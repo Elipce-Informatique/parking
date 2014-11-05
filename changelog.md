@@ -1,3 +1,6 @@
+###### 05/11/2014 MAJ du readme
+- Ajout de la procédure d'installation de l'environnement de développement.
+
 ###### 05/11/2014 Ajout de bootstrap 3.3 et jQuery 2.1
 - inclusion des libs frontend dans le dossier public.
 - voir https://bitbucket.org/beni/laravel-4-tutorial/wiki/Add_Twitter-Bootstrap pour leur utilisation dans le moteur de template.
