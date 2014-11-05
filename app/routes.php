@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Redis\Database;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -13,5 +14,6 @@
 
 Route::get('/', function()
 {
+	
 	return View::make('hello');
 });

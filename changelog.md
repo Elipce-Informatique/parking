@@ -1,3 +1,8 @@
+###### 05/11/2014 config BDD & mode debug & lang
+- Configuration des langues
+- Configuration du mode débug dans app.php
+- Configuration de la base de données dans database.php
+
 ###### 05/11/2014 INIT gulp JS et URL rewriting
 - Installation de gulp
 	- Installation en globale dans node js : npm install --global gulp
