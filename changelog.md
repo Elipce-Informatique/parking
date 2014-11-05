@@ -1,3 +1,7 @@
+###### 05/11/2014 Ajout de react JS
+- Installation de react
+- Update du package.json
+
 ###### 05/11/2014 MAJ du readme
 - Ajout de la procédure d'installation de l'environnement de développement.
 

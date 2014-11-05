@@ -5,7 +5,8 @@ Nouveau WorkFlow pour les développements web d'Elipce.
 Puis jQuery et Bootstrap comme utilitaires.
 
 
-## Initialisation de l'environnement de développement
+## INIT de l'environnement de développement
+
 ### Environnement de dev backend
 - Installation de composer (https://getcomposer.org/download/)
 - Installation de Laravel en global
@@ -13,12 +14,14 @@ Puis jQuery et Bootstrap comme utilitaires.
 	- Doc vidéo : https://laracasts.com/lessons/laravel-installation-for-newbs
 
 ### Environnement de dev Front End 
-- Installation de **node js** : http://nodejs.org/
-	- Si la commande ```npm``` affiche une erreur "ENOENT" dans powershell, il faut créer un dossier npm vide dans %appdata%
+###### - Installation de **node js** : http://nodejs.org/
+- Si la commande ```npm``` affiche une erreur "ENOENT" dans powershell, il faut créer un dossier npm vide dans %appdata%
+
 ###### - Installation de **Gulp** en global
 ```sh
 install --global gulp
 ```
+
 ###### - Installation de **Browserify** en global
 ```sh
 npm install -g browserify

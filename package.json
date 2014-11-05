@@ -1,6 +1,30 @@
 {
   "devDependencies": {
+    "browserify": "^6.2.0",
     "gulp": "^3.8.10",
     "gulp-minify-css": "^0.3.11"
-  }
+  },
+  "name": "elipce_workflow",
+  "description": "Nouveau WorkFlow pour les développements web d'Elipce. - Basé sur **Laravel** côté serveur, on va utiliser **Gulp** comme task runner - **Flux** et **React** comme Frontend engineering lib Puis jQuery et Bootstrap comme utilitaires.",
+  "version": "1.0.0",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp-minify-css": "^0.3.11",
+    "browserify": "^6.2.0",
+    "react": "^0.12.0",
+    "gulp": "^3.8.10"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Elipce-Informatique/elipce_workflow.git"
+  },
+  "author": "Elipce",
+  "license": "Copyright",
+  "bugs": {
+    "url": "https://github.com/Elipce-Informatique/elipce_workflow/issues"
+  },
+  "homepage": "https://github.com/Elipce-Informatique/elipce_workflow"
 }
