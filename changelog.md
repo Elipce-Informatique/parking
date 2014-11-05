@@ -1,3 +1,7 @@
+###### 05/11/2014 Ajout de bootstrap 3.3 et jQuery 2.1
+- inclusion des libs frontend dans le dossier public.
+- voir https://bitbucket.org/beni/laravel-4-tutorial/wiki/Add_Twitter-Bootstrap pour leur utilisation dans le moteur de template.
+
 ###### 05/11/2014 config BDD & mode debug & lang
 - Configuration des langues
 - Configuration du mode débug dans app.php
