@@ -12,21 +12,19 @@ Puis jQuery et Bootstrap comme utilitaires.
 - Installation de Laravel en global
 	- Doc écrite: http://laravel.com/docs/4.2/quick
 	- Doc vidéo : https://laracasts.com/lessons/laravel-installation-for-newbs
+- Ajout du dossier ```C:\Users\*********\AppData\Roaming\Composer\vendor\bin``` au path
+- Installation des dépendences (se placer dans le dossier du projet) : 
+```composer update```
 
-### Environnement de dev Front End 
+### Environnement de dev Front End
 ###### - Installation de **node js** : http://nodejs.org/
 - Si la commande ```npm``` affiche une erreur "ENOENT" dans powershell, il faut créer un dossier npm vide dans %appdata%
 
 ###### - Installation de **Gulp** en global
-```sh
-install --global gulp
-```
+```nmp install --global gulp```
 
 ###### - Installation de **Browserify** en global
-```sh
-npm install -g browserify
-```
+```npm install -g browserify```
 
 ###### - Installation des dépendences nodes depuis le package.json
 lancer la commande : ```npm update``` depuis la racine du projet
-
