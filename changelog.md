@@ -1,4 +1,11 @@
-###### 05/11/2014 Update de la procédure d'install
+###### 10/11/2014 Mise en place css/js et gulp
+- Création des dossiers pour CSS et JS sous app/assets
+- Création d'une tache gulp CSS qui envoi le tout sous public/css
+- Mise en place d'une tache watch avec init pour les CSS
+    - TODO : Plugger les autres watchers quand on en aura besoin
+- Important : mettre à jour les dependencies NPM
+
+###### 10/11/2014 Update de la procédure d'install
 - Modification du readme pour ajouter des infos d'install
 
 ###### 05/11/2014 Ajout de react JS

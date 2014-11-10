@@ -2,7 +2,9 @@
   "devDependencies": {
     "browserify": "^6.2.0",
     "gulp": "^3.8.10",
-    "gulp-minify-css": "^0.3.11"
+    "gulp-autoprefixer": "^1.0.1",
+    "gulp-minify-css": "^0.3.11",
+    "gulp-util": "^3.0.1"
   },
   "name": "elipce_workflow",
   "description": "Nouveau WorkFlow pour les développements web d'Elipce. - Basé sur **Laravel** côté serveur, on va utiliser **Gulp** comme task runner - **Flux** et **React** comme Frontend engineering lib Puis jQuery et Bootstrap comme utilitaires.",
