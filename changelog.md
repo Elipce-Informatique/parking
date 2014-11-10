@@ -1,3 +1,14 @@
+###### 10/11/2014 Update gulpfile
+- Déplacement des js libs dans assets (Bootstrap et jQuery)
+- Ajout d'un système de notification à gulp
+- Ajout de Stylus à Gulp
+- Création d'une tache JS
+- Installation de uglify js
+- Utilisation de uglify js dans la tache JS
+- Switch des jquery et bootstrap .js non mini dans le dossier assets
+- Passage des paths en variables de config (gulpfile)
+- Utilisation de gulp-changed pour détecter les fichiers modifiés entre 2 passages
+
 ###### 10/11/2014 Mise en place css/js et gulp
 - Création des dossiers pour CSS et JS sous app/assets
 - Création d'une tache gulp CSS qui envoi le tout sous public/css
