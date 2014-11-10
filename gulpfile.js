@@ -9,11 +9,17 @@ var autoprefixer = require('gulp-autoprefixer');
 var notify = require('gulp-notify');
 var stylus = require('gulp-stylus');
 var uglify = require('gulp-uglify');
+var plumber = require('gulp-plumber');
+var glob = require('glob');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
 
 // PATHS
 var CSS_SRC = 'app/assets/css/**/*.css';
 var CSS_DEST = 'public/css';
-var JS_SRC = 'app/assets/js/**/*.js';
+var JS_BUILD_SRC = 'app/assets/js/*.js';
+var JS_BUILD_DEST = '/temp/build/';
+var JS_SRC = '/temp/build/';
 var JS_DEST = 'public/js';
 
 // Manipulation des CSS
@@ -25,6 +31,20 @@ gulp.task('css', function () {
         .pipe(minifycss())
         .pipe(gulp.dest(CSS_DEST))
         .pipe(notify({message: 'CSS task completed.'}));
+});
+
+
+// Passage de browserify sur tous LES POINTS D'ENTRÉES
+gulp.task('browserify', function () {
+    var files = glob.sync(JS_BUILD_SRC);
+    return browserify({
+        entries: files,
+        extensions: ['.jsx']
+    })
+        .bundle()
+        .pipe(source('app.js'))
+        .pipe(plumber())
+        .pipe(gulp.dest(JS_BUILD_DEST));
 });
 
 // Manipulation des JS
@@ -51,4 +71,4 @@ gulp.task('watch', function () {
  * - Lance les watchers pour les taches suivantes:
  *      - CSS
  */
-gulp.task('default', ['css', 'js', 'watch']);
+gulp.task('default', ['css', 'browserify', 'js', 'watch']);

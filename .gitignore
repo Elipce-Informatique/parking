@@ -3,6 +3,7 @@
 /.settings
 /.idea
 /node_modules
+/temp
 composer.phar
 composer.lock
 .env.*.php

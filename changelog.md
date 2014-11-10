@@ -1,3 +1,8 @@
+###### 10/11/2014 Essai de browserify
+- Se renseigner sur les bonnes pratiques de browserify
+    - Un seul fichier d'entrée ou plusieurs
+    - si plusieurs Voir comment compiler vers plusieurs fichiers?
+    
 ###### 10/11/2014 Update gulpfile
 - Déplacement des js libs dans assets (Bootstrap et jQuery)
 - Ajout d'un système de notification à gulp
