@@ -1,3 +1,8 @@
+###### 11/11/2014 BROWSERIFY MARCHE ENFIN !!!!!
+- Intégration d'une nouvelle tache pour browserifier les JS
+- Update des tests
+- Test de module avec React et jsx
+    
 ###### 10/11/2014 Essai de browserify
 - Se renseigner sur les bonnes pratiques de browserify
     - Un seul fichier d'entrée ou plusieurs
