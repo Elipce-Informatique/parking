@@ -15,25 +15,21 @@ var reactify = require('reactify');
 
 // PATHS
 var CSS_SRC = 'app/assets/css/**/*.css';
+var STYL_SRC = 'app/assets/css/**/*.styl';
 var CSS_DEST = 'public/css';
 var JS_ALL = 'app/assets/js/**/*.js';
 var JS_SRC = 'app/assets/js/*.js';
 var JS_DEST = 'public/js';
 
 // Manipulation des CSS
-gulp.task('css', function () {
-    return gulp.src(CSS_SRC)
-        .pipe(changed(CSS_DEST))
-        .pipe(stylus())
-        .pipe(autoprefixer('> 1%'))
-        .pipe(minifycss())
-        .pipe(gulp.dest(CSS_DEST))
-        .pipe(notify({message: 'CSS task completed.'}));
-});
-
+gulp.task('css', ['stylus', 'css_natif']);
 
 // Manipulation des JS
-gulp.task('js', function () {
+gulp.task('js', ['browserify']);
+
+
+// BROWSERIFY
+gulp.task('browserify', function(){
     var browserified = transform(function(filename) {
         var b = browserify(filename);
         b.transform(reactify);
@@ -44,8 +40,30 @@ gulp.task('js', function () {
         .pipe(browserified)
         //.pipe(uglify())
         .pipe(gulp.dest(JS_DEST))
-        .pipe(notify({message: 'JS task completed.'}));
+        .pipe(notify({message: 'Browserify task completed.'}));
 });
+
+// STYLUS
+gulp.task('stylus', function(){
+    return gulp.src(STYL_SRC)
+        .pipe(changed(CSS_DEST))
+        .pipe(stylus())
+        .pipe(autoprefixer('> 1%'))
+        .pipe(minifycss())
+        .pipe(gulp.dest(CSS_DEST))
+        .pipe(notify({message: 'Stylus task completed.'}));
+});
+
+// STYLUS
+gulp.task('css_natif', function(){
+    return gulp.src(CSS_SRC)
+        .pipe(changed(CSS_DEST))
+        .pipe(autoprefixer('> 1%'))
+        .pipe(minifycss())
+        .pipe(gulp.dest(CSS_DEST))
+        .pipe(notify({message: 'CSS natif task completed.'}));
+});
+
 
 // Setup des watchers
 gulp.task('watch', function () {

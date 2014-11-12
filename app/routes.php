@@ -12,7 +12,17 @@ use Illuminate\Redis\Database;
 |
 */
 
-Route::get('/', function()
-{
-	return View::make('hello');
-});
+Route::get('/', 'HomeController@showWelcome');
+
+/*
+|--------------------------------------------------------------------------
+| Authentification  Routes
+|--------------------------------------------------------------------------
+|
+| Gestion du l'authentification utilisateur
+|
+*/
+Route::get('login', 'SessionController@create');
+Route::get('logout', 'SessionController@destroy');
+
+Route::resource('session', 'SessionController');
