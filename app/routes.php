@@ -14,6 +14,5 @@ use Illuminate\Redis\Database;
 
 Route::get('/', function()
 {
-	
 	return View::make('hello');
 });

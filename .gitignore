@@ -1,7 +1,9 @@
 /bootstrap/compiled.php
 /vendor
 /.settings
+/.idea
 /node_modules
+/temp
 composer.phar
 composer.lock
 .env.*.php
@@ -9,3 +11,4 @@ composer.lock
 .DS_Store
 Thumbs.db
 .buildpath
+.project

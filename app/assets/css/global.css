@@ -1,0 +1,10 @@
+/**
+* Le style global de l'application va dans ce dossier
+*/
+
+/* Test des watchers Gulp */
+.test{
+    font-size: large;
+    text-align: center;
+    background: linear-gradient(top, red, green);
+}
