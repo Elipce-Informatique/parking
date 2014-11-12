@@ -38,3 +38,9 @@ Le workflow JavaScript est très automatisé. Les fichiers de développement son
     - Qu'est-ce qu'un module COMMON JS ? https://egghead.io/lessons/nodejs-what-are-commonjs-modules
 
 Les fichiers à inclure dans les pages sont placés automatiquement par gulp dans **public/js**
+
+#### CSS
+Les fichier CSS sont écrits avec le langage Stylus (http://learnboost.github.io/stylus/)
+- Les fichiers de développenent en Stylus sont dans ```app/assets/css```
+- Les fichiers compilés en CSS natif sont placés dans ```public/css```
+

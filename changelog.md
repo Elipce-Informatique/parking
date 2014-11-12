@@ -1,3 +1,7 @@
+###### 12/11/2014 Update readme et package.json
+- Update readme css
+- Update package.json pour intégrer gulp-changed
+
 ###### 11/11/2014 BROWSERIFY MARCHE ENFIN !!!!!
 - Intégration d'une nouvelle tache pour browserifier les JS
 - Update des tests
