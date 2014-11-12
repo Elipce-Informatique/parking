@@ -1,3 +1,7 @@
+###### 12/11/2014 Authentification en cours de dev
+- Suivi du tuto sur l'authentification en cours
+- Blocage sans erreur sur la validation
+
 ###### 12/11/2014 Update readme et package.json
 - Update readme css
 - Update package.json pour intégrer gulp-changed

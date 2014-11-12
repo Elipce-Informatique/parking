@@ -55,7 +55,7 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => '192.168.1.220',
-			'database'  => 'noyau_v3',
+			'database'  => 'base_workflow',
 			'username'  => 'root',
 			'password'  => 'elipce',
 			'charset'   => 'utf8',

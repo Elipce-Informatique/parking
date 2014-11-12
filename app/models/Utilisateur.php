@@ -10,7 +10,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 	use UserTrait, RemindableTrait;
 
     public $timestamps = false;
-    protected $fillable = ['nom', 'prenom', 'mail', 'date_naissance', 'login', 'pwd'];
+    protected $fillable = ['id', 'nom', 'prenom', 'email', 'date_naissance', 'login', 'password', 'first_conn'];
 
 	/**
 	 * The database table used by the model.
@@ -24,6 +24,6 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 	 *
 	 * @var array
 	 */
-	protected $hidden = array('pwd', 'first_conn');
+	protected $hidden = array('password', 'first_conn');
 
 }

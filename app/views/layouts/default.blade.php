@@ -19,7 +19,7 @@
         <![endif]-->
 
         <!-- Header de l'application -->
-        <div id="header">@yield('content')</div>
+        <div id="header">@yield('header')</div>
 
         <!-- Contenu de l'application -->
         <div id="content">
