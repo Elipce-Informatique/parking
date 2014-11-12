@@ -4,6 +4,7 @@
 /.idea
 /node_modules
 /temp
+/nbproject
 composer.phar
 composer.lock
 .env.*.php
@@ -12,3 +13,4 @@ composer.lock
 Thumbs.db
 .buildpath
 .project
+/nbproject/private/

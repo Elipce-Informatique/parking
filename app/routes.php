@@ -14,6 +14,7 @@ use Illuminate\Redis\Database;
 
 Route::get('/', 'HomeController@showWelcome');
 
+
 /*
 |--------------------------------------------------------------------------
 | Authentification  Routes
