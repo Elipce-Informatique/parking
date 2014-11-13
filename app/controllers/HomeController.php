@@ -18,6 +18,12 @@ class HomeController extends BaseController
 
     public function showWelcome()
     {
+//        Utilisateur::create([
+//            'nom'=>'yann',
+//            'email' => 'yann.pltv@gmail.com',
+//            'password' => Hash::make('elipce')
+//        ]);
+
         return View::make('hello');
     }
 
