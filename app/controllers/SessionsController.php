@@ -12,7 +12,7 @@ class SessionsController extends \BaseController
         if (Auth::check()) {
             return Redirect::to('/accueil');
         }
-        return View::make('sessions.create');
+        return View::make('pages.login');
     }
 
 
@@ -24,9 +24,10 @@ class SessionsController extends \BaseController
     public function store()
     {
         if (Auth::attempt(Input::only('email', 'password'))) {
-            return "Bienvenue ".Auth::user()->nom;
+            return Auth::user();
         }
-        return 'Failed !';
+
+        return Redirect::back()->withInput();
     }
 
 

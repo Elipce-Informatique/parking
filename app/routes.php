@@ -14,7 +14,6 @@ use Illuminate\Redis\Database;
 
 Route::get('/', 'SessionsController@create');
 Route::get('/accueil', function(){
-//    Utilisateur::create(['nom'=>'perez','email'=>'vivian.perez@elipce.com','password'=>Hash::make('elipce05')]);
     return 'Page d\'accueil de l\'appli de la mort qui tue';
 });
 
