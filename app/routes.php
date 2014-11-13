@@ -14,7 +14,7 @@ use Illuminate\Redis\Database;
 
 Route::get('/', 'SessionsController@create');
 Route::get('/accueil', function(){
-    return 'Page d\'accueil de l\'appli';
+    return 'Page d\'accueil de l\'appli de la mort qui tue';
 });
 
 /*
