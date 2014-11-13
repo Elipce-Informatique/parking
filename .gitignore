@@ -5,6 +5,7 @@
 /node_modules
 /temp
 /nbproject
+/public
 composer.phar
 composer.lock
 .env.*.php
