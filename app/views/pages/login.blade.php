@@ -1,4 +1,4 @@
-@extends('layouts.default')
+@extends('...layouts.default')
 
 @section('content')
     <h1>Bienvenue, sur l'application !</h1>
