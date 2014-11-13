@@ -13,8 +13,12 @@ use Illuminate\Redis\Database;
 */
 
 Route::get('/', 'SessionsController@create');
-Route::get('/accueil', 'AccueilController@index');
+Route::get('/accueil', function(){
+    return 'Page d\'accueil de l\'appli de la mort qui tue';
+});
 
+
+Route::get('/utilisateur', 'UtilisateurController@index');
 /*
 |--------------------------------------------------------------------------
 | Authentification  Routes
