@@ -43,6 +43,21 @@ gulp.task('browserify', function(){
         .pipe(notify({message: 'Browserify task completed.'}));
 });
 
+//// BROWSERIFY LIBS & MODS
+//gulp.task('browserify', function(){
+//    var browserified = transform(function(filename) {
+//        var b = browserify(filename);
+//        b.transform(reactify);
+//        return b.bundle();
+//    });
+//
+//    return gulp.src(JS_ALL)
+//        .pipe(browserified)
+//        //.pipe(uglify())
+//        .pipe(gulp.dest(JS_DEST))
+//        .pipe(notify({message: 'Browserify JS LIBS & MODS task completed.'}));
+//});
+
 // STYLUS
 gulp.task('stylus', function(){
     return gulp.src(STYL_SRC)

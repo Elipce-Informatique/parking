@@ -10,7 +10,7 @@ class UtilisateurController extends \BaseController {
 	public function index()
 	{
                 $oUsers = Utilisateur::all();
-		return View::make('utilisateur.index')->with('users',$oUsers);
+		return View::make('pages.utilisateur')->with('users',$oUsers);
 	}
 
 
