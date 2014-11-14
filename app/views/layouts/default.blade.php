@@ -12,6 +12,7 @@
 
         <link rel="stylesheet" href="public/css/_global.css">
         <link rel="stylesheet" href="public/css/lib/bootstrap.css">
+        @yield('css')
     </head>
     <body>
         <!--[if lt IE 8]>
@@ -22,8 +23,15 @@
         <div id="header">@yield('header')</div>
 
         <!-- Contenu de l'application -->
-        <div id="content">
-            @yield('content')
+        <div class="container-fluid">
+            <div class="row">
+                <div id="menu" class="col-md-2">
+                    @yield('menu')
+                </div>
+                <div  id="content" class=""col-md-10>
+                    @yield('content')
+                </div>
+            </div>
         </div>
 
         <!-- Footer de l'application -->
