@@ -1,3 +1,9 @@
+###### 15/11/2014 Grosse update gulpfile et assets
+- Update gulpfile pour prendre les librairies js statiques (bootstrap)
+- Update inclusion js globale (global/app.js) qui inclu obligatoirement jQuery et React à la fenetre
+    - PLUS BESOIN DE REqUIRE jQuery et React
+- Fix gulpfile pour ne plus arrêter l'execution des watchers lorsqu'une erreur est rencontrée.
+
 ###### 12/11/2014 Authentification en cours de dev
 - Suivi du tuto sur l'authentification en cours
 - Blocage sans erreur sur la validation

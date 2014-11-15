@@ -13,7 +13,7 @@
         </div>
 
         <div>
-            {{Form::submit('login')}}
+            {{Form::submit('login', ['class'=>'btn btn-primary'])}}
         </div>
     {{ Form::close() }}
 @stop

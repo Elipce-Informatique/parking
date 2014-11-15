@@ -8,10 +8,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
-        <!-- Place favicon.ico in the root directory -->
 
+        <!-- CSS GLOBAL À L'APPLICATION -->
         <link rel="stylesheet" href="public/css/_global.css">
         <link rel="stylesheet" href="public/css/lib/bootstrap.css">
+        <link rel="stylesheet" href="public/css/lib/bootstrap-theme.css">
         @yield('css')
     </head>
     <body>
@@ -28,7 +29,7 @@
                 <div id="menu" class="col-md-2">
                     @yield('menu')
                 </div>
-                <div  id="content" class=""col-md-10>
+                <div  id="content" class="col-md-10">
                     @yield('content')
                 </div>
             </div>
@@ -42,8 +43,8 @@
 
         <!-- Inclusion des differents scripts globaux -->
         <div id="scripts">
-<!--            <script src="public/js/bootstrap.js"></script>-->
-            <script src="app/assets/js/libs/bootstrap.js"></script>
+            <script src="public/js/global/app.js"></script>
+            <script src="public/js/libs/bootstrap.js"></script>
             @yield('scripts')
         </div>
 
