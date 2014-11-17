@@ -1,7 +1,7 @@
 @extends('layouts.default')
 
 @section('css')
-<link rel="stylesheet" href="public/css/utilisateur.css">
+    <link rel="stylesheet" href="public/css/utilisateur.css">
 @stop
 
 @section('content')
@@ -48,5 +48,5 @@
 @stop
 
 @section('scripts')
-<script src="public/js/utilisateur.js"></script>
+    <script src="public/js/utilisateur.app.js"></script>
 @stop

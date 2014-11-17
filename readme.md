@@ -1,6 +1,6 @@
 # Elipce Workflow
 Nouveau WorkFlow pour les développements web d'Elipce.
-- Basé sur **Laravel** côté serveur, on va utiliser **Gulp** comme task runner
+- Basé sur **Laravel** côté serveur, on va utiliser **Gulp** comme task runner et une architecture **RESTFUL**
 - **Flux** et **React** comme Frontend engineering lib
 Puis jQuery et Bootstrap comme utilitaires.
 
@@ -31,6 +31,8 @@ lancer la commande : ```npm update``` depuis la racine du projet
 
 ## Conventions de développement
 ON NE DOIT RIEN METTRE MANUELLEMENT DANS LE DOSSIER ```public```
+#### PHP
+
 #### JavaScript
 Le workflow JavaScript est très automatisé. Les fichiers de développement sont placés sous app/assets/js.
 - A la racine de ce dossier, on met tous les js spécifiques à une page (accueil.js, login.js, utilisateur.js etc...)

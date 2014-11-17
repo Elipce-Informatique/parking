@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Redis\Database;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -13,12 +12,18 @@ use Illuminate\Redis\Database;
 */
 
 Route::get('/', 'SessionsController@create');
-Route::get('/accueil', function(){
-    return 'Page d\'accueil de l\'appli de la mort qui tue';
-});
+Route::get('accueil', 'AccueilController@index');
 
 
-Route::get('/utilisateur', 'UtilisateurController@index');
+/*
+|--------------------------------------------------------------------------
+| Gestion utilisateurs
+|--------------------------------------------------------------------------
+|
+| Gestion des informations utilisateur
+|
+*/
+Route::resource('utilisateur', 'UtilisateurController');
 /*
 |--------------------------------------------------------------------------
 | Authentification  Routes
@@ -33,3 +38,10 @@ Route::resource('sessions', 'SessionsController');
 Route::get('login', 'SessionsController@create');
 Route::get('logout', 'SessionsController@destroy');
 
+
+/*
+|--------------------------------------------------------------------------
+| TESTS
+|--------------------------------------------------------------------------
+*/
+Route::get('test', 'TestController@index');
