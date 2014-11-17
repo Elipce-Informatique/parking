@@ -6,6 +6,7 @@
 /temp
 /nbproject
 /public
+_ide_helper.php
 composer.phar
 composer.lock
 .env.*.php
