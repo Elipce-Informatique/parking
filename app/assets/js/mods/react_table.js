@@ -1,49 +1,53 @@
 /**
- * Exemple ultra basique de développement en modules Common JS avec React.
- * Ce module crée un composant écrivant Hello {param} dans un div.
+ * @param array head: array contenant l'entête du tableau ['A', 'B']
+ * @param string url: url AJAX (recupération données)
+ * @param array data: les clés de la requêtes SQL AJAX qui ne sont pas affichées dans le tableau et pour lesquelles on créé un data-* 
+ *                    ex: l'url AJAX retourne les données suivantes {'id':1, 'nom':'PEREZ', 'prenom':'Vivian'}
+ *                        var data = ['id']   
  */
 module.exports = React.createClass({
+    
+    componentDidMount: function() {
+        $.ajax({
+          url: this.props.url,
+          dataType: 'json',
+          success: function(data) {
+            this.setState({data: data});
+          }.bind(this),
+          error: function(xhr, status, err) {
+            console.error(this.props.url, status, err.toString());
+          }.bind(this)
+        });
+      },
 
     render: function() {
-        
-//        return <div>test</div> // OK chaine en dur
-//        return <div>{this.props.data}</div> //OK si data est une chaine ou une variable
-//        return <div class="table-responsive">
-//                <table class="table">
-//                 
-//                     <tr>
-//                        <td>{this.props.data[0]['nom']}</td>
-//                        <td>{this.props.data[0]['prenom']}</td>
-//                    </tr>
-//                    <tr>
-//                        <td>{this.props.data[1]['nom']}</td>
-//                        <td>{this.props.data[1]['prenom']}</td>
-//                    </tr>
-//                
-//                </table>
-//              </div> // OK mais on perd la classe
-
-//        return <div class="table-responsive">
-//                <table class="table">
-//                  for(var i in {this.props.data}){
-//                    <tr>
-//                    for(var j in {this.props.data[i]}){
-//                        <td>{this.props.data[i][j]}</td>
-//                    }
-//                    </tr>
-//                }
-//                </table>
-//              </div> // KO pas de FOR natif
             
+            // Variables
+            var entete = [];
             var corps = [];
-            this.props.data.forEach(function(tr) {
-                corps.push(<tr><td>{tr.nom}</td><td>{tr.prenom}</td></tr>);
+            var table;
+            var sEntete;
+            var sCorp;
+            
+            // Entete
+            this.props.head.forEach(function(col) {
+                entete.push(<td>{col}</td>)
             });
-              return <div id="toto" className="table-responsive">
+            sEntete = <thead><tr>{entete}</tr></thead>;
+            
+            // Corps
+            
+            sCorps = <tbody></tbody>
+            
+            // Table
+             table = 
+              <div className="table-responsive">
                 <table className="table">
-                {corps}
+                {sEntete} 
+                {sCorps}
                 </table>
               </div>
+            return table
 
       // lundi voir http://facebook.github.io/react/docs/thinking-in-react.html#start-with-a-mock
     }

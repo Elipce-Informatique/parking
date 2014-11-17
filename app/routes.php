@@ -24,6 +24,8 @@ Route::get('accueil', 'AccueilController@index');
 |
 */
 Route::resource('utilisateur', 'UtilisateurController');
+Route::get('utilisateur/list', 'UtilisateurController@list');
+
 /*
 |--------------------------------------------------------------------------
 | Authentification  Routes
