@@ -12,12 +12,18 @@
 */
 
 Route::get('/', 'SessionsController@create');
-Route::get('accueil', function(){
-    return 'Page d\'accueil de l\'appli de la mort qui tue';
-});
+Route::get('accueil', 'AccueilController@index');
 
 
-Route::get('/utilisateur', 'UtilisateurController@index');
+/*
+|--------------------------------------------------------------------------
+| Gestion utilisateurs
+|--------------------------------------------------------------------------
+|
+| Gestion des informations utilisateur
+|
+*/
+Route::ressource('utilisateur', 'UtilisateurController');
 /*
 |--------------------------------------------------------------------------
 | Authentification  Routes

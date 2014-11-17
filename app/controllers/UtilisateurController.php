@@ -4,7 +4,7 @@ class UtilisateurController extends \BaseController
 {
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the users.
      *
      * @return Response
      */
