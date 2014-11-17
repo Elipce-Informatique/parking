@@ -13,7 +13,7 @@ var Hello = React.createClass({
         return {nom: ""};
     },
     /**
-     * Callback appelé lorsque le composant est affiché.
+     * Callback appelée lorsque le composant est affiché.
      * C'est par exemple ici qu'on peut faire un appel ajax pour
      * charger ses données dynamiquement !
      */

@@ -39,11 +39,11 @@ module.exports = React.createClass({
             this.props.data.forEach(function(tr) {
                 corps.push(<tr><td>{tr.nom}</td><td>{tr.prenom}</td></tr>);
             });
-              return <div class="table-responsive">
-                <table class="table">
+              return <div id="toto" className="table-responsive">
+                <table className="table">
                 {corps}
                 </table>
-              </div> // KO pas de FOR natif
+              </div>
 
       // lundi voir http://facebook.github.io/react/docs/thinking-in-react.html#start-with-a-mock
     }
