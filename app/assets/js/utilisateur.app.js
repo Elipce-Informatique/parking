@@ -8,10 +8,10 @@ var Table = require('./mods/react_table');
 
 $(function(){
     var head = ['Nom','Prénom','Date de naissance'];
-    var monTab = [{'nom':'Nom','prenom':'Prénom','date_naissance':'Date de naissance'},{'nom':'Perez','prenom':'Vivian','date_naissance':'26/02/1985'}];
-    var test = 'toto';
+    var url = '/utilisateur/all';
+    var hide = ['password'];
     React.render(
-        <Table head={head}/>,
+        <Table head={head} url={url} hide={hide}/>,
         document.getElementById('tableau_react')
     );
 });

@@ -8,7 +8,7 @@ return array(
     |--------------------------------------------------------------------------
     */
 
-    'locales' => array('en', 'fr'),
+    'locales' => array('fr'),
 
     /*
     |--------------------------------------------------------------------------
@@ -25,8 +25,9 @@ return array(
     |   array( 'mynamespace' => array( 'test1', 'test2' ) )
     | for instance will be internally resolved to:
     |   array('mynamespace.test1', 'mynamespace.test2')
+    |
     */
 
-    'messages' => array('global','login'),
+    'messages' => array('login','global'),
 
 );

@@ -23,8 +23,8 @@ Route::get('accueil', 'AccueilController@index');
 | Gestion des informations utilisateur
 |
 */
+Route::get('utilisateur/all', 'UtilisateurController@all');
 Route::resource('utilisateur', 'UtilisateurController');
-Route::get('utilisateur/list', 'UtilisateurController@list');
 
 /*
 |--------------------------------------------------------------------------

@@ -12,7 +12,7 @@
     </div>
     <div class="row">
         <div class="col-md-12"> 
-            @if($users->count())
+            @if(isset($users) && $users->count())
             <select>
                 @foreach($users as $user)
                     <option>{{$user->nom}}</option>
