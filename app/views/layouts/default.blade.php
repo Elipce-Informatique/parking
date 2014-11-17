@@ -29,6 +29,6 @@
     </div>
 @stop
 
-@section('struct_script')
+@section('struct_scripts')
     @yield('scripts')
 @stop
