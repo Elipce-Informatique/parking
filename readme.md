@@ -15,7 +15,10 @@ Puis jQuery et Bootstrap comme utilitaires.
 - Ajout du dossier ```C:\Users\*********\AppData\Roaming\Composer\vendor\bin``` au path
 - Installation des dépendences (se placer dans le dossier du projet) : 
 ```composer update```
-
+- les langues sont définies dans des fichiers par thèmes (app/lang/fr)
+    - Pour les utiliser en JS il faut les déclarer dans la config package/andywer/js-localization
+    - Pour les appeller en JS on fait ```Lang.get('fichier.constante')```;
+    
 ### Environnement de dev Front End
 ###### - Installation de **node js** : http://nodejs.org/
 - Si la commande ```npm``` affiche une erreur "ENOENT" dans powershell, il faut créer un dossier npm vide dans %appdata%
@@ -32,6 +35,19 @@ lancer la commande : ```npm update``` depuis la racine du projet
 ## Conventions de développement
 ON NE DOIT RIEN METTRE MANUELLEMENT DANS LE DOSSIER ```public```
 #### PHP
+- Utilisation des routes de type 'resource' au MAXIMUM pour être RESTFUL
+- Template structuré de la manière suivante
+/views
+    structure.blade
+    /layouts
+        - login.blade
+        - default.blade
+    /pages
+        - page1.blade
+        - page2.blade
+        - ...
+Chaque page hérite d'un layout, le layout défault contient la structure d'une page classique de l'appli.
+Pour les structures plus fantaisistes, on en crée d'autres comme le layout login utilisé par la page login.
 
 #### JavaScript
 Le workflow JavaScript est très automatisé. Les fichiers de développement sont placés sous app/assets/js.

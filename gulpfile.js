@@ -35,15 +35,16 @@ gulp.task('js', ['browserify', 'libs_js_statiques']);
 gulp.task('browserify', function(){
     var browserified = transform(function(filename) {
         var b = browserify(filename);
-        b.transform(reactify);
+        b.transform(reactify).on('error', function(err){
+            gutil.log('ERREUR : '+err);
+            this.end();
+        });
         return b.bundle();
     });
 
     return gulp.src(JS_BUNDLE_SRC)
-        .pipe(plumber({errorHandler: gutil.log}))
         .pipe(browserified)
-        //.pipe(uglify())
-        .pipe(plumber.stop())
+        //.pipe(uglify()).on('error', gutil.log)
         .pipe(gulp.dest(JS_BUNDLE_DEST))
         .pipe(notify({message: 'Browserify task completed.'}));
 });
@@ -89,7 +90,7 @@ gulp.task('watch', function () {
     gulp.watch(CSS_SRC, ['css_natif']);
     gulp.watch(STYL_SRC, ['stylus']);
     // Watch des JS
-    gulp.watch(JS_ALL_SRC, ['js']);
+    gulp.watch(JS_ALL_SRC, ['browserify', 'libs_js_statiques']);
 });
 
 /**

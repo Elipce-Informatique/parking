@@ -1,19 +1,28 @@
-@extends('...layouts.default')
+@extends('...layouts.login')
+
+@section('css')
+    <link rel="stylesheet" href="public/css/login.css">
+@stop
 
 @section('content')
-    <h1>Bienvenue, sur l'application !</h1>
-    {{ Form::open(['route'=>'sessions.store']) }}
-        <div>
-            {{Form::label('email', 'Email: ')}}
-            {{Form::text('email')}}
-        </div>
-        <div>
-            {{Form::label('password', 'Mot de passe: ')}}
-            {{Form::password('password')}}
+    {{ Form::open(['route'=>'sessions.store', 'class'=>'form-signin']) }}
+
+        <h2>{{Lang::get('login.title_bienvenue')}}</h2>
+
+            {{Form::text('email', '', ['class'=>'form-control', 'placeholder'=>Lang::get('global.email')])}}
+
+            {{Form::password('password', ['class'=>'form-control', 'placeholder'=>Lang::get('global.password')])}}
+
+        <div class="checkbox">
+            <label>
+                {{Form::checkbox('remember-me')}} {{Lang::get('login.login')}}
+            </label>
         </div>
 
-        <div>
-            {{Form::submit('login', ['class'=>'btn btn-primary'])}}
-        </div>
+        {{Form::submit('login', ['class'=>'btn btn-lg btn-primary btn-block'])}}
     {{ Form::close() }}
+@stop
+
+@section('scripts')
+
 @stop
