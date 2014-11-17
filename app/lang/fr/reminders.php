@@ -13,14 +13,12 @@ return array(
 	|
 	*/
 
-	"password" => "Passwords must be at least six characters and match the confirmation.",
+    "password" => "Les mots de passe doivent avoir au moins six caractères et doivent être identiques.",
+    "user"     => "Nous ne pouvons trouver cet utilisateur avec cette adresse e-mail.",
+    "token"    => "Ce jeton de réinitialisation du mot de passe n'est pas valide.",
 
-	"user" => "We can't find a user with that e-mail address.",
+	"sent" => "Rappel de mot de passe envoyé!",
 
-	"token" => "This password reset token is invalid.",
-
-	"sent" => "Password reminder sent!",
-
-	"reset" => "Password has been reset!",
+	"reset" => "Le mot de passe à été réinitialisé!",
 
 );

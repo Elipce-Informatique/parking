@@ -1,3 +1,4 @@
+@include('js-localization::head')
 <!doctype html>
 <html class="no-js" lang="">
     <head>
@@ -21,9 +22,11 @@
 
         <!-- Inclusion des differents scripts globaux -->
         <div id="scripts">
+            @yield('js-localization.head')
             <script src="public/js/global/app.js"></script>
             <script src="public/js/libs/bootstrap.js"></script>
             @yield('struct_scripts')
         </div>
+        <input type="hidden" id="_token" name="_token" value="{{csrf_token()}} ?>">
     </body>
 </html>

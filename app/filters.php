@@ -12,7 +12,7 @@
 */
 
 App::before(function ($request) {
-    //
+
 });
 
 
@@ -73,7 +73,9 @@ Route::filter('guest', function () {
 */
 
 Route::filter('csrf', function () {
-    if (Session::token() != Input::get('_token')) {
-        throw new Illuminate\Session\TokenMismatchException;
+    if (count(Input::get())) {
+        if (Session::token() != Input::get('_token')) {
+            throw new Illuminate\Session\TokenMismatchException;
+        }
     }
 });
