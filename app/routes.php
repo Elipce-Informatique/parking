@@ -23,7 +23,7 @@ Route::get('accueil', 'AccueilController@index');
 | Gestion des informations utilisateur
 |
 */
-Route::ressource('utilisateur', 'UtilisateurController');
+Route::resource('utilisateur', 'UtilisateurController');
 /*
 |--------------------------------------------------------------------------
 | Authentification  Routes
