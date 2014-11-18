@@ -7,24 +7,27 @@
  */
 module.exports = React.createClass({
     getInitialState: function() {
-        return {data: [{'nom':'jo','prenom':'cacao'}]};
+        console.log('initialize')
+        return {data: []};
     },
     
     componentDidMount: function() {
         $.ajax({
           url: this.props.url,
           dataType: 'json',
+          context: this,
           success: function(data) {
-            this.setState({data: data});
-          }.bind(this),
+              console.log('setstate')
+            this.setState({'data': data});
+          },
           error: function(xhr, status, err) {
             console.error(this.props.url, status, err.toString());
-          }.bind(this)
+          }
         });
       },
 
     render: function() {
-            
+            console.log('render')
             // Variables
             var entete = [];
             var corps = [];
@@ -43,19 +46,21 @@ module.exports = React.createClass({
             this.state.data.forEach(function(user) {
                tr = new Array();
                // Parcours des users
-                user.forEach(function(val) {
-                     tr.push(<td>{val}</td>);
+                _.each(user,function(val,key) {
+                    var temp = user.id+'_'+key;
+                     tr.push(<td key={temp}>{val}</td>);
                 });
                 // Ajout du tr
-                entete.push(<td>{tr}</td>)
+                corps.push(<tr>{tr}</tr>)
             });
-            sCorps = <tbody>{entete}</tbody>
-            
+            sCorps = <tbody>{corps}</tbody>
+//            sCorps = <tbody><tr><td>toto</td><td>titi</td></tr></tbody>
+            console.log('%o',sCorps)
             // Table
              table = 
               <div className="table-responsive">
                 <table className="table">
-                {sEntete} 
+                {sEntete}
                 {sCorps}
                 </table>
               </div>

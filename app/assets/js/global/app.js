@@ -7,3 +7,4 @@
 
 window.$ = window.jQuery = require('jquery');
 window.React = require('react/addons');
+window._ = require('underscore/underscore');
