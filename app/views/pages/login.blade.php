@@ -9,7 +9,7 @@
 
         <h2>{{Lang::get('login.title_bienvenue')}}</h2>
 
-            {{Form::text('email', '', ['class'=>'form-control', 'placeholder'=>Lang::get('global.email')])}}
+            {{Form::email('email', '', ['class'=>'form-control', 'placeholder'=>Lang::get('global.email')])}}
 
             {{Form::password('password', ['class'=>'form-control', 'placeholder'=>Lang::get('global.password')])}}
 

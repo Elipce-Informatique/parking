@@ -34,17 +34,17 @@ gulp.task('js', ['browserify', 'libs_js_statiques']);
 // BROWSERIFY (*app.js)
 gulp.task('browserify', function(){
     var browserified = transform(function(filename) {
-        var b = browserify(filename);
-        b.transform(reactify).on('error', function(err){
-            gutil.log('ERREUR : '+err);
-            this.end();
+        var b = browserify({
+            transform: ['reactify'],
+            entries : filename
         });
+
         return b.bundle();
     });
 
     return gulp.src(JS_BUNDLE_SRC)
+        .pipe(plumber({errorHandler: gutil.log}))
         .pipe(browserified)
-        //.pipe(uglify()).on('error', gutil.log)
         .pipe(gulp.dest(JS_BUNDLE_DEST))
         .pipe(notify({message: 'Browserify task completed.'}));
 });

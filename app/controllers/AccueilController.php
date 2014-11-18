@@ -9,7 +9,7 @@ class AccueilController extends \BaseController {
 	 */
 	public function index()
 	{
-		return View::make('accueil');
+		return View::make('pages.accueil');
 	}
 
 

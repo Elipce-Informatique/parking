@@ -5,11 +5,11 @@
 | Filtres Globaux à l'application
 |--------------------------------------------------------------------------
 */
-Route::when('*', 'csrf', array('post', 'put', 'delete'));
+Route::when('*', 'csrf', array('post', 'put', 'delete', 'patch'));
 
 /*
 |--------------------------------------------------------------------------
-| Application Routes
+| Routes non-ressources de l'application
 |--------------------------------------------------------------------------
 |
 | Here is where you can register all of the routes for an application.
@@ -24,7 +24,7 @@ Route::get('accueil', 'AccueilController@index');
 
 /*
 |--------------------------------------------------------------------------
-| Gestion utilisateurs
+| Ressource utilisateurs
 |--------------------------------------------------------------------------
 |
 | Gestion des informations utilisateur
@@ -35,7 +35,7 @@ Route::resource('utilisateur', 'UtilisateurController');
 
 /*
 |--------------------------------------------------------------------------
-| Authentification  Routes
+| Ressource Authentification
 |--------------------------------------------------------------------------
 |
 | Gestion de l'authentification utilisateur
