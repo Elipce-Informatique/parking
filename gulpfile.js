@@ -30,31 +30,14 @@ var JS_LIBS_SRC = './app/assets/js/libs/*.js';
 var JS_LIBS_DEST = './public/js/libs';
 var JS_BUNDLE_SRC = './app/assets/js/**/*app.js';
 var JS_BUNDLE_DEST = './public/js';
+var IMG_SRC = './app/assets/images/**/*.*';
+var IMG_DEST = './public/images';
 
 // Manipulation des CSS
 gulp.task('css', ['stylus', 'css_natif']);
 
 // Manipulation des JS
 gulp.task('js', ['libs_js_statiques']);
-
-
-// BROWSERIFY (*app.js)
-//gulp.task('browserify', function(){
-//    var browserified = transform(function(filename) {
-//        var b = browserify({
-//            transform: ['reactify'],
-//            entries : filename
-//        });
-//
-//        return b.bundle();
-//    });
-//
-//    return gulp.src(JS_BUNDLE_SRC)
-//        .pipe(plumber({errorHandler: gutil.log}))
-//        .pipe(browserified)
-//        .pipe(gulp.dest(JS_BUNDLE_DEST))
-//        .pipe(notify({message: 'Browserify task completed.'}));
-//});
 
 // LIBS JS (/libs/*.js)
 gulp.task('libs_js_statiques', function(){
@@ -90,6 +73,13 @@ gulp.task('css_natif', function(){
         .pipe(notify({message: 'CSS natif task completed.'}));
 });
 
+// IMAGES 
+gulp.task('images', function(){
+    return gulp.src(IMG_SRC)
+        .pipe(changed(IMG_DEST))
+        .pipe(gulp.dest(IMG_DEST))
+        .pipe(notify({message: 'Images copy OK'}));
+});
 
 // SETUP DES WATCHERS
 gulp.task('watch', function () {
@@ -98,77 +88,9 @@ gulp.task('watch', function () {
     gulp.watch(STYL_SRC, ['stylus']);
     // Watch des JS
     gulp.watch(JS_ALL_SRC, ['libs_js_statiques']);
+    // Watch des IMG
+    gulp.watch(IMG_SRC, ['images']);
 });
-
-
-/*
-// BROWSERIFY INTELLIGENT
-gulp.task('watch_browserify', function() {
-
-    var browserified = transform(function(filename) {
-        var bundler = watchify(browserify(filename, watchify.args));
-        bundler.transform('reactify');
-
-        // Appel à rebundle lors des updates
-        bundler.on('update', function(){
-            return rebundle(bundler, filename);
-        });
-
-        gutil.log("Transform : " + filename);
-        return rebundle(bundler, filename);
-    });
-
-    return gulp.src(JS_BUNDLE_SRC)
-        .pipe(browserified)
-        //.pipe(notify({message: 'Browserify task completed.'}));;
-
-    function rebundle(bundler, filename) {
-        var filename = _.last(filename.split('\\'));
-        gutil.log("Rebundle : " + filename);
-        gutil.log("Rebundle : " + JS_BUNDLE_DEST);
-
-        return bundler.bundle()
-            .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-            //.pipe(source(filename))
-            .pipe(gulp.dest(JS_BUNDLE_DEST));
-    }
-
-});
-*/
-
-//var bundler = watchify(browserify(JS_BUNDLE_SRC, watchify.args));
-//bundler.transform('brfs');
-//
-//bundler.on('update', rebundle);
-//
-//function rebundle() {
-//    return bundler.bundle()
-//        // log errors if they happen
-//        .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-//        .pipe(source('bundle.js'))
-//        .pipe(gulp.dest(JS_BUNDLE_DEST));
-//}
-//
-//return rebundle();
-//
-///////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////
-//var browserified = transform(function(filename) {
-//    var b = browserify({
-//        transform: ['reactify'],
-//        entries : filename
-//    });
-//
-//    return b.bundle();
-//});
-//
-//return gulp.src(JS_BUNDLE_SRC)
-//    .pipe(plumber({errorHandler: gutil.log}))
-//    .pipe(browserified)
-//    .pipe(gulp.dest(JS_BUNDLE_DEST))
-//    .pipe(notify({message: 'Browserify task completed.'}));
-
 
 /**
  * Tâche par défaut appellée quand on tape la commande 'gulp'
@@ -177,7 +99,7 @@ gulp.task('watch_browserify', function() {
  * - Lance les watchers pour les taches suivantes:
  *      - CSS
  */
-gulp.task('default', ['css', 'js', 'watch', 'browserify']);
+gulp.task('default', ['css', 'js', 'watch', 'browserify','images']);
 
 
 // Test
