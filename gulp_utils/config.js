@@ -44,7 +44,7 @@ module.exports = {
         });
 
         var bundles = _.union(globFiles, appFiles);
-        console.log(bundles);
+//        console.log(bundles);
 
         return bundles;
     }

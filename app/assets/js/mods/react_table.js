@@ -7,7 +7,7 @@
  */
 module.exports = React.createClass({
     getInitialState: function() {
-        console.log('initialize')
+//        console.log('initialize')
         return {data: []};
     },
     
@@ -17,7 +17,7 @@ module.exports = React.createClass({
           dataType: 'json',
           context: this,
           success: function(data) {
-              console.log('setstate')
+//              console.log('setstate')
             this.setState({'data': data});
           },
           error: function(xhr, status, err) {
@@ -27,7 +27,7 @@ module.exports = React.createClass({
       },
 
     render: function() {
-            console.log('render')
+//            console.log('render')
             // Variables
             var entete = [];
             var corps = [];
@@ -35,6 +35,7 @@ module.exports = React.createClass({
             var sEntete;
             var sCorp;
             var tr;
+            var that = this;
             
             // Entete
             this.props.head.forEach(function(col) {
@@ -44,18 +45,25 @@ module.exports = React.createClass({
             
             // Corps
             this.state.data.forEach(function(user) {
-               tr = new Array();
+               tr = [];
+               attr = {};
+               
                // Parcours des users
                 _.each(user,function(val,key) {
-                    var temp = user.id+'_'+key;
-                     tr.push(<td key={temp}>{val}</td>);
+                    // Champ caché, ojn créé un data-key
+                    if(that.props.hide.length > 0 && _.indexOf(that.props.hide,key)>-1){
+                        attr['data-'+key] = val;
+                    }
+                    // Cellule de table
+                    else{
+                        var temp = user.id+'_'+key;
+                         tr.push(<td key={temp}>{val}</td>);
+                     }
                 });
                 // Ajout du tr
-                corps.push(<tr>{tr}</tr>)
+                corps.push(<tr {...attr}>{tr}</tr>)
             });
             sCorps = <tbody>{corps}</tbody>
-//            sCorps = <tbody><tr><td>toto</td><td>titi</td></tr></tbody>
-            console.log('%o',sCorps)
             // Table
              table = 
               <div className="table-responsive">
@@ -65,8 +73,6 @@ module.exports = React.createClass({
                 </table>
               </div>
             return table
-
-      // lundi voir http://facebook.github.io/react/docs/thinking-in-react.html#start-with-a-mock
     }
 });
 
