@@ -1,7 +1,7 @@
 @extends('...layouts.login')
 
 @section('css')
-    <link rel="stylesheet" href="public/css/login.css">
+    <link rel="stylesheet" href="{{URL::asset('public/css/login.css')}}">
 @stop
 
 @section('content')

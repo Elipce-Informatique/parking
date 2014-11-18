@@ -11,9 +11,9 @@
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
         <!-- CSS GLOBAL À L'APPLICATION -->
-        <link rel="stylesheet" href="public/css/_global.css">
-        <link rel="stylesheet" href="public/css/lib/bootstrap.css">
-        <link rel="stylesheet" href="public/css/lib/bootstrap-theme.css">
+        <link rel="stylesheet" href="{{URL::asset('/public/css/_global.css')}}">
+        <link rel="stylesheet" href="{{URL::asset('/public/css/lib/bootstrap.css')}}">
+        <link rel="stylesheet" href="{{URL::asset('/public/css/lib/bootstrap-theme.css')}}">
         @yield('struct_css')
     </head>
     <body>
@@ -23,8 +23,8 @@
         <!-- Inclusion des differents scripts globaux -->
         <div id="scripts">
             @yield('js-localization.head')
-            <script src="public/js/global/app.js"></script>
-            <script src="public/js/libs/bootstrap.js"></script>
+            <script src="{{URL::asset('/public/js/global/app.js')}}"></script>
+            <script src="{{URL::asset('/public/js/libs/bootstrap.js')}}"></script>
             @yield('struct_scripts')
         </div>
         <input type="hidden" id="_token" name="_token" value="{{csrf_token()}} ?>">
