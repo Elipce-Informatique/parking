@@ -1,7 +1,3 @@
-// NODES MODULES
-var $ = require('jquery');
-var React = require('react/addons');
-
 // Modules perso
 // ATTENTION la majuscule est super importante
 var Table = require('./mods/react_table');
