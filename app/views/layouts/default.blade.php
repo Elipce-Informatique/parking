@@ -16,18 +16,13 @@
     <!-- Contenu de l'application -->
     <div class="container-fluid">
         <div class="row">
-            <div id="menu-left" class="col-md-2">
+            <div id="menu-left" class="col-sm-3 col-md-2 sidebar">
                 @yield('menu-left')
             </div>
-            <div  id="content" class="col-md-10">
+            <div  id="content" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 @yield('content')
             </div>
         </div>
-    </div>
-
-    <!-- Footer de l'application -->
-    <div id="footer">
-        @yield('footer')
     </div>
 @stop
 

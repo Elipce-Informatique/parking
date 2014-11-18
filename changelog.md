@@ -1,3 +1,9 @@
+###### 18/11/2014 Optimisation browserify
+- Utilisation de watchify
+- Adaptation de gulp-starter (fork ici https://github.com/Elipce-Informatique/gulp-starter )
+
+BUILD EN 100 MS !!!!!!!!!!!!!!!!!!!!!!!
+
 ###### 15/11/2014 Grosse update gulpfile et assets
 - Update gulpfile pour prendre les librairies js statiques (bootstrap)
 - Update inclusion js globale (global/app.js) qui inclu obligatoirement jQuery et React à la fenetre
