@@ -8,7 +8,7 @@ var Table = require('./mods/react_table');
 
 $(function(){
     var head = ['Nom','Prénom','Date de naissance'];
-    var url = '/utilisateur/all';
+    var url = 'utilisateur/all';
     var hide = ['password'];
     React.render(
         <Table head={head} url={url} hide={hide}/>,
