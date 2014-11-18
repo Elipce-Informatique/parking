@@ -88,7 +88,7 @@ class UtilisateurController extends \BaseController
      * Récupère tous les utilisateurs
      */
     public function all(){
-        return Utilisateur::all();
+        return Utilisateur::getUtilisateurs();
     }
 
 }

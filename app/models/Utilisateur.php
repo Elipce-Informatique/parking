@@ -27,5 +27,14 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      * @var array
      */
     protected $hidden = array('password');
+    
+    /**
+     * Calculee la liste de tous les utilisateurs de l'application
+     * @return 
+     */
+    public static function getUtilisateurs(){
+       $res = DB::table('utilisateur')->select('id','nom','email')->get();
+       return $res;
+    }
 
 }

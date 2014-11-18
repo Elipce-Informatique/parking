@@ -23,6 +23,7 @@
         <!-- Inclusion des differents scripts globaux -->
         <div id="scripts">
             @yield('js-localization.head')
+            <script>window.BASE_URI="{{URL::asset('/')}}"</script>
             <script src="{{URL::asset('/public/js/global/app.js')}}"></script>
             <script src="{{URL::asset('/public/js/libs/bootstrap.js')}}"></script>
             @yield('struct_scripts')
