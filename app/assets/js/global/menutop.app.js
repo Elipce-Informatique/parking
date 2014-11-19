@@ -1,8 +1,9 @@
 /**
  * Created by yann on 18/11/2014.
+ * Instantiation de la barre de menu haut de l'application
  */
 
 $(function(){
-    // test
+
 
 });
