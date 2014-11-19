@@ -65,3 +65,11 @@ Les fichier CSS sont écrits avec le langage Stylus (http://learnboost.github.io
 - Les fichiers compilés en CSS natif sont placés dans ```public/css```
 - Les **tailles de polices** sont à définir en **%** pour le meilleur rendu possible en responsive
 
+## Liste des libs disponnibles
+### Javascript
+- Voir le [package.json](package.json) section **"dependencies"**
+- Pour avoir un aperçu de ce qui est **dispo globalement** (pas besoin de require), voir [app.js](app/assets/js/global/app.js)
+- Pour les autres libs, il faut les **require** selon le besoin.
+
+### PHP
+- Voir le [package.json](package.json) section **"require"**
