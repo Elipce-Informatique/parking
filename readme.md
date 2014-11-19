@@ -33,7 +33,8 @@ Puis jQuery et Bootstrap comme utilitaires.
 lancer la commande : ```npm update``` depuis la racine du projet
 
 ## Conventions de développement
-ON NE DOIT RIEN METTRE MANUELLEMENT DANS LE DOSSIER ```public```
+- ON NE DOIT RIEN METTRE MANUELLEMENT DANS LE DOSSIER ```public```
+- Template par défaut utilisé sur la majorité des pages pompé de bootstrap : http://getbootstrap.com/examples/dashboard/
 #### PHP
 - Utilisation des routes de type 'resource' au MAXIMUM pour être RESTFUL
 - Template structuré de la manière suivante
@@ -62,4 +63,5 @@ Les fichiers à inclure dans les pages sont placés automatiquement par gulp dan
 Les fichier CSS sont écrits avec le langage Stylus (http://learnboost.github.io/stylus/)
 - Les fichiers de développenent en Stylus sont dans ```app/assets/css```
 - Les fichiers compilés en CSS natif sont placés dans ```public/css```
+- Les **tailles de polices** sont à définir en **%** pour le meilleur rendu possible en responsive
 

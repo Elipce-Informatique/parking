@@ -1,3 +1,8 @@
+###### 19/11/2014 Automatisation des langues JS
+- Module de génération des langues en partant des langues Laravel: https://github.com/andywer/laravel-js-localization
+- Intégration d'un watcher pour mettre à jour le cache des langues automatiquement
+- Début du composant React menut top
+
 ###### 18/11/2014 Optimisation browserify
 - Utilisation de watchify
 - Adaptation de gulp-starter (fork ici https://github.com/Elipce-Informatique/gulp-starter )

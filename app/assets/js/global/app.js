@@ -4,7 +4,19 @@
  * Parsé ensuite par gulp et browserify pour aller dans le dossier public
  */
 
-
+/*
+ |--------------------------------------------------------------------------
+ | INCLUSIONS DE MODULES GLOBAUX
+ |--------------------------------------------------------------------------
+ */
 window.$ = window.jQuery = require('jquery');
 window.React = require('react/addons');
 window._ = require('underscore/underscore');
+
+/*
+ |--------------------------------------------------------------------------
+ | DEFINITION DE CONSTANTESDEFINITION DE CONSTANTES
+ |--------------------------------------------------------------------------
+ */
+// URL de base du projet. Définie en PHP (structure.blade.php), ici juste pour référence.
+window.BASE_URI;

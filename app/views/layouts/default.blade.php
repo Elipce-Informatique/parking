@@ -27,5 +27,6 @@
 @stop
 
 @section('struct_scripts')
+    <script type="text/javascript" src="{{URL::asset('/public/js/global/menutop.app.js')}}"></script>
     @yield('scripts')
 @stop

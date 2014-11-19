@@ -1,3 +1,6 @@
+// NODE REQUIREMENT
+var spawn = require('child_process').spawn;
+
 // GULP REQUIREMENT
 var gulp = require('gulp');
 var gutil = require('gulp-util');
@@ -19,7 +22,7 @@ var _ = require('underscore');
 // UTIL REQUIRELMENTS
 var bundleLogger = require('./gulp_utils/bundleLogger');
 var handleErrors = require('./gulp_utils/handleErrors');
-var config       = require('./gulp_utils/config').browserify;
+var config = require('./gulp_utils/config').browserify;
 
 // PATHS
 var CSS_SRC = './app/assets/css/**/*.css';
@@ -28,19 +31,40 @@ var CSS_DEST = './public/css';
 var JS_ALL_SRC = './app/assets/js/**/*.js';
 var JS_LIBS_SRC = './app/assets/js/libs/*.js';
 var JS_LIBS_DEST = './public/js/libs';
-var JS_BUNDLE_SRC = './app/assets/js/**/*app.js';
-var JS_BUNDLE_DEST = './public/js';
 var IMG_SRC = './app/assets/images/**/*.*';
 var IMG_DEST = './public/images';
+var LANG_SRC = './app/lang/**/*.php';
 
-// Manipulation des CSS
+/*
+ |--------------------------------------------------------------------------
+ | Tache par défaut, qui lance les taches d'init et de watch
+ |--------------------------------------------------------------------------
+ */
+gulp.task('default', ['watch', 'css', 'js', 'browserify', 'images', 'lang_js']);
+
+
+// MANIPULATION DES CSS
 gulp.task('css', ['stylus', 'css_natif']);
 
-// Manipulation des JS
+// SETUP DES WATCHERS
+gulp.task('watch', function () {
+    // Watch des CSS
+    gulp.watch(CSS_SRC, ['css_natif']);
+    gulp.watch(STYL_SRC, ['stylus']);
+    // Watch des JS
+    gulp.watch(JS_ALL_SRC, ['libs_js_statiques']);
+    // Watch des IMG
+    gulp.watch(IMG_SRC, ['images']);
+    // Watch des LANG
+    gulp.watch(LANG_SRC, ['lang_js']);
+
+});
+
+// MANIPULATION DES JS
 gulp.task('js', ['libs_js_statiques']);
 
 // LIBS JS (/libs/*.js)
-gulp.task('libs_js_statiques', function(){
+gulp.task('libs_js_statiques', function () {
     return gulp.src(JS_LIBS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(JS_LIBS_DEST))
@@ -51,7 +75,7 @@ gulp.task('libs_js_statiques', function(){
 });
 
 // STYLUS (*.styl)
-gulp.task('stylus', function(){
+gulp.task('stylus', function () {
     return gulp.src(STYL_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(CSS_DEST))
@@ -63,7 +87,7 @@ gulp.task('stylus', function(){
 });
 
 // CSS NATIF (*.css)
-gulp.task('css_natif', function(){
+gulp.task('css_natif', function () {
     return gulp.src(CSS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(CSS_DEST))
@@ -73,41 +97,45 @@ gulp.task('css_natif', function(){
         .pipe(notify({message: 'CSS natif task completed.'}));
 });
 
-// IMAGES 
-gulp.task('images', function(){
+// IMAGES
+gulp.task('images', function () {
     return gulp.src(IMG_SRC)
         .pipe(changed(IMG_DEST))
         .pipe(gulp.dest(IMG_DEST))
         .pipe(notify({message: 'Images copy OK'}));
 });
 
-// SETUP DES WATCHERS
-gulp.task('watch', function () {
-    // Watch des CSS
-    gulp.watch(CSS_SRC, ['css_natif']);
-    gulp.watch(STYL_SRC, ['stylus']);
-    // Watch des JS
-    gulp.watch(JS_ALL_SRC, ['libs_js_statiques']);
-    // Watch des IMG
-    gulp.watch(IMG_SRC, ['images']);
-});
+// LANGUES
+gulp.task('lang_js', function () {
+    var child = spawn("php", ["artisan", "js-localization:refresh"], {cwd: process.cwd()}),
+        stdout = '',
+        stderr = '';
 
-/**
- * Tâche par défaut appellée quand on tape la commande 'gulp'
- * - Lance les tâches suivantes a l'init
- *      - CSS
- * - Lance les watchers pour les taches suivantes:
- *      - CSS
- */
-gulp.task('default', ['css', 'js', 'watch', 'browserify','images']);
+    child.stdout.setEncoding('utf8');
+    child.stdout.on('data', function (data) {
+        stdout += data;
+        gutil.log(data);
+    });
 
+    child.stderr.setEncoding('utf8');
+    child.stderr.on('data', function (data) {
+        stderr += data;
+        gutil.log(gutil.colors.red(data));
+        gutil.beep();
+    });
 
-// Test
-gulp.task('browserify', function(callback) {
+    child.on('close', function(code) {
+        gutil.log("Remise en cache des langues terminée avec le code", code);
+        //gutil.log("You access complete stdout and stderr from here"); // stdout, stderr
+    });
+})
+
+// TACHE BROWSERIFY FONCTIONNELLE MULTI BUNDLE
+gulp.task('browserify', function (callback) {
 
     var bundleQueue = config.bundleConfigs().length;
 
-    var browserifyThis = function(bundleConfig) {
+    var browserifyThis = function (bundleConfig) {
 
         var bundler = browserify({
             // Required watchify args
@@ -118,10 +146,10 @@ gulp.task('browserify', function(callback) {
             extensions: config.extensions,
             // Enable source maps!
             debug: config.debug,
-            transform : 'reactify'
+            transform: 'reactify'
         });
 
-        var bundle = function() {
+        var bundle = function () {
             // Log when bundling starts
             bundleLogger.start(bundleConfig.outputName);
 
@@ -140,18 +168,18 @@ gulp.task('browserify', function(callback) {
 
         //if(global.isWatching) {
         //    // Wrap with watchify and rebundle on changes
-            bundler = watchify(bundler);
-            // Rebundle on update
-            bundler.on('update', bundle);
+        bundler = watchify(bundler);
+        // Rebundle on update
+        bundler.on('update', bundle);
         //}
 
-        var reportFinished = function() {
+        var reportFinished = function () {
             // Log when bundling completes
             bundleLogger.end(bundleConfig.outputName)
 
-            if(bundleQueue) {
+            if (bundleQueue) {
                 bundleQueue--;
-                if(bundleQueue === 0) {
+                if (bundleQueue === 0) {
                     // If queue is empty, tell gulp the task is complete.
                     // https://github.com/gulpjs/gulp/blob/master/docs/API.md#accept-a-callback
                     callback();
