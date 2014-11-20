@@ -18,6 +18,7 @@ var transform = require('vinyl-transform');
 var watchify = require('watchify');
 var source = require('vinyl-source-stream');
 var _ = require('underscore');
+var concat = require('gulp-concat');
 
 // UTIL REQUIRELMENTS
 var bundleLogger = require('./gulp_utils/bundleLogger');
@@ -28,6 +29,9 @@ var config = require('./gulp_utils/config').browserify;
 var CSS_SRC = './app/assets/css/**/*.css';
 var STYL_SRC = './app/assets/css/**/*.styl';
 var CSS_DEST = './public/css';
+var CSS_LIBS_SRC = './app/assets/css/libs/*.css';
+var CSS_LIBS_DEST = './public/css/libs';
+var CSS_FONTS_ = './app/assets/css/fonts/*';
 var JS_ALL_SRC = './app/assets/js/**/*.js';
 var JS_LIBS_SRC = './app/assets/js/libs/*.js';
 var JS_LIBS_DEST = './public/js/libs';
@@ -40,17 +44,18 @@ var LANG_SRC = './app/lang/**/*.php';
  | Tache par défaut, qui lance les taches d'init et de watch
  |--------------------------------------------------------------------------
  */
-gulp.task('default', ['watch', 'css', 'js', 'browserify', 'images', 'lang_js']);
+gulp.task('default', ['watch', 'css', 'js', 'images']);
 
-
-// MANIPULATION DES CSS
-gulp.task('css', ['stylus', 'css_natif']);
-
-// SETUP DES WATCHERS
+/*
+ |--------------------------------------------------------------------------
+ | SETUP DES WATCHERS
+ |--------------------------------------------------------------------------
+ */
 gulp.task('watch', function () {
     // Watch des CSS
     gulp.watch(CSS_SRC, ['css_natif']);
     gulp.watch(STYL_SRC, ['stylus']);
+    gulp.watch(CSS_LIBS_SRC, ['libs_css_statiques']);
     // Watch des JS
     gulp.watch(JS_ALL_SRC, ['libs_js_statiques']);
     // Watch des IMG
@@ -60,8 +65,17 @@ gulp.task('watch', function () {
 
 });
 
+/*
+ |--------------------------------------------------------------------------
+ | Définition des tâches
+ |--------------------------------------------------------------------------
+ */
+
+// MANIPULATION DES CSS
+gulp.task('css', ['stylus', 'css_natif', 'libs_css_statiques', 'css_fonts']);
+
 // MANIPULATION DES JS
-gulp.task('js', ['libs_js_statiques']);
+gulp.task('js', ['libs_js_statiques', 'browserify', 'lang_js']);
 
 // LIBS JS (/libs/*.js)
 gulp.task('libs_js_statiques', function () {
@@ -95,6 +109,26 @@ gulp.task('css_natif', function () {
         .pipe(minifycss())
         .pipe(gulp.dest(CSS_DEST))
         .pipe(notify({message: 'CSS natif task completed.'}));
+});
+
+// LIBS CSS (/libs/*.css)
+gulp.task('libs_css_statiques', function () {
+    return gulp.src(CSS_LIBS_SRC)
+        .pipe(plumber({errorHandler: gutil.log}))
+        .pipe(minifycss())
+        .pipe(concat('all.css'))
+        .pipe(gulp.dest(CSS_LIBS_DEST))
+        .pipe(notify({message: 'Static JS task completed.'}));
+});
+
+// FONTS CSS (/css/fonts)
+gulp.task('css_fonts', function () {
+    return gulp.src(CSS_LIBS_SRC)
+        .pipe(plumber({errorHandler: gutil.log}))
+        .pipe(minifycss())
+        .pipe(concat('all.css'))
+        .pipe(gulp.dest(CSS_LIBS_DEST))
+        .pipe(notify({message: 'Static JS task completed.'}));
 });
 
 // IMAGES

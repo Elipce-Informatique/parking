@@ -55,7 +55,7 @@ var ListItemsMenu = React.createClass({
      * Vérification éventuelle des types des propriétés
      */
     propTypes: {
-        dataMenu: React.PropTypes.object.isRequired
+        dataMenu: React.PropTypes.array.isRequired
     },
     /**
      * Méthode appellée à la création du composant,
@@ -123,21 +123,33 @@ var ListItemsMenu = React.createClass({
 /**
  * Created by yann on 19/11/2014.
  *
- * TODO : Snippet de base pour un composant react. Commentaire à éditer
- * @param name : nom a afficher dans le composant
+ * Composant placé à droite du menu haut pour afficher les infos de l'utilisateur
+ * @param nomUtilisateur : nom de l'utilisateur
+ * @param logoutRoute : url de logout de l'application
+ * @param logoutText : Texte pour le bouton logout
+ * @param dropdown : menu déroulant contenant les raccourcis de l'utilisateur
+ * [
+ *  {label: "profil", route:"/utilisateur/120"},
+ *  {label: "parametres", route:"/parametres"}
+ * ]
  */
 var UserInfos = React.createClass({
     /**
      * Vérification éventuelle des types des propriétés
      */
-    propTypes: {},
+    propTypes: {
+        nomUtilisateur: React.PropTypes.string,
+        logoutRoute: React.PropTypes.string,
+        logoutText: React.PropTypes.string,
+        dropdown: React.PropTypes.array
+    },
     /**
      * Méthode appellée à la création du composant,
      * initialise les propriétés non définies lors de l'appel avec les valeurs retournées
      * @returns object
      */
     getDefaultProps: function () {
-        return {};
+        return {dropdown: []};
     },
     /**
      * État initial des données du composant
@@ -169,103 +181,126 @@ var UserInfos = React.createClass({
      * @returns {XML}
      */
     render: function () {
-        var profil = Lang.get('')
+        var dropdown = this.getDropdown();
+
         return (
             <ul className="nav navbar-nav navbar-right">
                 <li className="dropdown">
                     <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                        <i className="glyphicon glyphicon-user"></i> Jean Guy <span className="caret"></span>
-                        </a>
-                        <ul className="dropdown-menu" role="menu">
-                            <li>
-                                <a href="#">Action</a>
-                            </li>
-                            <li>
-                                <a href="#">Another action</a>
-                            </li>
-                            <li>
-                                <a href="#">Something else here</a>
-                            </li>
-                            <li className="divider"></li>
-                            <li>
-                                <a href="#">Separated link</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            );
-            }
-            });
+                        <i className="glyphicon glyphicon-user"></i> {this.props.nomUtilisateur}
+                        <span className="caret"></span>
+                    </a>
+                    {dropdown}
+                </li>
+            </ul>
+        );
+    },
+    getDropdown: function () {
+        var itemsDrop = [];
+        this.props.dropdown.forEach(function(){
 
-            /**
-            * Created by yann on 18/11/2014.
-            * Composant de base du menu top utilisateur
-            *
-            * @param appName : Nom de l'application à afficher en haut à gauche
-            * @param appUrl : Url associée au nom de l'application (typiquement l'accueil)
-            * @param menuDataUrl : Url pour aller chercher les données contenues qui composent le menu
-            *                      TODO : définir la structure de ce retour (nom, url, acces, actif)
-            * @param userDataUrl : Url pour aller chercher les données de l'utilisateur
-            *                      TODO : Définir la structure de ces données
-            */
-            var MenuTop = React.createClass({
-                propTypes: {
-                // You can declare that a prop is a specific JS primitive. By default, these
-                // are all optional.
-                appName: React.PropTypes.string.isRequired,
-                appUrl: React.PropTypes.string.isRequired,
-                menuDataUrl: React.PropTypes.string.isRequired,
-                userDataUrl: React.PropTypes.string.isRequired
-                },
-            /**
-             * Méthode appellée à la création du composant,
-             * initialise les propriétés non définies lors de l'appel avec les valeurs retournées
-             * @returns object
-             */
-                getDefaultProps: function () {
-                return {
-                appName: "Mon Application",
-                appUrl: "#"
-                };
-                },
-            /**
-             * Méthode appellée pour construire le composant.
-             * A chaque fois que son contenu est mis à jour.
-             * @returns {XML}
-             */
-                render: function () {
-                return (
-                <div className="container-fluid">
+        });
+
+        return (
+            <ul className="dropdown-menu" role="menu">
+            {itemsDrop}
+                <li className="divider"></li>
+                <li>
+                    <a href={this.props.logoutRoute}>{this.props.logoutText}</a>
+                </li>
+            </ul>
+        );
+    }
+});
+
+/**
+ * Created by yann on 18/11/2014.
+ * Composant de base du menu top utilisateur
+ *
+ * @param appName : Nom de l'application à afficher en haut à gauche
+ * @param appUrl : Url associée au nom de l'application (typiquement l'accueil)
+ * @param menuDataUrl : Url pour aller chercher les données contenues qui composent le menu
+ * @param userDataUrl : Url pour aller chercher les données de l'utilisateur
+ */
+var MenuTop = React.createClass({
+    propTypes: {
+        // You can declare that a prop is a specific JS primitive. By default, these
+        // are all optional.
+        appName: React.PropTypes.string.isRequired,
+        appUrl: React.PropTypes.string.isRequired,
+        menuDataUrl: React.PropTypes.string.isRequired,
+        userDataUrl: React.PropTypes.string.isRequired
+    },
+    /**
+     * Méthode appellée à la création du composant,
+     * initialise les propriétés non définies lors de l'appel avec les valeurs retournées
+     * @returns object
+     */
+    getDefaultProps: function () {
+        return {
+            appName: "Mon Application",
+            appUrl: ""
+        };
+    },
+    getInitialState: function () {
+        var state = {
+            userInfos: this.getUserInfos(),
+            dataItems: this.getDataItems()
+        }
+        return state;
+    },
+    /**
+     * Méthode appellée pour construire le composant.
+     * A chaque fois que son contenu est mis à jour.
+     * @returns {XML}
+     */
+    render: function () {
+        return (
+            <div className="container-fluid">
                 <AppName name={this.props.appName} url={this.props.appUrl} />
                 <div id="navbar" className="navbar-collapse collapse">
-                <ListItemsMenu dataMenu={dataItems} />
-                <UserInfos />
-                </div>
-                </div>
-                )
-                }
-                });
+                    <ListItemsMenu dataMenu={this.state.dataItems} />
 
-            var dataItems = [
-    {
-        label: "item_1",
-        url: "http://toto.com/item_1",
-        active: true,
-        accessible: true
-        },
-    {
-        label: "item_2",
-        url: "http://toto.com/item_2",
-        active: false,
-        accessible: true,
-        icon: "glyphicon glyphicon-star"
-        },
-    {
-        label: "item_3",
-        url: "http://toto.com/item_3",
-        active: false,
-        accessible: false,
-        icon: "glyphicon glyphicon-cloud"
-        }];
+                    <UserInfos {...this.state.userInfos} />
+                </div>
+            </div>
+        )
+    },
+    getUserInfos: function () {
+        // TODO : requête AJAX
+        var infos = {
+            nomUtilisateur: "JEAN Guy",
+            logoutRoute: BASE_URI + "logout",
+            logoutText: "Logout",
+            dropdown: []
+        }
+        return infos;
+    },
+    getDataItems: function () {
+        // TODO : requête AJAX
+        return [
+            {
+                label: "item_1",
+                url: "http://toto.com/item_1",
+                active: true,
+                accessible: true
+            },
+            {
+                label: "item_2",
+                url: "http://toto.com/item_2",
+                active: false,
+                accessible: true,
+                icon: "glyphicon glyphicon-star"
+            },
+            {
+                label: "item_3",
+                url: "http://toto.com/item_3",
+                active: false,
+                accessible: false,
+                icon: "glyphicon glyphicon-cloud"
+            }];
+    }
+});
 
-            module.exports = MenuTop;
+
+module.exports = MenuTop;
