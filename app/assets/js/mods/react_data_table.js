@@ -6,13 +6,44 @@
  *                        var data = ['id']
  */
 var Table = require('./react_table');
-module.exports = React.createClass({
+var DataTable = React.createClass({
     
-
+    propTypes: {
+        head: React.PropTypes.array.isRequired,
+        url: React.PropTypes.string.isRequired,
+        hide: React.PropTypes.array.isRequired,
+        id: React.PropTypes.string.isRequired
+    },
+    
+    /**
+     * Après le 1er affichage
+     * @returns {undefined}
+     */
+    componentDidMount: function(){
+        this.applyDataTable()
+    },
+    
+    /**
+     * Après chaque mise à jour DATA du tableau (forceupdate() ou setState())
+     * @returns {undefined}
+     */
+    componentDidUpdate: function(){
+        this.applyDataTable();
+    },
+    
+    /**
+     * On applique le plugin dataTable sur la TABLE HTML
+     */
+    applyDataTable: function(){
+        
+        $('#'+this.props.id).dataTable({});
+    },
+    
     render: function() {
         return (
-         <Table head={this.props.head} url={this.props.url} hide={this.props.hide}/>
+         <Table id={this.props.id} head={this.props.head} url={this.props.url} hide={this.props.hide}/>
          )
     }
 });
 
+module.exports = DataTable;
