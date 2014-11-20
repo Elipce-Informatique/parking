@@ -11,5 +11,6 @@ return array(
     'password' => 'Mot de passe',
     'app_name' => 'Elipce Workflow',
     'accueil' => 'Accueil',
+    'logout' => 'Déconnexion'
 
 );
