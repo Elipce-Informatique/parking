@@ -36,7 +36,7 @@ var JS_ALL_SRC = './app/assets/js/**/*.js';
 var JS_LIBS_SRC = './app/assets/js/libs/*.js';
 var JS_LIBS_DEST = './public/js/libs';
 var IMG_SRC = './app/assets/images/**/*.*';
-var IMG_DEST = './public/images';
+var IMG_DEST = './public/css/images';
 var LANG_SRC = './app/lang/**/*.php';
 
 /*

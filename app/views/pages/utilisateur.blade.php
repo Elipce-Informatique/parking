@@ -2,6 +2,7 @@
 
 @section('css')
     <link rel="stylesheet" href="{{URL::asset('public/css/utilisateur.css')}}">
+    <link rel="stylesheet" href="{{URL::asset('public/css/lib/jquery.dataTables.css')}}">
 @stop
 
 @section('content')
@@ -10,7 +11,7 @@
             <h1>Gestion des utilisateurs de l'application</h1>
         </div>
     </div>
-    <div class="row">
+<!--    <div class="row">
         <div class="col-md-12"> 
             @if(isset($users) && $users->count())
             <select>
@@ -22,7 +23,7 @@
                 {{"Pas d'utilisateurs"}}
             @endif
         </div>
-    </div>
+    </div>-->
 
     <div class="row">
         <div class="col-md-12"> 
@@ -49,4 +50,5 @@
 
 @section('scripts')
     <script src="{{URL::asset('public/js/utilisateur.app.js')}}"></script>
+    <script src="{{URL::asset('public/js/libs/jquery.dataTables.min.js')}}"></script>
 @stop
