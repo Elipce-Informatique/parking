@@ -2,7 +2,7 @@
 
 @section('css')
     <link rel="stylesheet" href="{{URL::asset('public/css/utilisateur.css')}}">
-    <link rel="stylesheet" href="{{URL::asset('public/css/lib/jquery.dataTables.css')}}">
+    <link rel="stylesheet" href="{{URL::asset('public/css/libs/jquery.dataTables.css')}}">
 @stop
 
 @section('content')
