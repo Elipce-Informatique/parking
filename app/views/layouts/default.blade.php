@@ -12,12 +12,11 @@
     <nav id="menu-top" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 
     </nav>
-
     <!-- Contenu de l'application -->
     <div class="container-fluid">
         <div class="row">
             <div id="menu-left" class="col-sm-3 col-md-2 sidebar">
-                @yield('menu-left')
+
             </div>
             <div  id="content" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 @yield('content')

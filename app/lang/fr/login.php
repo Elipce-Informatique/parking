@@ -9,5 +9,6 @@ return array(
 
     'title_bienvenue' => 'Connectez-vous',
     'login' => 'Connexion',
+    'remember' => "Se rappeller de moi"
 
 );

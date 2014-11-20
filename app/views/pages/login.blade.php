@@ -15,11 +15,11 @@
 
         <div class="checkbox">
             <label>
-                {{Form::checkbox('remember-me')}} {{Lang::get('login.login')}}
+                {{Form::checkbox('remember-me')}} {{Lang::get('login.remember')}}
             </label>
         </div>
 
-        {{Form::submit('login', ['class'=>'btn btn-lg btn-primary btn-block'])}}
+        {{Form::submit(Lang::get('login.login'), ['class'=>'btn btn-lg btn-primary btn-block'])}}
     {{ Form::close() }}
 @stop
 

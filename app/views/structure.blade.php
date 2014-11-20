@@ -12,8 +12,8 @@
 
         <!-- CSS GLOBAL À L'APPLICATION -->
         <link rel="stylesheet" type="text/css" href="{{URL::asset('/public/css/_global.css')}}">
-        <link rel="stylesheet" type="text/css" href="{{URL::asset('/public/css/lib/bootstrap.css')}}">
-        <link rel="stylesheet" type="text/css" href="{{URL::asset('/public/css/lib/bootstrap-theme.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{URL::asset('/public/css/libs/bootstrap.css')}}">
+        <link rel="stylesheet" type="text/css" href="{{URL::asset('/public/css/libs/bootstrap-theme.css')}}">
         @yield('struct_css')
     </head>
     <body>

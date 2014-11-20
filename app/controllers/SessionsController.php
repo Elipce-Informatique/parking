@@ -24,7 +24,7 @@ class SessionsController extends \BaseController
     public function store()
     {
         if (Auth::attempt(Input::only('email', 'password'))) {
-            return Auth::user();
+            return Redirect::to('/');
         }
 
         return Redirect::back()->withInput();
@@ -39,7 +39,7 @@ class SessionsController extends \BaseController
     public function destroy()
     {
         Auth::logout();
-        return Redirect::route('sessions.create');
+        return Redirect::to('login');
     }
 
 
