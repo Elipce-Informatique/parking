@@ -244,10 +244,14 @@ var MenuTop = React.createClass({
     },
     getInitialState: function () {
         var state = {
-            userInfos: this.getUserInfos(),
-            dataItems: this.getDataItems()
+            userInfos: {},
+            dataItems: []
         }
         return state;
+    },
+    componentWillMount : function(){
+        this.refreshUserInfos();
+        this.refreshDataItems();
     },
     /**
      * Méthode appellée pour construire le composant.
@@ -266,7 +270,7 @@ var MenuTop = React.createClass({
             </div>
         )
     },
-    getUserInfos: function () {
+    refreshUserInfos: function () {
         // TODO : requête AJAX
         var infos = {
             nomUtilisateur: "JEAN Guy",
@@ -274,11 +278,12 @@ var MenuTop = React.createClass({
             logoutText: "Logout",
             dropdown: []
         }
-        return infos;
+
+        this.setState({userInfos : infos});
     },
-    getDataItems: function () {
+    refreshDataItems: function () {
         // TODO : requête AJAX
-        return [
+        var items = [
             {
                 label: "item_1",
                 url: "http://toto.com/item_1",
@@ -299,6 +304,8 @@ var MenuTop = React.createClass({
                 accessible: false,
                 icon: "glyphicon glyphicon-cloud"
             }];
+
+        this.setState({dataItems : items});
     }
 });
 

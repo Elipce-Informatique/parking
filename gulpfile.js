@@ -31,7 +31,8 @@ var STYL_SRC = './app/assets/css/**/*.styl';
 var CSS_DEST = './public/css';
 var CSS_LIBS_SRC = './app/assets/css/libs/*.css';
 var CSS_LIBS_DEST = './public/css/libs';
-var CSS_FONTS_ = './app/assets/css/fonts/*';
+var CSS_FONTS_SRC = './app/assets/css/fonts/*';
+var CSS_FONTS_DEST = './public/css/fonts';
 var JS_ALL_SRC = './app/assets/js/**/*.js';
 var JS_LIBS_SRC = './app/assets/js/libs/*.js';
 var JS_LIBS_DEST = './public/js/libs';
@@ -118,17 +119,16 @@ gulp.task('libs_css_statiques', function () {
         .pipe(minifycss())
         .pipe(concat('all.css'))
         .pipe(gulp.dest(CSS_LIBS_DEST))
-        .pipe(notify({message: 'Static JS task completed.'}));
+        .pipe(notify({message: 'Static CSS task completed.'}));
 });
 
 // FONTS CSS (/css/fonts)
 gulp.task('css_fonts', function () {
-    return gulp.src(CSS_LIBS_SRC)
+    return gulp.src(CSS_FONTS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
-        .pipe(minifycss())
-        .pipe(concat('all.css'))
-        .pipe(gulp.dest(CSS_LIBS_DEST))
-        .pipe(notify({message: 'Static JS task completed.'}));
+        .pipe(changed(CSS_FONTS_DEST))
+        .pipe(gulp.dest(CSS_FONTS_DEST))
+        .pipe(notify({message: 'CSS FONTS task completed.'}));
 });
 
 // IMAGES
