@@ -6,7 +6,9 @@
  *                        var data = ['id']
  */
 var Table = require('./react_table');
-var DataTable = React.createClass({
+var DataTableReact = React.createClass({
+    
+    oDataTable:{},
     
     propTypes: {
         head: React.PropTypes.array.isRequired,
@@ -25,7 +27,7 @@ var DataTable = React.createClass({
      * @returns {undefined}
      */
     componentDidMount: function(){
-        console.log('didmount DATAtable');
+//        console.log('DATATABLE didmount');
     },
     
     /**
@@ -33,22 +35,38 @@ var DataTable = React.createClass({
      * @returns {undefined}
      */
     componentDidUpdate: function(){
-        console.log('didupdate DATAtable');
+//        console.log('DATATABLE didupdate');
     },
     
     /**
      * On applique le plugin dataTable sur la TABLE HTML
      */
     applyDataTable: function(){
-        console.log('apply datatable')
-        $('#'+this.props.id).dataTable({});
+//        console.log('DATATABLE applydatatable')
+        this.oDataTable = $('#'+this.props.id).DataTable({});
+    },
+    
+    /**
+     * Destruction du composant dataTable
+     * @returns {undefined}
+     */
+    destroyDataTable: function(){
+//        console.log('DATATABLE destroy')
+        if(!$.isEmptyObject(this.oDataTable)){
+//            console.log('destroy le retour 4');
+            this.oDataTable.destroy();
+        }
+    },
+    
+    refreshData: function(){
+        this.setState({});
     },
     
     render: function() {
         return (
-         <Table id={this.props.id} head={this.props.head} url={this.props.url} hide={this.props.hide} callback={this.applyDataTable}/>
+         <Table id={this.props.id} head={this.props.head} url={this.props.url} hide={this.props.hide} afterUpdate={this.applyDataTable} beforeUpdate={this.destroyDataTable}/>
         )
     }
 });
 
-module.exports = DataTable;
+module.exports = DataTableReact;

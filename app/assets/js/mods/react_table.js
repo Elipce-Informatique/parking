@@ -10,7 +10,9 @@ var Table = React.createClass({
     propTypes: {
         head: React.PropTypes.array.isRequired,
         url: React.PropTypes.string.isRequired,
-        hide: React.PropTypes.array.isRequired
+        hide: React.PropTypes.array.isRequired,
+        beforeUpdate: React.PropTypes.func,
+        afterUpdate: React.PropTypes.func
     },
     
     getInitialState: function() {
@@ -18,32 +20,42 @@ var Table = React.createClass({
         return {data: []};
     },
     
+    getDefaultProps: function() {
+        return {beforeUpdate:function(){}, afterUpdate:function(){}};
+    },
+    
     componentWillMount: function(){
-        console.log('mount table');
+//        console.log('TABLE will mount');
         this.refreshData();
     },
     
     componentDidMount: function() {
-        console.log('didmount table');
-        console.log(this.props.callback);
-        // Indication que la mise à jour des données a été réalisée
-        if(this.props.callback != undefined){
-            this.props.callback();
-        }
+//        console.log('TABLE didmount');
+    },
+    
+    componentWillReceiveProps: function(){
+//        console.log('TOTO');
+        this.refreshData();
+    },
+    
+    componentWillUpdate: function(){
+//        console.log('TABLE will update');
+        // callback avant mise à jour données
+        this.props.beforeUpdate();
     },
     
     componentDidUpdate: function() {
-        console.log('didupdate table');
+//        console.log('TABLE didupdate');
         // Indication que la mise à jour des données a été réalisée
-        if(this.props.callback != undefined){
-            this.props.callback();
-        }
+        this.props.afterUpdate();
     },
     
     /**
      * Mise à jour des données via AJAX
      */
     refreshData: function(){
+        
+        // AJAX
          $.ajax({
         url: this.props.url,
         dataType: 'json',
@@ -74,7 +86,7 @@ var Table = React.createClass({
             if(this.props.id!=undefined){
                 id = {'id':this.props.id}
             }
-            console.log('render table')
+//            console.log('TABLE render')
             // TABLE
              return( 
               <div className="table-responsive">

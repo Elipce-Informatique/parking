@@ -32,6 +32,11 @@
             </div>
         </div>
     </div>
+<div class="row">
+        <div class="col-md-12"> 
+            <button id="test">IIIIIIII</button>
+        </div>
+    </div>
 <!--    {{ Form::open(['route'=>'sessions.store']) }}
         <div>
             {{Form::label('email', 'Email: ')}}

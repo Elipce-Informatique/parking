@@ -7,8 +7,15 @@ $(function(){
     var head = ['Nom','E-mail'];
     var url = BASE_URI+'utilisateur/all';
     var hide = ['id'];
-    React.render(
+    var oReactTable = React.render(
         <DataTable head={head} url={url} hide={hide} id="tab_users"/>,
         document.getElementById('tableau_react')
     );
+    
+    
+    
+    
+    $('#test').click(function(){
+       oReactTable.forceUpdate();
+    });
 });
