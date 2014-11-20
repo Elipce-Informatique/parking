@@ -18,11 +18,26 @@ var Table = React.createClass({
         return {data: []};
     },
     
-    componentDidMount: function() {
+    componentWillMount: function(){
+        console.log('mount table');
         this.refreshData();
     },
     
+    componentDidMount: function() {
+        console.log('didmount table');
+        console.log(this.props.callback);
+        // Indication que la mise à jour des données a été réalisée
+        if(this.props.callback != undefined){
+            this.props.callback();
+        }
+    },
+    
     componentDidUpdate: function() {
+        console.log('didupdate table');
+        // Indication que la mise à jour des données a été réalisée
+        if(this.props.callback != undefined){
+            this.props.callback();
+        }
     },
     
     /**
@@ -34,7 +49,6 @@ var Table = React.createClass({
         dataType: 'json',
         context: this,
         success: function(data) {
-//              console.log('setstate')
           this.setState({'data': data});
         },
         error: function(xhr, status, err) {
@@ -60,7 +74,7 @@ var Table = React.createClass({
             if(this.props.id!=undefined){
                 id = {'id':this.props.id}
             }
-            
+            console.log('render table')
             // TABLE
              return( 
               <div className="table-responsive">

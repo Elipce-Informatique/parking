@@ -15,12 +15,17 @@ var DataTable = React.createClass({
         id: React.PropTypes.string.isRequired
     },
     
+        getInitialState: function() {
+//        console.log('initialize')
+        return {data: []};
+    },
+    
     /**
      * Après le 1er affichage
      * @returns {undefined}
      */
     componentDidMount: function(){
-        this.applyDataTable()
+        console.log('didmount DATAtable');
     },
     
     /**
@@ -28,21 +33,21 @@ var DataTable = React.createClass({
      * @returns {undefined}
      */
     componentDidUpdate: function(){
-        this.applyDataTable();
+        console.log('didupdate DATAtable');
     },
     
     /**
      * On applique le plugin dataTable sur la TABLE HTML
      */
     applyDataTable: function(){
-        
+        console.log('apply datatable')
         $('#'+this.props.id).dataTable({});
     },
     
     render: function() {
         return (
-         <Table id={this.props.id} head={this.props.head} url={this.props.url} hide={this.props.hide}/>
-         )
+         <Table id={this.props.id} head={this.props.head} url={this.props.url} hide={this.props.hide} callback={this.applyDataTable}/>
+        )
     }
 });
 
