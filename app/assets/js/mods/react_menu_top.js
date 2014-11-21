@@ -275,7 +275,7 @@ var MenuTop = React.createClass({
         var infos = {
             nomUtilisateur: "JEAN Guy",
             logoutRoute: BASE_URI + "logout",
-            logoutText: "Logout",
+            logoutText: "Déconnexion",
             dropdown: []
         }
 

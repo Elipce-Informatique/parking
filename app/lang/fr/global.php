@@ -11,7 +11,6 @@ return array(
     'password' => 'Mot de passe',
     'app_name' => 'Elipce Workflow',
     'accueil' => 'Accueil',
-    'logout' => 'Déconnexion',
     'datatable' => [
         'sProcessing'=>     'Traitement en cours...',
         'sSearch'=>         'Rechercher',
@@ -34,7 +33,6 @@ return array(
             'sSortDescending'=> '=> activer pour trier la colonne par ordre d&eacute;croissant'
         ]
 ]
-    'accueil' => 'Accueil'
 
 
 );
