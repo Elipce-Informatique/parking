@@ -46,6 +46,10 @@ Route::filter('auth.basic', function () {
     return Auth::basic();
 });
 
+
+Route::filter('auth.canaccess', function(){
+    $currentPath = Route::getCurrentRoute()->getPath();
+});
 /*
 |--------------------------------------------------------------------------
 | Guest Filter
