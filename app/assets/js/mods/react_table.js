@@ -4,6 +4,9 @@
  * @param array hide: les clés de la requêtes SQL AJAX qui ne sont pas affichées dans le tableau et pour lesquelles on créé un data-* 
  *                    ex: l'url AJAX retourne les données suivantes {'id':1, 'nom':'PEREZ', 'prenom':'Vivian'}
  *                        var data = ['id']   
+ * @param function beforeUpdate: Fonction de callback executée avant la mise à jour des données
+ * @param function afterUpdate: Fonction de callback executée après la mise à jour des données
+ * @param object attributes: Attributs HTML TABLE
  */
 var Table = React.createClass({
     
@@ -12,7 +15,8 @@ var Table = React.createClass({
         url: React.PropTypes.string.isRequired,
         hide: React.PropTypes.array.isRequired,
         beforeUpdate: React.PropTypes.func,
-        afterUpdate: React.PropTypes.func
+        afterUpdate: React.PropTypes.func,
+        attributes: React.PropTypes.object
     },
     
     getInitialState: function() {
@@ -20,8 +24,11 @@ var Table = React.createClass({
         return {data: []};
     },
     
+    /**
+     * Les props par défaut
+     */
     getDefaultProps: function() {
-        return {beforeUpdate:function(){}, afterUpdate:function(){}};
+        return {beforeUpdate:function(){}, afterUpdate:function(){}, attributes:{}};
     },
     
     componentWillMount: function(){
@@ -90,7 +97,7 @@ var Table = React.createClass({
             // TABLE
              return( 
               <div className="table-responsive">
-                <table className="table" {...id}>
+                <table className="table" {...id} {...this.props.attributes}>
                 <TableHeader head={this.props.head}/>
                 <tbody>{corps}</tbody>
                 </table>
