@@ -7,7 +7,7 @@
 @section('content')
     {{ Form::open(['route'=>'sessions.store', 'class'=>'form-signin']) }}
 
-        <h2>{{Lang::get('login.title_bienvenue')}}</h2>
+        <h2>{{Lang::get('auth.title_bienvenue')}}</h2>
 
             {{Form::email('email', '', ['class'=>'form-control', 'placeholder'=>Lang::get('global.email')])}}
 
@@ -15,11 +15,11 @@
 
         <div class="checkbox">
             <label>
-                {{Form::checkbox('remember-me')}} {{Lang::get('login.remember')}}
+                {{Form::checkbox('remember-me')}} {{Lang::get('auth.remember')}}
             </label>
         </div>
 
-        {{Form::submit(Lang::get('login.login'), ['class'=>'btn btn-lg btn-primary btn-block'])}}
+        {{Form::submit(Lang::get('auth.login'), ['class'=>'btn btn-lg btn-primary btn-block'])}}
     {{ Form::close() }}
 @stop
 

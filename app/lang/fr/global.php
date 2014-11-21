@@ -10,7 +10,7 @@ return array(
     'email' => 'Email',
     'password' => 'Mot de passe',
     'app_name' => 'Elipce Workflow',
-    'accueil' => 'Accueil',
-    'logout' => 'Déconnexion'
+    'accueil' => 'Accueil'
+
 
 );

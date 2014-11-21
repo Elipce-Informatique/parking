@@ -48,7 +48,9 @@ var LANG_SRC = './app/lang/**/*.php';
  | Tache par défaut, qui lance les taches d'init et de watch
  |--------------------------------------------------------------------------
  */
-gulp.task('default', ['clean', 'build']);
+gulp.task('default', ['clean'], function(){
+    gulp.start('build');
+});
 gulp.task('build', ['watch', 'css', 'js', 'images']);
 
 /*
@@ -56,7 +58,7 @@ gulp.task('build', ['watch', 'css', 'js', 'images']);
  | SETUP DES WATCHERS
  |--------------------------------------------------------------------------
  */
-gulp.task('watch', ['clean'], function () {
+gulp.task('watch',  function () {
     // Watch des CSS
     gulp.watch(CSS_SRC, ['css_natif']);
     gulp.watch(STYL_SRC, ['stylus']);
@@ -93,7 +95,7 @@ gulp.task('css', ['stylus', 'css_natif', 'libs_css_statiques', 'css_fonts']);
 gulp.task('js', ['libs_js_statiques', 'browserify', 'lang_js']);
 
 // LIBS JS (/libs/*.js)
-gulp.task('libs_js_statiques', ['clean'], function () {
+gulp.task('libs_js_statiques',  function () {
     return gulp.src(JS_LIBS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(JS_LIBS_DEST))
@@ -104,7 +106,7 @@ gulp.task('libs_js_statiques', ['clean'], function () {
 });
 
 // STYLUS (*.styl)
-gulp.task('stylus', ['clean'], function () {
+gulp.task('stylus',  function () {
     return gulp.src(STYL_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(CSS_DEST))
@@ -116,7 +118,7 @@ gulp.task('stylus', ['clean'], function () {
 });
 
 // CSS NATIF (*.css)
-gulp.task('css_natif', ['clean'], function () {
+gulp.task('css_natif',  function () {
     return gulp.src(CSS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(CSS_DEST))
@@ -127,7 +129,7 @@ gulp.task('css_natif', ['clean'], function () {
 });
 
 // LIBS CSS (/libs/*.css)
-gulp.task('libs_css_statiques', ['clean'], function () {
+gulp.task('libs_css_statiques',  function () {
     return gulp.src(CSS_LIBS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(replace('../images/', '../../images/'))
@@ -138,7 +140,7 @@ gulp.task('libs_css_statiques', ['clean'], function () {
 });
 
 // FONTS CSS (/css/fonts)
-gulp.task('css_fonts', ['clean'], function () {
+gulp.task('css_fonts',  function () {
     return gulp.src(CSS_FONTS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(CSS_FONTS_DEST))
@@ -147,7 +149,7 @@ gulp.task('css_fonts', ['clean'], function () {
 });
 
 // IMAGES
-gulp.task('images', ['clean'], function () {
+gulp.task('images',  function () {
     return gulp.src(IMG_SRC)
         .pipe(changed(IMG_DEST))
         .pipe(gulp.dest(IMG_DEST))
@@ -155,7 +157,7 @@ gulp.task('images', ['clean'], function () {
 });
 
 // LANGUES
-gulp.task('lang_js', ['clean'], function () {
+gulp.task('lang_js',  function () {
     var child = spawn("php", ["artisan", "js-localization:refresh"], {cwd: process.cwd()}),
         stdout = '',
         stderr = '';
@@ -180,7 +182,7 @@ gulp.task('lang_js', ['clean'], function () {
 })
 
 // TACHE BROWSERIFY FONCTIONNELLE MULTI BUNDLE
-gulp.task('browserify', ['clean'], function (callback) {
+gulp.task('browserify',  function (callback) {
 
     var bundleQueue = config.bundleConfigs().length;
 
