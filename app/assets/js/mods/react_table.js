@@ -7,6 +7,7 @@
  * @param function beforeUpdate: Fonction de callback executée avant la mise à jour des données
  * @param function afterUpdate: Fonction de callback executée après la mise à jour des données
  * @param object attributes: Attributs HTML TABLE
+ * @param object evts: evenements sur les lignes de tableau {onclick:surligner}
  */
 var Table = React.createClass({
     
@@ -16,7 +17,8 @@ var Table = React.createClass({
         hide: React.PropTypes.array.isRequired,
         beforeUpdate: React.PropTypes.func,
         afterUpdate: React.PropTypes.func,
-        attributes: React.PropTypes.object
+        attributes: React.PropTypes.object,
+        evts:React.PropTypes.object
     },
     
     getInitialState: function() {
@@ -28,7 +30,7 @@ var Table = React.createClass({
      * Les props par défaut
      */
     getDefaultProps: function() {
-        return {beforeUpdate:function(){}, afterUpdate:function(){}, attributes:{}};
+        return {beforeUpdate:function(){}, afterUpdate:function(){}, attributes:{}, evts:{}};
     },
     
     componentWillMount: function(){
@@ -85,7 +87,6 @@ var Table = React.createClass({
             this.state.data.forEach(function(dataLine, index) {
                 // Ajout du TR
                 corps.push(<TableTr key={index} data={dataLine} hide={that.props.hide}/>)
-                
             });
             
             // ID
@@ -97,7 +98,7 @@ var Table = React.createClass({
             // TABLE
              return( 
               <div className="table-responsive">
-                <table className="table" {...id} {...this.props.attributes}>
+                <table className="table" {...id} {...this.props.attributes} {...this.props.evts}>
                 <TableHeader head={this.props.head}/>
                 <tbody>{corps}</tbody>
                 </table>

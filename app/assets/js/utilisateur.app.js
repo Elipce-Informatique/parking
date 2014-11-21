@@ -7,7 +7,8 @@ $(function(){
     var head = ['Nom','E-mail'];
     var url = BASE_URI+'utilisateur/all';
     var hide = ['id'];
-//    var attr = {className:'toto'};
+    var attr = {className:'toto'};
+    var evts = {};
     
     var oReactTable = React.render(
         <DataTable head={head} url={url} hide={hide} id="tab_users" attributes={attr}/>,
