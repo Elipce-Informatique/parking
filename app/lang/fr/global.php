@@ -34,5 +34,7 @@ return array(
             'sSortDescending'=> '=> activer pour trier la colonne par ordre d&eacute;croissant'
         ]
 ]
+    'accueil' => 'Accueil'
+
 
 );

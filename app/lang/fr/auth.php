@@ -9,6 +9,7 @@ return array(
 
     'title_bienvenue' => 'Connectez-vous',
     'login' => 'Connexion',
-    'remember' => "Se rappeller de moi"
+    'remember' => "Se rappeller de moi",
+    'logout' => 'Déconnexion'
 
 );
