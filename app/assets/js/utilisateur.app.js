@@ -11,7 +11,7 @@ $(function(){
     var evts = {};
     
     var oReactTable = React.render(
-        <DataTable head={head} url={url} hide={hide} id="tab_users" attributes={attr}/>,
+        <DataTable head={head} url={url} hide={hide} id="tab_users" attributes={attr} />,
         document.getElementById('tableau_react')
     );
     
