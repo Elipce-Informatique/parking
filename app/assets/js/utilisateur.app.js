@@ -19,7 +19,7 @@ $(function(){
     
     // Bandeau
      var oBandeau = React.render(
-        <Bandeau />,
+        <Bandeau titre={Lang.get('utilisateur.titre')}/>,
         document.getElementById('bandeau')
     );
     

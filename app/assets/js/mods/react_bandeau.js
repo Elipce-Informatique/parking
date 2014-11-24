@@ -3,18 +3,20 @@
  */
 
 var isEdtitableStore = require('./store_is_editable');
+var Button = require('react-bootstrap/Button');
 
 var ReactBandeau = React.createClass({
     mixins: [Reflux.ListenerMixin],
     
     propTypes: {
+        titre: React.PropTypes.string
     },
     
     /**
      * Les props par défaut
      */
     getDefaultProps: function() {
-        return {};
+        return {titre: 'Title'};
     },
     
     getInitialState: function() {
@@ -55,7 +57,11 @@ var ReactBandeau = React.createClass({
         var state = (this.state.bEditable?'OK':'KO');
         return (
          <div>
-            Etat de l'édition: {state}
+            <h1>{this.props.titre}</h1>
+            <h3>Etat de l'édition: {state}</h3>
+            <Button bsStyle="success">TST</Button>
+            <Button bsStyle="primary">{Lang.get('global.edit')}</Button>
+            <Button bsStyle="danger">{Lang.get('global.del')}</Button>
          </div>
         )
     }

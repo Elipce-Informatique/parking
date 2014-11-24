@@ -11,6 +11,9 @@ return array(
     'password' => 'Mot de passe',
     'app_name' => 'Elipce Workflow',
     'accueil' => 'Accueil',
+    'edit' => 'Editer',
+    'create' => 'Créer',
+    'del' => 'Supprimer',
     'datatable' => [
         'sProcessing'=>     'Traitement en cours...',
         'sSearch'=>         'Rechercher',
