@@ -8,15 +8,13 @@
 
 return [
     "top" => [
-        "item_1" => "Métier 1",
-        "item_2" => "Métier 2",
-        "item_3" => "Métier Inaccessible"
+        "administration" => "Administration"
     ],
     "side" => [
-
+        'utilisateurs' => 'Utilisateurs',
+        'profils' => 'Profils'
     ],
     "user" => [
         "profil" => "Profile",
-
     ]
 ];
