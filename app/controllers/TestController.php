@@ -7,6 +7,6 @@ class TestController extends \BaseController {
 	 */
 	public function index()
 	{
-		return Utilisateur::has('profils')->get();
+		return Utilisateur::with('profils')->whereNom('yann')->first();
 	}
 }

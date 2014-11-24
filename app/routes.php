@@ -19,20 +19,6 @@ Route::when('*', 'csrf', array('post', 'put', 'delete', 'patch'));
 */
 
 Route::get('/', 'SessionsController@create');
-Route::get('accueil', 'AccueilController@index');
-
-
-/*
-|--------------------------------------------------------------------------
-| Ressource utilisateurs
-|--------------------------------------------------------------------------
-|
-| Gestion des informations utilisateur
-|
-*/
-Route::get('utilisateur/all', 'UtilisateurController@all');
-Route::resource('utilisateur', 'UtilisateurController');
-
 /*
 |--------------------------------------------------------------------------
 | Ressource Authentification
@@ -45,7 +31,22 @@ Route::resource('sessions', 'SessionsController');
 
 // Alias d'URL
 Route::get('login', 'SessionsController@create');
-Route::get('logout', 'SessionsController@destroy');
+
+Route::group(['before' => 'auth'], function () {
+    Route::get('accueil', 'AccueilController@index');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ressource utilisateurs
+    |--------------------------------------------------------------------------
+    |
+    | Gestion des informations utilisateur
+    |
+    */
+    Route::get('utilisateur/all', 'UtilisateurController@all');
+    Route::resource('utilisateur', 'UtilisateurController');
+    Route::get('logout', 'SessionsController@destroy');
+});
 
 
 /*
