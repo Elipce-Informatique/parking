@@ -24,7 +24,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      *
      * @var array
      */
-    protected $hidden = array('password');
+    protected $hidden = array('password', 'remember_token');
 
     /*
     |--------------------------------------------------------------------------
@@ -36,17 +36,6 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         return $this->belongsToMany('Profil');
     }
 
-    public function fils() {
-        return $this->belongsToMany('Utilisateur', 'module_module', 'fils_id', 'parent_id');
-    }
-
-    public function parent(){
-        if($this->parent_id !== null && $this->parent_id > 0){
-            return $this->belongsToMany('Utilisateur', 'module_module', 'parent_id', 'fils_id');
-        } else {
-            return null;
-        }
-    }
     /*
     |--------------------------------------------------------------------------
     | MÉTHODES MÉTIER

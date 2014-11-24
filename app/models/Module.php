@@ -27,6 +27,18 @@ class Module extends Eloquent {
     {
         return $this->belongsToMany('Profil');
     }
+
+    public function fils() {
+        return $this->belongsToMany('Module', 'module_module', 'fils_id', 'parent_id');
+    }
+
+    public function parent(){
+        if($this->parent_id !== null && $this->parent_id > 0){
+            return $this->belongsToMany('Module', 'module_module', 'parent_id', 'fils_id');
+        } else {
+            return null;
+        }
+    }
     /*
     |--------------------------------------------------------------------------
     | MÉTHODES MÉTIER
