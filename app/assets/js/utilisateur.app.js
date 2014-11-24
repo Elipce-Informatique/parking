@@ -2,8 +2,10 @@
 // ATTENTION la majuscule est super importante
 //var Table = require('./mods/react_table');
 var DataTable = require('./mods/react_data_table');
+var Bandeau = require('./mods/react_bandeau');
 
 $(function(){
+    // Tableau
     var head = ['Nom','E-mail'];
     var url = BASE_URI+'utilisateur/all';
     var hide = ['id'];
@@ -15,9 +17,13 @@ $(function(){
         document.getElementById('tableau_react')
     );
     
+    // Bandeau
+     var oBandeau = React.render(
+        <Bandeau />,
+        document.getElementById('bandeau')
+    );
     
-    
-    
+    // Click bouton IIIII
     $('#test').click(function(){
        oReactTable.forceUpdate();
     });

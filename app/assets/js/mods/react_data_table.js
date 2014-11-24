@@ -144,6 +144,8 @@ var DataTableReact = React.createClass({
                 this.oDataTable.$('tr.row_selected').removeClass('row_selected');
                 tr.addClass('row_selected');
         }
+        // Action tableau cliqué
+        Actions.tableLineClicked(tr[0]);
     }
 });
 

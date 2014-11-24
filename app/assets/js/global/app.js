@@ -12,6 +12,8 @@
 window.$ = window.jQuery = require('jquery');
 window.React = require('react/addons');
 window._ = require('underscore/underscore');
+window.Reflux = require('reflux');
+
 
 /*
  |--------------------------------------------------------------------------
@@ -20,3 +22,12 @@ window._ = require('underscore/underscore');
  */
 // URL de base du projet. Définie en PHP (structure.blade.php), ici juste pour référence.
 window.BASE_URI;
+
+/*
+ |--------------------------------------------------------------------------
+ | ACTIONS GLOBALES REFLUX
+ |--------------------------------------------------------------------------
+ */
+window.Actions = Reflux.createActions([
+    "tableLineClicked"
+]);
