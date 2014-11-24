@@ -6,6 +6,10 @@
  *                        var data = ['id']
  * @param string id: attribut ID de la balise TABLE
  * @param object settings: objet JSON permettant de paramètrer dataTable voir http://www.datatables.net/reference/option/
+ * @param object attributes: attributs HTML de la TABLE. ex {alt:'mon alt', colspan:2}
+ * @param object evts: Evenements des lignes de tableau. ex: {click:modifierLigne, hover:mafonction}. Les clés de l'objet des évènements jquery: http://www.quirksmode.org/dom/events/
+ * @param boolean bUnderline: TRUE: Evenement par defaut sur click d'une ligne: surlignage
+ *                            FALSE: pas d'évènement par défaut.
  */
 var Table = require('./react_table');
 var DataTableReact = React.createClass({
@@ -19,7 +23,8 @@ var DataTableReact = React.createClass({
         id: React.PropTypes.string.isRequired,
         settings:React.PropTypes.object,
         attributes:React.PropTypes.object,
-        evts:React.PropTypes.object
+        evts:React.PropTypes.object,
+        bUnderline:React.PropTypes.bool
     },
     
     /**
@@ -27,7 +32,8 @@ var DataTableReact = React.createClass({
      */
     getDefaultProps: function() {
         
-        return {settings:{
+        return {
+        settings:{
             "language": {
             "sProcessing":     Lang.get('global.datatable.sProcessing'),
             "sSearch":         Lang.get('global.datatable.sSearch'),
@@ -51,12 +57,13 @@ var DataTableReact = React.createClass({
             }
         }},
         attributes: {},
-        evts:{click:"this.selectRow()"}};
+        evts:{},
+        bUnderline: true};
     },
     
     getInitialState: function() {
 //        console.log('initialize')
-        return {data: []};
+        return {evts:{click:this.selectRow}};
     },
     
     /**
@@ -85,13 +92,18 @@ var DataTableReact = React.createClass({
             "offsetTop": 50
         });
         
-        // Evts
+        // Evts déclarés par le dév
         var that = this;
         _.each(this.props.evts, function(val, key){
-            $.proxy(that.oDataTable.$('tr').on(key,function(e){
-                that.selectRow(e);
-            }),that);
+            $.proxy(that.oDataTable.$('tr').on(key,val),that);
         })
+        // Activations  des évènements fixes
+        if(this.props.bUnderline){
+            // Evts  fixes
+            _.each(this.state.evts, function(val, key){
+                $.proxy(that.oDataTable.$('tr').on(key,val),that);
+            })
+        }
         
     },
     
