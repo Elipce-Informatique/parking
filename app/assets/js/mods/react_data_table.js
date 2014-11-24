@@ -18,7 +18,8 @@ var DataTableReact = React.createClass({
         hide: React.PropTypes.array.isRequired,
         id: React.PropTypes.string.isRequired,
         settings:React.PropTypes.object,
-        attrbutes:React.PropTypes.object
+        attributes:React.PropTypes.object,
+        evts:React.PropTypes.object
     },
     
     /**
@@ -49,7 +50,8 @@ var DataTableReact = React.createClass({
                 "sSortDescending": Lang.get('global.datatable.oAria.sSortDescending')
             }
         }},
-        attributes: {}};
+        attributes: {},
+        evts:{click:"this.selectRow()"}};
     },
     
     getInitialState: function() {
@@ -79,6 +81,18 @@ var DataTableReact = React.createClass({
     applyDataTable: function(){
 //        console.log('DATATABLE applydatatable')
         this.oDataTable = $('#'+this.props.id).DataTable(this.props.settings);
+        new $.fn.dataTable.FixedHeader( this.oDataTable,{
+            "offsetTop": 50
+        });
+        
+        // Evts
+        var that = this;
+        _.each(this.props.evts, function(val, key){
+            that.oDataTable.$('tr').on(key,function(){
+                that.selectRow($(this),that);
+            });
+        })
+        
     },
     
     /**
@@ -99,8 +113,19 @@ var DataTableReact = React.createClass({
     
     render: function() {
         return (
-         <Table id={this.props.id} head={this.props.head} url={this.props.url} hide={this.props.hide} afterUpdate={this.applyDataTable} beforeUpdate={this.destroyDataTable} attributes={this.props.attributes}/>
+         <Table id={this.props.id} head={this.props.head} url={this.props.url} hide={this.props.hide} afterUpdate={this.applyDataTable} beforeUpdate={this.destroyDataTable} attributes={this.props.attributes} />
         )
+    },
+    
+    selectRow: function(tr, context){
+        
+        // GESTION VISUELLE
+        if (tr.hasClass('row_selected')) {
+                tr.removeClass('row_selected');
+        } else {
+                context.oDataTable.$('tr.row_selected').removeClass('row_selected');
+                tr.addClass('row_selected');
+        }
     }
 });
 
