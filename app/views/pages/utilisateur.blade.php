@@ -12,22 +12,9 @@
     </div>
     <div class="row">
         <div class="col-md-12"> 
-            <h1>Gestion des utilisateurs de l'application</h1>
+            <h1>{{Lang::get('utilisateur.titre')}}</h1>
         </div>
     </div>
-<!--    <div class="row">
-        <div class="col-md-12"> 
-            @if(isset($users) && $users->count())
-            <select>
-                @foreach($users as $user)
-                    <option>{{$user->nom}}</option>
-                @endforeach
-            </select>  
-            @else
-                {{"Pas d'utilisateurs"}}
-            @endif
-        </div>
-    </div>-->
 
     <div class="row">
         <div class="col-md-12"> 
