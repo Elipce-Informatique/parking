@@ -19,7 +19,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      *
      * @var string
      */
-    protected $table = 'utilisateur';
+    protected $table = 'utilisateurs';
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -33,7 +33,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      * @return 
      */
     public static function getUtilisateurs(){
-       $res = DB::table('utilisateur')->select('id','nom','email')->get();
+       $res = Utilisateur::all(array('id','nom','email'));
        return $res;
     }
 

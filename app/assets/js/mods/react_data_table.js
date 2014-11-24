@@ -88,9 +88,9 @@ var DataTableReact = React.createClass({
         // Evts
         var that = this;
         _.each(this.props.evts, function(val, key){
-            that.oDataTable.$('tr').on(key,function(){
-                that.selectRow($(this),that);
-            });
+            $.proxy(that.oDataTable.$('tr').on(key,function(e){
+                that.selectRow(e);
+            }),that);
         })
         
     },
@@ -117,13 +117,19 @@ var DataTableReact = React.createClass({
         )
     },
     
-    selectRow: function(tr, context){
+    /**
+     * Selectionne visuellement une ligne de tableau
+     * @param {event} evt: evenement js
+     * @returns {undefined}
+     */
+    selectRow: function(evt){
         
+        var tr = $(evt.currentTarget);
         // GESTION VISUELLE
         if (tr.hasClass('row_selected')) {
                 tr.removeClass('row_selected');
         } else {
-                context.oDataTable.$('tr.row_selected').removeClass('row_selected');
+                this.oDataTable.$('tr.row_selected').removeClass('row_selected');
                 tr.addClass('row_selected');
         }
     }
