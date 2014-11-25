@@ -7,14 +7,17 @@
  * @param function beforeUpdate: Fonction de callback executée avant la mise à jour des données
  * @param function afterUpdate: Fonction de callback executée après la mise à jour des données
  * @param object attributes: Attributs HTML TABLE
- * @param object evts: evenements sur les lignes de tableau {onclick:surligner}
+ * @param object evts: evenements sur les lignes de tableau {onclick:Action 1}
  */
+
 var Table = React.createClass({
+    
+    mixins: [Reflux.ListenerMixin],
     
     propTypes: {
         head: React.PropTypes.array.isRequired,
-        url: React.PropTypes.string.isRequired,
         hide: React.PropTypes.array.isRequired,
+        actionData: React.PropTypes.func.isRequired,
         beforeUpdate: React.PropTypes.func,
         afterUpdate: React.PropTypes.func,
         attributes: React.PropTypes.object,
@@ -22,7 +25,7 @@ var Table = React.createClass({
     },
     
     getInitialState: function() {
-//        console.log('initialize')
+        console.log('initialize')
         return {data: []};
     },
     
@@ -35,16 +38,25 @@ var Table = React.createClass({
     
     componentWillMount: function(){
 //        console.log('TABLE will mount');
-        this.refreshData();
+//        this.refreshData();
+           
     },
     
     componentDidMount: function() {
-//        console.log('TABLE didmount');
+        console.log('TABLE didmount');
+        this.listenTo(this.props.actionData, function(data) {
+            console.log('listen %o',data);
+            this.setState({
+                data: data
+            });
+        });
+        this.props.actionData();
     },
     
     componentWillReceiveProps: function(){
 //        console.log('TOTO');
-        this.refreshData();
+//        this.refreshData();
+           this.props.actionData();
     },
     
     componentWillUpdate: function(){
@@ -62,21 +74,21 @@ var Table = React.createClass({
     /**
      * Mise à jour des données via AJAX
      */
-    refreshData: function(){
-        
-        // AJAX
-         $.ajax({
-        url: this.props.url,
-        dataType: 'json',
-        context: this,
-        success: function(data) {
-          this.setState({'data': data});
-        },
-        error: function(xhr, status, err) {
-          console.error(this.props.url, status, err.toString());
-        }
-      });
-    },
+//    refreshData: function(){
+//        
+//        // AJAX
+//         $.ajax({
+//        url: this.props.url,
+//        dataType: 'json',
+//        context: this,
+//        success: function(data) {
+//          this.setState({'data': data});
+//        },
+//        error: function(xhr, status, err) {
+//          console.error(this.props.url, status, err.toString());
+//        }
+//      });
+//    },
 
     render: function() {
             // Variables

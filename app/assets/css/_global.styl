@@ -1,34 +1,29 @@
-/**
-* Le style global de l'application va dans ce dossier
-*/
 /*
- * Base structure
- */
+|--------------------------------------------------------------------------
+| Variables
+|--------------------------------------------------------------------------
+*/
+gris_sidebar = #f5f5f5
 
+/*
+|--------------------------------------------------------------------------
+| Template bootstrap
+|--------------------------------------------------------------------------
+*/
 /* Move down content because we have a fixed navbar that is 50px tall */
 body
   padding-top 50px
-
-/*
- * Global add-ons
- */
 
 .sub-header
   padding-bottom 10px
   border-bottom 1px solid #eee
 
-/*
- * Top navigation
- * Hide default border to remove 1px line.
- */
+
+ /* Top navigation: Hide default border to remove 1px line. */
 .navbar-fixed-top
   border 0
 
-/*
- * Sidebar
- */
-
-/* Hide for mobile, show later */
+/* Sidebar: Hide for mobile, show later */
 .sidebar
   display none
 
@@ -43,7 +38,7 @@ body
     padding 20px
     overflow-x hidden
     overflow-y auto /* Scrollable contents if viewport is shorter than content. */
-    background-color #f5f5f5
+    background-color gris_sidebar
     border-right 1px solid #eee
 
   /* Sidebar navigation */
@@ -62,17 +57,21 @@ body
     color #fff
     background-color #428bca
 
-  /*
-   * Main content
-   */
-  .main
-    padding 20px
-
+  /* Main content */
   @media (min-width 768px)
     .main
       padding-right 40px
       padding-left 40px
 
+/*
+|--------------------------------------------------------------------------
+| Classes Elipce generales
+|--------------------------------------------------------------------------
+*/
 .row_selected td
     color #AAAAAA;
     background-color #EEEEEE;
+
+.bandeau
+    padding 10px
+    background-color gris_sidebar
