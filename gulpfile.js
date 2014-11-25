@@ -144,8 +144,7 @@ gulp.task('css_fonts',  function () {
     return gulp.src(CSS_FONTS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(CSS_FONTS_DEST))
-        .pipe(gulp.dest(CSS_FONTS_DEST))
-        .pipe(notify({message: 'CSS FONTS task completed.'}));
+        .pipe(gulp.dest(CSS_FONTS_DEST));
 });
 
 // IMAGES
