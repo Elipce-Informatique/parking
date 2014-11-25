@@ -5,7 +5,7 @@ var isEdtitableStore = Reflux.createStore({
     init: function() {
 
         // Register statusUpdate action
-        this.listenTo(Actions.tableLineClicked, this.output);
+        this.listenTo(Actions.tableBandeauLineClicked, this.output);
     },
 
     // Callback

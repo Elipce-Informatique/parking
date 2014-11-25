@@ -30,5 +30,5 @@ window.BASE_URI;
  |--------------------------------------------------------------------------
  */
 window.Actions = Reflux.createActions([
-    "tableLineClicked"
+    "tableBandeauLineClicked"
 ]);
