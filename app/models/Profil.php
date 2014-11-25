@@ -25,7 +25,7 @@ class Profil extends Eloquent {
     */
     public function modules()
     {
-        return $this->belongsToMany('Module');
+        return $this->belongsToMany('Module', 'profil_module')->withPivot(['access_level']);
     }
 
     public function utilisateurs()
