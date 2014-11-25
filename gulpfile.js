@@ -152,8 +152,7 @@ gulp.task('css_fonts',  function () {
 gulp.task('images',  function () {
     return gulp.src(IMG_SRC)
         .pipe(changed(IMG_DEST))
-        .pipe(gulp.dest(IMG_DEST))
-        .pipe(notify({message: 'Images copy OK'}));
+        .pipe(gulp.dest(IMG_DEST));
 });
 
 // LANGUES
