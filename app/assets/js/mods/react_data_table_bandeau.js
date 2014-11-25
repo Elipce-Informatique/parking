@@ -7,7 +7,7 @@
  * @param string id: attribut ID de la balise TABLE
  * @param object settings: objet JSON permettant de paramètrer dataTable voir http://www.datatables.net/reference/option/
  * @param object attributes: attributs HTML de la TABLE. ex {alt:'mon alt', colspan:2}
- * @param object evts: Evenements des lignes de tableau. ex: {click:Action1, hover:Action2}. Les clés de l'objet des évènements jquery: http://www.quirksmode.org/dom/events/
+ * @param object evts: Evenements des lignes de tableau. ex: {click:modifierLigne, hover:mafonction}. Les clés de l'objet des évènements jquery: http://www.quirksmode.org/dom/events/
  * @param boolean bUnderline: TRUE: Evenement par defaut sur click d'une ligne: surlignage
  *                            FALSE: pas d'évènement par défaut.
  */
@@ -15,15 +15,13 @@
 var Table = require('./react_table');
 var DataTableReact = React.createClass({
     
-    mixins: [Reflux.ListenerMixin],
-    
     oDataTable:{},
     
     propTypes: {
         head: React.PropTypes.array.isRequired,
+        url: React.PropTypes.string.isRequired,
         hide: React.PropTypes.array.isRequired,
         id: React.PropTypes.string.isRequired,
-        actionData: React.PropTypes.func.isRequired,
         settings:React.PropTypes.object,
         attributes:React.PropTypes.object,
         evts:React.PropTypes.object,
@@ -128,7 +126,7 @@ var DataTableReact = React.createClass({
     
     render: function() {
         return (
-         <Table id={this.props.id} head={this.props.head} actionData={this.props.actionData} hide={this.props.hide} afterUpdate={this.applyDataTable} beforeUpdate={this.destroyDataTable} attributes={this.props.attributes} />
+         <Table id={this.props.id} head={this.props.head} url={this.props.url} hide={this.props.hide} afterUpdate={this.applyDataTable} beforeUpdate={this.destroyDataTable} attributes={this.props.attributes} />
         )
     },
     
@@ -147,6 +145,8 @@ var DataTableReact = React.createClass({
                 this.oDataTable.$('tr.row_selected').removeClass('row_selected');
                 tr.addClass('row_selected');
         }
+        // Action tableau cliqué
+        Actions.tableLineClicked(tr[0]);
     }
 });
 
