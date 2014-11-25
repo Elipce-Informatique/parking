@@ -13,6 +13,7 @@ window.$ = window.jQuery = require('jquery');
 window.React = require('react/addons');
 window._ = require('underscore/underscore');
 window.Reflux = require('reflux');
+window.ReactB = require('react-bootstrap');
 
 
 /*

@@ -3,7 +3,9 @@
  */
 
 var isEdtitableStore = require('./store_is_editable');
-var Button = require('react-bootstrap/Button');
+var Button = ReactB.Button;
+var ButtonToolbar = ReactB.ButtonToolbar;
+var Glyphicon = ReactB.Glyphicon;
 
 var ReactBandeau = React.createClass({
     mixins: [Reflux.ListenerMixin],
@@ -54,18 +56,21 @@ var ReactBandeau = React.createClass({
     },
     
     render: function() {
-        var state = (this.state.bEditable?'OK':'KO');
+        
+//        var inactif = (this.state.bEditable?{}:{'disabled':'disabled'});
+    var inactif = {'disabled':!this.state.bEditable};
+        
         return (
-         <div>
+        <div className="col-md-12 bandeau" > 
             <h1>{this.props.titre}</h1>
-            <h3>Etat de l'édition: {state}</h3>
-            <Button bsStyle="success">TST</Button>
-            <Button bsStyle="primary">{Lang.get('global.edit')}</Button>
-            <Button bsStyle="danger">{Lang.get('global.del')}</Button>
+            <ButtonToolbar>
+                <Button  id="btn_creer" bsSize="small" bsStyle="success"><Glyphicon glyph="plus-sign"/> {Lang.get('global.create')}</Button>
+                <Button  id="btn_edit" bsSize="small" bsStyle="primary" {...inactif}><Glyphicon glyph="pencil"/> {Lang.get('global.edit')}</Button>
+                <Button  id="btn_del" bsSize="small" bsStyle="danger" {...inactif}><Glyphicon glyph="minus-sign"/> {Lang.get('global.del')}</Button>
+            </ButtonToolbar>
          </div>
         )
     }
- 
 });
 
 module.exports = ReactBandeau;

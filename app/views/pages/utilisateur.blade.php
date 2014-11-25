@@ -5,10 +5,7 @@
 @stop
 
 @section('content')
-    <div class="row">
-        <div class="col-md-12" id="bandeau"> 
-            
-        </div>
+    <div class="row" id="bandeau">
     </div>
 <!--    <div class="row">
         <div class="col-md-12"> 
