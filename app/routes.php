@@ -32,19 +32,21 @@ Route::resource('sessions', 'SessionsController');
 // Alias d'URL
 Route::get('login', 'SessionsController@create');
 
+/*
+|--------------------------------------------------------------------------
+| GROUPE UTILISATEUR AUTHENTIFIE SIMPLE
+|--------------------------------------------------------------------------
+|
+| Gestion des informations utilisateur
+|
+*/
 Route::group(['before' => 'auth'], function () {
+
     Route::get('accueil', 'AccueilController@index');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Ressource utilisateurs
-    |--------------------------------------------------------------------------
-    |
-    | Gestion des informations utilisateur
-    |
-    */
     Route::get('utilisateur/all', 'UtilisateurController@all');
     Route::resource('utilisateur', 'UtilisateurController');
+
     Route::get('logout', 'SessionsController@destroy');
 });
 

@@ -25,7 +25,7 @@ class Module extends Eloquent {
     */
     public function profils()
     {
-        return $this->belongsToMany('Profil');
+        return $this->belongsToMany('Profil', 'profil_module')->withPivot(['access_level']);
     }
 
     public function fils() {
@@ -44,5 +44,11 @@ class Module extends Eloquent {
     | MÉTHODES MÉTIER
     |--------------------------------------------------------------------------
     */
+    /**
+     * Récupère les items du menu Top pour l'utilisateur authentifié
+     */
+    public static function getTopMenuItems(){
+        $user = Auth::user();
 
+    }
 } 

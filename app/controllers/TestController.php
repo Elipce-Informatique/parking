@@ -1,12 +1,14 @@
 <?php
 
-class TestController extends \BaseController {
+class TestController extends \BaseController
+{
 
-	/**
-	 * @return Response
-	 */
-	public function index()
-	{
-		return Utilisateur::with('profils')->whereNom('yann')->first();
-	}
+    /**
+     * @return Response
+     */
+    public function index()
+    {
+        $modules = Auth::user()->getMenuTopItems();
+        return $modules;
+    }
 }
