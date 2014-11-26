@@ -1,6 +1,6 @@
 /**
  * @param array head: array contenant l'entête du tableau ['A', 'B']
- * @param string url: url AJAX (recupération données)
+ * @param array data: tableau de données ex: [{},{}]
  * @param array hide: les clés de la requêtes SQL AJAX qui ne sont pas affichées dans le tableau et pour lesquelles on créé un data-*
  *                    ex: l'url AJAX retourne les données suivantes {'id':1, 'nom':'PEREZ', 'prenom':'Vivian'}
  *                        var data = ['id']
@@ -12,14 +12,13 @@
  *                            FALSE: pas d'évènement par défaut.
  */
 
-var Table = require('./react_table');
-var DataTableReact = React.createClass({
+var DataTable = require('./react_data_table');
+var DataTableBandeauReact = React.createClass({
     
     oDataTable:{},
     
     propTypes: {
         head: React.PropTypes.array.isRequired,
-        url: React.PropTypes.string.isRequired,
         hide: React.PropTypes.array.isRequired,
         id: React.PropTypes.string.isRequired,
         settings:React.PropTypes.object,
@@ -34,45 +33,21 @@ var DataTableReact = React.createClass({
     getDefaultProps: function() {
         
         return {
-        settings:{
-            "language": {
-            "sProcessing":     Lang.get('global.datatable.sProcessing'),
-            "sSearch":         Lang.get('global.datatable.sSearch'),
-            "sLengthMenu":     Lang.get('global.datatable.sLengthMenu'),
-            "sInfo":           Lang.get('global.datatable.sInfo'),
-            "sInfoEmpty":      Lang.get('global.datatable.sInfoEmpty'),
-            "sInfoFiltered":   Lang.get('global.datatable.sInfoFiltered'),
-            "sInfoPostFix":    Lang.get('global.datatable.sInfoPostFix'),
-            "sLoadingRecords": Lang.get('global.datatable.sLoadingRecords'),
-            "sZeroRecords":    Lang.get('global.datatable.sZeroRecords'),
-            "sEmptyTable":     Lang.get('global.datatable.sEmptyTable'),
-            "oPaginate": {
-                "sFirst":      Lang.get('global.datatable.oPaginate.sFirst'),
-                "sPrevious":   Lang.get('global.datatable.oPaginate.sPrevious'),
-                "sNext":       Lang.get('global.datatable.oPaginate.sNext'),
-                "sLast":       Lang.get('global.datatable.oPaginate.sLast')
-            },
-            "oAria": {
-                "sSortAscending":  Lang.get('global.datatable.oAria.sSortAscending'),
-                "sSortDescending": Lang.get('global.datatable.oAria.sSortDescending')
-            }
-        }},
-        attributes: {},
-        evts:{},
-        bUnderline: true};
+            attributes: {},
+            evts:{},
+            bUnderline: true};
     },
     
     getInitialState: function() {
-//        console.log('initialize')
-        return {evts:{click:this.selectRow}};
+        return {};
     },
     
     /**
      * Après le 1er affichage
      * @returns {undefined}
      */
-    componentDidMount: function(){
-//        console.log('DATATABLE didmount');
+    componentWillMount: function(){
+        
     },
     
     /**
@@ -80,74 +55,21 @@ var DataTableReact = React.createClass({
      * @returns {undefined}
      */
     componentDidUpdate: function(){
-//        console.log('DATATABLE didupdate');
-    },
-    
-    /**
-     * On applique le plugin dataTable sur la TABLE HTML
-     */
-    applyDataTable: function(){
-//        console.log('DATATABLE applydatatable')
-        this.oDataTable = $('#'+this.props.id).DataTable(this.props.settings);
-        new $.fn.dataTable.FixedHeader( this.oDataTable,{
-            "offsetTop": 50
-        });
-        
-        // Evts déclarés par le dév
-        var that = this;
-        _.each(this.props.evts, function(val, key){
-            $.proxy(that.oDataTable.$('tr').on(key,val),that);
-        })
-        // Activations  des évènements fixes
-        if(this.props.bUnderline){
-            // Evts  fixes
-            _.each(this.state.evts, function(val, key){
-                $.proxy(that.oDataTable.$('tr').on(key,val),that);
-            })
-        }
-        
-    },
-    
-    /**
-     * Destruction du composant dataTable
-     * @returns {undefined}
-     */
-    destroyDataTable: function(){
-//        console.log('DATATABLE destroy')
-        if(!$.isEmptyObject(this.oDataTable)){
-//            console.log('destroy le retour 4');
-            this.oDataTable.destroy();
-        }
-    },
-    
-    refreshData: function(){
-        this.setState({});
     },
     
     render: function() {
+        var evenements = this.props.evts;
+//        evts.click = this.handleTableClick;
         return (
-         <Table id={this.props.id} head={this.props.head} url={this.props.url} hide={this.props.hide} afterUpdate={this.applyDataTable} beforeUpdate={this.destroyDataTable} attributes={this.props.attributes} />
+         <DataTable id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={evenements}/>
         )
     },
-    
-    /**
-     * Selectionne visuellement une ligne de tableau
-     * @param {event} evt: evenement js
-     * @returns {undefined}
-     */
-    selectRow: function(evt){
-        
-        var tr = $(evt.currentTarget);
-        // GESTION VISUELLE
-        if (tr.hasClass('row_selected')) {
-                tr.removeClass('row_selected');
-        } else {
-                this.oDataTable.$('tr.row_selected').removeClass('row_selected');
-                tr.addClass('row_selected');
+    handleTableClick: function(e){
+        if(this.props.evts.click != undefined){
+            this.props.evts.click(e);
         }
-        // Action tableau cliqué
-        Actions.tableLineClicked(tr[0]);
+        Action.tableBandeauLineClicked(e.currentTarget);
     }
 });
 
-module.exports = DataTableReact;
+module.exports = DataTableBandeauReact;

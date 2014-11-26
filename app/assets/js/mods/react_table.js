@@ -1,9 +1,9 @@
 /**
  * @param array head: array contenant l'entête du tableau ['A', 'B']
- * @param string url: url AJAX (recupération données)
  * @param array hide: les clés de la requêtes SQL AJAX qui ne sont pas affichées dans le tableau et pour lesquelles on créé un data-* 
  *                    ex: l'url AJAX retourne les données suivantes {'id':1, 'nom':'PEREZ', 'prenom':'Vivian'}
  *                        var data = ['id']   
+ * @param array data: tableau de données ex: [{},{}]
  * @param function beforeUpdate: Fonction de callback executée avant la mise à jour des données
  * @param function afterUpdate: Fonction de callback executée après la mise à jour des données
  * @param object attributes: Attributs HTML TABLE
@@ -17,7 +17,7 @@ var Table = React.createClass({
     propTypes: {
         head: React.PropTypes.array.isRequired,
         hide: React.PropTypes.array.isRequired,
-        actionData: React.PropTypes.func.isRequired,
+        data: React.PropTypes.array.isRequired,
         beforeUpdate: React.PropTypes.func,
         afterUpdate: React.PropTypes.func,
         attributes: React.PropTypes.object,
@@ -25,8 +25,8 @@ var Table = React.createClass({
     },
     
     getInitialState: function() {
-        console.log('initialize')
-        return {data: []};
+//        console.log('initialize')
+        return {data: this.props.data};
     },
     
     /**
@@ -36,37 +36,23 @@ var Table = React.createClass({
         return {beforeUpdate:function(){}, afterUpdate:function(){}, attributes:{}, evts:{}};
     },
     
-    componentWillMount: function(){
-//        console.log('TABLE will mount');
-//        this.refreshData();
-           
+    componentWillMount: function(){           
     },
     
     componentDidMount: function() {
-        console.log('TABLE didmount');
-        this.listenTo(this.props.actionData, function(data) {
-            console.log('listen %o',data);
-            this.setState({
-                data: data
-            });
-        });
-        this.props.actionData();
+        // Indication que la mise à jour des données a été réalisée
+        this.props.afterUpdate();
     },
     
     componentWillReceiveProps: function(){
-//        console.log('TOTO');
-//        this.refreshData();
-           this.props.actionData();
     },
     
     componentWillUpdate: function(){
-//        console.log('TABLE will update');
         // callback avant mise à jour données
         this.props.beforeUpdate();
     },
     
     componentDidUpdate: function() {
-//        console.log('TABLE didupdate');
         // Indication que la mise à jour des données a été réalisée
         this.props.afterUpdate();
     },

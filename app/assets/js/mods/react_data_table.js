@@ -1,6 +1,6 @@
 /**
  * @param array head: array contenant l'entête du tableau ['A', 'B']
- * @param string url: url AJAX (recupération données)
+ * @param array data: tableau de données ex: [{},{}]
  * @param array hide: les clés de la requêtes SQL AJAX qui ne sont pas affichées dans le tableau et pour lesquelles on créé un data-*
  *                    ex: l'url AJAX retourne les données suivantes {'id':1, 'nom':'PEREZ', 'prenom':'Vivian'}
  *                        var data = ['id']
@@ -23,7 +23,7 @@ var DataTableReact = React.createClass({
         head: React.PropTypes.array.isRequired,
         hide: React.PropTypes.array.isRequired,
         id: React.PropTypes.string.isRequired,
-        actionData: React.PropTypes.func.isRequired,
+        data: React.PropTypes.array.isRequired,
         settings:React.PropTypes.object,
         attributes:React.PropTypes.object,
         evts:React.PropTypes.object,
@@ -98,7 +98,7 @@ var DataTableReact = React.createClass({
         // Evts déclarés par le dév
         var that = this;
         _.each(this.props.evts, function(val, key){
-            $.proxy(that.oDataTable.$('tr').on(key,val),that);
+            that.oDataTable.$('tr').on(key,val);
         })
         // Activations  des évènements fixes
         if(this.props.bUnderline){
@@ -122,13 +122,9 @@ var DataTableReact = React.createClass({
         }
     },
     
-    refreshData: function(){
-        this.setState({});
-    },
-    
     render: function() {
         return (
-         <Table id={this.props.id} head={this.props.head} actionData={this.props.actionData} hide={this.props.hide} afterUpdate={this.applyDataTable} beforeUpdate={this.destroyDataTable} attributes={this.props.attributes} />
+         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} afterUpdate={this.applyDataTable} beforeUpdate={this.destroyDataTable} attributes={this.props.attributes} />
         )
     },
     
