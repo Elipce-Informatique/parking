@@ -29,6 +29,16 @@ window.BASE_URI;
  | ACTIONS GLOBALES REFLUX
  |--------------------------------------------------------------------------
  */
-window.Actions = Reflux.createActions([
-    "tableBandeauLineClicked"
+window.Actions = {};
+window.Actions.global = Reflux.createActions([
+    "table_bandeau_line_clicked"
+]);
+
+/*
+ |--------------------------------------------------------------------------
+ | ACTIONS USER REFLUX
+ |--------------------------------------------------------------------------
+ */
+window.Actions.utilisateur = Reflux.createActions([
+    "load_data"
 ]);

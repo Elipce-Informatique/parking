@@ -15,8 +15,6 @@
 var Table = require('./react_table');
 var DataTableReact = React.createClass({
     
-    mixins: [Reflux.ListenerMixin],
-    
     oDataTable:{},
     
     propTypes: {
@@ -69,27 +67,45 @@ var DataTableReact = React.createClass({
         return {evts:{click:this.selectRow}};
     },
     
+    componentWillUpdate: function(){
+        // Suppression datable
+        this.destroyDataTable();
+    },
+    
+    render: function() {
+//                console.log('DT RENDER: %o',this.props.data);
+        return (
+         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} />
+        )
+    },
+    
     /**
      * Après le 1er affichage
      * @returns {undefined}
      */
     componentDidMount: function(){
-//        console.log('DATATABLE didmount');
+        this.applyDataTable();
     },
     
     /**
-     * Après chaque mise à jour DATA du tableau (forceupdate() ou setState())
+     * Après le 2è affichage
      * @returns {undefined}
      */
     componentDidUpdate: function(){
-//        console.log('DATATABLE didupdate');
+        // Suppression datable
+        this.applyDataTable();
     },
     
+ /*
+ |--------------------------------------------------------------------------
+ | FONCTIONS NON REACT
+ |--------------------------------------------------------------------------
+ */
     /**
      * On applique le plugin dataTable sur la TABLE HTML
      */
     applyDataTable: function(){
-//        console.log('DATATABLE applydatatable')
+        console.log('DATATABLE applydatatable')
         this.oDataTable = $('#'+this.props.id).DataTable(this.props.settings);
         new $.fn.dataTable.FixedHeader( this.oDataTable,{
             "offsetTop": 50
@@ -115,19 +131,12 @@ var DataTableReact = React.createClass({
      * @returns {undefined}
      */
     destroyDataTable: function(){
-//        console.log('DATATABLE destroy')
+        console.log('DATATABLE destroy')
         if(!$.isEmptyObject(this.oDataTable)){
-//            console.log('destroy le retour 4');
+            console.log('destroy le retour 4');
             this.oDataTable.destroy();
         }
     },
-    
-    render: function() {
-        return (
-         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} afterUpdate={this.applyDataTable} beforeUpdate={this.destroyDataTable} attributes={this.props.attributes} />
-        )
-    },
-    
     /**
      * Selectionne visuellement une ligne de tableau
      * @param {event} evt: evenement js

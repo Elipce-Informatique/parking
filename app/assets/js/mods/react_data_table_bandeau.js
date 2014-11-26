@@ -15,12 +15,14 @@
 var DataTable = require('./react_data_table');
 var DataTableBandeauReact = React.createClass({
     
-    oDataTable:{},
+    mixins: [Reflux.ListenerMixin],
+    
     
     propTypes: {
         head: React.PropTypes.array.isRequired,
         hide: React.PropTypes.array.isRequired,
         id: React.PropTypes.string.isRequired,
+        data: React.PropTypes.array.isRequired,
         settings:React.PropTypes.object,
         attributes:React.PropTypes.object,
         evts:React.PropTypes.object,
@@ -35,40 +37,66 @@ var DataTableBandeauReact = React.createClass({
         return {
             attributes: {},
             evts:{},
-            bUnderline: true};
+            bUnderline: true,
+            data: [{'id':'17','nom':'perez','prenom':'vivian'}]
+        };
     },
     
-    getInitialState: function() {
-        return {};
+    shouldComponentUpdate: function(nextProps, nextStates){
+//        console.log('shouldComponentUpdate: %o',this.props);
+//        console.log('shouldComponentUpdate: %o',nextProps);
+      return true;  
     },
-    
     /**
      * Après le 1er affichage
      * @returns {undefined}
      */
     componentWillMount: function(){
         
+//        this.userClick = this.props.evts.click;
+//        console.log(this.userClick);
+//        
+//        this.evts = this.props.evts;
+//        this.evts.click = this.handleTableClick;
+        
+    },
+    componentWillReceiveProps : function(nextProps){
+//        this.userClick = nextProps.evts.click;
+//        this.evts = nextProps.evts;
+////        console.log(this.evts.click);
+//        this.evts.click = this.handleTableClick;
     },
     
     /**
-     * Après chaque mise à jour DATA du tableau (forceupdate() ou setState())
+     * Après le 1er affichage
+     * @returns {undefined}
+     */
+    componentWillUpdate: function(){
+    },
+    
+    render: function() {
+                
+        return (
+         <DataTable id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts}/>
+        )
+    },
+    /**
+     * Après chaque RENDER de type update (forceupdate() ou setState())
      * @returns {undefined}
      */
     componentDidUpdate: function(){
     },
     
-    render: function() {
-        var evenements = this.props.evts;
-//        evts.click = this.handleTableClick;
-        return (
-         <DataTable id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={evenements}/>
-        )
-    },
+ /*
+ |--------------------------------------------------------------------------
+ | FONCTIONS NON REACT
+ |--------------------------------------------------------------------------
+ */
     handleTableClick: function(e){
-        if(this.props.evts.click != undefined){
-            this.props.evts.click(e);
+        if(this.userClick !== undefined){
+            this.userClick(e);
         }
-        Action.tableBandeauLineClicked(e.currentTarget);
+        Actions.global.table_bandeau_line_clicked(e.currentTarget);
     }
 });
 

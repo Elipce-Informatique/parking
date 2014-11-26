@@ -5,11 +5,11 @@ var isEdtitableStore = Reflux.createStore({
     init: function() {
 
         // Register statusUpdate action
-        this.listenTo(Actions.tableBandeauLineClicked, this.output);
+        this.listenTo(Actions.global.table_bandeau_line_clicked, this.outputTable);
     },
 
     // Callback
-    output: function(tr) {
+    outputTable: function(tr) {
         // Get ID
         var isEditable = $(tr).hasClass('row_selected');
 

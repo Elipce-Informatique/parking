@@ -2,7 +2,7 @@
  * @param array head: array contenant l'entête du tableau ['A', 'B']
  */
 
-var isEdtitableStore = require('./store_is_editable');
+var isEdtitableStore = require('./store_bandeau_is_editable');
 var Button = ReactB.Button;
 var ButtonToolbar = ReactB.ButtonToolbar;
 var Glyphicon = ReactB.Glyphicon;
@@ -64,9 +64,9 @@ var ReactBandeau = React.createClass({
         <div className="col-md-12 bandeau" > 
             <h1>{this.props.titre}</h1>
             <ButtonToolbar>
-                <Button  id="btn_creer" bsSize="small" bsStyle="success"><Glyphicon glyph="plus-sign"/> {Lang.get('global.create')}</Button>
-                <Button  id="btn_edit" bsSize="small" bsStyle="primary" {...inactif}><Glyphicon glyph="pencil"/> {Lang.get('global.edit')}</Button>
-                <Button  id="btn_del" bsSize="small" bsStyle="danger" {...inactif}><Glyphicon glyph="minus-sign"/> {Lang.get('global.del')}</Button>
+                <Button  id="btn_creer" bsSize="small"><Glyphicon glyph="plus-sign"/> {Lang.get('global.create')}</Button>
+                <Button  id="btn_edit" bsSize="small" {...inactif}><Glyphicon glyph="pencil"/> {Lang.get('global.edit')}</Button>
+                <Button  id="btn_del" bsSize="small" {...inactif}><Glyphicon glyph="minus-sign"/> {Lang.get('global.del')}</Button>
             </ButtonToolbar>
          </div>
         )
