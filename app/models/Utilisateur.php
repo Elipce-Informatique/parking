@@ -56,10 +56,36 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 ->whereNull('module_module.parent_id')
                 ->groupBy('modules.id')
                 ->get(['modules.*',  DB::raw('1 as accessible')]);
-
+            Session::put('menu_top_items', $modules);
         }
 
         return $modules;
+    }
+
+
+    public function isModuleAccessible($url){
+        //->groupBy('modules.id')
+        return $this
+            ->join('profil_utilisateur', 'profil_utilisateur.utilisateur_id', '=', 'utilisateurs.id')
+            ->join('profils', 'profils.id', '=', 'profil_utilisateur.profil_id')
+            ->join('profil_module', 'profil_module.profil_id', '=', 'profils.id')
+            ->join('modules', 'modules.id', '=', 'profil_module.module_id')
+            ->join('module_module', 'module_module.fils_id', '=', 'modules.id')
+            ->where('modules.url', $url)
+            ->groupBy('modules.id')
+            ->get(['modules.*']);
+    }
+
+    public function getAllModules(){
+        //->groupBy('modules.id')
+        return $this
+            ->join('profil_utilisateur', 'profil_utilisateur.utilisateur_id', '=', 'utilisateurs.id')
+            ->join('profils', 'profils.id', '=', 'profil_utilisateur.profil_id')
+            ->join('profil_module', 'profil_module.profil_id', '=', 'profils.id')
+            ->join('modules', 'modules.id', '=', 'profil_module.module_id')
+            ->join('module_module', 'module_module.fils_id', '=', 'modules.id')
+            ->groupBy('modules.id')
+            ->get(['modules.*', 'profil_module.access_level']);
     }
 
     /*

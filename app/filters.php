@@ -46,9 +46,15 @@ Route::filter('auth.basic', function () {
     return Auth::basic();
 });
 
-
 Route::filter('auth.canaccess', function(){
-    $currentPath = Route::getCurrentRoute()->getPath();
+    $module_url =  Request::segment(1);
+    if(!Auth::user()->isModuleAccessible($module_url)){
+        if (Request::ajax()) {
+            return Response::make('Unauthorized', 401);
+        } else {
+            return Redirect::back();
+        }
+    }
 });
 /*
 |--------------------------------------------------------------------------

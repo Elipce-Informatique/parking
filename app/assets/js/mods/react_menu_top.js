@@ -1,3 +1,5 @@
+var AccessMixin = require('./mixins/component_access');
+
 var actionMenuDidMount = Reflux.createAction();
 
 var menuItemsDataStore = Reflux.createStore({
@@ -16,7 +18,7 @@ var menuItemsDataStore = Reflux.createStore({
             data: {},
             context: this,
             success: function (data) {
-                data.forEach(function(item, i){
+                data.forEach(function (item, i) {
                     item.active = false;
                     item.accessible = (item.accessible ? true : false);
 
@@ -170,7 +172,7 @@ var ListItemsMenu = React.createClass({
             }
 
             items.push(
-                <li key={item.label} {...props}>
+                <li key={item.id} {...props}>
                     <a href={url}>{libelle}</a>
                 </li>
             );
@@ -315,7 +317,7 @@ var MenuTop = React.createClass({
         this.listenTo(menuUserDataStore, this.refreshUserInfos);
         this.listenTo(menuItemsDataStore, this.refreshDataItems);
     },
-    componentDidMount : function(){
+    componentDidMount: function () {
         // TRIGGER DE L'ACTION POUR CHARGER LES DATA
         actionMenuDidMount();
     },
@@ -337,14 +339,14 @@ var MenuTop = React.createClass({
         )
     },
     refreshUserInfos: function (infos) {
-        console.log('Infos utilisateur :');
-        console.log(infos);
+        //console.log('Infos utilisateur :');
+        //console.log(infos);
 
         this.setState({userInfos: infos});
     },
     refreshDataItems: function (data) {
-        console.log('Items menu :');
-        console.log(data);
+        //console.log('Items menu :');
+        //console.log(data);
         // var data = [
         //    {
         //        label: "item_1",
