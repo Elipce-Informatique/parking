@@ -20,7 +20,7 @@ $(function(){
                 {'id':'7','nom':'plt','prenom':'yann'}
             ];
     
-    // Bandeau ATTENTION BANDEAU AVANT
+    // Bandeau ATTENTION BANDEAU AVANT à cause du fixed header du tableau
      var oBandeau = React.render(
         <Bandeau titre={Lang.get('utilisateur.titre')}/>,
         document.getElementById('bandeau')
