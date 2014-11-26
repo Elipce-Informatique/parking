@@ -1,3 +1,65 @@
+var actionMenuDidMount = Reflux.createAction();
+
+var menuItemsDataStore = Reflux.createStore({
+    // Initial setup
+    init: function () {
+
+        // Register statusUpdate action
+        this.listenTo(actionMenuDidMount, this.fetchMenuData);
+    },
+    fetchMenuData: function () {
+        var url = BASE_URI + '/menu/top_from_auth';
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: {},
+            context: this,
+            success: function (data) {
+                data.forEach(function(item, i){
+                    item.active = false;
+                    item.accessible = (item.accessible ? true : false);
+
+                    data[i] = item;
+                });
+                this.trigger(data);
+            },
+            error: function (xhr, type, exception) {
+                // if ajax fails display error alert
+                alert("ajax error response error " + type);
+                alert("ajax error response body " + xhr.responseText);
+            }
+        });
+    }
+});
+
+var menuUserDataStore = Reflux.createStore({
+    // Initial setup
+    init: function () {
+
+        // Register statusUpdate action
+        this.listenTo(actionMenuDidMount, this.fetchUserData);
+    },
+    fetchUserData: function () {
+        var url = BASE_URI + '/menu/top_user_from_auth';
+
+        $.ajax({
+            type: 'GET',
+            url: url,
+            data: {},
+            context: this,
+            success: function (data) {
+                this.trigger(data);
+            },
+            error: function (xhr, type, exception) {
+                // if ajax fails display error alert
+                alert("ajax error response error " + type);
+                alert("ajax error response body " + xhr.responseText);
+            }
+        });
+    }
+});
+
 /**
  * Created by yann on 19/11/2014.
  * Affiche le nom du projet dans un header de navbar
@@ -45,9 +107,9 @@ var AppName = React.createClass({
  * TODO : Snippet de base pour un composant react. Commentaire à éditer
  * @param dataMenu : données à afficher dans le menu au format JSON
  * [
- *  {label: "item_1", url: "http://toto.com/item_1", active: true, accessible: true},
- *  {label: "item_2", url: "http://toto.com/item_2", active: false, accessible: true, icon: "glyphicon glyphicon-star"},
- *  {label: "item_3", url: "http://toto.com/item_3", active: false, accessible: false, icon: "glyphicon glyphicon-cloud"}
+ *  {traduction: "item_1", url: "item_1", active: true, accessible: true},
+ *  {traduction: "item_2", url: "item_2", active: false, accessible: true, icon: "glyphicon glyphicon-star"},
+ *  {traduction: "item_3", url: "item_3", active: false, accessible: false, icon: "glyphicon glyphicon-cloud"}
  * ]
  */
 var ListItemsMenu = React.createClass({
@@ -98,9 +160,10 @@ var ListItemsMenu = React.createClass({
         var data = this.props.dataMenu;
 
         var items = [];
+        // PARCOURS DES ITEMS DE MENU
         data.forEach(function (item) {
-            var libelle = Lang.get("menu.top." + item.label);
-            var url = (item.accessible ? item.url : "#")
+            var libelle = Lang.get("menu.top." + item.traduction);
+            var url = (item.accessible ? item.url : "#");
             var classnames = (item.active ? "active " : "") + (item.accessible ? "" : "disabled");
             var props = {
                 className: classnames
@@ -197,7 +260,7 @@ var UserInfos = React.createClass({
     },
     getDropdown: function () {
         var itemsDrop = [];
-        this.props.dropdown.forEach(function(){
+        this.props.dropdown.forEach(function () {
 
         });
 
@@ -223,13 +286,12 @@ var UserInfos = React.createClass({
  * @param userDataUrl : Url pour aller chercher les données de l'utilisateur
  */
 var MenuTop = React.createClass({
+    mixins: [Reflux.ListenerMixin],
     propTypes: {
         // You can declare that a prop is a specific JS primitive. By default, these
         // are all optional.
         appName: React.PropTypes.string.isRequired,
-        appUrl: React.PropTypes.string.isRequired,
-        menuDataUrl: React.PropTypes.string.isRequired,
-        userDataUrl: React.PropTypes.string.isRequired
+        appUrl: React.PropTypes.string.isRequired
     },
     /**
      * Méthode appellée à la création du composant,
@@ -239,7 +301,7 @@ var MenuTop = React.createClass({
     getDefaultProps: function () {
         return {
             appName: "Mon Application",
-            appUrl: ""
+            appUrl: BASE_URI,
         };
     },
     getInitialState: function () {
@@ -249,9 +311,13 @@ var MenuTop = React.createClass({
         }
         return state;
     },
-    componentWillMount : function(){
-        this.refreshUserInfos();
-        this.refreshDataItems();
+    componentWillMount: function () {
+        this.listenTo(menuUserDataStore, this.refreshUserInfos);
+        this.listenTo(menuItemsDataStore, this.refreshDataItems);
+    },
+    componentDidMount : function(){
+        // TRIGGER DE L'ACTION POUR CHARGER LES DATA
+        actionMenuDidMount();
     },
     /**
      * Méthode appellée pour construire le composant.
@@ -270,42 +336,38 @@ var MenuTop = React.createClass({
             </div>
         )
     },
-    refreshUserInfos: function () {
-        // TODO : requête AJAX
-        var infos = {
-            nomUtilisateur: "JEAN Guy",
-            logoutRoute: BASE_URI + "logout",
-            logoutText: "Déconnexion",
-            dropdown: []
-        }
+    refreshUserInfos: function (infos) {
+        console.log('Infos utilisateur :');
+        console.log(infos);
 
-        this.setState({userInfos : infos});
+        this.setState({userInfos: infos});
     },
-    refreshDataItems: function () {
-        // TODO : requête AJAX
-        var items = [
-            {
-                label: "item_1",
-                url: "http://toto.com/item_1",
-                active: true,
-                accessible: true
-            },
-            {
-                label: "item_2",
-                url: "http://toto.com/item_2",
-                active: false,
-                accessible: true,
-                icon: "glyphicon glyphicon-star"
-            },
-            {
-                label: "item_3",
-                url: "http://toto.com/item_3",
-                active: false,
-                accessible: false,
-                icon: "glyphicon glyphicon-cloud"
-            }];
+    refreshDataItems: function (data) {
+        console.log('Items menu :');
+        console.log(data);
+        // var data = [
+        //    {
+        //        label: "item_1",
+        //        url: "http://toto.com/item_1",
+        //        active: true,
+        //        accessible: true
+        //    },
+        //    {
+        //        label: "item_2",
+        //        url: "http://toto.com/item_2",
+        //        active: false,
+        //        accessible: true,
+        //        icon: "glyphicon glyphicon-star"
+        //    },
+        //    {
+        //        label: "item_3",
+        //        url: "http://toto.com/item_3",
+        //        active: false,
+        //        accessible: false,
+        //        icon: "glyphicon glyphicon-cloud"
+        //    }];
 
-        this.setState({dataItems : items});
+        this.setState({dataItems: data});
     }
 });
 

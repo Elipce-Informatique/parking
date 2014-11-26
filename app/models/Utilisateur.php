@@ -42,16 +42,23 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
     |--------------------------------------------------------------------------
     */
     public function getMenuTopItems(){
-        $modules = Auth::user()
-            ->join('profil_utilisateur', 'profil_utilisateur.utilisateur_id', '=', 'utilisateurs.id')
-            ->join('profils', 'profils.id', '=', 'profil_utilisateur.profil_id')
-            ->join('profil_module', 'profil_module.profil_id', '=', 'profils.id')
-            ->join('modules', 'modules.id', '=', 'profil_module.module_id')
-            ->join('module_module', 'module_module.fils_id', '=', 'modules.id')
-            ->where('utilisateurs.id', Auth::user()->id)
-            ->whereNull('module_module.parent_id')
-            ->groupBy('modules.id')
-            ->get(['modules.*']);
+        if (Session::has('menu_top_items'))
+        {
+            $modules = Session::get('menu_top_items');
+        }else{
+            $modules = $this
+                ->join('profil_utilisateur', 'profil_utilisateur.utilisateur_id', '=', 'utilisateurs.id')
+                ->join('profils', 'profils.id', '=', 'profil_utilisateur.profil_id')
+                ->join('profil_module', 'profil_module.profil_id', '=', 'profils.id')
+                ->join('modules', 'modules.id', '=', 'profil_module.module_id')
+                ->join('module_module', 'module_module.fils_id', '=', 'modules.id')
+                ->where('utilisateurs.id', $this->id)
+                ->whereNull('module_module.parent_id')
+                ->groupBy('modules.id')
+                ->get(['modules.*',  DB::raw('1 as accessible')]);
+
+        }
+
         return $modules;
     }
 
