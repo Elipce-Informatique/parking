@@ -73,7 +73,7 @@ var DataTableReact = React.createClass({
     },
     
     render: function() {
-//                console.log('DT RENDER: %o',this.props.data);
+                console.log('DT RENDER: %o',this.props.evts);
         return (
          <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} />
         )
@@ -105,22 +105,34 @@ var DataTableReact = React.createClass({
      * On applique le plugin dataTable sur la TABLE HTML
      */
     applyDataTable: function(){
-        console.log('DATATABLE applydatatable')
-        this.oDataTable = $('#'+this.props.id).DataTable(this.props.settings);
-        new $.fn.dataTable.FixedHeader( this.oDataTable,{
-            "offsetTop": 50
-        });
+//        console.log('DATATABLE applydatatable')
+        // TODO
+//        this.oDataTable = $('#'+this.props.id).DataTable(this.props.settings);
+//        if(this.oFixedHeader === undefined){
+//            this.fixedHeader = new $.fn.dataTable.FixedHeader( this.oDataTable,{
+//                "offsetTop": 50
+//            });
+//        }
+//        else{
+//            this.oFixedHeader.fnUpdate();
+//        }
         
         // Evts déclarés par le dév
         var that = this;
+        console.log('EVTS DEV: %o', this.props.evts);
         _.each(this.props.evts, function(val, key){
-            that.oDataTable.$('tr').on(key,val);
+        // TODO
+//            that.oDataTable.$('tr').on(key,val);
+            $('tr').on(key,val);
         })
         // Activations  des évènements fixes
         if(this.props.bUnderline){
             // Evts  fixes
+        console.log('EVTS FIXES: %o', this.state.evts);
             _.each(this.state.evts, function(val, key){
-                $.proxy(that.oDataTable.$('tr').on(key,val),that);
+        // TODO
+//                $.proxy(that.oDataTable.$('tr').on(key,val),that);
+                    $('tr').on(key,val);
             })
         }
         
@@ -134,7 +146,7 @@ var DataTableReact = React.createClass({
         console.log('DATATABLE destroy')
         if(!$.isEmptyObject(this.oDataTable)){
             console.log('destroy le retour 4');
-            this.oDataTable.destroy();
+            this.oDataTable.destroy(true);
         }
     },
     /**
@@ -149,7 +161,8 @@ var DataTableReact = React.createClass({
         if (tr.hasClass('row_selected')) {
                 tr.removeClass('row_selected');
         } else {
-                this.oDataTable.$('tr.row_selected').removeClass('row_selected');
+        // TODO
+//                this.oDataTable.$('tr.row_selected').removeClass('row_selected');
                 tr.addClass('row_selected');
         }
     }

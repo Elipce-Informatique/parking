@@ -117,23 +117,23 @@ var userStore = Reflux.createStore({
         });       
     },
     
-    getInitialState:function(){
-        var dataRetour = [];
-        // AJAX
-        $.ajax({
-            url: BASE_URI+'utilisateur/all',
-            dataType: 'json',
-            context: this,
-            async:false,
-            success: function(data) {
-                dataRetour = data;
-            },
-            error: function(xhr, status, err) {
-                 console.error(status, err.toString());
-            }
-        });   
-        return dataRetour;
-    }
+//    getInitialState:function(){
+//        var dataRetour = [];
+//        // AJAX
+//        $.ajax({
+//            url: BASE_URI+'utilisateur/all',
+//            dataType: 'json',
+//            context: this,
+//            async:false,
+//            success: function(data) {
+//                dataRetour = data;
+//            },
+//            error: function(xhr, status, err) {
+//                 console.error(status, err.toString());
+//            }
+//        });   
+//        return dataRetour;
+//    }
     
     
 });
