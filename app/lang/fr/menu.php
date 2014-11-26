@@ -15,6 +15,7 @@ return [
         'profils' => 'Profils'
     ],
     "user" => [
-        "profil" => "Profile",
+        "profil" => "Profil",
+        "params" => "Paramètres"
     ]
 ];
