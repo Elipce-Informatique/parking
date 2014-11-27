@@ -6,7 +6,7 @@
  * @param string id: attribut ID de la balise TABLE
  * @param object settings: objet JSON permettant de paramètrer dataTable voir http://www.datatables.net/reference/option/
  * @param object attributes: attributs HTML de la TABLE. ex {alt:'mon alt', colspan:2}
- * @param object evts: Evenements des lignes de tableau. ex: {click:modifierLigne, hover:mafonction}. Les clés de l'objet des évènements jquery: http://www.quirksmode.org/dom/events/
+ * @param object evts: évènements sur les lignes de tableau {onClick:function(}{}} ATTENTION: les clés correspondent aux noms d'évènements HTML case sensitive.
  * @param boolean bUnderline: TRUE: Evenement par defaut sur click d'une ligne: surlignage
  *                            FALSE: pas d'évènement par défaut.
  */
@@ -35,7 +35,8 @@ var DataTableBandeauUtilisateurReact = React.createClass({
         return {
             attributes: {},
             evts:{},
-            bUnderline: true};
+            bUnderline: true
+        };
     },
     
     getInitialState: function(){
@@ -76,12 +77,17 @@ var DataTableBandeauUtilisateurReact = React.createClass({
  | FONCTIONS NON REACT
  |--------------------------------------------------------------------------
  */   
-    
+    /**
+     * Mise à jour de la TABLE
+     * @param {type} data
+     * @returns {undefined}
+     */
     updateData: function(data) {
 //        console.log('listen %o',data);
         this.setState({
             data: data
         });
+        console.log('setState 3');
     }
 });
 
@@ -117,23 +123,23 @@ var userStore = Reflux.createStore({
         });       
     },
     
-//    getInitialState:function(){
-//        var dataRetour = [];
-//        // AJAX
-//        $.ajax({
-//            url: BASE_URI+'utilisateur/all',
-//            dataType: 'json',
-//            context: this,
-//            async:false,
-//            success: function(data) {
-//                dataRetour = data;
-//            },
-//            error: function(xhr, status, err) {
-//                 console.error(status, err.toString());
-//            }
-//        });   
-//        return dataRetour;
-//    }
+    getInitialState:function(){
+        var dataRetour = [];
+        // AJAX
+        $.ajax({
+            url: BASE_URI+'utilisateur/all',
+            dataType: 'json',
+            context: this,
+            async:false,
+            success: function(data) {
+                dataRetour = data;
+            },
+            error: function(xhr, status, err) {
+                 console.error(status, err.toString());
+            }
+        });   
+        return dataRetour;
+    }
     
     
 });

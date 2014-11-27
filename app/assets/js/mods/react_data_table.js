@@ -7,7 +7,7 @@
  * @param string id: attribut ID de la balise TABLE
  * @param object settings: objet JSON permettant de paramètrer dataTable voir http://www.datatables.net/reference/option/
  * @param object attributes: attributs HTML de la TABLE. ex {alt:'mon alt', colspan:2}
- * @param object evts: Evenements des lignes de tableau. ex: {click:Action1, hover:Action2}. Les clés de l'objet des évènements jquery: http://www.quirksmode.org/dom/events/
+ * @param object evts: évènements sur les lignes de tableau {onClick:function(}{}} ATTENTION: les clés correspondent aux noms d'évènements HTML case sensitive.
  * @param boolean bUnderline: TRUE: Evenement par defaut sur click d'une ligne: surlignage
  *                            FALSE: pas d'évènement par défaut.
  */
@@ -16,6 +16,8 @@ var Table = require('./react_table');
 var DataTableReact = React.createClass({
     
     oDataTable:{},
+    
+    cssLigne: 'row_selected',
     
     propTypes: {
         head: React.PropTypes.array.isRequired,
@@ -62,20 +64,30 @@ var DataTableReact = React.createClass({
         bUnderline: true};
     },
     
-    getInitialState: function() {
-//        console.log('initialize')
-        return {evts:{click:this.selectRow}};
+    getInitialState: function(){
+      return {evts:{}};  
     },
     
-    componentWillUpdate: function(){
+    componentWillMount: function(){
+      this.addCustomClick(this.props, this.state);  
+    },
+    
+    componentReceiveProps: function(newProps){
+        
+        // Ajout des Evts spécifiques à ce composant
+        this.addCustomClick(newProps, this.state); // ATTENTION, ne pas mettre dans willUpdate car un setState engendre un willUpdate => boucle infinie
+    },
+    
+    componentWillUpdate: function(newProps, newState){         
         // Suppression datable
         this.destroyDataTable();
+        
     },
     
     render: function() {
-//                console.log('DT RENDER: %o',this.props.data);
+        console.log('RenderDataTable');
         return (
-         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} />
+         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} evts={this.state.evts} />
         )
     },
     
@@ -104,34 +116,12 @@ var DataTableReact = React.createClass({
     /**
      * On applique le plugin dataTable sur la TABLE HTML
      */
-    applyDataTable: function(){
-        // Contexte
-        var that = this;
-        console.log('DATATABLE applydatatable');
-        
-        // TODO
-//        this.oDataTable = $('#'+this.props.id).DataTable(this.props.settings);
-//        new $.fn.dataTable.FixedHeader( this.oDataTable,{
-//            "offsetTop": 50
-//        });
-        
-        // Activations  des évènements fixes
-        if(this.props.bUnderline){
-            // Evts  fixes
-            _.each(this.state.evts, function(val, key){
-//                that.oDataTable.$('tr').on(key,val);
-                    // TODO
-                    $('tr').on(key,val);
-            })
-        }
-        
-        // Evts déclarés par le dév
-        _.each(this.props.evts, function(val, key){
-//            that.oDataTable.$('tr').on(key,val);
-                // TODO
-                $('tr').on(key,val);
-        })
-        
+    applyDataTable: function(){        
+        // Activation datatable
+        this.oDataTable = $('#'+this.props.id).DataTable(this.props.settings);
+        new $.fn.dataTable.FixedHeader( this.oDataTable,{
+            "offsetTop": 50
+        });
     },
     
     /**
@@ -140,7 +130,7 @@ var DataTableReact = React.createClass({
      */
     destroyDataTable: function(){
         if(!$.isEmptyObject(this.oDataTable)){
-        console.log('DATATABLE destroy')
+//            console.log('DATATABLE destroy')
             this.oDataTable.destroy();// ATTENTION true pose pb sur fixedHeader
         }
     },
@@ -150,16 +140,40 @@ var DataTableReact = React.createClass({
      * @returns {undefined}
      */
     selectRow: function(evt){
-        
+        console.log('SelectRow evt: %o',evt);
         var tr = $(evt.currentTarget);
         // GESTION VISUELLE
-        if (tr.hasClass('row_selected')) {
-                tr.removeClass('row_selected');
-        } else {
-            // TODO
-//                this.oDataTable.$('tr.row_selected').removeClass('row_selected');
-                tr.addClass('row_selected');
+        if (tr.hasClass(this.cssLigne)) {
+                tr.removeClass(this.cssLigne);
+        }else {
+                tr.parent('tbody').find('tr').removeClass(this.cssLigne)
+                tr.addClass(this.cssLigne);
         }
+    },
+    
+    handleTableClick: function(e){
+//        console.log('HANDLE DATA TABLE');
+        e.preventDefault();
+        
+        if(this.props.bUnderline){
+            // Evt par défaut
+            this.selectRow(e);
+        }
+        
+        // Executionles Evts définis par le DEV
+        if(this.props.evts.onClick !== undefined){
+            this.props.evts.onClick(e);
+        }
+    },
+    
+    addCustomClick: function(newProps, newState){
+        
+        var evts = newProps.evts;
+        console.log('Mes evts %o',evts);
+        evts.onClick = this.handleTableClick;
+        console.log('setState 1');
+        this.setState({evts: evts});
+        
     }
 });
 

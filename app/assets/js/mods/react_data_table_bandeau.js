@@ -7,16 +7,14 @@
  * @param string id: attribut ID de la balise TABLE
  * @param object settings: objet JSON permettant de paramètrer dataTable voir http://www.datatables.net/reference/option/
  * @param object attributes: attributs HTML de la TABLE. ex {alt:'mon alt', colspan:2}
- * @param object evts: Evenements des lignes de tableau. ex: {click:modifierLigne, hover:mafonction}. Les clés de l'objet des évènements jquery: http://www.quirksmode.org/dom/events/
+ * @param object evts: évènements sur les lignes de tableau {onClick:function(}{}} ATTENTION: les clés correspondent aux noms d'évènements HTML case sensitive.
  * @param boolean bUnderline: TRUE: Evenement par defaut sur click d'une ligne: surlignage
  *                            FALSE: pas d'évènement par défaut.
  */
 
-var DataTable = require('./react_data_table');
+var DataTable = require('./react_data_table'); 
 var DataTableBandeauReact = React.createClass({
-    
-    mixins: [Reflux.ListenerMixin],
-    
+   
     
     propTypes: {
         head: React.PropTypes.array.isRequired,
@@ -38,46 +36,28 @@ var DataTableBandeauReact = React.createClass({
             attributes: {},
             evts:{},
             bUnderline: true,
-            data: [{'id':'17','nom':'perez','prenom':'vivian'}]
+            data: []
         };
     },
     
-    shouldComponentUpdate: function(nextProps, nextStates){
-//        console.log('shouldComponentUpdate: %o',this.props);
-//        console.log('shouldComponentUpdate: %o',nextProps);
-      return true;  
-    },
-    /**
-     * Après le 1er affichage
-     * @returns {undefined}
-     */
-    componentWillMount: function(){
-        
-//        this.userClick = this.props.evts.click;
-//        console.log(this.userClick);
-//        
-//        this.evts = this.props.evts;
-//        this.evts.click = this.handleTableClick;
-        
-    },
-    componentWillReceiveProps : function(nextProps){
-//        this.userClick = nextProps.evts.click;
-//        this.evts = nextProps.evts;
-////        console.log(this.evts.click);
-//        this.evts.click = this.handleTableClick;
+    getInitialState: function(){
+        return {evts:{}};
     },
     
-    /**
-     * Après le 1er affichage
-     * @returns {undefined}
-     */
-    componentWillUpdate: function(){
+    componentWillMount: function(){
+      this.addCustomClick(this.props, this.state);  
+    },
+    
+    componentReceiveProps: function(newProps){
+        
+        // Ajout des Evts spécifiques à ce composant
+        this.addCustomClick(newProps, this.state); // ATTENTION, ne pas mettre dans willUpdate car un setState engendre un willUpdate => boucle infinie
     },
     
     render: function() {
                 
         return (
-         <DataTable id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts}/>
+         <DataTable id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.state.evts}/>
         )
     },
     /**
@@ -92,11 +72,23 @@ var DataTableBandeauReact = React.createClass({
  | FONCTIONS NON REACT
  |--------------------------------------------------------------------------
  */
-    handleTableClick: function(e){
-        if(this.userClick !== undefined){
-            this.userClick(e);
+    handleDataTableBandeauClick: function(e){
+        e.preventDefault();
+        // Activation / désactivation bandeau
+//        Actions.global.table_bandeau_line_clicked(e.currentTarget);
+        // Execution des Evts définis par le DEV
+        if(this.props.evts.onClick !== undefined){
+            this.props.evts.onClick(e);
         }
-        Actions.global.table_bandeau_line_clicked(e.currentTarget);
+    },
+    
+    addCustomClick: function(newProps, newState){
+        
+        var evts = newProps.evts;
+        evts.onClick = this.handleDataTableBandeauClick;
+        this.setState({evts: evts});
+        console.log('setState 2');
+        
     }
 });
 
