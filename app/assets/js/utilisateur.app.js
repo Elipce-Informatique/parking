@@ -23,7 +23,8 @@ $(function(){
     
     // Click bouton IIIII
     $('#test').click(function(){
-       oReactTable.forceUpdate();
+//       oReactTable.forceUpdate();
+         Actions.utilisateur.load_data();
     });
 });
 
