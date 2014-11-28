@@ -15,14 +15,15 @@ var Table = React.createClass({
         hide: React.PropTypes.array.isRequired,
         data: React.PropTypes.array.isRequired,
         attributes: React.PropTypes.object,
-        evts:React.PropTypes.object
+        evts:React.PropTypes.object,
+        onDataTableLineClick: React.PropTypes.func
     },
     
     /**
      * Les props par défaut
      */
     getDefaultProps: function() {
-        return {attributes:{}, evts:{}};
+        return {attributes:{}, evts:{}, onDataTableClick:{}};
     },
 
     render: function() {
@@ -33,7 +34,7 @@ var Table = React.createClass({
             // Parcours des lignes du tableau
             this.props.data.forEach(function(dataLine, index) {
                 // Ajout du TR
-                corps.push(<TableTr key={index} data={dataLine} hide={that.props.hide} evts={that.props.evts} />)
+                corps.push(<TableTr key={index} data={dataLine} hide={that.props.hide} evts={that.props.evts} onDataTableClick={that.props.onDataTableLineClick}/>)
             });
             
             // ID
@@ -90,12 +91,8 @@ var TableTr = React.createClass({
         data: React.PropTypes.object.isRequired,
         hide: React.PropTypes.array.isRequired,
         evts:React.PropTypes.object,
-        callbackOnClick:React.PropTypes.func
+        onDataTableClick:React.PropTypes.func
     },
-    
-//    componentWillMount: function(newProps){
-//        this.
-//    },
 
     render: function() {
             // Variables
@@ -115,7 +112,7 @@ var TableTr = React.createClass({
                   }
              });
              // Ajout du tr
-             return <tr {...attr} {...this.props.evts}>{tr}</tr>
+             return <tr {...attr} {...this.props.evts} onClick={this.handleClick}>{tr}</tr>
            
      
     },
@@ -125,7 +122,9 @@ var TableTr = React.createClass({
  | FONCTIONS NON REACT
  |--------------------------------------------------------------------------
  */
-    handleClick: function(){
-        
+    handleClick: function(e){
+        console.log('tr.handleClick');
+        // Appel du click
+        this.props.onDataTableClick(e);
     }
 });

@@ -29,7 +29,7 @@ var DataTableReact = React.createClass({
         attributes:React.PropTypes.object,
         evts:React.PropTypes.object,
         bUnderline:React.PropTypes.bool,
-        onLineClick: React.PropTypes.func
+        onDataTableLineClick: React.PropTypes.func
     },
     
     /**
@@ -38,40 +38,38 @@ var DataTableReact = React.createClass({
     getDefaultProps: function() {
         
         return {
-        settings:{
-            "language": {
-            "sProcessing":     Lang.get('global.datatable.sProcessing'),
-            "sSearch":         Lang.get('global.datatable.sSearch'),
-            "sLengthMenu":     Lang.get('global.datatable.sLengthMenu'),
-            "sInfo":           Lang.get('global.datatable.sInfo'),
-            "sInfoEmpty":      Lang.get('global.datatable.sInfoEmpty'),
-            "sInfoFiltered":   Lang.get('global.datatable.sInfoFiltered'),
-            "sInfoPostFix":    Lang.get('global.datatable.sInfoPostFix'),
-            "sLoadingRecords": Lang.get('global.datatable.sLoadingRecords'),
-            "sZeroRecords":    Lang.get('global.datatable.sZeroRecords'),
-            "sEmptyTable":     Lang.get('global.datatable.sEmptyTable'),
-            "oPaginate": {
-                "sFirst":      Lang.get('global.datatable.oPaginate.sFirst'),
-                "sPrevious":   Lang.get('global.datatable.oPaginate.sPrevious'),
-                "sNext":       Lang.get('global.datatable.oPaginate.sNext'),
-                "sLast":       Lang.get('global.datatable.oPaginate.sLast')
-            },
-            "oAria": {
-                "sSortAscending":  Lang.get('global.datatable.oAria.sSortAscending'),
-                "sSortDescending": Lang.get('global.datatable.oAria.sSortDescending')
-            }
-        }},
-        attributes: {},
-        evts:{},
-        bUnderline: true,
-        onLineClick: function(){}};
+            settings:{
+                "language": {
+                "sProcessing":     Lang.get('global.datatable.sProcessing'),
+                "sSearch":         Lang.get('global.datatable.sSearch'),
+                "sLengthMenu":     Lang.get('global.datatable.sLengthMenu'),
+                "sInfo":           Lang.get('global.datatable.sInfo'),
+                "sInfoEmpty":      Lang.get('global.datatable.sInfoEmpty'),
+                "sInfoFiltered":   Lang.get('global.datatable.sInfoFiltered'),
+                "sInfoPostFix":    Lang.get('global.datatable.sInfoPostFix'),
+                "sLoadingRecords": Lang.get('global.datatable.sLoadingRecords'),
+                "sZeroRecords":    Lang.get('global.datatable.sZeroRecords'),
+                "sEmptyTable":     Lang.get('global.datatable.sEmptyTable'),
+                "oPaginate": {
+                    "sFirst":      Lang.get('global.datatable.oPaginate.sFirst'),
+                    "sPrevious":   Lang.get('global.datatable.oPaginate.sPrevious'),
+                    "sNext":       Lang.get('global.datatable.oPaginate.sNext'),
+                    "sLast":       Lang.get('global.datatable.oPaginate.sLast')
+                },
+                "oAria": {
+                    "sSortAscending":  Lang.get('global.datatable.oAria.sSortAscending'),
+                    "sSortDescending": Lang.get('global.datatable.oAria.sSortDescending')
+                }
+            }},
+            attributes: {},
+            evts:{},
+            bUnderline: true,
+            onDataTableLineClick: function(){},
+            onDataTableBandeauLineClick: function(){}
+        };
     },
     
     componentWillMount: function(){
-        // Le DEV veut un surlignage sur clic
-        if(this.props.bUnderline){
-            this.manageLineClick(this.props);
-        }
     },
     
     componentWillReceiveProps: function(newProps){
@@ -90,7 +88,7 @@ var DataTableReact = React.createClass({
     
     render: function() {
         return (
-         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} evts={this.props.evts} onLineClick={this.props.onLineClick}/>
+         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} evts={this.props.evts} onDataTableLineClick={this.handleClick}/>
         )
     },
     
@@ -142,6 +140,8 @@ var DataTableReact = React.createClass({
      * @returns {undefined}
      */
     selectRow: function(evt){
+        
+        console.log('dataTable.selectRow');
         var tr = $(evt.currentTarget);
         // GESTION VISUELLE
         if (tr.hasClass(this.cssLigne)) {
@@ -152,28 +152,18 @@ var DataTableReact = React.createClass({
         }
     },
     
-    manageLineClick: function(newProps){
-        var that = this;
-        // On vient du composant react_data_table_bandeau
-        if(newProps.onLineClick.toString !== ''){
-            var temp = newProps.onLineClick;
-            newProps.onLineClick = function(e){
-                that.selectRow(e);
-//                console.log('currentTarget %o',e.currentTarget);
-                temp(e.currentTarget);
-            }
-        }    
-        // Merge vers on click
-        if(newProps.evts.onClick != undefined){
-            var temp = newProps.evts.onClick;
-            newProps.evts.onClick = function(e){
-                temp(e);
-                newProps.onLineClick(e);
-            };
+    handleClick: function(e){
+        // Le DEV veut un surlignage sur clic
+        if(this.props.bUnderline){
+            this.selectRow(e);
         }
-        // Seulement les evts bandeau et surlignage
-        else{
-            newProps.evts.onClick = newProps.onLineClick;
+        // Execution clic data table bandeau
+        this.props.onDataTableBandeauLineClick(e.currentTarget);
+        
+        // Execution clic défini par DEV
+        if(this.props.evts.onClick !== undefined){
+            this.props.evts.onClick(e);
+            // ATTENTION supprimer le onClick de evts passé en param
         }
     }
 });

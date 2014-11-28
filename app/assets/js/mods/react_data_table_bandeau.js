@@ -24,7 +24,7 @@ var DataTableBandeauReact = React.createClass({
         attributes:React.PropTypes.object,
         evts:React.PropTypes.object,
         bUnderline:React.PropTypes.bool,
-        onLineClick: React.PropTypes.func
+        onDataTableBandeauLineClick: React.PropTypes.func
     },
     
     /**
@@ -36,15 +36,14 @@ var DataTableBandeauReact = React.createClass({
             attributes: {},
             evts:{},
             bUnderline: true,
-            data: [],
-            onLineClick: Actions.global.table_bandeau_line_clicked
+            data: []
         };
     },
     
     render: function() {       
         
         return (
-         <DataTable id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} onLineClick={this.props.onLineClick}/>
+         <DataTable id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} onDataTableBandeauLineClick={Actions.global.table_bandeau_line_clicked}/>
         )
     }
     

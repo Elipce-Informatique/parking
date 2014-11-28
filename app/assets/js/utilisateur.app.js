@@ -8,8 +8,8 @@ $(function(){
     // Tableau
     var head = ['Nom','E-mail'];
     var hide = ['id'];
-    var evts = {'onClick':function(){alert("toto")}};
-    evts = {};
+    var evts = {'onClick':function(){alert("clic défini par DEV")}};
+//    evts = {};
     
     // Bandeau ATTENTION BANDEAU AVANT à cause du fixed header du tableau
      var oBandeau = React.render(
