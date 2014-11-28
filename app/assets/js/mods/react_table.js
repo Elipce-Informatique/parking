@@ -24,21 +24,8 @@ var Table = React.createClass({
     getDefaultProps: function() {
         return {attributes:{}, evts:{}};
     },
-    
-    componentWillMount: function(){        
-    },
-    
-    componentDidMount: function() {
-    },
-    
-    componentWillReceiveProps: function(){
-    },
-    
-    componentWillUpdate: function(){
-    },
 
     render: function() {
-            console.log('TABLE RENDER: %O',this.props.evts);
             // Variables
             var corps = [];
             var that = this;
@@ -46,7 +33,7 @@ var Table = React.createClass({
             // Parcours des lignes du tableau
             this.props.data.forEach(function(dataLine, index) {
                 // Ajout du TR
-                corps.push(<TableTr key={index} data={dataLine} hide={that.props.hide} evts={that.props.evts}/>)
+                corps.push(<TableTr key={index} data={dataLine} hide={that.props.hide} evts={that.props.evts} />)
             });
             
             // ID
@@ -54,7 +41,6 @@ var Table = React.createClass({
             if(this.props.id!=undefined){
                 id = {'id':this.props.id}
             }
-//            console.log('TABLE render')
             // TABLE
              return( 
               <div className="table-responsive">
@@ -64,10 +50,7 @@ var Table = React.createClass({
                 </table>
               </div>
             )
-    },
-    
-    componentDidUpdate: function() {
-    },
+    }
 });
 module.exports = Table;
 
@@ -106,11 +89,15 @@ var TableTr = React.createClass({
      propTypes: {
         data: React.PropTypes.object.isRequired,
         hide: React.PropTypes.array.isRequired,
-        evts:React.PropTypes.object
+        evts:React.PropTypes.object,
+        callbackOnClick:React.PropTypes.func
     },
+    
+//    componentWillMount: function(newProps){
+//        this.
+//    },
 
     render: function() {
-//        console.log('TR RENDER: %o',this.props.evts);
             // Variables
             var tr = [];
             var that = this;
@@ -131,5 +118,14 @@ var TableTr = React.createClass({
              return <tr {...attr} {...this.props.evts}>{tr}</tr>
            
      
+    },
+    
+    /*
+ |--------------------------------------------------------------------------
+ | FONCTIONS NON REACT
+ |--------------------------------------------------------------------------
+ */
+    handleClick: function(){
+        
     }
 });

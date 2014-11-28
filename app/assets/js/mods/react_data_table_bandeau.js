@@ -14,7 +14,6 @@
 
 var DataTable = require('./react_data_table'); 
 var DataTableBandeauReact = React.createClass({
-   
     
     propTypes: {
         head: React.PropTypes.array.isRequired,
@@ -24,7 +23,8 @@ var DataTableBandeauReact = React.createClass({
         settings:React.PropTypes.object,
         attributes:React.PropTypes.object,
         evts:React.PropTypes.object,
-        bUnderline:React.PropTypes.bool
+        bUnderline:React.PropTypes.bool,
+        onLineClick: React.PropTypes.func
     },
     
     /**
@@ -36,60 +36,24 @@ var DataTableBandeauReact = React.createClass({
             attributes: {},
             evts:{},
             bUnderline: true,
-            data: []
+            data: [],
+            onLineClick: Actions.global.table_bandeau_line_clicked
         };
     },
     
-    getInitialState: function(){
-        return {evts:{}};
-    },
-    
-    componentWillMount: function(){
-      this.addCustomClick(this.props, this.state);  
-    },
-    
-    componentReceiveProps: function(newProps){
+    render: function() {       
         
-        // Ajout des Evts spécifiques à ce composant
-        this.addCustomClick(newProps, this.state); // ATTENTION, ne pas mettre dans willUpdate car un setState engendre un willUpdate => boucle infinie
-    },
-    
-    render: function() {
-                
         return (
-         <DataTable id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.state.evts}/>
+         <DataTable id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} onLineClick={this.props.onLineClick}/>
         )
-    },
-    /**
-     * Après chaque RENDER de type update (forceupdate() ou setState())
-     * @returns {undefined}
-     */
-    componentDidUpdate: function(){
-    },
+    }
     
  /*
  |--------------------------------------------------------------------------
  | FONCTIONS NON REACT
  |--------------------------------------------------------------------------
  */
-    handleDataTableBandeauClick: function(e){
-        e.preventDefault();
-        // Activation / désactivation bandeau
-//        Actions.global.table_bandeau_line_clicked(e.currentTarget);
-        // Execution des Evts définis par le DEV
-        if(this.props.evts.onClick !== undefined){
-            this.props.evts.onClick(e);
-        }
-    },
     
-    addCustomClick: function(newProps, newState){
-        
-        var evts = newProps.evts;
-        evts.onClick = this.handleDataTableBandeauClick;
-        this.setState({evts: evts});
-        console.log('setState 2');
-        
-    }
 });
 
 module.exports = DataTableBandeauReact;

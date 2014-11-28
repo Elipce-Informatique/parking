@@ -53,23 +53,10 @@ var DataTableBandeauUtilisateurReact = React.createClass({
         Actions.utilisateur.load_data();
     },
     
-    /**
-     * Après le 1er affichage. ATTENTION : on a pas les nouvelles propriétés this.props
-     * @returns {undefined}
-     */
-    componentWillUpdate: function(){
-    },
-    
     render: function() {
         return (
          <DataTableBandeau id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts}/>
         )
-    },
-    
-    componentDidMount : function(){
-    },
-    
-    componentDidUpdate: function(){
     },
     
  /*
@@ -83,11 +70,10 @@ var DataTableBandeauUtilisateurReact = React.createClass({
      * @returns {undefined}
      */
     updateData: function(data) {
-//        console.log('listen %o',data);
+        // MAJ data
         this.setState({
             data: data
         });
-        console.log('setState 3');
     }
 });
 
