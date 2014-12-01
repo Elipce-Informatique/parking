@@ -79,7 +79,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             'nomUtilisateur' => $this->nom,
             'logoutRoute' => URL::asset('/') . "logout",
             'logoutText' => Lang::get('auth.logout'),
-            'dropdown' => ['label' => "parametres", 'route' => "/parametres"]
+            'dropdown' => [['label' => Lang::get('menu.user.params'), 'route' => URL::route('index')]]
         ]);
     }
 
@@ -121,7 +121,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
     |--------------------------------------------------------------------------
     */
     /**
-     * Calculee la liste de tous les utilisateurs de l'application
+     * Calcule la liste de tous les utilisateurs de l'application
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public static function getUtilisateurs()

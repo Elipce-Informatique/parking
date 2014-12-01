@@ -1,10 +1,14 @@
 
-module.exports = {
+var AuthentLevelMixin = {
     componentWillMount: function() {
         // TODO :
-
-        this.render = function(){
-            return false;
+        if(!Auth.check()) {
+            // Disable component
+            this.render = function () {
+                return false;
+            }
         }
     }
 }
+
+module.exports = AuthentLevelMixin;

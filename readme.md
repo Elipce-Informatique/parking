@@ -38,7 +38,7 @@ lancer la commande : ```npm update``` depuis la racine du projet
 #### PHP
 - Utilisation des routes de type 'resource' au MAXIMUM pour être RESTFUL
 - Template structuré de la manière suivante
-/views
+```/views
     structure.blade
     /layouts
         - login.blade
@@ -47,6 +47,7 @@ lancer la commande : ```npm update``` depuis la racine du projet
         - page1.blade
         - page2.blade
         - ...
+```
 Chaque page hérite d'un layout, le layout défault contient la structure d'une page classique de l'appli.
 Pour les structures plus fantaisistes, on en crée d'autres comme le layout login utilisé par la page login.
 
@@ -58,6 +59,8 @@ Le workflow JavaScript est très automatisé. Les fichiers de développement son
     - Qu'est-ce qu'un module COMMON JS ? https://egghead.io/lessons/nodejs-what-are-commonjs-modules
 
 Les fichiers à inclure dans les pages sont placés automatiquement par gulp dans **public/js**
+- /!\ IMPORTANT /!\
+    - EN JAVASCRIPT LA COPIE D'OBJETS DOIT ÊTRE EXPLICITE ! UNE AFFECTATION SIMPLE PASSE UNE RÉFÉRENCE !!!
 
 #### CSS
 Les fichier CSS sont écrits avec le langage Stylus (http://learnboost.github.io/stylus/)
