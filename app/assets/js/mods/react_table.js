@@ -15,30 +15,18 @@ var Table = React.createClass({
         hide: React.PropTypes.array.isRequired,
         data: React.PropTypes.array.isRequired,
         attributes: React.PropTypes.object,
-        evts:React.PropTypes.object
+        evts:React.PropTypes.object,
+        onDataTableLineClick: React.PropTypes.func
     },
     
     /**
      * Les props par défaut
      */
     getDefaultProps: function() {
-        return {attributes:{}, evts:{}};
-    },
-    
-    componentWillMount: function(){        
-    },
-    
-    componentDidMount: function() {
-    },
-    
-    componentWillReceiveProps: function(){
-    },
-    
-    componentWillUpdate: function(){
+        return {attributes:{}, evts:{}, onDataTableClick:{}};
     },
 
     render: function() {
-            console.log('TABLE RENDER: %O',this.props.evts);
             // Variables
             var corps = [];
             var that = this;
@@ -46,7 +34,7 @@ var Table = React.createClass({
             // Parcours des lignes du tableau
             this.props.data.forEach(function(dataLine, index) {
                 // Ajout du TR
-                corps.push(<TableTr key={index} data={dataLine} hide={that.props.hide} evts={that.props.evts}/>)
+                corps.push(<TableTr key={index} data={dataLine} hide={that.props.hide} evts={that.props.evts} onDataTableClick={that.props.onDataTableLineClick}/>)
             });
             
             // ID
@@ -54,7 +42,6 @@ var Table = React.createClass({
             if(this.props.id!=undefined){
                 id = {'id':this.props.id}
             }
-//            console.log('TABLE render')
             // TABLE
              return( 
               <div className="table-responsive">
@@ -64,10 +51,7 @@ var Table = React.createClass({
                 </table>
               </div>
             )
-    },
-    
-    componentDidUpdate: function() {
-    },
+    }
 });
 module.exports = Table;
 
@@ -106,11 +90,11 @@ var TableTr = React.createClass({
      propTypes: {
         data: React.PropTypes.object.isRequired,
         hide: React.PropTypes.array.isRequired,
-        evts:React.PropTypes.object
+        evts:React.PropTypes.object,
+        onDataTableClick:React.PropTypes.func
     },
 
     render: function() {
-//        console.log('TR RENDER: %o',this.props.evts);
             // Variables
             var tr = [];
             var that = this;
@@ -128,8 +112,19 @@ var TableTr = React.createClass({
                   }
              });
              // Ajout du tr
-             return <tr {...attr} {...this.props.evts}>{tr}</tr>
+             return <tr {...attr} {...this.props.evts} onClick={this.handleClick}>{tr}</tr>
            
      
+    },
+    
+    /*
+ |--------------------------------------------------------------------------
+ | FONCTIONS NON REACT
+ |--------------------------------------------------------------------------
+ */
+    handleClick: function(e){
+        console.log('tr.handleClick');
+        // Appel du click
+        this.props.onDataTableClick(e);
     }
 });

@@ -18,6 +18,7 @@ var DataTableReact = React.createClass({
     oDataTable:{},
     
     cssLigne: 'row_selected',
+    userEvts : undefined,
     
     propTypes: {
         head: React.PropTypes.array.isRequired,
@@ -27,7 +28,8 @@ var DataTableReact = React.createClass({
         settings:React.PropTypes.object,
         attributes:React.PropTypes.object,
         evts:React.PropTypes.object,
-        bUnderline:React.PropTypes.bool
+        bUnderline:React.PropTypes.bool,
+        onDataTableLineClick: React.PropTypes.func
     },
     
     /**
@@ -36,46 +38,46 @@ var DataTableReact = React.createClass({
     getDefaultProps: function() {
         
         return {
-        settings:{
-            "language": {
-            "sProcessing":     Lang.get('global.datatable.sProcessing'),
-            "sSearch":         Lang.get('global.datatable.sSearch'),
-            "sLengthMenu":     Lang.get('global.datatable.sLengthMenu'),
-            "sInfo":           Lang.get('global.datatable.sInfo'),
-            "sInfoEmpty":      Lang.get('global.datatable.sInfoEmpty'),
-            "sInfoFiltered":   Lang.get('global.datatable.sInfoFiltered'),
-            "sInfoPostFix":    Lang.get('global.datatable.sInfoPostFix'),
-            "sLoadingRecords": Lang.get('global.datatable.sLoadingRecords'),
-            "sZeroRecords":    Lang.get('global.datatable.sZeroRecords'),
-            "sEmptyTable":     Lang.get('global.datatable.sEmptyTable'),
-            "oPaginate": {
-                "sFirst":      Lang.get('global.datatable.oPaginate.sFirst'),
-                "sPrevious":   Lang.get('global.datatable.oPaginate.sPrevious'),
-                "sNext":       Lang.get('global.datatable.oPaginate.sNext'),
-                "sLast":       Lang.get('global.datatable.oPaginate.sLast')
-            },
-            "oAria": {
-                "sSortAscending":  Lang.get('global.datatable.oAria.sSortAscending'),
-                "sSortDescending": Lang.get('global.datatable.oAria.sSortDescending')
-            }
-        }},
-        attributes: {},
-        evts:{},
-        bUnderline: true};
-    },
-    
-    getInitialState: function(){
-      return {evts:{}};  
+            settings:{
+                "language": {
+                "sProcessing":     Lang.get('global.datatable.sProcessing'),
+                "sSearch":         Lang.get('global.datatable.sSearch'),
+                "sLengthMenu":     Lang.get('global.datatable.sLengthMenu'),
+                "sInfo":           Lang.get('global.datatable.sInfo'),
+                "sInfoEmpty":      Lang.get('global.datatable.sInfoEmpty'),
+                "sInfoFiltered":   Lang.get('global.datatable.sInfoFiltered'),
+                "sInfoPostFix":    Lang.get('global.datatable.sInfoPostFix'),
+                "sLoadingRecords": Lang.get('global.datatable.sLoadingRecords'),
+                "sZeroRecords":    Lang.get('global.datatable.sZeroRecords'),
+                "sEmptyTable":     Lang.get('global.datatable.sEmptyTable'),
+                "oPaginate": {
+                    "sFirst":      Lang.get('global.datatable.oPaginate.sFirst'),
+                    "sPrevious":   Lang.get('global.datatable.oPaginate.sPrevious'),
+                    "sNext":       Lang.get('global.datatable.oPaginate.sNext'),
+                    "sLast":       Lang.get('global.datatable.oPaginate.sLast')
+                },
+                "oAria": {
+                    "sSortAscending":  Lang.get('global.datatable.oAria.sSortAscending'),
+                    "sSortDescending": Lang.get('global.datatable.oAria.sSortDescending')
+                }
+            }},
+            attributes: {},
+            evts:{},
+            bUnderline: true,
+            onDataTableLineClick: function(){},
+            onDataTableBandeauLineClick: function(){}
+        };
     },
     
     componentWillMount: function(){
-      this.addCustomClick(this.props, this.state);  
     },
     
-    componentReceiveProps: function(newProps){
+    componentWillReceiveProps: function(newProps){
         
-        // Ajout des Evts spécifiques à ce composant
-        this.addCustomClick(newProps, this.state); // ATTENTION, ne pas mettre dans willUpdate car un setState engendre un willUpdate => boucle infinie
+//        // Le DEV veut un surlignage sur clic
+//        if(this.props.bUnderline){
+//            this.manageLineClick(newProps);
+//        }
     },
     
     componentWillUpdate: function(newProps, newState){         
@@ -85,9 +87,8 @@ var DataTableReact = React.createClass({
     },
     
     render: function() {
-        console.log('RenderDataTable');
         return (
-         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} evts={this.state.evts} />
+         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} evts={this.props.evts} onDataTableLineClick={this.handleClick}/>
         )
     },
     
@@ -130,7 +131,6 @@ var DataTableReact = React.createClass({
      */
     destroyDataTable: function(){
         if(!$.isEmptyObject(this.oDataTable)){
-//            console.log('DATATABLE destroy')
             this.oDataTable.destroy();// ATTENTION true pose pb sur fixedHeader
         }
     },
@@ -140,7 +140,8 @@ var DataTableReact = React.createClass({
      * @returns {undefined}
      */
     selectRow: function(evt){
-        console.log('SelectRow evt: %o',evt);
+        
+        console.log('dataTable.selectRow');
         var tr = $(evt.currentTarget);
         // GESTION VISUELLE
         if (tr.hasClass(this.cssLigne)) {
@@ -151,29 +152,19 @@ var DataTableReact = React.createClass({
         }
     },
     
-    handleTableClick: function(e){
-//        console.log('HANDLE DATA TABLE');
-        e.preventDefault();
-        
+    handleClick: function(e){
+        // Le DEV veut un surlignage sur clic
         if(this.props.bUnderline){
-            // Evt par défaut
             this.selectRow(e);
         }
+        // Execution clic data table bandeau
+        this.props.onDataTableBandeauLineClick(e.currentTarget);
         
-        // Executionles Evts définis par le DEV
+        // Execution clic défini par DEV
         if(this.props.evts.onClick !== undefined){
             this.props.evts.onClick(e);
+            // ATTENTION supprimer le onClick de evts passé en param
         }
-    },
-    
-    addCustomClick: function(newProps, newState){
-        
-        var evts = newProps.evts;
-        console.log('Mes evts %o',evts);
-        evts.onClick = this.handleTableClick;
-        console.log('setState 1');
-        this.setState({evts: evts});
-        
     }
 });
 

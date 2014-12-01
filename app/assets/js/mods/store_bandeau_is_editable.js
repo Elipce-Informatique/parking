@@ -10,6 +10,7 @@ var isEdtitableStore = Reflux.createStore({
 
     // Callback
     outputTable: function(tr) {
+//        console.log('STORE BANDEAU TR %o', tr);
         // Get ID
         var isEditable = $(tr).hasClass('row_selected');
 
