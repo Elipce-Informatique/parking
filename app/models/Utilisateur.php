@@ -126,7 +126,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      */
     public static function getUtilisateurs()
     {
-        $res = Utilisateur::all(array('id', 'nom', 'email'));
+        $res = Utilisateur::all(array('id', 'nom', 'email',DB::raw('email as mail2'),DB::raw('email as mail3')));
         return $res;
     }
 

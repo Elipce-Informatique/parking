@@ -6,11 +6,9 @@ var Button = ReactB.Button;
 $(function(){
     
     // Tableau
-    var head = ['Nom','E-mail'];
+    var head = ['Nom','E-mail','E-mail','E-mail'];
     var hide = ['id'];
-    var evts = {'onClick':function(e){alert('clic DEV')},
-                };
-//    evts = {};
+    var evts = {'onClick':Actions.utilisateur.display_user()};
     
     // Bandeau ATTENTION BANDEAU AVANT à cause du fixed header du tableau
      var oBandeau = React.render(
@@ -23,6 +21,13 @@ $(function(){
         <DataTableBandeauUser head={head} hide={hide} id="tab_users" evts={evts}/>,
         document.getElementById('tableau_react')
     );
+    
+    
+    
+    
+    
+    
+    
     
     // Click bouton IIIII
     $('#test').click(function(){
