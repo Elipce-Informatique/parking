@@ -31,21 +31,8 @@ Route::resource('sessions', 'SessionsController');
 
 // Alias d'URL
 Route::get('login', 'SessionsController@create');
+Route::get('logout', 'SessionsController@destroy');
 
-/*
-|--------------------------------------------------------------------------
-| GROUPE API MENU
-|--------------------------------------------------------------------------
-|
-| Gestion des routes qui nécessitent d'être authentifié mais pas d'avoir
-| des droits spécifiques.
-|
-*/
-Route::group(['before' => 'auth', 'prefix' => 'menu'], function () {
-    // MENU TOP RESTFUL
-    Route::get('top_from_auth', 'MenuController@menuTopItemsFromSession');
-    Route::get('top_user_from_auth', 'MenuController@menuTopInfosUserFromSession');
-});
 
 /*
 |--------------------------------------------------------------------------
@@ -57,9 +44,6 @@ Route::group(['before' => 'auth', 'prefix' => 'menu'], function () {
 |
 */
 Route::group(['before' => 'auth'], function () {
-    // DESTRUCTION DE LA SESSION SI AUTHENTIFIÉ
-    Route::get('logout', ['as' => 'logout', 'uses' => 'SessionsController@destroy']);
-
     // PAGE D'ACCUEIL
     Route::get('accueil', 'AccueilController@index');
 });
@@ -79,10 +63,23 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     Route::resource('utilisateur', 'UtilisateurController');
 });
 
+/*
+|--------------------------------------------------------------------------
+| GROUPE API MENU
+|--------------------------------------------------------------------------
+|
+| Gestion des routes qui fournissent les données pour le menu
+|
+*/
+Route::group(['before' => 'auth', 'prefix' => 'menu'], function () {
+    // MENU TOP RESTFUL
+    Route::get('top_from_auth', 'MenuController@menuTopItemsFromSession');
+    Route::get('top_user_from_auth', 'MenuController@menuTopInfosUserFromSession');
+});
 
 /*
 |--------------------------------------------------------------------------
-| TESTS
+| TESTS EN DUR
 |--------------------------------------------------------------------------
 */
 Route::get('test', 'TestController@index');

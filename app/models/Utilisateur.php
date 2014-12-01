@@ -41,11 +41,11 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
     | MÉTHODES MÉTIER DE CLASSE
     |--------------------------------------------------------------------------
     */
-    public function getMenuTopItems(){
-        if (Session::has('menu_top_items'))
-        {
+    public function getMenuTopItems()
+    {
+        if (Session::has('menu_top_items')) {
             $modules = Session::get('menu_top_items');
-        }else{
+        } else {
             $modules = $this
                 ->join('profil_utilisateur', 'profil_utilisateur.utilisateur_id', '=', 'utilisateurs.id')
                 ->join('profils', 'profils.id', '=', 'profil_utilisateur.profil_id')
@@ -55,15 +55,41 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 ->where('utilisateurs.id', $this->id)
                 ->whereNull('module_module.parent_id')
                 ->groupBy('modules.id')
-                ->get(['modules.*',  DB::raw('1 as accessible')]);
+                ->get(['modules.*', DB::raw('1 as accessible')]);
             Session::put('menu_top_items', $modules);
         }
 
         return $modules;
     }
 
+    /**
+     * Retourne les infos pour construire le menu de l'utilisateur dans le menu top
+     *
+     * @return mixed
+     */
+    public function menuTopInfosUser()
+    {
+        /* TODO dropdown : menu déroulant contenant les raccourcis de l'utilisateur
+         * [
+         *   {label: "profil", route:"/utilisateur/120"},
+         *   {label: "parametres", route:"/parametres"}
+         * ]
+         **/
+        return json_encode([
+            'nomUtilisateur' => $this->nom,
+            'logoutRoute' => URL::asset('/') . "logout",
+            'logoutText' => Lang::get('auth.logout'),
+            'dropdown' => ['label' => "parametres", 'route' => "/parametres"]
+        ]);
+    }
 
-    public function isModuleAccessible($url){
+    /**
+     * Test accessibilité en lecture
+     * @param $url
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function isModuleAccessible($url)
+    {
         //->groupBy('modules.id')
         return $this
             ->join('profil_utilisateur', 'profil_utilisateur.utilisateur_id', '=', 'utilisateurs.id')
@@ -76,7 +102,8 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             ->get(['modules.*']);
     }
 
-    public function getAllModules(){
+    public function getAllModules()
+    {
         //->groupBy('modules.id')
         return $this
             ->join('profil_utilisateur', 'profil_utilisateur.utilisateur_id', '=', 'utilisateurs.id')
@@ -97,9 +124,10 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      * Calculee la liste de tous les utilisateurs de l'application
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public static function getUtilisateurs(){
-       $res = Utilisateur::all(array('id','nom','email'));
-       return $res;
+    public static function getUtilisateurs()
+    {
+        $res = Utilisateur::all(array('id', 'nom', 'email'));
+        return $res;
     }
 
 

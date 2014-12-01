@@ -22,7 +22,7 @@
         <!-- Inclusion des differents scripts globaux -->
         <div id="scripts">
             @yield('js-localization.head')
-            @include('droits_js')
+            @include('auth_js')
             <script type="text/javascript">window.BASE_URI="{{URL::asset('/')}}"</script>
             <script type="text/javascript" src="{{URL::asset('/public/js/global/app.js')}}"></script>
             <script type="text/javascript" src="{{URL::asset('/public/js/libs/bootstrap.js')}}"></script>
