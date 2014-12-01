@@ -11,11 +11,13 @@
  *                            FALSE: pas d'évènement par défaut.
  */
 
+var AuthentMixins = require('./mixins/component_access');
 var DataTableBandeau = require('./react_data_table_bandeau');
 var DataTableBandeauUtilisateurReact = React.createClass({
     
-    mixins: [Reflux.ListenerMixin],
+    mixins: [Reflux.ListenerMixin,AuthentMixins],
     
+    module_url: 'utilisateur',
     
     propTypes: {
         head: React.PropTypes.array.isRequired,

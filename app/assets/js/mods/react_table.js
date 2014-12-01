@@ -43,12 +43,12 @@ var Table = React.createClass({
             }
             // TABLE
              return( 
-              <div className="">
-                <table className="display responsive no-wrap" width="100%" {...id} {...this.props.attributes} >
+              <p className="table-responsive">
+                <table className="table display" width="100%" {...id} {...this.props.attributes} >
                 <TableHeader head={this.props.head}/>
                 <tbody>{corps}</tbody>
                 </table>
-              </div>
+              </p>
             )
     }
 });

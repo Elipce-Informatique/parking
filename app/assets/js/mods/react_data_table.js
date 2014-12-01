@@ -41,6 +41,7 @@ var DataTableReact = React.createClass({
         
         return {
             settings:{
+                responsive: true,
                 "language": {
                     "sProcessing":     Lang.get('global.datatable.sProcessing'),
                     "sSearch":         Lang.get('global.datatable.sSearch'),
@@ -87,7 +88,7 @@ var DataTableReact = React.createClass({
         
     },
     
-    componentWillUpdate: function(newProps, newState){         
+    componentWillUpdate: function(newProps, newState){      
         // Suppression datable
         this.destroyDataTable();
         
@@ -124,12 +125,13 @@ var DataTableReact = React.createClass({
     /**
      * On applique le plugin dataTable sur la TABLE HTML
      */
-    applyDataTable: function(){        
+    applyDataTable: function(){   
         // Activation datatable
         this.oDataTable = $('#'+this.props.id).DataTable(this.props.settings);
-//        new $.fn.dataTable.FixedHeader( this.oDataTable,{
-//            "offsetTop": 50
-//        });
+        // Tableau à entete fixe
+        new $.fn.dataTable.FixedHeader( this.oDataTable,{
+            "offsetTop": 50
+        });
     },
     
     /**
@@ -138,7 +140,9 @@ var DataTableReact = React.createClass({
      */
     destroyDataTable: function(){
         if(!$.isEmptyObject(this.oDataTable)){
-            this.oDataTable.destroy();// ATTENTION true pose pb sur fixedHeader
+            this.oDataTable.destroy();
+            this.oDataTable.clear();// HYPER IMPORTANT clear() après destroy()
+            
         }
     },
     /**

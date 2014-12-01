@@ -6,7 +6,7 @@ var Button = ReactB.Button;
 $(function(){
     
     // Tableau
-    var head = ['Nom','E-mail','E-mail','E-mail'];
+    var head = [Lang.get('utilisateur.tableau.nom'),Lang.get('utilisateur.tableau.email'),Lang.get('utilisateur.tableau.email2'),Lang.get('utilisateur.tableau.email3')];
     var hide = ['id'];
     var evts = {'onClick':Actions.utilisateur.display_user()};
     
