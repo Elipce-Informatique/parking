@@ -2,63 +2,39 @@ var AccessMixin = require('./mixins/component_access');
 
 var actionMenuDidMount = Reflux.createAction();
 
+/**
+ * Gère les données à afficher dans la lsite des items de menu
+ */
 var menuItemsDataStore = Reflux.createStore({
     // Initial setup
     init: function () {
-
         // Register statusUpdate action
         this.listenTo(actionMenuDidMount, this.fetchMenuData);
     },
     fetchMenuData: function () {
-        var url = BASE_URI + '/menu/top_from_auth';
+        var data = Auth.menu_top.items;
+        data.forEach(function (item, i) {
+            item.active = false;
+            item.accessible = (item.accessible ? true : false);
 
-        $.ajax({
-            type: 'GET',
-            url: url,
-            data: {},
-            context: this,
-            success: function (data) {
-                data.forEach(function (item, i) {
-                    item.active = false;
-                    item.accessible = (item.accessible ? true : false);
-
-                    data[i] = item;
-                });
-                this.trigger(data);
-            },
-            error: function (xhr, type, exception) {
-                // if ajax fails display error alert
-                alert("ajax error response error " + type);
-                alert("ajax error response body " + xhr.responseText);
-            }
+            data[i] = item;
         });
+        this.trigger(data);
     }
 });
 
+/**
+ * Gère les données à afficher dans le menu utilisateur
+ */
 var menuUserDataStore = Reflux.createStore({
     // Initial setup
     init: function () {
-
         // Register statusUpdate action
         this.listenTo(actionMenuDidMount, this.fetchUserData);
     },
     fetchUserData: function () {
-        var url = BASE_URI + '/menu/top_user_from_auth';
-
-        $.ajax({
-            type: 'GET',
-            url: url,
-            data: {},
-            context: this,
-            success: function (data) {
-                this.trigger(data);
-            },
-            error: function (xhr, type, exception) {
-                // if ajax fails display error alert
-                alert("ajax error response error " + type);
-                alert("ajax error response body " + xhr.responseText);
-            }
-        });
+        var data = Auth.menu_top.user;
+        this.trigger(data);
     }
 });
 
@@ -262,13 +238,16 @@ var UserInfos = React.createClass({
     },
     getDropdown: function () {
         var itemsDrop = [];
-        this.props.dropdown.forEach(function () {
-
+        this.props.dropdown.forEach(function (link) {
+            var item = <li key={link.route}>
+                <a href={link.route}>{link.label}</a>
+            </li>;
+            itemsDrop.push(item);
         });
-
+        console.log('Pass getDropdown');
         return (
             <ul className="dropdown-menu" role="menu">
-            {itemsDrop}
+                {itemsDrop}
                 <li className="divider"></li>
                 <li>
                     <a href={this.props.logoutRoute}>{this.props.logoutText}</a>
@@ -284,8 +263,6 @@ var UserInfos = React.createClass({
  *
  * @param appName : Nom de l'application à afficher en haut à gauche
  * @param appUrl : Url associée au nom de l'application (typiquement l'accueil)
- * @param menuDataUrl : Url pour aller chercher les données contenues qui composent le menu
- * @param userDataUrl : Url pour aller chercher les données de l'utilisateur
  */
 var MenuTop = React.createClass({
     mixins: [Reflux.ListenerMixin],
@@ -339,36 +316,10 @@ var MenuTop = React.createClass({
         )
     },
     refreshUserInfos: function (infos) {
-        //console.log('Infos utilisateur :');
-        //console.log(infos);
-
+        console.log(infos);
         this.setState({userInfos: infos});
     },
     refreshDataItems: function (data) {
-        //console.log('Items menu :');
-        //console.log(data);
-        // var data = [
-        //    {
-        //        label: "item_1",
-        //        url: "http://toto.com/item_1",
-        //        active: true,
-        //        accessible: true
-        //    },
-        //    {
-        //        label: "item_2",
-        //        url: "http://toto.com/item_2",
-        //        active: false,
-        //        accessible: true,
-        //        icon: "glyphicon glyphicon-star"
-        //    },
-        //    {
-        //        label: "item_3",
-        //        url: "http://toto.com/item_3",
-        //        active: false,
-        //        accessible: false,
-        //        icon: "glyphicon glyphicon-cloud"
-        //    }];
-
         this.setState({dataItems: data});
     }
 });

@@ -58,6 +58,8 @@ Le workflow JavaScript est très automatisé. Les fichiers de développement son
     - Qu'est-ce qu'un module COMMON JS ? https://egghead.io/lessons/nodejs-what-are-commonjs-modules
 
 Les fichiers à inclure dans les pages sont placés automatiquement par gulp dans **public/js**
+/!\ IMPORTANT /!\
+EN JAVASCRIPT LA COPIE D'OBJETS DOIT ÊTRE EXPLICITE ! UNE AFFECTATION SIMPLE PASSE UNE RÉFÉRENCE !!!
 
 #### CSS
 Les fichier CSS sont écrits avec le langage Stylus (http://learnboost.github.io/stylus/)

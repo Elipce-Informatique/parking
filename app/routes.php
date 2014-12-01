@@ -18,7 +18,7 @@ Route::when('*', 'csrf', array('post', 'put', 'delete', 'patch'));
 |
 */
 
-Route::get('/', 'SessionsController@create');
+Route::get('/', ['as'=>'index', 'uses'=>'SessionsController@create']);
 /*
 |--------------------------------------------------------------------------
 | Ressource Authentification
