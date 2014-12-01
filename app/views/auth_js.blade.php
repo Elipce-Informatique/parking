@@ -12,7 +12,7 @@
          *
          * @param url : 1er segment de l'url du module à tester
          */
-        canRead : function(url){
+        canAccess : function(url){
             var retour = false;
             // Test de la présence du module dans la liste pour le mode lecture
             _.each(this.modules, function(module,index,list){
