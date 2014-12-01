@@ -18,7 +18,8 @@ var DataTableReact = React.createClass({
     oDataTable:{},
     
     cssLigne: 'row_selected',
-    userEvts : undefined,
+    myEvts : {},
+    userClick: function(){},
     
     propTypes: {
         head: React.PropTypes.array.isRequired,
@@ -64,20 +65,24 @@ var DataTableReact = React.createClass({
             attributes: {},
             evts:{},
             bUnderline: true,
-            onDataTableLineClick: function(){},
-            onDataTableBandeauLineClick: function(){}
+            onDataTableLineClick: function(){}
         };
     },
     
     componentWillMount: function(){
+         
+        // Copie des evts passés en param
+        this.myEvts = _.clone(this.props.evts);
+        // Evts définis par le DEV.
+        if(this.myEvts.onClick !== undefined){
+            this.userClick = this.myEvts.onClick;
+        }
+        // Evt onClick avec prise en charge dataTableBandeau + DataTable + DEV click
+        this.myEvts.onClick = this.handleClick;
     },
     
     componentWillReceiveProps: function(newProps){
         
-//        // Le DEV veut un surlignage sur clic
-//        if(this.props.bUnderline){
-//            this.manageLineClick(newProps);
-//        }
     },
     
     componentWillUpdate: function(newProps, newState){         
@@ -88,7 +93,7 @@ var DataTableReact = React.createClass({
     
     render: function() {
         return (
-         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} evts={this.props.evts} onDataTableLineClick={this.handleClick}/>
+         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} evts={this.myEvts}/>
         )
     },
     
@@ -140,8 +145,6 @@ var DataTableReact = React.createClass({
      * @returns {undefined}
      */
     selectRow: function(evt){
-        
-        console.log('dataTable.selectRow');
         var tr = $(evt.currentTarget);
         // GESTION VISUELLE
         if (tr.hasClass(this.cssLigne)) {
@@ -158,13 +161,12 @@ var DataTableReact = React.createClass({
             this.selectRow(e);
         }
         // Execution clic data table bandeau
-        this.props.onDataTableBandeauLineClick(e.currentTarget);
+        var monEvenement = _.clone(e);// IMPORTANT VRAI copie et non affectation de références
+        this.props.onDataTableLineClick(monEvenement);
         
         // Execution clic défini par DEV
-        if(this.props.evts.onClick !== undefined){
-            this.props.evts.onClick(e);
-            // ATTENTION supprimer le onClick de evts passé en param
-        }
+        this.userClick(e);
+        
     }
 });
 

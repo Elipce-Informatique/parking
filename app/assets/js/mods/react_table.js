@@ -15,15 +15,14 @@ var Table = React.createClass({
         hide: React.PropTypes.array.isRequired,
         data: React.PropTypes.array.isRequired,
         attributes: React.PropTypes.object,
-        evts:React.PropTypes.object,
-        onDataTableLineClick: React.PropTypes.func
+        evts:React.PropTypes.object
     },
     
     /**
      * Les props par défaut
      */
     getDefaultProps: function() {
-        return {attributes:{}, evts:{}, onDataTableClick:{}};
+        return {attributes:{}, evts:{}};
     },
 
     render: function() {
@@ -34,7 +33,7 @@ var Table = React.createClass({
             // Parcours des lignes du tableau
             this.props.data.forEach(function(dataLine, index) {
                 // Ajout du TR
-                corps.push(<TableTr key={index} data={dataLine} hide={that.props.hide} evts={that.props.evts} onDataTableClick={that.props.onDataTableLineClick}/>)
+                corps.push(<TableTr key={index} data={dataLine} hide={that.props.hide} evts={that.props.evts}/>)
             });
             
             // ID
@@ -90,8 +89,7 @@ var TableTr = React.createClass({
      propTypes: {
         data: React.PropTypes.object.isRequired,
         hide: React.PropTypes.array.isRequired,
-        evts:React.PropTypes.object,
-        onDataTableClick:React.PropTypes.func
+        evts:React.PropTypes.object
     },
 
     render: function() {
@@ -112,7 +110,7 @@ var TableTr = React.createClass({
                   }
              });
              // Ajout du tr
-             return <tr {...attr} {...this.props.evts} onClick={this.handleClick}>{tr}</tr>
+             return <tr {...attr} {...this.props.evts}>{tr}</tr>
            
      
     },
@@ -122,9 +120,5 @@ var TableTr = React.createClass({
  | FONCTIONS NON REACT
  |--------------------------------------------------------------------------
  */
-    handleClick: function(e){
-        console.log('tr.handleClick');
-        // Appel du click
-        this.props.onDataTableClick(e);
-    }
+
 });

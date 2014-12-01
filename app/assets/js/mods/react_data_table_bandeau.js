@@ -23,8 +23,7 @@ var DataTableBandeauReact = React.createClass({
         settings:React.PropTypes.object,
         attributes:React.PropTypes.object,
         evts:React.PropTypes.object,
-        bUnderline:React.PropTypes.bool,
-        onDataTableBandeauLineClick: React.PropTypes.func
+        bUnderline:React.PropTypes.bool
     },
     
     /**
@@ -43,7 +42,7 @@ var DataTableBandeauReact = React.createClass({
     render: function() {       
         
         return (
-         <DataTable id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} onDataTableBandeauLineClick={Actions.global.table_bandeau_line_clicked}/>
+         <DataTable id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} onDataTableLineClick={Actions.global.table_bandeau_line_clicked}/>
         )
     }
     

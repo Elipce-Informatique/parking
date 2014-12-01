@@ -8,7 +8,8 @@ $(function(){
     // Tableau
     var head = ['Nom','E-mail'];
     var hide = ['id'];
-    var evts = {'onClick':function(){alert("clic défini par DEV")}};
+    var evts = {'onClick':function(e){alert('clic DEV')},
+                };
 //    evts = {};
     
     // Bandeau ATTENTION BANDEAU AVANT à cause du fixed header du tableau
