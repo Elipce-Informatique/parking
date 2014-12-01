@@ -244,7 +244,6 @@ var UserInfos = React.createClass({
             </li>;
             itemsDrop.push(item);
         });
-        console.log('Pass getDropdown');
         return (
             <ul className="dropdown-menu" role="menu">
                 {itemsDrop}
@@ -316,7 +315,6 @@ var MenuTop = React.createClass({
         )
     },
     refreshUserInfos: function (infos) {
-        console.log(infos);
         this.setState({userInfos: infos});
     },
     refreshDataItems: function (data) {
