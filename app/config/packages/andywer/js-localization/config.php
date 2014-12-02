@@ -28,6 +28,6 @@ return array(
     |
     */
 
-    'messages' => array('auth','global','menu','utilisateur'),
+    'messages' => array('auth','global','menu','utilisateur','accueil'),
 
 );

@@ -1,6 +1,6 @@
 /**
- * Utilise la variable de classe
- * @type {{componentWillMount: Function}}
+ * Utilise la propriété this.props.module_url pour identifier le module
+ *
  */
 var AuthentLevelMixin = {
     componentWillMount: function () {
@@ -14,7 +14,7 @@ var AuthentLevelMixin = {
         return <span />;
     },
     _setRenderMethod: function () {
-        this.render = Auth.canAccess(this.module_url) ? this._originalRender : this._emptyRender;
+        this.render = Auth.canAccess(this.props.module_url) ? this._originalRender : this._emptyRender;
     }
 }
 

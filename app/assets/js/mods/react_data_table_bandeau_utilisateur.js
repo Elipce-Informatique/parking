@@ -17,8 +17,6 @@ var DataTableBandeauUtilisateurReact = React.createClass({
     
     mixins: [Reflux.ListenerMixin,AuthentMixins],
     
-    module_url: 'utilisateur',
-    
     propTypes: {
         head: React.PropTypes.array.isRequired,
         hide: React.PropTypes.array.isRequired,
@@ -37,7 +35,8 @@ var DataTableBandeauUtilisateurReact = React.createClass({
         return {
             attributes: {},
             evts:{},
-            bUnderline: true
+            bUnderline: true,
+            module_url: 'utilisateur'
         };
     },
     

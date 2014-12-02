@@ -20,16 +20,13 @@ Puis jQuery et Bootstrap comme utilitaires.
     - Pour les appeller en JS on fait ```Lang.get('fichier.constante')```;
     
 ### Environnement de dev Front End
-###### - Installation de **node js** : http://nodejs.org/
-- Si la commande ```npm``` affiche une erreur "ENOENT" dans powershell, il faut créer un dossier npm vide dans %appdata%
-
-###### - Installation de **Gulp** en global
+- Installation de **node js** : http://nodejs.org/
+    - Si la commande ```npm``` affiche une erreur "ENOENT" dans powershell, il faut créer un dossier npm vide dans %appdata%
+- Installation de **Gulp** en global
 ```nmp install --global gulp```
-
-###### - Installation de **Browserify** en global
+- Installation de **Browserify** en global
 ```npm install -g browserify```
-
-###### - Installation des dépendences nodes depuis le package.json
+- Installation des dépendences nodes depuis le package.json
 lancer la commande : ```npm update``` depuis la racine du projet
 
 ## Conventions de développement
@@ -61,6 +58,24 @@ Le workflow JavaScript est très automatisé. Les fichiers de développement son
 Les fichiers à inclure dans les pages sont placés automatiquement par gulp dans **public/js**
 - /!\ IMPORTANT /!\
     - EN JAVASCRIPT LA COPIE D'OBJETS DOIT ÊTRE EXPLICITE ! UNE AFFECTATION SIMPLE PASSE UNE RÉFÉRENCE !!!
+- Pour tester le type d'une variable, on utilise l'opérateur **typeof**
+```
+typeof []; // object
+typeof {}; // object
+typeof ''; // string
+typeof new Date() // object
+typeof 1; // number
+typeof function () {}; // function
+typeof /test/i; // object
+typeof true; // boolean
+typeof null; // object
+typeof undefined; // undefined
+
+// Example : 
+if(typeof foo == 'undefined'){
+    bar = true;
+}
+```
 
 #### CSS
 Les fichier CSS sont écrits avec le langage Stylus (http://learnboost.github.io/stylus/)
