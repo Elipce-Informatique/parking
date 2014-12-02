@@ -14,7 +14,7 @@ Puis jQuery et Bootstrap comme utilitaires.
 - Ajout du dossier ```C:\Users\*********\AppData\Roaming\Composer\vendor\bin``` au path
 - Installation de Laravel en global
 	- Doc vidéo : https://laracasts.com/lessons/laravel-installation-for-newbs (Recommandée)
-	- Doc écrite: http://laravel.com/docs/4.2/quick (section "Via Composer")
+	- Doc écrite: http://laravel.com/docs/4.2/quick (section "Via Laravel Installer")
 - Clonner le projet github dans un dossier local (typiquement dans le dossier www de easyphp)
 - Installation des **dépendences Laravel** en ligne de commande (se placer dans le dossier du projet) : 
 ```composer update```
