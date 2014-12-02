@@ -6,13 +6,13 @@ Puis jQuery et Bootstrap comme utilitaires.
 
 
 ## INIT de l'environnement de développement
-
+** Si les commandes composer et npm ne sont pas reconues, il faut sans doute ajouter leur chemin dans le path local **
 ### Environnement de dev backend
 - Installation de composer (https://getcomposer.org/download/)
+- Ajout du dossier ```C:\Users\*********\AppData\Roaming\Composer\vendor\bin``` au path
 - Installation de Laravel en global
 	- Doc écrite: http://laravel.com/docs/4.2/quick
 	- Doc vidéo : https://laracasts.com/lessons/laravel-installation-for-newbs
-- Ajout du dossier ```C:\Users\*********\AppData\Roaming\Composer\vendor\bin``` au path
 - Installation des dépendences (se placer dans le dossier du projet) : 
 ```composer update```
 - les langues sont définies dans des fichiers par thèmes (app/lang/fr)
@@ -58,7 +58,7 @@ Le workflow JavaScript est très automatisé. Les fichiers de développement son
 Les fichiers à inclure dans les pages sont placés automatiquement par gulp dans **public/js**
 - /!\ IMPORTANT /!\
     - EN JAVASCRIPT LA COPIE D'OBJETS DOIT ÊTRE EXPLICITE ! UNE AFFECTATION SIMPLE PASSE UNE RÉFÉRENCE !!!
-- Pour tester le type d'une variable, on utilise l'opérateur **typeof**
+- Pour tester le type d'une variable, on utilise l'opérateur **typeof** :
 ```javascript
 typeof []; // object
 typeof {}; // object
@@ -86,8 +86,9 @@ Les fichier CSS sont écrits avec le langage Stylus (http://learnboost.github.io
 ## Liste des libs disponnibles
 ### Javascript
 - Voir le [package.json](package.json) section **"dependencies"**
-- Pour avoir un aperçu de ce qui est **dispo globalement** (pas besoin de require), voir [app.js](app/assets/js/global/app.js)
-- Pour les autres libs, il faut les **require** selon le besoin.
+- Pour avoir un aperçu de ce qui est **dispo globalement** dans toutes les pages (pas besoin de require), voir [app.js](app/assets/js/global/app.js)
+- Pour les autres libs, il faut les **require** selon le besoin si elles sont installées via NPM Sinon, les inclure dans le template php
+dans la section scripts : ```@section('scripts')```
 
 ### PHP
 - Voir le [package.json](package.json) section **"require"**
