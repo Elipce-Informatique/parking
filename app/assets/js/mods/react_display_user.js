@@ -5,7 +5,7 @@
 var DisplayUser = React.createClass({
     
     propTypes: {
-        head: React.PropTypes.array.isRequired
+        infos: React.PropTypes.object.isRequired
     },
     
     /**
@@ -14,17 +14,20 @@ var DisplayUser = React.createClass({
     getDefaultProps: function() {
         
         return {
-            attributes: {},
-            evts:{},
-            bUnderline: true,
-            data: []
+            infos: {}
         };
     },
     
     render: function() {       
         
         return (
-         <h1 />
+        <div>
+            <img src={this.props.infos.photo} className="img-responsive img-thumbnail" alt={this.props.infos.nom+' '+{this.props.infos.prenom}}/>
+            <h2>{this.props.infos.nom} {this.props.infos.prenom}<h2>
+            <div className="row">
+                <label className="col-md-2 text-right">{this.props.infos.nom}</label>
+                
+        <div>
         )
     }
     
