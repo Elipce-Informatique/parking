@@ -34,14 +34,15 @@ Puis jQuery et Bootstrap comme utilitaires.
 lancer la commande : ```npm update``` depuis la racine du projet
 
 ## Conventions de développement
-- ON NE DOIT RIEN METTRE MANUELLEMENT DANS LE DOSSIER ```public```
+- ON NE DOIT RIEN METTRE MANUELLEMENT DANS LE DOSSIER **public**
 - Template par défaut utilisé sur la majorité des pages pompé de bootstrap : http://getbootstrap.com/examples/dashboard/
 
 #### PHP
 - Utilisation des routes de type 'resource' au MAXIMUM pour être RESTFUL
 - Template structuré de la manière suivante
-```/views
-    structure.blade
+```
+    /views
+        - structure.blade
     /layouts
         - login.blade
         - default.blade
