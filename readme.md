@@ -6,7 +6,9 @@ Puis jQuery et Bootstrap comme utilitaires.
 
 
 ## INIT de l'environnement de développement
-**Si les commandes composer et npm ne sont pas reconues, il faut sans doute ajouter leur chemin dans le path local**
+- **Si les commandes composer et npm ne sont pas reconues, il faut sans doute ajouter leur chemin dans le path local**
+- Les commandes en consoles sont à lancer depuis un **powershell** de préférence
+- Il est fortement conseillé d'installer Cmder pour avoir un meilleur shell sous Windows : http://bliker.github.io/cmder/
 ### Environnement de dev backend
 - Installation de composer (https://getcomposer.org/download/)
 - Ajout du dossier ```C:\Users\*********\AppData\Roaming\Composer\vendor\bin``` au path
