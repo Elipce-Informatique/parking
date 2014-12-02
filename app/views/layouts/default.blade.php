@@ -16,7 +16,7 @@
     <div class="container-fluid">
         <div class="row">
             <div id="menu-left" class="col-sm-3 col-md-2 sidebar">
-
+                   Mon sous menu
             </div>
             <div  id="content" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                 @yield('content')

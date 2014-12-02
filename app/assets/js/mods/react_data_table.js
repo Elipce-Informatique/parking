@@ -10,6 +10,7 @@
  * @param object evts: évènements sur les lignes de tableau {onClick:function(}{}} ATTENTION: les clés correspondent aux noms d'évènements HTML case sensitive.
  * @param boolean bUnderline: TRUE: Evenement par defaut sur click d'une ligne: surlignage
  *                            FALSE: pas d'évènement par défaut.
+ * @param function onDataTableLineClick: sur clic ligne de tableau DataTable
  */
 
 var Table = require('./react_table');
@@ -40,28 +41,30 @@ var DataTableReact = React.createClass({
         
         return {
             settings:{
+                responsive: true,
                 "language": {
-                "sProcessing":     Lang.get('global.datatable.sProcessing'),
-                "sSearch":         Lang.get('global.datatable.sSearch'),
-                "sLengthMenu":     Lang.get('global.datatable.sLengthMenu'),
-                "sInfo":           Lang.get('global.datatable.sInfo'),
-                "sInfoEmpty":      Lang.get('global.datatable.sInfoEmpty'),
-                "sInfoFiltered":   Lang.get('global.datatable.sInfoFiltered'),
-                "sInfoPostFix":    Lang.get('global.datatable.sInfoPostFix'),
-                "sLoadingRecords": Lang.get('global.datatable.sLoadingRecords'),
-                "sZeroRecords":    Lang.get('global.datatable.sZeroRecords'),
-                "sEmptyTable":     Lang.get('global.datatable.sEmptyTable'),
-                "oPaginate": {
-                    "sFirst":      Lang.get('global.datatable.oPaginate.sFirst'),
-                    "sPrevious":   Lang.get('global.datatable.oPaginate.sPrevious'),
-                    "sNext":       Lang.get('global.datatable.oPaginate.sNext'),
-                    "sLast":       Lang.get('global.datatable.oPaginate.sLast')
-                },
-                "oAria": {
-                    "sSortAscending":  Lang.get('global.datatable.oAria.sSortAscending'),
-                    "sSortDescending": Lang.get('global.datatable.oAria.sSortDescending')
+                    "sProcessing":     Lang.get('global.datatable.sProcessing'),
+                    "sSearch":         Lang.get('global.datatable.sSearch'),
+                    "sLengthMenu":     Lang.get('global.datatable.sLengthMenu'),
+                    "sInfo":           Lang.get('global.datatable.sInfo'),
+                    "sInfoEmpty":      Lang.get('global.datatable.sInfoEmpty'),
+                    "sInfoFiltered":   Lang.get('global.datatable.sInfoFiltered'),
+                    "sInfoPostFix":    Lang.get('global.datatable.sInfoPostFix'),
+                    "sLoadingRecords": Lang.get('global.datatable.sLoadingRecords'),
+                    "sZeroRecords":    Lang.get('global.datatable.sZeroRecords'),
+                    "sEmptyTable":     Lang.get('global.datatable.sEmptyTable'),
+                    "oPaginate": {
+                        "sFirst":      Lang.get('global.datatable.oPaginate.sFirst'),
+                        "sPrevious":   Lang.get('global.datatable.oPaginate.sPrevious'),
+                        "sNext":       Lang.get('global.datatable.oPaginate.sNext'),
+                        "sLast":       Lang.get('global.datatable.oPaginate.sLast')
+                    },
+                    "oAria": {
+                        "sSortAscending":  Lang.get('global.datatable.oAria.sSortAscending'),
+                        "sSortDescending": Lang.get('global.datatable.oAria.sSortDescending')
+                    }
                 }
-            }},
+        },
             attributes: {},
             evts:{},
             bUnderline: true,
@@ -85,7 +88,7 @@ var DataTableReact = React.createClass({
         
     },
     
-    componentWillUpdate: function(newProps, newState){         
+    componentWillUpdate: function(newProps, newState){      
         // Suppression datable
         this.destroyDataTable();
         
@@ -122,9 +125,10 @@ var DataTableReact = React.createClass({
     /**
      * On applique le plugin dataTable sur la TABLE HTML
      */
-    applyDataTable: function(){        
+    applyDataTable: function(){   
         // Activation datatable
         this.oDataTable = $('#'+this.props.id).DataTable(this.props.settings);
+        // Tableau à entete fixe
         new $.fn.dataTable.FixedHeader( this.oDataTable,{
             "offsetTop": 50
         });
@@ -136,7 +140,9 @@ var DataTableReact = React.createClass({
      */
     destroyDataTable: function(){
         if(!$.isEmptyObject(this.oDataTable)){
-            this.oDataTable.destroy();// ATTENTION true pose pb sur fixedHeader
+            this.oDataTable.destroy();
+            this.oDataTable.clear();// HYPER IMPORTANT clear() après destroy()
+            
         }
     },
     /**

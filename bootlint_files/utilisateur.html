@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)http://localhost/elipce_workflow/utilisateur -->
+<html class="no-js" lang=""><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="apple-touch-icon" href="http://localhost/elipce_workflow/apple-touch-icon.png">
+
+        <!-- CSS GLOBAL À L'APPLICATION -->
+        <link rel="stylesheet" type="text/css" href="./utilisateur_files/_global.css">
+        <link rel="stylesheet" type="text/css" href="./utilisateur_files/all.css">
+                <link rel="stylesheet" href="http://localhost/elipce_workflow/public/css/utilisateur.css">
+    </head>
+    <body>
+
+            <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    <!-- Menu header de l'application -->
+    <nav id="menu-top" class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container-fluid" data-reactid=".0"><div class="navbar-header" data-reactid=".0.0"><button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" data-reactid=".0.0.0"><span class="sr-only" data-reactid=".0.0.0.0">Toggle navigation</span><span class="icon-bar" data-reactid=".0.0.0.1"></span><span class="icon-bar" data-reactid=".0.0.0.2"></span><span class="icon-bar" data-reactid=".0.0.0.3"></span></button><a class="navbar-brand" href="http://localhost/elipce_workflow/" data-reactid=".0.0.1">Elipce Workflow</a></div><div id="navbar" class="navbar-collapse collapse" data-reactid=".0.1"><ul class="nav navbar-nav navbar-left" data-reactid=".0.1.0"><li class="" data-reactid=".0.1.0.$1"><a href="http://localhost/elipce_workflow/administration" data-reactid=".0.1.0.$1.0">Administration</a></li></ul><ul class="nav navbar-nav navbar-right" data-reactid=".0.1.1"><li class="dropdown" data-reactid=".0.1.1.0"><a href="http://localhost/elipce_workflow/utilisateur#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" data-reactid=".0.1.1.0.0"><i class="glyphicon glyphicon-user" data-reactid=".0.1.1.0.0.0"></i><span data-reactid=".0.1.1.0.0.1"> </span><span data-reactid=".0.1.1.0.0.2">perez</span><span class="caret" data-reactid=".0.1.1.0.0.3"></span></a><ul class="dropdown-menu" role="menu" data-reactid=".0.1.1.0.1"><li data-reactid=".0.1.1.0.1.0:$http=2//localhost/elipce_workflow"><a href="http://localhost/elipce_workflow" data-reactid=".0.1.1.0.1.0:$http=2//localhost/elipce_workflow.0">Paramètres</a></li><li class="divider" data-reactid=".0.1.1.0.1.1"></li><li data-reactid=".0.1.1.0.1.2"><a data-reactid=".0.1.1.0.1.2.0" href="http://localhost/elipce_workflow/logout">Déconnexion</a></li></ul></li></ul></div></div></nav>
+    <!-- Contenu de l'application -->
+    <div class="container-fluid">
+        <div class="row">
+            <div id="menu-left" class="col-sm-3 col-md-2 sidebar">
+                   Mon sous menu
+            </div>
+            <div id="content" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                    <div class="row" id="bandeau"><div class="col-md-12 bandeau" data-reactid=".1"><h1 data-reactid=".1.0">Gestion des utilisateurs de l'application</h1><div role="toolbar" class="btn-toolbar" data-reactid=".1.1"><button id="btn_creer" type="button" class="btn btn-sm btn-default" data-reactid=".1.1.0"><span class="glyphicon glyphicon-plus-sign" data-reactid=".1.1.0.0"></span><span data-reactid=".1.1.0.1"> </span><span data-reactid=".1.1.0.2">Créer</span></button><button id="btn_edit" disabled="" type="button" class="btn btn-sm btn-default" data-reactid=".1.1.1"><span class="glyphicon glyphicon-pencil" data-reactid=".1.1.1.0"></span><span data-reactid=".1.1.1.1"> </span><span data-reactid=".1.1.1.2">Editer</span></button><button id="btn_del" disabled="" type="button" class="btn btn-sm btn-default" data-reactid=".1.1.2"><span class="glyphicon glyphicon-minus-sign" data-reactid=".1.1.2.0"></span><span data-reactid=".1.1.2.1"> </span><span data-reactid=".1.1.2.2">Supprimer</span></button></div></div></div>
+
+    <div class="row">
+        <div class="col-md-12"> 
+            <div id="tableau_react"><div class="" data-reactid=".2"><div id="tab_users_wrapper" class="dataTables_wrapper no-footer"><div class="dataTables_length" id="tab_users_length"><label>Afficher <select name="tab_users_length" aria-controls="tab_users" class=""><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select> éléments</label></div><div id="tab_users_filter" class="dataTables_filter"><label>Rechercher<input type="search" class="" placeholder="" aria-controls="tab_users"></label></div><table class="display responsive no-wrap no-footer dtr-inline dataTable" width="100%" id="tab_users" data-reactid=".2.0" role="grid" aria-describedby="tab_users_info" style="width: 100%;"><thead data-reactid=".2.0.0"><tr data-reactid=".2.0.0.0" role="row"><td data-reactid=".2.0.0.0.$0" class="sorting_asc" tabindex="0" aria-controls="tab_users" rowspan="1" colspan="1" aria-label="Nom=&gt; activer pour trier la colonne par ordre d&amp;eacute;croissant" style="width: 107px;" aria-sort="ascending">Nom</td><td data-reactid=".2.0.0.0.$1" class="sorting" tabindex="0" aria-controls="tab_users" rowspan="1" colspan="1" aria-label="E-mail=&gt; activer pour trier la colonne par ordre croissant" style="width: 350px;">E-mail</td><td data-reactid=".2.0.0.0.$2" class="sorting" tabindex="0" aria-controls="tab_users" rowspan="1" colspan="1" aria-label="E-mail=&gt; activer pour trier la colonne par ordre croissant" style="width: 351px;">E-mail</td><td data-reactid=".2.0.0.0.$3" class="sorting" tabindex="0" aria-controls="tab_users" rowspan="1" colspan="1" aria-label="E-mail=&gt; activer pour trier la colonne par ordre croissant" style="width: 351px;">E-mail</td></tr></thead><tbody data-reactid=".2.0.1"><tr data-id="7" data-reactid=".2.0.1.$3" role="row" class="odd"><td data-reactid=".2.0.1.$3.$7nom" class="sorting_1">GUY</td><td data-reactid=".2.0.1.$3.$7email">guy@g.com</td><td data-reactid=".2.0.1.$3.$7mail2">guy@g.com</td><td data-reactid=".2.0.1.$3.$7mail3">guy@g.com</td></tr><tr data-id="2" data-reactid=".2.0.1.$1" role="row" class="even"><td data-reactid=".2.0.1.$1.$2nom" class="sorting_1">perez</td><td data-reactid=".2.0.1.$1.$2email">vivian.perez@elipce.com</td><td data-reactid=".2.0.1.$1.$2mail2">vivian.perez@elipce.com</td><td data-reactid=".2.0.1.$1.$2mail3">vivian.perez@elipce.com</td></tr><tr data-id="4" data-reactid=".2.0.1.$2" role="row" class="odd"><td data-reactid=".2.0.1.$2.$4nom" class="sorting_1">Vallier</td><td data-reactid=".2.0.1.$2.$4email">lvallier@elipce.com</td><td data-reactid=".2.0.1.$2.$4mail2">lvallier@elipce.com</td><td data-reactid=".2.0.1.$2.$4mail3">lvallier@elipce.com</td></tr><tr data-id="1" data-reactid=".2.0.1.$0" role="row" class="even"><td data-reactid=".2.0.1.$0.$1nom" class="sorting_1">yann</td><td data-reactid=".2.0.1.$0.$1email">yann.pltv@gmail.com</td><td data-reactid=".2.0.1.$0.$1mail2">yann.pltv@gmail.com</td><td data-reactid=".2.0.1.$0.$1mail3">yann.pltv@gmail.com</td></tr></tbody></table><div class="dataTables_info" id="tab_users_info" role="status" aria-live="polite">Affichage de l'élement 1 à 4 sur 4 éléments</div><div class="dataTables_paginate paging_simple_numbers" id="tab_users_paginate"><a class="paginate_button previous disabled" aria-controls="tab_users" data-dt-idx="0" tabindex="0" id="tab_users_previous">Précédent</a><span><a class="paginate_button current" aria-controls="tab_users" data-dt-idx="1" tabindex="0">1</a></span><a class="paginate_button next disabled" aria-controls="tab_users" data-dt-idx="2" tabindex="0" id="tab_users_next">Suivant</a></div></div></div></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12"> 
+            <button id="test" type="button">IIIIIIII</button>
+        </div>
+    </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Inclusion des differents scripts globaux -->
+        <div id="scripts">
+                <script src="./utilisateur_files/localization.js"></script>
+
+    <script type="text/javascript" src="./utilisateur_files/messages"></script>
+            <script type="text/javascript">
+    window.Auth = {
+        modules : [{"id":1,"url":"administration","traduction":"administration","is_menu":1,"access_level":"modif"},{"id":2,"url":"utilisateur","traduction":"utilisateurs","is_menu":1,"access_level":"modif"},{"id":3,"url":"profils","traduction":"profils","is_menu":1,"access_level":"modif"}],
+        menu_top:{
+            items: [{"id":1,"url":"administration","traduction":"administration","is_menu":1,"accessible":1}],
+            user: {"nomUtilisateur":"perez","logoutRoute":"http:\/\/localhost\/elipce_workflow\/logout","logoutText":"D\u00e9connexion","dropdown":[{"label":"Param\u00e8tres","route":"http:\/\/localhost\/elipce_workflow"}]}
+        },
+        /**
+         * Retourne true si l'utilisateur a le droit d'accès en lecture au module
+         * correspondant à l'URL passée en paramètres (1er segment de l'URL seulement)
+         *
+         * @param  url : 1er segment de l'url du module à tester
+         */
+        canAccess : function(url){
+            var retour = false;
+            // Test de la présence du module dans la liste pour le mode lecture
+            _.each(this.modules, function(module,index,list){
+                if(module.url == url){
+                    retour = true;
+                }
+            }, this);
+            return retour;
+        },
+        /**
+         * Retourne true si l'utilisateur a le droit d'accès en modif au module
+         * correspondant à l'URL passée en paramètres (1er segment de l'URL seulement)
+         *
+         * @param  url : 1er segment de l'url du module à tester
+         */
+        canModif: function(url){
+            var retour = false;
+            // Test de la présence du module dans la liste ET de la valeur modif
+            _.each(this.modules, function(module,index,list){
+                if(module.url == url && module.access_level == 'modif'){
+                    retour = true;
+                }
+            }, this);
+            return retour;
+        }
+    };
+    </script>
+            <script type="text/javascript">window.BASE_URI="http://localhost/elipce_workflow/"</script>
+            <script type="text/javascript" src="./utilisateur_files/app.js"></script>
+            <script type="text/javascript" src="./utilisateur_files/bootstrap.js"></script>
+                <script type="text/javascript" src="./utilisateur_files/menu.app.js"></script>
+        <script src="./utilisateur_files/utilisateur.app.js"></script>
+    <script src="./utilisateur_files/jquery.dataTables.min.js"></script>
+        </div>
+        <input type="hidden" id="_token" name="_token" value="gFrNKb1von0C6fRvxvsZ5Y7yzvzjNRw4U4RzCe3U ?&gt;">
+    
+</body></html>

@@ -5,16 +5,8 @@
 @stop
 
 @section('content')
-    <div class="row">
-        <div class="col-md-12" id="bandeau">
-        
-        </div>
+    <div class="row" id="bandeau">
     </div>
-<!--    <div class="row">
-        <div class="col-md-12"> 
-            <h1>{{Lang::get('utilisateur.titre')}}</h1>
-        </div>
-    </div>-->
 
     <div class="row">
         <div class="col-md-12"> 
@@ -23,25 +15,11 @@
             </div>
         </div>
     </div>
-<div class="row">
+    <div class="row">
         <div class="col-md-12"> 
-            <button id="test">IIIIIIII</button>
+            <button id="test" type="button">IIIIIIII</button>
         </div>
     </div>
-<!--    {{ Form::open(['route'=>'sessions.store']) }}
-        <div>
-            {{Form::label('email', 'Email: ')}}
-            {{Form::text('email')}}
-        </div>
-        <div>
-            {{Form::label('password', 'Mot de passe: ')}}
-            {{Form::password('password')}}
-        </div>
-
-        <div>
-            {{Form::submit('login')}}
-        </div>
-    {{ Form::close() }}-->
 @stop
 
 @section('scripts')

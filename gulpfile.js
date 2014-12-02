@@ -22,6 +22,7 @@ var concat = require('gulp-concat');
 var replace = require('gulp-replace');
 var Q = require('Q');
 var del = require('del');
+var bootlint  = require('gulp-bootlint');
 
 // UTIL REQUIRELMENTS
 var bundleLogger = require('./gulp_utils/bundleLogger');
@@ -241,4 +242,10 @@ gulp.task('browserify',  function (callback) {
 
     // Start bundling with Browserify for each bundleConfig specified
     config.bundleConfigs().forEach(browserifyThis);
+});
+
+// Bootlint
+gulp.task('bootlint', function() {
+    gulp.src('./bootlint_files/*')
+        .pipe(bootlint());
 });

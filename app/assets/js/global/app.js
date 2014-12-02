@@ -40,5 +40,6 @@ window.Actions.global = Reflux.createActions([
  |--------------------------------------------------------------------------
  */
 window.Actions.utilisateur = Reflux.createActions([
-    "load_data"
+    "load_data",
+    "display_user"
 ]);
