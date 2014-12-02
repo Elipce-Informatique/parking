@@ -59,7 +59,7 @@ Les fichiers à inclure dans les pages sont placés automatiquement par gulp dan
 - /!\ IMPORTANT /!\
     - EN JAVASCRIPT LA COPIE D'OBJETS DOIT ÊTRE EXPLICITE ! UNE AFFECTATION SIMPLE PASSE UNE RÉFÉRENCE !!!
 - Pour tester le type d'une variable, on utilise l'opérateur **typeof**
-```
+```javascript
 typeof []; // object
 typeof {}; // object
 typeof ''; // string
