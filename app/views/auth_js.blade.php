@@ -14,7 +14,12 @@
          */
         canAccess : function(url){
             var retour = false;
-            // Test de la présence du module dans la liste pour le mode lecture
+
+            // SI UNDEFINED, ON DONNE LE DROIT D'ACCÈS
+            if(typeof url == 'undefined'){
+                retour = true;
+            }
+            // TEST DE LA PRÉSENCE DU MODULE DANS LA LISTE POUR LE MODE LECTURE
             _.each(this.modules, function(module,index,list){
                 if(module.url == url){
                     retour = true;

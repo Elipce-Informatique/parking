@@ -6,40 +6,43 @@ Puis jQuery et Bootstrap comme utilitaires.
 
 
 ## INIT de l'environnement de développement
+- **Si les commandes composer et npm ne sont pas reconues, il faut sans doute ajouter leur chemin dans le path local**
+- Les commandes en consoles sont à lancer depuis un **powershell** de préférence
+- Il est fortement conseillé d'installer Cmder pour avoir un meilleur shell sous Windows : http://bliker.github.io/cmder/
 
 ### Environnement de dev backend
 - Installation de composer (https://getcomposer.org/download/)
-- Installation de Laravel en global
-	- Doc écrite: http://laravel.com/docs/4.2/quick
-	- Doc vidéo : https://laracasts.com/lessons/laravel-installation-for-newbs
 - Ajout du dossier ```C:\Users\*********\AppData\Roaming\Composer\vendor\bin``` au path
-- Installation des dépendences (se placer dans le dossier du projet) : 
+- Installation de Laravel en global
+	- Doc vidéo : https://laracasts.com/lessons/laravel-installation-for-newbs (Recommandée)
+	- Doc écrite: http://laravel.com/docs/4.2/quick (section "Via Laravel Installer")
+- Clonner le projet github dans un dossier local (typiquement dans le dossier www de easyphp)
+- Installation des **dépendences Laravel** en ligne de commande (se placer dans le dossier du projet) : 
 ```composer update```
 - les langues sont définies dans des fichiers par thèmes (app/lang/fr)
     - Pour les utiliser en JS il faut les déclarer dans la config package/andywer/js-localization
     - Pour les appeller en JS on fait ```Lang.get('fichier.constante')```;
     
 ### Environnement de dev Front End
-###### - Installation de **node js** : http://nodejs.org/
-- Si la commande ```npm``` affiche une erreur "ENOENT" dans powershell, il faut créer un dossier npm vide dans %appdata%
-
-###### - Installation de **Gulp** en global
+- Installation de **node js** : http://nodejs.org/
+    - Si la commande ```npm``` affiche une erreur "ENOENT" dans powershell, il faut créer un dossier npm vide dans %appdata%
+- Installation de **Gulp** en global
 ```nmp install --global gulp```
-
-###### - Installation de **Browserify** en global
+- Installation de **Browserify** en global
 ```npm install -g browserify```
-
-###### - Installation des dépendences nodes depuis le package.json
+- Installation des dépendences nodes depuis le package.json
 lancer la commande : ```npm update``` depuis la racine du projet
 
 ## Conventions de développement
-- ON NE DOIT RIEN METTRE MANUELLEMENT DANS LE DOSSIER ```public```
+- ON NE DOIT RIEN METTRE MANUELLEMENT DANS LE DOSSIER **public**
 - Template par défaut utilisé sur la majorité des pages pompé de bootstrap : http://getbootstrap.com/examples/dashboard/
+
 #### PHP
 - Utilisation des routes de type 'resource' au MAXIMUM pour être RESTFUL
 - Template structuré de la manière suivante
-```/views
-    structure.blade
+```
+    /views
+        - structure.blade
     /layouts
         - login.blade
         - default.blade
@@ -61,6 +64,24 @@ Le workflow JavaScript est très automatisé. Les fichiers de développement son
 Les fichiers à inclure dans les pages sont placés automatiquement par gulp dans **public/js**
 - /!\ IMPORTANT /!\
     - EN JAVASCRIPT LA COPIE D'OBJETS DOIT ÊTRE EXPLICITE ! UNE AFFECTATION SIMPLE PASSE UNE RÉFÉRENCE !!!
+- Pour tester le type d'une variable, on utilise l'opérateur **typeof** :
+```javascript
+    typeof []; // object
+    typeof {}; // object
+    typeof ''; // string
+    typeof new Date() // object
+    typeof 1; // number
+    typeof function () {}; // function
+    typeof /test/i; // object
+    typeof true; // boolean
+    typeof null; // object
+    typeof undefined; // undefined
+    
+    // Example : 
+    if(typeof foo == 'undefined'){
+        bar = true;
+    }
+```
 
 #### CSS
 Les fichier CSS sont écrits avec le langage Stylus (http://learnboost.github.io/stylus/)
@@ -69,10 +90,12 @@ Les fichier CSS sont écrits avec le langage Stylus (http://learnboost.github.io
 - Les **tailles de polices** sont à définir en **%** pour le meilleur rendu possible en responsive
 
 ## Liste des libs disponnibles
+
 ### Javascript
 - Voir le [package.json](package.json) section **"dependencies"**
-- Pour avoir un aperçu de ce qui est **dispo globalement** (pas besoin de require), voir [app.js](app/assets/js/global/app.js)
-- Pour les autres libs, il faut les **require** selon le besoin.
+- Pour avoir un aperçu de ce qui est **dispo globalement** dans toutes les pages (pas besoin de require), voir [app.js](app/assets/js/global/app.js)
+- Pour les autres libs, il faut les **require** selon le besoin si elles sont installées via NPM Sinon, les inclure dans le template php
+dans la section scripts : ```@section('scripts')```
 
 ### PHP
 - Voir le [package.json](package.json) section **"require"**

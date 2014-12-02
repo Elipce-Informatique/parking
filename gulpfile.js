@@ -244,7 +244,7 @@ gulp.task('browserify',  function (callback) {
     config.bundleConfigs().forEach(browserifyThis);
 });
 
-// Bootlint
+// BOOTLINT
 gulp.task('bootlint', function() {
     gulp.src('./bootlint_files/*')
         .pipe(bootlint());
