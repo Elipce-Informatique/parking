@@ -25,7 +25,7 @@ Puis jQuery et Bootstrap comme utilitaires.
     
 ### Environnement de dev Front End
 - Installation de **node js** : http://nodejs.org/
-    - Si la commande ```npm``` affiche une erreur "ENOENT" dans powershell, il faut créer un dossier npm vide dans %appdata%
+    - Si la commande ```npm``` affiche une erreur "ENOENT" dans powershell, il faut créer un dossier npm vide dans %appdata%/Roaming
 - Installation de **Gulp** en global
 ```nmp install --global gulp```
 - Installation de **Browserify** en global
