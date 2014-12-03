@@ -4,42 +4,44 @@
  * Parsé ensuite par gulp et browserify pour aller dans le dossier public
  */
 
-/*
- |--------------------------------------------------------------------------
- | INCLUSIONS DE MODULES GLOBAUX
- |--------------------------------------------------------------------------
- */
-window.$ = window.jQuery = require('jquery');
-window.React = require('react/addons');
-window._ = require('underscore/underscore');
-window.Reflux = require('reflux');
-window.ReactB = require('react-bootstrap');
+(function (global) {
+    /*
+     |--------------------------------------------------------------------------
+     | INCLUSIONS DE MODULES GLOBAUX
+     |--------------------------------------------------------------------------
+     */
+    global.$ = global.jQuery = require('jquery');
+    global.React = require('react/addons');
+    global._ = require('underscore/underscore');
+    global.Reflux = require('reflux');
+    global.ReactB = require('react-bootstrap');
 
 
-/*
- |--------------------------------------------------------------------------
- | DEFINITION DE CONSTANTESDEFINITION DE CONSTANTES
- |--------------------------------------------------------------------------
- */
-// URL de base du projet. Définie en PHP (structure.blade.php), ici juste pour référence.
-window.BASE_URI;
+    /*
+     |--------------------------------------------------------------------------
+     | DEFINITION DE CONSTANTESDEFINITION DE CONSTANTES
+     |--------------------------------------------------------------------------
+     */
+    // URL de base du projet. Définie en PHP (structure.blade.php), ici juste pour référence.
+    global.BASE_URI;
 
-/*
- |--------------------------------------------------------------------------
- | ACTIONS GLOBALES REFLUX
- |--------------------------------------------------------------------------
- */
-window.Actions = {};
-window.Actions.global = Reflux.createActions([
-    "table_bandeau_line_clicked"
-]);
+    /*
+     |--------------------------------------------------------------------------
+     | ACTIONS GLOBALES REFLUX
+     |--------------------------------------------------------------------------
+     */
+    global.Actions = {};
+    global.Actions.global = Reflux.createActions([
+        "table_bandeau_line_clicked"
+    ]);
 
-/*
- |--------------------------------------------------------------------------
- | ACTIONS USER REFLUX
- |--------------------------------------------------------------------------
- */
-window.Actions.utilisateur = Reflux.createActions([
-    "load_data",
-    "display_user"
-]);
+    /*
+     |--------------------------------------------------------------------------
+     | ACTIONS USER REFLUX
+     |--------------------------------------------------------------------------
+     */
+    global.Actions.utilisateur = Reflux.createActions([
+        "load_data",
+        "display_user"
+    ]);
+})(window);
