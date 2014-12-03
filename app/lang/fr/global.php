@@ -28,6 +28,7 @@ return array(
     'accueil' => 'Accueil',
     'administration' => 'Administration',
     'acceder' => 'Accéder',
+    'gerer' => 'Gérer',
 
     /*
     |--------------------------------------------------------------------------

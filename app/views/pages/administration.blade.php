@@ -4,8 +4,8 @@
     <div class="row" id="jumbo">
         <div class="jumbotron">
            <div class="container">
-               <h1>{{Lang::get('administration.titre')}}</h1>
-               <p>{{Lang::get('administration.text')}}</p>
+               <h1>{{Lang::get('administration.accueil.titre')}}</h1>
+               <p>{{Lang::get('administration.accueil.text')}}</p>
            </div>
        </div>
     </div>
