@@ -12,15 +12,19 @@ return array(
     'block_utilisateur_texte' => 'Administration des utilisateurs de l\'application et gestion de leur droits d\'accès',
     'bouton_utilisateur' => 'Gérer',
 
-    // MODULE UTILISATEUR
-    'utilisateur' => array(
+    // MODULE UTILISATEURS
+    'utilisateur' => [
         'titre' => 'Gestion des utilisateurs de l\'application',
         'tableau' => array('nom' => 'Nom',
             'email' => 'E-mail',
             'email2' => 'E-mail 2',
             'email3' => 'E-mail 3')
+    ],
 
-    ),
+    // MODULE PROFILS
+    'profil' => [
+        'titre' => 'Gestion des profiles'
+    ],
 
 
 );
