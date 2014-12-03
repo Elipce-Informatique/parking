@@ -28,7 +28,6 @@ $(function(){
     
     
     
-    
     // Click bouton IIIII
     $('#test').click(function(){
 //       oReactTable.forceUpdate();
