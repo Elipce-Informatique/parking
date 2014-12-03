@@ -7,35 +7,55 @@ return array(
     |--------------------------------------------------------------------------
     */
 
-    'email' => 'Email',
-    'password' => 'Mot de passe',
+    // NOM DE L'APPLI
     'app_name' => 'Elipce Workflow',
-    'accueil' => 'Accueil',
+
+    // GÉNÉRALITÉS BANDEAU
     'edit' => 'Editer',
     'create' => 'Créer',
     'del' => 'Supprimer',
+
+
+    // AUTHENTIFICATION
+    'title_bienvenue' => 'Connectez-vous',
+    'email' => 'Email',
+    'password' => 'Mot de passe',
+    'remember' => "Se rappeller de moi",
+    'login' => 'Connexion',
+    'logout' => 'Déconnexion',
+
+    // AUTRES
+    'accueil' => 'Accueil',
+    'administration' => 'Administration',
+    'acceder' => 'Accéder',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Traduction DataTables
+    |--------------------------------------------------------------------------
+    */
     'datatable' => [
-        'sProcessing'=>     'Traitement en cours...',
-        'sSearch'=>         'Rechercher',
-        'sLengthMenu'=>     'Afficher _MENU_ &eacute;l&eacute;ments',
-        'sInfo'=>           "Affichage de l'&eacute;lement _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
-        'sInfoEmpty'=>      "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
-        'sInfoFiltered'=>   '(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)',
-        'sInfoPostFix'=>    '',
-        'sLoadingRecords'=> 'Chargement en cours...',
-        'sZeroRecords'=>    'Aucun &eacute;l&eacute;ment &agrave; afficher',
-        'sEmptyTable'=>     'Aucune donn&eacute;e disponible dans le tableau',
-        'oPaginate'=> [
-            'sFirst'=>      'Premier',
-            'sPrevious'=>   'Pr&eacute;c&eacute;dent',
-            'sNext'=>       'Suivant',
-            'sLast'=>       'Dernier'
+        'sProcessing' => 'Traitement en cours...',
+        'sSearch' => 'Rechercher',
+        'sLengthMenu' => 'Afficher _MENU_ &eacute;l&eacute;ments',
+        'sInfo' => "Affichage de l'&eacute;lement _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+        'sInfoEmpty' => "Affichage de l'&eacute;lement 0 &agrave; 0 sur 0 &eacute;l&eacute;ments",
+        'sInfoFiltered' => '(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)',
+        'sInfoPostFix' => '',
+        'sLoadingRecords' => 'Chargement en cours...',
+        'sZeroRecords' => 'Aucun &eacute;l&eacute;ment &agrave; afficher',
+        'sEmptyTable' => 'Aucune donn&eacute;e disponible dans le tableau',
+        'oPaginate' => [
+            'sFirst' => 'Premier',
+            'sPrevious' => 'Pr&eacute;c&eacute;dent',
+            'sNext' => 'Suivant',
+            'sLast' => 'Dernier'
         ],
-        'oAria'=> [
-            'sSortAscending'=>  '=> activer pour trier la colonne par ordre croissant',
-            'sSortDescending'=> '=> activer pour trier la colonne par ordre d&eacute;croissant'
+        'oAria' => [
+            'sSortAscending' => '=> activer pour trier la colonne par ordre croissant',
+            'sSortDescending' => '=> activer pour trier la colonne par ordre d&eacute;croissant'
         ]
-]
+    ]
 
 
 );

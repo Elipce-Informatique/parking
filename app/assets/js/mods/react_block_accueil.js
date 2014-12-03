@@ -15,7 +15,11 @@ var BlockAccueil = React.createClass({
         titre: React.PropTypes.string.isRequired,
         texte: React.PropTypes.string.isRequired,
         bouton: React.PropTypes.string.isRequired,
+        bouton_url: React.PropTypes.string,
         module_url: React.PropTypes.string
+    },
+    getDefaultProps: function () {
+        return {bouton_url: "#"};
     },
     /**
      * Méthode appellée pour construire le composant.
@@ -28,7 +32,7 @@ var BlockAccueil = React.createClass({
                 <h2>{this.props.titre}</h2>
                 <p>{this.props.texte}</p>
                 <p>
-                    <a className="btn btn-default" href="#" role="button">{this.props.bouton} »</a>
+                    <a className="btn btn-default" href={this.props.bouton_url} role="button">{this.props.bouton} »</a>
                 </p>
             </div>
         );

@@ -6,13 +6,13 @@ var Button = ReactB.Button;
 $(function(){
     
     // Tableau
-    var head = [Lang.get('utilisateur.tableau.nom'),Lang.get('utilisateur.tableau.email'),Lang.get('utilisateur.tableau.email2'),Lang.get('utilisateur.tableau.email3')];
+    var head = [Lang.get('administration.utilisateur.tableau.nom'),Lang.get('administration.utilisateur.tableau.email'),Lang.get('administration.utilisateur.tableau.email2'),Lang.get('administration.utilisateur.tableau.email3')];
     var hide = ['id'];
     var evts = {'onClick':Actions.utilisateur.display_user()};
     
     // Bandeau ATTENTION BANDEAU AVANT à cause du fixed header du tableau
      var oBandeau = React.render(
-        <Bandeau titre={Lang.get('utilisateur.titre')}/>,
+        <Bandeau titre={Lang.get('administration.utilisateur.titre')}/>,
         document.getElementById('bandeau')
     );
     
