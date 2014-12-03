@@ -6,6 +6,7 @@
 /temp
 /nbproject
 /public
+/bootlint_files
 _ide_helper.php
 composer.phar
 composer.lock
@@ -15,4 +16,3 @@ composer.lock
 Thumbs.db
 .buildpath
 .project
-/nbproject/private/

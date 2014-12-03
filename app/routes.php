@@ -64,6 +64,9 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
 
     // GESTION PROFILES (association profiles module)
     Route::resource('profils', 'ProfilController');
+
+    // administration
+    Route::get('administration',['as'=>'administration', 'uses'=>'AdministrationController@index'] );
 });
 
 /*
