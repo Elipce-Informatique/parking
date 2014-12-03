@@ -12,6 +12,7 @@ return array(
     'block_utilisateur_titre' => 'Gestion Utilisateurs',
     'block_utilisateur_texte' => 'Administration des utilisateurs de l\'application et gestion de leur droits d\'accès',
     'bouton_utilisateur' => 'Gérer',
-
-
+    'profil' => [
+        'titre' => 'Gestion des profils'
+    ]
 );

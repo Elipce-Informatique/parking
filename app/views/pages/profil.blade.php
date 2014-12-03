@@ -10,7 +10,15 @@
 
     <div class="row">
         <div class="col-md-12">
-            <div id="tableau_react">
+            <div id="tableau_profil_react">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="tableau_module_profil_react">
 
             </div>
         </div>
