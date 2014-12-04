@@ -18,7 +18,7 @@ class MenuController extends \BaseController {
         return [
             'nomUtilisateur'=> Auth::user()->nom,
             'logoutRoute'=> URL::asset('/')."logout",
-            'logoutText'=> Lang::get('auth.logout'),
+            'logoutText'=> Lang::get('global.logout'),
             'dropdown'=> []
         ];
     }

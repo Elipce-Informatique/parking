@@ -78,7 +78,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         return json_encode([
             'nomUtilisateur' => $this->nom,
             'logoutRoute' => URL::asset('/') . "logout",
-            'logoutText' => Lang::get('auth.logout'),
+            'logoutText' => Lang::get('global.logout'),
             'dropdown' => [['label' => Lang::get('menu.user.params'), 'route' => URL::route('index')]]
         ]);
     }
