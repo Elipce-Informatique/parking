@@ -1,7 +1,7 @@
 @extends('...layouts.login')
 
 @section('css')
-    <link rel="stylesheet" type="text/css" href="{{URL::asset('public/css/login.css')}}">
+
 @stop
 
 @section('content')
@@ -20,9 +20,6 @@
         </div>
 
         {{Form::submit(Lang::get('global.login'), ['class'=>'btn btn-lg btn-primary btn-block'])}}
+        {{ link_to('/password/remind', Lang::get('global.password_oublie')) }}
     {{ Form::close() }}
-@stop
-
-@section('scripts')
-
 @stop
