@@ -19,6 +19,8 @@ Route::when('*', 'csrf', array('post', 'put', 'delete', 'patch'));
 */
 
 Route::get('/', ['as'=>'index', 'uses'=>'SessionsController@create']);
+Route::controller('password', 'RemindersController');
+
 /*
 |--------------------------------------------------------------------------
 | Ressource Authentification

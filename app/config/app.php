@@ -122,7 +122,9 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 
+        // LIBS TIERCE
         'JsLocalization\JsLocalizationServiceProvider',
+        'Laracasts\Flash\FlashServiceProvider',
 
 	),
 
@@ -190,6 +192,9 @@ return array(
 		'URL'               => 'Illuminate\Support\Facades\URL',
 		'Validator'         => 'Illuminate\Support\Facades\Validator',
 		'View'              => 'Illuminate\Support\Facades\View',
+
+        // FAÇADES TIERCES
+        'Flash'             => 'Laracasts\Flash\Flash'
 
 	),
 

@@ -23,6 +23,8 @@ return array(
     'remember' => "Se rappeller de moi",
     'login' => 'Connexion',
     'logout' => 'Déconnexion',
+    'login_error' => "Erreur lors de la tentative de connexion. L'e-mail et le mot de passe fournis ne correspondent pas.",
+    'password_oublie' => "Mot de passe oublié ?",
 
     // Profil
     'profil' => 'Profil',
