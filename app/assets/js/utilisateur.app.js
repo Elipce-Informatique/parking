@@ -15,8 +15,7 @@ $(function(){
         <Bandeau titre={Lang.get('administration.utilisateur.titre')}/>,
         document.getElementById('bandeau')
     );
-    
-    
+
     var oReactTable = React.render(
         <DataTableBandeauUser head={head} hide={hide} id="tab_users" evts={evts}/>,
         document.getElementById('tableau_react')

@@ -11,19 +11,19 @@
  *                            FALSE: pas d'évènement par défaut.
  */
 
-var AuthentMixins = require('./mixins/component_access');
-var DataTableBandeau = require('./react_data_table_bandeau');
-var DataTableBandeauProfilReact = React.createClass({
+var AuthentMixins                     = require('./mixins/component_access');
+var DataTableBandeau                  = require('./react_data_table_bandeau');
+var DataTableBandeauModuleProfilReact = React.createClass({
 
     mixins: [Reflux.ListenerMixin,AuthentMixins],
 
     propTypes: {
-        head: React.PropTypes.array.isRequired,
-        hide: React.PropTypes.array.isRequired,
-        id: React.PropTypes.string.isRequired,
-        settings:React.PropTypes.object,
+        head:      React.PropTypes.array.isRequired,
+        hide:      React.PropTypes.array.isRequired,
+        id:        React.PropTypes.string.isRequired,
+        settings:  React.PropTypes.object,
         attributes:React.PropTypes.object,
-        evts:React.PropTypes.object,
+        evts:      React.PropTypes.object,
         bUnderline:React.PropTypes.bool
     },
 
@@ -35,8 +35,7 @@ var DataTableBandeauProfilReact = React.createClass({
         return {
             attributes: {},
             evts:{},
-            bUnderline: true,
-            module_url: 'profils' /* correspond au module url de la BDD */
+            bUnderline: true
         };
     },
 
@@ -50,7 +49,7 @@ var DataTableBandeauProfilReact = React.createClass({
      * @returns {undefined}
      */
     componentWillMount: function(){
-        this.listenTo(profilStore, this.updateData, this.updateData);
+        this.listenTo(moduleProfilStore, this.updateData, this.updateData);
         // Appel action
         Actions.profil.load_profil();
     },
@@ -79,26 +78,26 @@ var DataTableBandeauProfilReact = React.createClass({
     }
 });
 
-module.exports = DataTableBandeauProfilReact;
+module.exports = DataTableBandeauModuleProfilReact;
 
 
 /* Création du store du tableau profil       */
 /* On a abonné le composant tableau au store */
-var profilStore = Reflux.createStore({
+var moduleProfilStore = Reflux.createStore({
 
     // Initial setup
     init: function() {
 
         // Register statusUpdate action
-        this.listenTo(Actions.profil.load_profil, this.getDataProfil);
+        this.listenTo(Actions.profil.load_module_profil, this.getDataModuleProfil);
 
     },
 
     /* Charge les données à chaque évènement load_profil */
-    getDataProfil: function() {
+    getDataModuleProfil: function() {
         // AJAX
         $.ajax({
-            url: BASE_URI+'profils/all', /* correspond au module url de la BDD */
+            url: BASE_URI+'profils/{profils}/modules', /* correspond au module url de la BDD */
             dataType: 'json',
             context: this,
             success: function(data) {

@@ -44,4 +44,15 @@
         "load_data",
         "display_user"
     ]);
+
+    /*
+     |--------------------------------------------------------------------------
+     | ACTION PROFIL REFLUX
+     |--------------------------------------------------------------------------
+     */
+    global.Actions.profil = Reflux.createActions([
+        "profil_select",
+        "load_profil",
+        "load_module_profil"
+    ]);
 })(window);

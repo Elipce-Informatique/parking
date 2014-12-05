@@ -37,5 +37,8 @@ class Profil extends Eloquent {
     | MÉTHODES MÉTIER
     |--------------------------------------------------------------------------
     */
-
+    /* Récupère les modules avec les droits à visu/modif/aucun selon le profil */
+    public static function getProfilModule($idProfil){
+        return
+    }
 } 

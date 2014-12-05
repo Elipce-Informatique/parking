@@ -82,5 +82,12 @@ class ProfilController extends \BaseController {
 		//
 	}
 
+    /* Récupère tous les profils */
+    public function all(){
+        return Profil::all();
+    }
 
+    public function getProfilModule($idProfil){
+        return Profil::getProfilModule($idProfil);
+    }
 }

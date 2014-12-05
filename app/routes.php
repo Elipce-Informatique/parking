@@ -63,6 +63,8 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     Route::resource('utilisateur', 'UtilisateurController');
 
     // GESTION PROFILES (association profiles module)
+    Route::get('profils/all', 'ProfilController@all');
+    Route::get('profils/{profils}/modules', 'ProfilController@getProfilModule');
     Route::resource('profils', 'ProfilController');
 
     // administration

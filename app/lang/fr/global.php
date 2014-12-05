@@ -24,6 +24,9 @@ return array(
     'login' => 'Connexion',
     'logout' => 'Déconnexion',
 
+    // Profil
+    'profil' => 'Profil',
+
     // AUTRES
     'accueil' => 'Accueil',
     'administration' => 'Administration',

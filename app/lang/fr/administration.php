@@ -29,7 +29,5 @@ return array(
     // MODULE PROFILS
     'profil' => [
         'titre' => 'Gestion des profiles'
-    ],
-
-
+    ]
 );
