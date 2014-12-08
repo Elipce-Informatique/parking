@@ -8,7 +8,7 @@ class TestController extends \BaseController
      */
     public function index()
     {
-        $modules = Auth::user()->getAllModules();
+        $modules = Auth::user()->getMenuLeftItems(1);
         return $modules;
     }
 }

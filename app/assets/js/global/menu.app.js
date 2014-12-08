@@ -4,7 +4,8 @@
  */
 
 (function () {
-    var MenuTop = require('../mods/composants/react_menu_top');
+    var MenuTop = require('../mods/composants/menu/react_menu_top');
+    var MenuLeft = require('../mods/composants/menu/react_menu_left');
 
     $(function () {
 
@@ -18,7 +19,7 @@
 
         // CRÉATION DU MENU GAUCHE SI LA PAGE LE PERMET
         if (document.getElementById('menu-left')) {
-            // TODO
+            //React.render(<MenuLeft/>, document.getElementById('menu-left'));
         }
     });
 

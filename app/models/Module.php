@@ -44,6 +44,16 @@ class Module extends Eloquent {
     | MÉTHODES MÉTIER
     |--------------------------------------------------------------------------
     */
+
+    /**
+     * @param bool $parent
+     * @return mixed
+     */
+    public function getDescendants ( $parent = false ) {
+
+        return null;
+    }
+
     /**
      * Récupère les items du menu Top pour l'utilisateur authentifié
      */

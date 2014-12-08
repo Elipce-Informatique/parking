@@ -1,42 +1,7 @@
-var AccessMixin = require('../mixins/component_access');
-
-var actionMenuDidMount = Reflux.createAction();
-
-/**
- * Gère les données à afficher dans la lsite des items de menu
- */
-var menuItemsDataStore = Reflux.createStore({
-    // Initial setup
-    init: function () {
-        // Register statusUpdate action
-        this.listenTo(actionMenuDidMount, this.fetchMenuData);
-    },
-    fetchMenuData: function () {
-        var data = Auth.menu_top.items;
-        data.forEach(function (item, i) {
-            item.active = false;
-            item.accessible = (item.accessible ? true : false);
-
-            data[i] = item;
-        });
-        this.trigger(data);
-    }
-});
-
-/**
- * Gère les données à afficher dans le menu utilisateur
- */
-var menuUserDataStore = Reflux.createStore({
-    // Initial setup
-    init: function () {
-        // Register statusUpdate action
-        this.listenTo(actionMenuDidMount, this.fetchUserData);
-    },
-    fetchUserData: function () {
-        var data = Auth.menu_top.user;
-        this.trigger(data);
-    }
-});
+var AccessMixin = require('../../mixins/component_access');
+var menuItemsDataStore = require('../../stores/stores_menus').menu_top_items;
+var menuUserDataStore = require('../../stores/stores_menus').menu_top_user;
+var actionMenuDidMount = Actions.menu.menu_top_did_mount;
 
 /**
  * Created by yann on 19/11/2014.

@@ -16,9 +16,9 @@
     <div class="container-fluid">
         <div class="row">
             <div id="menu-left" class="col-sm-3 col-md-2 sidebar">
+                <div class="panel-group sidebar-accordion" id="accordion">
 
 
-               <div class="panel-group sidebar-accordion" id="accordion">
                    <div class="panel panel-default">
                        <div class="panel-heading">
                            <h4 class="panel-title">
@@ -26,8 +26,10 @@
                                </span>Utilisateurs</a>
                            </h4>
                        </div>
-
                    </div>
+
+
+
                    <div class="panel panel-default">
                        <div class="panel-heading">
                            <h4 class="panel-title">
@@ -64,7 +66,7 @@
                        </div>
                    </div>
 
-               </div>
+                </div>
 
 
             </div>

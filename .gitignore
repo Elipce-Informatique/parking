@@ -1,18 +1,42 @@
-/bootstrap/compiled.php
-/vendor
-/.settings
-/.idea
-/node_modules
-/temp
-/nbproject
-/public
-/bootlint_files
+#laravel and project specific ignores
+bootstrap/compiled.php
+temp
+public
+bootlint_files
 _ide_helper.php
 composer.phar
 composer.lock
 .env.*.php
 .env.php
+
+# Numerous always-ignore extensions
+*.diff
+*.err
+*.log
+*.orig
+*.rej
+*.swo
+*.swp
+*.vi
+*.zip
+*~
+
+# Folders to ignore
+bower_components
+node_modules
+vendor
+
+# OS or Editor folders
+._*
+.cache
 .DS_Store
-Thumbs.db
-.buildpath
+.idea
 .project
+.settings
+.buildpath
+.tmproj
+*.esproj
+*.sublime-project
+*.sublime-workspace
+nbproject
+Thumbs.db

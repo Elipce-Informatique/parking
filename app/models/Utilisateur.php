@@ -53,6 +53,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 ->join('modules', 'modules.id', '=', 'profil_module.module_id')
                 ->join('module_module', 'module_module.fils_id', '=', 'modules.id')
                 ->where('utilisateurs.id', $this->id)
+                ->where('module_module.is_menu', 1)
                 ->whereNull('module_module.parent_id')
                 ->groupBy('modules.id')
                 ->get(['modules.*', DB::raw('1 as accessible')]);
@@ -82,6 +83,21 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             'dropdown' => [['label' => Lang::get('menu.user.params'), 'route' => URL::route('index')]]
         ]);
     }
+
+    /**
+     *
+     */
+    public function getMenuLeftItems($idEntete)
+    {
+        $tabRetour = [];
+        $this->getMenuLeftItemsRecursif($tabRetour, $idEntete);
+        return $tabRetour;
+    }
+
+    public function getMenuLeftItemsRecursif(array &$tabRes, $id){
+
+    }
+
 
     /**
      * Test accessibilité en lecture
@@ -126,7 +142,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      */
     public static function getUtilisateurs()
     {
-        $res = Utilisateur::all(array('id', 'nom', 'email',DB::raw('email as mail2'),DB::raw('email as mail3')));
+        $res = Utilisateur::all(array('id', 'nom', 'email', DB::raw('email as mail2'), DB::raw('email as mail3')));
         return $res;
     }
 
