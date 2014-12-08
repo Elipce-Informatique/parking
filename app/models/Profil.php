@@ -39,6 +39,11 @@ class Profil extends Eloquent {
     */
     /* Récupère les modules avec les droits à visu/modif/aucun selon le profil */
     public static function getProfilModule($idProfil){
-        return
+        /* Un profil est sélectionné */
+        if($idProfil != 0) {
+            /* Récupère tout les modules avec les droits associés au profil */
+            return Module::all(array('id', 'traduction', "traduction AS etat" ));
+        }
+        else return [];
     }
 } 

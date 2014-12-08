@@ -11,8 +11,8 @@
  *                            FALSE: pas d'évènement par défaut.
  */
 
-var AuthentMixins = require('./mixins/component_access');
-var DataTableBandeau = require('./react_data_table_bandeau');
+var AuthentMixins = require('./mixins/component_access');                          /* Pour gérer les droits d'accès     */
+var DataTableBandeau = require('./composants/tableau/react_data_table_bandeau'); /* Pour le bandeau de la page profil */
 var DataTableBandeauProfilReact = React.createClass({
 
     mixins: [Reflux.ListenerMixin,AuthentMixins],
@@ -36,7 +36,7 @@ var DataTableBandeauProfilReact = React.createClass({
             attributes: {},
             evts:{},
             bUnderline: true,
-            module_url: 'profils' /* correspond au module url de la BDD */
+            module_url: 'profils' /* correspond au module url de la BDD, pour les droits */
         };
     },
 
@@ -52,7 +52,7 @@ var DataTableBandeauProfilReact = React.createClass({
     componentWillMount: function(){
         this.listenTo(profilStore, this.updateData, this.updateData);
         // Appel action
-        Actions.profil.load_profil();
+        Actions.profil.profil_load();
     },
 
     render: function() {
@@ -90,7 +90,7 @@ var profilStore = Reflux.createStore({
     init: function() {
 
         // Register statusUpdate action
-        this.listenTo(Actions.profil.load_profil, this.getDataProfil);
+        this.listenTo(Actions.profil.profil_load, this.getDataProfil);
 
     },
 

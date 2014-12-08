@@ -11,9 +11,9 @@
  *                            FALSE: pas d'évènement par défaut.
  */
 
-var AuthentMixins                     = require('./mixins/component_access');
-var DataTableBandeau                  = require('./react_data_table_bandeau');
-var DataTableBandeauModuleProfilReact = React.createClass({
+var AuthentMixins              = require('./mixins/component_access');
+var DataTable                  = require('./composants/tableau/react_data_table');
+var DataTableModuleProfilReact = React.createClass({
 
     mixins: [Reflux.ListenerMixin,AuthentMixins],
 
@@ -51,12 +51,12 @@ var DataTableBandeauModuleProfilReact = React.createClass({
     componentWillMount: function(){
         this.listenTo(moduleProfilStore, this.updateData, this.updateData);
         // Appel action
-        Actions.profil.load_profil();
+        Actions.profil.profil_load();
     },
 
     render: function() {
         return (
-            <DataTableBandeau id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts}/>
+            <DataTable id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts}/>
         )
     },
 
@@ -78,7 +78,7 @@ var DataTableBandeauModuleProfilReact = React.createClass({
     }
 });
 
-module.exports = DataTableBandeauModuleProfilReact;
+module.exports = DataTableModuleProfilReact;
 
 
 /* Création du store du tableau profil       */
@@ -89,44 +89,34 @@ var moduleProfilStore = Reflux.createStore({
     init: function() {
 
         // Register statusUpdate action
-        this.listenTo(Actions.profil.load_module_profil, this.getDataModuleProfil);
+        this.listenTo(Actions.profil.profil_select, this.getDataModuleProfil);
 
     },
 
     /* Charge les données à chaque évènement load_profil */
-    getDataModuleProfil: function() {
-        // AJAX
-        $.ajax({
-            url: BASE_URI+'profils/{profils}/modules', /* correspond au module url de la BDD */
-            dataType: 'json',
-            context: this,
-            success: function(data) {
-                // Passe variable aux composants qui écoutent le store profilStore
-                this.trigger(data);
-            },
-            error: function(xhr, status, err) {
-                console.error(status, err.toString());
-                this.trigger({});
-            }
-        });
-    },
+    getDataModuleProfil: function(evt) {
+        if($(evt.currentTarget).hasClass('row_selected')) {
+            var idProfil = $(evt.currentTarget).data('id');
+            //$("#tabModule").show();
 
-    /* Charge les données tout seul au début */
-    getInitialState:function(){
-        var dataRetour = [];
-        // AJAX
-        $.ajax({
-            url: BASE_URI+'profils/all', /* correspond au module url de la BDD */
-            dataType: 'json',
-            context: this,
-            async:false,
-            success: function(data) {
-                dataRetour = data;
-            },
-            error: function(xhr, status, err) {
-                console.error(status, err.toString());
-            }
-        });
-        return dataRetour;
+            // AJAX
+            $.ajax({
+                url: BASE_URI + 'profils/' + idProfil + '/modules', /* correspond au module url de la BDD */
+                dataType: 'json',
+                context: this,
+                success: function (data) {
+                    // Passe variable aux composants qui écoutent le store profilStore
+                    this.trigger(data);
+                },
+                error: function (xhr, status, err) {
+                    console.error(status, err.toString());
+                    this.trigger([]);
+                }
+            });
+        }
+        else{
+            //$("#tabModule").hide();
+            this.trigger([]);
+        }
     }
 });

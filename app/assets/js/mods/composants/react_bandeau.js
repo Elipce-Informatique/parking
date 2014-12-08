@@ -2,7 +2,7 @@
  * @param array head: array contenant l'entête du tableau ['A', 'B']
  */
 
-var isEdtitableStore = require('./stores/store_bandeau_is_editable');
+var isEdtitableStore = require('../stores/store_bandeau_is_editable');
 var Button = ReactB.Button;
 var ButtonToolbar = ReactB.ButtonToolbar;
 var Glyphicon = ReactB.Glyphicon;

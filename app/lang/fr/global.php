@@ -28,6 +28,7 @@ return array(
 
     // Profil
     'profil' => 'Profil',
+    'module' => 'module',
 
     // AUTRES
     'accueil' => 'Accueil',

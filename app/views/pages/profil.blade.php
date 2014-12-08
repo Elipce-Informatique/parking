@@ -15,8 +15,10 @@
             </div>
         </div>
     </div>
-
-    <div class="row">
+    <div id="tabModule" class="row">
+        <div class="col-md-12 bandeau">
+            <h1>{{ Lang::get('administration.profil.titre_module') }}</h1>
+        </div>
         <div class="col-md-12">
             <div id="tableau_module_profil_react">
 

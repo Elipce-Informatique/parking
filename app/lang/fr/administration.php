@@ -28,6 +28,8 @@ return array(
 
     // MODULE PROFILS
     'profil' => [
-        'titre' => 'Gestion des profiles'
+        'titre' => 'Gestion des profiles',
+        'visu_modif' => 'Visu/Modif/Aucun',
+        'titre_module' => 'Gestion des modules'
     ]
 );

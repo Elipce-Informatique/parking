@@ -51,8 +51,8 @@
      |--------------------------------------------------------------------------
      */
     global.Actions.profil = Reflux.createActions([
-        "profil_select",
-        "load_profil",
-        "load_module_profil"
+        "profil_select", /* Sélection d'une ligne sur le tableau profil             */
+        "profil_load",   /* Chargement des données initiales du tableau profil      */
+        "profil_module_load" /* Chargement des données initiales du tableau module */
     ]);
 })(window);
