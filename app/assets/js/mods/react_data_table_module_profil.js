@@ -105,6 +105,27 @@ var moduleProfilStore = Reflux.createStore({
                 dataType: 'json',
                 context: this,
                 success: function (data) {
+                    //// Gestion des radio boutons
+                    //data.forEach(function(lg) {
+                    //    var inTD = '<label class="btn btn-primary '+ (data['']) +'">';
+                    //    inTD += '<input type="radio" name="btn_visu" autocomplete="off">';
+                    //    inTD += Lang.get('administration.profil.visu');
+                    //    inTD += '</label>';
+                    //
+                    //    inTD += '<label class="btn btn-primary">'
+                    //    inTD += '<input type="radio" name="btn_modif" autocomplete="off">';
+                    //    inTD += Lang.get('administration.profil.modif');
+                    //    inTD += '</label>';
+                    //
+                    //    inTD += '<label class="btn btn-primary">';
+                    //    inTD += '<input type="radio" name="btn_aucun" autocomplete="off">';
+                    //    inTD += Lang.get('administration.profil.aucun');
+                    //    inTD += '</label>';
+                    //
+                    //
+                    //    lg = inTD;
+                    //});
+
                     // Passe variable aux composants qui écoutent le store profilStore
                     this.trigger(data);
                 },

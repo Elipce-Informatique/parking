@@ -32,6 +32,11 @@ $(function(){
     var headMP = [Lang.get('global.module'), Lang.get('administration.profil.visu_modif')]; // Entête du tableau
     var hideMP = ['id'];
 
+    /* Paramètres pour gérer les radiot boutons dela colonne Visu/Modif/Aucun */
+    var aLibRadioBtn    = [Lang.get('administration.profil'), Lang.get('administration.profil.modif'), Lang.get('administration.profil.aucun')];
+    var aNameRadionBtn  = ['rBtn_Visu', 'rBtn_Modif', 'rBtn_Aucun'];
+    var NomActionSurBtn = "onclickRadioBtnModule";
+
     /* Tableau des modules avec droits d'accès */
     var oReactTableModuleProfil = React.render(
         <DataTableModuleProfil head={headMP} hide={hideMP} id="tab_module_profil" bUnderline={false} />,
