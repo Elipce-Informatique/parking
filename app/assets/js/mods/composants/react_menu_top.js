@@ -1,4 +1,4 @@
-var AccessMixin = require('./mixins/component_access');
+var AccessMixin = require('../mixins/component_access');
 
 var actionMenuDidMount = Reflux.createAction();
 

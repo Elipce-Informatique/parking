@@ -1,4 +1,4 @@
-var AccessMixin = require('./mixins/component_access');
+var AccessMixin = require('../mixins/component_access');
 
 /**
  * Created by yann on 02/12/2014.
