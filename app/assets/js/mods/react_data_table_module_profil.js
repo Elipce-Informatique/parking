@@ -13,6 +13,7 @@
 
 var AuthentMixins              = require('./mixins/component_access');
 var DataTable                  = require('./composants/tableau/react_data_table');
+var ReactGroupRadioBoots       = require('./composants/formulaire/react_radio');
 var DataTableModuleProfilReact = React.createClass({
 
     mixins: [Reflux.ListenerMixin,AuthentMixins],
@@ -105,29 +106,26 @@ var moduleProfilStore = Reflux.createStore({
                 dataType: 'json',
                 context: this,
                 success: function (data) {
-                    //// Gestion des radio boutons
-                    //data.forEach(function(lg) {
-                    //    var inTD = '<label class="btn btn-primary '+ (data['']) +'">';
-                    //    inTD += '<input type="radio" name="btn_visu" autocomplete="off">';
-                    //    inTD += Lang.get('administration.profil.visu');
-                    //    inTD += '</label>';
-                    //
-                    //    inTD += '<label class="btn btn-primary">'
-                    //    inTD += '<input type="radio" name="btn_modif" autocomplete="off">';
-                    //    inTD += Lang.get('administration.profil.modif');
-                    //    inTD += '</label>';
-                    //
-                    //    inTD += '<label class="btn btn-primary">';
-                    //    inTD += '<input type="radio" name="btn_aucun" autocomplete="off">';
-                    //    inTD += Lang.get('administration.profil.aucun');
-                    //    inTD += '</label>';
-                    //
-                    //
-                    //    lg = inTD;
-                    //});
+                    var aLibelle = new Array(Lang.get('administration.profil.visu'), Lang.get('administration.profil.modif'), Lang.get('administration.profil.aucun'));
+                    var aName    = new Array('btnVisu', 'btnModif', 'btnAucun');
+                    var aChecked = new Array();
+                    var newData  = new Array();
+                    var indice = 0;
+
+                    // Gestion des radio boutons
+                    data.forEach(function(lg) {
+                        aChecked[0] = (lg['etat'] == 'visu' ?true:false);
+                        aChecked[1] = (lg['etat'] == 'modif'?true:false);
+                        aChecked[2] = (lg['etat'] == 'null' ?true:false);
+
+                        lg['etat'] = <ReactGroupRadioBoots name={aName} libelle={aLibelle} checked={aChecked}/>;
+
+                        newData[indice++] = lg;
+                        console.log(newData);
+                    });
 
                     // Passe variable aux composants qui écoutent le store profilStore
-                    this.trigger(data);
+                    this.trigger(newData);
                 },
                 error: function (xhr, status, err) {
                     console.error(status, err.toString());
