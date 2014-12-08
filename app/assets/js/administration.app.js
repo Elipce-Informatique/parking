@@ -1,4 +1,4 @@
-var Block = require('./mods/react_block_accueil');
+var Block = require('./mods/composants/react_block_accueil');
 
 $(function () {
 
@@ -10,7 +10,7 @@ $(function () {
         bouton={Lang.get('global.gerer')}
         bouton_url={url_utilisateur}
         module_url="utilisateur"/>,
-        document.getElementById('block_utilisateur'))
+        document.getElementById('block_utilisateur'));
 
     // BLOCK FONCTIONNALITÉ PROFILS
     var url_utilisateur = BASE_URI + 'profils';

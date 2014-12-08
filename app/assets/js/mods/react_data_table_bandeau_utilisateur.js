@@ -12,7 +12,7 @@
  */
 
 var AuthentMixins = require('./mixins/component_access');
-var DataTableBandeau = require('./react_data_table_bandeau');
+var DataTableBandeau = require('./composants/tableau/react_data_table_bandeau');
 var DataTableBandeauUtilisateurReact = React.createClass({
     
     mixins: [Reflux.ListenerMixin,AuthentMixins],

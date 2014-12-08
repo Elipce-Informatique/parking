@@ -4,7 +4,7 @@
  */
 
 (function () {
-    var MenuTop = require('.././mods/react_menu_top');
+    var MenuTop = require('../mods/composants/react_menu_top');
 
     $(function () {
 
