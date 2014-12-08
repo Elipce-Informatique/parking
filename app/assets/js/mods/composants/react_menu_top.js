@@ -73,7 +73,7 @@ var AppName = React.createClass({
                     <span className="icon-bar"></span>
                     <span className="icon-bar"></span>
                 </button>
-                <a className="navbar-brand" href={this.props.url}>{this.props.name}</a>
+                <a className="navbar-brand" href={this.props.url}><span className="glyphicon glyphicon-home"></span>{this.props.name}</a>
             </div>
         )
     }
@@ -146,10 +146,11 @@ var ListItemsMenu = React.createClass({
             var props = {
                 className: classnames
             }
+            var icon = "glyphicon "+item.icon;
 
             items.push(
                 <li key={item.id} {...props}>
-                    <a href={url}>{libelle}</a>
+                    <a href={url}><span className={icon}></span>{libelle}</a>
                 </li>
             );
         });
