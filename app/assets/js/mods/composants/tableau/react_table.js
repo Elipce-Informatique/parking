@@ -106,7 +106,12 @@ var TableTr = React.createClass({
                  }
                  // Cellule de table
                  else{
-                      tr.push(<td key={that.props.data.id+key}>{val}</td>);
+                     if(typeof(val) === 'object') {
+                         tr.push(<td key={that.props.data.id + key} dangerouslySetInnerHTML={{__html: val}} ></td>);
+                         console.log('%o', val);
+                     }
+                     else
+                        tr.push(<td key={that.props.data.id+key}>{val}</td>);
                   }
              });
              // Ajout du tr
