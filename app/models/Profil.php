@@ -42,7 +42,11 @@ class Profil extends Eloquent {
         /* Un profil est sélectionné */
         if($idProfil != 0) {
             /* Récupère tout les modules avec les droits associés au profil */
-            return Module::all(array('id', 'traduction', "traduction AS etat" ));
+            $aTabModule =  Module::all(array('id', 'traduction', "traduction AS etat" ));
+            $aTabModule[0]['etat'] = 0;
+            $aTabModule[1]['etat'] = 1;
+            $aTabModule[2]['etat'] = 2;
+            return $aTabModule;
         }
         else return [];
     }
