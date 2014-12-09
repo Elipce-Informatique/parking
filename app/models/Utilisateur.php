@@ -87,15 +87,14 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
     /**
      *
      */
-    public function getMenuLeftItems($idEntete)
+    public function getMenuLeftItemsFromUrl($url)
     {
+        $entete = Module::getTopLevelParentModuleFromUrl($url);
         $tabRetour = [];
-        $this->getMenuLeftItemsRecursif($tabRetour, $idEntete);
+        if ($entete) {
+            Module::getChildrenModulesRecursifWithDroitsForMenu($tabRetour, $entete->id, $this->id);
+        }
         return $tabRetour;
-    }
-
-    public function getMenuLeftItemsRecursif(array &$tabRes, $id){
-
     }
 
 
@@ -104,7 +103,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      * @param $url
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function isModuleAccessible($url)
+    public function isModuleAccessibleByUrl($url)
     {
         //->groupBy('modules.id')
         return $this
@@ -116,6 +115,25 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             ->where('modules.url', $url)
             ->groupBy('modules.id')
             ->get(['modules.*']);
+    }
+
+    /**
+     * Test accessibilité en lecture
+     * @param $url
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function isModuleAccessible($id)
+    {
+        //->groupBy('modules.id')
+        return (count($this
+                ->join('profil_utilisateur', 'profil_utilisateur.utilisateur_id', '=', 'utilisateurs.id')
+                ->join('profils', 'profils.id', '=', 'profil_utilisateur.profil_id')
+                ->join('profil_module', 'profil_module.profil_id', '=', 'profils.id')
+                ->join('modules', 'modules.id', '=', 'profil_module.module_id')
+                ->join('module_module', 'module_module.fils_id', '=', 'modules.id')
+                ->where('modules.id', $id)
+                ->groupBy('modules.id')
+                ->get(['modules.*'])) != 0);
     }
 
     public function getAllModules()

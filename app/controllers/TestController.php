@@ -8,7 +8,8 @@ class TestController extends \BaseController
      */
     public function index()
     {
-        $modules = Auth::user()->getMenuLeftItems(1);
+        $modules = Auth::user()->getMenuLeftItemsFromUrl('accueil');
         return $modules;
+//        return json_encode(Module::getTopLevelParentModuleFromUrl('test'));
     }
 }
