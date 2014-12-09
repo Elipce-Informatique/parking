@@ -24,7 +24,7 @@ $(function(){
 
     /* Tableau des profils */
     var oReactTableProfil = React.render(
-        <DataTableBandeauProfil head={headP} hide={hideP} id="tab_profil" evts={evtsP}/>,
+        <DataTableBandeauProfil head={headP} hide={hideP} id="tab_profil" evts={evtsP} />,
         document.getElementById('tableau_profil_react')
     );
 
@@ -37,14 +37,20 @@ $(function(){
     var aNameRadionBtn  = ['rBtn_Visu', 'rBtn_Modif', 'rBtn_Aucun'];
     var NomActionSurBtn = "onclickRadioBtnModule";
 
+    /* Paramètres pour les radios Boutons */
+    var aLibelle = new Array(Lang.get('administration.profil.visu'), Lang.get('administration.profil.modif'), Lang.get('administration.profil.aucun'));
+    var aName    = new Array('btnVisu', 'btnModif', 'btnAucun');
+    var aReactElements = {};
+    aReactElements['1'] = new Array();
+    aReactElements['1'][0] = 'Radio';
+    aReactElements['1'][1] = {'name':aName, 'libelle':aLibelle};
+
     /* Tableau des modules avec droits d'accès */
     var oReactTableModuleProfil = React.render(
-        <DataTableModuleProfil head={headMP} hide={hideMP} id="tab_module_profil" bUnderline={false} />,
+        <DataTableModuleProfil head={headMP} hide={hideMP} id="tab_module_profil" bUnderline={false} reactElements={aReactElements} />,
         document.getElementById('tableau_module_profil_react')
     );
 });
-
-
 
 /* Action appelé lors d'un clic sur une ligne du tableau profil */
 function handleClickProfil(evt){

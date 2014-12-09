@@ -25,7 +25,8 @@ var DataTableModuleProfilReact = React.createClass({
         settings:  React.PropTypes.object,
         attributes:React.PropTypes.object,
         evts:      React.PropTypes.object,
-        bUnderline:React.PropTypes.bool
+        bUnderline:React.PropTypes.bool,
+        reactElements: React.PropTypes.object
     },
 
     /**
@@ -36,7 +37,8 @@ var DataTableModuleProfilReact = React.createClass({
         return {
             attributes: {},
             evts:{},
-            bUnderline: true
+            bUnderline: true,
+            reactElements:{}
         };
     },
 
@@ -57,7 +59,7 @@ var DataTableModuleProfilReact = React.createClass({
 
     render: function() {
         return (
-            <DataTable id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts}/>
+            <DataTable id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} reactElements={this.props.reactElements}/>
         )
     },
 
@@ -106,26 +108,8 @@ var moduleProfilStore = Reflux.createStore({
                 dataType: 'json',
                 context: this,
                 success: function (data) {
-                    var aLibelle = new Array(Lang.get('administration.profil.visu'), Lang.get('administration.profil.modif'), Lang.get('administration.profil.aucun'));
-                    var aName    = new Array('btnVisu', 'btnModif', 'btnAucun');
-                    var aChecked = new Array();
-                    var newData  = new Array();
-                    var indice = 0;
-
-                    // Gestion des radio boutons
-                    data.forEach(function(lg) {
-                        aChecked[0] = (lg['etat'] == 'visu' ?true:false);
-                        aChecked[1] = (lg['etat'] == 'modif'?true:false);
-                        aChecked[2] = (lg['etat'] == 'null' ?true:false);
-
-                        lg['etat'] = <ReactGroupRadioBoots name={aName} libelle={aLibelle} checked={aChecked}/>;
-
-                        newData[indice++] = lg;
-                        console.log(newData);
-                    });
-
                     // Passe variable aux composants qui écoutent le store profilStore
-                    this.trigger(newData);
+                    this.trigger(data);
                 },
                 error: function (xhr, status, err) {
                     console.error(status, err.toString());
