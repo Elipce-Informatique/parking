@@ -6,6 +6,7 @@
             items: {{Auth::user()->getMenuTopItems()}},
             user: {{Auth::user()->menuTopInfosUser()}}
         },
+        menu_left: {{json_encode(Auth::user()->getMenuLeftItemsFromUrl(Request::segment(1)))}},
         /**
          * Retourne true si l'utilisateur a le droit d'accès en lecture au module
          * correspondant à l'URL passée en paramètres (1er segment de l'URL seulement)
