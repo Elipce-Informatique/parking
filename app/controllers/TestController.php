@@ -9,7 +9,9 @@ class TestController extends \BaseController
     public function index()
     {
         $modules = Auth::user()->getMenuLeftItemsFromUrl('accueil');
-        return $modules;
+
+        $testPierre = Module::with('profils')->whereHas('profils.id', 1)->get();
+        return $testPierre;
 //        return json_encode(Module::getTopLevelParentModuleFromUrl('test'));
     }
 }

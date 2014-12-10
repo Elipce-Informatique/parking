@@ -126,22 +126,22 @@ var TableTr = React.createClass({
                  // Cellule de la ligne
                  else{
                      /* Cellule contenant un élément React */
-                     if(that.props.reactElements !== 'undefined' && Array.isArray(that.props.reactElements[indiceCol])){
+                     if(that.props.reactElements !== 'undefined' && Array.isArray(that.props.reactElements[indiceCol.toString()])){
 
-                        switch(that.props.reactElements[indiceCol][0]){
+                        switch(that.props.reactElements[indiceCol.toString()][0]){
                             case 'Radio':
                                 var radios = [];
                                 var indice = 0;
-                                _.each(that.props.reactElements[indiceCol][1]['name'], function(val, key){
+                                _.each(that.props.reactElements[indiceCol.toString()][1]['name'], function(val, key){
                                     var attributes = {'data-id':that.props.data.id};
-                                    radios.push(<ReactRadioBtsp uniqueIdentifier={''+that.props.data.id} name={val} attributes={attributes} libelle={that.props.reactElements[indiceCol][1]['libelle'][indice++]}/>);
+                                    radios.push(<ReactRadioBtsp key={'RRB'+that.props.data.id+key} name={val} attributes={attributes} libelle={that.props.reactElements[indiceCol.toString()][1]['libelle'][indice++]} evts={that.props.reactElements[indiceCol.toString()][2]}/>);
                                 });
                                 tr.push(<td key={that.props.data.id+key}>
                                             <ButtonGroup data-toggle="buttons" bsSize="xsmall">{radios}</ButtonGroup>
                                         </td>);
                                 break;
                             default :
-                                tr.push(<td key={that.props.data.id+key}>Objet React --{that.props.reactElements[indiceCol][0]}-- non défini</td>);
+                                tr.push(<td key={that.props.data.id+key}>Objet React --{that.props.reactElements[indiceCol.toString()][0]}-- non défini</td>);
                                 break;
                         }
                      }

@@ -13,20 +13,27 @@ var ReactRadioBtsp = React.createClass({
     propTypes: {
         name:    React.PropTypes.string.isRequired,          /* Name du radio bouton */
         libelle: React.PropTypes.string.isRequired,          /* libelle à afficher   */
-        uniqueIdentifier: React.PropTypes.string.isRequired, /* identifiant unique afin de ne pas avoir de warning react */
-                                                             /* il lui sera ajouter le name du radioBouton               */
-        attributes: React.PropTypes.object
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object
+    },
+
+    /**
+     * Les props par défaut
+     */
+    getDefaultProps: function() {
+        return {attributes:{}, evts:{}};
     },
 
     render: function() {
-        var classBtn         = 'btn btn-default';
-        var uniqueIdentifier = '' + this.props.name + this.props.uniqueIdentifier;
-        var uniqueIdentifier2 = '' + this.props.name + this.props.uniqueIdentifier + '2';
+        var classBtn          = 'btn btn-default';
 
-        /* Code HTML */
+        /*                               Code HTML                          */
+        /* On met les attributs et les évènement sur le label car           */
+        /* il s'agit d'un composant bootstrap qui cache le input            */
+        /* on a donc que le label pour récupérer les évènement et les infos */
         return (
-            <label className={classBtn} key={uniqueIdentifier}>
-                <input type="radio" key={uniqueIdentifier2} name={this.props.name} {...this.props.attributes} /> {this.props.libelle}
+            <label className={classBtn} {...this.props.evts} {...this.props.attributes}>
+                <input type="radio" name={this.props.name} />{this.props.libelle}
             </label>
         );
     }

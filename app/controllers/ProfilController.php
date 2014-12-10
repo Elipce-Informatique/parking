@@ -88,6 +88,6 @@ class ProfilController extends \BaseController {
     }
 
     public function getProfilModule($idProfil){
-        return Profil::getProfilModule($idProfil);
+        return Profil::find($idProfil)->getProfilModule($idProfil);
     }
 }

@@ -38,16 +38,26 @@ class Profil extends Eloquent {
     |--------------------------------------------------------------------------
     */
     /* Récupère les modules avec les droits à visu/modif/aucun selon le profil */
-    public static function getProfilModule($idProfil){
+    public function getProfilModule($idProfil){
         /* Un profil est sélectionné */
         if($idProfil != 0) {
+
+//            SELECT m.id, m.traduction, pm.access_level AS etat, pm.profil_id AS IDprofil
+//            FROM modules m
+//            LEFT JOIN profil_module pm ON pm.module_id = m.id AND pm.profil_id=$idProfil
+
             /* Récupère tout les modules avec les droits associés au profil */
-            $aTabModule =  Module::all(array('id', 'traduction', "traduction AS etat" ));
-            $aTabModule[0]['etat'] = 'visu';
-            $aTabModule[1]['etat'] = 'modif';
-            $aTabModule[2]['etat'] = 'aucun';
+            $aTabModule =  Module::all(array('id', 'traduction', DB::raw('"visu" as etat'), DB::raw($idProfil.' as IDprofil')));
+
             return $aTabModule;
         }
-        else return [];
+        /* Récupère uniquement les modules */
+        else{
+            /* Récupère tout les modules uniquement */
+            $aTabModule =  Module::all(array('id', 'traduction', DB::raw('"" as etat'), DB::raw('"" as IDprofil')));
+            $nb = count($aTabModule);
+
+            return $aTabModule;
+        }
     }
 } 
