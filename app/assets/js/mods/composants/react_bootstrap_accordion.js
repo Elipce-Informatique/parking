@@ -35,8 +35,6 @@ var PanelGroup = React.createClass({
             return temp;
         }, this);
 
-        console.log('ReactPanelGroup AprèsMaps');
-        console.log(children);
         return (
             <div {...this.props} className={classes}>
                 {children}
@@ -250,7 +248,6 @@ var TrCollapse = React.createClass({
 
     render: function () {
         var icon = this.props.icon != "" ? <span className={"glyphicon " + this.props.icon}></span> : '';
-        console.log(this.props);
 
         return (<tr>
             <td>

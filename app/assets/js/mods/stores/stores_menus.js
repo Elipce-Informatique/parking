@@ -40,6 +40,7 @@ module.exports.menu_top_items = Reflux.createStore({
  * Gère les données à afficher dans le menu utilisateur (menu top)
  */
 module.exports.menu_top_user = Reflux.createStore({
+
     getInitialState: function() {
         return Auth.menu_top.user;
     },
@@ -49,8 +50,7 @@ module.exports.menu_top_user = Reflux.createStore({
         this.listenTo(actionMenuTopDidMount, this.fetchUserData);
     },
     fetchUserData: function () {
-        var data = Auth.menu_top.user;
-        this.trigger(data);
+        this.trigger(Auth.menu_top.user);
     }
 });
 
@@ -67,7 +67,7 @@ module.exports.menu_left = Reflux.createStore({
         this.listenTo(actionMenuLeftDidMount, this.fetchData);
     },
     fetchData: function () {
-        return {data: Auth.menu_left};
+        this.trigger(Auth.menu_left);
     }
 });
 

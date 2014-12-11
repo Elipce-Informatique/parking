@@ -38,7 +38,7 @@ var MenuLeft = React.createClass({
      * charger ses données dynamiquement !
      */
     componentDidMount: function () {
-        this.listenTo(storeMenuLeft, this.setState);
+        this.listenTo(storeMenuLeft, this.handleStoreData);
         actionMenuLeftDidMount();
     },
     /**
@@ -69,8 +69,6 @@ var MenuLeft = React.createClass({
             return <Panel id={id} key={id} icon={child.icon} title={child.traduction} url={child.url} collapseData={child.children} />;
         }, this);
 
-        console.log('ReactMenuLeft:');
-        console.log(panels);
         return (
             <PanelGroup id="accordion-menu-left">
                 {panels}
@@ -88,6 +86,10 @@ var MenuLeft = React.createClass({
         }
 
         return temp;
+    },
+
+    handleStoreData: function(data){
+        this.setState({data: data});
     }
 });
 
