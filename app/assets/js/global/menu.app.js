@@ -19,7 +19,8 @@
 
         // CRÉATION DU MENU GAUCHE SI LA PAGE LE PERMET
         if (document.getElementById('menu-left')) {
-            //React.render(<MenuLeft/>, document.getElementById('menu-left'));
+
+            React.render(<MenuLeft/>, document.getElementById('menu-left'));
         }
     });
 

@@ -41,7 +41,8 @@
      |--------------------------------------------------------------------------
      */
     global.Actions.menu = Reflux.createActions([
-        "menu_top_did_mount"
+        "menu_top_did_mount",
+        "menu_left_did_mount"
     ]);
 
     /*
