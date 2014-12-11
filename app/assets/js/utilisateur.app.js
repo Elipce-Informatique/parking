@@ -2,13 +2,14 @@
 var DataTableBandeauUser = require('./mods/react_data_table_bandeau_utilisateur');
 var Bandeau = require('./mods/composants/react_bandeau');
 var Button = ReactB.Button;
+var InputTextEditable = require('./mods/composants/formulaire/react_input.js');
 
 $(function(){
     
     // Tableau
     var head = [Lang.get('administration.utilisateur.tableau.nom'),Lang.get('administration.utilisateur.tableau.email'),Lang.get('administration.utilisateur.tableau.email2'),Lang.get('administration.utilisateur.tableau.email3')];
     var hide = ['id'];
-    var evts = {'onClick':Actions.utilisateur.display_user()};
+    var evts = {'onClick':displayUser};
     
     // Bandeau ATTENTION BANDEAU AVANT à cause du fixed header du tableau
      var oBandeau = React.render(
@@ -34,3 +35,16 @@ $(function(){
     });
 });
 
+function displayUser(evt){
+    var tr = $(evt.currentTarget);
+    var id = tr.data('id');
+    var attr = {value:id};
+
+    var oReactTable = React.render(
+        <InputTextEditable attributes={attr} editable={false} />,
+        document.getElementById('tableau_react')
+    );
+
+    // suppression fixed header => voir sur unset du tableau react
+    $('.fixedHeader').remove();
+}

@@ -120,7 +120,10 @@ var DataTableReact = React.createClass({
         // Suppression datable
         this.applyDataTable();
     },
-    
+
+    unmountComponentAtNode: function(container){
+      console.log('passe');
+    },
  /*
  |--------------------------------------------------------------------------
  | FONCTIONS NON REACT
@@ -146,7 +149,8 @@ var DataTableReact = React.createClass({
         if(!$.isEmptyObject(this.oDataTable)){
             this.oDataTable.destroy();
             this.oDataTable.clear();// HYPER IMPORTANT clear() après destroy()
-            
+            // suppression fixed header
+            $('.fixedHeader').remove();
         }
     },
     /**
