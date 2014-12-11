@@ -10,6 +10,7 @@
  * @param object evts: évènements sur les lignes de tableau {onClick:function(}{}} ATTENTION: les clés correspondent aux noms d'évènements HTML case sensitive.
  * @param boolean bUnderline: TRUE: Evenement par defaut sur click d'une ligne: surlignage
  *                            FALSE: pas d'évènement par défaut.
+ * @param object reactElements: voire composant react 'TableTr'
  */
 
 var DataTable = require('./react_data_table'); 
@@ -23,7 +24,8 @@ var DataTableBandeauReact = React.createClass({
         settings:React.PropTypes.object,
         attributes:React.PropTypes.object,
         evts:React.PropTypes.object,
-        bUnderline:React.PropTypes.bool
+        bUnderline:React.PropTypes.bool,
+        reactElements:React.PropTypes.object
     },
     
     /**
@@ -35,14 +37,15 @@ var DataTableBandeauReact = React.createClass({
             attributes: {},
             evts:{},
             bUnderline: true,
-            data: []
+            data: [],
+            reactElements: {}
         };
     },
     
     render: function() {       
         
         return (
-         <DataTable id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} onDataTableLineClick={Actions.global.table_bandeau_line_clicked}/>
+         <DataTable id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} onDataTableLineClick={Actions.global.table_bandeau_line_clicked} reactElements={this.props.reactElements}/>
         )
     }
     

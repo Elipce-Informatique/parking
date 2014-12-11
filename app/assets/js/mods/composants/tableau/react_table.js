@@ -1,3 +1,6 @@
+var ReactRadioBtsp = require('../formulaire/react_radio');
+var ButtonGroup = ReactB.ButtonGroup;
+
 /**
  * @param array head: array contenant l'entête du tableau ['A', 'B']
  * @param array hide: les clés de la requêtes SQL AJAX qui ne sont pas affichées dans le tableau et pour lesquelles on créé un data-* 
@@ -6,6 +9,7 @@
  * @param array data: tableau de données ex: [{},{}]
  * @param object attributes: Attributs HTML TABLE
  * @param object evts: évènements sur les lignes de tableau {onClick:function(}{}} ATTENTION: les clés correspondent aux noms d'évènements HTML case sensitive.
+ * @param object reactElements: voire composant react 'TableTr'
  */
 
 var Table = React.createClass({
@@ -15,14 +19,15 @@ var Table = React.createClass({
         hide: React.PropTypes.array.isRequired,
         data: React.PropTypes.array.isRequired,
         attributes: React.PropTypes.object,
-        evts:React.PropTypes.object
+        evts:React.PropTypes.object,
+        reactElements: React.PropTypes.object
     },
     
     /**
      * Les props par défaut
      */
     getDefaultProps: function() {
-        return {attributes:{}, evts:{}};
+        return {attributes:{}, evts:{}, reactElements:{}};
     },
 
     render: function() {
@@ -33,7 +38,7 @@ var Table = React.createClass({
             // Parcours des lignes du tableau
             this.props.data.forEach(function(dataLine, index) {
                 // Ajout du TR
-                corps.push(<TableTr key={index} data={dataLine} hide={that.props.hide} evts={that.props.evts}/>)
+                corps.push(<TableTr key={index} data={dataLine} hide={that.props.hide} evts={that.props.evts} reactElements={that.props.reactElements}/>)
             });
             
             // ID
@@ -82,36 +87,68 @@ var TableHeader = React.createClass({
  * @param json data: objet JSON. ex: {id:1, name:toto}
  * @param array hide: les clés de la requêtes SQL AJAX qui ne sont pas affichées dans le tableau et pour lesquelles on créé un data-* 
  *                    ex: l'url AJAX retourne les données suivantes {'id':1, 'nom':'PEREZ', 'prenom':'Vivian'}
- *                        var data = ['id']   
+ *                        var data = ['id']
+ * @param object reactElements: défini les propriétés des éléments react à afficher dans la colonne
+ *                              {indiceColonne0:['NomDuComposantReact1',{paramètres du composant NomDuComposantReact1}],
+ *                               indiceColonne2:['NomDuComposantReact2',{paramètres du composant NomDuComposantReact2}],
+ *                               indiceColonne5:['NomDuComposantReact1',{paramètres du composant NomDuComposantReact1}]
+ *                              }
  */
 var TableTr = React.createClass({
     
      propTypes: {
         data: React.PropTypes.object.isRequired,
         hide: React.PropTypes.array.isRequired,
-        evts:React.PropTypes.object
+        evts: React.PropTypes.object,
+        reactElements: React.PropTypes.object
+    },
+
+    /**
+     * Les props par défaut
+     */
+    getDefaultProps: function() {
+        return {reactElements:{}};
     },
 
     render: function() {
             // Variables
-            var tr = [];
-            var that = this;
-            var attr = {};
-               
+            var tr        = [];
+            var that      = this;
+            var attr      = {};
+            var indiceCol = 0;
+
             // Parcours des data
              _.each(this.props.data,function(val,key) {
                  // Champ caché, on créé un data-key
                  if(that.props.hide.length > 0 && _.indexOf(that.props.hide,key)>-1){
                      attr['data-'+key] = val;
                  }
-                 // Cellule de table
+                 // Cellule de la ligne
                  else{
-                     if(typeof(val) === 'object') {
-                         tr.push(<td key={that.props.data.id + key} dangerouslySetInnerHTML={{__html: val}} ></td>);
-                         console.log('%o', val);
+                     /* Cellule contenant un élément React */
+                     if(that.props.reactElements !== 'undefined' && Array.isArray(that.props.reactElements[indiceCol.toString()])){
+
+                        switch(that.props.reactElements[indiceCol.toString()][0]){
+                            case 'Radio':
+                                var radios = [];
+                                var indice = 0;
+                                _.each(that.props.reactElements[indiceCol.toString()][1]['name'], function(val, key){
+                                    var attributes = {'data-id':that.props.data.id};
+                                    radios.push(<ReactRadioBtsp key={'RRB'+that.props.data.id+key} name={val} attributes={attributes} libelle={that.props.reactElements[indiceCol.toString()][1]['libelle'][indice++]} evts={that.props.reactElements[indiceCol.toString()][2]}/>);
+                                });
+                                tr.push(<td key={that.props.data.id+key}>
+                                            <ButtonGroup data-toggle="buttons" bsSize="xsmall">{radios}</ButtonGroup>
+                                        </td>);
+                                break;
+                            default :
+                                tr.push(<td key={that.props.data.id+key}>Objet React --{that.props.reactElements[indiceCol.toString()][0]}-- non défini</td>);
+                                break;
+                        }
                      }
+                     /* Cellule "normal", un champ texte */
                      else
                         tr.push(<td key={that.props.data.id+key}>{val}</td>);
+                     indiceCol++;
                   }
              });
              // Ajout du tr

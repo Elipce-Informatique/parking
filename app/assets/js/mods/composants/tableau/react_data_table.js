@@ -11,6 +11,7 @@
  * @param boolean bUnderline: TRUE: Evenement par defaut sur click d'une ligne: surlignage
  *                            FALSE: pas d'évènement par défaut.
  * @param function onDataTableLineClick: sur clic ligne de tableau DataTable
+ * @param object reactElements: voire composant react 'TableTr'
  */
 
 var Table = require('./react_table');
@@ -31,7 +32,8 @@ var DataTableReact = React.createClass({
         attributes:React.PropTypes.object,
         evts:React.PropTypes.object,
         bUnderline:React.PropTypes.bool,
-        onDataTableLineClick: React.PropTypes.func
+        onDataTableLineClick: React.PropTypes.func,
+        reactElements: React.PropTypes.object
     },
     
     /**
@@ -69,7 +71,8 @@ var DataTableReact = React.createClass({
             attributes: {},
             evts:{},
             bUnderline: true,
-            onDataTableLineClick: function(){}
+            onDataTableLineClick: function(){},
+            reactElements: {}
         };
     },
     
@@ -97,7 +100,7 @@ var DataTableReact = React.createClass({
     
     render: function() {
         return (
-         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} evts={this.myEvts}/>
+         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} evts={this.myEvts} reactElements={this.props.reactElements}/>
         )
     },
     
