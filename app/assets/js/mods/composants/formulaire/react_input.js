@@ -10,6 +10,8 @@ var InputText = React.createClass({
     if (length > 10) return 'success';
     else if (length > 5) return 'warning';
     else if (length > 0) return 'error';
+
+
   },
 
   handleChange: function() {
