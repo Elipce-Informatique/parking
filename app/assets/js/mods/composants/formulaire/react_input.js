@@ -1,44 +1,76 @@
+
+/**
+ * Champ texte
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ */
 var InputText = React.createClass({
-  getInitialState: function() {
-    return {
-      value: ''
-    };
-  },
 
-  validationState: function() {
-    var length = this.state.value.length;
-    if (length > 10) return 'success';
-    else if (length > 5) return 'warning';
-    else if (length > 0) return 'error';
+    propTypes: {
+        attributes:React.PropTypes.object,
+        evts:React.PropTypes.object
+    },
+    GetDefaultProps: function(){
+        return{
+            attributes: {},
+            evts: {}
+        }
+    },
 
-
-  },
-
-  handleChange: function() {
-    // This could also be done using ReactLink:
-    // http://facebook.github.io/react/docs/two-way-binding-helpers.html
-    this.setState({
-      value: this.refs.input.getValue()
-    });
-  },
-
-  render: function() {
-    return (
-        <Input
-          type="text"
-          value={this.state.value}
-          placeholder="Enter text"
-          label="Working example with validation"
-          help="Validates based on string length."
-          bsStyle={this.validationState()}
-          hasFeedback
-          ref="input"
-          groupClassName="group-class"
-          wrapperClassName="wrapper-class"
-          labelClassName="label-class"
-          onChange={this.handleChange} />
-    );
-  }
+    render: function() {
+        return (
+            <Input
+            type="text"
+                {...this.props.attributes}
+                {...this.props.evts}
+            />
+        );
+    }
 });
 
-module.exports = DisplayUser;
+module.exports = InputText;
+
+
+/**
+ * Champ texte editable => si pas editable INPUT devient LABEL.
+ * @param editable: (bool) Si true alors INPUT sinon LABEL
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ */
+var InputTextEditable = React.createClass({
+
+    propTypes: {
+        editable:React.PropTypes.bool.isRequired,
+        attributes:React.PropTypes.object,
+        evts:React.PropTypes.object
+    },
+
+    GetDefaultProps: function(){
+        return{
+            attributes: {},
+            evts: {}
+        }
+    },
+
+    render: function() {
+        var retour;
+        // Editable
+        if(this.props.editable){
+            retour =  <InputText
+                            {...this.props.attributes}
+                            {...this.props.evts}
+                        />
+        }
+        // Non editable
+        else{
+            var texte = '';
+            if(this.props.attributes.value !== undefined){
+                texte = this.props.attributes.value;
+            }
+            retour = <label>{texte}</label>
+        }
+        return retour;
+    }
+});
+
+module.exports = InputTextEditable;
