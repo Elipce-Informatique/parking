@@ -2,7 +2,8 @@
 var DataTableBandeauUser = require('./mods/react_data_table_bandeau_utilisateur');
 var Bandeau = require('./mods/composants/react_bandeau');
 var Button = ReactB.Button;
-var InputTextEditable = require('./mods/composants/formulaire/react_input.js');
+var FicheUser = require('./mods/react_fiche_utilisateur');
+var containerTableau = 'tableau_react';
 
 $(function(){
     
@@ -19,32 +20,24 @@ $(function(){
 
     var oReactTable = React.render(
         <DataTableBandeauUser head={head} hide={hide} id="tab_users" evts={evts}/>,
-        document.getElementById('tableau_react')
+        document.getElementById(containerTableau)
     );
-    
-    
-    
-    
-    
-    
-    
-    // Click bouton IIIII
-    $('#test').click(function(){
-//       oReactTable.forceUpdate();
-         Actions.utilisateur.load_data();
-    });
+
 });
 
+/**
+ * Affaiche la fiche utilisateur
+ * @param evt: evenement JS
+ */
 function displayUser(evt){
     var tr = $(evt.currentTarget);
     var id = tr.data('id');
-    var attr = {value:id};
+
+    React.unmountComponentAtNode(document.getElementById(containerTableau));
 
     var oReactTable = React.render(
-        <InputTextEditable attributes={attr} editable={false} />,
-        document.getElementById('tableau_react')
+        <FicheUser editable={true} idUser={id} />,
+        document.getElementById(containerTableau)
     );
 
-    // suppression fixed header => voir sur unset du tableau react
-    $('.fixedHeader').remove();
 }

@@ -16,9 +16,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12"> 
-            <button id="test" type="button">IIIIIIII</button>
-        </div>
+        <div class="col-md-12" id="fiche"/>
     </div>
 @stop
 

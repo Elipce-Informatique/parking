@@ -21,9 +21,11 @@ return array(
     'utilisateur' => [
         'titre' => 'Gestion des utilisateurs de l\'application',
         'tableau' => array('nom' => 'Nom',
+            'prenom' => 'Prénom',
             'email' => 'E-mail',
             'email2' => 'E-mail 2',
-            'email3' => 'E-mail 3')
+            'email3' => 'E-mail 3'),
+        'fiche'=> 'Fiche '
     ],
 
     // MODULE PROFILS

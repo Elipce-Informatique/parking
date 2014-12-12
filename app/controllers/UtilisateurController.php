@@ -45,7 +45,7 @@ class UtilisateurController extends \BaseController
      */
     public function show($id)
     {
-        //
+        return Utilisateur::getUtilisateurFromId($id);
     }
 
 

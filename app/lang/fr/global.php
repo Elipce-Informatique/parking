@@ -15,6 +15,9 @@ return array(
     'create' => 'Créer',
     'del' => 'Supprimer',
 
+    // BOUTONS
+    'save' => "Enregistrer",
+    'back' => 'Retour',
 
     // AUTHENTIFICATION
     'title_bienvenue' => 'Connectez-vous',

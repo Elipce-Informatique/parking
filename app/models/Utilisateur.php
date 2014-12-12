@@ -164,5 +164,16 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         return $res;
     }
 
+    /**
+     * Infos d'un utilisateur
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public static function getUtilisateurFromId($id)
+    {
+        $res = Utilisateur::find($id);
+        return $res;
+    }
+
+
 
 }

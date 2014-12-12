@@ -121,8 +121,10 @@ var DataTableReact = React.createClass({
         this.applyDataTable();
     },
 
-    unmountComponentAtNode: function(container){
-      console.log('passe');
+    componentWillUnmount: function(){
+
+        // Suppression fixed header
+        $('.fixedHeader').remove();
     },
  /*
  |--------------------------------------------------------------------------
