@@ -1,7 +1,7 @@
 @if(Auth::check())
     <script type="text/javascript">
     window.Auth = {
-        modules : {{Auth::user()->getAllModules()}},
+        modules : {{Auth::user()->getAllModulesForAuthuser()}},
         menu_top:{
             items: {{Auth::user()->getMenuTopItems()}},
             user: {{Auth::user()->menuTopInfosUser()}}

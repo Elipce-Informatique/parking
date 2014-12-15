@@ -149,6 +149,19 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             ->get(['modules.*', 'profil_module.access_level']);
     }
 
+    public function getAllModulesForAuthuser()
+    {
+        return $this
+            ->join('profil_utilisateur', 'profil_utilisateur.utilisateur_id', '=', 'utilisateurs.id')
+            ->join('profils', 'profils.id', '=', 'profil_utilisateur.profil_id')
+            ->join('profil_module', 'profil_module.profil_id', '=', 'profils.id')
+            ->join('modules', 'modules.id', '=', 'profil_module.module_id')
+            ->join('module_module', 'module_module.fils_id', '=', 'modules.id')
+            ->where('utilisateurs.id', $this->id)
+            ->groupBy('modules.id')
+            ->get(['modules.*', 'profil_module.access_level']);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | MÉTHODES MÉTIER STATIQUES
