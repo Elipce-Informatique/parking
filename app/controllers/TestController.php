@@ -8,10 +8,10 @@ class TestController extends \BaseController
      */
     public function index()
     {
-        $modules = Auth::user()->getMenuLeftItemsFromUrl('accueil');
+        $modules = Auth::user()->isModuleAccessibleByUrl('administration') ? 'oui' : 'non';
 
-        $testPierre = Module::with('profils')->whereHas('profils.id', 1)->get();
-        return $testPierre;
+//        $testPierre = Module::with('profils')->whereHas('profils.id', 1)->get();
+        return $modules;
 //        return json_encode(Module::getTopLevelParentModuleFromUrl('test'));
     }
 }

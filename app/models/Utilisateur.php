@@ -105,16 +105,16 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      */
     public function isModuleAccessibleByUrl($url)
     {
-        //->groupBy('modules.id')
-        return $this
-            ->join('profil_utilisateur', 'profil_utilisateur.utilisateur_id', '=', 'utilisateurs.id')
-            ->join('profils', 'profils.id', '=', 'profil_utilisateur.profil_id')
-            ->join('profil_module', 'profil_module.profil_id', '=', 'profils.id')
-            ->join('modules', 'modules.id', '=', 'profil_module.module_id')
-            ->join('module_module', 'module_module.fils_id', '=', 'modules.id')
-            ->where('modules.url', $url)
-            ->groupBy('modules.id')
-            ->get(['modules.*']);
+        return (count($this
+                ->join('profil_utilisateur', 'profil_utilisateur.utilisateur_id', '=', 'utilisateurs.id')
+                ->join('profils', 'profils.id', '=', 'profil_utilisateur.profil_id')
+                ->join('profil_module', 'profil_module.profil_id', '=', 'profils.id')
+                ->join('modules', 'modules.id', '=', 'profil_module.module_id')
+                ->join('module_module', 'module_module.fils_id', '=', 'modules.id')
+                ->where('modules.url', $url)
+                ->where('utilisateurs.id', $this->id)
+                ->groupBy('modules.id')
+                ->get(['modules.*'])) != 0);
     }
 
     /**
@@ -124,7 +124,6 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      */
     public function isModuleAccessible($id)
     {
-        //->groupBy('modules.id')
         return (count($this
                 ->join('profil_utilisateur', 'profil_utilisateur.utilisateur_id', '=', 'utilisateurs.id')
                 ->join('profils', 'profils.id', '=', 'profil_utilisateur.profil_id')
@@ -132,6 +131,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 ->join('modules', 'modules.id', '=', 'profil_module.module_id')
                 ->join('module_module', 'module_module.fils_id', '=', 'modules.id')
                 ->where('modules.id', $id)
+                ->where('utilisateurs.id', $this->id)
                 ->groupBy('modules.id')
                 ->get(['modules.*'])) != 0);
     }
@@ -173,7 +173,6 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         $res = Utilisateur::find($id);
         return $res;
     }
-
 
 
 }
