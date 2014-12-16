@@ -9,7 +9,7 @@
  *      style: "success",
  *      icon: "plus-sign",  // VOIR DOC BOOTSTRAP ET NE PAS METTRE GLYPHICON DEVANT
  *      attrs: {disabled: true},
- *      evts: {onclick: function}
+ *      evts: {onClick: function}
  * }
  */
 
@@ -21,7 +21,6 @@ var Col = ReactB.Col;
 var Row = ReactB.Row;
 
 var ReactBandeau = React.createClass({
-    mixins: [Reflux.ListenerMixin],
 
     propTypes: {
         titre: React.PropTypes.string.isRequired,
@@ -71,10 +70,10 @@ var ReactBandeau = React.createClass({
     },
 
     render: function () {
-        var titre, btnRetour="", btnList;
+        var titre, btnRetour = "", btnList;
 
         // CRÉATION DU TITRE
-        var sousTitre = <small>{this.props.sousTitre}</small>;
+        var sousTitre = <small>  {this.props.sousTitre}</small>;
         switch (this.props.tailleTitre) {
             case 1:
                 titre = <h1>{this.props.titre}
@@ -111,15 +110,19 @@ var ReactBandeau = React.createClass({
         }
 
         // CRÉATION DES BOUTONS
-        btnList = _.map(this.props.btnList, function(btn){
-            return (<Button {...btn.attrs} {...btn.evts} bsStyle={btn.style} > <Glyphicon glyph={btn.icon}/> {btn.libelle}</Button>);
+        btnList = _.map(this.props.btnList, function (btn, index) {
+            return (<Button key={"btnbandeau-" + index} {...btn.attrs} {...btn.evts} bsStyle={btn.style} >
+                <Glyphicon glyph={btn.icon}/> {btn.libelle}</Button>);
         });
 
         // CRÉATION DU BOUTON BACK
-        if(this.props.onRetour){
-            btnRetour = <Button onClick={this.props.onRetour} > <Glyphicon glyph="arrow-left"/> Lang.get('')</Button>;
+        if (typeof(this.props.onRetour) != 'undefined') {
+            btnRetour = <Button onClick={this.props.onRetour} bsSize="small" >
+                <Glyphicon glyph="arrow-left"/>{Lang.get('global.back')}
+            </Button>;
         }
 
+        // AFFICHAGE DU BANDEAU
         return (
             <Col xs={12} md={12} className="bandeau">
                 <Row className="titre-bandeau">

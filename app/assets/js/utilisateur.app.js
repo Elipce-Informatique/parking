@@ -22,7 +22,6 @@ $(function(){
         <DataTableBandeauUser head={head} hide={hide} id="tab_users" evts={evts}/>,
         document.getElementById(containerTableau)
     );
-
 });
 
 /**
@@ -40,4 +39,9 @@ function displayUser(evt){
         document.getElementById(containerTableau)
     );
 
+}
+
+function onCreerBandeau(e){
+    console.log('OnCréer bandeau clické: ');
+    console.log(e);
 }
