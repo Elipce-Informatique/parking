@@ -5,19 +5,18 @@
 @stop
 
 @section('content')
-    <div class="row" id="profils_bandeau">
-
-    </div>
-
-
-    <div class="row">
-        <div class="col-md-12" id="profils_form"/>
+    <div class="row" id="bandeau">
     </div>
 
     <div class="row">
-        <div class="col-md-12" id="profils_tableau">
+        <div class="col-md-12">
+            <div id="tableau_react">
 
+            </div>
         </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" id="fiche"/>
     </div>
 @stop
 
