@@ -12,7 +12,7 @@
      */
     global.$ = global.jQuery = require('jquery');
     global.React = require('react/addons');
-    global._ = require('underscore/underscore');
+    global._ = require('lodash');
     global.Reflux = require('reflux');
     global.ReactB = require('react-bootstrap');
 

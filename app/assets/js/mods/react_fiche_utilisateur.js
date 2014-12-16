@@ -8,6 +8,10 @@ var Button = ReactB.Button;
 var ButtonToolbar = ReactB.ButtonToolbar;
 var Glyphicon = ReactB.Glyphicon;
 var AuthentMixins = require('./mixins/component_access');
+// TEST
+var InputRadioEditable = Input.InputRadioEditable;
+
+
 /**
  * Fiche utilisateur
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
@@ -33,7 +37,7 @@ var FicheUser = React.createClass({
     },
 
     render: function() {
-        console.log('STATE %o',this.state);
+        //console.log('STATE FICHE USER %o',this.state);
         var boutons = '';
         if(this.props.editable){
 
@@ -60,12 +64,12 @@ var FicheUser = React.createClass({
                 <Row>
                     <Col md={1} mdOffset={2} className="photo">
                         <PhotoEditable src={BASE_URI+this.state.data.photo} editable={this.props.editable}/>
+                        <InputTextEditable attributes={{label:Lang.get('administration.utilisateur.tableau.nom'),name:"nom", value:this.state.data.nom, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
+                        <InputTextEditable attributes={{label:Lang.get('administration.utilisateur.tableau.prenom'),name:"prenom", value:this.state.data.prenom, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
+                        <InputMailEditable attributes={{label:Lang.get('administration.utilisateur.tableau.email'),name:"email", value:this.state.data.email, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
+                        <InputRadioEditable attributes={{label:'Radio',name:"rad", value:"test", wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
                     </Col>
                 </Row>
-                <InputTextEditable attributes={{label:Lang.get('administration.utilisateur.tableau.nom'),name:"nom", value:this.state.data.nom, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
-                <InputTextEditable attributes={{label:Lang.get('administration.utilisateur.tableau.prenom'),name:"prenom", value:this.state.data.prenom, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
-                <InputMailEditable attributes={{label:Lang.get('administration.utilisateur.tableau.email'),name:"email", value:this.state.data.email, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
-
             </div>
         );
     },
@@ -96,6 +100,7 @@ var ficheStore = Reflux.createStore({
 
     // Callback
     getInfosUser: function(idUser) {
+        //console.log('STORE id '+idUser);
         // AJAX
         $.ajax({
             url: BASE_URI+'utilisateur/'+idUser,
