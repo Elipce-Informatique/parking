@@ -57,31 +57,19 @@ function handleClickRadio(evt){
 /*      FIN : Composant react_data_table_bandeau_module         */
 /****************************************************************/
 
-/**
- * Created by Pierre on 16/12/2014.
- *
- * TODO : Snippet de base pour un composant react. Commentaire à éditer
- * @param //
- */
-var ReactPageProfil  = React.createClass({
-    /**
-     * Vérification éventuelle des types des propriétés
-     */
-    propTypes: {},
-    /**
-     * Méthode appellée à la création du composant,
-     * initialise les propriétés non définies lors de l'appel avec les valeurs retournées
-     * @returns object
-     */
-    getDefaultProps: function () {
 
-    },
+/************************************************************************************************/
+/*                                                                                              */
+/*                               COMPOSANT REACT PAGE PROFIL                                    */
+/*                                                                                              */
+/************************************************************************************************/
+var ReactPageProfil  = React.createClass({
 
     /**
      * État initial des données du composant
-     * isNameProfilModif : pas de modification sur le nom du profil
+     * isNameProfilModif    : pas de modification sur le nom du profil
      * isMatriceModuleModif : pas de modification de la matrice des droits des modules
-     * matriceModuleDroit : matrice correspondant à la base de donnée lors du chargement serveur
+     * matriceModuleDroit   : matrice correspondant à la base de donnée lors du chargement serveur
      * @returns les données de l'état initial
      */
     getInitialState: function () {
@@ -90,27 +78,33 @@ var ReactPageProfil  = React.createClass({
         /* A chaque clic sur un radio bouton       */
         /* on va venir mettre à jour cette matrice */
         var aoMatrice = {};
-        var indice = 0;
-        _.each(this.props.dataModule, function(val, key){
-            aoMatrice.push({'id':    this.props.dataModule[indice]['id'],
-                            'etat':  this.props.dataModule[indice++]['etat']});
-        });
 
         return {
-            isNameProfilModif    : false,
-            isMatriceModuleModif : false,
-            matriceModuleDroit   : aoMatrice,
-            etatPageProfil       : 'profils'
+            matriceIniModuleDroit : aoMatrice,
+            matriceModuleDroit    : aoMatrice,
+            etatPageProfil        : 'profils',
+            dataProfil            : [],
+            dataModule            : []
         };
     },
-    /**
-     * Callback appelé lorsque le composant est affiché.
-     * C'est par exemple ici qu'on peut faire un appel ajax pour
-     * charger ses données dynamiquement !
-     */
-    componentDidMount: function () {
 
+    /**
+     * Avant le premier Render()
+     */
+    componentWillMount: function () {
+        /* On abonne ReactPageProfil aux stores :     */
+        /*     - pageProfilStore, déclenché par :     */
+        /*                           - profil_create  */
+        /*                           - profil_edit    */
+        /*                           - profil_suppr   */
+        /*                           - profil_retour  */
+        /*                           - profil_save    */
+        /*                  , ecoute les stores :     */
+        /*                           - profilStore    */
+        /*                           - moduleStore    */
+        this.listenTo(pageProfilStore, this.retourPageProfilStore, this.retourPageProfilStore);
     },
+
     /**
      * Test si le composant doit être réaffiché avec les nouvelles données
      * @param nextProps : Nouvelles propriétés
@@ -120,6 +114,7 @@ var ReactPageProfil  = React.createClass({
     shouldComponentUpdate: function (nextProps, nextState) {
         return true;
     },
+
     /**
      * Méthode appellée pour construire le composant.
      * A chaque fois que son contenu est mis à jour.
@@ -127,9 +122,49 @@ var ReactPageProfil  = React.createClass({
      */
     render: function () {
         return GetComponentSwitchState(this.state.etatPageProfil);
+    },
+
+    /**
+     * Retour du store "pageProfilStore"
+     * @param data
+     */
+    retourPageProfilStore: function(data) {
+        var newState = {};
+
+        /* Modification de la matrice */
+        if('radioChange' in data){
+            newState['isMatriceModuleModif'] = true;
+            newState['matriceModuleDroit']   = this.state.matriceModuleDroit;
+            newState.matriceModuleDroit[data.radioChange[0]] = data.radioChange[1];
+        }
+        /* Mise à jour du tableau des profils */
+        else if('dataProfil' in data){
+            newState['dataProfil'] = data.dataProfil;
+        }
+        /* Mise à jour du tableau des modules */
+        else if('dataModule' in data){
+            newState['dataModule'] = data.dataModule;
+        }
+        else if('libelleChange' in data){
+            newState['isNameProfilModif'] = true;
+        }
+
+        // MAJ data automatique, lifecycle "UPDATE"
+        this.setState(data);
     }
 });
+/************************************************************************************************/
+/*                                                                                              */
+/*                           FIN : COMPOSANT REACT PAGE PROFIL                                  */
+/*                                                                                              */
+/************************************************************************************************/
 
+
+/**********************************************************************************************/
+/*                                                                                            */
+/*                                       FONCTIONS SPECIFIQUES                                */
+/*                                                                                            */
+/**********************************************************************************************/
 function GetComponentSwitchState(etatPageProfil){
 
     var titrePage = Lang.get('global.profils');
@@ -146,7 +181,7 @@ function GetComponentSwitchState(etatPageProfil){
                     <Bandeau titre={titrePage} />
                 </Row>
                 <Row>
-                    <DataTableBandeauProfil head={headP} hide={hideP} id="tab_profil" evts={evtsP} />
+                    <DataTableBandeauProfil head={headP} hide={hideP} donnees={donnees} evts={evtsP} />
                 </Row>
             </div>
             break;
@@ -196,3 +231,193 @@ function GetComponentSwitchState(etatPageProfil){
             break;
     }
 }
+/**********************************************************************************************/
+/*                                                                                            */
+/*                                  FIN : FONCTIONS SPECIFIQUES                               */
+/*                                                                                            */
+/**********************************************************************************************/
+
+
+/**************************************************************************************************************/
+/*                                                                                                            */
+/*                                        STORES                                                              */
+/*                                                                                                            */
+/**************************************************************************************************************/
+
+/************************************************************************/
+/*                          PAGEPROFILSTORE                             */
+/*              Store associé à la page profil                          */
+/************************************************************************/
+var pageProfilStore = Reflux.createStore({
+    isMatriceModuleModif:   false,
+    isNameProfilModif:      false,
+    matriceIniModuleDroit : {},
+    matriceModuleDroit:     {},
+
+    // Initial setup
+    init: function() {
+
+        this.listenTo(Actions.bandeau.creer,         this.createProfil);  /* Action */
+        this.listenTo(Actions.bandeau.editer,        this.editProfil);    /* Action */
+        this.listenTo(Actions.bandeau.supprimer,     this.supprProfil);   /* Action */
+        this.listenTo(Actions.bandeau.retour,        this.retourProfil);  /* Action */
+        this.listenTo(Actions.bandeau.sauvegarder,   this.saveProfil);    /* Action */
+        this.listenTo(Actions.profil.radio_change,   this.radioChange);   /* Action */
+        this.listenTo(Actions.profil.libelle_change, this.libelleChange); /* Action */
+        this.listenTo(profilStore, this.updateProfil); /* Store  */
+        this.listenTo(moduleStore, this.updateModule); /* Store  */
+    },
+
+    createProfil: function(){
+
+    },
+
+    editProfil: function(){
+
+    },
+
+    supprProfil: function(){
+
+    },
+
+    retourProfil: function(){
+
+    },
+
+    saveProfil: function(){
+
+    },
+
+    updateProfil: function(dataProfil){
+        this.trigger({dataProfil:dataProfil});
+    },
+
+    updateModule: function(dataModule){
+        this.trigger({dataModule:dataModule});
+    },
+
+    radioChange: function(evt){
+        Etat      = $(evt.currentTarget).data('etat');     /* 'visu', 'modif' ou 'aucun' */
+        idModule  = $(evt.currentTarget).data('idModule'); /* id du module concerné      */
+
+        this.isMatriceModuleModif = true;
+    },
+
+    libelleChange: function(){
+        this.isNameProfilModif = true;
+    }
+});
+
+/*********************************************************************/
+/*                              PROFILSTORE                          */
+/*              Store associé au tableau des profils                 */
+/*********************************************************************/
+var profilStore = Reflux.createStore({
+
+    // Initial setup
+    init: function() {
+        // Register statusUpdate action
+        this.listenTo(Actions.profil.profil_update, this.updateProfil);
+    },
+
+    /* Charge les données à chaque évènement "profil_update" */
+    updateProfil: function() {
+        // AJAX
+        $.ajax({
+            url: BASE_URI+'profils/all', /* correspond au module url de la BDD */
+            dataType: 'json',
+            context: this,
+            success: function(data) {
+                /* Passe "data" en paramètre au(x) composant(s) qui écoutent le store profilStore */
+                this.trigger(data);
+            },
+            error: function(xhr, status, err) {
+                console.error(status, err.toString());
+                this.trigger({});
+            }
+        });
+    },
+
+    /* Charge les données tout seul au début */
+    getInitialState:function(){
+        var dataRetour = [];
+        // AJAX
+        $.ajax({
+            url: BASE_URI+'profils/all', /* correspond au module url de la BDD */
+            dataType: 'json',
+            context: this,
+            async:false,
+            success: function(data) {
+                dataRetour = data;
+            },
+            error: function(xhr, status, err) {
+                console.error(status, err.toString());
+            }
+        });
+        /* Passe "dataRetour" en paramètre au(x) composant(s) qui écoutent le store profilStore */
+        return dataRetour;
+    }
+});
+
+/****************************************************************/
+/*                          MODULESTORE                         */
+/*          Store associé au tableau des modules                */
+/****************************************************************/
+var moduleStore = Reflux.createStore({
+
+    // Initial setup
+    init: function() {
+        /* Charge les données du tableau module à chaque évènement "profil_select" */
+        this.listenTo(Actions.profil.profil_select, this.updateModule);
+    },
+
+    /* Met à jour le tableau des modules */
+    updateModule: function(evt) {
+        var idProfil = 0;
+
+        /* On a un profil de sélectionné, affichage complet du tableau */
+        if($(evt.currentTarget).hasClass('row_selected'))
+            idProfil = $(evt.currentTarget).data('id');
+        console.log('idProfil : '+idProfil);
+        // AJAX
+        $.ajax({
+            url: BASE_URI + 'profils/' + idProfil + '/modules', /* correspond au module url de la BDD */
+            dataType: 'json',
+            context: this,
+            success: function (data) {
+                /* Passe "data" en paramètre au(x) composant(s) qui écoutent le store moduleStore */
+                this.trigger(data);
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+                /* Passe "[]" en paramètre au(x) composant(s) qui écoutent le store profilStore */
+                this.trigger([]);
+            }
+        });
+    },
+
+    /* Charge les données tout seul au début */
+    getInitialState:function(){
+        var dataRetour = [];
+        // AJAX
+        $.ajax({
+            url: BASE_URI+'profils/0/module', /* correspond au module url de la BDD */
+            dataType: 'json',
+            context: this,
+            async:false,
+            success: function(data) {
+                dataRetour = data;
+            },
+            error: function(xhr, status, err) {
+                console.error(status, err.toString());
+            }
+        });
+        /* Passe "dataRetour" en paramètre au(x) composant(s) qui écoutent le store moduleStore */
+        return dataRetour;
+    }
+});
+/**************************************************************************************************************/
+/*                                                                                                            */
+/*                                            FIN : STORES                                                    */
+/*                                                                                                            */
+/**************************************************************************************************************/
