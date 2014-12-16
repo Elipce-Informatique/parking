@@ -82,11 +82,21 @@ class ProfilController extends \BaseController {
 		//
 	}
 
-    /* Récupère tous les profils */
+    /**
+     * Récupère tous les profils
+     * ['id', 'traduction']
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
     public function all(){
         return Profil::all();
     }
 
+    /**
+     * Récupère tout les modules avec les droits associés selon le profil
+     * ['id', 'traduction', 'etat']
+     * @param $idProfil
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
     public function getProfilModule($idProfil){
         return Profil::find($idProfil)->getProfilModule($idProfil);
     }

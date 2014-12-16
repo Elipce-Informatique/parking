@@ -76,6 +76,7 @@ var ReactPageProfil  = React.createClass({
     getDefaultProps: function () {
 
     },
+
     /**
      * État initial des données du composant
      * isNameProfilModif : pas de modification sur le nom du profil
@@ -125,68 +126,73 @@ var ReactPageProfil  = React.createClass({
      * @returns {XML}
      */
     render: function () {
-        var titrePage = Lang.get('global.profils');
-
-        switch(this.state.etatPageProfil){
-
-            /* On arrive sur la page "Profils" */
-            /* On affiche :                    */
-            /*    - le bandeau (Créer)         */
-            /*    - le tableau des profils     */
-            case 'profils':
-                return  <div id="containerPageProfil">
-                            <Row>
-                                <Bandeau titre={titrePage} />
-                            </Row>
-                            <Row>
-                                <DataTableBandeauProfil head={headP} hide={hideP} id="tab_profil" evts={evtsP} />
-                            </Row>
-                        </div>
-            break;
-
-            /* On a sélectionné un profil                      */
-            /* On affiche :                                    */
-            /*    - le bandeau (Retour/Créer/Editer/Supprimer) */
-            /*    - le nom du profil NON éditable              */
-            /*    - le tableau des modules NON éditable        */
-            case 'module/visu':
-                titrePage += 'Nom du profil sélectionné';
-                var NomProfil = Lang.get('global.profils') + ' ' + 'Nom du profil sélectionné';
-
-                return  <div id="containerPageProfil">
-                            <Row>
-                                <Bandeau titre={titrePage} />
-                            </Row>
-                            <Row>
-                                <p>{NomProfil}</p>
-                            </Row>
-                            <Row>
-                                <DataTableBandeauModule head={headMP} hide={hideMP} id="tab_module_profil" bUnderline={false} reactElements={aReactElements} />
-                            </Row>
-                        </div>
-            break;
-
-            /* On édite un profil                   */
-            /* On affiche :                         */
-            /*    - le bandeau                      */
-            /*    - le nom du profil EDITABLE       */
-            /*    - le tableau des modules EDITABLE */
-            case 'module/edition':
-
-                break;
-
-            /* On créer un profil                   */
-            /* On affiche :                         */
-            /*    - le bandeau                      */
-            /*    - le nom du profil EDITABLE       */
-            /*    - le tableau des modules EDITABLE */
-            case 'module/création':
-                titrePage += Lang.get('global.creation');
-
-                break;
-            default:
-                return <div>Erreur dans le render de react_page_profil.js</div>
-                break;
-        }
+        return GetComponentSwitchState(this.state.etatPageProfil);
     }
 });
+
+function GetComponentSwitchState(etatPageProfil){
+
+    var titrePage = Lang.get('global.profils');
+
+    switch(etatPageProfil){
+
+        /* On arrive sur la page "Profils" */
+        /* On affiche :                    */
+        /*    - le bandeau (Créer)         */
+        /*    - le tableau des profils     */
+        case 'profils':
+            return  <div id="containerPageProfil">
+                <Row>
+                    <Bandeau titre={titrePage} />
+                </Row>
+                <Row>
+                    <DataTableBandeauProfil head={headP} hide={hideP} id="tab_profil" evts={evtsP} />
+                </Row>
+            </div>
+            break;
+
+        /* On a sélectionné un profil                      */
+        /* On affiche :                                    */
+        /*    - le bandeau (Retour/Créer/Editer/Supprimer) */
+        /*    - le nom du profil NON éditable              */
+        /*    - le tableau des modules NON éditable        */
+        case 'module/visu':
+            titrePage += 'Nom du profil sélectionné';
+            var NomProfil = Lang.get('global.profils') + ' ' + 'Nom du profil sélectionné';
+
+            return  <div id="containerPageProfil">
+                <Row>
+                    <Bandeau titre={titrePage} />
+                </Row>
+                <Row>
+                    <p>{NomProfil}</p>
+                </Row>
+                <Row>
+                    <DataTableBandeauModule head={headMP} hide={hideMP} id="tab_module_profil" bUnderline={false} reactElements={aReactElements} />
+                </Row>
+            </div>
+            break;
+
+        /* On édite un profil                   */
+        /* On affiche :                         */
+        /*    - le bandeau                      */
+        /*    - le nom du profil EDITABLE       */
+        /*    - le tableau des modules EDITABLE */
+        case 'module/edition':
+
+            break;
+
+        /* On créer un profil                   */
+        /* On affiche :                         */
+        /*    - le bandeau                      */
+        /*    - le nom du profil EDITABLE       */
+        /*    - le tableau des modules EDITABLE */
+        case 'module/création':
+            titrePage += Lang.get('global.creation');
+
+            break;
+        default:
+            return <div>Erreur dans le render de react_page_profil.js</div>
+            break;
+    }
+}
