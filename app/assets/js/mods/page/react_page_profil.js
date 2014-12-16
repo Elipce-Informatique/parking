@@ -3,12 +3,12 @@
  */
 
 /* Composant react Bandeau */
-var Bandeau = require('./mods/composants/react_bandeau');
+var Bandeau = require('../composants/react_bandeau');
 
 /****************************************************************/
 /*          Composant react_data_table_bandeau_profil           */
 
-var DataTableBandeauProfil = require('./mods/react_data_table_bandeau_profil');
+var DataTableBandeauProfil = require('../react_data_table_bandeau_profil');
 
 /* Paramètres du composant react_data_table_bandeau_profil      */
 /* Entête(s) du tableau : "Profils"                             */
@@ -29,7 +29,7 @@ function handleClickProfil(evt){
 /****************************************************************/
 /*          Composant react_data_table_bandeau_module           */
 
-var DataTableBandeauModule = require('./mods/react_data_table_module_profil');
+var DataTableBandeauModule = require('../react_data_table_module_profil');
 
 /* Paramètres du composant react_data_table_module_profil            */
 /* Entête(s) du tableau : "Module, Droits                            */
