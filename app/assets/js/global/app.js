@@ -11,6 +11,7 @@
      |--------------------------------------------------------------------------
      */
     global.$ = global.jQuery = require('jquery');
+    global.Parsley = require('parsleyjs');
     global.React = require('react/addons');
     global._ = require('lodash');
     global.Reflux = require('reflux');
@@ -22,7 +23,7 @@
      | DEFINITION DE CONSTANTESDEFINITION DE CONSTANTES
      |--------------------------------------------------------------------------
      */
-    // URL de base du projet. Définie en PHP (structure.blade.php), ici juste pour référence.
+    // URL de base du projet. Définie en PHP dans structure.blade.php, ici juste pour référence IDE.
     global.BASE_URI;
 
     /*
@@ -43,6 +44,19 @@
     global.Actions.menu = Reflux.createActions([
         "menu_top_did_mount",
         "menu_left_did_mount"
+    ]);
+
+    /*
+     |--------------------------------------------------------------------------
+     | ACTIONS BANDEAU REFLUX
+     |--------------------------------------------------------------------------
+     */
+    global.Actions.bandeau = Reflux.createActions([
+        "creer",
+        "editer",
+        "supprimer",
+        "sauvegarder",
+        "retour"
     ]);
 
     /*

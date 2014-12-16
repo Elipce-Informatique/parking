@@ -3,7 +3,7 @@
  */
 
 /* Composant react Bandeau */
-var Bandeau = require('../composants/react_bandeau');
+var Bandeau = require('../composants/bandeau/react_bandeau');
 
 /****************************************************************/
 /*          Composant react_data_table_bandeau_profil           */
