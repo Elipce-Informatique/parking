@@ -6,7 +6,7 @@ var DataTableBandeauProfil       = require('./mods/react_data_table_bandeau_prof
 var DataTableModuleProfil = require('./mods/react_data_table_module_profil');
 
 /* Composant visuel Bandeau */
-var Bandeau                      = require('./mods/composants/react_bandeau');
+var Bandeau                      = require('./mods/composants/bandeau/react_bandeau');
 
 
 $(function(){
