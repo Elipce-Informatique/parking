@@ -1,6 +1,6 @@
-var Input = require('./composants/formulaire/react_input');
-var InputTextEditable = Input.InputTextEditable;
-var InputMailEditable = Input.InputMailEditable;
+var Field = require('./composants/formulaire/react_form_fields');
+var InputTextEditable = Field.Input.InputTextEditable;
+var InputMailEditable = Field.Input.InputMailEditable;
 var PhotoEditable = require('./react_photo');
 var Row = ReactB.Row;
 var Col = ReactB.Col;
@@ -9,7 +9,8 @@ var ButtonToolbar = ReactB.ButtonToolbar;
 var Glyphicon = ReactB.Glyphicon;
 var AuthentMixins = require('./mixins/component_access');
 // TEST
-var InputRadioEditable = Input.InputRadioEditable;
+var InputRadioEditable = Field.Input.InputRadioEditable;
+var Form = Field.Form
 
 
 /**
@@ -27,7 +28,7 @@ var FicheUser = React.createClass({
     },
 
     getInitialState: function(){
-        return {data:{}};
+        return {data:{nom:'',prenom:'',email:'',photo:'app/documents/photo/no.gif'}};
     },
 
     componentWillMount: function(){
@@ -54,7 +55,7 @@ var FicheUser = React.createClass({
         }
 
         return (
-            <div>
+            <Form>
                 {boutons}
                 <Row>
                     <Col md={6} className="text-center">
@@ -64,13 +65,22 @@ var FicheUser = React.createClass({
                 <Row>
                     <Col md={1} mdOffset={2} className="photo">
                         <PhotoEditable src={BASE_URI+this.state.data.photo} editable={this.props.editable}/>
-                        <InputTextEditable attributes={{label:Lang.get('administration.utilisateur.tableau.nom'),name:"nom", value:this.state.data.nom, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
-                        <InputTextEditable attributes={{label:Lang.get('administration.utilisateur.tableau.prenom'),name:"prenom", value:this.state.data.prenom, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
-                        <InputMailEditable attributes={{label:Lang.get('administration.utilisateur.tableau.email'),name:"email", value:this.state.data.email, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
-                        <InputRadioEditable attributes={{label:'Radio',name:"rad", value:"test", wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
                     </Col>
                 </Row>
-            </div>
+                <InputTextEditable ref="nom"
+                    attributes={
+                    {   label:Lang.get('administration.utilisateur.tableau.nom'),
+                        name:"nom",
+                        value:this.state.data.nom,
+                        wrapperClassName:'col-md-4', labelClassName:'col-md-2 text-right',groupClassName:'row'
+                    }}
+                    editable={this.props.editable}
+                    evts={{onChange:this.test}}/>
+                <InputTextEditable attributes={{label:Lang.get('administration.utilisateur.tableau.prenom'),name:"prenom", value:this.state.data.prenom, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
+                <InputMailEditable attributes={{label:Lang.get('administration.utilisateur.tableau.email'),name:"email", value:this.state.data.email, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
+                <InputRadioEditable ref="toto" attributes={{label:'Radio',name:"rad", value:"test", wrapperClassName:'col-md-2 col-md-offset-1',groupClassName:''}} editable={this.props.editable} />
+                <InputRadioEditable ref="titi" attributes={{label:'titi',name:"rad", value:"uu", wrapperClassName:'col-md-2',groupClassName:''}} editable={this.props.editable} />
+            </Form>
         );
     },
 
@@ -83,6 +93,10 @@ var FicheUser = React.createClass({
         this.setState({
             data: data
         });
+    },
+
+    test: function(){
+        console.log('Change NOM %o',this.refs)
     }
 });
 module.exports = FicheUser;
