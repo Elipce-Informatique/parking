@@ -30,7 +30,7 @@ return array(
 
     // MODULE PROFILS
     'profil' => [
-        'titre' => 'Gestion des profiles',
+        'titre' => 'Gestion des profils',
         'visu_modif' => 'Visu/Modif/Aucun',
         'titre_module' => 'Gestion des modules',
         'visu' => 'Visu',
