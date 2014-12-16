@@ -14,6 +14,7 @@ return array(
     'edit' => 'Editer',
     'create' => 'Créer',
     'del' => 'Supprimer',
+    'creation' => 'Création',
 
     // BOUTONS
     'save' => "Enregistrer",
@@ -30,8 +31,8 @@ return array(
     'password_oublie' => "Mot de passe oublié ?",
 
     // Profil
-    'profil' => 'Profil',
-    'module' => 'module',
+    'profils' => 'Profils',
+    'droits' => 'Droits',
 
     // AUTRES
     'accueil' => 'Accueil',
