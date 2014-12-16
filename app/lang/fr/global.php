@@ -15,9 +15,10 @@ return array(
     'create' => 'Créer',
     'del' => 'Supprimer',
     'creation' => 'Création',
+    'edition' => 'Edition',
 
     // BOUTONS
-    'save' => "Enregistrer",
+    'save' => "Sauvegarder",
     'back' => 'Retour',
 
     // AUTHENTIFICATION

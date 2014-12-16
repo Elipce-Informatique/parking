@@ -19,7 +19,7 @@ return array(
 
     // MODULE UTILISATEURS
     'utilisateur' => [
-        'titre' => 'Gestion des utilisateurs de l\'application',
+        'titre' => 'Utilisateurs',
         'tableau' => array('nom' => 'Nom',
             'prenom' => 'Prénom',
             'email' => 'E-mail',

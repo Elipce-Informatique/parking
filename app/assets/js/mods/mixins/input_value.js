@@ -1,5 +1,6 @@
 /**
  * Mixin permettant le gérer la value des inputs
+ * Pré-requis: le mixin est utilisé sur un composant ayant une ref="InputField"
  *
  */
 var InputValueMixin = {
@@ -11,11 +12,10 @@ var InputValueMixin = {
         });
         // OnChange DEV existe
         if(this.props.evts.onChange !== undefined){
-            this.evts.onChange(e);
+            this.props.evts.onChange(e);
         }
     },
     getInitialState: function(){
-        console.log('AAAAAA');
         // Value par défaut
         var val = '';
         if(this.props.attributes.value !== undefined){
@@ -36,14 +36,16 @@ var InputValueMixin = {
 
 /**
  * Mixin permettant de gérer le chack des radio et checkbox
+ * Pré-requis: le mixin est utilisé sur un composant ayant une ref="Checkable"
  *
  */
 var InputCheckableMixin = {
 
     handleChange: function(e) {
         // Mise à jour de l'état du composant
+        //console.log('Checked %o',this.refs.Checkable.getChecked());
         this.setState({
-            checked: this.refs.Checkable.getDOMNode().checked
+            checked: this.refs.Checkable.getChecked()
         });
         // OnChange DEV existe
         if(this.props.evts.onChange !== undefined){
@@ -51,7 +53,6 @@ var InputCheckableMixin = {
         }
     },
     getInitialState: function(){
-        console.log('OOOOOO');
         // Etat par défaut
         var coche = false;
         if(this.props.attributes.checked !== undefined){

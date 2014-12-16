@@ -1,6 +1,6 @@
 // ATTENTION la majuscule est super importante
 var DataTableBandeauUser = require('./mods/react_data_table_bandeau_utilisateur');
-var Bandeau = require('./mods/composants/react_bandeau');
+var Bandeau = require('./mods/composants/bandeau/react_bandeau');
 var Button = ReactB.Button;
 var FicheUser = require('./mods/react_fiche_utilisateur');
 var containerTableau = 'tableau_react';
@@ -22,7 +22,6 @@ $(function(){
         <DataTableBandeauUser head={head} hide={hide} id="tab_users" evts={evts}/>,
         document.getElementById(containerTableau)
     );
-
 });
 
 /**
@@ -40,4 +39,9 @@ function displayUser(evt){
         document.getElementById(containerTableau)
     );
 
+}
+
+function onCreerBandeau(e){
+    console.log('OnCréer bandeau clické: ');
+    console.log(e);
 }

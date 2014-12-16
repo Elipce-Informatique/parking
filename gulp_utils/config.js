@@ -1,7 +1,7 @@
 var dest = "./public/js";
 var src = './app/assets/js';
 var fs = require('fs');
-var _ = require('underscore');
+var _ = require('lodash');
 
 module.exports = {
     browserify: {
