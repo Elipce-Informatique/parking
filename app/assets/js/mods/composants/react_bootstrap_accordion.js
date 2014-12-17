@@ -1,3 +1,4 @@
+var Glyphicon = ReactB.Glyphicon;
 /**
  * Created by yann on 09/12/2014.
  *
@@ -54,7 +55,7 @@ var PanelGroup = React.createClass({
  * @param title : Titre affiché dans le header du panel
  * @param url : url du lien dans le header du panel
  * @param collapseData : Tableau de données pour créer le menu déroulant (Voir le composant PanelCollapse pour la structure)
- * @param icon : icone a afficher dans le header du panel
+ * @param icon : icone a afficher dans le header du panel (sans glyphicon-)
  */
 var Panel = React.createClass({
 
@@ -106,7 +107,7 @@ var Panel = React.createClass({
  * @param title : Titre a afficher dans le lien
  * @param url : url du lien
  * @param collapseId : id du PanelCollapse correspondant à ce PanelHeading (non obligatoire si non collapsable)
- * @param icon : Icon à accicher
+ * @param icon : Icon à afficher (sans mettre glypgicon- devant)
  */
 var PanelHeading = React.createClass({
 
@@ -135,7 +136,7 @@ var PanelHeading = React.createClass({
     },
 
     render: function () {
-        var icon = this.props.icon != "" ? <span className={"glyphicon " + this.props.icon}></span> : '';
+        var icon = this.props.icon != "" ? <Glyphicon glyph={this.props.icon}/> : '';
         var collapse = ((this.props.collapseId != "") ? (<a data-parent={"#"+this.props.groupId} data-toggle="collapse" href={"#"+this.props.collapseId}>
             <span className="glyphicon glyphicon-chevron-down pull-right" />
         </a>) : "");
@@ -162,13 +163,13 @@ var PanelHeading = React.createClass({
  *              id: 4
  *              url: "http://totolafritte.fr/",
  *              traduction: "Toto Lafritte",
- *              icon: "glyphicon-tasks"
+ *              icon: "tasks"
  *          },
  *          {
  *              id: 5
  *              url: "http://totolagoutte.fr/",
  *              traduction: "Toto Lagoutte",
- *              icon: "glyphicon-user"
+ *              icon: "user"
  *          }
  *      ]
  *
@@ -247,7 +248,7 @@ var TrCollapse = React.createClass({
     },
 
     render: function () {
-        var icon = this.props.icon != "" ? <span className={"glyphicon " + this.props.icon}></span> : '';
+        var icon = this.props.icon != "" ? <Glyphicon glyph={this.props.icon}/> : '';
 
         return (<tr>
             <td>

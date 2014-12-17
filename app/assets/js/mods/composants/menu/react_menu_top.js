@@ -2,6 +2,7 @@ var AccessMixin = require('../../mixins/component_access');
 var menuItemsDataStore = require('../../stores/stores_menus').menu_top_items;
 var menuUserDataStore = require('../../stores/stores_menus').menu_top_user;
 var actionMenuDidMount = Actions.menu.menu_top_did_mount;
+var Glyphicon = ReactB.Glyphicon;
 
 /**
  * Created by yann on 19/11/2014.
@@ -38,7 +39,9 @@ var AppName = React.createClass({
                     <span className="icon-bar"></span>
                     <span className="icon-bar"></span>
                 </button>
-                <a className="navbar-brand" href={this.props.url}><span className="glyphicon glyphicon-home"></span>{this.props.name}</a>
+                <a className="navbar-brand" href={this.props.url}>
+                    <Glyphicon glyph="home"/>{this.props.name}</a>
+
             </div>
         )
     }
@@ -47,12 +50,11 @@ var AppName = React.createClass({
 /**
  * Created by yann on 19/11/2014.
  *
- * TODO : Snippet de base pour un composant react. Commentaire à éditer
  * @param dataMenu : données à afficher dans le menu au format JSON
  * [
  *  {traduction: "item_1", url: "item_1", active: true, accessible: true},
- *  {traduction: "item_2", url: "item_2", active: false, accessible: true, icon: "glyphicon glyphicon-star"},
- *  {traduction: "item_3", url: "item_3", active: false, accessible: false, icon: "glyphicon glyphicon-cloud"}
+ *  {traduction: "item_2", url: "item_2", active: false, accessible: true, icon: "star"},
+ *  {traduction: "item_3", url: "item_3", active: false, accessible: false, icon: "cloud"}
  * ]
  */
 var ListItemsMenu = React.createClass({
@@ -111,11 +113,12 @@ var ListItemsMenu = React.createClass({
             var props = {
                 className: classnames
             }
-            var icon = "glyphicon "+item.icon;
+            var icon = <Glyphicon glyph={item.icon}/>;
 
             items.push(
                 <li key={item.id} {...props}>
-                    <a href={url}><span className={icon}></span>{libelle}</a>
+                    <a href={url}>
+                        {icon}{libelle}</a>
                 </li>
             );
         });
@@ -194,7 +197,7 @@ var UserInfos = React.createClass({
             <ul className="nav navbar-nav navbar-right">
                 <li className="dropdown">
                     <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                        <i className="glyphicon glyphicon-user"></i> {this.props.nomUtilisateur}
+                        <Glyphicon glyph="user"/> {this.props.nomUtilisateur}
                         <span className="caret"></span>
                     </a>
                     {dropdown}

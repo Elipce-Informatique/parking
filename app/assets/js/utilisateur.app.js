@@ -1,6 +1,6 @@
 // ATTENTION la majuscule est super importante
 var DataTableBandeauUser = require('./mods/react_data_table_bandeau_utilisateur');
-var Bandeau = require('./mods/composants/bandeau/react_bandeau');
+var Bandeau = require('./mods/composants/bandeau/react_bandeau_visu');
 var Button = ReactB.Button;
 var FicheUser = require('./mods/react_fiche_utilisateur');
 var containerTableau = 'tableau_react';
