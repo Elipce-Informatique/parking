@@ -57,7 +57,6 @@ var PageUser = React.createClass({
                 react =
                     <div>
                         Mode creation
-                        <DataTableBandeauUser/>
                     </div>
                 break;
             default:

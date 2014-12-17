@@ -1,6 +1,6 @@
 var Field = require('./composants/formulaire/react_form_fields');
-var InputTextEditable = Field.Input.InputTextEditable;
-var InputMailEditable = Field.Input.InputMailEditable;
+var InputTextEditable = Field.InputTextEditable;
+var InputMailEditable = Field.InputMailEditable;
 var PhotoEditable = require('./react_photo');
 var Row = ReactB.Row;
 var Col = ReactB.Col;
@@ -9,7 +9,7 @@ var ButtonToolbar = ReactB.ButtonToolbar;
 var Glyphicon = ReactB.Glyphicon;
 var AuthentMixins = require('./mixins/component_access');
 // TEST
-var InputRadioEditable = Field.Input.InputRadioEditable;
+var InputRadioEditable = Field.InputRadioEditable;
 var Form = Field.Form
 
 
