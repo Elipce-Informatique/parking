@@ -49,9 +49,6 @@ var DataTableBandeauUtilisateurReact = React.createClass({
      * @returns {undefined}
      */
     componentWillMount: function(){
-        this.listenTo(userStore, this.updateData, this.updateData);
-        // Appel action
-        Actions.utilisateur.load_data();
     },
     
     render: function() {
@@ -59,12 +56,7 @@ var DataTableBandeauUtilisateurReact = React.createClass({
          <DataTableBandeau id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts}/>
         )
     },
-    
- /*
- |--------------------------------------------------------------------------
- | FONCTIONS NON REACT
- |--------------------------------------------------------------------------
- */   
+
     /**
      * Mise à jour de la TABLE
      * @param {type} data
@@ -79,54 +71,3 @@ var DataTableBandeauUtilisateurReact = React.createClass({
 });
 
 module.exports = DataTableBandeauUtilisateurReact;
-
-
-// Creates a DataStore
-var userStore = Reflux.createStore({
-
-    // Initial setup
-    init: function() {
-
-        // Register statusUpdate action
-        this.listenTo(Actions.utilisateur.load_data, this.getData);
-        
-    },
-
-    // Callback
-    getData: function() {
-        // AJAX
-        $.ajax({
-            url: BASE_URI+'utilisateur/all',
-            dataType: 'json',
-            context: this,
-            success: function(data) {
-                // Passe variable aux composants qui écoutent l'action actionLoadData
-                this.trigger(data);
-            },
-            error: function(xhr, status, err) {
-                 console.error(status, err.toString());
-                 this.trigger({});
-            }
-        });       
-    },
-    
-    getInitialState:function(){
-        var dataRetour = [];
-        // AJAX
-        $.ajax({
-            url: BASE_URI+'utilisateur/all',
-            dataType: 'json',
-            context: this,
-            async:false,
-            success: function(data) {
-                dataRetour = data;
-            },
-            error: function(xhr, status, err) {
-                 console.error(status, err.toString());
-            }
-        });   
-        return dataRetour;
-    }
-    
-    
-});

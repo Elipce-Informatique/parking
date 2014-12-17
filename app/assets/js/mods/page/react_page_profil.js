@@ -2,6 +2,10 @@
  * Created by Pierre on 16/12/2014.
  */
 
+var Row = ReactB.Row;
+
+var AuthentMixins = require('../mixins/component_access'); /* Pour le listenTo */
+
 /* Composant react Bandeau */
 var Bandeau = require('../composants/bandeau/react_bandeau');
 
@@ -14,7 +18,7 @@ var DataTableBandeauProfil = require('../react_data_table_bandeau_profil');
 /* Entête(s) du tableau : "Profils"                             */
 /* Champ(s) caché(s)    : "id"                                  */
 /* Sur clic d'une ligne, déclenche l'action "handleClickProfil" */
-var headP = [Lang.get('global.profil')];
+var headP = [Lang.get('global.profils')];
 var hideP = ['id'];
 var evtsP = {'onClick':handleClickProfil};
 
@@ -65,6 +69,8 @@ function handleClickRadio(evt){
 /************************************************************************************************/
 var ReactPageProfil  = React.createClass({
 
+    mixins: [Reflux.ListenerMixin,AuthentMixins], /* Pour le listenTo */
+
     /**
      * État initial des données du composant
      * isNameProfilModif    : pas de modification sur le nom du profil
@@ -73,6 +79,7 @@ var ReactPageProfil  = React.createClass({
      * @returns les données de l'état initial
      */
     getInitialState: function () {
+
         /* Création de la matrice qui associe      */
         /* pour chaque module ses droits           */
         /* A chaque clic sur un radio bouton       */
@@ -82,8 +89,9 @@ var ReactPageProfil  = React.createClass({
         return {
             dataProfil : [],
             dataModule : [],
-            titrePage  : '',
-            profilName : ''
+            titrePage  : Lang.get('global.profils'),
+            profilName : '',
+            etatPageProfil:'profils'
         };
     },
 
@@ -128,6 +136,7 @@ var ReactPageProfil  = React.createClass({
      * @param data
      */
     retourPageProfilStore: function(data) {
+        console.log('MAJ-- du state du composant : "ReactPageProfil" --MAJ');
         // MAJ data automatique, lifecycle "UPDATE"
         this.setState(data);
     },
@@ -146,7 +155,7 @@ var ReactPageProfil  = React.createClass({
                         <Bandeau titre={this.state.titrePage} />
                     </Row>
                     <Row>
-                        <DataTableBandeauProfil head={headP} hide={hideP} donnees={donnees} evts={evtsP} />
+                        <DataTableBandeauProfil id="tableProfils" head={headP} hide={hideP} donnees={this.state.dataProfil} evts={evtsP} />
                     </Row>
                 </div>
                 break;
@@ -195,6 +204,9 @@ var ReactPageProfil  = React.createClass({
         }
     }
 });
+module.exports = ReactPageProfil;
+
+
 /************************************************************************************************/
 /*                                                                                              */
 /*                           FIN : COMPOSANT REACT PAGE PROFIL                                  */
@@ -207,154 +219,6 @@ var ReactPageProfil  = React.createClass({
 /*                                        STORES                                                              */
 /*                                                                                                            */
 /**************************************************************************************************************/
-
-/************************************************************************/
-/*                          PAGEPROFILSTORE                             */
-/*              Store associé à la page profil                          */
-/************************************************************************/
-var pageProfilStore = Reflux.createStore({
-    isMatriceModuleModif:   false,
-    isNameProfilModif:      false,
-    matriceIniModuleDroit : {},
-    matriceModuleDroit:     {},
-    idProfilSelect:         0,
-    nameProfil:             "",
-    etatPrecedent:          "",
-    etatCourant:            "profils",
-
-    // Initial setup
-    init: function() {
-
-        this.listenTo(Actions.bandeau.creer,         this.createProfil);  /* Action */
-        this.listenTo(Actions.bandeau.editer,        this.editProfil);    /* Action */
-        this.listenTo(Actions.bandeau.supprimer,     this.supprProfil);   /* Action */
-        this.listenTo(Actions.bandeau.retour,        this.retourProfil);  /* Action */
-        this.listenTo(Actions.bandeau.sauvegarder,   this.saveProfil);    /* Action */
-        this.listenTo(Actions.profil.radio_change,   this.radioChange);   /* Action */
-        this.listenTo(Actions.profil.libelle_change, this.libelleChange); /* Action */
-        this.listenTo(profilStore, this.updateProfil); /* Store  */
-        this.listenTo(moduleStore, this.updateModule); /* Store  */
-    },
-
-    getInitialState: function(){
-        return {titrePage:Lang.get('global.profils')};
-    },
-
-    createProfil: function(){
-        this.etatPrecedent = this.etatCourant;
-        this.etatCourant   = 'création';
-
-        this.trigger({etatPageProfil:'création', titrePage:Lang.get('global.profils')+'/'+Lang.get('global.creation')});
-    },
-
-    /**
-     * Passage en mode édition
-     */
-    editProfil: function(){
-        this.etatPrecedent = this.etatCourant;
-        this.etatCourant   = 'edition';
-
-        this.trigger({etatPageProfil:'edition', titrePage:Lang.get('global.profils')+'/'+this.nameProfil, profilName:this.nameProfil});
-    },
-
-    /**
-     * Suppression du profil
-     * @param idProfil
-     */
-    supprProfil: function(){
-        console.log('Suppression du profil "'+this.nameProfil+'" à faire.');
-    },
-
-    /**
-     * Clic sur le bouton retour
-     */
-    retourProfil: function(){
-        this.etatPrecedent = "profils";
-        this.etatCourant   = "profils";
-        this.trigger({etatPageProfil:"profils", titrePage:Lang.get('global.profils')});
-    },
-
-    /**
-     * Sauvegarde
-     */
-    saveProfil: function(){
-        if(this.isNameProfilModif){
-            console.log('Sauvegarde du libelle du profil à faire.');
-        }
-
-        if(this.isMatriceModuleModif){
-            console.log('Sauvegarde de l\'état des modules à faire.');
-        }
-    },
-
-    /**
-     * Retour vers la page profil
-     */
-    updateProfil: function(dataProfil){
-        this.trigger({dataProfil:dataProfil});
-    },
-
-    /**
-     *  On a sélectionné un profil
-     */
-    updateModule: function(data){
-        this.idProfilSelect        = data.idProfil;
-        this.matriceIniModuleDroit = {};
-        this.matriceModuleDroit    = {};
-        this.getNameProfilByID();
-        var indice = 0;
-
-        /* Initialisation de la matrice initial */
-        _.each(data.data, function(key, value){
-            this.matriceIniModuleDroit[data.data[indice]['id']] = data.data[indice]['etat'];
-            indice++;
-        }, this);
-
-        /* Initialisation de la matrice représentative de l'état de la page */
-        this.matriceModuleDroit = _.clone(this.matriceIniModuleDroit);
-
-        this.trigger({etatPageProfil:'création'});
-        this.trigger({dataModule:data.data, etatPageProfil:'visu', titrePage:Lang.get('global.profils')+'/'+this.nameProfil, profilName:this.nameProfil});
-    },
-
-    /**
-     * Clic sur un radio bouton
-     */
-    radioChange: function(evt){
-        Etat      = $(evt.currentTarget).data('etat');     /* 'visu', 'modif' ou 'aucun' */
-        idModule  = $(evt.currentTarget).data('idModule'); /* id du module concerné      */
-
-        /* Mise a jour de la matrice */
-        this.matriceModuleDroit[idModule] = Etat;
-
-        /* Mise à jour du flag pour sauvegarder les modifications sur l'etat des modules */
-        this.isMatriceModuleModif = true;
-    },
-
-    /**
-     * Modification du libelle du profil
-     */
-    libelleChange: function(){
-        this.isNameProfilModif = true;
-    },
-
-    getNameProfilByID: function(){
-        // AJAX
-        $.ajax({
-            url: BASE_URI+'profils/'+this.idProfil, /* correspond au module url de la BDD */
-            dataType: 'json',
-            context: this,
-            async:false,
-            success: function(data) {
-                this.nameProfil = data.name;
-            },
-            error: function(xhr, status, err) {
-                this.nameProfil = 'Error in getNameProfilByID';
-                console.error(status, err.toString());
-            }
-        });
-    }
-});
 
 /*********************************************************************/
 /*                              PROFILSTORE                          */
@@ -463,6 +327,160 @@ var moduleStore = Reflux.createStore({
         });
         /* Passe "dataRetour" en paramètre au(x) composant(s) qui écoutent le store moduleStore */
         return dataRetour;
+    }
+});
+
+/************************************************************************/
+/*                          PAGEPROFILSTORE                             */
+/*              Store associé à la page profil                          */
+/************************************************************************/
+var pageProfilStore = Reflux.createStore({
+    isMatriceModuleModif:   false,
+    isNameProfilModif:      false,
+    matriceIniModuleDroit : {},
+    matriceModuleDroit:     {},
+    idProfilSelect:         0,
+    nameProfil:             "",
+    etatPrecedent:          "",
+    etatCourant:            "profils",
+    initialDataProfil:      {},
+
+    // Initial setup
+    init: function() {
+        this.listenTo(Actions.bandeau.creer,          this.createProfil);  /* Action */
+        this.listenTo(Actions.bandeau.editer,         this.editProfil);    /* Action */
+        this.listenTo(Actions.bandeau.supprimer,      this.supprProfil);   /* Action */
+        this.listenTo(Actions.bandeau.retour,         this.retourProfil);  /* Action */
+        this.listenTo(Actions.bandeau.sauvegarder,    this.saveProfil);    /* Action */
+        this.listenTo(Actions.profil.radio_change,    this.radioChange);   /* Action */
+        this.listenTo(Actions.profil.libelle_change,  this.libelleChange); /* Action */
+        this.listenTo(profilStore, this.updateProfil, this.getInitialDataProfil);  /* Store  */
+        this.listenTo(moduleStore, this.updateModule); /* Store  */
+    },
+
+    getInitialState:function(){
+        return {dataProfil:this.initialDataProfil};
+    },
+
+    getInitialDataProfil: function(data){
+        console.log('getInitialDataProfil');
+        this.initialDataProfil = data;
+    },
+
+    createProfil: function(){
+        this.etatPrecedent = this.etatCourant;
+        this.etatCourant   = 'création';
+
+        this.trigger({etatPageProfil:'création', titrePage:Lang.get('global.profils')+'/'+Lang.get('global.creation')});
+    },
+
+    /**
+     * Passage en mode édition
+     */
+    editProfil: function(){
+        this.etatPrecedent = this.etatCourant;
+        this.etatCourant   = 'edition';
+
+        this.trigger({etatPageProfil:'edition', titrePage:Lang.get('global.profils')+'/'+this.nameProfil, profilName:this.nameProfil});
+    },
+
+    /**
+     * Suppression du profil
+     * @param idProfil
+     */
+    supprProfil: function(){
+        console.log('Suppression du profil "'+this.nameProfil+'" à faire.');
+    },
+
+    /**
+     * Clic sur le bouton retour
+     */
+    retourProfil: function(){
+        this.etatPrecedent = "profils";
+        this.etatCourant   = "profils";
+        this.trigger({etatPageProfil:"profils", titrePage:Lang.get('global.profils')});
+    },
+
+    /**
+     * Sauvegarde
+     */
+    saveProfil: function(){
+        if(this.isNameProfilModif){
+            console.log('Sauvegarde du libelle du profil à faire.');
+        }
+
+        if(this.isMatriceModuleModif){
+            console.log('Sauvegarde de l\'état des modules à faire.');
+        }
+    },
+
+    /**
+     * Retour vers la page profil
+     */
+    updateProfil: function(dataProfil){
+        console.log('updateProfil dans pageProfilStore %o',dataProfil);
+        this.trigger({dataProfil:dataProfil});
+    },
+
+    /**
+     *  On a sélectionné un profil
+     */
+    updateModule: function(data){
+        this.idProfilSelect        = data.idProfil;
+        this.matriceIniModuleDroit = {};
+        this.matriceModuleDroit    = {};
+        this.getNameProfilByID();
+        var indice = 0;
+
+        /* Initialisation de la matrice initial */
+        _.each(data.data, function(key, value){
+            this.matriceIniModuleDroit[data.data[indice]['id']] = data.data[indice]['etat'];
+            indice++;
+        }, this);
+
+        /* Initialisation de la matrice représentative de l'état de la page */
+        this.matriceModuleDroit = _.clone(this.matriceIniModuleDroit);
+
+        this.trigger({etatPageProfil:'création'});
+        this.trigger({dataModule:data.data, etatPageProfil:'visu', titrePage:Lang.get('global.profils')+'/'+this.nameProfil, profilName:this.nameProfil});
+    },
+
+    /**
+     * Clic sur un radio bouton
+     */
+    radioChange: function(evt){
+        Etat      = $(evt.currentTarget).data('etat');     /* 'visu', 'modif' ou 'aucun' */
+        idModule  = $(evt.currentTarget).data('idModule'); /* id du module concerné      */
+
+        /* Mise a jour de la matrice */
+        this.matriceModuleDroit[idModule] = Etat;
+
+        /* Mise à jour du flag pour sauvegarder les modifications sur l'etat des modules */
+        this.isMatriceModuleModif = true;
+    },
+
+    /**
+     * Modification du libelle du profil
+     */
+    libelleChange: function(){
+        this.isNameProfilModif = true;
+    },
+
+    getNameProfilByID: function(){
+        // AJAX
+        $.ajax({
+            url: BASE_URI+'profils/'+this.idProfil, /* correspond au module url de la BDD */
+            dataType: 'json',
+            context: this,
+            async:false,
+            success: function(data) {
+                this.nameProfil = data.name;
+            },
+            error: function(xhr, status, err) {
+                this.nameProfil = 'Error in getNameProfilByID';
+                console.error(status, err.toString());
+            }
+        });
     }
 });
 /**************************************************************************************************************/
