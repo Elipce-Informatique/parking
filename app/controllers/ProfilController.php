@@ -43,7 +43,7 @@ class ProfilController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		//
+        return Profil::find($id);
 	}
 
 
@@ -97,7 +97,7 @@ class ProfilController extends \BaseController {
      * @param $idProfil
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function getProfilModule($idProfil){
-        return Profil::find($idProfil)->getProfilModule($idProfil);
+    public function getProfilModule($profils){
+        return Profil::find($profils)->getProfilModule($profils);
     }
 }
