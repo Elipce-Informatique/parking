@@ -20,7 +20,7 @@
 
     /*
      |--------------------------------------------------------------------------
-     | DEFINITION DE CONSTANTESDEFINITION DE CONSTANTES
+     | DEFINITION DE GLOBALES
      |--------------------------------------------------------------------------
      */
     // URL de base du projet. Définie en PHP dans structure.blade.php, ici juste pour référence IDE.
@@ -33,7 +33,9 @@
      */
     global.Actions = {};
     global.Actions.global = Reflux.createActions([
-        "table_bandeau_line_clicked"
+        "table_bandeau_line_clicked",
+        "gestion_modif_change",
+        "gestion_modif_reset"
     ]);
 
     /*
@@ -56,7 +58,8 @@
         "editer",
         "supprimer",
         "sauvegarder",
-        "retour"
+        "retour",
+        "boutons_perso"
     ]);
 
     /*
