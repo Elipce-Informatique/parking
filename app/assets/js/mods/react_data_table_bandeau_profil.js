@@ -10,12 +10,8 @@
  * @param boolean bUnderline: TRUE: Evenement par defaut sur click d'une ligne: surlignage
  *                            FALSE: pas d'évènement par défaut.
  */
-
-var AuthentMixins = require('./mixins/component_access');                          /* Pour gérer les droits d'accès     */
 var DataTableBandeau = require('./composants/tableau/react_data_table_bandeau'); /* Pour le bandeau de la page profil */
 var DataTableBandeauProfilReact = React.createClass({
-
-    mixins: [Reflux.ListenerMixin,AuthentMixins],
 
     propTypes: {
         head: React.PropTypes.array.isRequired,
@@ -50,9 +46,6 @@ var DataTableBandeauProfilReact = React.createClass({
      * @returns {undefined}
      */
     componentWillMount: function(){
-        this.listenTo(profilStore, this.updateData, this.updateData);
-        // Appel action
-        Actions.profil.profil_load();
     },
 
     render: function() {
@@ -80,5 +73,3 @@ var DataTableBandeauProfilReact = React.createClass({
 });
 
 module.exports = DataTableBandeauProfilReact;
-
-

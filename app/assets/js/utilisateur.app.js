@@ -1,4 +1,3 @@
-// Composants REACT
 // ATTENTION la majuscule est super importante
 var PageUser = require('./mods/page/react_page_utilisateur').Composant;
 
