@@ -32,31 +32,15 @@ var FicheUser = React.createClass({
     },
 
     componentWillMount: function(){
-        this.listenTo(ficheStore, this.updateData, this.updateData);
-        // Appel action
-        Actions.utilisateur.display_user(this.props.idUser);
+        this.listenTo(ficheUserStore, this.updateData, this.updateData);
     },
 
     render: function() {
-        //console.log('STATE FICHE USER %o',this.state);
-        var boutons = '';
-        if(this.props.editable){
 
-            boutons =
-                (<Row>
-                    <Col md={8} className="text-left">
-                        <ButtonToolbar>
-                            <Button bsStyle="primary" bsSize="xsmall"><Glyphicon glyph="floppy-saved"/>{Lang.get('global.save')}</Button>
-                            <Button bsSize="xsmall"><Glyphicon glyph="arrow-left"/>{Lang.get('global.back')}</Button>
-                        </ButtonToolbar>
-                    </Col>
-                </Row>
-                )
-        }
+        //<PhotoEditable src={BASE_URI+this.state.data.photo} editable={this.props.editable}/>
 
         return (
             <Form>
-                {boutons}
                 <Row>
                     <Col md={6} className="text-center">
                         <h2>{Lang.get('administration.utilisateur.fiche')+this.state.data.nom+' '+this.state.data.prenom}</h2>
@@ -64,7 +48,6 @@ var FicheUser = React.createClass({
                 </Row>
                 <Row>
                     <Col md={1} mdOffset={2} className="photo">
-                        <PhotoEditable src={BASE_URI+this.state.data.photo} editable={this.props.editable}/>
                     </Col>
                 </Row>
                 <InputTextEditable ref="nom"
@@ -99,11 +82,11 @@ var FicheUser = React.createClass({
         console.log('Change NOM %o',this.refs)
     }
 });
-module.exports = FicheUser;
+module.exports.Composant = FicheUser;
 
 
 // Creates a DataStore
-var ficheStore = Reflux.createStore({
+var ficheUserStore = Reflux.createStore({
 
     // Initial setup
     init: function() {
@@ -131,3 +114,4 @@ var ficheStore = Reflux.createStore({
         });
     }
 });
+module.exports.Store = ficheUserStore;

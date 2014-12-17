@@ -14,11 +14,13 @@ var BandeauListe = React.createClass({
 
     propTypes: {
         titre: React.PropTypes.string.isRequired,
-        onCreer: React.PropTypes.func.isRequired
+        onCreer: React.PropTypes.func
     },
 
     getDefaultProps: function () {
-        return {};
+        return {
+            onCreer: Actions.bandeau.creer
+        };
     },
 
     getInitialState: function () {

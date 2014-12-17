@@ -65,8 +65,11 @@
      |--------------------------------------------------------------------------
      */
     global.Actions.utilisateur = Reflux.createActions([
-        "load_data",
-        "display_user"
+        "load_data_all_users",
+        "display_user",
+        "save_user",
+        "edit_user",
+        "create_user"
     ]);
 
     /*

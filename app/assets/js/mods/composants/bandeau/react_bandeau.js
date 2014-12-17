@@ -111,13 +111,15 @@ var ReactBandeau = React.createClass({
 
         // CRÉATION DES BOUTONS
         btnList = _.map(this.props.btnList, function (btn, index) {
-            return (<Button key={"btnbandeau-" + index} {...btn.attrs} {...btn.evts} bsStyle={btn.style} >
-                <Glyphicon glyph={btn.icon}/> {btn.libelle}</Button>);
+            return (
+                <Button key={"btnbandeau-" + index} {...btn.attrs} {...btn.evts} bsStyle={btn.style} >
+                    <Glyphicon glyph={btn.icon}/>{btn.libelle}
+                </Button>);
         });
 
         // CRÉATION DU BOUTON BACK
         if (typeof(this.props.onRetour) != 'undefined') {
-            btnRetour = <Button onClick={this.props.onRetour} bsSize="small" >
+            btnRetour = <Button onClick={this.props.onRetour} bsSize="xsmall" >
                 <Glyphicon glyph="arrow-left"/>{Lang.get('global.back')}
             </Button>;
         }

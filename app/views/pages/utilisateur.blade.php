@@ -9,14 +9,9 @@
     </div>
 
     <div class="row">
-        <div class="col-md-12">
-            <div id="tableau_react">
+        <div class="col-md-12" id="content_user">
 
-            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12" id="fiche"/>
     </div>
 @stop
 

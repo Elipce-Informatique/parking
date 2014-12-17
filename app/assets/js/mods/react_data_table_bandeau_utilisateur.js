@@ -13,19 +13,14 @@
 
 var AuthentMixins = require('./mixins/component_access');
 var DataTableBandeau = require('./composants/tableau/react_data_table_bandeau');
+
 var DataTableBandeauUtilisateurReact = React.createClass({
     
     mixins: [Reflux.ListenerMixin,AuthentMixins],
-    
-    propTypes: {
-        head: React.PropTypes.array.isRequired,
-        hide: React.PropTypes.array.isRequired,
-        id: React.PropTypes.string.isRequired,
-        settings:React.PropTypes.object,
-        attributes:React.PropTypes.object,
-        evts:React.PropTypes.object,
-        bUnderline:React.PropTypes.bool
-    },
+
+    head : [Lang.get('administration.utilisateur.tableau.nom'),Lang.get('administration.utilisateur.tableau.email'),Lang.get('administration.utilisateur.tableau.email2'),Lang.get('administration.utilisateur.tableau.email3')],
+    hide : ['id'],
+    // evts ne pas mettre ici car this.displayUser n'est pas encore connu
     
     /**
      * Les props par défaut
@@ -33,9 +28,6 @@ var DataTableBandeauUtilisateurReact = React.createClass({
     getDefaultProps: function() {
         
         return {
-            attributes: {},
-            evts:{},
-            bUnderline: true,
             module_url: 'utilisateur'
         };
     },
@@ -49,14 +41,13 @@ var DataTableBandeauUtilisateurReact = React.createClass({
      * @returns {undefined}
      */
     componentWillMount: function(){
-        this.listenTo(userStore, this.updateData, this.updateData);
-        // Appel action
-        Actions.utilisateur.load_data();
+        this.listenTo(tableauUserStore, this.updateData, this.updateData);
     },
     
     render: function() {
+        console.log('RENDER TABLEAU');
         return (
-         <DataTableBandeau id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts}/>
+         <DataTableBandeau id="tab_users" head={this.head} data={this.state.data} hide={this.hide} attributes={this.attributes} bUnderline={true} evts={{onClick:this.displayUser}}/>
         )
     },
     
@@ -75,20 +66,27 @@ var DataTableBandeauUtilisateurReact = React.createClass({
         this.setState({
             data: data
         });
+    },
+
+    displayUser: function(e){
+        // Ligne du tableau
+        var id = $(e.currentTarget).data('id');
+        console.log('DISPLAY USER ID: '+id);
+        Actions.utilisateur.display_user(id);
     }
 });
 
-module.exports = DataTableBandeauUtilisateurReact;
+module.exports.Composant = DataTableBandeauUtilisateurReact;
 
 
 // Creates a DataStore
-var userStore = Reflux.createStore({
+var tableauUserStore = Reflux.createStore({
 
     // Initial setup
     init: function() {
 
         // Register statusUpdate action
-        this.listenTo(Actions.utilisateur.load_data, this.getData);
+        this.listenTo(Actions.utilisateur.load_data_all_users, this.getData);
         
     },
 
@@ -127,6 +125,5 @@ var userStore = Reflux.createStore({
         });   
         return dataRetour;
     }
-    
-    
 });
+module.exports.Store = tableauUserStore;
