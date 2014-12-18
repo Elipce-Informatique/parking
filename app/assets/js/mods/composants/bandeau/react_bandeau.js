@@ -119,8 +119,8 @@ var ReactBandeau = React.createClass({
 
         // CRÉATION DU BOUTON BACK
         if (typeof(this.props.onRetour) != 'undefined') {
-            btnRetour = <Button onClick={this.props.onRetour} bsSize="xsmall" >
-                <Glyphicon glyph="arrow-left"/>{Lang.get('global.back')}
+            btnRetour = <Button onClick={this.props.onRetour} bsSize="small" className="retour-bandeau" >
+                <Glyphicon glyph="arrow-left"/>
             </Button>;
         }
 
@@ -128,16 +128,26 @@ var ReactBandeau = React.createClass({
         return (
             <Row>
                 <Col xs={12} md={12} className="bandeau">
-                    <Row className="titre-bandeau">
-                        <Col xs={1} md={1} className="titre-bandeau-icon">{btnRetour}</Col>
-                        <Col xs={11} md={11} >{titre}</Col>
-                    </Row>
-                    <Row className="boutons-bandeau">
-                        <ButtonToolbar>
-                            <ButtonGroup bsSize="small">
-                                {btnList}
-                            </ButtonGroup>
-                        </ButtonToolbar>
+                    <Row>
+                        <Col xs={12} md={8}>
+                            <Row className="titre-bandeau">
+                                <Col xs={1} md={1} className="titre-bandeau-icon">{btnRetour}</Col>
+                                <Col xs={11} md={11} >{titre}</Col>
+                            </Row>
+                            <Row className="boutons-bandeau">
+                                <Col xs={11} md={11} mdOffset={1}>
+                                    <ButtonToolbar>
+                                        <ButtonGroup bsSize="small">
+                                        {btnList}
+                                        </ButtonGroup>
+                                    </ButtonToolbar>
+                                </Col>
+                            </Row>
+                        </Col>
+                        <Col xs={12} md={4}>
+                            <Row className="bandeau-toolbar-right">
+                            </Row>
+                        </Col>
                     </Row>
                 </Col>
             </Row>
