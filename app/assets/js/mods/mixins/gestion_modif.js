@@ -9,9 +9,10 @@ var mixinGestionModif = {
         this.attachEventsOnForm();
     },
     attachEventsOnForm: function () {
-        //console.log(this.getDOMNode());
-        var $form = $(this.getDOMNode());
-        $form.off(Actions.global.gestion_modif_change, '[data-gest-mod]');
+        console.log(this.getDOMNode());
+        var $page = $(this.getDOMNode());
+        $page.off("change", '[data-gest-mod]', Actions.global.gestion_modif_change);
+        $page.on("change", '[data-gest-mod]', Actions.global.gestion_modif_change);
     }
 };
 
