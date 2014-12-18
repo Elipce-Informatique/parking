@@ -84,11 +84,7 @@ var InputTextEditable = React.createClass({
         }
         // Non editable
         else{
-            var texte = '';
-            if(this.props.attributes.value !== undefined){
-                texte = this.props.attributes.value;
-            }
-            retour = <label>{texte}</label>
+            retour = modeEditableFalse(this.props.attributes);
         }
         return retour;
     }
@@ -167,11 +163,7 @@ var InputMailEditable = React.createClass({
         }
         // Non editable
         else{
-            var texte = '';
-            if(this.props.attributes.value !== undefined){
-                texte = this.props.attributes.value;
-            }
-            retour = <label>{texte}</label>
+            retour = modeEditableFalse(this.props.attributes);
         }
         return retour;
     }
@@ -258,11 +250,7 @@ var InputPasswordEditable = React.createClass({
         }
         // Non editable
         else{
-            var texte = '';
-            if(this.props.attributes.value !== undefined){
-                texte = this.props.attributes.value;
-            }
-            retour = <label>{texte}</label>
+            retour = modeEditableFalse(this.props.attributes);
         }
         return retour;
     }
@@ -447,3 +435,30 @@ module.exports.InputRadio = InputRadio;
 module.exports.InputRadioEditable = InputRadioEditable;
 module.exports.InputCheckbox = InputCheckbox;
 module.exports.InputCheckboxEditable = InputCheckboxEditable;
+
+// FONCTIONS
+
+/**
+ * Permet de construire le formulaire en mode non editable (labels)
+ * @param attr: this.props.attributes
+ * @returns {XML}
+ */
+function modeEditableFalse(attr){
+    // Label
+    var label= (attr.label !== undefined?attr.label:'');
+    // Texte
+    var texte = (attr.value !== undefined?attr.value:'');
+    // CSS
+    var classRow = (attr.groupClassName !== undefined?{className:attr.groupClassName}:{});
+    var classLabel = (attr.labelClassName !== undefined?{className:attr.labelClassName}:{});
+    var classTexte = (attr.wrapperClassName !== undefined?{className:attr.wrapperClassName}:{});
+
+    return (
+        <div {...classRow}>
+            <label {...classLabel}><span>{label}</span></label>
+            <div {...classTexte}>
+                <span>{texte}</span>
+            </div>
+        </div>
+    )
+}
