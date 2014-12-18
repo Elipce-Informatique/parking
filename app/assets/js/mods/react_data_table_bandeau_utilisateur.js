@@ -18,7 +18,7 @@ var DataTableBandeauUtilisateurReact = React.createClass({
     
     mixins: [Reflux.ListenerMixin,AuthentMixins],
 
-    head : [Lang.get('administration.utilisateur.tableau.nom'),Lang.get('administration.utilisateur.tableau.email'),Lang.get('administration.utilisateur.tableau.email2'),Lang.get('administration.utilisateur.tableau.email3')],
+    head : [Lang.get('administration.utilisateur.tableau.nom'),Lang.get('administration.utilisateur.tableau.prenom'),Lang.get('administration.utilisateur.tableau.email')],
     hide : ['id'],
     // evts ne pas mettre ici car this.displayUser n'est pas encore connu
     
@@ -45,7 +45,6 @@ var DataTableBandeauUtilisateurReact = React.createClass({
     },
     
     render: function() {
-        console.log('RENDER TABLEAU');
         return (
          <DataTableBandeau id="tab_users" head={this.head} data={this.state.data} hide={this.hide} attributes={this.attributes} bUnderline={true} evts={{onClick:this.displayUser}}/>
         )
@@ -71,7 +70,6 @@ var DataTableBandeauUtilisateurReact = React.createClass({
     displayUser: function(e){
         // Ligne du tableau
         var id = $(e.currentTarget).data('id');
-        console.log('DISPLAY USER ID: '+id);
         Actions.utilisateur.display_user(id);
     }
 });
