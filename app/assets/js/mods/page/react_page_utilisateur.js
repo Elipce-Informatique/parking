@@ -89,6 +89,7 @@ var PageUser = React.createClass({
     },
 
     updateData: function (obj) {
+        console.log('UPDATE %o',obj);
         // MAJ data
         this.setState(obj);
     }
@@ -134,4 +135,5 @@ var pageUserStore = Reflux.createStore({
         this.trigger({etat: 'liste', idUser: ''});
     }
 });
-module.exports.Store = pageUserStore;
+console.log('PAGU UTILISATEUR STORE %o',pageUserStore);
+module.exports.store = pageUserStore;

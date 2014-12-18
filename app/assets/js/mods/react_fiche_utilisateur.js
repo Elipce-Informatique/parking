@@ -1,3 +1,4 @@
+// COMPOSANTS REACT
 var Field = require('./composants/formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputMailEditable = Field.InputMailEditable;
@@ -12,6 +13,10 @@ var AuthentMixins = require('./mixins/component_access');
 var InputRadioEditable = Field.InputRadioEditable;
 var Form = Field.Form
 
+// STORES
+//var storePageUser = require('./page/react_page_utilisateur');
+//
+//console.log('INIT STORE PAGE USER %o',storePageUser);
 
 /**
  * Fiche utilisateur
@@ -32,7 +37,11 @@ var FicheUser = React.createClass({
     },
 
     componentWillMount: function(){
+        // Liaison au store
         this.listenTo(ficheUserStore, this.updateData, this.updateData);
+
+        // Appel du chargement
+        Actions.utilisateur.load_user_info(this.props.idUser);
     },
 
     render: function() {
@@ -91,13 +100,12 @@ var ficheUserStore = Reflux.createStore({
     // Initial setup
     init: function() {
         // Register statusUpdate action
-        this.listenTo(Actions.utilisateur.display_user, this.getInfosUser);
-
+        this.listenTo(Actions.utilisateur.load_user_info, this.getInfosUser);
     },
 
     // Callback
     getInfosUser: function(idUser) {
-        //console.log('STORE id '+idUser);
+        console.log('STORE FICHE USER id '+idUser);
         // AJAX
         $.ajax({
             url: BASE_URI+'utilisateur/'+idUser,
