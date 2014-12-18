@@ -17,6 +17,10 @@ return array(
     'creation' => 'Création',
     'edition' => 'Edition',
 
+    // GESTION MODIFS
+    'gest_mod_confirm' => 'Des modifications non enregistrées on été effectuées.',
+    'gest_mod_confirm_question' => 'Des modifications non enregistrées on été effectuées. Voulez-vous vraiment les perdre ?',
+
     // BOUTONS
     'save' => "Sauvegarder",
     'back' => 'Retour',

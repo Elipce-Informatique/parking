@@ -81,7 +81,7 @@ gulp.task('watch',  function () {
 gulp.task('clean', function (cb) {
 
     del(['public/css', 'public/js', 'public/images'], cb);
-})
+});
 
 /*
  |--------------------------------------------------------------------------
