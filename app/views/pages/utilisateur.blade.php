@@ -5,14 +5,7 @@
 @stop
 
 @section('content')
-    <div class="row" id="bandeau">
-    </div>
-
-    <div class="row">
-        <div class="col-md-12" id="content_user">
-
-        </div>
-    </div>
+    <div class="row" id="content_user"/>
 @stop
 
 @section('scripts')

@@ -126,19 +126,21 @@ var ReactBandeau = React.createClass({
 
         // AFFICHAGE DU BANDEAU
         return (
-            <Col xs={12} md={12} className="bandeau">
-                <Row className="titre-bandeau">
-                    <Col xs={1} md={1} className="titre-bandeau-icon">{btnRetour}</Col>
-                    <Col xs={11} md={11} >{titre}</Col>
-                </Row>
-                <Row className="boutons-bandeau">
-                    <ButtonToolbar>
-                        <ButtonGroup bsSize="small">
-                            {btnList}
-                        </ButtonGroup>
-                    </ButtonToolbar>
-                </Row>
-            </Col>
+            <Row>
+                <Col xs={12} md={12} className="bandeau">
+                    <Row className="titre-bandeau">
+                        <Col xs={1} md={1} className="titre-bandeau-icon">{btnRetour}</Col>
+                        <Col xs={11} md={11} >{titre}</Col>
+                    </Row>
+                    <Row className="boutons-bandeau">
+                        <ButtonToolbar>
+                            <ButtonGroup bsSize="small">
+                                {btnList}
+                            </ButtonGroup>
+                        </ButtonToolbar>
+                    </Row>
+                </Col>
+            </Row>
         )
     }
 });
