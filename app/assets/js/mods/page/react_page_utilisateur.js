@@ -34,10 +34,6 @@ var PageUser = React.createClass({
     render: function() {
         return this.display();
     },
-    //
-    //componentWillUnmout: function(){
-    //    console.log('UNMOUNT');
-    //},
 
     display: function(){
         var react;
@@ -45,7 +41,7 @@ var PageUser = React.createClass({
         switch(this.state.etat){
             case 'visu':
                 react =
-                    <div id="VISU">
+                    <div key={this.state.etat}>
                         <BandeauVisu titre={Lang.get('administration.utilisateur.titre')}/>
                         <FicheUser editable={true} idUser={this.state.idUser}/>
                     </div>
@@ -55,13 +51,13 @@ var PageUser = React.createClass({
                 break;
             case 'creation':
                 react =
-                    <div>
-                        Mode creation
+                    <div key={this.state.etat}>
+                        <span>Mode creation</span>
                     </div>
                 break;
             default:
                 react =
-                    <div id="VISU">
+                    <div key={this.state.etat}>
                         <BandeauListe titre={Lang.get('administration.utilisateur.titre')}/>
                         <DataTableBandeauUser/>
                     </div>
