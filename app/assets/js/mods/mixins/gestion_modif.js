@@ -18,7 +18,7 @@ var mixinGestionModif = {
         this.attachEventsOnForm();
     },
     attachEventsOnForm: function () {
-        console.log(this.getDOMNode());
+        //console.log(this.getDOMNode());
         var $page = $(this.getDOMNode());
         $page.off("change", '[data-gest-mod]', this.triggerChange);
         $page.on("change", '[data-gest-mod]', this.triggerChange);

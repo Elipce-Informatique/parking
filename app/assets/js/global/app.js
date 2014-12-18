@@ -70,6 +70,7 @@
     global.Actions.utilisateur = Reflux.createActions([
         "load_data_all_users",
         "display_user",
+        "load_user_info",
         "save_user",
         "edit_user",
         "create_user"
