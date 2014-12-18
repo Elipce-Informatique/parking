@@ -29,7 +29,7 @@ var PageUser = React.createClass({
     },
 
     getInitialState: function () {
-        return {etat: 'liste', idUser: ''};
+        return {etat: 'liste', idUser: 0};
     },
 
     componentWillMount: function () {
@@ -68,7 +68,7 @@ var PageUser = React.createClass({
                 react =
                     <div key={this.state.etat}>
                         <BandeauEdition mode={0} titre={Lang.get('administration.utilisateur.titre')}/>
-                        <FicheUser editable={true} idUser=""/>
+                        <FicheUser editable={true} idUser={0}/>
                     </div>
                 break;
             default:
@@ -89,7 +89,6 @@ var PageUser = React.createClass({
     },
 
     updateData: function (obj) {
-        console.log('UPDATE %o',obj);
         // MAJ data
         this.setState(obj);
     }
@@ -101,7 +100,7 @@ module.exports.Composant = PageUser;
 var pageUserStore = Reflux.createStore({
 
     // Variables
-    idUser: '',
+    idUser: 0,
 
     // Initial setup
     init: function () {
@@ -111,8 +110,7 @@ var pageUserStore = Reflux.createStore({
         this.listenTo(Actions.bandeau.creer, this.modeCreation);
         this.listenTo(Actions.bandeau.editer, this.modeEdition);
         this.listenTo(Actions.bandeau.retour, this.modeListe);
-
-
+        this.listenTo(Actions.bandeau.sauvegarder, this.sauvegarder);
     },
 
     modeVisu: function (idUser) {
@@ -121,19 +119,23 @@ var pageUserStore = Reflux.createStore({
     },
 
     modeCreation: function () {
-        this.idUser = '';
+        this.idUser = 0;
         this.trigger({etat: 'creation', idUser: ''});
     },
 
     modeEdition: function () {
-        console.log('ID USER ' + this.idUser);
         this.trigger({etat: 'edition', idUser: this.idUser});
     },
 
     modeListe: function () {
-        this.idUser = '';
+        this.idUser = 0;
         this.trigger({etat: 'liste', idUser: ''});
+    },
+
+    sauvegarder: function(){
+        // La fiche user enregistre l'utilisateur
+        Actions.utilisateur.save_user(this.idUser);
+
     }
 });
-console.log('PAGU UTILISATEUR STORE %o',pageUserStore);
 module.exports.store = pageUserStore;

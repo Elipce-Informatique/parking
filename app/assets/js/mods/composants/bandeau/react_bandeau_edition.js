@@ -52,10 +52,10 @@ var BandeauEdition = React.createClass({
         }
         var btnList = [{
             libelle: Lang.get('global.save'),
-            style: "default", // VOIR DOC REACT-BOTSTRAP
-            icon: "plus-sign", // VOIR DOC BOOTSTRAP ET NE PAS METTRE GLYPHICON DEVANT
+            style: "success", // VOIR DOC REACT-BOTSTRAP
+            icon: "floppy-disk", // VOIR DOC BOOTSTRAP ET NE PAS METTRE GLYPHICON DEVANT
             attrs: {},
-            evts: {onClick: this.props.onCreer}
+            evts: {onClick: this.props.onSauvegarder}
         }];
         return (<Bandeau titre={this.props.titre} btnList={btnList} onRetour={this.props.onRetour} sousTitre={sousTitre} />);
     }

@@ -49,7 +49,7 @@ var FicheUser = React.createClass({
         //<PhotoEditable src={BASE_URI+this.state.data.photo} editable={this.props.editable}/>
 
         return (
-            <Form>
+            <Form ref="form">
                 <Row>
                     <Col md={6} className="text-center">
                         <h2>{Lang.get('administration.utilisateur.fiche')+this.state.data.nom+' '+this.state.data.prenom}</h2>
@@ -88,7 +88,7 @@ var FicheUser = React.createClass({
     },
 
     test: function(){
-        console.log('Change NOM %o',this.refs)
+        //console.log('Change NOM %o',this.refs)
     }
 });
 module.exports.Composant = FicheUser;
@@ -101,23 +101,60 @@ var ficheUserStore = Reflux.createStore({
     init: function() {
         // Register statusUpdate action
         this.listenTo(Actions.utilisateur.load_user_info, this.getInfosUser);
+        this.listenTo(Actions.utilisateur.save_user, this.sauvegarder);
     },
 
     // Callback
     getInfosUser: function(idUser) {
-        console.log('STORE FICHE USER id '+idUser);
-        // AJAX
+        // ID user KO
+        if(idUser === 0){
+            this.trigger({nom:'',prenom:'',email:'',photo:'app/documents/photo/no.gif'})
+        }
+        // User OK
+        else {
+            // AJAX
+            $.ajax({
+                url: BASE_URI + 'utilisateur/' + idUser,
+                dataType: 'json',
+                context: this,
+                success: function (data) {
+                    // Passe variable aux composants qui écoutent l'action actionLoadData
+                    this.trigger(data);
+                },
+                error: function (xhr, status, err) {
+                    console.error(status, err.toString());
+                    this.trigger({});
+                }
+            });
+        }
+    },
+
+    sauvegarder: function(idUser){
+
+        // Variables
+        var url = idUser===0?'':idUser;
+        url = BASE_URI+'utilisateur/'+url;
+        console.log('SAVE '+idUser+' URL '+url);
+        var method = idUser===0?'POST':'PUT';
+        var data = $('form').serializeArray();
+        data.push({name:'_token',value:$('#_token').val()});
+        
+        //console.log('DATA %o',data);
+
+        // Requête
         $.ajax({
-            url: BASE_URI+'utilisateur/'+idUser,
+            url: url,
             dataType: 'json',
             context: this,
-            success: function(data) {
+            type: method,
+            data: data,
+            success: function(rep) {
                 // Passe variable aux composants qui écoutent l'action actionLoadData
-                this.trigger(data);
+                this.trigger(rep);
             },
             error: function(xhr, status, err) {
                 console.error(status, err.toString());
-                this.trigger({});
+                this.trigger('KO');
             }
         });
     }

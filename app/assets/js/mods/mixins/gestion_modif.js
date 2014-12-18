@@ -15,7 +15,7 @@ var mixinGestionModif = {
         $page.on("change", '[data-gest-mod]', this.triggerChange);
     },
     triggerChange: function(){
-        console.log('testqsdf');
+        //console.log('testqsdf');
     }
 };
 
