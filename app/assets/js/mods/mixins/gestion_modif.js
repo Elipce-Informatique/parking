@@ -11,8 +11,11 @@ var mixinGestionModif = {
     attachEventsOnForm: function () {
         //console.log(this.getDOMNode());
         var $page = $(this.getDOMNode());
-        $page.off("change", '[data-gest-mod]', Actions.global.gestion_modif_change);
-        $page.on("change", '[data-gest-mod]', Actions.global.gestion_modif_change);
+        $page.off("change", '[data-gest-mod]', this.triggerChange);
+        $page.on("change", '[data-gest-mod]', this.triggerChange);
+    },
+    triggerChange: function(){
+        console.log('testqsdf');
     }
 };
 
