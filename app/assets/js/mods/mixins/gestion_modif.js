@@ -13,5 +13,6 @@ var mixinGestionModif = {
         var $form = $(this.getDOMNode());
         $form.off(Actions.global.gestion_modif_change, '[data-gest-mod]');
     }
-}
+};
+
 module.exports = mixinGestionModif;

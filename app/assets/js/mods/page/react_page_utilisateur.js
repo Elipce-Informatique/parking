@@ -8,6 +8,8 @@ var Button = ReactB.Button;
 var FicheUser = require('../react_fiche_utilisateur').Composant;
 var AuthentMixins = require('../mixins/component_access');
 
+var MixinGestMod = require('../mixins/gestion_modif');
+
 
 
 /**
@@ -17,7 +19,7 @@ var AuthentMixins = require('../mixins/component_access');
  */
 var PageUser = React.createClass({
 
-    mixins: [Reflux.ListenerMixin,AuthentMixins],
+    mixins: [Reflux.ListenerMixin,AuthentMixins,MixinGestMod],
 
     getDefaultProps: function(){
         return { module_url: 'utilisateur'}
