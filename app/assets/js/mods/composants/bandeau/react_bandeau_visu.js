@@ -8,6 +8,7 @@ var Bandeau = require('./react_bandeau');
  * Bandeau correspondant à une page de visu de données (ex: fiche utilisateur en mode visu)
  *
  * @param string titre : Titre du bandeau
+ * @param string sousTitre : sous titre du bandeau (En gris en petit à coté du titre)
  * @param func onRetour : Fonction de retour facultative (Sinon Actions.bandeau.retour)
  * @param func onCreer : Fonction de création facultative (Sinon Actions.bandeau.creer)
  * @param func onEditer : Fonction d'édition facultative (Sinon Actions.bandeau.editer)
@@ -17,6 +18,7 @@ var BandeauVisu = React.createClass({
 
     propTypes: {
         titre: React.PropTypes.string.isRequired,
+        sousTitre: React.PropTypes.string,
         onRetour: React.PropTypes.func,
         onCreer: React.PropTypes.func,
         onEditer: React.PropTypes.func,
@@ -25,6 +27,7 @@ var BandeauVisu = React.createClass({
 
     getDefaultProps: function () {
         return {
+            sousTitre: "",
             onRetour: Actions.bandeau.retour,
             onCreer: Actions.bandeau.creer,
             onEditer: Actions.bandeau.editer,
@@ -65,7 +68,7 @@ var BandeauVisu = React.createClass({
             attrs: {},
             evts: {onClick: this.props.onSupprimer}
         }];
-        return (<Bandeau titre={this.props.titre} btnList={btnList} onRetour={this.props.onRetour}  />);
+        return (<Bandeau titre={this.props.titre} btnList={btnList} onRetour={this.props.onRetour} sousTitre={this.props.sousTitre} />);
     }
 });
 
