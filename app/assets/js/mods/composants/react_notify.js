@@ -64,7 +64,7 @@ var Notify = React.createClass({
             // WHETHER TO HIDE THE NOTIFICATION ON CLICK
             clickToHide: true,
             // WHETHER TO AUTO-HIDE THE NOTIFICATION
-            autoHide: false,
+            autoHide: true,
             // IF AUTOHIDE, HIDE AFTER MILLISECONDS
             autoHideDelay: 6370,
             // SHOW THE ARROW POINTING AT THE ELEMENT
