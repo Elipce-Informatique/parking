@@ -30,15 +30,20 @@ var mixinGestionModif = {
     triggerChange: function (e) {
         Actions.global.gestion_modif_change(e);
     },
+    triggerReset: function(){
+        Actions.global.gestion_modif_reset();
+    },
     onStoreGestModTrigger: function (data) {
         switch (data.action) {
             case 'retour':
                 if(confirm(Lang.get('gest_mod_confirm_question'))){
+                    this.triggerReset();
                     this.onRetour();
                 }
                 break;
             case 'bandeau_perso':
                 if(confirm(Lang.get('gest_mod_confirm_question'))){
+                    this.triggerReset();
                     this.onClickBandeauPerso(data.evt);
                 }
                 break;
