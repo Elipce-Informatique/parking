@@ -80,23 +80,28 @@ class UtilisateurController extends \BaseController
      */
     public function update($id)
     {
+        $bSave = false;
         // Trouver le user
         $user = Utilisateur::find($id);
-
+        // Champs du formualaire
+        $fields = Input::except('_token');
         // Parcourir les champs envoyés par PUT
-        foreach(Input::except('_token') as $key=>$val) {
+        foreach($fields as $key=>$val) {
             $user->$key = $val;
         }
 
         // Sauvegarde
         try {
-            $ret = $user->save();
+            $bSave = $user->save();
         }
         catch(Exception $e){
-            $ret = false;
+            $retour = array('data'=>$fields,'save'=>false);
         }
-//        Log::info('RETOUR UPDATE '.print_r($ret,true));
-        return json_encode($ret);
+        // Enregistrement OK
+        if($bSave){
+            $retour = array('data'=>$this->show($id),'save'=>false);
+        }
+        return json_encode($retour);
     }
 
 
