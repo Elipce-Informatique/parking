@@ -29,6 +29,7 @@
             <script type="text/javascript" src="{{URL::asset('/public/js/libs/notify.js')}}"></script>
             @yield('struct_scripts')
         </div>
+        @include('notifications')
         <input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
     </body>
 </html>
