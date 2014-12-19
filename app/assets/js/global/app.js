@@ -38,6 +38,13 @@
         "gestion_modif_reset"
     ]);
 
+    global.Actions.notif = Reflux.createActions([
+        "success",
+        "warning",
+        "error",
+        "default"
+    ]);
+
     /*
      |--------------------------------------------------------------------------
      | ACTIONS MENU REFLUX
@@ -89,7 +96,11 @@
     ]);
 })(window);
 
-// GESTION DES NOTIFICATIONS
+/*
+ |--------------------------------------------------------------------------
+ | GESTION DES NOTIFICATIONS
+ |--------------------------------------------------------------------------
+ */
 $(function(){
     var Notify = require('../mods/composants/react_notify');
     React.render(<Notify />, document.getElementById('composant_react_notifications'))

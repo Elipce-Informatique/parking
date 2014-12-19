@@ -19,7 +19,14 @@ return array(
 
     // GESTION MODIFS
     'gest_mod_confirm' => 'Des modifications non enregistrées on été effectuées.',
-    'gest_mod_confirm_question' => 'Des modifications non enregistrées on été effectuées. Voulez-vous vraiment les perdre ?',
+    'gest_mod_confirm_question' => 'Des modifications non enregistrées on été effectuées.
+Voulez-vous vraiment quitter cette page ?',
+
+    // NOTIFICATIONS
+    'notif_success' => 'Opération effectuée avec succès !',
+    'notif_warning' => 'Message de danger générique',
+    'notif_erreur' => 'Une erreur s\'est produite, veuillez contacter un responsable informatique',
+    'notif_default' => 'Message d\'information générique',
 
     // BOUTONS
     'save' => "Sauvegarder",
