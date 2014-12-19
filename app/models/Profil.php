@@ -47,14 +47,14 @@ class Profil extends Eloquent {
 //            LEFT JOIN profil_module pm ON pm.module_id = m.id AND pm.profil_id=$idProfil
 
             /* Récupère tout les modules avec les droits associés au profil */
-            $aTabModule =  Module::all(array('id', 'traduction', DB::raw('"visu" as etat'), DB::raw($idProfil.' as IDprofil')));
+            $aTabModule =  Module::all(array('id', 'traduction', DB::raw('"visu" as etat')));
 
             return $aTabModule;
         }
         /* Récupère uniquement les modules */
         else{
             /* Récupère tout les modules uniquement */
-            $aTabModule =  Module::all(array('id', 'traduction', DB::raw('"" as etat'), DB::raw('"" as IDprofil')));
+            $aTabModule =  Module::all(array('id', 'traduction', DB::raw('"" as etat')));
             $nb = count($aTabModule);
 
             return $aTabModule;

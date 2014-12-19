@@ -32,6 +32,7 @@ return array(
     'profil' => [
         'visu' => 'Visu',
         'modif' => 'Modif',
-        'aucun' => 'Aucun'
+        'aucun' => 'Aucun',
+        'module'=> 'Modules'
     ]
 );
