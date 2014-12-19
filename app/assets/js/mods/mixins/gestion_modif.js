@@ -4,21 +4,25 @@ var storeGestMod = require('../stores/gestion_modif');
  */
 var mixinGestionModif = {
     componentDidMount: function () {
-        // Check mixin
+        // CHECK MIXIN
         if (typeof(this.listenTo) == 'undefined') {
             console.error('Oulalalala, tu n\'a pas mis le mixin Reflux.ListenerMixin dans ton composant ' +
             this._currentElement.type.displayName + ' !!! Corrige vite ça si tu veux que ça marche !');
         }
+        // CHECK ONRETOUR
+        if (typeof(this.onRetour) == 'undefined') {
+            console.error('Oulalalala, tu n\'a pas défini la méthode onRetour dans ton composant ' +
+            this._currentElement.type.displayName + ' !!! Corrige vite ça si tu veux que ça marche !');
+        }
 
+        // ECOUTE
         this.listenTo(storeGestMod, this.onStoreGestModTrigger);
-
         this.attachEventsOnForm();
     },
     componentDidUpdate: function (pp, ps) {
         this.attachEventsOnForm();
     },
     attachEventsOnForm: function () {
-        //console.log(this.getDOMNode());
         var $page = $(this.getDOMNode());
         $page.off("change", '[data-gest-mod]', this.triggerChange);
         $page.on("change", '[data-gest-mod]', this.triggerChange);
@@ -26,16 +30,26 @@ var mixinGestionModif = {
     triggerChange: function (e) {
         Actions.global.gestion_modif_change(e);
     },
+    triggerReset: function () {
+        Actions.global.gestion_modif_reset();
+    },
     onStoreGestModTrigger: function (data) {
         switch (data.action) {
             case 'retour':
-                if(confirm(Lang.get('gest_mod_confirm_question'))){
+                if (data.confirm && confirm(Lang.get('global.gest_mod_confirm_question'))) {
+                    this.triggerReset();
+                    this.onRetour();
+                }
+                else if(!data.confirm){
                     this.onRetour();
                 }
                 break;
             case 'bandeau_perso':
-                if(confirm(Lang.get('gest_mod_confirm_question'))){
+                if (data.confirm && confirm(Lang.get('global.gest_mod_confirm_question'))) {
+                    this.triggerReset();
                     this.onClickBandeauPerso(data.evt);
+                }else if(!data.confirm){
+                    this.onRetour();
                 }
                 break;
             default :

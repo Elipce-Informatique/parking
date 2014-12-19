@@ -58,7 +58,7 @@
         "editer",
         "supprimer",
         "sauvegarder",
-        "retour",
+        "retour", // NE PAS ECOUTER SI VOUS VOULEZ LA GESTION DES MODIFS
         "boutons_perso"
     ]);
 
@@ -88,3 +88,9 @@
         "libelle_change" /* Onchange du libelle du profil                                                        */
     ]);
 })(window);
+
+// GESTION DES NOTIFICATIONS
+$(function(){
+    var Notify = require('../mods/composants/react_notify');
+    React.render(<Notify />, document.getElementById('composant_react_notifications'))
+});

@@ -8,17 +8,20 @@ var Bandeau = require('./react_bandeau');
  * Bandeau correspondant à une page de liste (Bouton créer uniquement)
  *
  * @param string titre : Titre du bandeau
+ * @param string sousTitre : sous titre du bandeau (En gris en petit à coté du titre)
  * @param func onCreer : Action à exécuter
  */
 var BandeauListe = React.createClass({
 
     propTypes: {
         titre: React.PropTypes.string.isRequired,
+        sousTitre: React.PropTypes.string,
         onCreer: React.PropTypes.func
     },
 
     getDefaultProps: function () {
         return {
+            sousTitre: "",
             onCreer: Actions.bandeau.creer
         };
     },
@@ -44,7 +47,7 @@ var BandeauListe = React.createClass({
             attrs: {},
             evts: {onClick: this.props.onCreer}
         }];
-        return (<Bandeau titre={this.props.titre} btnList={btnList} />);
+        return (<Bandeau titre={this.props.titre} btnList={btnList} sousTitre={this.props.sousTitre} />);
     }
 });
 
