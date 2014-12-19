@@ -10,16 +10,20 @@
  * @param boolean bUnderline: TRUE: Evenement par defaut sur click d'une ligne: surlignage
  *                            FALSE: pas d'évènement par défaut.
  */
+
+var AuthentMixins    = require('./mixins/component_access');
 var DataTableBandeau = require('./composants/tableau/react_data_table_bandeau'); /* Pour le bandeau de la page profil */
 var DataTableBandeauProfilReact = React.createClass({
 
+    mixins: [Reflux.ListenerMixin,AuthentMixins],
+
     propTypes: {
-        head: React.PropTypes.array.isRequired,
-        hide: React.PropTypes.array.isRequired,
-        id: React.PropTypes.string.isRequired,
-        settings:React.PropTypes.object,
+        head:      React.PropTypes.array.isRequired,
+        hide:      React.PropTypes.array.isRequired,
+        id:        React.PropTypes.string.isRequired,
+        settings:  React.PropTypes.object,
         attributes:React.PropTypes.object,
-        evts:React.PropTypes.object,
+        evts:      React.PropTypes.object,
         bUnderline:React.PropTypes.bool
     },
 
@@ -46,6 +50,12 @@ var DataTableBandeauProfilReact = React.createClass({
      * @returns {undefined}
      */
     componentWillMount: function(){
+
+        /* Ecoute le store profilStore qui se charge de mettre à jour les données */
+        this.listenTo(profilStore, this.updateProfil, this.updateProfil);
+
+        /* Charge les données */
+        Actions.profil.profil_update();
     },
 
     render: function() {
@@ -64,7 +74,7 @@ var DataTableBandeauProfilReact = React.createClass({
      * @param {type} data
      * @returns {undefined}
      */
-    updateData: function(data) {
+    updateProfil: function(data) {
         // MAJ data automatique, lifecycle "UPDATE"
         this.setState({
             data: data
@@ -73,3 +83,57 @@ var DataTableBandeauProfilReact = React.createClass({
 });
 
 module.exports = DataTableBandeauProfilReact;
+
+/*********************************************************************/
+/*                              PROFILSTORE                          */
+/*              Store associé au tableau des profils                 */
+/*********************************************************************/
+var profilStore = Reflux.createStore({
+
+    // Initial setup
+    init: function() {
+
+        /* Sur l'action "profil_update" on charge les données */
+        this.listenTo(Actions.profil.profil_update, this.updateProfil);
+    },
+
+    /* Charge les données à chaque évènement "profil_update" */
+    updateProfil: function() {
+        // AJAX
+        $.ajax({
+            url: BASE_URI+'profils/all', /* correspond au module url de la BDD */
+            dataType: 'json',
+            context: this,
+            success: function(data) {
+                /* Passe "data" en paramètre au(x) composant(s) qui écoutent le store profilStore */
+                this.trigger(data);
+            },
+            error: function(xhr, status, err) {
+                console.error(status, err.toString());
+                this.trigger({});
+            }
+        });
+    },
+
+    /* Charge les données tout seul au début */
+    getInitialState:function(){
+        var dataRetour = [];
+        // AJAX
+        $.ajax({
+            url: BASE_URI+'profils/all', /* correspond au module url de la BDD */
+            dataType: 'json',
+            context: this,
+            async:false,
+            success: function(data) {
+                dataRetour = data;
+            },
+            error: function(xhr, status, err) {
+                console.error(status, err.toString());
+            }
+        });
+        /* Passe "dataRetour" en paramètre au(x) composant(s) qui écoutent le store profilStore */
+        return dataRetour;
+    }
+});
+
+module.exports.Store = profilStore;
