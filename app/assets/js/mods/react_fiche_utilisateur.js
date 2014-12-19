@@ -51,11 +51,6 @@ var FicheUser = React.createClass({
         return (
             <Form ref="form">
                 <Row>
-                    <Col md={6} className="text-center">
-                        <h2>{Lang.get('administration.utilisateur.fiche')+this.state.data.nom+' '+this.state.data.prenom}</h2>
-                    </Col>
-                </Row>
-                <Row>
                     <Col md={1} mdOffset={2} className="photo">
                     </Col>
                 </Row>
@@ -70,8 +65,6 @@ var FicheUser = React.createClass({
                     evts={{onChange:this.test}}/>
                 <InputTextEditable attributes={{label:Lang.get('administration.utilisateur.tableau.prenom'),name:"prenom", value:this.state.data.prenom, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
                 <InputMailEditable attributes={{label:Lang.get('administration.utilisateur.tableau.email'),name:"email", value:this.state.data.email, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
-                <InputRadioEditable ref="toto" attributes={{label:'Radio',name:"rad", value:"test", wrapperClassName:'col-md-2 col-md-offset-1',groupClassName:''}} editable={this.props.editable} />
-                <InputRadioEditable ref="titi" attributes={{label:'titi',name:"rad", value:"uu", wrapperClassName:'col-md-2',groupClassName:''}} editable={this.props.editable} />
             </Form>
         );
     },
@@ -134,7 +127,7 @@ var ficheUserStore = Reflux.createStore({
         // Variables
         var url = idUser===0?'':idUser;
         url = BASE_URI+'utilisateur/'+url;
-        console.log('SAVE '+idUser+' URL '+url);
+        //console.log('SAVE '+idUser+' URL '+url);
         var method = idUser===0?'POST':'PUT';
         var data = $('form').serializeArray();
         data.push({name:'_token',value:$('#_token').val()});
@@ -159,4 +152,4 @@ var ficheUserStore = Reflux.createStore({
         });
     }
 });
-module.exports.Store = ficheUserStore;
+module.exports.store = ficheUserStore;
