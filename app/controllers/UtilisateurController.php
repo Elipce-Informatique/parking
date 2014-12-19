@@ -33,7 +33,18 @@ class UtilisateurController extends \BaseController
      */
     public function store()
     {
-        //
+        // Mot de passe généré
+        $pwd = Hash::make(time());
+        $pwd = substr($pwd, 8, 8);
+        Log::info('MON PASSWORD '.$pwd);
+
+        // Valeurs postées
+        $post = Input::except('_token');
+        $post['password'] = $pwd;
+
+        // Nouvel utilisateur
+        $user = Utilisateur::create($post);
+        return $user;
     }
 
 
@@ -69,7 +80,23 @@ class UtilisateurController extends \BaseController
      */
     public function update($id)
     {
-        //
+        // Trouver le user
+        $user = Utilisateur::find($id);
+
+        // Parcourir les champs envoyés par PUT
+        foreach(Input::except('_token') as $key=>$val) {
+            $user->$key = $val;
+        }
+
+        // Sauvegarde
+        try {
+            $ret = $user->save();
+        }
+        catch(Exception $e){
+            $ret = false;
+        }
+//        Log::info('RETOUR UPDATE '.print_r($ret,true));
+        return json_encode($ret);
     }
 
 

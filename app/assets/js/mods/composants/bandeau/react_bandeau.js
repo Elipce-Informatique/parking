@@ -137,7 +137,7 @@ var ReactBandeau = React.createClass({
                             <Row className="boutons-bandeau">
                                 <Col xs={11} md={11} mdOffset={1}>
                                     <ButtonToolbar>
-                                        <ButtonGroup bsSize="small">
+                                        <ButtonGroup bsSize="xsmall">
                                         {btnList}
                                         </ButtonGroup>
                                     </ButtonToolbar>
