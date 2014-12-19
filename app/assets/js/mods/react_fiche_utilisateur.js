@@ -51,11 +51,6 @@ var FicheUser = React.createClass({
         return (
             <Form ref="form">
                 <Row>
-                    <Col md={6} className="text-center">
-                        <h2>{Lang.get('administration.utilisateur.fiche')+this.state.data.nom+' '+this.state.data.prenom}</h2>
-                    </Col>
-                </Row>
-                <Row>
                     <Col md={1} mdOffset={2} className="photo">
                     </Col>
                 </Row>
