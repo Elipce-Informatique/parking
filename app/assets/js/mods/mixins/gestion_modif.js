@@ -40,11 +40,16 @@ var mixinGestionModif = {
                     this.triggerReset();
                     this.onRetour();
                 }
+                else if(!data.confirm){
+                    this.onRetour();
+                }
                 break;
             case 'bandeau_perso':
                 if (data.confirm && confirm(Lang.get('global.gest_mod_confirm_question'))) {
                     this.triggerReset();
                     this.onClickBandeauPerso(data.evt);
+                }else if(!data.confirm){
+                    this.onRetour();
                 }
                 break;
             default :

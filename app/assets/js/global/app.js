@@ -58,7 +58,7 @@
         "editer",
         "supprimer",
         "sauvegarder",
-        "retour",
+        "retour", // NE PAS ECOUTER SI VOUS VOULEZ LA GESTION DES MODIFS
         "boutons_perso"
     ]);
 
