@@ -88,7 +88,7 @@ var Notify = React.createClass({
             hideDuration: 200,
             // PADDING BETWEEN ELEMENT AND NOTIFICATION
             gap: 2
-        })
+        });
         this.listenTo(StoreNotif, this.displayNotif);
     },
 
