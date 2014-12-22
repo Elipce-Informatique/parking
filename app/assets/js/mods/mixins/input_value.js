@@ -32,7 +32,7 @@ var InputValueMixin = {
         }
         this.setState ({value: val});
     }
-}
+};
 
 /**
  * Mixin permettant de gérer le chack des radio et checkbox
@@ -69,7 +69,7 @@ var InputCheckableMixin = {
         }
         this.setState ({checked: coche});
     }
-}
+};
 
 module.exports.InputValueMixin = InputValueMixin;
 module.exports.InputCheckableMixin = InputCheckableMixin;
