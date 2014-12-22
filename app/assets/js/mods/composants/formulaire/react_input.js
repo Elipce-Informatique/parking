@@ -13,39 +13,38 @@ var InputText = React.createClass({
     mixins: [MixinInputValue],
 
     propTypes: {
-        attributes:React.PropTypes.object,
+        attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange:React.PropTypes.func,
+        onChange: React.PropTypes.func,
         gestMod: React.PropTypes.bool
     },
 
-    getDefaultProps: function(){
-        return{
+    getDefaultProps: function () {
+        return {
             attributes: {},
             evts: {},
-            onChange:this.handleChange,
+            onChange: this.handleChange,
             gestMod: true
-        }
+        };
     },
 
-   // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
+    // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
-    render: function() {
-        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod}: {};
+    render: function () {
+        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
         return (
             <Input
             type="text"
                 {...this.props.attributes}
                 {...this.props.evts}
                 {...gestMod}
-                value = {this.state.value}
-                onChange={this.handleChange}
-                ref = "InputField"
+            value = {this.state.value}
+            onChange={this.handleChange}
+            ref = "InputField"
             />
         );
     }
 });
-
 
 
 /**
@@ -57,33 +56,33 @@ var InputText = React.createClass({
 var InputTextEditable = React.createClass({
 
     propTypes: {
-        editable:React.PropTypes.bool.isRequired,
-        attributes:React.PropTypes.object,
-        evts:React.PropTypes.object,
+        editable: React.PropTypes.bool.isRequired,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool
     },
 
-    getDefaultProps: function(){
-        return{
+    getDefaultProps: function () {
+        return {
             attributes: {},
             evts: {},
             gestMod: true
         }
     },
 
-    render: function() {
+    render: function () {
         var retour;
         // Editable
-        if(this.props.editable){
-            retour =  <InputText
-                            attributes = {this.props.attributes}
-                            evts = {this.props.evts}
-                            ref="Editable"
-                            gestMod={this.props.gestMod}
-                        />
+        if (this.props.editable) {
+            retour = <InputText
+            attributes = {this.props.attributes}
+            evts = {this.props.evts}
+            ref="Editable"
+            gestMod={this.props.gestMod}
+            />
         }
         // Non editable
-        else{
+        else {
             retour = modeEditableFalse(this.props.attributes);
         }
         return retour;
@@ -97,29 +96,29 @@ var InputMail = React.createClass({
     mixins: [MixinInputValue],
 
     propTypes: {
-        attributes:React.PropTypes.object,
-        evts:React.PropTypes.object,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool
     },
-    getDefaultProps: function(){
-        return{
+    getDefaultProps: function () {
+        return {
             attributes: {},
             evts: {},
             gestMod: true
         }
     },
 
-    render: function() {
-        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod}: {};
+    render: function () {
+        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
         return (
             <Input
-                type="email"
+            type="email"
                 {...this.props.attributes}
                 {...this.props.evts}
                 {...gestMod}
-                value = {this.state.value}
-                onChange={this.handleChange}
-                ref = "InputField"
+            value = {this.state.value}
+            onChange={this.handleChange}
+            ref = "InputField"
             />
         );
     }
@@ -135,34 +134,34 @@ var InputMail = React.createClass({
 var InputMailEditable = React.createClass({
 
     propTypes: {
-        editable:React.PropTypes.bool.isRequired,
-        attributes:React.PropTypes.object,
-        evts:React.PropTypes.object,
+        editable: React.PropTypes.bool.isRequired,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool
     },
 
-    getDefaultProps: function(){
-        return{
+    getDefaultProps: function () {
+        return {
             attributes: {},
             evts: {},
             gestMod: true
         }
     },
 
-    render: function() {
+    render: function () {
         var retour;
         // Editable
-        if(this.props.editable){
+        if (this.props.editable) {
             retour =
                 <InputMail
-                    attributes = {this.props.attributes}
-                    evts = {this.props.evts}
-                    ref="Editable"
-                    gestMod={this.props.gestMod}
+                attributes = {this.props.attributes}
+                evts = {this.props.evts}
+                ref="Editable"
+                gestMod={this.props.gestMod}
                 />
         }
         // Non editable
-        else{
+        else {
             retour = modeEditableFalse(this.props.attributes);
         }
         return retour;
@@ -177,41 +176,41 @@ var InputMailEditable = React.createClass({
  * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
  */
 var InputPassword = React.createClass({
-        mixins: [MixinInputValue],
+    mixins: [MixinInputValue],
 
-        propTypes: {
-            attributes:React.PropTypes.object,
-            evts: React.PropTypes.object,
-            onChange:React.PropTypes.func,
-            gestMod: React.PropTypes.bool
-        },
+    propTypes: {
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        onChange: React.PropTypes.func,
+        gestMod: React.PropTypes.bool
+    },
 
-        getDefaultProps: function(){
-            return{
-                attributes: {},
-                evts: {},
-                onChange:this.handleChange,
-                gestMod: true
-            }
-        },
+    getDefaultProps: function () {
+        return {
+            attributes: {},
+            evts: {},
+            onChange: this.handleChange,
+            gestMod: true
+        }
+    },
 
-        // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
+    // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
-        render: function() {
-            var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod}: {};
-            return (
-                <Input
-                    type="password"
+    render: function () {
+        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
+        return (
+            <Input
+            type="password"
                     {...this.props.attributes}
                     {...this.props.evts}
                     {...gestMod}
-                    value = {this.state.value}
-                    onChange={this.handleChange}
-                    ref = "InputField"
-                />
-            );
-        }
-    });
+            value = {this.state.value}
+            onChange={this.handleChange}
+            ref = "InputField"
+            />
+        );
+    }
+});
 
 /**
  * Champ texte editable => si pas editable INPUT devient LABEL.
@@ -222,34 +221,34 @@ var InputPassword = React.createClass({
 var InputPasswordEditable = React.createClass({
 
     propTypes: {
-        editable:React.PropTypes.bool.isRequired,
-        attributes:React.PropTypes.object,
-        evts:React.PropTypes.object,
+        editable: React.PropTypes.bool.isRequired,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool
     },
 
-    getDefaultProps: function(){
-        return{
+    getDefaultProps: function () {
+        return {
             attributes: {},
             evts: {},
             gestMod: true
         }
     },
 
-    render: function() {
+    render: function () {
         var retour;
         // Editable
-        if(this.props.editable){
+        if (this.props.editable) {
             retour =
                 <InputPassword
-                    attributes = {this.props.attributes}
-                    evts = {this.props.evts}
-                    ref="Editable"
-                    gestMod={this.props.gestMod}
+                attributes = {this.props.attributes}
+                evts = {this.props.evts}
+                ref="Editable"
+                gestMod={this.props.gestMod}
                 />
         }
         // Non editable
-        else{
+        else {
             retour = modeEditableFalse(this.props.attributes);
         }
         return retour;
@@ -257,8 +256,8 @@ var InputPasswordEditable = React.createClass({
 });
 
 /*--------------------------------------------------------------
-        CHECKABLE
----------------------------------------------------------------- */
+ CHECKABLE
+ ---------------------------------------------------------------- */
 
 /**
  * Champ radio
@@ -270,34 +269,34 @@ var InputRadio = React.createClass({
     mixins: [MixinInputChecked],
 
     propTypes: {
-        attributes:React.PropTypes.object,
+        attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange:React.PropTypes.func,
+        onChange: React.PropTypes.func,
         gestMod: React.PropTypes.bool
     },
 
-    getDefaultProps: function(){
-        return{
+    getDefaultProps: function () {
+        return {
             attributes: {},
             evts: {},
-            onChange:this.handleChange,
+            onChange: this.handleChange,
             gestMod: true
         }
     },
 
     // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
-    render: function() {
-        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod}: {};
+    render: function () {
+        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
         return (
             <Input
             type="radio"
                 {...this.props.attributes}
                 {...this.props.evts}
                 {...gestMod}
-                value = {this.state.value}
-                onChange={this.handleChange}
-                ref = "Checkable"
+            value = {this.state.value}
+            onChange={this.handleChange}
+            ref = "Checkable"
             />
         );
     }
@@ -312,33 +311,33 @@ var InputRadio = React.createClass({
 var InputRadioEditable = React.createClass({
 
     propTypes: {
-        editable:React.PropTypes.bool.isRequired,
-        attributes:React.PropTypes.object,
-        evts:React.PropTypes.object,
+        editable: React.PropTypes.bool.isRequired,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool
     },
 
-    getDefaultProps: function(){
-        return{
+    getDefaultProps: function () {
+        return {
             attributes: {},
             evts: {},
             gestMod: true
         }
     },
 
-    render: function() {
+    render: function () {
         var attr = this.props.attributes;
         // Editable
-        if(this.props.editable){
-            attr = _.extend(attr,{readOnly:true});
+        if (this.props.editable) {
+            attr = _.extend(attr, {readOnly: true});
         }
         //console.log(attr);
         return <InputRadio
-                    attributes = {attr}
-                    evts = {this.props.evts}
-                    ref="Editable"
-                    gestMod={this.props.gestMod}
-                />
+        attributes = {attr}
+        evts = {this.props.evts}
+        ref="Editable"
+        gestMod={this.props.gestMod}
+        />
     }
 });
 
@@ -353,34 +352,34 @@ var InputCheckbox = React.createClass({
     mixins: [MixinInputChecked],
 
     propTypes: {
-        attributes:React.PropTypes.object,
+        attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange:React.PropTypes.func,
+        onChange: React.PropTypes.func,
         gestMod: React.PropTypes.bool
     },
 
-    getDefaultProps: function(){
-        return{
+    getDefaultProps: function () {
+        return {
             attributes: {},
             evts: {},
-            onChange:this.handleChange,
+            onChange: this.handleChange,
             gestMod: true
         }
     },
 
     // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
-    render: function() {
-        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod}: {};
+    render: function () {
+        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
         return (
             <Input
-                type="checkbox"
+            type="checkbox"
                 {...this.props.attributes}
                 {...this.props.evts}
                 {...gestMod}
-                value = {this.state.value}
-                onChange={this.handleChange}
-                ref = "Checkable"
+            value = {this.state.value}
+            onChange={this.handleChange}
+            ref = "Checkable"
             />
         );
     }
@@ -395,32 +394,32 @@ var InputCheckbox = React.createClass({
 var InputCheckboxEditable = React.createClass({
 
     propTypes: {
-        editable:React.PropTypes.bool.isRequired,
-        attributes:React.PropTypes.object,
-        evts:React.PropTypes.object,
+        editable: React.PropTypes.bool.isRequired,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool
     },
 
-    getDefaultProps: function(){
-        return{
+    getDefaultProps: function () {
+        return {
             attributes: {},
             evts: {},
             gestMod: true
         }
     },
 
-    render: function() {
+    render: function () {
         var attr = this.props.attributes;
         // Editable
-        if(this.props.editable){
-            attr = _.extend(attr,{readOnly:true});
+        if (this.props.editable) {
+            attr = _.extend(attr, {readOnly: true});
         }
         //console.log(attr);
         return <InputCheckbox
-            attributes = {attr}
-            evts = {this.props.evts}
-            ref="Editable"
-            gestMod={this.props.gestMod}
+        attributes = {attr}
+        evts = {this.props.evts}
+        ref="Editable"
+        gestMod={this.props.gestMod}
         />
     }
 });
@@ -443,19 +442,21 @@ module.exports.InputCheckboxEditable = InputCheckboxEditable;
  * @param attr: this.props.attributes
  * @returns {XML}
  */
-function modeEditableFalse(attr){
+function modeEditableFalse(attr) {
     // Label
-    var label= (attr.label !== undefined?attr.label:'');
+    var label = (attr.label !== undefined ? attr.label : '');
     // Texte
-    var texte = (attr.value !== undefined?attr.value:'');
+    var texte = (attr.value !== undefined ? attr.value : '');
     // CSS
-    var classRow = (attr.groupClassName !== undefined?{className:attr.groupClassName}:{});
-    var classLabel = (attr.labelClassName !== undefined?{className:attr.labelClassName}:{});
-    var classTexte = (attr.wrapperClassName !== undefined?{className:attr.wrapperClassName}:{});
+    var classRow = (attr.groupClassName !== undefined ? {className: attr.groupClassName} : {});
+    var classLabel = (attr.labelClassName !== undefined ? {className: attr.labelClassName} : {});
+    var classTexte = (attr.wrapperClassName !== undefined ? {className: attr.wrapperClassName} : {});
 
     return (
         <div {...classRow}>
-            <label {...classLabel}><span>{label}</span></label>
+            <label {...classLabel}>
+                <span>{label}</span>
+            </label>
             <div {...classTexte}>
                 <span>{texte}</span>
             </div>

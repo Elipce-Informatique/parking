@@ -11,11 +11,11 @@
      |--------------------------------------------------------------------------
      */
     global.$ = global.jQuery = require('jquery');
-    global.Parsley = require('parsleyjs');
     global.React = require('react/addons');
     global._ = require('lodash');
     global.Reflux = require('reflux');
     global.ReactB = require('react-bootstrap');
+    global.validator = require('validator');
 
 
 

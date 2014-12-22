@@ -88,7 +88,7 @@ var MenuLeft = React.createClass({
         return temp;
     },
 
-    handleStoreData: function(data){
+    handleStoreData: function (data) {
         this.setState({data: data});
     }
 });
