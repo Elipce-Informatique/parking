@@ -25,8 +25,7 @@
             @include('auth_js')
             <script type="text/javascript">window.BASE_URI="{{URL::asset('/')}}"</script>
             <script type="text/javascript" src="{{URL::asset('/public/js/global/app.js')}}"></script>
-            <script type="text/javascript" src="{{URL::asset('/public/js/libs/bootstrap.js')}}"></script>
-            <script type="text/javascript" src="{{URL::asset('/public/js/libs/notify.js')}}"></script>
+            <script type="text/javascript" src="{{URL::asset('/public/js/libs/bundled_libs.js')}}"></script>
             @yield('struct_scripts')
         </div>
         @include('notifications')
