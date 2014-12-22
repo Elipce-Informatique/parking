@@ -141,13 +141,15 @@ var ficheUserStore = Reflux.createStore({
             context: this,
             type: method,
             data: data,
-            success: function(rep) {
+            success: function(tab) {
+                // TODO NOTIFICATION
+                //Notif tab['save']
                 // Passe variable aux composants qui écoutent l'action actionLoadData
-                this.trigger(rep);
+                this.trigger(tab['data']);
             },
             error: function(xhr, status, err) {
                 console.error(status, err.toString());
-                this.trigger('KO');
+                this.trigger(tab['data']);
             }
         });
     }
