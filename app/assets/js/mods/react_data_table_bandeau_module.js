@@ -22,6 +22,7 @@ var DataTableModuleReact = React.createClass({
         hide:          React.PropTypes.array.isRequired,
         id:            React.PropTypes.string.isRequired,
         idProfil:      React.PropTypes.string.isRequired,
+        nameProfil:    React.PropTypes.string.isRequired,
         editable:      React.PropTypes.bool.isRequired,
         settings:      React.PropTypes.object,
         attributes:    React.PropTypes.object,
@@ -65,12 +66,12 @@ var DataTableModuleReact = React.createClass({
         return  <div  key='divTableauModule'>
                     <Row>
                         <Col md={12}>
-                            <InputTextEditable attributes={{label:Lang.get('global.profils'), name:"libelle", value:this.state.nameProfil, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
+                            <InputTextEditable attributes={{label:Lang.get('global.profils'), name:"libelle", value:this.props.nameProfil, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
                         </Col>
                     </Row>
                     <Row>
                         <Col md={12}>
-                            <DataTableBandeau id={this.props.id} head={this.props.head} data={this.state.data} editable={this.props.editable} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} reactElements={this.props.reactElements}/>
+                            <DataTableBandeau id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} reactElements={this.props.reactElements} editable={this.props.editable}/>
                         </Col>
                     </Row>
                 </div>;
@@ -83,7 +84,7 @@ var DataTableModuleReact = React.createClass({
      */
     updateModule: function(data) {
         // MAJ data automatique, lifecycle "UPDATE"
-        this.setState({data:data.data});
+        this.setState(data.dataModule);
     }
 });
 module.exports.composant = DataTableModuleReact;
@@ -104,18 +105,15 @@ var moduleStore = Reflux.createStore({
     // Initial setup
     init: function() {
         /* Charge les données du tableau module à chaque évènement "profil_select" */
-        this.listenTo(Actions.profil.profil_select,  this.updateModule);
         this.listenTo(Actions.profil.libelle_change, this.libelleChange);
         this.listenTo(Actions.profil.radio_change,   this.radioChange);
-        this.listenTo(Actions.bandeau.creer,         this.createProfil);
-        this.listenTo(Actions.bandeau.editer,        this.editProfil);
         this.listenTo(Actions.bandeau.supprimer,     this.supprProfil);
         this.listenTo(Actions.bandeau.sauvegarder,   this.saveProfil);
     },
 
     /* Charge les données tout seul au début */
     getInitialState:function(){
-        var dataRetour = {data:[], nameProfil:'', etatPageProfil:'liste'};
+        var dataRetour = {dataModule:[], nameProfil:'', dataProfil:{etatPageProfil:'liste'}};
 
         // AJAX
         $.ajax({
@@ -124,7 +122,7 @@ var moduleStore = Reflux.createStore({
             context:  this,
             async:    false,
             success:  function(data) {
-                dataRetour.data = data;
+                dataRetour.dataModule = data;
             },
             error: function(xhr, status, err) {
                 console.error(status, err.toString());
@@ -229,23 +227,6 @@ var moduleStore = Reflux.createStore({
      */
     libelleChange: function() {
         this.isNameProfilModif = true;
-    },
-
-    getNameProfilByID: function(){
-        // AJAX
-        $.ajax({
-            url: BASE_URI+'profils/'+this.idProfilSelect, /* correspond au module url de la BDD */
-            dataType: 'json',
-            context: this,
-            async:false,
-            success: function(data) {
-                this.nameProfil = data.traduction;
-            },
-            error: function(xhr, status, err) {
-                this.nameProfil = 'Error in getNameProfilByID';
-                console.error(status, err.toString());
-            }
-        });
     }
 });
 module.exports.Store = moduleStore;

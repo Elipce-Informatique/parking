@@ -96,9 +96,10 @@ var ReactPageProfil  = React.createClass({
     getInitialState: function () {
 
         return {
-            titrePage  : Lang.get('global.profils'), /* Titre initial : Profils               */
-            profilName : '',                         /* Pas de profil de sélectionné          */
-            etatPageProfil:'liste'                   /*  Affichage initial, liste des profils */
+            titrePage  :    Lang.get('global.profils'), /* Titre initial : Profils               */
+            nameProfil :    '',                         /* Pas de profil de sélectionné          */
+            idProfil:       0,                          /* Id NULL au début                      */
+            etatPageProfil: 'liste'                     /*  Affichage initial, liste des profils */
         };
     },
 
@@ -166,7 +167,7 @@ var ReactPageProfil  = React.createClass({
                                 <p>{Lang.get('global.profils')+' '+this.state.profilName}</p>
                             </Row>
                             <Row>
-                                <DataTableBandeauModule head={headMP} hide={hideMP} id="tab_module" data={this.state.dataModule} bUnderline={false} reactElements={aReactElements} />
+                                <DataTableBandeauModule head={headMP} hide={hideMP} editable={false} id="tab_module" bUnderline={false} reactElements={aReactElements} />
                             </Row>
                         </div>;
                 break;
@@ -176,10 +177,10 @@ var ReactPageProfil  = React.createClass({
             /*    - le bandeau                      */
             /*    - le nom du profil EDITABLE       */
             /*    - le tableau des modules EDITABLE */
-            case 'création':
+            case 'create':
                 mode = 0;
                 this.state.profilName = '';
-            case 'edition':
+            case 'edit':
                 return  <div key={this.state.etatPageProfil}>
                             <Row>
                                 <BandeauEdition mode={mode} titre={this.state.titrePage} />
@@ -188,7 +189,7 @@ var ReactPageProfil  = React.createClass({
                                 <p>{Lang.get('global.profils')+' '+this.state.profilName}</p>
                             </Row>
                             <Row>
-                                <DataTableBandeauModule head={headMP} hide={hideMP} id="tab_module" data={this.state.dataModule} bUnderline={false} reactElements={aReactElements} />
+                                <DataTableBandeauModule head={headMP} hide={hideMP} editable={true} id="tab_module" bUnderline={false} reactElements={aReactElements} />
                             </Row>
                         </div>;
                 break;
@@ -239,15 +240,57 @@ var pageProfilStore = Reflux.createStore({
 
     // Initial setup
     init: function() {
-        this.listenTo(moduleStore, this.updateModule);
+        this.listenTo(moduleStore, this.updatePage);
+        this.listenTo(Actions.profil.profil_select, this.updateModule);
+        this.listenTo(Actions.bandeau.creer,        this.createProfil);
+        this.listenTo(Actions.bandeau.editer,       this.editProfil);
     },
 
     getInitialState:function(){
         return {etatPageProfil:'liste'};
     },
 
-    getInitialDataProfil: function(data){
-        this.trigger({etatPageProfil:data.etatPageProfil});
+    updatePage: function(data){
+        this.trigger(data.pageProfil);
+    },
+
+    updateModule: function(evt) {
+        var idProfil      = 0;
+        var libelleProfil = '';
+
+        /* On a un profil de sélectionné, affichage complet du tableau */
+        if($(evt.currentTarget).hasClass('row_selected')) {
+            idProfil      = $(evt.currentTarget).data('id');
+            libelleProfil = this.getNameProfilByID();
+            console.log('Name profil : '+libelleProfil);
+        }
+
+        return {etatPageProfil:'visu', nameProfil:libelleProfil, idProfil:idProfil};
+    },
+
+    createProfil: function(){
+        return {etatPageProfil:'visu', nameProfil:'', idProfil:0};
+    },
+
+    editProfil: function(){
+        return {etatPageProfil:'edit'};
+    },
+
+    getNameProfilByID: function(){
+        // AJAX
+        $.ajax({
+            url: BASE_URI+'profils/'+this.idProfilSelect, /* correspond au module url de la BDD */
+            dataType: 'json',
+            context: this,
+            async:false,
+            success: function(data) {
+                return data.traduction;
+            },
+            error: function(xhr, status, err) {
+                return '';
+                console.error(status, err.toString());
+            }
+        });
     }
 });
 /**************************************************************************************************************/
