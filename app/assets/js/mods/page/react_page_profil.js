@@ -2,22 +2,30 @@
  * Created by Pierre on 16/12/2014.
  */
 
+/***********************/
+/* Composants Boostrap */
 var Row = ReactB.Row;
 var Col = ReactB.Col;
 
+/********************************************/
+/* Gestion de la modification et des droits */
 var AuthentMixins = require('../mixins/component_access'); /* Pour le listenTo           */
 var MixinGestMod  = require('../mixins/gestion_modif');    /* Pour la gestion des modifs */
 
+/*********************************************/
 /* Composant input pour le libelle du profil */
+var Field = require('../composants/formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 
+
+/***************************/
 /* Composant react Bandeau */
 var BandeauVisu    = require('../composants/bandeau/react_bandeau_visu');
 var BandeauEdition = require('../composants/bandeau/react_bandeau_edition');
 var BandeauListe   = require('../composants/bandeau/react_bandeau_liste');
 
-/****************************************************************/
-/*          Composant react_data_table_bandeau_profil           */
+/*********************************************/
+/* Composant react_data_table_bandeau_profil */
 
 var DataTableBandeauProfil = require('../react_data_table_bandeau_profil');
 
@@ -29,7 +37,8 @@ var headP = [Lang.get('global.profils')];
 var hideP = ['id'];
 var evtsP = {'onClick':handleClickProfil};
 
-/* Fonction handleClickProfil */
+/* Fonction handleClickProfil                                   */
+/* On passe par un handle pour faire la copie de l'objet cliqué */
 function handleClickProfil(evt){
     var copie = _.clone(evt);
     Actions.profil.profil_select(copie);
@@ -40,7 +49,8 @@ function handleClickProfil(evt){
 /****************************************************************/
 /*          Composant react_data_table_bandeau_module           */
 
-var DataTableBandeauModule = require('../react_data_table_bandeau_module');
+var DataTableBandeauModule = require('../react_data_table_bandeau_module').composant;
+var moduleStore            = require('../react_data_table_bandeau_module').Store;
 
 /* Paramètres du composant react_data_table_module_profil            */
 /* Entête(s) du tableau : "Module, Droits                            */
@@ -76,6 +86,7 @@ function handleClickRadio(evt){
 /************************************************************************************************/
 var ReactPageProfil  = React.createClass({
 
+    /* Ce composant gère les droits d'accès et les modifications */
     mixins: [Reflux.ListenerMixin,AuthentMixins,MixinGestMod],
 
     /**
@@ -85,9 +96,9 @@ var ReactPageProfil  = React.createClass({
     getInitialState: function () {
 
         return {
-            titrePage  : Lang.get('global.profils'),
-            profilName : '',
-            etatPageProfil:'liste'
+            titrePage  : Lang.get('global.profils'), /* Titre initial : Profils               */
+            profilName : '',                         /* Pas de profil de sélectionné          */
+            etatPageProfil:'liste'                   /*  Affichage initial, liste des profils */
         };
     },
 
@@ -95,14 +106,14 @@ var ReactPageProfil  = React.createClass({
      * Avant le premier Render()
      */
     componentWillMount: function () {
-        /* On abonne ReactPageProfil aux stores :     */
-        /*     - pageProfilStore, déclenché par :     */
-        /*                           - profil_create  */
-        /*                           - profil_edit    */
-        /*                           - profil_suppr   */
-        /*                           - profil_retour  */
-        /*                           - profil_save    */
-        this.listenTo(pageProfilStore, this.retourPageProfilStore, this.retourPageProfilStore);
+        /* On abonne ReactPageProfil au store "pageProfilStore" : */
+        /*     - pageProfilStore, déclenché par :                 */
+        /*                           - profil_create              */
+        /*                           - profil_edit                */
+        /*                           - profil_suppr               */
+        /*                           - profil_retour              */
+        /*                           - profil_save                */
+        this.listenTo(pageProfilStore, this.updateState, this.updateState);
     },
 
     /**
@@ -128,7 +139,7 @@ var ReactPageProfil  = React.createClass({
      * Retour du store "pageProfilStore", met à jour le state de la page
      * @param data
      */
-    retourPageProfilStore: function(data) {
+    updateState: function(data) {
         console.log('MAJ-- du state du composant : "ReactPageProfil" --MAJ');
         // MAJ data automatique, lifecycle "UPDATE"
         this.setState(data);
@@ -136,6 +147,9 @@ var ReactPageProfil  = React.createClass({
 
     getComponentSwitchState: function(){
 
+        var mode = 1;
+
+        /* Selon l'état de la page */
         switch(this.state.etatPageProfil){
 
             /* On a sélectionné un profil                      */
@@ -144,8 +158,17 @@ var ReactPageProfil  = React.createClass({
             /*    - le nom du profil NON éditable              */
             /*    - le tableau des modules NON éditable        */
             case 'visu':
-                console.log('getComponentSwitchState --> Visu');
-                return
+                return <div key={this.state.etatPageProfil}>
+                            <Row>
+                                <BandeauVisu titre={this.state.titrePage} />
+                            </Row>
+                            <Row>
+                                <p>{Lang.get('global.profils')+' '+this.state.profilName}</p>
+                            </Row>
+                            <Row>
+                                <DataTableBandeauModule head={headMP} hide={hideMP} id="tab_module" data={this.state.dataModule} bUnderline={false} reactElements={aReactElements} />
+                            </Row>
+                        </div>;
                 break;
 
             /* On édite/créer un profil             */
@@ -153,21 +176,13 @@ var ReactPageProfil  = React.createClass({
             /*    - le bandeau                      */
             /*    - le nom du profil EDITABLE       */
             /*    - le tableau des modules EDITABLE */
-            case 'edition':
-                console.log('getComponentSwitchState --> Edition/Création');
-                return <div key={this.state.etatPageProfil}>
-                    <Row>
-                        <BandeauEdition mode={1} titre={this.state.titrePage} />
-                    </Row>
-                    <Row>
-                        <DataTableBandeauModule head={headMP} hide={hideMP} id="tab_module" data={this.state.dataModule} bUnderline={false} reactElements={aReactElements} />
-                    </Row>
-                </div>;
-                break;
             case 'création':
+                mode = 0;
+                this.state.profilName = '';
+            case 'edition':
                 return  <div key={this.state.etatPageProfil}>
                             <Row>
-                                <BandeauEdition mode={0} titre={this.state.titrePage} />
+                                <BandeauEdition mode={mode} titre={this.state.titrePage} />
                             </Row>
                             <Row>
                                 <p>{Lang.get('global.profils')+' '+this.state.profilName}</p>
@@ -202,8 +217,6 @@ var ReactPageProfil  = React.createClass({
     }
 });
 module.exports = ReactPageProfil;
-
-
 /************************************************************************************************/
 /*                                                                                              */
 /*                           FIN : COMPOSANT REACT PAGE PROFIL                                  */
@@ -217,65 +230,6 @@ module.exports = ReactPageProfil;
 /*                                                                                                            */
 /**************************************************************************************************************/
 
-
-/****************************************************************/
-/*                          MODULESTORE                         */
-/*          Store associé au tableau des modules                */
-/****************************************************************/
-var moduleStore = Reflux.createStore({
-
-    // Initial setup
-    init: function() {
-        /* Charge les données du tableau module à chaque évènement "profil_select" */
-        this.listenTo(Actions.profil.profil_select, this.updateModule);
-    },
-
-    /* Met à jour le tableau des modules */
-    updateModule: function(evt) {
-        var idProfil = 0;
-
-        /* On a un profil de sélectionné, affichage complet du tableau */
-        if($(evt.currentTarget).hasClass('row_selected'))
-            idProfil = $(evt.currentTarget).data('id');
-        console.log('idProfil : '+idProfil);
-        // AJAX
-        $.ajax({
-            url: BASE_URI + 'profils/' + idProfil + '/modules', /* correspond au module url de la BDD */
-            dataType: 'json',
-            context: this,
-            success: function (dataFromBdd) {
-                var data = {idProfil:idProfil, dataModule:dataFromBdd};
-                /* Passe "data" en paramètre au(x) composant(s) qui écoutent le store moduleStore */
-                this.trigger(data);
-            },
-            error: function (xhr, status, err) {
-                console.error(status, err.toString());
-                /* Passe "[]" en paramètre au(x) composant(s) qui écoutent le store profilStore */
-                this.trigger([]);
-            }
-        });
-    },
-
-    /* Charge les données tout seul au début */
-    getInitialState:function(){
-        var dataRetour = [];
-        // AJAX
-        $.ajax({
-            url: BASE_URI+'profils/0/module', /* correspond au module url de la BDD */
-            dataType: 'json',
-            context: this,
-            async:false,
-            success: function(data) {
-                dataRetour = data;
-            },
-            error: function(xhr, status, err) {
-                console.error(status, err.toString());
-            }
-        });
-        /* Passe "dataRetour" en paramètre au(x) composant(s) qui écoutent le store moduleStore */
-        return dataRetour;
-    }
-});
 
 /************************************************************************/
 /*                          PAGEPROFILSTORE                             */
