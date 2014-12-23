@@ -39,6 +39,20 @@
         "gestion_modif_reset"
     ]);
 
+    /*
+     |--------------------------------------------------------------------------
+     | ACTIONS VALIDATION REFLUX
+     |--------------------------------------------------------------------------
+     */
+    global.Actions.validation = Reflux.createActions([
+        "form_field_changed"
+    ]);
+
+    /*
+     |--------------------------------------------------------------------------
+     | ACTIONS NOTIFICATIONS REFLUX
+     |--------------------------------------------------------------------------
+     */
     global.Actions.notif = Reflux.createActions([
         "success",
         "warning",

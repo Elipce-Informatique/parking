@@ -8,7 +8,12 @@ var MixinInputChecked = MixinInput.InputCheckableMixin;
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
  * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
- * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ * {
+ *      isValid: false|true
+ *      style: 'success|warning|error|default',
+ *      message: 'La donnée saisie est déjà présente dans la base de données.'
+ * }
  */
 var InputText = React.createClass({
     mixins: [MixinInputValue],
@@ -58,7 +63,12 @@ var InputText = React.createClass({
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ * {
+ *      isValid: false|true
+ *      style: 'success|warning|error|default',
+ *      message: 'La donnée saisie est déjà présente dans la base de données.'
+ * }
  */
 var InputTextEditable = React.createClass({
 
@@ -107,7 +117,12 @@ var InputTextEditable = React.createClass({
 
 /**
  * Champ mail
- * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ * {
+ *      isValid: false|true
+ *      style: 'success|warning|error|default',
+ *      message: 'La donnée saisie est déjà présente dans la base de données.'
+ * }
  */
 var InputMail = React.createClass({
     mixins: [MixinInputValue],
@@ -142,7 +157,11 @@ var InputMail = React.createClass({
         );
     },
     defaultValidator: function (val) {
-        return {status: 'success', tooltip: ''};
+        if (validator.isEmail(val)) {
+            return {isValid: true, style: 'success', tooltip: ''};
+        } else {
+            return {isValid: false, style: 'error', tooltip: Lang.get('global.validation_erreur_mail')};
+        }
     }
 });
 
@@ -152,7 +171,12 @@ var InputMail = React.createClass({
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ * {
+ *      isValid: false|true
+ *      style: 'success|warning|error|default',
+ *      message: 'La donnée saisie est déjà présente dans la base de données.'
+ * }
  */
 var InputMailEditable = React.createClass({
 
@@ -206,6 +230,7 @@ var InputMailEditable = React.createClass({
  * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
+ *      isValid: false|true
  *      style: 'success|warning|error|default',
  *      message: 'La donnée saisie est déjà présente dans la base de données.'
  * }
@@ -250,12 +275,12 @@ var InputPassword = React.createClass({
     defaultValidator: function (val) {
         var retour = {};
         // CHAMP OK
-        if(val.length >= 6 && (!validator.isAlpha(val) && !validator.isNumeric(val))){
-            retour= {style: 'success'};
+        if (val.length >= 6 && (!validator.isAlpha(val) && !validator.isNumeric(val))) {
+            retour = {isValid: true, style: 'success'};
         }
         // CHAMP KO
-        else{
-            retour= {style: 'error', message: Lang.get('global.validation_erreur_pass')};
+        else {
+            retour = {isValid: false, style: 'error', message: Lang.get('global.validation_erreur_pass')};
         }
         return retour;
     }
@@ -266,7 +291,12 @@ var InputPassword = React.createClass({
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ * {
+ *      isValid: false|true
+ *      style: 'success|warning|error|default',
+ *      message: 'La donnée saisie est déjà présente dans la base de données.'
+ * }
  */
 var InputPasswordEditable = React.createClass({
 
