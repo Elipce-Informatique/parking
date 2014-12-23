@@ -82,9 +82,12 @@ var InputTextEditable = React.createClass({
         var retour;
         // Editable
         if (this.props.editable) {
+            console.log(this.props.attributes);
+
+            var attrs = this.props.attributes;
             // AJOUT DU VALIDATOR PERSO
             if (typeof(this.props.validator) == 'function') {
-                var attrs = _.extends(this.props.attributes, {validator: this.props.validator});
+                attrs = _.extends(this.props.attributes, {validator: this.props.validator});
             }
 
             retour = <InputText
@@ -173,9 +176,10 @@ var InputMailEditable = React.createClass({
         var retour;
         // Editable
         if (this.props.editable) {
+            var attrs = this.props.attributes;
             // AJOUT DU VALIDATOR PERSO
             if (typeof(this.props.validator) == 'function') {
-                var attrs = _.extends(this.props.attributes, {validator: this.props.validator});
+                attrs = _.extends(this.props.attributes, {validator: this.props.validator});
             }
 
             retour =
@@ -286,9 +290,10 @@ var InputPasswordEditable = React.createClass({
         var retour;
         // Editable
         if (this.props.editable) {
+            var attrs = this.props.attributes;
             // AJOUT DU VALIDATOR PERSO
             if (typeof(this.props.validator) == 'function') {
-                var attrs = _.extends(this.props.attributes, {validator: this.props.validator});
+                attrs = _.extends(this.props.attributes, {validator: this.props.validator});
             }
             retour =
                 <InputPassword
