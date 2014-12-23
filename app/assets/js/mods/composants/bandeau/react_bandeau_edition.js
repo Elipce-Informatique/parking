@@ -50,7 +50,7 @@ var BandeauEdition = React.createClass({
                 sousTitre = this.props.sousTitre + Lang.get('global.creation');
                 break;
             case 1:
-                sousTitre = this.props.sousTitre + Lang.get('global.edition');
+                sousTitre = this.props.sousTitre;
                 break;
             default:
                 sousTitre = this.props.sousTitre;

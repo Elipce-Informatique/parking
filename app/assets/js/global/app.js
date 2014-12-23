@@ -18,6 +18,7 @@
     global.validator = require('validator');
 
 
+
     /*
      |--------------------------------------------------------------------------
      | DEFINITION DE GLOBALES
@@ -80,7 +81,8 @@
         "load_user_info",
         "save_user",
         "edit_user",
-        "create_user"
+        "create_user",
+        "delete_user"
     ]);
 
     /*

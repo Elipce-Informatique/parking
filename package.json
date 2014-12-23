@@ -27,6 +27,7 @@
   "version": "0.0.2",
   "main": "gulpfile.js",
   "dependencies": {
+    "bootstrap-sweetalert": "^0.4.2",
     "browserify": "^6.2.0",
     "jquery": "^2.1.1",
     "lodash": "^2.4.1",

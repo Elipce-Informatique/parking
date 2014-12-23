@@ -38,7 +38,7 @@ var PageUser = React.createClass({
         };
     },
 
-    componentWillMount: function () {
+    componentDidMount: function () {
         this.listenTo(pageUserStore, this.updateData, this.updateData);
     },
 
@@ -95,6 +95,7 @@ var PageUser = React.createClass({
     },
 
     updateData: function (obj) {
+        //console.log('PAGE USER data %o',obj);
         // MAJ data
         this.setState(obj);
     },
@@ -110,7 +111,7 @@ module.exports.Composant = PageUser;
 var pageUserStore = Reflux.createStore({
 
     // Variables
-    idUser: 0,
+    stateLocal : {idUser:0, etat: 'liste'},
 
     // Initial setup
     init: function () {
@@ -121,36 +122,73 @@ var pageUserStore = Reflux.createStore({
         this.listenTo(Actions.bandeau.editer, this.modeEdition);
         this.listenTo(Actions.bandeau.sauvegarder, this.sauvegarder);
         this.listenTo(storeFicheUser, this.setDataUser);
+        this.listenTo(Actions.bandeau.supprimer, this.supprimer);
 
     },
 
     modeVisu: function (idUser) {
-        this.idUser = idUser;
-        this.trigger({etat: 'visu', idUser: idUser});
+        this.stateLocal = {idUser:idUser, etat: 'visu'}
+        this.trigger(this.stateLocal);
     },
 
     modeCreation: function () {
-        this.idUser = 0;
-        this.trigger({etat: 'creation', idUser: ''});
+        this.stateLocal = {idUser:0, etat: 'creation'}
+        //console.log('PAGE USER mode création '+this.idUser);
+        this.trigger(this.stateLocal);
     },
 
     modeEdition: function () {
-        this.trigger({etat: 'edition', idUser: this.idUser});
+        this.stateLocal = {idUser:this.stateLocal.idUser, etat: 'edition'}
+        this.trigger(this.stateLocal);
     },
 
     modeListe: function () {
-        this.idUser = 0;
-        this.trigger({etat: 'liste', idUser: ''});
+        this.stateLocal = {idUser:0, etat: 'liste'}
+        this.trigger(this.stateLocal);
     },
 
+    /**
+     * Indique à la fiche utilisateur de sauvegarder les données
+     */
     sauvegarder: function(){
         // La fiche user enregistre l'utilisateur
-        Actions.utilisateur.save_user(this.idUser);
+        Actions.utilisateur.save_user(this.stateLocal.idUser);
 
     },
 
+    /**
+     * Retour de la fiche utilisateur pour mise à jour des infos de la page
+     * @param data
+     */
     setDataUser: function(data){
-        this.trigger({dataUser:data});
+        // Variables
+        this.stateLocal.dataUser = data;
+
+        // Nouvel utilisateur
+        if(this.stateLocal.etat === 'creation'){
+            this.stateLocal.idUser = data.id;
+            this.stateLocal.etat = 'edition';
+        }
+
+        // Suppression utilisateur
+        if(this.stateLocal.etat === 'suppression'){
+            this.stateLocal.idUser = 0;
+            this.stateLocal.etat = 'liste';
+        }
+
+        //console.log('PAGE USER trigger %o', this.stateLocal);
+        this.trigger(this.stateLocal);
+    },
+
+    /**
+     * Suppression d'un utilisateur
+     */
+    supprimer : function(){
+        // Boite de confirmation
+
+        // Suppr
+        this.stateLocal = {idUser:this.stateLocal.idUser, etat: 'suppression'}
+        Actions.utilisateur.delete_user(this.stateLocal.idUser);
     }
 });
 module.exports.store = pageUserStore;

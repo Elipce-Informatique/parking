@@ -36,7 +36,7 @@ var FicheUser = React.createClass({
         return {data:{nom:'',prenom:'',email:'',photo:'app/documents/photo/no.gif'}};
     },
 
-    componentWillMount: function(){
+    componentDidMount: function(){
         // Liaison au store
         this.listenTo(ficheUserStore, this.updateData, this.updateData);
 
@@ -74,10 +74,16 @@ var FicheUser = React.createClass({
      * @param {object} data
      */
     updateData: function(data) {
-        // MAJ data
-        this.setState({
-            data: data
-        });
+        //console.log('Fiche USER data %o',data);
+        try {
+            // MAJ data
+            this.setState({
+                data: data
+            });
+        }
+        catch(e){
+
+        }
     },
 
     test: function(){
@@ -90,18 +96,22 @@ module.exports.Composant = FicheUser;
 // Creates a DataStore
 var ficheUserStore = Reflux.createStore({
 
+    // Variables
+    dataUser:{},
+
     // Initial setup
     init: function() {
         // Register statusUpdate action
         this.listenTo(Actions.utilisateur.load_user_info, this.getInfosUser);
         this.listenTo(Actions.utilisateur.save_user, this.sauvegarder);
+        this.listenTo(Actions.utilisateur.delete_user, this.supprimer);
     },
 
     // Callback
     getInfosUser: function(idUser) {
         // ID user KO
         if(idUser === 0){
-            this.trigger({nom:'',prenom:'',email:'',photo:'app/documents/photo/no.gif'})
+            this.trigger({id:0,nom:'',prenom:'',email:'',photo:'app/documents/photo/no.gif'})
         }
         // User OK
         else {
@@ -116,14 +126,14 @@ var ficheUserStore = Reflux.createStore({
                 },
                 error: function (xhr, status, err) {
                     console.error(status, err.toString());
-                    this.trigger({});
+                    this.trigger({id:0});
                 }
             });
         }
     },
 
     sauvegarder: function(idUser){
-
+        //console.log('FICHE USER SAVE '+idUser);
         // Variables
         var url = idUser===0?'':idUser;
         url = BASE_URI+'utilisateur/'+url;
@@ -131,7 +141,7 @@ var ficheUserStore = Reflux.createStore({
         var method = idUser===0?'POST':'PUT';
         var data = $('form').serializeArray();
         data.push({name:'_token',value:$('#_token').val()});
-        
+
         //console.log('DATA %o',data);
 
         // Requête
@@ -144,12 +154,39 @@ var ficheUserStore = Reflux.createStore({
             success: function(tab) {
                 // TODO NOTIFICATION
                 //Notif tab['save']
+                this.dataUser = tab.data;
                 // Passe variable aux composants qui écoutent l'action actionLoadData
-                this.trigger(tab['data']);
+                this.trigger(tab.data);
             },
             error: function(xhr, status, err) {
-                console.error(status, err.toString());
-                this.trigger(tab['data']);
+                console.error( status, err.toString());
+                this.trigger(this.dataUser);
+            }
+        });
+    },
+
+    supprimer: function(idUser){
+        // Variables
+        var url = BASE_URI+'utilisateur/'+idUser;
+        var method = 'DELETE';
+
+        // Requête
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            context: this,
+            type: method,
+            data: {'_token':$('#_token').val()},
+            success: function(tab) {
+                // TODO NOTIFICATION
+                //Notif tab['save']
+                this.dataUser = tab.data;
+                // Passe variable aux composants qui écoutent l'action actionLoadData
+                this.trigger(tab.data);
+            },
+            error: function(xhr, status, err) {
+                console.error( status, err.toString());
+                this.trigger(this.dataUser);
             }
         });
     }
