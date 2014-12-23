@@ -33,18 +33,18 @@ class UtilisateurController extends \BaseController
      */
     public function store()
     {
-        // Mot de passe généré
+        // Mot de passe généré sur 6 digits
         $pwd = Hash::make(time());
-        $pwd = substr($pwd, 8, 8);
-        Log::info('MON PASSWORD '.$pwd);
+        $pwd = substr($pwd, 8, 6);
+        $pwdBdd = Hash::make($pwd);
+
+        // TODO envoyer $pwd par mail.
 
         // Valeurs postées
         $post = Input::except('_token');
-        $post['password'] = $pwd;
+        $post['password'] = $pwdBdd;
 
-        // Nouvel utilisateur
-        $user = Utilisateur::create($post);
-        return $user;
+        return json_encode(Utilisateur::creerUtilisateur($post));
     }
 
 
@@ -80,28 +80,10 @@ class UtilisateurController extends \BaseController
      */
     public function update($id)
     {
-        $bSave = false;
-        // Trouver le user
-        $user = Utilisateur::find($id);
         // Champs du formualaire
         $fields = Input::except('_token');
-        // Parcourir les champs envoyés par PUT
-        foreach($fields as $key=>$val) {
-            $user->$key = $val;
-        }
 
-        // Sauvegarde
-        try {
-            $bSave = $user->save();
-        }
-        catch(Exception $e){
-            $retour = array('data'=>$fields,'save'=>false);
-        }
-        // Enregistrement OK
-        if($bSave){
-            $retour = array('data'=>$this->show($id),'save'=>false);
-        }
-        return json_encode($retour);
+        return json_encode(Utilisateur::updateUser($id, $fields));
     }
 
 
@@ -113,7 +95,7 @@ class UtilisateurController extends \BaseController
      */
     public function destroy($id)
     {
-        //
+       return json_encode(Utilisateur::deleteUser($id));
     }
 
     /**

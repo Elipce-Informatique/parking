@@ -86,7 +86,7 @@ var DataTableModuleReact = React.createClass({
         this.setState({data:data.data});
     }
 });
-module.exports = DataTableModuleReact;
+module.exports.composant = DataTableModuleReact;
 
 /****************************************************************/
 /*                          MODULESTORE                         */
@@ -169,14 +169,16 @@ var moduleStore = Reflux.createStore({
 
     /* Met à jour le tableau des modules */
     updateModule: function(evt) {
-        var idProfil = 0;
+        this.idProfilSelect = 0;
 
         /* On a un profil de sélectionné, affichage complet du tableau */
         if($(evt.currentTarget).hasClass('row_selected')) {
             this.idProfilSelect = $(evt.currentTarget).data('id');
-            getNameProfilByID();
+            this.getNameProfilByID();
+            console.log('Name profil : '+this.nameProfil);
         }
-        console.log('idProfil : '+idProfil);
+
+        console.log('idProfil : '+this.idProfilSelect);
         // AJAX
         $.ajax({
             url:      BASE_URI + 'profils/' + this.idProfilSelect + '/modules', /* correspond au module url de la BDD */

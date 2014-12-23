@@ -187,5 +187,81 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         return $res;
     }
 
+    /**
+     * Supprime un utilisateur
+     * @param $id: ID user
+     * @return array('data' => tableau de données, 'save' => bool, enregistrement OK ou KO)
+     *
+     */
+    public static function deleteUser($id){
+        // Variables
+        $bSave = true;
+
+        // Chercher user
+        $user = Utilisateur::find($id);
+
+        // Supprimer utilisateur
+        try{
+            $user->delete();
+        }
+        catch(Exception $e){
+            $bSave = false;
+        }
+        return array('data'=>array('id'=>0, 'nom'=>'','prenom'=>'','email'=>''),'save'=>$bSave);
+    }
+
+    /**
+     * Met à jour les infos d'un utilisateur
+     * @param $id: ID user
+     * @param $fields: array($key=>$value) $key=champ table, $value=valeur
+     * @return array('data' => tableau de données, 'save' => bool, enregistrement OK ou KO)
+     */
+    public static function updateUser($id, $fields){
+        // Variables
+        $bSave = true;
+        $data = $fields;
+
+        // Trouver le user
+        $user = Utilisateur::find($id);
+
+        // Parcourir les champs envoyés par PUT
+        foreach($fields as $key=>$val) {
+            $user->$key = $val;
+        }
+
+        // Sauvegarde
+        try {
+            $bSave = $user->save();
+        }
+        catch(Exception $e){
+            $bSave = false;
+        }
+        // Enregistrement OK
+        if($bSave){
+            $data = Utilisateur::getUtilisateurFromId($id);
+        }
+
+        return array('data'=>$data,'save'=>$bSave);
+    }
+
+    /**
+     * Créé un utilisateur
+     * @param $fields: array($key=>$value) $key=champ table, $value=valeur
+     * @return array('data' => tableau de données, 'save' => bool, enregistrement OK ou KO)
+     */
+    public static function creerUtilisateur($fields){
+        // Variables
+        $bSave = true;
+
+        try {
+            // Nouvel utilisateur
+            $user = Utilisateur::create($fields);
+        }
+        catch(Exception $e){
+            $bSave = false;
+            $user = array('id'=>0, 'nom'=>'','prenom'=>'','email'=>'');
+        }
+        return array('data'=>$user,'save'=>$bSave);
+    }
 
 }
