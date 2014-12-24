@@ -474,7 +474,7 @@ var InputRadioBootstrap = React.createClass({
         var classBtn = 'btn btn-default';
 
         return (
-            <label className={classBtn} {...this.props.evts} {...this.props.attributes}>
+            <label {...this.props.evts} {...this.props.attributes} className={classBtn+' '+this.props.attributes.className}>
                 <input {...gestMod} type="radio" name={this.props.name} />{this.props.children}
             </label>
         );
