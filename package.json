@@ -24,7 +24,7 @@
   },
   "name": "elipce_workflow",
   "description": "Nouveau WorkFlow pour les développements web d'Elipce. - Basé sur **Laravel** côté serveur, on va utiliser **Gulp** comme task runner - **Flux** et **React** comme Frontend engineering libs Puis jQuery et Bootstrap comme utilitaires.",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "main": "gulpfile.js",
   "dependencies": {
     "bootstrap-sweetalert": "^0.4.2",
