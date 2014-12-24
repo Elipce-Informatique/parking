@@ -8,6 +8,7 @@ var MixinInputChecked = MixinInput.InputCheckableMixin;
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
  * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input
  */
 var InputText = React.createClass({
     mixins: [MixinInputValue],
@@ -16,7 +17,8 @@ var InputText = React.createClass({
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         onChange: React.PropTypes.func,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        validator: React.PropTypes.func
     },
 
     getDefaultProps: function () {
@@ -24,7 +26,8 @@ var InputText = React.createClass({
             attributes: {},
             evts: {},
             onChange: this.handleChange,
-            gestMod: true
+            gestMod: true,
+            validator: this.defaultValidator
         };
     },
 
@@ -43,6 +46,9 @@ var InputText = React.createClass({
             ref = "InputField"
             />
         );
+    },
+    defaultValidator: function (val) {
+        return {status: 'success', tooltip: ''};
     }
 });
 
@@ -52,6 +58,7 @@ var InputText = React.createClass({
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input
  */
 var InputTextEditable = React.createClass({
 
@@ -59,7 +66,8 @@ var InputTextEditable = React.createClass({
         editable: React.PropTypes.bool.isRequired,
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        validator: React.PropTypes.func
     },
 
     getDefaultProps: function () {
@@ -74,8 +82,16 @@ var InputTextEditable = React.createClass({
         var retour;
         // Editable
         if (this.props.editable) {
+            console.log(this.props.attributes);
+
+            var attrs = this.props.attributes;
+            // AJOUT DU VALIDATOR PERSO
+            if (typeof(this.props.validator) == 'function') {
+                attrs = _.extends(this.props.attributes, {validator: this.props.validator});
+            }
+
             retour = <InputText
-            attributes = {this.props.attributes}
+            attributes = {attrs}
             evts = {this.props.evts}
             ref="Editable"
             gestMod={this.props.gestMod}
@@ -91,6 +107,7 @@ var InputTextEditable = React.createClass({
 
 /**
  * Champ mail
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input
  */
 var InputMail = React.createClass({
     mixins: [MixinInputValue],
@@ -98,13 +115,15 @@ var InputMail = React.createClass({
     propTypes: {
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        validator: React.PropTypes.func
     },
     getDefaultProps: function () {
         return {
             attributes: {},
             evts: {},
-            gestMod: true
+            gestMod: true,
+            validator: this.defaultValidator
         }
     },
 
@@ -121,6 +140,9 @@ var InputMail = React.createClass({
             ref = "InputField"
             />
         );
+    },
+    defaultValidator: function (val) {
+        return {status: 'success', tooltip: ''};
     }
 });
 
@@ -130,6 +152,7 @@ var InputMail = React.createClass({
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input
  */
 var InputMailEditable = React.createClass({
 
@@ -137,7 +160,8 @@ var InputMailEditable = React.createClass({
         editable: React.PropTypes.bool.isRequired,
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        validator: React.PropTypes.func
     },
 
     getDefaultProps: function () {
@@ -152,9 +176,15 @@ var InputMailEditable = React.createClass({
         var retour;
         // Editable
         if (this.props.editable) {
+            var attrs = this.props.attributes;
+            // AJOUT DU VALIDATOR PERSO
+            if (typeof(this.props.validator) == 'function') {
+                attrs = _.extends(this.props.attributes, {validator: this.props.validator});
+            }
+
             retour =
                 <InputMail
-                attributes = {this.props.attributes}
+                attributes = {attrs}
                 evts = {this.props.evts}
                 ref="Editable"
                 gestMod={this.props.gestMod}
@@ -174,6 +204,11 @@ var InputMailEditable = React.createClass({
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
  * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ * {
+ *      style: 'success|warning|error|default',
+ *      message: 'La donnée saisie est déjà présente dans la base de données.'
+ * }
  */
 var InputPassword = React.createClass({
     mixins: [MixinInputValue],
@@ -182,7 +217,8 @@ var InputPassword = React.createClass({
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         onChange: React.PropTypes.func,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        validator: React.PropTypes.func
     },
 
     getDefaultProps: function () {
@@ -190,7 +226,8 @@ var InputPassword = React.createClass({
             attributes: {},
             evts: {},
             onChange: this.handleChange,
-            gestMod: true
+            gestMod: true,
+            validator: this.defaultValidator
         }
     },
 
@@ -209,6 +246,18 @@ var InputPassword = React.createClass({
             ref = "InputField"
             />
         );
+    },
+    defaultValidator: function (val) {
+        var retour = {};
+        // CHAMP OK
+        if(val.length >= 6 && (!validator.isAlpha(val) && !validator.isNumeric(val))){
+            retour= {style: 'success'};
+        }
+        // CHAMP KO
+        else{
+            retour= {style: 'error', message: Lang.get('global.validation_erreur_pass')};
+        }
+        return retour;
     }
 });
 
@@ -217,6 +266,7 @@ var InputPassword = React.createClass({
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input
  */
 var InputPasswordEditable = React.createClass({
 
@@ -224,7 +274,8 @@ var InputPasswordEditable = React.createClass({
         editable: React.PropTypes.bool.isRequired,
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        validator: React.PropTypes.func
     },
 
     getDefaultProps: function () {
@@ -239,9 +290,14 @@ var InputPasswordEditable = React.createClass({
         var retour;
         // Editable
         if (this.props.editable) {
+            var attrs = this.props.attributes;
+            // AJOUT DU VALIDATOR PERSO
+            if (typeof(this.props.validator) == 'function') {
+                attrs = _.extends(this.props.attributes, {validator: this.props.validator});
+            }
             retour =
                 <InputPassword
-                attributes = {this.props.attributes}
+                attributes = {attrs}
                 evts = {this.props.evts}
                 ref="Editable"
                 gestMod={this.props.gestMod}

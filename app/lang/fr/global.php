@@ -28,6 +28,14 @@ Voulez-vous vraiment quitter cette page ?',
     'notif_erreur' => 'Une erreur s\'est produite, veuillez contacter un responsable informatique',
     'notif_default' => 'Message d\'information générique',
 
+    // VALIDATIONS
+    'validation_success_generique' => '',
+    'validation_warning_generique' => 'Attention à la valeur de ce champ',
+    'validation_erreur_generique' => 'Ce champ est mal rempli.',
+    'validation_default_generique' => '',
+    'validation_erreur_pass' => 'Le mot de passe doit faire 6 caractères de long et contenir des chiffres et des lettres',
+
+
     // BOUTONS
     'save' => "Sauvegarder",
     'back' => 'Retour',
