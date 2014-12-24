@@ -34,6 +34,7 @@ Voulez-vous vraiment quitter cette page ?',
     'validation_erreur_generique' => 'Ce champ est mal rempli.',
     'validation_default_generique' => '',
     'validation_erreur_pass' => 'Le mot de passe doit faire 6 caractères de long et contenir des chiffres et des lettres',
+    'validation_erreur_mail' => 'L\'e-mail saisi n\'est pas valide',
 
 
     // BOUTONS
