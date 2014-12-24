@@ -103,10 +103,10 @@
      |--------------------------------------------------------------------------
      */
     global.Actions.profil = Reflux.createActions([
-        "profil_select",  /* Sélection d'une ligne sur le tableau profil                                          */
-        "profil_update",  /* Recharge les données du tableau des profils                                          */
-        "module_update",  /* Recharge les données du tableau des modules                                          */
-        "radio_change",   /* Action déclenchée lors du changement d'état d'un radio bouton du tableau des modules */
+        "profil_select", /* Sélection d'une ligne sur le tableau profil                                          */
+        "profil_update", /* Recharge les données du tableau des profils                                          */
+        "module_update", /* Recharge les données du tableau des modules                                          */
+        "radio_change", /* Action déclenchée lors du changement d'état d'un radio bouton du tableau des modules */
         "libelle_change", /* Onchange du libelle du profil                                                        */
         "setIdProfil",
         "initMatrice"
@@ -118,13 +118,14 @@
  | GESTION DES NOTIFICATIONS
  |--------------------------------------------------------------------------
  */
-$(function(){
+$(function () {
     var Notify = require('../mods/composants/react_notify');
     React.render(<Notify />, document.getElementById('composant_react_notifications'));
 
-    $(document).bind('keydown', function(e) {
-        if(e.ctrlKey && (e.which == 83)) {
-            swal('Nan mais allo quoi ! le mec il fait CTRL+S dans une page web ! Allo !!');
+    $(document).bind('keydown', function (e) {
+        if (e.ctrlKey && (e.which == 83)) {
+            e.preventDefault();
+            swal('Perdu ! Si tu veux vraiment sauvegarder la page, utilise le menu de ton navigateur.');
         }
     });
 });
