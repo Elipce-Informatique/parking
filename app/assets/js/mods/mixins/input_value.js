@@ -9,7 +9,7 @@ var InputValueMixin = {
         var val = this.refs.InputField.getValue();
 
         // VALIDATION DE LA VALUE
-        var newState = _.extends(this.validator(val), {
+        var newState = _.extend(this.props.validator(val), {
             value: val
         });
         // MISE À JOUR DE L'ÉTAT DU COMPOSANT
@@ -18,9 +18,9 @@ var InputValueMixin = {
         // DÉCLENCHEMENT DE LA VALIDATION MÉTIER TODO remplir les données de l'action
         if (newState.isValid) {
             Actions.validation.form_field_changed({
-                name: '',
-                value: '',
-                form: ''
+                name: this.props.attributes.name,
+                value: val,
+                form: this.props.form
             });
         }
 
@@ -37,7 +37,7 @@ var InputValueMixin = {
         }
 
         // VALIDATION DE LA VALUE
-        var initState = _.extends(this.validator(val), {
+        var initState = _.extend(this.props.validator(val), {
             value: val
         });
         return initState;
@@ -51,7 +51,7 @@ var InputValueMixin = {
         }
 
         // VALIDATION DE LA VALUE
-        var newState = _.extends(this.validator(val), {
+        var newState = _.extend(this.props.validator(val), {
             value: val
         });
         // MISE À JOUR DE L'ÉTAT DU COMPOSANT

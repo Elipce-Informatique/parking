@@ -18,7 +18,6 @@
     global.validator = require('validator');
 
 
-
     /*
      |--------------------------------------------------------------------------
      | DEFINITION DE GLOBALES
@@ -119,5 +118,11 @@
  */
 $(function(){
     var Notify = require('../mods/composants/react_notify');
-    React.render(<Notify />, document.getElementById('composant_react_notifications'))
+    React.render(<Notify />, document.getElementById('composant_react_notifications'));
+
+    $(document).bind('keydown', function(e) {
+        if(e.ctrlKey && (e.which == 83)) {
+            swal('Nan mais allo quoi ! le mec il fait CTRL+S dans une page web ! Allo !!');
+        }
+    });
 });
