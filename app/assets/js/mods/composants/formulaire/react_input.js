@@ -148,7 +148,7 @@ var InputMail = React.createClass({
             validator: function (val) {
                 if (Validator.isEmail(val)) {
                     return {isValid: true, style: 'success', tooltip: ''};
-                }else if(val.length == 0){
+                } else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
                 else {
@@ -443,6 +443,88 @@ var InputRadioEditable = React.createClass({
 
 
 /**
+ * Champ radio
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ */
+var InputRadioBootstrap = React.createClass({
+    mixins: [MixinInputChecked],
+
+    propTypes: {
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        onChange: React.PropTypes.func,
+        gestMod: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+        return {
+            attributes: {},
+            evts: {},
+            onChange: this.handleChange,
+            gestMod: true
+        }
+    },
+
+    // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
+
+    render: function () {
+        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
+        var classBtn = 'btn btn-default';
+
+        return (
+            <label className={classBtn} {...this.props.evts} {...this.props.attributes}>
+                <input {...gestMod} type="radio" name={this.props.name} />{this.props.children}
+            </label>
+        );
+    }
+});
+
+/**
+ * Champ texte editable => si pas editable INPUT devient READONLY.
+ * @param editable: (bool) Si true alors INPUT sinon LABEL
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ */
+var InputRadioBootstrapEditable = React.createClass({
+
+    propTypes: {
+        editable: React.PropTypes.bool.isRequired,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        gestMod: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+        return {
+            attributes: {},
+            evts: {},
+            gestMod: true
+        }
+    },
+
+    render: function () {
+        var attr = this.props.attributes;
+        // Editable
+        if (!this.props.editable) {
+            attr = _.extend(attr, {disabled: true});
+        }else{
+            attr = _.extend(attr, {disabled: false});
+        }
+
+        return <InputRadioBootstrap
+        attributes = {attr}
+        evts = {this.props.evts}
+        ref="Editable"
+        gestMod={this.props.gestMod} >
+                    {this.props.children}
+        </InputRadioBootstrap>
+    }
+});
+
+
+/**
  * Champ checkbox
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
@@ -532,6 +614,8 @@ module.exports.InputPassword = InputPassword;
 module.exports.InputPasswordEditable = InputPasswordEditable;
 module.exports.InputRadio = InputRadio;
 module.exports.InputRadioEditable = InputRadioEditable;
+module.exports.InputRadioBootstrap = InputRadioBootstrap;
+module.exports.InputRadioBootstrapEditable = InputRadioBootstrapEditable;
 module.exports.InputCheckbox = InputCheckbox;
 module.exports.InputCheckboxEditable = InputCheckboxEditable;
 
