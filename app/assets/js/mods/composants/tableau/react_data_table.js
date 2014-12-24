@@ -33,7 +33,8 @@ var DataTableReact = React.createClass({
         evts:React.PropTypes.object,
         bUnderline:React.PropTypes.bool,
         onDataTableLineClick: React.PropTypes.func,
-        reactElements: React.PropTypes.object
+        reactElements: React.PropTypes.object,
+        editable:React.PropTypes.bool
     },
     
     /**
@@ -44,6 +45,7 @@ var DataTableReact = React.createClass({
         return {
             settings:{
                 destroy: true,
+                editable:false,
                 responsive: true,
                 "language": {
                     "sProcessing":     Lang.get('global.datatable.sProcessing'),
@@ -100,7 +102,7 @@ var DataTableReact = React.createClass({
     
     render: function() {
         return (
-         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} evts={this.myEvts} reactElements={this.props.reactElements}/>
+         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} evts={this.myEvts} reactElements={this.props.reactElements} editable={this.props.editable} />
         )
     },
     
@@ -166,7 +168,7 @@ var DataTableReact = React.createClass({
         if (tr.hasClass(this.cssLigne)) {
                 tr.removeClass(this.cssLigne);
         }else {
-                tr.parent('tbody').find('tr').removeClass(this.cssLigne)
+                tr.parent('tbody').find('tr').removeClass(this.cssLigne);
                 tr.addClass(this.cssLigne);
         }
     },

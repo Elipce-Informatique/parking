@@ -56,7 +56,7 @@ var hideMP = ['id'];
 /* Name     : "btnVisu, btnModif, btnAucun                           */
 /* Sur clic d'un radio bouton, déclenche l'action "handleClickRadio" */
 var aLibelle = new Array(Lang.get('administration.profil.visu'), Lang.get('administration.profil.modif'), Lang.get('administration.profil.aucun'));
-var aName    = new Array('btnVisu', 'btnModif', 'btnAucun');
+var aName    = new Array('visu', 'modif', 'null');
 var aReactElements  = {};
 aReactElements['1'] = new Array();                           /* Colonne n°1 du tableau               */
 aReactElements['1'][0] = 'Radio';                            /* Type de composant à ajouter          */
@@ -155,7 +155,7 @@ var ReactPageProfil  = React.createClass({
                 console.log('VISU');
                 return <div key={this.state.etatPageProfil}>
                             <Row>
-                                <BandeauVisu titre={this.state.titrePageIni+'/'+this.state.nameProfil} />
+                                <BandeauVisu titre={this.state.titrePageIni+(this.state.nameProfil==''?'':'/'+this.state.nameProfil)} />
                             </Row>
                             <Row>
                                 <DataTableModule head={headMP} hide={hideMP} idProfil={this.state.idProfil} nameProfil={this.state.nameProfil} editable={false} id="tab_module" bUnderline={false} reactElements={aReactElements} />
@@ -175,7 +175,7 @@ var ReactPageProfil  = React.createClass({
                 console.log('EDIT');
                 return  <div key={this.state.etatPageProfil}>
                             <Row>
-                                <BandeauEdition mode={mode} titre={this.state.titrePageIni+'/'+this.state.nameProfil} />
+                                <BandeauEdition mode={mode} titre={this.state.titrePageIni+(this.state.nameProfil==''?'':'/'+this.state.nameProfil)} />
                             </Row>
                             <Row>
                                 <DataTableModule head={headMP} hide={hideMP} editable={true} idProfil={this.state.idProfil} nameProfil={this.state.nameProfil}  id="tab_module" bUnderline={false} reactElements={aReactElements} />
@@ -241,6 +241,7 @@ var pageProfilStore = Reflux.createStore({
         this.listenTo(Actions.bandeau.editer,       this.editProfil);
         this.listenTo(Actions.bandeau.supprimer,    this.supprProfil);
         this.listenTo(Actions.bandeau.sauvegarder,  this.saveProfil);
+        this.listenTo(Actions.profil.radio_change,  this.radioChange);
     },
 
     getInitialState:function(){
@@ -286,7 +287,7 @@ var pageProfilStore = Reflux.createStore({
     },
 
     createProfil: function(){
-        return {etatPageProfil:'create', nameProfil:Lang.get('global.create'), idProfil:0};
+        this.trigger({etatPageProfil:'create', nameProfil:'', idProfil:0});
     },
 
     editProfil: function(){
@@ -301,8 +302,8 @@ var pageProfilStore = Reflux.createStore({
         console.log('--> Sauvegarde du profil id \''+this.idProfilSelect+'\' à faire <--');
     },
 
-    radioChange: function(){
-
+    radioChange: function(evt){
+        console.log('radioChange');
         /* Récupère les données du radio bouton */
         Etat      = $(evt.currentTarget).data('etat');     /* 'visu', 'modif' ou 'aucun' */
         idModule  = $(evt.currentTarget).data('idModule'); /* id du module concerné      */

@@ -1,5 +1,8 @@
-var ReactRadioBtsp = require('../formulaire/react_radio');
+/* Pour les radio boutons */
 var ButtonGroup = ReactB.ButtonGroup;
+var Field              = require('../formulaire/react_form_fields');
+var InputRadio         = Field.InputRadio;
+var InputRadioEditable = Field.InputRadioEditable;
 
 /**
  * @param array head: array contenant l'entête du tableau ['A', 'B']
@@ -20,14 +23,15 @@ var Table = React.createClass({
         data: React.PropTypes.array.isRequired,
         attributes: React.PropTypes.object,
         evts:React.PropTypes.object,
-        reactElements: React.PropTypes.object
+        reactElements: React.PropTypes.object,
+        editable:React.PropTypes.bool
     },
     
     /**
      * Les props par défaut
      */
     getDefaultProps: function() {
-        return {attributes:{}, evts:{}, reactElements:{}};
+        return {attributes:{}, evts:{}, reactElements:{}, editable:false};
     },
 
     render: function() {
@@ -38,7 +42,7 @@ var Table = React.createClass({
             // Parcours des lignes du tableau
             this.props.data.forEach(function(dataLine, index) {
                 // Ajout du TR
-                corps.push(<TableTr key={index} data={dataLine} hide={that.props.hide} evts={that.props.evts} reactElements={that.props.reactElements}/>)
+                corps.push(<TableTr key={index} data={dataLine} hide={that.props.hide} evts={that.props.evts} reactElements={that.props.reactElements} editable={that.props.editable} />)
             });
             
             // ID
@@ -100,7 +104,8 @@ var TableTr = React.createClass({
         data: React.PropTypes.object.isRequired,
         hide: React.PropTypes.array.isRequired,
         evts: React.PropTypes.object,
-        reactElements: React.PropTypes.object
+        reactElements: React.PropTypes.object,
+        editable:React.PropTypes.bool
     },
 
     /**
@@ -130,11 +135,20 @@ var TableTr = React.createClass({
 
                         switch(that.props.reactElements[indiceCol.toString()][0]){
                             case 'Radio':
+                                var classBtn          = 'btn btn-default';
                                 var radios = [];
                                 var indice = 0;
                                 _.each(that.props.reactElements[indiceCol.toString()][1]['name'], function(val, key){
-                                    var attributes = {'data-id':that.props.data.id};
-                                    radios.push(<ReactRadioBtsp key={'RRB'+that.props.data.id+key} name={val} attributes={attributes} libelle={that.props.reactElements[indiceCol.toString()][1]['libelle'][indice++]} evts={that.props.reactElements[indiceCol.toString()][2]}/>);
+
+                                    var etat     = that.props.reactElements[indiceCol.toString()][1]['name'][indice];
+                                    var libelle  = that.props.reactElements[indiceCol.toString()][1]['libelle'][indice++];
+
+                                    var attributes = {'data-id':that.props.data.id, 'data-etat':etat, 'value':etat};
+
+                                    radios.push(<label className={classBtn} key={'LAB' + that.props.data.id + key} {...attributes} {...that.props.reactElements[indiceCol.toString()][2]}>
+                                                    <InputRadioEditable key={'IR' + that.props.data.id + key} editable={that.props.editable}/>
+                                                    {libelle}
+                                                </label>);
                                 });
                                 tr.push(<td key={that.props.data.id+key}>
                                             <ButtonGroup data-toggle="buttons" bsSize="xsmall">{radios}</ButtonGroup>

@@ -396,6 +396,7 @@ var InputRadio = React.createClass({
 
     render: function () {
         var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
+        console.log('INPUT : %o', this.props.attributes);
         return (
             <Input
             type="radio"
@@ -436,7 +437,7 @@ var InputRadioEditable = React.createClass({
     render: function () {
         var attr = this.props.attributes;
         // Editable
-        if (this.props.editable) {
+        if (!this.props.editable) {
             attr = _.extend(attr, {readOnly: true});
         }
         //console.log(attr);
