@@ -142,12 +142,14 @@ var TableTr = React.createClass({
 
                                 _.each(that.props.reactElements[indiceCol.toString()][1]['name'], function(val, key){
 
+                                    var etat       = that.props.reactElements[indiceCol.toString()][1]['name'][indice];
+                                    var libelle    = that.props.reactElements[indiceCol.toString()][1]['libelle'][indice++];
+
                                     /* Si l'état correspond à la valeur du btn, on l'active */
                                     if(etatBtn == etat || (etat == 'null' && etatBtn == null))
                                         classBtn += 'active';
+                                    console.log('etat : '+etat);
 
-                                    var etat       = that.props.reactElements[indiceCol.toString()][1]['name'][indice];
-                                    var libelle    = that.props.reactElements[indiceCol.toString()][1]['libelle'][indice++];
                                     var attributes = {'data-id':that.props.data.id, 'data-etat':etat, 'value':etat, className:classBtn};
 
 
