@@ -124,6 +124,7 @@ var TableTr = React.createClass({
 
             // Parcours des data
              _.each(this.props.data,function(val,key) {
+
                  // Champ caché, on créé un data-key
                  if(that.props.hide.length > 0 && _.indexOf(that.props.hide,key)>-1){
                      attr['data-'+key] = val;
@@ -135,20 +136,22 @@ var TableTr = React.createClass({
 
                         switch(that.props.reactElements[indiceCol.toString()][0]){
                             case 'Radio':
-                                var classBtn          = 'btn btn-default';
-                                var radios = [];
-                                var indice = 0;
+                                var radios   = [];
+                                var indice   = 0;
+                                var etatBtn  = val;
+                                var classBtn = '';
+
                                 _.each(that.props.reactElements[indiceCol.toString()][1]['name'], function(val, key){
 
-                                    var etat     = that.props.reactElements[indiceCol.toString()][1]['name'][indice];
-                                    var libelle  = that.props.reactElements[indiceCol.toString()][1]['libelle'][indice++];
+                                    var etat       = that.props.reactElements[indiceCol.toString()][1]['name'][indice];
+                                    var libelle    = that.props.reactElements[indiceCol.toString()][1]['libelle'][indice++];
+                                    var attributes = {'data-id':that.props.data.id, 'data-etat':etat, 'value':etat, disabled:'disabled'};
 
-                                    var attributes = {'data-id':that.props.data.id, 'data-etat':etat, 'value':etat};
+                                    /* Si l'état correspond à la valeur du btn, on l'active */
+                                    if(etatBtn == etat || (etat == 'null' && etatBtn == null))
+                                        classBtn += 'active';
 
-                                    radios.push(<label className={classBtn} key={'LAB' + that.props.data.id + key} {...attributes} {...that.props.reactElements[indiceCol.toString()][2]}>
-                                                    <InputRadioEditable key={'IR' + that.props.data.id + key} editable={that.props.editable}/>
-                                                    {libelle}
-                                                </label>);
+                                    radios.push(<InputRadioEditable key={'IR' + that.props.data.id + key} editable={that.props.editable}/>);
                                 });
                                 tr.push(<td key={that.props.data.id+key}>
                                             <ButtonGroup data-toggle="buttons" bsSize="xsmall">{radios}</ButtonGroup>

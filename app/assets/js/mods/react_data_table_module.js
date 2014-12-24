@@ -83,17 +83,9 @@ var DataTableModuleReact = React.createClass({
     },
 
     render: function() {
-        return  <div  key='divTableauModule'>
-                    <Row>
-                        <Col md={12}>
-                            <InputTextEditable attributes={{label:Lang.get('global.profils'), name:"libelle", value:this.props.nameProfil, wrapperClassName:'col-md-4',labelClassName:'col-md-2 text-right',groupClassName:'row'}} editable={this.props.editable} />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col md={12}>
-                            <DataTable id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} reactElements={this.props.reactElements} editable={this.props.editable}/>
-                        </Col>
-                    </Row>
+        return  <div key='divTableauModule'>
+                    <InputTextEditable attributes={{label:Lang.get('global.profils'), name:"libelle", value:this.props.nameProfil, wrapperClassName:'col-md-4',labelClassName:'col-md-1',groupClassName:'row'}} editable={this.props.editable} />
+                    <DataTable id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} reactElements={this.props.reactElements} editable={this.props.editable}/>
                 </div>;
     },
 
