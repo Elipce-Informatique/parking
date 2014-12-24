@@ -98,6 +98,6 @@ class ProfilController extends \BaseController {
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function getProfilModule($profils){
-        return Profil::find($profils)->getProfilModule($profils);
+        return Profil::getProfilModule($profils);
     }
 }

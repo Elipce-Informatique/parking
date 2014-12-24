@@ -38,21 +38,12 @@ class Profil extends Eloquent {
     |--------------------------------------------------------------------------
     */
     /* Récupère les modules avec les droits à visu/modif/aucun selon le profil */
-    public function getProfilModule($idProfil){
+    public static function getProfilModule($idProfil){
         $aTabModule = [];
-
-//            SELECT m.id, m.traduction, pm.access_level AS etat, pm.profil_id AS IDprofil
-//            FROM modules m
-//            LEFT JOIN profil_module pm ON pm.module_id = m.id AND pm.profil_id=$idProfil
 
         /* Récupère tout les modules avec les droits associés au profil */
         if($idProfil != 0) {
-//            $aTabModule = DB::table('modules')->leftJoin('profil_module', 'profil_module.module_id', '=', 'modules.id')->orOn('profil_module.profil_id', '=', $idProfil)
-//                                ->join('modules', 'modules.id', '=', 'profil_module.module_id')
-//                                ->get(['modules.id', 'modules.traduction', 'profil_module.access_level']);
-
-
-            $aTabModule = DB::table('modules')->leftJoin('profil_module', function($join) use($idProfil)
+            $aTabModule = Module::leftJoin('profil_module', function($join) use($idProfil)
             {
                 $join->on('profil_module.module_id', '=', 'modules.id')->orOn('profil_module.profil_id', '=', DB::raw($idProfil));
             })
@@ -61,7 +52,7 @@ class Profil extends Eloquent {
         }
         /* Récupère uniquement les modules */
         else
-            $aTabModule =  Module::all(array('id', 'traduction', DB::raw('"" as etat')));
+            $aTabModule =  Module::all(array('id', 'traduction', DB::raw('"null" as etat')));
 
         return $aTabModule;
     }

@@ -155,7 +155,7 @@ var ReactPageProfil  = React.createClass({
                 console.log('VISU');
                 return <div key={this.state.etatPageProfil}>
                             <Row>
-                                <BandeauVisu titre={this.state.titrePageIni+(this.state.nameProfil==''?'':'/'+this.state.nameProfil)} />
+                                <BandeauVisu titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
                             </Row>
                             <Row>
                                 <Col md={12}>
@@ -177,7 +177,7 @@ var ReactPageProfil  = React.createClass({
                 console.log('EDIT');
                 return  <div key={this.state.etatPageProfil}>
                             <Row>
-                                <BandeauEdition mode={mode} titre={this.state.titrePageIni+(this.state.nameProfil==''?'':'/'+this.state.nameProfil)} />
+                                <BandeauEdition mode={mode} titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
                             </Row>
                             <Row>
                                 <Col md={12}>

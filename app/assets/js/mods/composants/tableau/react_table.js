@@ -137,22 +137,17 @@ var TableTr = React.createClass({
                             case 'Radio':
                                 var radios   = [];
                                 var indice   = 0;
-                                var etatBtn  = val;
-                                var classBtn = '';
 
-                                _.each(that.props.reactElements[indiceCol.toString()][1]['name'], function(val, key){
-                                    var etat = that.props.reactElements[indiceCol.toString()][1]['name'][indice];
-                                    var libelle = that.props.reactElements[indiceCol.toString()][1]['libelle'][indice++];
+                                _.each(that.props.reactElements[indiceCol.toString()][1]['name'], function(val2, key){
+                                    var etat     = that.props.reactElements[indiceCol.toString()][1]['name'][indice];
+                                    var libelle  = that.props.reactElements[indiceCol.toString()][1]['libelle'][indice++];
+                                    var classBtn = '';
 
                                     /* Si l'état correspond à la valeur du btn, on l'active */
-                                    if(etatBtn == etat || (etat == 'null' && etatBtn == null)) {
-                                        classBtn = 'active';
-                                        console.log(etat);
-                                    }else{
-                                        classBtn = '';
-                                    }
-                                    var attributes = {'data-id':that.props.data.id, 'data-etat':etat, 'value':etat, className:classBtn};
+                                    if(val == etat || (etat == 'null' && val == null))
+                                        classBtn += 'active';
 
+                                    var attributes = {'data-id':that.props.data.id, 'data-etat':etat, 'value':etat, className:classBtn};
 
                                     radios.push(<InputRadioBootstrapEditable key={'IR' + that.props.data.id + key} editable={that.props.editable} attributes={attributes}>
                                                     {libelle}
