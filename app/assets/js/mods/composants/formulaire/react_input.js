@@ -4,6 +4,7 @@ var Tooltip = ReactB.Tooltip;
 var MixinInput = require('../../mixins/input_value');
 var MixinInputValue = MixinInput.InputValueMixin;
 var MixinInputChecked = MixinInput.InputCheckableMixin;
+var Validator = require('validator');
 
 /**
  * Champ texte
@@ -47,35 +48,17 @@ var InputText = React.createClass({
     // ATTENTION: getInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
     render: function () {
+        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
         var attrs = this.props.attributes;
-        var retour;
-
-        // 1. MERGE ATTRS AVEC GESTION MODIF
-        attrs = _.merge((this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {}), this.props.attributes);
-
-
-        // 2. ATTR DATA-VALID
-        if (!this.state.isValid) {
-            attrs = _.merge({'data-valid': false}, this.props.attributes);
-        } else {
-            attrs = _.merge({'data-valid': true}, this.props.attributes);
-        }
-
-        //3. AJOUT DU STYLE REACTB
-        var style = {'bsStyle': this.state.style};
-        if (this.state.tooltip.length > 0) {
-            style.help = this.state.tooltip;
-        }
-        attrs = _.merge(style, this.props.attributes);
-
+        attrs = _.merge(this.state.attributes, this.props.attributes);
 
         // 4. ATTRS OK, CREATION INPUT
         retour = (<Input
         type="text"
                 {...attrs}
                 {...this.props.evts}
-        value = {this.state.value}
         onChange = {this.handleChange}
+        value={this.state.value}
         ref = "InputField"
         hasFeedback
         />);
@@ -163,9 +146,12 @@ var InputMail = React.createClass({
             evts: {},
             gestMod: true,
             validator: function (val) {
-                if (validator.isEmail(val)) {
+                if (Validator.isEmail(val)) {
                     return {isValid: true, style: 'success', tooltip: ''};
-                } else {
+                }else if(val.length == 0){
+                    return {isValid: true, style: 'default', tooltip: ''};
+                }
+                else {
                     return {isValid: false, style: 'error', tooltip: Lang.get('global.validation_erreur_mail')};
                 }
             }
@@ -173,16 +159,19 @@ var InputMail = React.createClass({
     },
 
     render: function () {
-        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
+        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
+        var attrs = this.props.attributes;
+        attrs = _.merge(this.state.attributes, this.props.attributes);
+
         return (
             <Input
             type="email"
-                {...this.props.attributes}
+                {...attrs}
                 {...this.props.evts}
-                {...gestMod}
             value = {this.state.value}
             onChange={this.handleChange}
             ref = "InputField"
+            hasFeedback
             />
         );
     }
@@ -278,7 +267,7 @@ var InputPassword = React.createClass({
             validator: function (val) {
                 var retour = {};
                 // CHAMP OK
-                if (val.length >= 6 && (!validator.isAlpha(val) && !validator.isNumeric(val))) {
+                if (val.length >= 6 && (!Validator.isAlpha(val) && !Validator.isNumeric(val))) {
                     retour = {isValid: true, style: 'success'};
                 }
                 // CHAMP KO
@@ -293,16 +282,19 @@ var InputPassword = React.createClass({
     // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
     render: function () {
-        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
+        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
+        var attrs = this.props.attributes;
+        attrs = _.merge(this.state.attributes, this.props.attributes);
+
         return (
             <Input
             type="password"
-                    {...this.props.attributes}
+                    {...attrs}
                     {...this.props.evts}
-                    {...gestMod}
             value = {this.state.value}
             onChange={this.handleChange}
             ref = "InputField"
+            hasFeedback
             />
         );
     }

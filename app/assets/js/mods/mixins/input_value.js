@@ -1,3 +1,5 @@
+var Validator = require('validator');
+
 /**
  * Mixin permettant le gérer la value des inputs
  * Pré-requis: le mixin est utilisé sur un composant ayant une ref="InputField"
@@ -6,17 +8,17 @@
 var InputValueMixin = {
 
     handleChange: function (e) {
+        // 1. RÉCUPÉRATION DE LA VALUE
         var val = this.refs.InputField.getValue();
 
-        // VALIDATION DE LA VALUE
-        var newState = _.extend(this.props.validator(val), {
-            value: val
-        });
-        // MISE À JOUR DE L'ÉTAT DU COMPOSANT
-        this.setState(newState);
+        // CRÉATION DES ATTRIBUTS POUR LE STATE
+        var attrs = this.getStateAttributes(val);
 
-        // DÉCLENCHEMENT DE LA VALIDATION MÉTIER TODO remplir les données de l'action
-        if (newState.isValid) {
+        // MISE À JOUR DE L'ÉTAT DU COMPOSANT
+        this.setState({attributes: attrs, value: val});
+
+        // y. DÉCLENCHEMENT DE LA VALIDATION MÉTIER (AU NIVEAU DU FORMULAIRE)
+        if (attrs['data-valid']) {
             Actions.validation.form_field_changed({
                 name: this.props.attributes.name,
                 value: val,
@@ -36,26 +38,47 @@ var InputValueMixin = {
             val = this.props.attributes.value;
         }
 
-        // VALIDATION DE LA VALUE
-        var initState = _.extend(this.props.validator(val), {
-            value: val
-        });
-        return initState;
+        /// CRÉATION DES ATTRIBUTS POUR LE STATE
+        var attrs = this.getStateAttributes(val);
+
+        // MISE À JOUR DE L'ÉTAT DU COMPOSANT
+        return {attributes: attrs, value: val};
     },
 
     componentWillReceiveProps: function (newProps) {
-        // Value par défaut
+        // VALUE PAR DÉFAUT
         var val = '';
         if (newProps.attributes.value !== undefined) {
             val = newProps.attributes.value;
         }
 
-        // VALIDATION DE LA VALUE
-        var newState = _.extend(this.props.validator(val), {
-            value: val
-        });
+        // CRÉATION DES ATTRIBUTS POUR LE STATE
+        var attrs = this.getStateAttributes(val);
+
         // MISE À JOUR DE L'ÉTAT DU COMPOSANT
-        this.setState(newState);
+        this.setState({attributes: attrs, value: val});
+    },
+
+    getStateAttributes: function (val) {
+        var attrs = {}
+
+        // 1. MERGE ATTRS AVEC GESTION MODIF
+        attrs = _.merge((this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {}), attrs);
+
+        // 2. VALIDATION VALUE
+        var validation = this.props.validator(val);
+
+        // 3. ATTR DATA-VALID
+        attrs = _.merge({'data-valid': validation.isValid}, attrs);
+
+        // 4. AJOUT DU STYLE REACTB
+        var style = {'bsStyle': (!Validator.matches(validation.style, 'success|warning|error', 'i') ? undefined : validation.style)};
+        if (validation.tooltip.length > 0) {
+            style.help = validation.tooltip;
+        }
+        attrs = _.merge(style, attrs);
+
+        return attrs;
     }
 };
 
