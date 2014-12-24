@@ -1,8 +1,8 @@
 /* Pour les radio boutons */
 var ButtonGroup = ReactB.ButtonGroup;
 var Field              = require('../formulaire/react_form_fields');
-var InputRadio         = Field.InputRadio;
-var InputRadioEditable = Field.InputRadioEditable;
+var InputRadioBootstrap         = Field.InputRadioBootstrap;
+var InputRadioBootstrapEditable = Field.InputRadioBootstrapEditable;
 
 /**
  * @param array head: array contenant l'entête du tableau ['A', 'B']
@@ -145,10 +145,9 @@ var TableTr = React.createClass({
 
                                     var attributes = {'data-id':that.props.data.id, 'data-etat':etat, 'value':etat};
 
-                                    radios.push(<label className={classBtn} key={'LAB' + that.props.data.id + key} {...attributes} {...that.props.reactElements[indiceCol.toString()][2]}>
-                                                    <InputRadioEditable key={'IR' + that.props.data.id + key} editable={that.props.editable}/>
+                                    radios.push(<InputRadioBootstrapEditable key={'IR' + that.props.data.id + key} editable={that.props.editable} attributes={attributes}>
                                                     {libelle}
-                                                </label>);
+                                    </ InputRadioBootstrapEditable>);
                                 });
                                 tr.push(<td key={that.props.data.id+key}>
                                             <ButtonGroup data-toggle="buttons" bsSize="xsmall">{radios}</ButtonGroup>
