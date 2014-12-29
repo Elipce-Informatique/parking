@@ -149,7 +149,7 @@ var TableTr = React.createClass({
 
                                     var attributes = {'data-id':that.props.data.id, 'data-etat':etat, 'value':etat, className:classBtn};
 
-                                    radios.push(<InputRadioBootstrapEditable key={'IR' + that.props.data.id + key} editable={that.props.editable} attributes={attributes}>
+                                    radios.push(<InputRadioBootstrapEditable key={'IR' + that.props.data.id + key} evts={that.props.reactElements[indiceCol.toString()][2]} editable={that.props.editable} attributes={attributes}>
                                                     {libelle}
                                     </ InputRadioBootstrapEditable>);
                                 });

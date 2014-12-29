@@ -254,9 +254,16 @@ var pageProfilStore = Reflux.createStore({
 
     initMatrice: function(data){
         var indice = 0;
+        var etat   = '';
+        this.matriceBtnRadio = {};
 
         _.each(data, function(val, key){
-            this.matriceBtnRadio[data[indice]['id']] = data[indice]['etat'];
+            etat =  data[indice]['access_level'];
+
+            if(etat != 'visu' && etat != 'modif')
+                etat = 'null';
+
+            this.matriceBtnRadio[data[indice]['id']] = etat;
             indice++;
         }, this);
     },
@@ -291,6 +298,7 @@ var pageProfilStore = Reflux.createStore({
     },
 
     createProfil: function(){
+        this.idProfilSelect = 0;
         this.trigger({etatPageProfil:'create', nameProfil:'', idProfil:0});
     },
 
@@ -299,18 +307,81 @@ var pageProfilStore = Reflux.createStore({
     },
 
     supprProfil: function(){
-        console.log('--> Suppression du profil id \''+this.idProfilSelect+'\' à faire <--');
+        if(this.idProfilSelect == 0)
+            this.nameProfil = '';
+        else {
+
+            var that = this;
+
+            // AJAX
+            $.ajax({
+                url: BASE_URI + 'profils/' + this.idProfilSelect, /* correspond au module url de la BDD */
+                dataType: 'json',
+                context: that,
+                type: 'DELETE',
+                data: {'_token':$('#_token').val()},
+                success: function (data) {
+                    this.idProfilSelect = 0;
+                    that.trigger({idProfil:0, etatPageProfil:'liste', nameProfil:''});
+                },
+                error: function (xhr, status, err) {
+                    console.error(status, err.toString());
+                }
+            });
+        }
     },
 
     saveProfil: function(){
-        console.log('--> Sauvegarde du profil id \''+this.idProfilSelect+'\' à faire <--');
+        // Variables
+        var url = BASE_URI+'profils/'+(this.idProfilSelect===0?'':this.idProfilSelect);
+
+        var method = this.idProfilSelect===0?'POST':'PUT';
+
+        var matrice = [];
+        var that    = this;
+        var indice  = 0;
+        _.each(this.matriceBtnRadio, function($key, $value){
+            console.log('$key : '+$key+', $value : '+$value);
+            matrice.push([$key, $value]);
+        }, that);
+
+        var data = $('form').serializeArray();
+        data.push({name:'_token',  value:$('#_token').val()});
+        data.push({name:'matrice', value:matrice});
+
+        console.log('DATA %o',data);
+
+        // Requête
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            context: this,
+            type: method,
+            data: data,
+            success: function(tab) {
+                // TODO NOTIFICATION
+                //Notif tab['save']
+                if(tab.save === true) {
+                    this.idProfilSelect = tab.idProfil;
+
+                    // Passe variable aux composants qui écoutent l'action actionLoadData
+                    this.trigger({idProfil: (tab.idProfil*1), etatPageProfil: 'edit', nameProfil: tab.nameProfil});
+                }
+            },
+            error: function(xhr, status, err) {
+                console.error( status, err.toString());
+            }
+        });
     },
 
     radioChange: function(evt){
         console.log('radioChange');
         /* Récupère les données du radio bouton */
         Etat      = $(evt.currentTarget).data('etat');     /* 'visu', 'modif' ou 'aucun' */
-        idModule  = $(evt.currentTarget).data('idModule'); /* id du module concerné      */
+        idModule  = $(evt.currentTarget).data('id'); /* id du module concerné      */
+
+        if(Etat != 'visu' && Etat != 'modif')
+            Etat = 'null';
 
         /* Mise a jour de la matrice */
         this.matriceBtnRadio[idModule] = Etat;

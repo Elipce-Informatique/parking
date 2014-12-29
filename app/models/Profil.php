@@ -6,13 +6,14 @@
  * Time: 10:16
  */
 
-class Profil extends Eloquent {
+class Profil extends Eloquent
+{
 
-   /*
-   |--------------------------------------------------------------------------
-   | ATTRIBUTS
-   |--------------------------------------------------------------------------
-   */
+    /*
+    |--------------------------------------------------------------------------
+    | ATTRIBUTS
+    |--------------------------------------------------------------------------
+    */
     public $timestamp = false;
 
     protected $fillable = ['traduction'];
@@ -38,22 +39,188 @@ class Profil extends Eloquent {
     |--------------------------------------------------------------------------
     */
     /* Récupère les modules avec les droits à visu/modif/aucun selon le profil */
-    public static function getProfilModule($idProfil){
+    public static function getProfilModule($idProfil)
+    {
         $aTabModule = [];
 
         /* Récupère tout les modules avec les droits associés au profil */
-        if($idProfil != 0) {
-            $aTabModule = Module::leftJoin('profil_module', function($join) use($idProfil)
-            {
-                $join->on('profil_module.module_id', '=', 'modules.id')->orOn('profil_module.profil_id', '=', DB::raw($idProfil));
+        if ($idProfil != 0) {
+            $aTabModule = Module::leftJoin('profil_module', function ($join) use ($idProfil) {
+                $join->on('profil_module.module_id', '=', 'modules.id');
+                $join->on('profil_module.profil_id', '=', DB::raw($idProfil));
             })
                 ->groupBy('modules.id')
-            ->get(['modules.id', 'modules.traduction', 'profil_module.access_level']);
-        }
-        /* Récupère uniquement les modules */
+                ->get(['modules.id', 'modules.traduction', 'profil_module.access_level']);
+        } /* Récupère uniquement les modules */
         else
-            $aTabModule =  Module::all(array('id', 'traduction', DB::raw('"null" as etat')));
+            $aTabModule = Module::all(array('id', 'traduction', DB::raw('"null" as etat')));
 
         return $aTabModule;
     }
-} 
+
+    public static function getProfilExistLibelle($libelle){
+        $profil = DB::table('profils')->where('traduction', $libelle)->first(['id']);
+        return array('good' => empty($profil));
+    }
+
+    /**
+     * Supprime un profil
+     * @param $id : ID profil
+     * @return array('save' => bool, enregistrement OK ou KO)
+     *
+     */
+    public static function deleteProfil($id)
+    {
+        // Variables
+        $bSave = true;
+
+        // Chercher user
+        $profil = Profil::find($id);
+
+        // Supprimer utilisateur
+        try {
+            $profil->delete();
+        } catch (Exception $e) {
+            $bSave = false;
+        }
+        return array('save' => $bSave);
+    }
+
+    /**
+     * Créé un profil
+     * @param $inputs : array($key=>$value) $key=champ table, $value=valeur
+     * @return array('save' => bool, enregistrement OK ou KO)
+     */
+    public static function creerProfil($inputs)
+    {
+        // Variables
+        $bSave = true;
+        $idProfil = 0;
+
+        // Récupère la donnée du profil
+        $fieldProfil = [];
+        $fieldProfil['traduction'] = $inputs['libelle'];
+
+        try {
+            Log::warning('-----------> Debut try <-----------');
+            DB::beginTransaction();
+            Log::warning('-----------> Transaction init <-----------');
+
+            // Nouveau profil
+            $idProfil = Profil::insertGetId($fieldProfil);
+            Log::warning('-----------> create ok <-----------');
+
+            Log::warning('-----------> Profil::create($fieldProfil) OK :' . $idProfil . ' <-----------');
+
+            // Récupère les droits d'accès du profil
+            // module_id, profil_id, access_level
+            Log::warning('-----------> $inputs[\'matrice\'] :' . print_r($inputs['matrice'], true) . ' <-----------');
+            Log::warning('-----------> $inputs[\'matrice\'] :' . $inputs['matrice'] . ' <-----------');
+            $matrice = explode(',', $inputs['matrice']);
+
+            for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
+                if ($matrice[$i] != 'null') {
+                    Log::warning('-----------> module_id :' . $matrice[$i + 1] . 'access_level :' . $matrice[$i] . ' <-----------');
+                    $ligne = [];
+                    $ligne['module_id'] = $matrice[$i + 1];
+                    $ligne['profil_id'] = $idProfil;
+                    $ligne['access_level'] = $matrice[$i];
+
+                    // Défini les droits associés au profil
+                    $bSave = DB::table('profil_module')->insert($ligne);
+                }
+            }
+
+            DB::commit();
+        } catch (Exception $e) {
+            Log::warning('-----------> catch' . $e->getMessage() . ' <-----------');
+            DB::rollback();
+            $bSave = false;
+        }
+        return array('idProfil' => $idProfil, 'nameProfil' => $fieldProfil['traduction'], 'save' => $bSave);
+    }
+
+
+    /**
+     * Met à jour les infos d'un profil
+     * @param $id : ID profil
+     * @param $fields : array($key=>$value) $key=champ table, $value=valeur
+     * @return array('data' => tableau de données, 'save' => bool, enregistrement OK ou KO)
+     */
+    public static function updateProfil($id, $fields)
+    {
+        //Log::warning('-----------> updateProfil $id : '.$id.'<-----------');
+        // Variables
+        $bSave = true;
+
+        // Trouver le user
+        $profil = Profil::find($id);
+
+        // Mise à jour de la traduction
+        $profil->traduction = $fields['libelle'];
+
+        // Sauvegarde
+        try {
+            DB::beginTransaction();
+
+            $bSave = $profil->save();
+
+            if($bSave == true) {
+
+                // Met à jour la relation avec les modules
+                $matrice = explode(',', $fields['matrice']);
+
+                for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
+
+                    $idModule     = $matrice[$i+1];
+                    $accesssLevel = $matrice[$i];
+
+                    /* Est-ce que la ligne existe ? */
+                    $ligne = DB::table('profil_module')
+                               ->where('module_id', $idModule)
+                               ->where('profil_id', $id)
+                               ->first(['profil_module.*']);
+
+                    /* La ligne existe */
+                    if(count($ligne)>0) {
+                        /* Droit à null, on supprime la ligne */
+                        if($accesssLevel == 'null') {
+                            $bSave = DB::table('profil_module')->delete($ligne->id);
+                        }
+                        /* Nouveau droit */
+                        else if ($ligne->access_level != $accesssLevel) {
+                            Log::warning('-----------> updateProfil $accesssLevel : '.$accesssLevel.'<-----------');
+                            $update = [];
+                            $update['module_id']    = $idModule;
+                            $update['profil_id']    = $id;
+                            $update['access_level'] = $accesssLevel;
+                            $bSave = DB::table('profil_module')->where('id', $ligne->id)->update($update);
+                        }
+                    }
+                    /* La ligne n'existe pas, on la créer */
+                    else if( $accesssLevel != 'null'){
+                        Log::warning('-----------> updateProfil $accesssLevel : '.$accesssLevel.'<-----------');
+                        $ligne = [];
+                        $ligne['module_id']    = $idModule;
+                        $ligne['profil_id']    = $id;
+                        $ligne['access_level'] = $accesssLevel;
+
+                        // Défini les droits associés au profil
+                        $bSave = DB::table('profil_module')->insert($ligne);
+                    }
+                }
+            }
+
+            if($bSave == true)
+                DB::commit();
+            else
+                DB::rollback();
+        }
+        catch (Exception $e) {
+            Log::warning('-----------> catch : ' . $e->getMessage() . ' <-----------');
+            $bSave = false;
+            DB::rollback();
+        }
+        return array('idProfil' => $id, 'nameProfil' => $fields['libelle'], 'save' => $bSave);
+    }
+}

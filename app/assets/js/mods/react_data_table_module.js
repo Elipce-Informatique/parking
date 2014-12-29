@@ -22,10 +22,53 @@
 var Row = ReactB.Row;
 var Col = ReactB.Col;
 
+function formChange(evt){
+    console.log('evt.value : '+evt.value.length);
+
+    var retour = {};
+
+    /* Est-ce que le libvelle existe? */
+    if(evt.name=='libelle' && evt.value.length>=2){
+        // AJAX
+        $.ajax({
+            url:      BASE_URI + 'profils/'+this.idProfil+'/modules', /* correspond au module url de la BDD */
+            dataType: 'json',
+            context:  this,
+            async: false,
+            success:  function (good) {
+                /* En vert */
+                if(good){
+                    retour.isValid = true;
+                    retour.style   = 'success';
+                    retour.tooltip = '';
+                }
+                /* En rouge */
+                else{
+                    retour.isValid = false;
+                    retour.style   = 'error';
+                    retour.tooltip = Lang.get('global.profils.profilExist');
+                }
+            },
+
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+            }
+        });
+    }
+    /* En rouge */
+    else{
+        retour.isValid = false;
+        retour.style   = 'error';
+        retour.tooltip = Lang.get('global.profils.profilTooMuch');
+    }
+
+    return retour;
+}
 /*********************************************/
 /* Composant input pour le libelle du profil */
-var Field = require('./composants/formulaire/react_form_fields');
+var Field             = require('./composants/formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
+var Form              = Field.Form;
 
 var AuthentMixins        = require('./mixins/component_access');
 var DataTable            = require('./composants/tableau/react_data_table');
@@ -83,10 +126,10 @@ var DataTableModuleReact = React.createClass({
     },
 
     render: function() {
-        return  <div key='divTableauModule'>
-                    <InputTextEditable attributes={{label:Lang.get('global.profils'), name:"libelle", value:this.props.nameProfil, wrapperClassName:'col-md-4',labelClassName:'col-md-1',groupClassName:'row'}} editable={this.props.editable} />
+        return <Form ref="form">
+                    <InputTextEditable ref="libelle" validator={formChange} attributes={{label:Lang.get('global.profils'), name:"libelle", value:this.props.nameProfil, wrapperClassName:'col-md-4',labelClassName:'col-md-1',groupClassName:'row'}} editable={this.props.editable} />
                     <DataTable id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} reactElements={this.props.reactElements} editable={this.props.editable}/>
-                </div>;
+                </Form>;
     },
 
     /**

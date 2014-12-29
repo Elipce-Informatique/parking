@@ -91,29 +91,7 @@ module.exports = DataTableBandeauProfilReact;
 var profilStore = Reflux.createStore({
 
     // Initial setup
-    init: function() {
-
-        /* Sur l'action "profil_update" on charge les données */
-        //this.listenTo(Actions.profil.profil_update, this.updateProfil);
-    },
-
-    ///* Charge les données à chaque évènement "profil_update" */
-    //updateProfil: function() {
-    //    // AJAX
-    //    $.ajax({
-    //        url: BASE_URI+'profils/all', /* correspond au module url de la BDD */
-    //        dataType: 'json',
-    //        context: this,
-    //        success: function(data) {
-    //            /* Passe "data" en paramètre au(x) composant(s) qui écoutent le store profilStore */
-    //            this.trigger(data);
-    //        },
-    //        error: function(xhr, status, err) {
-    //            console.error(status, err.toString());
-    //            this.trigger({});
-    //        }
-    //    });
-    //},
+    init: function() {},
 
     /* Charge les données tout seul au début */
     getInitialState:function(){

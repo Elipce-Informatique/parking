@@ -31,7 +31,10 @@ class ProfilController extends \BaseController {
 	 */
 	public function store()
 	{
-		//
+        // Valeurs postées
+        $post = Input::except('_token');
+
+        return json_encode(Profil::creerProfil($post));
 	}
 
 
@@ -67,7 +70,8 @@ class ProfilController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+        $fields = Input::except('_token');
+        return Profil::updateProfil($id, $fields);
 	}
 
 
@@ -79,7 +83,7 @@ class ProfilController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+        return json_encode(Profil::deleteProfil($id));
 	}
 
     /**
@@ -88,7 +92,7 @@ class ProfilController extends \BaseController {
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function all(){
-        return Profil::all();
+        return Profil::all(array('id', 'traduction'));
     }
 
     /**
@@ -99,5 +103,9 @@ class ProfilController extends \BaseController {
      */
     public function getProfilModule($profils){
         return Profil::getProfilModule($profils);
+    }
+
+    public function getProfilExistLibelle($libelle){
+        return Profil::getProfilExistLibelle($libelle);
     }
 }

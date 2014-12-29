@@ -14,7 +14,7 @@ var Validator = require('validator');
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
- *      message: 'La donnée saisie est déjà présente dans la base de données.' | ''
+ *      tooltip: 'La donnée saisie est déjà présente dans la base de données.' | ''
  *      style: 'success|warning|error|default',
  * }
  */
