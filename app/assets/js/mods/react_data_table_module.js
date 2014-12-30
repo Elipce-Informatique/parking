@@ -22,48 +22,79 @@
 var Row = ReactB.Row;
 var Col = ReactB.Col;
 
-function formChange(evt){
-    console.log('evt.value : '+evt.value.length);
+var libelleInitial = '';
+var firstPass = true;
 
+function libelleChange(value, edit){
+
+    /* Sauvegarde du libelle initial */
+    if(firstPass == true){
+        firstPass      = false;
+        libelleInitial = value;
+    }
+
+    /* Varaible de retour */
     var retour = {};
 
-    /* Est-ce que le libvelle existe? */
-    if(evt.name=='libelle' && evt.value.length>=2){
-        // AJAX
-        $.ajax({
-            url:      BASE_URI + 'profils/'+this.idProfil+'/modules', /* correspond au module url de la BDD */
-            dataType: 'json',
-            context:  this,
-            async: false,
-            success:  function (good) {
-                /* En vert */
-                if(good){
-                    retour.isValid = true;
-                    retour.style   = 'success';
-                    retour.tooltip = '';
-                }
-                /* En rouge */
-                else{
-                    retour.isValid = false;
-                    retour.style   = 'error';
-                    retour.tooltip = Lang.get('global.profils.profilExist');
-                }
-            },
+    /* Est-ce que le libelle existe? */
+    if(value.length>=2){
 
-            error: function (xhr, status, err) {
-                console.error(status, err.toString());
-            }
-        });
+        /* Si le libelle est le libelle initial */
+        /* Pas besoin de vérifier en base       */
+        if(edit == true && value == libelleInitial){
+            retour.isValid = true;
+            retour.style   = 'success';
+            retour.tooltip = '';
+        }
+        else{
+            // AJAX
+            $.ajax({
+                url:      BASE_URI + 'profils/libelle/'+value, /* correspond au module url de la BDD */
+                dataType: 'json',
+                context:  this,
+                async: false,
+                success:  function (good) {
+
+                    /* En vert */
+                    if(good.good == true){
+                        retour.isValid = true;
+                        retour.style   = 'success';
+                        retour.tooltip = '';
+                    }
+                    /* En rouge */
+                    else{
+                        retour.isValid = false;
+                        retour.style   = 'error';
+                        retour.tooltip = Lang.get('global.profilExist');
+                    }
+                },
+
+                error: function (xhr, status, err) {
+                    console.error(status, err.toString());
+                }
+            });
+        }
     }
     /* En rouge */
     else{
         retour.isValid = false;
         retour.style   = 'error';
-        retour.tooltip = Lang.get('global.profils.profilTooMuch');
+        retour.tooltip = Lang.get('global.profilTooMuch');
     }
-
+    console.log('retour : %o', retour);
     return retour;
 }
+
+function libelleEditChange(value){
+    console.log('libelleEditChange');
+    return libelleChange(value, true);
+}
+
+function libelleCreateChange (value){
+    console.log('libelleCreateChange');
+    return libelleChange(value, false);
+}
+
 /*********************************************/
 /* Composant input pour le libelle du profil */
 var Field             = require('./composants/formulaire/react_form_fields');
@@ -126,8 +157,10 @@ var DataTableModuleReact = React.createClass({
     },
 
     render: function() {
+        firstPass = true;
+        var functionLibelleChange = (this.props.nameProfil==''?libelleCreateChange:libelleEditChange);
         return <Form ref="form">
-                    <InputTextEditable ref="libelle" validator={formChange} attributes={{label:Lang.get('global.profils'), name:"libelle", value:this.props.nameProfil, wrapperClassName:'col-md-4',labelClassName:'col-md-1',groupClassName:'row'}} editable={this.props.editable} />
+                    <InputTextEditable ref="libelle" validator={functionLibelleChange} attributes={{label:Lang.get('global.profils'), name:"libelle", value:this.props.nameProfil, wrapperClassName:'col-md-4',labelClassName:'col-md-1',groupClassName:'row'}} editable={this.props.editable} />
                     <DataTable id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} reactElements={this.props.reactElements} editable={this.props.editable}/>
                 </Form>;
     },

@@ -55,8 +55,8 @@ var InputText = React.createClass({
         // 4. ATTRS OK, CREATION INPUT
         retour = (<Input
         type="text"
-                {...attrs}
-                {...this.props.evts}
+        {...attrs}
+        {...this.props.evts}
         onChange = {this.handleChange}
         value={this.state.value}
         ref = "InputField"
@@ -98,26 +98,33 @@ var InputTextEditable = React.createClass({
     },
 
     render: function () {
+        console.log('render');
         var retour;
         // Editable
         if (this.props.editable) {
-            var attrs = this.props.attributes;
             // AJOUT DU VALIDATOR PERSO
             if (typeof(this.props.validator) == 'function') {
-                attrs = _.extends(this.props.attributes, {validator: this.props.validator});
+                retour = <InputText
+                            attributes = {this.props.attributes}
+                            evts       = {this.props.evts}
+                            ref        = "Editable"
+                            gestMod    = {this.props.gestMod}
+                            validator  = {this.props.validator}
+                            />
             }
-
-            retour = <InputText
-            attributes = {attrs}
-            evts = {this.props.evts}
-            ref="Editable"
-            gestMod={this.props.gestMod}
-            />
+            else {
+                retour = <InputText
+                            attributes = {this.props.attributes}
+                            evts       = {this.props.evts}
+                            ref        = "Editable"
+                            gestMod    = {this.props.gestMod}
+                            />
+            }
         }
         // Non editable
-        else {
+        else
             retour = modeEditableFalse(this.props.attributes);
-        }
+
         return retour;
     }
 });

@@ -134,7 +134,6 @@ var ReactPageProfil  = React.createClass({
      * @param data
      */
     updateState: function(data) {
-        console.log('MAJ-- du state du composant : "ReactPageProfil" --MAJ');
         // MAJ data automatique, lifecycle "UPDATE"
         this.setState(data);
     },
@@ -152,7 +151,6 @@ var ReactPageProfil  = React.createClass({
             /*    - le nom du profil NON éditable              */
             /*    - le tableau des modules NON éditable        */
             case 'visu':
-                console.log('VISU');
                 return <div key={this.state.etatPageProfil}>
                             <Row>
                                 <BandeauVisu titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
@@ -171,10 +169,8 @@ var ReactPageProfil  = React.createClass({
             /*    - le nom du profil EDITABLE       */
             /*    - le tableau des modules EDITABLE */
             case 'create':
-                console.log('CREATE');
                 mode = 0;
             case 'edit':
-                console.log('EDIT');
                 return  <div key={this.state.etatPageProfil}>
                             <Row>
                                 <BandeauEdition mode={mode} titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
@@ -192,9 +188,7 @@ var ReactPageProfil  = React.createClass({
             /*    - le bandeau (Créer)         */
             /*    - le tableau des profils     */
             case 'liste':
-                console.log('LISTE');
             default:
-                console.log('getComponentSwitchState --> Profils');
                 return  <div  key={this.state.etatPageProfil}>
                             <BandeauListe titre={this.state.titrePageIni} />
                             <Row>
@@ -321,13 +315,17 @@ var pageProfilStore = Reflux.createStore({
                 type: 'DELETE',
                 data: {'_token':$('#_token').val()},
                 success: function (data) {
-                    this.idProfilSelect = 0;
+                    that.idProfilSelect = 0;
                     that.trigger({idProfil:0, etatPageProfil:'liste', nameProfil:''});
+
+                    Actions.notif.success(Lang.get('global.notif_success'));
                 },
                 error: function (xhr, status, err) {
                     console.error(status, err.toString());
+
+                    Actions.notif.error('AJAX : '+Lang.get('global.notif_erreur'));
                 }
-            });
+            }, that);
         }
     },
 
@@ -341,15 +339,12 @@ var pageProfilStore = Reflux.createStore({
         var that    = this;
         var indice  = 0;
         _.each(this.matriceBtnRadio, function($key, $value){
-            console.log('$key : '+$key+', $value : '+$value);
             matrice.push([$key, $value]);
         }, that);
 
         var data = $('form').serializeArray();
         data.push({name:'_token',  value:$('#_token').val()});
         data.push({name:'matrice', value:matrice});
-
-        console.log('DATA %o',data);
 
         // Requête
         $.ajax({
@@ -362,16 +357,22 @@ var pageProfilStore = Reflux.createStore({
                 // TODO NOTIFICATION
                 //Notif tab['save']
                 if(tab.save === true) {
-                    this.idProfilSelect = tab.idProfil;
+                    that.idProfilSelect = tab.idProfil;
 
                     // Passe variable aux composants qui écoutent l'action actionLoadData
                     this.trigger({idProfil: (tab.idProfil*1), etatPageProfil: 'edit', nameProfil: tab.nameProfil});
+
+                    Actions.notif.success(Lang.get('global.notif_success'));
+                }
+                else{
+                    Actions.notif.error(Lang.get('global.notif_erreur'));
                 }
             },
             error: function(xhr, status, err) {
                 console.error( status, err.toString());
+                Actions.notif.error('AJAX : '+Lang.get('global.notif_erreur'));
             }
-        });
+        }, that);
     },
 
     radioChange: function(evt){

@@ -94,50 +94,61 @@ class Profil extends Eloquent
     public static function creerProfil($inputs)
     {
         // Variables
-        $bSave = true;
+        $bSave    = true;
+        $retour   = [];
         $idProfil = 0;
 
-        // Récupère la donnée du profil
-        $fieldProfil = [];
-        $fieldProfil['traduction'] = $inputs['libelle'];
+        /* Varifie que le profil n'existe pas */
+        $res = Profil::getProfilExistLibelle($inputs['libelle']);
 
-        try {
-            Log::warning('-----------> Debut try <-----------');
-            DB::beginTransaction();
-            Log::warning('-----------> Transaction init <-----------');
+        if($res['good'] == true) {
 
-            // Nouveau profil
-            $idProfil = Profil::insertGetId($fieldProfil);
-            Log::warning('-----------> create ok <-----------');
+            // Récupère la donnée du profil
+            $fieldProfil = [];
+            $fieldProfil['traduction'] = $inputs['libelle'];
 
-            Log::warning('-----------> Profil::create($fieldProfil) OK :' . $idProfil . ' <-----------');
+            try {
+                Log::warning('-----------> Debut try <-----------');
+                DB::beginTransaction();
+                Log::warning('-----------> Transaction init <-----------');
 
-            // Récupère les droits d'accès du profil
-            // module_id, profil_id, access_level
-            Log::warning('-----------> $inputs[\'matrice\'] :' . print_r($inputs['matrice'], true) . ' <-----------');
-            Log::warning('-----------> $inputs[\'matrice\'] :' . $inputs['matrice'] . ' <-----------');
-            $matrice = explode(',', $inputs['matrice']);
+                // Nouveau profil
+                $idProfil = Profil::insertGetId($fieldProfil);
+                Log::warning('-----------> create ok <-----------');
 
-            for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
-                if ($matrice[$i] != 'null') {
-                    Log::warning('-----------> module_id :' . $matrice[$i + 1] . 'access_level :' . $matrice[$i] . ' <-----------');
-                    $ligne = [];
-                    $ligne['module_id'] = $matrice[$i + 1];
-                    $ligne['profil_id'] = $idProfil;
-                    $ligne['access_level'] = $matrice[$i];
+                Log::warning('-----------> Profil::create($fieldProfil) OK :' . $idProfil . ' <-----------');
 
-                    // Défini les droits associés au profil
-                    $bSave = DB::table('profil_module')->insert($ligne);
+                // Récupère les droits d'accès du profil
+                // module_id, profil_id, access_level
+                Log::warning('-----------> $inputs[\'matrice\'] :' . print_r($inputs['matrice'], true) . ' <-----------');
+                Log::warning('-----------> $inputs[\'matrice\'] :' . $inputs['matrice'] . ' <-----------');
+                $matrice = explode(',', $inputs['matrice']);
+
+                for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
+                    if ($matrice[$i] != 'null') {
+                        Log::warning('-----------> module_id :' . $matrice[$i + 1] . 'access_level :' . $matrice[$i] . ' <-----------');
+                        $ligne = [];
+                        $ligne['module_id'] = $matrice[$i + 1];
+                        $ligne['profil_id'] = $idProfil;
+                        $ligne['access_level'] = $matrice[$i];
+
+                        // Défini les droits associés au profil
+                        $bSave = DB::table('profil_module')->insert($ligne);
+                    }
                 }
-            }
 
-            DB::commit();
-        } catch (Exception $e) {
-            Log::warning('-----------> catch' . $e->getMessage() . ' <-----------');
-            DB::rollback();
-            $bSave = false;
+                DB::commit();
+                $retour = array('idProfil' => $idProfil, 'nameProfil' => $fieldProfil['traduction'], 'save' => $bSave);
+            } catch (Exception $e) {
+                Log::warning('-----------> catch' . $e->getMessage() . ' <-----------');
+                DB::rollback();
+                $retour = array('save' => false);
+            }
         }
-        return array('idProfil' => $idProfil, 'nameProfil' => $fieldProfil['traduction'], 'save' => $bSave);
+        else
+            $retour = array('save' => false);
+
+        return $retour;
     }
 
 
