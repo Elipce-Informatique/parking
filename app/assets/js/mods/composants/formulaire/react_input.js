@@ -5,6 +5,7 @@ var MixinInput = require('../../mixins/input_value');
 var MixinInputValue = MixinInput.InputValueMixin;
 var MixinInputChecked = MixinInput.InputCheckableMixin;
 var Validator = require('validator');
+var Calendar  = require('rc-calendar');
 
 /**
  * Champ texte
@@ -76,7 +77,7 @@ var InputText = React.createClass({
  * {
  *      isValid: false|true
  *      style: 'success|warning|error|default',
- *      message: 'La donnée saisie est déjà présente dans la base de données.'
+ *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
  * }
  */
 var InputTextEditable = React.createClass({
@@ -135,7 +136,7 @@ var InputTextEditable = React.createClass({
  * {
  *      isValid: false|true
  *      style: 'success|warning|error|default',
- *      message: 'La donnée saisie est déjà présente dans la base de données.'
+ *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
  * }
  */
 var InputMail = React.createClass({
@@ -194,7 +195,7 @@ var InputMail = React.createClass({
  * {
  *      isValid: false|true
  *      style: 'success|warning|error|default',
- *      message: 'La donnée saisie est déjà présente dans la base de données.'
+ *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
  * }
  */
 var InputMailEditable = React.createClass({
@@ -251,7 +252,7 @@ var InputMailEditable = React.createClass({
  * {
  *      isValid: false|true
  *      style: 'success|warning|error|default',
- *      message: 'La donnée saisie est déjà présente dans la base de données.'
+ *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
  * }
  */
 var InputPassword = React.createClass({
@@ -275,11 +276,11 @@ var InputPassword = React.createClass({
                 var retour = {};
                 // CHAMP OK
                 if (val.length >= 6 && (!Validator.isAlpha(val) && !Validator.isNumeric(val))) {
-                    retour = {isValid: true, style: 'success'};
+                    retour = {isValid: true, style: 'success', tooltip: ''};
                 }
                 // CHAMP KO
                 else {
-                    retour = {isValid: false, style: 'error', message: Lang.get('global.validation_erreur_pass')};
+                    retour = {isValid: false, style: 'error', tooltip: Lang.get('global.validation_erreur_pass')};
                 }
                 return retour;
             }
@@ -316,7 +317,7 @@ var InputPassword = React.createClass({
  * {
  *      isValid: false|true
  *      style: 'success|warning|error|default',
- *      message: 'La donnée saisie est déjà présente dans la base de données.'
+ *      tooltip: 'La donnée saisie est déjà présente dans la base de données.'
  * }
  */
 var InputPasswordEditable = React.createClass({
@@ -358,6 +359,55 @@ var InputPasswordEditable = React.createClass({
         else {
             retour = modeEditableFalse(this.props.attributes);
         }
+        return retour;
+    }
+});
+
+var InputDate = React.createClass({
+
+    propTypes: {
+    },
+    getDefaultProps: function () {
+        return {
+        }
+    },
+
+    render: function () {
+        return (
+            <div id='toto'>Ta race ! </div>
+        );
+    }
+});
+
+/**
+ * Champ mail editable => si pas editable INPUT devient LABEL.
+ * @param editable: (bool) Si true alors INPUT sinon LABEL
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ * {
+ *      isValid: false|true
+ *      style: 'success|warning|error|default',
+ *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
+ * }
+ */
+var InputDateEditable = React.createClass({
+
+    propTypes: {
+        editable: React.PropTypes.bool.isRequired
+    },
+
+    getDefaultProps: function () {
+    },
+
+    render: function () {
+        var retour;
+
+
+            retour =
+                <InputDate
+                />
+
         return retour;
     }
 });
@@ -625,6 +675,8 @@ module.exports.InputRadioBootstrap = InputRadioBootstrap;
 module.exports.InputRadioBootstrapEditable = InputRadioBootstrapEditable;
 module.exports.InputCheckbox = InputCheckbox;
 module.exports.InputCheckboxEditable = InputCheckboxEditable;
+module.exports.InputDateEditable = InputDateEditable;
+module.exports.InputDate = InputDate;
 
 // FONCTIONS
 

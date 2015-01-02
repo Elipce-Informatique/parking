@@ -73,6 +73,9 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
 
     // administration
     Route::get('administration',['as'=>'administration', 'uses'=>'AdministrationController@index'] );
+
+    // test
+    Route::resource('test', 'TestController');
 });
 
 /*
