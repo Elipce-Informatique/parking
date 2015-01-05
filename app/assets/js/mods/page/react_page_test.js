@@ -78,13 +78,13 @@ var ReactPageTest = React.createClass({
 
             <Row id="Champ_radio">
                     <Col md={2}>
-                        InputRadioEditable
+                        <p>InputRadioEditable</p>
                     </Col>
                     <Col md={1}>
                         <InputRadioEditable key={'bt1'} editable={true} attributes={{name:'btGroup', checked:'checked'}} />
                     </Col>
                     <Col md={2}>
-                        InputRadioEditable
+                        <p>InputRadioEditable</p>
                     </Col>
                     <Col md={1}>
                         <InputRadioEditable key={'bt2'} editable={true} attributes={{name:'btGroup'}} />
@@ -93,7 +93,7 @@ var ReactPageTest = React.createClass({
 
             <Row id="Champ_checkBox">
                 <Col md={2}>
-                InputCheckboxEditable
+                    <p>InputCheckboxEditable</p>
                 </Col>
                 <Col md={1}>
                     <InputCheckboxEditable key={'bt1'} editable={true} />

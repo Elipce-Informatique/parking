@@ -363,24 +363,33 @@ var InputPasswordEditable = React.createClass({
     }
 });
 
+/**
+ * Champ date
+ * @param editable: (bool) Si true alors INPUT sinon LABEL
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ * {
+ *      isValid: false|true
+ *      style: 'success|warning|error|default',
+ *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
+ * }
+ */
 var InputDate = React.createClass({
 
     propTypes: {
     },
     getDefaultProps: function () {
-        return {
-        }
+        return {}
     },
 
     render: function () {
-        return (
-            <div id='toto'>Ta race ! </div>
-        );
+        return <div id='toto'> Test </div>;
     }
 });
 
 /**
- * Champ mail editable => si pas editable INPUT devient LABEL.
+ * Champ date editable => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
@@ -403,10 +412,7 @@ var InputDateEditable = React.createClass({
     render: function () {
         var retour;
 
-
-            retour =
-                <InputDate
-                />
+            retour = <div><Calendar/></div>;
 
         return retour;
     }

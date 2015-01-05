@@ -13,5 +13,7 @@ module.exports = {
     InputCheckbox: Input.InputCheckbox,
     InputCheckboxEditable: Input.InputCheckboxEditable,
     InputRadioBootstrap: Input.InputRadioBootstrap,
-    InputRadioBootstrapEditable: Input.InputRadioBootstrapEditable
+    InputRadioBootstrapEditable: Input.InputRadioBootstrapEditable,
+    InputDate: Input.InputDate,
+    InputDateEditable: Input.InputDateEditable
 };
