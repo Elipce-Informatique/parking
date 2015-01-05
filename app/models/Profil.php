@@ -108,25 +108,17 @@ class Profil extends Eloquent
             $fieldProfil['traduction'] = $inputs['libelle'];
 
             try {
-                Log::warning('-----------> Debut try <-----------');
                 DB::beginTransaction();
-                Log::warning('-----------> Transaction init <-----------');
 
                 // Nouveau profil
                 $idProfil = Profil::insertGetId($fieldProfil);
-                Log::warning('-----------> create ok <-----------');
-
-                Log::warning('-----------> Profil::create($fieldProfil) OK :' . $idProfil . ' <-----------');
 
                 // Récupère les droits d'accès du profil
                 // module_id, profil_id, access_level
-                Log::warning('-----------> $inputs[\'matrice\'] :' . print_r($inputs['matrice'], true) . ' <-----------');
-                Log::warning('-----------> $inputs[\'matrice\'] :' . $inputs['matrice'] . ' <-----------');
                 $matrice = explode(',', $inputs['matrice']);
 
                 for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
                     if ($matrice[$i] != 'null') {
-                        Log::warning('-----------> module_id :' . $matrice[$i + 1] . 'access_level :' . $matrice[$i] . ' <-----------');
                         $ligne = [];
                         $ligne['module_id'] = $matrice[$i + 1];
                         $ligne['profil_id'] = $idProfil;
@@ -140,7 +132,6 @@ class Profil extends Eloquent
                 DB::commit();
                 $retour = array('idProfil' => $idProfil, 'nameProfil' => $fieldProfil['traduction'], 'save' => $bSave);
             } catch (Exception $e) {
-                Log::warning('-----------> catch' . $e->getMessage() . ' <-----------');
                 DB::rollback();
                 $retour = array('save' => false);
             }

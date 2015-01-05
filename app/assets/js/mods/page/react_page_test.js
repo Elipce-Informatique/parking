@@ -15,6 +15,7 @@ var ButtonGroup                 = ReactB.ButtonGroup;
 var InputRadioBootstrapEditable = Field.InputRadioBootstrapEditable;
 var InputCheckboxEditable       = Field.InputCheckboxEditable;
 var InputDateEditable           = Field.InputDateEditable;
+var InputSelectEditable         = Field.InputSelectEditable;
 
 var ReactPageTest = React.createClass({
 
@@ -81,13 +82,13 @@ var ReactPageTest = React.createClass({
                         <p>InputRadioEditable</p>
                     </Col>
                     <Col md={1}>
-                        <InputRadioEditable key={'bt1'} editable={true} attributes={{name:'btGroup', checked:'checked'}} />
+                        <InputRadioEditable key={'bt1'} editable={true} attributes={{name:'btGroup[]', checked:'checked'}} />
                     </Col>
                     <Col md={2}>
                         <p>InputRadioEditable</p>
                     </Col>
                     <Col md={1}>
-                        <InputRadioEditable key={'bt2'} editable={true} attributes={{name:'btGroup'}} />
+                        <InputRadioEditable key={'bt2'} editable={true} attributes={{name:'btGroup[]'}} />
                     </Col>
             </Row>
 
@@ -103,6 +104,12 @@ var ReactPageTest = React.createClass({
             <Row id="Champ_date">
                 <Col md={12}>
                     <InputDateEditable editable={true} />
+                </Col>
+            </Row>
+
+            <Row id="Champ_select">
+                <Col md={12}>
+                    <InputSelectEditable data={{toto:'toto'}} editable={true} />
                 </Col>
             </Row>
         </div>;
