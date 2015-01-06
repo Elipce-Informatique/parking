@@ -6,8 +6,10 @@ var MixinInputValue = MixinInput.InputValueMixin;
 var MixinInputChecked = MixinInput.InputCheckableMixin;
 var Validator = require('validator');
 
-var DateTimePicker = ReactW.DateTimePicker;
-var Combobox       = ReactW.Combobox;
+/***********************/
+/* Composants Boostrap */
+var Row = ReactB.Row;
+var Col = ReactB.Col;
 
 /**
  * Champ texte
@@ -365,144 +367,13 @@ var InputPasswordEditable = React.createClass({
 });
 
 /**
- * Champ texte
- * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
- * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
- * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
- * {
- *      isValid: false|true
- *      tooltip: 'La donnée saisie est déjà présente dans la base de données.' | ''
- *      style: 'success|warning|error|default',
- * }
- */
-var InputDate = React.createClass({
-        mixins: [MixinInputValue],
-
-        propTypes: {
-            min: React.PropTypes.object,
-            max: React.PropTypes.object,
-            attributes: React.PropTypes.object,
-            evts: React.PropTypes.object,
-            onChange: React.PropTypes.func,
-            gestMod: React.PropTypes.bool,
-            validator: React.PropTypes.func
-        },
-
-        getDefaultProps: function () {
-            return {
-                attributes: {},
-                evts: {},
-                onChange: this.handleChange,
-                gestMod: true,
-                validator: function (val) {
-                    if (Validator.isDate(val)) {
-                        return {isValid: true, style: 'success', tooltip: ''};
-                    } else {
-                        return {isValid: true, style: 'error', tooltip: ''};
-                    }
-                }
-            };
-        },
-
-        // ATTENTION: getInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
-
-        render: function () {
-            // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-            var attrs = this.props.attributes;
-            attrs = _.merge(this.state.attributes, this.props.attributes);
-
-            // 4. ATTRS OK, CREATION INPUT
-            retour = (<DateTimePicker
-                min={this.props.min}
-                max={this.props.max}
-                time={false}
-                format='dd/MM/yyyy'
-                {...attrs}
-                {...this.props.evts}
-                ref = "InputField"
-                hasFeedback
-            />);
-            return retour;
-        }
-    });
-
-
-/**
- * Champ texte editable => si pas editable INPUT devient LABEL.
- * @param editable: (bool) Si true alors INPUT sinon LABEL
- * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
- * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
- * {
- *      isValid: false|true
- *      style: 'success|warning|error|default',
- *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
- * }
- */
-var InputDateEditable = React.createClass({
-
-    propTypes: {
-        editable: React.PropTypes.bool.isRequired,
-        min: React.PropTypes.object,
-        max: React.PropTypes.object,
-        attributes: React.PropTypes.object,
-        evts: React.PropTypes.object,
-        gestMod: React.PropTypes.bool,
-        validator: React.PropTypes.func
-    },
-
-    getDefaultProps: function () {
-        return {
-            min: new Date(0, 0, 0),
-            max: new Date(9999, 1, 1),
-            attributes: {},
-            evts: {},
-            gestMod: true
-        }
-    },
-
-    render: function () {
-
-        var retour;
-        // Editable
-        if (this.props.editable) {
-            // AJOUT DU VALIDATOR PERSO
-            if (typeof(this.props.validator) == 'function') {
-                retour = <InputDate
-                attributes = {this.props.attributes}
-                evts       = {this.props.evts}
-                ref        = "Editable"
-                gestMod    = {this.props.gestMod}
-                min        = {this.props.min}
-                max        = {this.props.max}
-                validator  = {this.props.validator}
-                />
-            }
-            else {
-                retour = <InputDate
-                attributes = {this.props.attributes}
-                evts       = {this.props.evts}
-                ref        = "Editable"
-                gestMod    = {this.props.gestMod}
-                min        = {this.props.min}
-                max        = {this.props.max}
-                />
-            }
-        }
-        // Non editable
-        else
-            retour = modeEditableFalse(this.props.attributes);
-
-        return retour;
-    }
-});
-
-/**
- * Champ select
- * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
- * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * Champ select (react-select)
+ * @param data: array(array(label:'Framboise', value:0), array(label:'Pomme', value:1))
+ * @param selectedValue: array('0', '1')
+ * @param placeholder: string, par défaut 'Sélection..'
+ * @param multi: bool, à choix multiple, par défaut non
+ * @param attributes: props de Input (react bootstrap) ex: {label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onChange: maFonction}
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -511,13 +382,15 @@ var InputDateEditable = React.createClass({
  * }
  */
 var InputSelect = React.createClass({
-    mixins: [MixinInputValue],
+   // mixins: [MixinInputValue],
 
     propTypes: {
-        data:React.PropTypes.object.isRequired,
+        data:React.PropTypes.array.isRequired,
+        selectedValue:React.PropTypes.array,
+        placeholder:React.PropTypes.string,
+        multi:React.PropTypes.bool,
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange: React.PropTypes.func,
         gestMod: React.PropTypes.bool,
         validator: React.PropTypes.func
     },
@@ -526,13 +399,13 @@ var InputSelect = React.createClass({
         return {
             attributes: {},
             evts: {},
-            onChange: this.handleChange,
             gestMod: true,
             validator: function (val) {
-                if (Validator.isDate(val)) {
-                    return {isValid: true, style: 'success', tooltip: ''};
-                } else {
+                console.log('Coucou');
+                if (val.length == 0) {
                     return {isValid: true, style: 'error', tooltip: ''};
+                } else {
+                    return {isValid: true, style: 'success', tooltip: ''};
                 }
             }
         };
@@ -541,36 +414,41 @@ var InputSelect = React.createClass({
     // ATTENTION: getInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
     render: function () {
-        function logChange(value) {
-            console.log('Select value changed: ' + value);
-        }
 
-        var ops = [
-            { label: 'Chocolate', value: 'chocolate' },
-            { label: 'Vanilla', value: 'vanilla' },
-            { label: 'Strawberry', value: 'strawberry' },
-            { label: 'Caramel', value: 'caramel' },
-            { label: 'Cookies and Cream', value: 'cookiescream' },
-            { label: 'Peppermint', value: 'peppermint' }
-        ];
+        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
+        //var attrs = this.props.attributes;
+        //attrs = _.merge(this.state.attributes, this.props.attributes);
 
-        return <div>
-                   <label>Toto</label>
-                   <Combobox
-                       data={ops}
-                       value={'Select in'}
-                       onChange={logChange}
-                       textField='latoto'
-                       valueField='value' />
-               </div>;
+        return <Row>
+                    <Col md={(this.props.attributes.labelCol !== undefined?this.props.attributes.labelCol:6)}>
+                        <label>{(this.props.attributes.label !== undefined?this.props.attributes.label:'')}</label>
+                    </Col>
+                    <Col md={(this.props.attributes.selectCol !== undefined?this.props.attributes.selectCol:6)}>
+                        <Select
+                            name={this.props.attributes.name}
+                            value={this.props.selectedValue}
+                            options={this.props.data}
+                            placeholder={this.props.placeholder}
+                            multi={this.props.multi}
+                            {...this.props.attributes}
+                            {...this.props.evts}
+                            ref = "InputField"
+                            hasFeedback
+                            matchProp="label"
+                        />
+                    </Col>
+                </Row>;
     }
 });
-
 
 /**
  * Champ select editable => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
- * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param data: array(array(label:'Framboise', value:0), array(label:'Pomme', value:1))
+ * @param selectedValue: array('0', '1')
+ * @param placeholder: string, par défaut 'Sélection..'
+ * @param multi: bool, à choix multiple, par défaut non
+ * @param attributes: props de Input (react bootstrap) ex: {label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
@@ -583,7 +461,10 @@ var InputSelectEditable = React.createClass({
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
-        data:React.PropTypes.object.isRequired,
+        data:React.PropTypes.array.isRequired,
+        selectedValue:React.PropTypes.array,
+        placeholder:React.PropTypes.string,
+        multi:React.PropTypes.bool,
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool,
@@ -594,7 +475,9 @@ var InputSelectEditable = React.createClass({
         return {
             attributes: {},
             evts: {},
-            gestMod: true
+            gestMod: true,
+            placeholder: Lang.get('global.select'),
+            multi: false
         }
     },
 
@@ -607,25 +490,47 @@ var InputSelectEditable = React.createClass({
                 retour = <InputSelect
                             attributes = {this.props.attributes}
                             evts       = {this.props.evts}
+                            selectedValue = {this.props.selectedValue}
+                            placeholder   = {this.props.placeholder}
                             ref        = "Editable"
                             gestMod    = {this.props.gestMod}
                             validator  = {this.props.validator}
                             data       = {this.props.data}
+                            multi      = {this.props.multi}
                             autocomplete="both"/>;
             }
             else {
                 retour = <InputSelect
                             attributes = {this.props.attributes}
                             evts       = {this.props.evts}
+                            selectedValue = {this.props.selectedValue}
+                            placeholder   = {this.props.placeholder}
                             ref        = "Editable"
                             gestMod    = {this.props.gestMod}
                             data       = {this.props.data}
+                            multi = {this.props.multi}
                             autocomplete="both"/>;
             }
         }
         // Non editable
-        else
-            retour = modeEditableFalse(this.props.attributes);
+        else {
+
+            /* Récupère les valeurs depuis les datas en mode non éditable */
+            var attrs  = this.props.attributes;
+            var indice = 0;
+            var that   = this;
+            var firstPassage = true;
+            attrs.value = '';
+            _.each(this.props.selectedValue, function(val, key){
+                if(firstPassage == false)
+                    attrs.value += ', ';
+                attrs.value += that.props.data[val]['label'];
+                firstPassage = false;
+            }, that);
+            /* FIN : Récupère les valeurs depuis les datas en mode non éditable */
+
+            retour = modeEditableFalse(attrs);
+        }
 
         return retour;
     }
@@ -893,8 +798,8 @@ module.exports.InputRadioBootstrap = InputRadioBootstrap;
 module.exports.InputRadioBootstrapEditable = InputRadioBootstrapEditable;
 module.exports.InputCheckbox = InputCheckbox;
 module.exports.InputCheckboxEditable = InputCheckboxEditable;
-module.exports.InputDateEditable = InputDateEditable;
-module.exports.InputDate = InputDate;
+//module.exports.InputDateEditable = InputDateEditable;
+//module.exports.InputDate = InputDate;
 module.exports.InputSelect = InputSelect;
 module.exports.InputSelectEditable = InputSelectEditable;
 

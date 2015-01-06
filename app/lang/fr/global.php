@@ -64,6 +64,9 @@ Voulez-vous vraiment quitter cette page ?',
     'acceder' => 'Accéder',
     'gerer' => 'Gérer',
 
+    // FORMULAIRE
+    'select' => 'Sélection...',
+
     /*
     |--------------------------------------------------------------------------
     | Traduction DataTables

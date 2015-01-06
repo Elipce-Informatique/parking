@@ -49,6 +49,29 @@ var ReactPageTest = React.createClass({
      * @returns {XML}
      */
     render: function () {
+
+        /*********************/
+        /* Paramètres Select */
+        var options = [
+            { value: '0', label: 'Fraise' },
+            { value: '1', label: 'Abricot' },
+            { value: '2', label: 'Framboise' },
+            { value: '3', label: 'Pomme' },
+            { value: '4', label: 'Poire' }
+        ];
+
+        function selectChange(value, aData){
+            console.log('Value : '+value);
+
+            var indice = 0;
+            _.each(aData, function(val, key){
+                console.log('aData['+indice+'], label : '+aData[indice]['label']+', value : '+aData[indice]['value']);
+                indice++;
+            });
+        }
+        /* FIN : Paramètres Select */
+        /***************************/
+
         return  <div>
             <Row id="Champ_texte">
                 <Col md={12}>
@@ -101,15 +124,9 @@ var ReactPageTest = React.createClass({
                 </Col>
             </Row>
 
-            <Row id="Champ_date">
-                <Col md={12}>
-                    <InputDateEditable editable={true} />
-                </Col>
-            </Row>
-
-            <Row id="Champ_select">
-                <Col md={12}>
-                    <InputSelectEditable data={{toto:'toto'}} editable={true} />
+            <Row id="Select">
+                <Col md={6}>
+                    <InputSelectEditable multi={true} evts={{onChange:selectChange}} attributes={{label:'Select', name:"Select", selectCol:5,labelCol:1}} data={options} editable={true} selectedValue={['2']} placeholder={'PlaceHolder...'}/>
                 </Col>
             </Row>
         </div>;
