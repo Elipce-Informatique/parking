@@ -37,6 +37,7 @@ Voulez-vous vraiment quitter cette page ?',
     'validation_erreur_mail' => 'L\'e-mail saisi n\'est pas valide',
     'validation_erreur_date' => 'Format de date incorrect (JJ/MM/AA)',
     'form_incorrect' => 'Formulaire invalide',
+    'champ_obligatoire' => 'Champ obligatoire',
 
 
     // BOUTONS

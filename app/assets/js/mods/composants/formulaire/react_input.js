@@ -5,8 +5,8 @@ var Glyphicon = ReactB.Glyphicon
 
 /*********/
 /* Mixin */
-var MixinInput        = require('../../mixins/input_value');
-var MixinInputValue   = MixinInput.InputValueMixin;
+var MixinInput = require('../../mixins/input_value');
+var MixinInputValue = MixinInput.InputValueMixin;
 var MixinInputChecked = MixinInput.InputCheckableMixin;
 var NumberPickerMixin = MixinInput.NumberPickerMixin;
 var Validator = require('validator');
@@ -55,7 +55,7 @@ var InputText = React.createClass({
                 }
                 else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
-                }else {
+                } else {
                     return {isValid: true, style: 'success', tooltip: ''};
                 }
             }
@@ -69,8 +69,9 @@ var InputText = React.createClass({
         var attrs = this.props.attributes;
         attrs = _.merge(this.state.attributes, this.props.attributes);
 
-        if(typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true){
-            attrs = _.merge(this.state.attributes, {addonAfter:<Glyphicon glyph="asterisk" />});
+        // Ajout de l'addon required si besoin
+        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
+            attrs = addRequiredAddon(attrs, this.state.value);
         }
 
         // 4. ATTRS OK, CREATION INPUT
@@ -190,6 +191,11 @@ var InputMail = React.createClass({
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
         var attrs = this.props.attributes;
         attrs = _.merge(this.state.attributes, this.props.attributes);
+
+        // Ajout de l'addon required si besoin
+        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
+            attrs = addRequiredAddon(attrs, this.state.value);
+        }
 
         return (
             <Input
@@ -315,6 +321,11 @@ var InputPassword = React.createClass({
         var attrs = this.props.attributes;
         attrs = _.merge(this.state.attributes, this.props.attributes);
 
+        // Ajout de l'addon required si besoin
+        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
+            attrs = addRequiredAddon(attrs, this.state.value);
+        }
+
         return (
             <Input
                 type="password"
@@ -397,10 +408,10 @@ var InputPasswordEditable = React.createClass({
 var InputSelect = React.createClass({
 
     propTypes: {
-        data:React.PropTypes.array.isRequired,
-        selectedValue:React.PropTypes.array,
-        placeholder:React.PropTypes.string,
-        multi:React.PropTypes.bool,
+        data: React.PropTypes.array.isRequired,
+        selectedValue: React.PropTypes.array,
+        placeholder: React.PropTypes.string,
+        multi: React.PropTypes.bool,
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool
@@ -423,22 +434,22 @@ var InputSelect = React.createClass({
         //attrs = _.merge(this.state.attributes, this.props.attributes);
 
         return <Row>
-                    <Col md={(this.props.attributes.labelCol !== undefined?this.props.attributes.labelCol:6)}>
-                        <label>{(this.props.attributes.label !== undefined?this.props.attributes.label:'')}</label>
-                    </Col>
-                    <Col md={(this.props.attributes.selectCol !== undefined?this.props.attributes.selectCol:6)}>
-                        <Select
-                            name={this.props.attributes.name}
-                            value={this.props.selectedValue}
-                            options={this.props.data}
-                            placeholder={this.props.placeholder}
-                            multi={this.props.multi}
+            <Col md={(this.props.attributes.labelCol !== undefined ? this.props.attributes.labelCol : 6)}>
+                <label>{(this.props.attributes.label !== undefined ? this.props.attributes.label : '')}</label>
+            </Col>
+            <Col md={(this.props.attributes.selectCol !== undefined ? this.props.attributes.selectCol : 6)}>
+                <Select
+                    name={this.props.attributes.name}
+                    value={this.props.selectedValue}
+                    options={this.props.data}
+                    placeholder={this.props.placeholder}
+                    multi={this.props.multi}
                             {...this.props.attributes}
                             {...this.props.evts}
-                            matchProp="label"
-                        />
-                    </Col>
-                </Row>;
+                    matchProp="label"
+                />
+            </Col>
+        </Row>;
     }
 });
 
@@ -456,10 +467,10 @@ var InputSelectEditable = React.createClass({
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
-        data:React.PropTypes.array.isRequired,
-        selectedValue:React.PropTypes.array,
-        placeholder:React.PropTypes.string,
-        multi:React.PropTypes.bool,
+        data: React.PropTypes.array.isRequired,
+        selectedValue: React.PropTypes.array,
+        placeholder: React.PropTypes.string,
+        multi: React.PropTypes.bool,
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool
@@ -479,28 +490,28 @@ var InputSelectEditable = React.createClass({
         var retour;
         // Editable
         if (this.props.editable) {
-                retour = <InputSelect
-                            attributes = {this.props.attributes}
-                            evts       = {this.props.evts}
-                            selectedValue = {this.props.selectedValue}
-                            placeholder   = {this.props.placeholder}
-                            ref        = "Editable"
-                            gestMod    = {this.props.gestMod}
-                            data       = {this.props.data}
-                            multi      = {this.props.multi}
-                            autocomplete="both"/>;
+            retour = <InputSelect
+                attributes = {this.props.attributes}
+                evts       = {this.props.evts}
+                selectedValue = {this.props.selectedValue}
+                placeholder   = {this.props.placeholder}
+                ref        = "Editable"
+                gestMod    = {this.props.gestMod}
+                data       = {this.props.data}
+                multi      = {this.props.multi}
+                autocomplete="both"/>;
         }
         // Non editable
         else {
 
             /* Récupère les valeurs depuis les datas en mode non éditable */
-            var attrs  = this.props.attributes;
+            var attrs = this.props.attributes;
             var indice = 0;
-            var that   = this;
+            var that = this;
             var firstPassage = true;
             attrs.value = '';
-            _.each(this.props.selectedValue, function(val, key){
-                if(firstPassage == false)
+            _.each(this.props.selectedValue, function (val, key) {
+                if (firstPassage == false)
                     attrs.value += ', ';
                 attrs.value += that.props.data[val]['label'];
                 firstPassage = false;
@@ -530,9 +541,9 @@ var InputNumber = React.createClass({
     mixins: [MixinInputValue],
 
     propTypes: {
-        min:React.PropTypes.number,
-        max:React.PropTypes.number,
-        step:React.PropTypes.number,
+        min: React.PropTypes.number,
+        max: React.PropTypes.number,
+        step: React.PropTypes.number,
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool,
@@ -541,9 +552,9 @@ var InputNumber = React.createClass({
 
     getDefaultProps: function () {
         return {
-            min:-9999999999,
-            max:9999999999,
-            step:1,
+            min: -9999999999,
+            max: 9999999999,
+            step: 1,
             attributes: {},
             evts: {},
             gestMod: true,
@@ -554,7 +565,7 @@ var InputNumber = React.createClass({
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
                 /* Valeur non correct */
-                else if(val < props.min || val > props.max){
+                else if (val < props.min || val > props.max) {
                     var tooltip = Lang.get('global.profils');
                     tooltip = tooltip.replace('[min]', props.min);
                     tooltip = tooltip.replace('[max]', props.max);
@@ -575,6 +586,11 @@ var InputNumber = React.createClass({
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
         var attrs = this.props.attributes;
         attrs = _.merge(this.state.attributes, this.props.attributes);
+
+        // Ajout de l'addon required si besoin
+        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
+            attrs = addRequiredAddon(attrs, this.state.value);
+        }
 
         // 4. ATTRS OK, CREATION INPUT
         retour = <Input
@@ -608,9 +624,9 @@ var InputNumber = React.createClass({
 var InputNumberEditable = React.createClass({
 
     propTypes: {
-        min:React.PropTypes.number,
-        max:React.PropTypes.number,
-        step:React.PropTypes.number,
+        min: React.PropTypes.number,
+        max: React.PropTypes.number,
+        step: React.PropTypes.number,
         editable: React.PropTypes.bool.isRequired,
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
@@ -619,7 +635,7 @@ var InputNumberEditable = React.createClass({
 
     getDefaultProps: function () {
         return {
-            attributes: {value:''},
+            attributes: {value: ''},
             evts: {},
             gestMod: true
         }
@@ -945,4 +961,17 @@ function modeEditableFalse(attr) {
             </div>
         </div>
     )
+}
+
+function addRequiredAddon(attrs, value) {
+    if(value.length == 0) {
+        return _.merge(attrs, {
+            addonAfter: <OverlayTrigger placement="top" overlay={<Tooltip>
+                <strong>{Lang.get('global.champ_obligatoire')}</strong>
+            </Tooltip>}>
+                <Glyphicon glyph="asterisk" />
+            </OverlayTrigger>
+        });
+    }
+    return attrs;
 }
