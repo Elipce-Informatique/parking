@@ -24,7 +24,7 @@ var InputValueMixin = {
         }
     },
     handleBlur: function (e) {
-        console.log('Pass handleBlur mixin');
+
         // 1. RÉCUPÉRATION DE LA VALUE
         var val = this.refs.InputField.getValue();
 
@@ -86,10 +86,17 @@ var InputValueMixin = {
         var validation = this.props.validator(val, this.props, this.state);
 
         // 3. ATTR DATA-VALID
-        attrs = _.merge({'data-valid': validation.isValid}, attrs);
+        var html5Validity = true;
+        if(typeof(this.refs.InputField) != 'undefined'){
+            html5Validity = $(this.refs.InputField.getDOMNode()).find(':invalid').length == 0;
+        }
+        attrs = _.merge({'data-valid': validation.isValid && html5Validity}, attrs);
 
         // 4. AJOUT DU STYLE REACTB
         var style = {'bsStyle': (!Validator.matches(validation.style, 'success|warning|error', 'i') ? undefined : validation.style)};
+        if(! html5Validity){
+            style = {'bsStyle': 'error'};
+        }
         if (validation.tooltip.length > 0) {
             style.help = validation.tooltip;
         }
