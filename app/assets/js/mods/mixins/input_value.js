@@ -8,6 +8,7 @@ var Validator = require('validator');
 var InputValueMixin = {
 
     handleChange: function (e) {
+
         // 1. RÉCUPÉRATION DE LA VALUE
         var val = this.refs.InputField.getValue();
 
@@ -99,7 +100,7 @@ var InputValueMixin = {
 };
 
 /**
- * Mixin permettant de gérer le chack des radio et checkbox
+ * Mixin permettant de gérer le check des radio et checkbox
  * Pré-requis: le mixin est utilisé sur un composant ayant une ref="Checkable"
  *
  */
@@ -135,5 +136,5 @@ var InputCheckableMixin = {
     }
 };
 
-module.exports.InputValueMixin = InputValueMixin;
+module.exports.InputValueMixin     = InputValueMixin;
 module.exports.InputCheckableMixin = InputCheckableMixin;

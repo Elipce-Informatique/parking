@@ -15,6 +15,8 @@ var ButtonGroup                 = ReactB.ButtonGroup;
 var InputRadioBootstrapEditable = Field.InputRadioBootstrapEditable;
 var InputCheckboxEditable       = Field.InputCheckboxEditable;
 var InputDateEditable           = Field.InputDateEditable;
+var InputSelectEditable         = Field.InputSelectEditable;
+var InputNumberEditable         = Field.InputNumberEditable;
 
 var ReactPageTest = React.createClass({
 
@@ -48,6 +50,29 @@ var ReactPageTest = React.createClass({
      * @returns {XML}
      */
     render: function () {
+
+        /*********************/
+        /* Paramètres Select */
+        var options = [
+            { value: '0', label: 'Fraise' },
+            { value: '1', label: 'Abricot' },
+            { value: '2', label: 'Framboise' },
+            { value: '3', label: 'Pomme' },
+            { value: '4', label: 'Poire' }
+        ];
+
+        function selectChange(value, aData){
+            console.log('Value : '+value);
+
+            var indice = 0;
+            _.each(aData, function(val, key){
+                console.log('aData['+indice+'], label : '+aData[indice]['label']+', value : '+aData[indice]['value']);
+                indice++;
+            });
+        }
+        /* FIN : Paramètres Select */
+        /***************************/
+
         return  <div>
             <Row id="Champ_texte">
                 <Col md={12}>
@@ -81,13 +106,13 @@ var ReactPageTest = React.createClass({
                         <p>InputRadioEditable</p>
                     </Col>
                     <Col md={1}>
-                        <InputRadioEditable key={'bt1'} editable={true} attributes={{name:'btGroup', checked:'checked'}} />
+                        <InputRadioEditable key={'bt1'} editable={true} attributes={{name:'btGroup[]', checked:'checked'}} />
                     </Col>
                     <Col md={2}>
                         <p>InputRadioEditable</p>
                     </Col>
                     <Col md={1}>
-                        <InputRadioEditable key={'bt2'} editable={true} attributes={{name:'btGroup'}} />
+                        <InputRadioEditable key={'bt2'} editable={true} attributes={{name:'btGroup[]'}} />
                     </Col>
             </Row>
 
@@ -100,9 +125,15 @@ var ReactPageTest = React.createClass({
                 </Col>
             </Row>
 
-            <Row id="Champ_date">
-                <Col md={12}>
-                    <InputDateEditable editable={true} />
+            <Row id="Select">
+                <Col md={6}>
+                    <InputSelectEditable multi={true} evts={{onChange:selectChange}} attributes={{label:'Select', name:"Select", selectCol:5,labelCol:1}} data={options} editable={true} selectedValue={['2']} placeholder={'PlaceHolder...'}/>
+                </Col>
+            </Row>
+
+            <Row id="Input number">
+                <Col md={6}>
+                    <InputNumberEditable min={-10} max={10} step={0.01} attributes={{label:'Input number -10 to 10', name:"InputNumber", value:5, inputCol:3,labelCol:4}} editable={true} />
                 </Col>
             </Row>
         </div>;

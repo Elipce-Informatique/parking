@@ -65,6 +65,10 @@ Voulez-vous vraiment quitter cette page ?',
     'acceder' => 'Accéder',
     'gerer' => 'Gérer',
 
+    // FORMULAIRE
+    'select' => 'Sélection...',
+    'saisieNumber' => 'La saisie doit être entre [min] et [max]',
+
     /*
     |--------------------------------------------------------------------------
     | Traduction DataTables
