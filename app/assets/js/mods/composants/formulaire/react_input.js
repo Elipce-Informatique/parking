@@ -1,11 +1,11 @@
 var Input = ReactB.Input;
 var OverlayTrigger = ReactB.OverlayTrigger;
 var Tooltip = ReactB.Tooltip;
+var Glyphicon = ReactB.Glyphicon
 var MixinInput = require('../../mixins/input_value');
 var MixinInputValue = MixinInput.InputValueMixin;
 var MixinInputChecked = MixinInput.InputCheckableMixin;
 var Validator = require('validator');
-var Calendar  = require('rc-calendar');
 
 /**
  * Champ texte
@@ -36,10 +36,13 @@ var InputText = React.createClass({
             evts: {},
             onChange: this.handleChange,
             gestMod: true,
-            validator: function (val) {
-                if (val.length == 0) {
+            validator: function (val, props, state) {
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                    return {isValid: false, style: 'default', tooltip: ''};
+                }
+                else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
-                } else {
+                }else {
                     return {isValid: true, style: 'success', tooltip: ''};
                 }
             }
@@ -53,15 +56,20 @@ var InputText = React.createClass({
         var attrs = this.props.attributes;
         attrs = _.merge(this.state.attributes, this.props.attributes);
 
+        if(typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true){
+            attrs = _.merge(this.state.attributes, {addonAfter:<Glyphicon glyph="asterisk" />});
+        }
+
         // 4. ATTRS OK, CREATION INPUT
         retour = (<Input
-        type="text"
+            type="text"
         {...attrs}
         {...this.props.evts}
-        onChange = {this.handleChange}
-        value={this.state.value}
-        ref = "InputField"
-        hasFeedback
+            onChange = {this.handleChange}
+            onBlur = {this.handleBlur}
+            value={this.state.value}
+            ref = "InputField"
+            hasFeedback
         />);
         return retour;
     }
@@ -99,27 +107,26 @@ var InputTextEditable = React.createClass({
     },
 
     render: function () {
-        console.log('render');
         var retour;
         // Editable
         if (this.props.editable) {
             // AJOUT DU VALIDATOR PERSO
             if (typeof(this.props.validator) == 'function') {
                 retour = <InputText
-                            attributes = {this.props.attributes}
-                            evts       = {this.props.evts}
-                            ref        = "Editable"
-                            gestMod    = {this.props.gestMod}
-                            validator  = {this.props.validator}
-                            />
+                    attributes = {this.props.attributes}
+                    evts       = {this.props.evts}
+                    ref        = "Editable"
+                    gestMod    = {this.props.gestMod}
+                    validator  = {this.props.validator}
+                />
             }
             else {
                 retour = <InputText
-                            attributes = {this.props.attributes}
-                            evts       = {this.props.evts}
-                            ref        = "Editable"
-                            gestMod    = {this.props.gestMod}
-                            />
+                    attributes = {this.props.attributes}
+                    evts       = {this.props.evts}
+                    ref        = "Editable"
+                    gestMod    = {this.props.gestMod}
+                />
             }
         }
         // Non editable
@@ -153,7 +160,7 @@ var InputMail = React.createClass({
             attributes: {},
             evts: {},
             gestMod: true,
-            validator: function (val) {
+            validator: function (val, props, state) {
                 if (Validator.isEmail(val)) {
                     return {isValid: true, style: 'success', tooltip: ''};
                 } else if (val.length == 0) {
@@ -173,13 +180,14 @@ var InputMail = React.createClass({
 
         return (
             <Input
-            type="email"
+                type="email"
                 {...attrs}
                 {...this.props.evts}
-            value = {this.state.value}
-            onChange={this.handleChange}
-            ref = "InputField"
-            hasFeedback
+                value = {this.state.value}
+                onChange={this.handleChange}
+                onBlur = {this.handleBlur}
+                ref = "InputField"
+                hasFeedback
             />
         );
     }
@@ -228,10 +236,10 @@ var InputMailEditable = React.createClass({
 
             retour =
                 <InputMail
-                attributes = {attrs}
-                evts = {this.props.evts}
-                ref="Editable"
-                gestMod={this.props.gestMod}
+                    attributes = {attrs}
+                    evts = {this.props.evts}
+                    ref="Editable"
+                    gestMod={this.props.gestMod}
                 />
         }
         // Non editable
@@ -272,7 +280,7 @@ var InputPassword = React.createClass({
             evts: {},
             onChange: this.handleChange,
             gestMod: true,
-            validator: function (val) {
+            validator: function (val, props, state) {
                 var retour = {};
                 // CHAMP OK
                 if (val.length >= 6 && (!Validator.isAlpha(val) && !Validator.isNumeric(val))) {
@@ -296,13 +304,14 @@ var InputPassword = React.createClass({
 
         return (
             <Input
-            type="password"
+                type="password"
                     {...attrs}
                     {...this.props.evts}
-            value = {this.state.value}
-            onChange={this.handleChange}
-            ref = "InputField"
-            hasFeedback
+                value = {this.state.value}
+                onChange={this.handleChange}
+                onBlur = {this.handleBlur}
+                ref = "InputField"
+                hasFeedback
             />
         );
     }
@@ -349,10 +358,10 @@ var InputPasswordEditable = React.createClass({
             }
             retour =
                 <InputPassword
-                attributes = {attrs}
-                evts = {this.props.evts}
-                ref="Editable"
-                gestMod={this.props.gestMod}
+                    attributes = {attrs}
+                    evts = {this.props.evts}
+                    ref="Editable"
+                    gestMod={this.props.gestMod}
                 />
         }
         // Non editable
@@ -377,8 +386,7 @@ var InputPasswordEditable = React.createClass({
  */
 var InputDate = React.createClass({
 
-    propTypes: {
-    },
+    propTypes: {},
     getDefaultProps: function () {
         return {}
     },
@@ -412,7 +420,9 @@ var InputDateEditable = React.createClass({
     render: function () {
         var retour;
 
-            retour = <div><Calendar/></div>;
+        retour = <div>
+            <Calendar/>
+        </div>;
 
         return retour;
     }
@@ -453,13 +463,13 @@ var InputRadio = React.createClass({
         var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
         return (
             <Input
-            type="radio"
+                type="radio"
                 {...this.props.attributes}
                 {...this.props.evts}
                 {...gestMod}
-            value = {this.state.value}
-            onChange={this.handleChange}
-            ref = "Checkable"
+                value = {this.state.value}
+                onChange={this.handleChange}
+                ref = "Checkable"
             />
         );
     }
@@ -496,10 +506,10 @@ var InputRadioEditable = React.createClass({
         }
         //console.log(attr);
         return <InputRadio
-        attributes = {attr}
-        evts = {this.props.evts}
-        ref="Editable"
-        gestMod={this.props.gestMod}
+            attributes = {attr}
+            evts = {this.props.evts}
+            ref="Editable"
+            gestMod={this.props.gestMod}
         />
     }
 });
@@ -537,7 +547,7 @@ var InputRadioBootstrap = React.createClass({
         var classBtn = 'btn btn-default';
 
         return (
-            <label {...this.props.evts} {...this.props.attributes} className={classBtn+' '+this.props.attributes.className}>
+            <label {...this.props.evts} {...this.props.attributes} className={classBtn + ' ' + this.props.attributes.className}>
                 <input {...gestMod} type="radio" name={this.props.name} />{this.props.children}
             </label>
         );
@@ -572,15 +582,15 @@ var InputRadioBootstrapEditable = React.createClass({
         // Editable
         if (!this.props.editable) {
             attr = _.extend(attr, {disabled: true});
-        }else{
+        } else {
             attr = _.extend(attr, {disabled: false});
         }
 
         return <InputRadioBootstrap
-        attributes = {attr}
-        evts = {this.props.evts}
-        ref="Editable"
-        gestMod={this.props.gestMod} >
+            attributes = {attr}
+            evts = {this.props.evts}
+            ref="Editable"
+            gestMod={this.props.gestMod} >
                     {this.props.children}
         </InputRadioBootstrap>
     }
@@ -618,13 +628,13 @@ var InputCheckbox = React.createClass({
         var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
         return (
             <Input
-            type="checkbox"
+                type="checkbox"
                 {...this.props.attributes}
                 {...this.props.evts}
                 {...gestMod}
-            value = {this.state.value}
-            onChange={this.handleChange}
-            ref = "Checkable"
+                value = {this.state.value}
+                onChange={this.handleChange}
+                ref = "Checkable"
             />
         );
     }
@@ -661,10 +671,10 @@ var InputCheckboxEditable = React.createClass({
         }
         //console.log(attr);
         return <InputCheckbox
-        attributes = {attr}
-        evts = {this.props.evts}
-        ref="Editable"
-        gestMod={this.props.gestMod}
+            attributes = {attr}
+            evts = {this.props.evts}
+            ref="Editable"
+            gestMod={this.props.gestMod}
         />
     }
 });

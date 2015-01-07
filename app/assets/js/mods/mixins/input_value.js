@@ -17,7 +17,23 @@ var InputValueMixin = {
         // MISE À JOUR DE L'ÉTAT DU COMPOSANT
         this.setState({attributes: attrs, value: val});
 
-        // y. DÉCLENCHEMENT DE LA VALIDATION MÉTIER (AU NIVEAU DU FORMULAIRE)
+        // ONCHANGE DEV EXISTE
+        if (this.props.evts.onChange !== undefined) {
+            this.props.evts.onChange(e);
+        }
+    },
+    handleBlur: function (e) {
+        console.log('Pass handleBlur mixin');
+        // 1. RÉCUPÉRATION DE LA VALUE
+        var val = this.refs.InputField.getValue();
+
+        // CRÉATION DES ATTRIBUTS POUR LE STATE
+        var attrs = this.getStateAttributes(val);
+
+        // MISE À JOUR DE L'ÉTAT DU COMPOSANT
+        this.setState({attributes: attrs, value: val});
+
+        // y. DÉCLENCHEMENT DE LA VALIDATION MÉTIER (AU NIVEAU DU FORMULAIRE) SI CHAMP VALIDE
         if (attrs['data-valid']) {
             Actions.validation.form_field_changed({
                 name: this.props.attributes.name,
@@ -26,9 +42,9 @@ var InputValueMixin = {
             });
         }
 
-        // ONCHANGE DEV EXISTE
-        if (this.props.evts.onChange !== undefined) {
-            this.props.evts.onChange(e);
+        // ONBLUR DEV EXISTE
+        if (this.props.evts.onBlur !== undefined) {
+            this.props.evts.onBlur(e);
         }
     },
     getInitialState: function () {
@@ -60,13 +76,13 @@ var InputValueMixin = {
     },
 
     getStateAttributes: function (val) {
-        var attrs = {}
+        var attrs = {};
 
         // 1. MERGE ATTRS AVEC GESTION MODIF
         attrs = _.merge((this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {}), attrs);
 
         // 2. VALIDATION VALUE
-        var validation = this.props.validator(val);
+        var validation = this.props.validator(val, this.props, this.state);
 
         // 3. ATTR DATA-VALID
         attrs = _.merge({'data-valid': validation.isValid}, attrs);

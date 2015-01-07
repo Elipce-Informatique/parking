@@ -36,6 +36,7 @@ Voulez-vous vraiment quitter cette page ?',
     'validation_erreur_pass' => 'Le mot de passe doit faire 6 caractères de long et contenir des chiffres et des lettres',
     'validation_erreur_mail' => 'L\'e-mail saisi n\'est pas valide',
     'validation_erreur_date' => 'Format de date incorrect (JJ/MM/AA)',
+    'form_incorrect' => 'Formulaire invalide',
 
 
     // BOUTONS

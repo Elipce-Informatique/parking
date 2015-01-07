@@ -43,7 +43,9 @@
      |--------------------------------------------------------------------------
      */
     global.Actions.validation = Reflux.createActions([
-        "form_field_changed"
+        "form_field_changed",
+        "verify_form_save",
+        "submit_form"
     ]);
 
     /*

@@ -27,7 +27,7 @@ var BandeauEdition = React.createClass({
         return {
             sousTitre: "",
             onRetour: Actions.bandeau.retour,
-            onSauvegarder: Actions.bandeau.sauvegarder
+            onSauvegarder: Actions.validation.verify_form_save
         };
     },
 

@@ -120,7 +120,7 @@ var pageUserStore = Reflux.createStore({
         this.listenTo(Actions.utilisateur.display_user, this.modeVisu);
         this.listenTo(Actions.bandeau.creer, this.modeCreation);
         this.listenTo(Actions.bandeau.editer, this.modeEdition);
-        this.listenTo(Actions.bandeau.sauvegarder, this.sauvegarder);
+        this.listenTo(Actions.validation.submit_form, this.sauvegarder);
         this.listenTo(storeFicheUser, this.setDataUser);
         this.listenTo(Actions.bandeau.supprimer, this.supprimer);
 
