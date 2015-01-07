@@ -66,6 +66,7 @@ Voulez-vous vraiment quitter cette page ?',
 
     // FORMULAIRE
     'select' => 'Sélection...',
+    'saisieNumber' => 'La saisie doit être entre [min] et [max]',
 
     /*
     |--------------------------------------------------------------------------

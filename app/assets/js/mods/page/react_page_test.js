@@ -16,6 +16,7 @@ var InputRadioBootstrapEditable = Field.InputRadioBootstrapEditable;
 var InputCheckboxEditable       = Field.InputCheckboxEditable;
 var InputDateEditable           = Field.InputDateEditable;
 var InputSelectEditable         = Field.InputSelectEditable;
+var InputNumberEditable         = Field.InputNumberEditable;
 
 var ReactPageTest = React.createClass({
 
@@ -127,6 +128,12 @@ var ReactPageTest = React.createClass({
             <Row id="Select">
                 <Col md={6}>
                     <InputSelectEditable multi={true} evts={{onChange:selectChange}} attributes={{label:'Select', name:"Select", selectCol:5,labelCol:1}} data={options} editable={true} selectedValue={['2']} placeholder={'PlaceHolder...'}/>
+                </Col>
+            </Row>
+
+            <Row id="Input number">
+                <Col md={6}>
+                    <InputNumberEditable min={-10} max={10} step={0.01} attributes={{label:'Input number -10 to 10', name:"InputNumber", value:5, inputCol:3,labelCol:4}} editable={true} />
                 </Col>
             </Row>
         </div>;

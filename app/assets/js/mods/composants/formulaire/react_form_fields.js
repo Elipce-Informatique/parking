@@ -17,5 +17,7 @@ module.exports = {
     InputDate: Input.InputDate,
     InputDateEditable: Input.InputDateEditable,
     InputSelect: Input.InputSelect,
-    InputSelectEditable: Input.InputSelectEditable
+    InputSelectEditable: Input.InputSelectEditable,
+    InputNumber: Input.InputNumber,
+    InputNumberEditable: Input.InputNumberEditable
 };
