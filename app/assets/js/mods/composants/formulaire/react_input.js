@@ -964,14 +964,11 @@ function modeEditableFalse(attr) {
 }
 
 function addRequiredAddon(attrs, value) {
-    if(value.length == 0) {
-        return _.merge(attrs, {
-            addonAfter: <OverlayTrigger placement="top" overlay={<Tooltip>
-                <strong>{Lang.get('global.champ_obligatoire')}</strong>
-            </Tooltip>}>
-                <Glyphicon glyph="asterisk" />
-            </OverlayTrigger>
-        });
-    }
-    return attrs;
+    return _.merge(attrs, {
+        addonBefore: <OverlayTrigger placement="top" overlay={<Tooltip>
+            {Lang.get('global.champ_obligatoire')}
+        </Tooltip>}>
+            <Glyphicon glyph="asterisk" />
+        </OverlayTrigger>
+    });
 }

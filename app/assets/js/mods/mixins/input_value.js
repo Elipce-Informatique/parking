@@ -24,7 +24,7 @@ var InputValueMixin = {
         }
     },
     handleBlur: function (e) {
-        console.log('Pass handleBlur mixin');
+
         // 1. RÉCUPÉRATION DE LA VALUE
         var val = this.refs.InputField.getValue();
 

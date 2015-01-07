@@ -12,7 +12,7 @@ var storeVerif = Reflux.createStore({
         // Register statusUpdate action
         this.listenTo(Actions.validation.verify_form_save, this.triggerValidation);
     },
-    triggerValidation: function(data){
+    triggerValidation: function (data) {
         console.log('Pass trigger store verif');
         this.trigger(data);
     }
@@ -33,7 +33,6 @@ var FormValidationMixin = {
      * @param data
      */
     verifyForm: function (data) {
-        console.log('Pass verify form');
 
         // Récupération du formulaire
         var $form = $(this.getDOMNode());
