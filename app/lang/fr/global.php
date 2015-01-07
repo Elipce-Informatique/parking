@@ -67,7 +67,8 @@ Voulez-vous vraiment quitter cette page ?',
 
     // FORMULAIRE
     'select' => 'Sélection...',
-    'saisieNumber' => 'La saisie doit être entre [min] et [max]',
+    'saisieNumber' => 'La saisie doit être entre [min] et [max], et par pas de [pas]',
+    'inputTelError' => 'Numéro incorrect',
 
     /*
     |--------------------------------------------------------------------------

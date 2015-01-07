@@ -17,6 +17,7 @@ var InputCheckboxEditable       = Field.InputCheckboxEditable;
 var InputDateEditable           = Field.InputDateEditable;
 var InputSelectEditable         = Field.InputSelectEditable;
 var InputNumberEditable         = Field.InputNumberEditable;
+var InputTelEditable            = Field.InputTelEditable;
 
 var ReactPageTest = React.createClass({
 
@@ -80,6 +81,12 @@ var ReactPageTest = React.createClass({
                 </Col>
             </Row>
 
+            <Row id="Champ_texte_area">
+                <Col md={12}>
+                    <InputTextEditable area={true} attributes={{label:'InputTextEditableArea', name:"InputTextEditableArea", value:'InputTextEditableArea', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={true} />
+                </Col>
+            </Row>
+
             <Row id="Champ_mail">
                 <Col md={12}>
                     <InputMailEditable attributes={{label:'InputMailEditable', name:"InputMailEditable", value:'InputMailEditable', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={true} />
@@ -89,6 +96,24 @@ var ReactPageTest = React.createClass({
             <Row id="Champ_password">
                 <Col md={12}>
                     <InputPasswordEditable attributes={{label:'InputPasswordEditable', name:"InputPasswordEditable", value:"InputPasswordEditable", wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={true} />
+                </Col>
+            </Row>
+
+            <Row id="Select">
+                <Col md={6}>
+                    <InputSelectEditable multi={true} evts={{onChange:selectChange}} attributes={{label:'Select', name:"Select", selectCol:5,labelCol:4}} data={options} editable={true} selectedValue={['2']} placeholder={'PlaceHolder...'}/>
+                </Col>
+            </Row>
+
+            <Row id="Input number">
+                <Col md={6}>
+                    <InputNumberEditable min={-10} max={10} step={0.01} attributes={{label:'Input number', name:"InputNumber", value:5, wrapperClassName:'col-md-5',labelClassName:'col-md-4',groupClassName:'row'}} editable={true} />
+                </Col>
+            </Row>
+
+            <Row id="Input number">
+                <Col md={6}>
+                    <InputTelEditable attributes={{label:'Input tel', name:"InputTel", value:'0475757575', wrapperClassName:'col-md-5',labelClassName:'col-md-4',groupClassName:'row'}} editable={true} />
                 </Col>
             </Row>
 
@@ -122,18 +147,6 @@ var ReactPageTest = React.createClass({
                 </Col>
                 <Col md={1}>
                     <InputCheckboxEditable key={'bt1'} editable={true} />
-                </Col>
-            </Row>
-
-            <Row id="Select">
-                <Col md={6}>
-                    <InputSelectEditable multi={true} evts={{onChange:selectChange}} attributes={{label:'Select', name:"Select", selectCol:5,labelCol:1}} data={options} editable={true} selectedValue={['2']} placeholder={'PlaceHolder...'}/>
-                </Col>
-            </Row>
-
-            <Row id="Input number">
-                <Col md={6}>
-                    <InputNumberEditable min={-10} max={10} step={0.01} attributes={{label:'Input number -10 to 10', name:"InputNumber", value:5, inputCol:3,labelCol:4}} editable={true} />
                 </Col>
             </Row>
         </div>;

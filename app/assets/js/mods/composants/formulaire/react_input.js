@@ -8,17 +8,12 @@ var Glyphicon = ReactB.Glyphicon
 var MixinInput        = require('../../mixins/input_value');
 var MixinInputValue   = MixinInput.InputValueMixin;
 var MixinInputChecked = MixinInput.InputCheckableMixin;
-var NumberPickerMixin = MixinInput.NumberPickerMixin;
 var Validator = require('validator');
 
 /***********************/
 /* Composants Boostrap */
 var Row = ReactB.Row;
 var Col = ReactB.Col;
-
-/***************************/
-/* Composant React Widgets */
-var NumberPicker = ReactW.NumberPicker;
 
 /**
  * Champ texte
@@ -40,6 +35,7 @@ var InputText = React.createClass({
         evts: React.PropTypes.object,
         onChange: React.PropTypes.func,
         gestMod: React.PropTypes.bool,
+        area: React.PropTypes.bool,
         validator: React.PropTypes.func
     },
 
@@ -49,6 +45,7 @@ var InputText = React.createClass({
             evts: {},
             onChange: this.handleChange,
             gestMod: true,
+            area:false,
             validator: function (val, props, state) {
                 if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
                     return {isValid: false, style: 'default', tooltip: ''};
@@ -74,8 +71,12 @@ var InputText = React.createClass({
         }
 
         // 4. ATTRS OK, CREATION INPUT
+        var type = "text";
+        if(this.props.area == true)
+            type = "textarea";
+
         retour = (<Input
-            type="text"
+            type={type}
         {...attrs}
         {...this.props.evts}
             onChange = {this.handleChange}
@@ -108,6 +109,7 @@ var InputTextEditable = React.createClass({
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool,
+        area: React.PropTypes.bool,
         validator: React.PropTypes.func
     },
 
@@ -115,7 +117,8 @@ var InputTextEditable = React.createClass({
         return {
             attributes: {},
             evts: {},
-            gestMod: true
+            gestMod: true,
+            area:false
         }
     },
 
@@ -130,6 +133,7 @@ var InputTextEditable = React.createClass({
                     evts       = {this.props.evts}
                     ref        = "Editable"
                     gestMod    = {this.props.gestMod}
+                    area       = {this.props.area}
                     validator  = {this.props.validator}
                 />
             }
@@ -139,6 +143,7 @@ var InputTextEditable = React.createClass({
                     evts       = {this.props.evts}
                     ref        = "Editable"
                     gestMod    = {this.props.gestMod}
+                    area       = {this.props.area}
                 />
             }
         }
@@ -549,16 +554,25 @@ var InputNumber = React.createClass({
             gestMod: true,
             onChange: this.handleChange,
             validator: function (val, props, state) {
+
+                /* Pour résoudre le problème de float accuracy */
+                var resModulo = (val/props.step).toFixed(1);
+                var test = resModulo + '';
+                var aTest = test.split('.');
+
                 /* Champ vide */
                 if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
                 /* Valeur non correct */
-                else if(val < props.min || val > props.max){
-                    var tooltip = Lang.get('global.profils');
+                else if(val < props.min || val > props.max || aTest[1] != 0){
+                    var tooltip = Lang.get('global.saisieNumber');
                     tooltip = tooltip.replace('[min]', props.min);
                     tooltip = tooltip.replace('[max]', props.max);
-                    return {isValid: true, style: 'error', tooltip: tooltip};
+                    var step = props.step + '';
+                    step = step.replace('.', ',');
+                    tooltip = tooltip.replace('[pas]', props.step);
+                    return {isValid: false, style: 'error', tooltip: tooltip};
                 }
                 /* Valeur correct */
                 else {
@@ -628,13 +642,143 @@ var InputNumberEditable = React.createClass({
     render: function () {
         var retour;
         // Editable
-        if (this.props.editable) {
+        if (this.props.editable) {// 4. ATTRS OK, CREATION INPUT
             retour = <InputNumber
                 defaultValue = {this.props.attributes.value}
                 attributes = {this.props.attributes}
                 min        = {this.props.min}
                 max        = {this.props.max}
                 step       = {this.props.step}
+                evts       = {this.props.evts}
+                ref        = "Editable"
+                gestMod    = {this.props.gestMod}
+            />
+        }
+        // Non editable
+        else
+            retour = modeEditableFalse(this.props.attributes);
+
+        return retour;
+    }
+});
+
+
+/**
+ * Champ nombre
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ * {
+ *      isValid: false|true
+ *      tooltip: 'La donnée saisie est déjà présente dans la base de données.' | ''
+ *      style: 'success|warning|error|default',
+ * }
+ */
+var InputTel = React.createClass({
+    mixins: [MixinInputValue],
+
+    propTypes: {
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        gestMod: React.PropTypes.bool,
+        onChange: React.PropTypes.func
+    },
+
+    getDefaultProps: function () {
+        return {
+            attributes: {},
+            evts: {},
+            gestMod: true,
+            onChange: this.handleChange,
+            validator: function (val, props, state) {
+
+                console.log('val : %o',val);
+
+                var tel = val+'';
+                var telSansEspace = tel.replace(' ', '');
+                telSansEspace     = telSansEspace.replace('+', '');
+                var bool = !isNaN(telSansEspace);
+
+                /* Champ vide */
+                if (val.length == 0) {
+                    console.log('1');
+                    return {isValid: true, style: 'default', tooltip: ''};
+                }
+                /* Valeur non correct */
+                else if(!bool){
+                    console.log('2');
+                    return {isValid: false, style: 'error', tooltip: Lang.get('global.inputTelError')};
+                }
+                /* Valeur correct */
+                else {
+                    console.log('3');
+                    return {isValid: true, style: 'success', tooltip: ''};
+                }
+            }
+        };
+    },
+
+    // ATTENTION: getInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
+
+    render: function () {
+
+        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
+        var attrs = this.props.attributes;
+        attrs = _.merge(this.state.attributes, this.props.attributes);
+
+        // 4. ATTRS OK, CREATION INPUT
+        retour = <Input
+            type="tel"
+            {...attrs}
+            {...this.props.evts}
+            onChange = {this.handleChange}
+            value={this.state.value}
+            ref = "InputField"
+            hasFeedback
+        />;
+
+        return retour;
+    }
+});
+
+
+/**
+ * Champ texte editable => si pas editable INPUT devient LABEL.
+ * @param editable: (bool) Si true alors INPUT sinon LABEL
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ * {
+ *      isValid: false|true
+ *      style: 'success|warning|error|default',
+ *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
+ * }
+ */
+var InputTelEditable = React.createClass({
+
+    propTypes: {
+        editable: React.PropTypes.bool.isRequired,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        gestMod: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+        return {
+            attributes: {value:''},
+            evts: {},
+            gestMod: true
+        }
+    },
+
+    render: function () {
+        var retour;
+        // Editable
+        if (this.props.editable) {// 4. ATTRS OK, CREATION INPUT
+            retour = <InputTel
+                defaultValue = {this.props.attributes.value}
+                attributes = {this.props.attributes}
                 evts       = {this.props.evts}
                 ref        = "Editable"
                 gestMod    = {this.props.gestMod}
@@ -910,8 +1054,8 @@ module.exports.InputRadioBootstrap = InputRadioBootstrap;
 module.exports.InputRadioBootstrapEditable = InputRadioBootstrapEditable;
 module.exports.InputCheckbox = InputCheckbox;
 module.exports.InputCheckboxEditable = InputCheckboxEditable;
-//module.exports.InputDateEditable = InputDateEditable;
-//module.exports.InputDate = InputDate;
+module.exports.InputTelEditable = InputTelEditable;
+module.exports.InputTel = InputTel;
 module.exports.InputSelect = InputSelect;
 module.exports.InputSelectEditable = InputSelectEditable;
 module.exports.InputNumber = InputNumber;
