@@ -1,14 +1,14 @@
-var Input = ReactB.Input;
+var Input          = ReactB.Input;
 var OverlayTrigger = ReactB.OverlayTrigger;
-var Tooltip = ReactB.Tooltip;
-var Glyphicon = ReactB.Glyphicon
+var Tooltip        = ReactB.Tooltip;
+var Glyphicon      = ReactB.Glyphicon;
 
 /*********/
 /* Mixin */
-var MixinInput = require('../../mixins/input_value');
-var MixinInputValue = MixinInput.InputValueMixin;
+var MixinInput        = require('../../mixins/input_value');
+var MixinInputValue   = MixinInput.InputValueMixin;
 var MixinInputChecked = MixinInput.InputCheckableMixin;
-var Validator = require('validator');
+var Validator         = require('validator');
 
 /***********************/
 /* Composants Boostrap */
@@ -19,6 +19,7 @@ var Col = ReactB.Col;
  * Champ texte
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param area: bool, input type area ou non, false par défaut
  * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
@@ -96,6 +97,7 @@ var InputText = React.createClass({
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param area: bool, input type area ou non, false par défaut
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -347,7 +349,7 @@ var InputPassword = React.createClass({
 });
 
 /**
- * Champ texte editable => si pas editable INPUT devient LABEL.
+ * Champ mot de passe => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
@@ -1045,9 +1047,12 @@ var InputCheckboxEditable = React.createClass({
     render: function () {
         var attr = this.props.attributes;
         // Editable
-        if (this.props.editable) {
-            attr = _.extend(attr, {readOnly: true});
+        if (!this.props.editable) {
+            attr = _.extend(attr, {disabled: true});
+        } else {
+            attr = _.extend(attr, {disabled: false});
         }
+
         //console.log(attr);
         return <InputCheckbox
             attributes = {attr}
