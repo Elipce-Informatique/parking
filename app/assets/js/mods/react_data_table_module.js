@@ -86,12 +86,10 @@ function libelleChange(value, edit){
 }
 
 function libelleEditChange(value){
-    console.log('libelleEditChange');
     return libelleChange(value, true);
 }
 
 function libelleCreateChange (value){
-    console.log('libelleCreateChange');
     return libelleChange(value, false);
 }
 
@@ -103,9 +101,10 @@ var Form              = Field.Form;
 
 var AuthentMixins        = require('./mixins/component_access');
 var DataTable            = require('./composants/tableau/react_data_table');
+var FormValidationMixin  = require('./mixins/form_validation');
 var DataTableModuleReact = React.createClass({
 
-    mixins: [Reflux.ListenerMixin,AuthentMixins],
+    mixins: [Reflux.ListenerMixin,AuthentMixins, FormValidationMixin],
 
     propTypes: {
         head:          React.PropTypes.array.isRequired,
@@ -135,7 +134,7 @@ var DataTableModuleReact = React.createClass({
     },
 
     getInitialState: function(){
-        return {data:[], nameProfil:''};
+        return {data:[], nameProfil:'', retour: {}};
     },
 
     /**
@@ -154,13 +153,25 @@ var DataTableModuleReact = React.createClass({
 
         /* Met à jour les données */
         Actions.profil.module_update();
+        Actions.profil.set_etat_create_edit((this.props.nameProfil==''?true:false));
     },
 
     render: function() {
         firstPass = true;
-        var functionLibelleChange = (this.props.nameProfil==''?libelleCreateChange:libelleEditChange);
-        return <Form ref="form">
-                    <InputTextEditable ref="libelle" validator={functionLibelleChange} attributes={{label:Lang.get('global.profils'), name:"libelle", value:this.props.nameProfil, wrapperClassName:'col-md-4',labelClassName:'col-md-1',groupClassName:'row'}} editable={this.props.editable} />
+
+        var attrs = {label:Lang.get('global.profils'), name:"libelle", value:this.props.nameProfil, wrapperClassName:'col-md-4',labelClassName:'col-md-1',groupClassName:'row'};
+
+        console.log('this.state.retour : %o', this.state.retour);
+        if(this.state.retour.style != undefined ){
+            console.log('Coucou');
+            var attrs2  = {bsStyle:this.state.retour.style, 'data-valid':this.state.retour.isValid, help:this.state.retour.tooltip};
+            attrs       = _.merge(attrs, attrs2);
+            attrs.value = this.state.retour.value;
+            console.log('attrs : %o', attrs);
+        }
+
+        return <Form ref="form_profil">
+                    <InputTextEditable key='libKey' ref="libelle" attributes={attrs} editable={this.props.editable} />
                     <DataTable id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} reactElements={this.props.reactElements} editable={this.props.editable}/>
                 </Form>;
     },
@@ -171,6 +182,7 @@ var DataTableModuleReact = React.createClass({
      * @returns {undefined}
      */
     updateModule: function(data) {
+        console.log('Trigger');
         // MAJ data automatique, lifecycle "UPDATE"
         this.setState(data);
     }
@@ -183,12 +195,15 @@ module.exports.composant = DataTableModuleReact;
 /****************************************************************/
 var moduleStore = Reflux.createStore({
     idProfil:0,
+    modeCreate:true,
 
     // Initial setup
     init: function() {
         /* Charge les données du tableau module à chaque évènement "profil_select" */
-        this.listenTo(Actions.profil.module_update, this.updateModule);
-        this.listenTo(Actions.profil.setIdProfil,   this.setIdProfil);
+        this.listenTo(Actions.profil.module_update,          this.updateModule);
+        this.listenTo(Actions.profil.setIdProfil,            this.setIdProfil);
+        this.listenTo(Actions.validation.form_field_changed, this.libelleChange);
+        this.listenTo(Actions.profil.set_etat_create_edit,   this.setEtatCreateEdit);
     },
 
     /* Charge les données tout seul au début */
@@ -217,6 +232,25 @@ var moduleStore = Reflux.createStore({
                 this.trigger({data:[]});
             }
         });
+    },
+
+    setEtatCreateEdit: function(modeCreate_P){
+        this.modeCreate = modeCreate_P;
+    },
+
+    libelleChange:function(e){
+        console.log('e : %o', e);
+        var retour = {};
+
+        if(e.name == 'libelle'){
+            if(this.modeCreate)
+                retour = libelleCreateChange(e.value);
+            else
+                retour = libelleEditChange(e.value);
+            retour = _.merge(retour, {value:e.value});
+        }
+
+        this.trigger({retour:retour});
     },
 
     setIdProfil: function(idProfil_P){

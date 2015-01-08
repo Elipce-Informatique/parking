@@ -64,8 +64,7 @@ var InputText = React.createClass({
 
     render: function () {
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var attrs = this.props.attributes;
-        attrs = _.merge(this.state.attributes, this.props.attributes);
+        var attrs = _.merge(this.state.attributes, this.props.attributes);
 
         // Ajout de l'addon required si besoin
         if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
@@ -77,17 +76,16 @@ var InputText = React.createClass({
         if(this.props.area == true)
             type = "textarea";
 
-        retour = (<Input
+        return (<Input
             type={type}
-        {...attrs}
-        {...this.props.evts}
+            {...attrs}
+            {...this.props.evts}
             onChange = {this.handleChange}
             onBlur = {this.handleBlur}
             value={this.state.value}
             ref = "InputField"
             hasFeedback
         />);
-        return retour;
     }
 });
 
@@ -196,8 +194,7 @@ var InputMail = React.createClass({
 
     render: function () {
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var attrs = this.props.attributes;
-        attrs = _.merge(this.state.attributes, this.props.attributes);
+        var attrs = _.merge(this.state.attributes, this.props.attributes);
 
         // Ajout de l'addon required si besoin
         if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
@@ -325,8 +322,7 @@ var InputPassword = React.createClass({
 
     render: function () {
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var attrs = this.props.attributes;
-        attrs = _.merge(this.state.attributes, this.props.attributes);
+        var attrs = _.merge(this.state.attributes, this.props.attributes);
 
         // Ajout de l'addon required si besoin
         if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
@@ -435,6 +431,7 @@ var InputSelect = React.createClass({
     // ATTENTION: getInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
     render: function () {
+        console.log('this.props.evts : %o', this.props.evts);
 
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
         //var attrs = this.props.attributes;
@@ -451,9 +448,11 @@ var InputSelect = React.createClass({
                     options={this.props.data}
                     placeholder={this.props.placeholder}
                     multi={this.props.multi}
-                            {...this.props.attributes}
-                            {...this.props.evts}
+                    {...this.props.attributes}
+                    {...this.props.evts}
                     matchProp="label"
+                    ref = "InputField"
+                    hasFeedback
                 />
             </Col>
         </Row>;
@@ -513,11 +512,10 @@ var InputSelectEditable = React.createClass({
 
             /* Récupère les valeurs depuis les datas en mode non éditable */
             var attrs = this.props.attributes;
-            var indice = 0;
             var that = this;
             var firstPassage = true;
             attrs.value = '';
-            _.each(this.props.selectedValue, function (val, key) {
+            _.each(this.props.selectedValue, function (val) {
                 if (firstPassage == false)
                     attrs.value += ', ';
                 attrs.value += that.props.data[val]['label'];
@@ -584,7 +582,7 @@ var InputNumber = React.createClass({
                     tooltip = tooltip.replace('[max]', props.max);
                     var step = props.step + '';
                     step = step.replace('.', ',');
-                    tooltip = tooltip.replace('[pas]', props.step);
+                    tooltip = tooltip.replace('[pas]', step);
                     return {isValid: false, style: 'error', tooltip: tooltip};
                 }
                 /* Valeur correct */
@@ -600,8 +598,7 @@ var InputNumber = React.createClass({
     render: function () {
 
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var attrs = this.props.attributes;
-        attrs = _.merge(this.state.attributes, this.props.attributes);
+        var attrs = _.merge(this.state.attributes, this.props.attributes);
 
         // Ajout de l'addon required si besoin
         if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
@@ -609,7 +606,7 @@ var InputNumber = React.createClass({
         }
 
         // 4. ATTRS OK, CREATION INPUT
-        retour = <Input
+        return <Input
             type="number"
             step={this.props.step}
             {...attrs}
@@ -619,8 +616,6 @@ var InputNumber = React.createClass({
             ref = "InputField"
             hasFeedback
         />;
-
-        return retour;
     }
 });
 
@@ -711,26 +706,21 @@ var InputTel = React.createClass({
             onChange: this.handleChange,
             validator: function (val, props, state) {
 
-                console.log('val : %o',val);
-
                 var tel = val+'';
-                var telSansEspace = tel.replace(' ', '');
-                telSansEspace     = telSansEspace.replace('+', '');
-                var bool = !isNaN(telSansEspace);
+                var telSansEspace = tel.replace(/ /g, '').replace(/\+/g, '');
+                var telNumber = telSansEspace*1;
+                var bool      = !isNaN(telNumber);
 
                 /* Champ vide */
                 if (val.length == 0) {
-                    console.log('1');
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
                 /* Valeur non correct */
                 else if(!bool){
-                    console.log('2');
                     return {isValid: false, style: 'error', tooltip: Lang.get('global.inputTelError')};
                 }
                 /* Valeur correct */
                 else {
-                    console.log('3');
                     return {isValid: true, style: 'success', tooltip: ''};
                 }
             }
@@ -742,11 +732,10 @@ var InputTel = React.createClass({
     render: function () {
 
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var attrs = this.props.attributes;
-        attrs = _.merge(this.state.attributes, this.props.attributes);
+        var attrs = _.merge(this.state.attributes, this.props.attributes);
 
         // 4. ATTRS OK, CREATION INPUT
-        retour = <Input
+        return <Input
             type="tel"
             {...attrs}
             {...this.props.evts}
@@ -755,8 +744,6 @@ var InputTel = React.createClass({
             ref = "InputField"
             hasFeedback
         />;
-
-        return retour;
     }
 });
 

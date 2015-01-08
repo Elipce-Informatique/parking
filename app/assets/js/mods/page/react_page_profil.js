@@ -233,13 +233,13 @@ var pageProfilStore = Reflux.createStore({
 
     // Initial setup
     init: function() {
-        this.listenTo(Actions.profil.profil_select, this.profilSelect);
-        this.listenTo(Actions.profil.initMatrice,   this.initMatrice);
-        this.listenTo(Actions.bandeau.creer,        this.createProfil);
-        this.listenTo(Actions.bandeau.editer,       this.editProfil);
-        this.listenTo(Actions.bandeau.supprimer,    this.supprProfil);
-        this.listenTo(Actions.bandeau.sauvegarder,  this.saveProfil);
-        this.listenTo(Actions.profil.radio_change,  this.radioChange);
+        this.listenTo(Actions.profil.profil_select,   this.profilSelect);
+        this.listenTo(Actions.profil.initMatrice,     this.initMatrice);
+        this.listenTo(Actions.bandeau.creer,          this.createProfil);
+        this.listenTo(Actions.bandeau.editer,         this.editProfil);
+        this.listenTo(Actions.bandeau.supprimer,      this.supprProfil);
+        this.listenTo(Actions.validation.submit_form, this.saveProfil);
+        this.listenTo(Actions.profil.radio_change,    this.radioChange);
     },
 
     getInitialState:function(){
