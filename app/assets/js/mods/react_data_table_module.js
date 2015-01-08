@@ -95,9 +95,9 @@ function libelleCreateChange (value){
 
 /*********************************************/
 /* Composant input pour le libelle du profil */
-var Field     = require('./composants/formulaire/react_form_fields');
-var InputText = Field.InputTextEditable;
-var Form      = Field.Form;
+var Field             = require('./composants/formulaire/react_form_fields');
+var InputTextEditable = Field.InputTextEditable;
+var Form              = Field.Form;
 
 var AuthentMixins        = require('./mixins/component_access');
 var DataTable            = require('./composants/tableau/react_data_table');
@@ -161,17 +161,14 @@ var DataTableModuleReact = React.createClass({
 
         var attrs = {label:Lang.get('global.profils'), required:true, name:"libelle", value:this.props.nameProfil, wrapperClassName:'col-md-4',labelClassName:'col-md-1',groupClassName:'row'};
 
-        console.log('this.state.retour : %o', this.state.retour);
         if(this.state.retour.style != undefined ){
-            console.log('Coucou');
             var attrs2  = {bsStyle:this.state.retour.style, 'data-valid':this.state.retour.isValid, help:this.state.retour.tooltip};
             attrs       = _.merge(attrs, attrs2);
             attrs.value = this.state.retour.value;
-            console.log('attrs : %o', attrs);
         }
 
         return <Form ref="form_profil">
-                    <InputText key='libKey' ref="libelle" attributes={attrs} editable={this.props.editable} />
+                    <InputTextEditable key='libKey' ref="libelle" attributes={attrs} editable={this.props.editable} />
                     <DataTable id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} reactElements={this.props.reactElements} editable={this.props.editable}/>
                 </Form>;
     },
@@ -182,7 +179,6 @@ var DataTableModuleReact = React.createClass({
      * @returns {undefined}
      */
     updateModule: function(data) {
-        console.log('Trigger');
         // MAJ data automatique, lifecycle "UPDATE"
         this.setState(data);
     }
@@ -239,7 +235,6 @@ var moduleStore = Reflux.createStore({
     },
 
     libelleChange:function(e){
-        console.log('e : %o', e);
         var retour = {};
 
         if(e.name == 'libelle'){
