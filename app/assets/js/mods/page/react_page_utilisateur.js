@@ -60,22 +60,21 @@ var PageUser = React.createClass({
                     <div key={this.state.etat}>
                         <BandeauVisu titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom+' '+this.state.dataUser.prenom}/>
                         <FicheUser editable={false} idUser={this.state.idUser}/>
-                    </div>
-
+                    </div>;
                 break;
             case 'edition':
                 react =
                     <div key={this.state.etat}>
                         <BandeauEdition mode={1} titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom+' '+this.state.dataUser.prenom}/>
                         <FicheUser editable={true} idUser={this.state.idUser}/>
-                    </div>
+                    </div>;
                 break;
             case 'creation':
                 react =
                     <div key={this.state.etat}>
                         <BandeauEdition mode={0} titre={Lang.get('administration.utilisateur.titre')}/>
                         <FicheUser editable={true} idUser={0}/>
-                    </div>
+                    </div>;
                 break;
             default:
                 react =
@@ -86,7 +85,7 @@ var PageUser = React.createClass({
                                 <DataTableBandeauUser/>
                             </Col>
                         </Row>
-                    </div>
+                    </div>;
 
                 break;
 

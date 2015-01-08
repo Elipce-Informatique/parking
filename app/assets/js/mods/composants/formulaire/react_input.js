@@ -882,7 +882,6 @@ var InputRadioEditable = React.createClass({
     }
 });
 
-
 /**
  * Champ radio
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}

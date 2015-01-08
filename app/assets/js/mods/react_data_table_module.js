@@ -95,9 +95,9 @@ function libelleCreateChange (value){
 
 /*********************************************/
 /* Composant input pour le libelle du profil */
-var Field             = require('./composants/formulaire/react_form_fields');
-var InputTextEditable = Field.InputTextEditable;
-var Form              = Field.Form;
+var Field     = require('./composants/formulaire/react_form_fields');
+var InputText = Field.InputTextEditable;
+var Form      = Field.Form;
 
 var AuthentMixins        = require('./mixins/component_access');
 var DataTable            = require('./composants/tableau/react_data_table');
@@ -159,7 +159,7 @@ var DataTableModuleReact = React.createClass({
     render: function() {
         firstPass = true;
 
-        var attrs = {label:Lang.get('global.profils'), name:"libelle", value:this.props.nameProfil, wrapperClassName:'col-md-4',labelClassName:'col-md-1',groupClassName:'row'};
+        var attrs = {label:Lang.get('global.profils'), required:true, name:"libelle", value:this.props.nameProfil, wrapperClassName:'col-md-4',labelClassName:'col-md-1',groupClassName:'row'};
 
         console.log('this.state.retour : %o', this.state.retour);
         if(this.state.retour.style != undefined ){
@@ -171,7 +171,7 @@ var DataTableModuleReact = React.createClass({
         }
 
         return <Form ref="form_profil">
-                    <InputTextEditable key='libKey' ref="libelle" attributes={attrs} editable={this.props.editable} />
+                    <InputText key='libKey' ref="libelle" attributes={attrs} editable={this.props.editable} />
                     <DataTable id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} reactElements={this.props.reactElements} editable={this.props.editable}/>
                 </Form>;
     },

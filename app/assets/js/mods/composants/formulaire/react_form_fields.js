@@ -20,7 +20,7 @@ module.exports = {
     InputSelectEditable: Input.InputSelectEditable,
     InputNumber: Input.InputNumber,
     InputNumberEditable: Input.InputNumberEditable,
-    InputTelEditable: Input.InputTel,
+    InputTel: Input.InputTel,
     InputTelEditable: Input.InputTelEditable
 
 };

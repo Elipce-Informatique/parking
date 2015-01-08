@@ -18,6 +18,7 @@ var InputDateEditable           = Field.InputDateEditable;
 var InputSelectEditable         = Field.InputSelectEditable;
 var InputNumberEditable         = Field.InputNumberEditable;
 var InputTelEditable            = Field.InputTelEditable;
+var ImageEditable = require('../react_photo');
 
 var ReactPageTest = React.createClass({
 
@@ -100,6 +101,12 @@ var ReactPageTest = React.createClass({
                 </Col>
             </Row>
 
+            <Row id="InputImageEditable">
+                <Col md={12}>
+                    <ImageEditable src='./app/assets/images/portrait_vide.gif' attributes={{name:"InputImageEditable", imgCol:4,labelCol:2}} editable={editable} />
+                </Col>
+            </Row>
+
             <Row id="Select">
                 <Col md={12}>
                     <InputSelectEditable multi={true} evts={{onChange:selectChange}} attributes={{label:'Select', name:"Select", selectCol:4,labelCol:2}} data={options} editable={editable} selectedValue={['2']} placeholder={'PlaceHolder...'}/>
@@ -112,7 +119,7 @@ var ReactPageTest = React.createClass({
                 </Col>
             </Row>
 
-            <Row id="Input number">
+            <Row id="Input tel">
                 <Col md={12}>
                     <InputTelEditable attributes={{label:'Input tel', name:"InputTel", value:'0475757575', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
                 </Col>
