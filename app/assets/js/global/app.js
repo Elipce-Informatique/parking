@@ -112,7 +112,8 @@
         "radio_change", /* Action déclenchée lors du changement d'état d'un radio bouton du tableau des modules */
         "libelle_change", /* Onchange du libelle du profil                                                        */
         "setIdProfil",
-        "initMatrice"
+        "initMatrice",
+        "set_etat_create_edit"
     ]);
 })(window);
 

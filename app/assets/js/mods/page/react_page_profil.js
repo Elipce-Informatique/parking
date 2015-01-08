@@ -238,7 +238,7 @@ var pageProfilStore = Reflux.createStore({
         this.listenTo(Actions.bandeau.creer,        this.createProfil);
         this.listenTo(Actions.bandeau.editer,       this.editProfil);
         this.listenTo(Actions.bandeau.supprimer,    this.supprProfil);
-        this.listenTo(Actions.bandeau.sauvegarder,  this.saveProfil);
+        this.listenTo(Actions.validation.submit_form, this.saveProfil);
         this.listenTo(Actions.profil.radio_change,  this.radioChange);
     },
 

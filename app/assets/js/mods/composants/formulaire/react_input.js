@@ -1,14 +1,14 @@
-var Input = ReactB.Input;
+var Input          = ReactB.Input;
 var OverlayTrigger = ReactB.OverlayTrigger;
-var Tooltip = ReactB.Tooltip;
-var Glyphicon = ReactB.Glyphicon
+var Tooltip        = ReactB.Tooltip;
+var Glyphicon      = ReactB.Glyphicon;
 
 /*********/
 /* Mixin */
-var MixinInput = require('../../mixins/input_value');
-var MixinInputValue = MixinInput.InputValueMixin;
+var MixinInput        = require('../../mixins/input_value');
+var MixinInputValue   = MixinInput.InputValueMixin;
 var MixinInputChecked = MixinInput.InputCheckableMixin;
-var Validator = require('validator');
+var Validator         = require('validator');
 
 /***********************/
 /* Composants Boostrap */
@@ -19,6 +19,7 @@ var Col = ReactB.Col;
  * Champ texte
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param area: bool, input type area ou non, false par défaut
  * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
@@ -63,8 +64,7 @@ var InputText = React.createClass({
 
     render: function () {
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var attrs = this.props.attributes;
-        attrs = _.merge(this.state.attributes, this.props.attributes);
+        var attrs = _.merge(this.state.attributes, this.props.attributes);
 
         // Ajout de l'addon required si besoin
         if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
@@ -76,17 +76,16 @@ var InputText = React.createClass({
         if(this.props.area == true)
             type = "textarea";
 
-        retour = (<Input
+        return (<Input
             type={type}
-        {...attrs}
-        {...this.props.evts}
+            {...attrs}
+            {...this.props.evts}
             onChange = {this.handleChange}
             onBlur = {this.handleBlur}
             value={this.state.value}
             ref = "InputField"
             hasFeedback
         />);
-        return retour;
     }
 });
 
@@ -96,6 +95,7 @@ var InputText = React.createClass({
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param area: bool, input type area ou non, false par défaut
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -194,8 +194,7 @@ var InputMail = React.createClass({
 
     render: function () {
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var attrs = this.props.attributes;
-        attrs = _.merge(this.state.attributes, this.props.attributes);
+        var attrs = _.merge(this.state.attributes, this.props.attributes);
 
         // Ajout de l'addon required si besoin
         if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
@@ -323,8 +322,7 @@ var InputPassword = React.createClass({
 
     render: function () {
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var attrs = this.props.attributes;
-        attrs = _.merge(this.state.attributes, this.props.attributes);
+        var attrs = _.merge(this.state.attributes, this.props.attributes);
 
         // Ajout de l'addon required si besoin
         if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
@@ -347,7 +345,7 @@ var InputPassword = React.createClass({
 });
 
 /**
- * Champ texte editable => si pas editable INPUT devient LABEL.
+ * Champ mot de passe => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
@@ -433,6 +431,7 @@ var InputSelect = React.createClass({
     // ATTENTION: getInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
     render: function () {
+        console.log('this.props.evts : %o', this.props.evts);
 
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
         //var attrs = this.props.attributes;
@@ -449,9 +448,11 @@ var InputSelect = React.createClass({
                     options={this.props.data}
                     placeholder={this.props.placeholder}
                     multi={this.props.multi}
-                            {...this.props.attributes}
-                            {...this.props.evts}
+                    {...this.props.attributes}
+                    {...this.props.evts}
                     matchProp="label"
+                    ref = "InputField"
+                    hasFeedback
                 />
             </Col>
         </Row>;
@@ -511,11 +512,10 @@ var InputSelectEditable = React.createClass({
 
             /* Récupère les valeurs depuis les datas en mode non éditable */
             var attrs = this.props.attributes;
-            var indice = 0;
             var that = this;
             var firstPassage = true;
             attrs.value = '';
-            _.each(this.props.selectedValue, function (val, key) {
+            _.each(this.props.selectedValue, function (val) {
                 if (firstPassage == false)
                     attrs.value += ', ';
                 attrs.value += that.props.data[val]['label'];
@@ -582,7 +582,7 @@ var InputNumber = React.createClass({
                     tooltip = tooltip.replace('[max]', props.max);
                     var step = props.step + '';
                     step = step.replace('.', ',');
-                    tooltip = tooltip.replace('[pas]', props.step);
+                    tooltip = tooltip.replace('[pas]', step);
                     return {isValid: false, style: 'error', tooltip: tooltip};
                 }
                 /* Valeur correct */
@@ -598,8 +598,7 @@ var InputNumber = React.createClass({
     render: function () {
 
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var attrs = this.props.attributes;
-        attrs = _.merge(this.state.attributes, this.props.attributes);
+        var attrs = _.merge(this.state.attributes, this.props.attributes);
 
         // Ajout de l'addon required si besoin
         if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
@@ -607,7 +606,7 @@ var InputNumber = React.createClass({
         }
 
         // 4. ATTRS OK, CREATION INPUT
-        retour = <Input
+        return <Input
             type="number"
             step={this.props.step}
             {...attrs}
@@ -617,8 +616,6 @@ var InputNumber = React.createClass({
             ref = "InputField"
             hasFeedback
         />;
-
-        return retour;
     }
 });
 
@@ -709,26 +706,21 @@ var InputTel = React.createClass({
             onChange: this.handleChange,
             validator: function (val, props, state) {
 
-                console.log('val : %o',val);
-
                 var tel = val+'';
-                var telSansEspace = tel.replace(' ', '');
-                telSansEspace     = telSansEspace.replace('+', '');
-                var bool = !isNaN(telSansEspace);
+                var telSansEspace = tel.replace(/ /g, '').replace(/\+/g, '');
+                var telNumber = telSansEspace*1;
+                var bool      = !isNaN(telNumber);
 
                 /* Champ vide */
                 if (val.length == 0) {
-                    console.log('1');
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
                 /* Valeur non correct */
                 else if(!bool){
-                    console.log('2');
                     return {isValid: false, style: 'error', tooltip: Lang.get('global.inputTelError')};
                 }
                 /* Valeur correct */
                 else {
-                    console.log('3');
                     return {isValid: true, style: 'success', tooltip: ''};
                 }
             }
@@ -740,11 +732,10 @@ var InputTel = React.createClass({
     render: function () {
 
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var attrs = this.props.attributes;
-        attrs = _.merge(this.state.attributes, this.props.attributes);
+        var attrs = _.merge(this.state.attributes, this.props.attributes);
 
         // 4. ATTRS OK, CREATION INPUT
-        retour = <Input
+        return <Input
             type="tel"
             {...attrs}
             {...this.props.evts}
@@ -753,8 +744,6 @@ var InputTel = React.createClass({
             ref = "InputField"
             hasFeedback
         />;
-
-        return retour;
     }
 });
 
@@ -892,7 +881,6 @@ var InputRadioEditable = React.createClass({
         />
     }
 });
-
 
 /**
  * Champ radio
@@ -1045,9 +1033,12 @@ var InputCheckboxEditable = React.createClass({
     render: function () {
         var attr = this.props.attributes;
         // Editable
-        if (this.props.editable) {
-            attr = _.extend(attr, {readOnly: true});
+        if (!this.props.editable) {
+            attr = _.extend(attr, {disabled: true});
+        } else {
+            attr = _.extend(attr, {disabled: false});
         }
+
         //console.log(attr);
         return <InputCheckbox
             attributes = {attr}

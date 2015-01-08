@@ -18,6 +18,7 @@ var InputDateEditable           = Field.InputDateEditable;
 var InputSelectEditable         = Field.InputSelectEditable;
 var InputNumberEditable         = Field.InputNumberEditable;
 var InputTelEditable            = Field.InputTelEditable;
+var ImageEditable = require('../react_photo');
 
 var ReactPageTest = React.createClass({
 
@@ -51,6 +52,7 @@ var ReactPageTest = React.createClass({
      * @returns {XML}
      */
     render: function () {
+        var editable = true;
 
         /*********************/
         /* Paramètres Select */
@@ -77,76 +79,84 @@ var ReactPageTest = React.createClass({
         return  <div>
             <Row id="Champ_texte">
                 <Col md={12}>
-                    <InputTextEditable attributes={{label:'InputTextEditable', name:"InputTextEditable", value:'InputTextEditable', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={true} />
+                    <InputTextEditable attributes={{label:'InputTextEditable', name:"InputTextEditable", value:'InputTextEditable', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
                 </Col>
             </Row>
 
             <Row id="Champ_texte_area">
                 <Col md={12}>
-                    <InputTextEditable area={true} attributes={{label:'InputTextEditableArea', name:"InputTextEditableArea", value:'InputTextEditableArea', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={true} />
+                    <InputTextEditable area={true} attributes={{label:'InputTextEditableArea', name:"InputTextEditableArea", value:'InputTextEditableArea', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
                 </Col>
             </Row>
 
             <Row id="Champ_mail">
                 <Col md={12}>
-                    <InputMailEditable attributes={{label:'InputMailEditable', name:"InputMailEditable", value:'InputMailEditable', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={true} />
+                    <InputMailEditable attributes={{label:'InputMailEditable', name:"InputMailEditable", value:'InputMailEditable', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
                 </Col>
             </Row>
 
             <Row id="Champ_password">
                 <Col md={12}>
-                    <InputPasswordEditable attributes={{label:'InputPasswordEditable', name:"InputPasswordEditable", value:"InputPasswordEditable", wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={true} />
+                    <InputPasswordEditable attributes={{label:'InputPasswordEditable', name:"InputPasswordEditable", value:"InputPasswordEditable", wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
+                </Col>
+            </Row>
+
+            <Row id="InputImageEditable">
+                <Col md={12}>
+                    <ImageEditable src='./app/assets/images/portrait_vide.gif' attributes={{name:"InputImageEditable", imgCol:4,labelCol:2}} editable={editable} />
                 </Col>
             </Row>
 
             <Row id="Select">
-                <Col md={6}>
-                    <InputSelectEditable multi={true} evts={{onChange:selectChange}} attributes={{label:'Select', name:"Select", selectCol:5,labelCol:4}} data={options} editable={true} selectedValue={['2']} placeholder={'PlaceHolder...'}/>
+                <Col md={12}>
+                    <InputSelectEditable multi={true} evts={{onChange:selectChange}} attributes={{label:'Select', name:"Select", selectCol:4,labelCol:2}} data={options} editable={editable} selectedValue={['2']} placeholder={'PlaceHolder...'}/>
                 </Col>
             </Row>
 
             <Row id="Input number">
-                <Col md={6}>
-                    <InputNumberEditable min={-10} max={10} step={0.01} attributes={{label:'Input number', name:"InputNumber", value:5, wrapperClassName:'col-md-5',labelClassName:'col-md-4',groupClassName:'row'}} editable={true} />
+                <Col md={12}>
+                    <InputNumberEditable min={-10} max={10} step={0.01} attributes={{label:'Input number', name:"InputNumber", value:5, wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
                 </Col>
             </Row>
 
-            <Row id="Input number">
-                <Col md={6}>
-                    <InputTelEditable attributes={{label:'Input tel', name:"InputTel", value:'0475757575', wrapperClassName:'col-md-5',labelClassName:'col-md-4',groupClassName:'row'}} editable={true} />
+            <Row id="Input tel">
+                <Col md={12}>
+                    <InputTelEditable attributes={{label:'Input tel', name:"InputTel", value:'0475757575', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
                 </Col>
             </Row>
 
             <Row id="Champ_radioBoostrap">
-                <Col md={12}>
+                <Col md={2}>
+                    <label>Radio Boostrap</label>
+                </Col>
+                <Col md={4}>
                     <ButtonGroup data-toggle="buttons" bsSize="xsmall">
-                        <InputRadioBootstrapEditable key={'bt1'} editable={true} attributes={{className:'active'}}>Btn 1</ InputRadioBootstrapEditable>
-                        <InputRadioBootstrapEditable key={'bt2'} editable={true}>Btn 2</ InputRadioBootstrapEditable>
+                        <InputRadioBootstrapEditable key={'bt1'} editable={editable} attributes={{className:'active'}}>Btn 1</ InputRadioBootstrapEditable>
+                        <InputRadioBootstrapEditable key={'bt2'} editable={editable}>Btn 2</ InputRadioBootstrapEditable>
                     </ButtonGroup>
                 </Col>
             </Row>
 
             <Row id="Champ_radio">
                     <Col md={2}>
-                        <p>InputRadioEditable</p>
                     </Col>
-                    <Col md={1}>
-                        <InputRadioEditable key={'bt1'} editable={true} attributes={{name:'btGroup[]', checked:'checked'}} />
+                    <Col md={10}>
+                        <InputRadioEditable key={'bt1'} editable={editable} attributes={{label:'InputRadioEditable 1', checked:true, name:"InputRadioEditable[]", wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} />
                     </Col>
+                </Row>
+                <Row >
                     <Col md={2}>
-                        <p>InputRadioEditable</p>
                     </Col>
-                    <Col md={1}>
-                        <InputRadioEditable key={'bt2'} editable={true} attributes={{name:'btGroup[]'}} />
+                    <Col md={10}>
+                        <InputRadioEditable key={'bt2'} editable={editable} attributes={{label:'InputRadioEditable 2', name:"InputRadioEditable[]", wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} />
                     </Col>
             </Row>
 
             <Row id="Champ_checkBox">
                 <Col md={2}>
-                    <p>InputCheckboxEditable</p>
                 </Col>
-                <Col md={1}>
-                    <InputCheckboxEditable key={'bt1'} editable={true} />
+                <Col md={10}>
+                    <InputCheckboxEditable key={'bt1'} attributes={{label:'InputCheckboxEditable', name:"InputCheckboxEditable", wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
                 </Col>
             </Row>
         </div>;

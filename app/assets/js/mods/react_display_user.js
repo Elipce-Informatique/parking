@@ -13,22 +13,18 @@ var DisplayUser = React.createClass({
      */
     getDefaultProps: function() {
         
-        return {
-            infos: {}
-        };
+        return {infos: {nom:'', prenom:''}};
     },
     
     render: function() {       
         
-        return (
-        <div>
-            <img src={this.props.infos.photo} className="img-responsive img-thumbnail" alt={this.props.infos.nom+' '+{this.props.infos.prenom}}/>
-            <h2>{this.props.infos.nom} {this.props.infos.prenom}<h2>
-            <div className="row">
-                <label className="col-md-2 text-right">{this.props.infos.nom}</label>
-                
-        <div>
-        )
+        return <div>
+                    <img src={this.props.infos.photo} className="img-responsive img-thumbnail" alt={this.props.infos.nom+' '+this.props.infos.prenom}/>
+                    <h2>{this.props.infos.nom} {this.props.infos.prenom}<h2>
+                    <div className="row">qsdqd
+                        <label className="col-md-2 text-right">{this.props.infos.nom}</label>
+                    </div>
+                </div>;
     }
     
  /*
