@@ -161,14 +161,17 @@ var DataTableModuleReact = React.createClass({
 
         var attrs = {label:Lang.get('global.profils'), required:true, name:"libelle", value:this.props.nameProfil, wrapperClassName:'col-md-4',labelClassName:'col-md-1',groupClassName:'row'};
 
+        // Test si besoin de forcer le style
         if(this.state.retour.style != undefined ){
             var attrs2  = {bsStyle:this.state.retour.style, 'data-valid':this.state.retour.isValid, help:this.state.retour.tooltip};
+            console.log('Attrs2 %o', attrs2);
             attrs       = _.merge(attrs, attrs2);
             attrs.value = this.state.retour.value;
         }
+        console.log('Attrs %o', attrs);
 
         return <Form ref="form_profil">
-                    <InputTextEditable key='libKey' ref="libelle" attributes={attrs} editable={this.props.editable} />
+                    <InputTextEditable ref="libelle" attributes={attrs} editable={this.props.editable} />
                     <DataTable id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} reactElements={this.props.reactElements} editable={this.props.editable}/>
                 </Form>;
     },

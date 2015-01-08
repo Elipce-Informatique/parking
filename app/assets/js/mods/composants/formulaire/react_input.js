@@ -64,7 +64,8 @@ var InputText = React.createClass({
 
     render: function () {
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var attrs = _.merge(this.state.attributes, this.props.attributes);
+        var propsattrs = _.omit(this.props.attributes, ['help', 'data-valid']);
+        var attrs = _.merge(propsattrs, this.state.attributes);
 
         // Ajout de l'addon required si besoin
         if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {

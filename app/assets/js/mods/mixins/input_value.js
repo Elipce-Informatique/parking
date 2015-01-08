@@ -104,14 +104,12 @@ var InputValueMixin = {
 
         return attrs;
     },
-    componentWillReceivProps: function (np) {
-        console.log('Pass components will receive props');
+    componentWillReceiveProps: function (np) {
         // data-valid, bsStyle, help
         var attrs = {};
-        attrs = typeof(np['data-valid']) != 'undefined' ? _.merge(attrs, {'data-valid': np['data-valid']}) : attrs;
-        attrs = typeof(np['bsStyle']) != 'undefined' ? _.merge(attrs, {bsStyle: np['bsStyle']}) : attrs;
-        attrs = typeof(np['help']) != 'undefined' ? _.merge(attrs, {help: np['help']}) : attrs;
-
+        typeof(np.attributes['data-valid']) != 'undefined' ? attrs['data-valid'] = np.attributes['data-valid'] : '';
+        typeof(np.attributes.bsStyle) != 'undefined' ? attrs.bsStyle = np.attributes.bsStyle : '';
+        typeof(np.attributes.help) != 'undefined' ? attrs.help = np.attributes.help : '';
         this.setState({attributes: attrs});
     }
 };
