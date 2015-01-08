@@ -13,7 +13,7 @@ var InputValueMixin = {
         var val = this.refs.InputField.getValue();
 
         // CRÉATION DES ATTRIBUTS POUR LE STATE
-        var attrs = this.getStateAttributes(val);
+        var attrs = this.getStateAttributes(val, this.refs.InputField.getDOMNode());
 
         // MISE À JOUR DE L'ÉTAT DU COMPOSANT
         this.setState({attributes: attrs, value: val});
@@ -76,7 +76,7 @@ var InputValueMixin = {
         this.setState({attributes: attrs, value: val});
     },
 
-    getStateAttributes: function (val) {
+    getStateAttributes: function (val, DOM) {
         var attrs = {};
 
         // 1. MERGE ATTRS AVEC GESTION MODIF
@@ -87,14 +87,14 @@ var InputValueMixin = {
 
         // 3. ATTR DATA-VALID
         var html5Validity = true;
-        if(typeof(this.refs.InputField) != 'undefined'){
-            html5Validity = $(this.refs.InputField.getDOMNode()).find(':invalid').length == 0;
+        if (typeof(DOM) != 'undefined') {
+            html5Validity = $(DOM).find(':invalid').length == 0;
         }
         attrs = _.merge({'data-valid': validation.isValid && html5Validity}, attrs);
 
         // 4. AJOUT DU STYLE REACTB
         var style = {'bsStyle': (!Validator.matches(validation.style, 'success|warning|error', 'i') ? undefined : validation.style)};
-        if(! html5Validity){
+        if (!html5Validity) {
             style = {'bsStyle': 'error'};
         }
         if (validation.tooltip.length > 0) {
@@ -103,6 +103,16 @@ var InputValueMixin = {
         attrs = _.merge(style, attrs);
 
         return attrs;
+    },
+    componentWillReceivProps: function (np) {
+        console.log('Pass components will receive props');
+        // data-valid, bsStyle, help
+        var attrs = {};
+        attrs = typeof(np['data-valid']) != 'undefined' ? _.merge(attrs, {'data-valid': np['data-valid']}) : attrs;
+        attrs = typeof(np['bsStyle']) != 'undefined' ? _.merge(attrs, {bsStyle: np['bsStyle']}) : attrs;
+        attrs = typeof(np['help']) != 'undefined' ? _.merge(attrs, {help: np['help']}) : attrs;
+
+        this.setState({attributes: attrs});
     }
 };
 
@@ -143,5 +153,5 @@ var InputCheckableMixin = {
     }
 };
 
-module.exports.InputValueMixin     = InputValueMixin;
+module.exports.InputValueMixin = InputValueMixin;
 module.exports.InputCheckableMixin = InputCheckableMixin;

@@ -8,12 +8,10 @@ var storeVerif = Reflux.createStore({
     },
     // Initial setup
     init: function () {
-        console.log('Pass init store verif');
         // Register statusUpdate action
         this.listenTo(Actions.validation.verify_form_save, this.triggerValidation);
     },
     triggerValidation: function (data) {
-        console.log('Pass trigger store verif');
         this.trigger(data);
     }
 });
