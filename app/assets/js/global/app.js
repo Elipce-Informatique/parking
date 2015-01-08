@@ -97,7 +97,8 @@
         "save_user",
         "edit_user",
         "create_user",
-        "delete_user"
+        "delete_user",
+        "changePhoto"
     ]);
 
     /*
