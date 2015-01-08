@@ -2,7 +2,8 @@
 var Field = require('./composants/formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputMailEditable = Field.InputMailEditable;
-var PhotoEditable = require('./react_photo');
+var react_photo       = require('./react_photo');
+var PhotoEditable     = react_photo.PhotoEditable;
 var Row = ReactB.Row;
 var Col = ReactB.Col;
 var Button = ReactB.Button;
@@ -46,6 +47,11 @@ var FicheUser = React.createClass({
         Actions.utilisateur.load_user_info(this.props.idUser);
     },
 
+    clickPhoto: function (evt){
+        var copie = _.clone(evt);
+        Actions.utilisateur.changePhoto(copie);
+    },
+
     render: function () {
 
         //<PhotoEditable src={BASE_URI+this.state.data.photo} editable={this.props.editable}/>
@@ -54,6 +60,7 @@ var FicheUser = React.createClass({
             <Form ref="form">
                 <Row>
                     <Col md={1} mdOffset={2} className="photo">
+                            <PhotoEditable src='./app/assets/images/portrait_vide.gif' evts={{onClick:this.clickPhoto}} editable={this.props.editable} />
                     </Col>
                 </Row>
                 <InputTextEditable ref="nom"
@@ -125,6 +132,7 @@ var ficheUserStore = Reflux.createStore({
         this.listenTo(Actions.utilisateur.load_user_info, this.getInfosUser);
         this.listenTo(Actions.utilisateur.save_user, this.sauvegarder);
         this.listenTo(Actions.utilisateur.delete_user, this.supprimer);
+        this.listenTo(Actions.utilisateur.changePhoto, this.changePhoto);
     },
 
     // Callback
@@ -209,6 +217,10 @@ var ficheUserStore = Reflux.createStore({
                 this.trigger(this.dataUser);
             }
         });
+    },
+
+    changePhoto: function(evt){
+        console.log('clickImage, evt : %o', evt);
     }
 });
 module.exports.store = ficheUserStore;

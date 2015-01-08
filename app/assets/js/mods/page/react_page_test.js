@@ -18,9 +18,10 @@ var InputDateEditable           = Field.InputDateEditable;
 var InputSelectEditable         = Field.InputSelectEditable;
 var InputNumberEditable         = Field.InputNumberEditable;
 var InputTelEditable            = Field.InputTelEditable;
-var ImageEditable = require('../react_photo');
+var react_photo                 = require('../react_photo');
+var ImageEditable               = react_photo.PhotoEditable;
 
-var ReactPageTest = React.createClass({
+var ReactPageTest               = React.createClass({
 
     /**
      * État initial des données du composant
@@ -73,6 +74,11 @@ var ReactPageTest = React.createClass({
                 indice++;
             });
         }
+
+        function clickImage(evt){
+            var copie = _.clone(evt);
+            console.log('clickImage, evt : %o', copie);
+        }
         /* FIN : Paramètres Select */
         /***************************/
 
@@ -103,7 +109,7 @@ var ReactPageTest = React.createClass({
 
             <Row id="InputImageEditable">
                 <Col md={12}>
-                    <ImageEditable src='./app/assets/images/portrait_vide.gif' attributes={{name:"InputImageEditable", imgCol:4,labelCol:2}} editable={editable} />
+                    <ImageEditable src='./app/assets/images/portrait_vide.gif' evts={{onClick:clickImage}} attributes={{name:"InputImageEditable", imgCol:4,labelCol:2}} editable={editable} />
                 </Col>
             </Row>
 

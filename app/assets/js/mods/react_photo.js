@@ -21,12 +21,11 @@ var Photo = React.createClass({
 
     render: function() {
        return(
-           <img src={this.props.src} className="img-thumbnail img-responsive img-editable"/>
+           <img src={this.props.src} {...this.props.attributes} {...this.props.evts} className="img-thumbnail img-responsive img-editable"/>
        )
     }
 });
-module.exports = Photo;
-
+module.exports.Photo = Photo;
 
 /**
  * Photo portrait editable
@@ -62,13 +61,9 @@ var PhotoEditable = React.createClass({
         }
         // Non editable
         else{
-            retour = <Photo
-                        src={this.props.src}
-                        attributes = {this.props.attributes}
-                        evts = {this.props.evts}
-                    />;
+            retour = <img src={this.props.src} className="img-thumbnail img-responsive"/>;
         }
         return retour;
     }
 });
-module.exports = PhotoEditable;
+module.exports.PhotoEditable = PhotoEditable;

@@ -168,7 +168,7 @@ var DataTableModuleReact = React.createClass({
         }
 
         return <Form ref="form_profil">
-                    <InputTextEditable key='libKey' ref="libelle" attributes={attrs} editable={this.props.editable} />
+                    <InputTextEditable ref="libelle" attributes={attrs} editable={this.props.editable} />
                     <DataTable id={this.props.id} head={this.props.head} data={this.state.data} hide={this.props.hide} attributes={this.props.attributes} bUnderline={this.props.bUnderline} evts={this.props.evts} reactElements={this.props.reactElements} editable={this.props.editable}/>
                 </Form>;
     },
