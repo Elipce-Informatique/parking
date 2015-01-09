@@ -71,8 +71,7 @@ class UtilisateurController extends \BaseController
      */
     public function edit($id)
     {
-        $oUser = Auth::user();
-        return View::make('pages.utilisateur')->with('user', $oUser);
+        //
     }
 
 
@@ -111,6 +110,14 @@ class UtilisateurController extends \BaseController
 
     public function getUserExist($email){
         return Utilisateur::getUserExist($email);
+    }
+
+    /**
+     * Affiche la fiche de l'utilisateur actuellement connecté.
+     */
+    public function fiche(){
+        $oUser = Auth::user();
+        return View::make('pages.utilisateur_courant')->with('user', $oUser);
     }
 
 }
