@@ -56,8 +56,10 @@ Voulez-vous vraiment quitter cette page ?',
 
     // Profil
     'profils' => 'Profils',
+    'profil' => 'Profil',
     'droits' => 'Droits',
     'profilExist' => 'Ce profil existe déjà',
+    'utilisateurExist' => 'Cet utilisateur existe déjà',
     'profilTooMuch' => 'Libelle trop court',
 
     // AUTRES
@@ -65,6 +67,8 @@ Voulez-vous vraiment quitter cette page ?',
     'administration' => 'Administration',
     'acceder' => 'Accéder',
     'gerer' => 'Gérer',
+    'oui' => 'Oui',
+    'non' => 'Non',
 
     // FORMULAIRE
     'select' => 'Sélection...',

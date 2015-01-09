@@ -95,10 +95,8 @@ class Profil extends Eloquent
     {
         // Variables
         $bSave    = true;
-        $retour   = [];
-        $idProfil = 0;
 
-        /* Varifie que le profil n'existe pas */
+        /* Vérifie que le profil n'existe pas */
         $res = Profil::getProfilExistLibelle($inputs['libelle']);
 
         if($res['good'] == true) {
@@ -151,10 +149,6 @@ class Profil extends Eloquent
      */
     public static function updateProfil($id, $fields)
     {
-        //Log::warning('-----------> updateProfil $id : '.$id.'<-----------');
-        // Variables
-        $bSave = true;
-
         // Trouver le user
         $profil = Profil::find($id);
 

@@ -165,7 +165,7 @@ var DataTableModuleReact = React.createClass({
         if(this.state.retour.style != undefined ){
             var attrs2  = {bsStyle:this.state.retour.style, 'data-valid':this.state.retour.isValid, help:this.state.retour.tooltip};
             console.log('Attrs2 %o', attrs2);
-            attrs       = _.merge(attrs, attrs2);
+            attrs       = _.extend(attrs, attrs2);
             attrs.value = this.state.retour.value;
         }
         console.log('Attrs %o', attrs);

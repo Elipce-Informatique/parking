@@ -187,6 +187,45 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         return $res;
     }
 
+    public static function getUserAndProfil($id){
+
+        /* Récupère tout les profils avec les droits associés à l'utilisateur ('oui'/'non') */
+        if ($id != 0) {
+            $data = Utilisateur::find($id);
+            $data['dataProfil'] = [];
+
+            $dataProfil = DB::table('profils')->leftJoin('profil_utilisateur', function ($join) use ($id) {
+                $join->on('profil_utilisateur.profil_id', '=', 'profils.id');
+                $join->on('profil_utilisateur.utilisateur_id', '=', DB::raw($id));
+            })
+                ->groupBy('profils.id')
+                ->get(['profils.id', 'profils.traduction', 'profil_utilisateur.profil_id as etat']);
+
+
+            $aDataProfil = [];
+            for($i = 0; $i < count($dataProfil);$i++){
+                $idProfil   = $dataProfil[$i]->id;
+                $traduction = $dataProfil[$i]->traduction;
+                $etat       = $dataProfil[$i]->etat;
+
+                $ligne = array('id'=>$idProfil, 'traduction'=>$traduction, 'etat'=>'oui');
+
+                if($etat == '')
+                    $ligne['etat'] = 'non';
+
+                $aDataProfil[$i] = $ligne;
+            }
+
+            $data['dataProfil'] = $aDataProfil;
+        } /* Récupère uniquement les profils */
+        else {
+            $data = ['id'=>0, 'nom'=> '', 'prenom' => '', 'email' => '', 'photo' => 'app/documents/photo/no.gif'];
+            $data['dataProfil'] = [];
+            $data['dataProfil'] = DB::table('profils')->get(array('id', 'traduction', DB::raw('"non" as etat')));
+        }
+
+        return $data;
+    }
     /**
      * Supprime un utilisateur
      * @param $id: ID user
@@ -217,9 +256,10 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      * @return array('data' => tableau de données, 'save' => bool, enregistrement OK ou KO)
      */
     public static function updateUser($id, $fields){
+
+        Log::warning('-----------> updateUser $id : '.$id.'<-----------');
         // Variables
         $bSave = true;
-        $data = $fields;
 
         // Trouver le user
         $user = Utilisateur::find($id);
@@ -231,37 +271,116 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
         // Sauvegarde
         try {
+            DB::beginTransaction();
+
             $bSave = $user->save();
+
+            if($bSave == true) {
+
+                // Met à jour la relation avec les profils
+                $matrice = explode(',', $fields['matrice']);
+
+                for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
+
+                    $idProfil = $matrice[$i+1];
+                    $etat     = $matrice[$i];
+
+                    /* Est-ce que la ligne existe ? */
+                    $ligne = DB::table('profil_utilisateur')
+                        ->where('profil_id', $idProfil)
+                        ->where('utilisateur_id', $id)
+                        ->first(['profil_utilisateur.*']);
+
+                    /* La ligne existe et l'utilisateur n'a plus ce profil, on supprime la ligne */
+                    if(count($ligne)>0 && $etat == 'non') {
+                        $bSave = DB::table('profil_utilisateur')->delete($ligne->id);
+                    }
+                    /* La ligne n'existe pas, et l'utilisateur possède le profil, on crééer la ligne */
+                    else if(count($ligne) == 0 && $etat == 'oui'){
+                        Log::warning('-----------> updateUser $accesssLevel : '.$etat.'<-----------');
+                        $ligne = [];
+                        $ligne['utilisateur_id']    = $id;
+                        $ligne['profil_id']    = $idProfil;
+
+                        // Défini les droits associés au profil
+                        $bSave = DB::table('profil_utilisateur')->insert($ligne);
+                    }
+                }
+            }
+
+            if($bSave == true)
+                DB::commit();
+            else
+                DB::rollback();
         }
-        catch(Exception $e){
+        catch (Exception $e) {
+            Log::warning('-----------> catch : ' . $e->getMessage() . ' <-----------');
             $bSave = false;
-        }
-        // Enregistrement OK
-        if($bSave){
-            $data = Utilisateur::getUtilisateurFromId($id);
+            DB::rollback();
         }
 
-        return array('data'=>$data,'save'=>$bSave);
+        return array('save' => $bSave);
     }
 
     /**
      * Créé un utilisateur
      * @param $fields: array($key=>$value) $key=champ table, $value=valeur
-     * @return array('data' => tableau de données, 'save' => bool, enregistrement OK ou KO)
+     * @return array('idUser' => idUser, 'save' => bool)
      */
     public static function creerUtilisateur($fields){
-        // Variables
+
         $bSave = true;
 
-        try {
-            // Nouvel utilisateur
-            $user = Utilisateur::create($fields);
+        /* Vérifie que l'utilisateur n'existe pas */
+        $res = Utilisateur::getUserExist($fields['email']);
+
+        if($res['good'] == true) {
+
+            // Récupère la donnée de l'utilisateur
+            $fieldUser = [];
+            $fieldUser['nom']    = $fields['nom'];
+            $fieldUser['prenom'] = $fields['prenom'];
+            $fieldUser['email']  = $fields['email'];
+            $fieldUser['photo']  = $fields['photo'];
+
+            try {
+                DB::beginTransaction();
+
+                // Nouveau profil
+                $idUser = Utilisateur::insertGetId($fieldUser);
+
+                // Récupère les profils de l'utilisateur
+                $matrice = explode(',', $fields['matrice']);
+
+                for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
+                    $ligne = [];
+                    $ligne['utilisateur_id'] = $idUser;
+                    $ligne['profil_id']      = $matrice[$i + 1];
+
+                    // Défini les droits associés au profil
+                    $bSave = DB::table('profil_utilisateur')->insert($ligne);
+                }
+
+                DB::commit();
+                $retour = array('idUser' => $idUser, 'save' => $bSave);
+            } catch (Exception $e) {
+                DB::rollback();
+                $retour = array('save' => false);
+            }
         }
-        catch(Exception $e){
-            $bSave = false;
-            $user = array('id'=>0, 'nom'=>'','prenom'=>'','email'=>'');
-        }
-        return array('data'=>$user,'save'=>$bSave);
+        else
+            $retour = array('save' => false);
+
+        return $retour;
     }
 
+    /**
+     * Retourne true si l'utilisateur existe, false sinon
+     * @param $email email de l'utilisateur
+     * @return array(good => true/false)
+     */
+    public static function getUserExist($email){
+        $user = DB::table('utilisateurs')->where('email', $email)->first(['id']);
+        return array('good' => empty($user));
+    }
 }

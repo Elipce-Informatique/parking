@@ -25,7 +25,8 @@ return array(
             'email' => 'E-mail',
             'email2' => 'E-mail 2',
             'email3' => 'E-mail 3'),
-        'fiche'=> 'Fiche '
+        'fiche'=> 'Fiche ',
+        'profilsAssocie' => 'Profils associés',
     ],
 
     // MODULE PROFILS

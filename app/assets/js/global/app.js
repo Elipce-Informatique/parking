@@ -98,7 +98,10 @@
         "edit_user",
         "create_user",
         "delete_user",
-        "changePhoto"
+        "changePhoto",
+        "radio_change",
+        "initMatrice",
+        "set_etat_create_edit"
     ]);
 
     /*

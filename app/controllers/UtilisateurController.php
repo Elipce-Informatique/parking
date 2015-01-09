@@ -59,6 +59,9 @@ class UtilisateurController extends \BaseController
         return Utilisateur::getUtilisateurFromId($id);
     }
 
+    public function getUserAndProfil($id){
+        return Utilisateur::getUserAndProfil($id);
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -103,6 +106,10 @@ class UtilisateurController extends \BaseController
      */
     public function all(){
         return Utilisateur::getUtilisateurs();
+    }
+
+    public function getUserExist($email){
+        return Utilisateur::getUserExist($email);
     }
 
 }

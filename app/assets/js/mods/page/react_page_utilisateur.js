@@ -86,7 +86,6 @@ var PageUser = React.createClass({
                             </Col>
                         </Row>
                     </div>;
-
                 break;
 
         }
