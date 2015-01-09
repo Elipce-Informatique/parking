@@ -1,9 +1,8 @@
 // ATTENTION la majuscule est super importante
-var PageUserCourant = require('./mods/page/react_page_utilisateur_courant').Composant;
+var PageUserCourant = require('./mods/page/react_page_utilisateur_courant');
 
 $(function(){
-    console.log('ICICIIIII');
-    var oReactPageUser = React.render(
+    var oReactPageUserCourant = React.render(
         <PageUserCourant />,
         document.getElementById('content_user')
     );
