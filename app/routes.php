@@ -48,6 +48,7 @@ Route::get('logout', 'SessionsController@destroy');
 Route::group(['before' => 'auth'], function () {
     // PAGE D'ACCUEIL
     Route::get('accueil', 'AccueilController@index');
+    Route::get('utilisateur/fiche', 'UtilisateurController@fiche');
 });
 
 /*
