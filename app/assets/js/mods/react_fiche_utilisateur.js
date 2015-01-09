@@ -103,18 +103,21 @@ var FicheUser = React.createClass({
     },
 
     getInitialState: function () {
-        return {nom: '', prenom: '', email: '', photo: 'app/documents/photo/no.gif', dataProfil: [], retour: {}};
+        return {nom: '', prenom: '', email: '', photo: BASE_URI+'app/documents/photo/no.gif', dataProfil: [], retour: {}};
     },
 
     componentWillMount: function () {
         // Liaison au store
         this.listenTo(ficheUserStore, this.updateData, this.updateData);
 
-        console.log('componentWillMount');
+        console.log('componentWillMount TOTO');
 
         // Appel du chargement
         Actions.utilisateur.set_etat_create_edit(this.props.idUser==0);
         Actions.utilisateur.load_user_info(this.props.idUser);
+    },
+    componentWillUnmount: function(){
+        console.log('UNMOUNT TOTO');
     },
 
     clickPhoto: function (evt){
