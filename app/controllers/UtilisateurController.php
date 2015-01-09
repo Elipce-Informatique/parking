@@ -71,7 +71,8 @@ class UtilisateurController extends \BaseController
      */
     public function edit($id)
     {
-        //
+        $oUser = Auth::user();
+        return View::make('pages.utilisateur')->with('user', $oUser);
     }
 
 

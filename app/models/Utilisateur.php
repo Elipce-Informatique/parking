@@ -80,7 +80,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             'nomUtilisateur' => $this->nom,
             'logoutRoute' => URL::asset('/') . "logout",
             'logoutText' => Lang::get('global.logout'),
-            'dropdown' => [['label' => Lang::get('menu.user.params'), 'route' => URL::route('index')]]
+            'dropdown' => [['label' => Lang::get('menu.user.profil'), 'route' => URL::to('utilisateur/'.$this->id.'/edit')]]
         ]);
     }
 

@@ -11,6 +11,7 @@ class MenuController extends \BaseController {
     }
 
     /**
+     * UNUSED
      * Retourne le tableau des items de menu pour le menu top
      * @return mixed
      */
