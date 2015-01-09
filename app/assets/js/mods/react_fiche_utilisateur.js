@@ -42,56 +42,39 @@ function handleClickRadio(evt){
 }
 
 var emailInitial = '';
-var firstPass    = true;
 
 function emailChange(value, edit){
-
-    /* Sauvegarde du libelle initial */
-    if(firstPass == true){
-        firstPass    = false;
-        emailInitial = value;
-    }
-
     /* Varaible de retour */
     var retour = {};
 
     /* Est-ce que l'email est supérieur à 4 caractère (x@x.xx)? */
-    if(value.length>=6){
+    if(value.length>=6 && value != emailInitial){
 
-        /* Si le'email est l'email initial */
-        /* Pas besoin de vérifier en base       */
-        if(edit == true && value == emailInitial){
-            retour.isValid = true;
-            retour.style   = 'success';
-            retour.tooltip = '';
-        }
-        else{
-            // AJAX
-            $.ajax({
-                url:      BASE_URI + 'utilisateur/email/'+value, /* correspond au module url de la BDD */
-                dataType: 'json',
-                context:  this,
-                async: false,
-                success:  function (good) {
-                    /* En vert */
-                    if(good.good == true){
-                        retour.isValid = true;
-                        retour.style   = 'success';
-                        retour.tooltip = '';
-                    }
-                    /* En rouge */
-                    else{
-                        retour.isValid = false;
-                        retour.style   = 'error';
-                        retour.tooltip = Lang.get('global.utilisateurExist');
-                    }
-                },
-
-                error: function (xhr, status, err) {
-                    console.error(status, err.toString());
+        // AJAX
+        $.ajax({
+            url:      BASE_URI + 'utilisateur/email/'+value, /* correspond au module url de la BDD */
+            dataType: 'json',
+            context:  this,
+            async: false,
+            success:  function (good) {
+                /* En vert */
+                if(good.good == true){
+                    retour.isValid = true;
+                    retour.style   = 'success';
+                    retour.tooltip = '';
                 }
-            });
-        }
+                /* En rouge */
+                else{
+                    retour.isValid = false;
+                    retour.style   = 'error';
+                    retour.tooltip = Lang.get('global.utilisateurExist');
+                }
+            },
+
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+            }
+        });
     }
     console.log('retour : %o', retour);
     return retour;
@@ -127,9 +110,11 @@ var FicheUser = React.createClass({
         // Liaison au store
         this.listenTo(ficheUserStore, this.updateData, this.updateData);
 
+        console.log('componentWillMount');
+
         // Appel du chargement
+        Actions.utilisateur.set_etat_create_edit(this.props.idUser==0);
         Actions.utilisateur.load_user_info(this.props.idUser);
-        Actions.profil.set_etat_create_edit((this.props.idUser==0?true:false));
     },
 
     clickPhoto: function (evt){
@@ -143,7 +128,7 @@ var FicheUser = React.createClass({
     },
 
     render: function () {
-        firstPass = true;
+        emailInitial = this.state.email;
 
         var titreBis = Lang.get('administration.utilisateur.profilsAssocie');
         
@@ -156,8 +141,6 @@ var FicheUser = React.createClass({
                 labelClassName: 'col-md-2 text-right',
                 groupClassName: 'row'
         };
-
-        console.log('this.state : %o', this.state);
 
         // Test si besoin de forcer le style de l'email
         if(this.state.retour.style != undefined ){

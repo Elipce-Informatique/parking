@@ -23,60 +23,43 @@ var Row = ReactB.Row;
 var Col = ReactB.Col;
 
 var libelleInitial = '';
-var firstPass = true;
 
 function libelleChange(value, edit){
 
-    /* Sauvegarde du libelle initial */
-    if(firstPass == true){
-        firstPass      = false;
-        libelleInitial = value;
-    }
-
-    /* Varaible de retour */
+    /* Variable de retour */
     var retour = {};
 
     /* Est-ce que le libelle existe? */
-    if(value.length>=2){
+    if(value.length>=2 && value != libelleInitial){
+        // AJAX
+        $.ajax({
+            url:      BASE_URI + 'profils/libelle/'+value, /* correspond au module url de la BDD */
+            dataType: 'json',
+            context:  this,
+            async: false,
+            success:  function (good) {
 
-        /* Si le libelle est le libelle initial */
-        /* Pas besoin de vérifier en base       */
-        if(edit == true && value == libelleInitial){
-            retour.isValid = true;
-            retour.style   = 'success';
-            retour.tooltip = '';
-        }
-        else{
-            // AJAX
-            $.ajax({
-                url:      BASE_URI + 'profils/libelle/'+value, /* correspond au module url de la BDD */
-                dataType: 'json',
-                context:  this,
-                async: false,
-                success:  function (good) {
-
-                    /* En vert */
-                    if(good.good == true){
-                        retour.isValid = true;
-                        retour.style   = 'success';
-                        retour.tooltip = '';
-                    }
-                    /* En rouge */
-                    else{
-                        retour.isValid = false;
-                        retour.style   = 'error';
-                        retour.tooltip = Lang.get('global.profilExist');
-                    }
-                },
-
-                error: function (xhr, status, err) {
-                    console.error(status, err.toString());
+                /* En vert */
+                if(good.good == true){
+                    retour.isValid = true;
+                    retour.style   = 'success';
+                    retour.tooltip = '';
                 }
-            });
-        }
+                /* En rouge */
+                else{
+                    retour.isValid = false;
+                    retour.style   = 'error';
+                    retour.tooltip = Lang.get('global.profilExist');
+                }
+            },
+
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+            }
+        });
     }
     /* En rouge */
-    else{
+    else if(value.length<2){
         retour.isValid = false;
         retour.style   = 'error';
         retour.tooltip = Lang.get('global.profilTooMuch');
@@ -156,7 +139,7 @@ var DataTableModuleReact = React.createClass({
     },
 
     render: function() {
-        firstPass = true;
+        libelleInitial = this.props.nameProfil;
 
         var attrs = {label:Lang.get('global.profils'), required:true, name:"libelle", value:this.props.nameProfil, wrapperClassName:'col-md-4',labelClassName:'col-md-1',groupClassName:'row'};
 
