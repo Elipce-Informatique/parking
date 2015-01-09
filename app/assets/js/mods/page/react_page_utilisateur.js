@@ -128,8 +128,8 @@ var pageUserStore = Reflux.createStore({
 
     },
 
-    loadProfil: function($id){
-        this.trigger({etat:'edition', idUser:$id});
+    loadProfil: function(id){
+        this.trigger({etat:'edition', idUser:id});
     },
 
     modeVisu: function (idUser) {

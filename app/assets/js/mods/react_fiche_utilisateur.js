@@ -303,8 +303,8 @@ var ficheUserStore = Reflux.createStore({
         var matrice = [];
         if(this.isMatriceModuleModif) {
             var that = this;
-            _.each(this.matriceBtnRadio, function ($key, $value) {
-                matrice.push([$key, $value]);
+            _.each(this.matriceBtnRadio, function (key, value) {
+                matrice.push([key, value]);
             }, that);
         }
 
