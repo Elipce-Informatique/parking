@@ -63,6 +63,7 @@ var PageUser = React.createClass({
                     </div>;
                 break;
             case 'edition':
+                console.log('edition');
                 react =
                     <div key={this.state.etat}>
                         <BandeauEdition mode={1} titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom+' '+this.state.dataUser.prenom}/>
@@ -70,6 +71,7 @@ var PageUser = React.createClass({
                     </div>;
                 break;
             case 'creation':
+                console.log('creation');
                 react =
                     <div key={this.state.etat}>
                         <BandeauEdition mode={0} titre={Lang.get('administration.utilisateur.titre')}/>
@@ -119,18 +121,25 @@ var pageUserStore = Reflux.createStore({
         this.listenTo(Actions.bandeau.creer, this.modeCreation);
         this.listenTo(Actions.bandeau.editer, this.modeEdition);
         this.listenTo(Actions.validation.submit_form, this.sauvegarder);
-        this.listenTo(storeFicheUser, this.setDataUser);
         this.listenTo(Actions.bandeau.supprimer, this.supprimer);
+        this.listenTo(Actions.utilisateur.saveOK, this.loadProfil);
+        this.listenTo(Actions.utilisateur.supprOK, this.modeListe);
+        this.listenTo(Actions.utilisateur.updateBandeau, this.setNomPrenom)
 
     },
 
+    loadProfil: function($id){
+        this.trigger({etat:'edition', idUser:$id});
+    },
+
     modeVisu: function (idUser) {
-        this.stateLocal = {idUser:idUser, etat: 'visu'}
+        this.stateLocal = {idUser:idUser, etat: 'visu', dataUser:{nom:'', prenom:''}};
         this.trigger(this.stateLocal);
     },
 
     modeCreation: function () {
-        this.stateLocal = {idUser:0, etat: 'creation'}
+        console.log('modeCreation');
+        this.stateLocal = {idUser:0, etat: 'creation', dataUser:{nom:'', prenom:''}};
         //console.log('PAGE USER mode création '+this.idUser);
         this.trigger(this.stateLocal);
     },
@@ -157,24 +166,10 @@ var pageUserStore = Reflux.createStore({
      * Retour de la fiche utilisateur pour mise à jour des infos de la page
      * @param data
      */
-    setDataUser: function(data){
-        // Variables
-        this.stateLocal.dataUser = data;
-
-        // Nouvel utilisateur
-        if(this.stateLocal.etat === 'creation'){
-            this.stateLocal.idUser = data.id;
-            this.stateLocal.etat = 'edition';
-        }
-
-        // Suppression utilisateur
-        if(this.stateLocal.etat === 'suppression'){
-            this.stateLocal.idUser = 0;
-            this.stateLocal.etat = 'liste';
-        }
-
+    setNomPrenom: function(nom, prenom, id){
+        this.stateLocal.idUser = id;
         //console.log('PAGE USER trigger %o', this.stateLocal);
-        this.trigger(this.stateLocal);
+        this.trigger({dataUser:{nom:nom, prenom:prenom}, idUser:id});
     },
 
     /**
