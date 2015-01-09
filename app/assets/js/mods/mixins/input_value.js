@@ -15,6 +15,7 @@ var InputValueMixin = {
         // CRÉATION DES ATTRIBUTS POUR LE STATE
         var attrs = this.getStateAttributes(val, this.refs.InputField.getDOMNode());
 
+
         // MISE À JOUR DE L'ÉTAT DU COMPOSANT
         this.setState({attributes: attrs, value: val});
 
@@ -69,8 +70,14 @@ var InputValueMixin = {
             val = newProps.attributes.value;
         }
 
-        // CRÉATION DES ATTRIBUTS POUR LE STATE
-        var attrs = this.getStateAttributes(val);
+        // data-valid, bsStyle, help
+        var attrs = {};
+        typeof(newProps.attributes['data-valid']) != 'undefined' ? attrs['data-valid'] = newProps.attributes['data-valid'] : '';
+        typeof(newProps.attributes.bsStyle) != 'undefined' ? attrs.bsStyle = newProps.attributes.bsStyle : '';
+        typeof(newProps.attributes.help) != 'undefined' ? attrs.help = newProps.attributes.help : '';
+
+        attrs = _.extend(this.getStateAttributes(val), attrs);
+
 
         // MISE À JOUR DE L'ÉTAT DU COMPOSANT
         this.setState({attributes: attrs, value: val});
@@ -80,7 +87,7 @@ var InputValueMixin = {
         var attrs = {};
 
         // 1. MERGE ATTRS AVEC GESTION MODIF
-        attrs = _.merge((this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {}), attrs);
+        attrs = _.extend((this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {}), attrs);
 
         // 2. VALIDATION VALUE
         var validation = this.props.validator(val, this.props, this.state);
@@ -90,7 +97,7 @@ var InputValueMixin = {
         if (typeof(DOM) != 'undefined') {
             html5Validity = $(DOM).find(':invalid').length == 0;
         }
-        attrs = _.merge({'data-valid': validation.isValid && html5Validity}, attrs);
+        attrs = _.extend({'data-valid': validation.isValid && html5Validity}, attrs);
 
         // 4. AJOUT DU STYLE REACTB
         var style = {'bsStyle': (!Validator.matches(validation.style, 'success|warning|error', 'i') ? undefined : validation.style)};
@@ -100,17 +107,9 @@ var InputValueMixin = {
         if (validation.tooltip.length > 0) {
             style.help = validation.tooltip;
         }
-        attrs = _.merge(style, attrs);
+        attrs = _.extend(style, attrs);
 
         return attrs;
-    },
-    componentWillReceiveProps: function (np) {
-        // data-valid, bsStyle, help
-        var attrs = {};
-        typeof(np.attributes['data-valid']) != 'undefined' ? attrs['data-valid'] = np.attributes['data-valid'] : '';
-        typeof(np.attributes.bsStyle) != 'undefined' ? attrs.bsStyle = np.attributes.bsStyle : '';
-        typeof(np.attributes.help) != 'undefined' ? attrs.help = np.attributes.help : '';
-        this.setState({attributes: attrs});
     }
 };
 

@@ -81,7 +81,6 @@ function libelleChange(value, edit){
         retour.style   = 'error';
         retour.tooltip = Lang.get('global.profilTooMuch');
     }
-    console.log('retour : %o', retour);
     return retour;
 }
 
@@ -164,11 +163,9 @@ var DataTableModuleReact = React.createClass({
         // Test si besoin de forcer le style
         if(this.state.retour.style != undefined ){
             var attrs2  = {bsStyle:this.state.retour.style, 'data-valid':this.state.retour.isValid, help:this.state.retour.tooltip};
-            console.log('Attrs2 %o', attrs2);
-            attrs       = _.extend(attrs, attrs2);
+            attrs       = _.merge(attrs, attrs2);
             attrs.value = this.state.retour.value;
         }
-        console.log('Attrs %o', attrs);
 
         return <Form ref="form_profil">
                     <InputTextEditable ref="libelle" attributes={attrs} editable={this.props.editable} />

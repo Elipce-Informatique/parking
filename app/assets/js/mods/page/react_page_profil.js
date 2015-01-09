@@ -376,7 +376,6 @@ var pageProfilStore = Reflux.createStore({
     },
 
     radioChange: function(evt){
-        console.log('radioChange');
         /* Récupère les données du radio bouton */
         Etat      = $(evt.currentTarget).data('etat');     /* 'visu', 'modif' ou 'aucun' */
         idModule  = $(evt.currentTarget).data('id'); /* id du module concerné      */
