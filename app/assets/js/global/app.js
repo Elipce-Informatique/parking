@@ -102,7 +102,10 @@
         "changePhoto",
         "radio_change",
         "initMatrice",
-        "set_etat_create_edit"
+        "set_etat_create_edit",
+        "saveOK",
+        "supprOK",
+        "updateBandeau"
     ]);
 
     /*

@@ -264,54 +264,59 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         // Trouver le user
         $user = Utilisateur::find($id);
 
-        // Parcourir les champs envoyés par PUT
-        foreach($fields as $key=>$val) {
-            $user->$key = $val;
-        }
+        // Récupère la donnée de l'utilisateur
+        $user->nom    = $fields['nom'];
+        $user->prenom = $fields['prenom'];
+        $user->email  = $fields['email'];
+        $user->photo  = 'app/documents/photo/no.gif';
 
         // Sauvegarde
         try {
             DB::beginTransaction();
 
             $bSave = $user->save();
+            Log::warning('-----------> save <-----------');
 
             if($bSave == true) {
 
                 // Met à jour la relation avec les profils
                 $matrice = explode(',', $fields['matrice']);
 
-                for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
+                if(count($matrice[0]) >= 1) {
+                    for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
 
-                    $idProfil = $matrice[$i+1];
-                    $etat     = $matrice[$i];
+                        $idProfil = $matrice[$i + 1];
+                        $etat = $matrice[$i];
 
-                    /* Est-ce que la ligne existe ? */
-                    $ligne = DB::table('profil_utilisateur')
-                        ->where('profil_id', $idProfil)
-                        ->where('utilisateur_id', $id)
-                        ->first(['profil_utilisateur.*']);
+                        /* Est-ce que la ligne existe ? */
+                        $ligne = DB::table('profil_utilisateur')
+                            ->where('profil_id', $idProfil)
+                            ->where('utilisateur_id', $id)
+                            ->first(['profil_utilisateur.*']);
 
-                    /* La ligne existe et l'utilisateur n'a plus ce profil, on supprime la ligne */
-                    if(count($ligne)>0 && $etat == 'non') {
-                        $bSave = DB::table('profil_utilisateur')->delete($ligne->id);
-                    }
-                    /* La ligne n'existe pas, et l'utilisateur possède le profil, on crééer la ligne */
-                    else if(count($ligne) == 0 && $etat == 'oui'){
-                        Log::warning('-----------> updateUser $accesssLevel : '.$etat.'<-----------');
-                        $ligne = [];
-                        $ligne['utilisateur_id']    = $id;
-                        $ligne['profil_id']    = $idProfil;
+                        /* La ligne existe et l'utilisateur n'a plus ce profil, on supprime la ligne */
+                        if (count($ligne) > 0 && $etat == 'non') {
+                            $bSave = DB::table('profil_utilisateur')->delete($ligne->id);
+                        } /* La ligne n'existe pas, et l'utilisateur possède le profil, on crééer la ligne */
+                        else if (count($ligne) == 0 && $etat == 'oui') {
+                            Log::warning('-----------> updateUser $accesssLevel : ' . $etat . '<-----------');
+                            $ligne = [];
+                            $ligne['utilisateur_id'] = $id;
+                            $ligne['profil_id'] = $idProfil;
 
-                        // Défini les droits associés au profil
-                        $bSave = DB::table('profil_utilisateur')->insert($ligne);
+                            // Défini les droits associés au profil
+                            $bSave = DB::table('profil_utilisateur')->insert($ligne);
+                        }
                     }
                 }
             }
 
-            if($bSave == true)
+            if($bSave == true) {
                 DB::commit();
-            else
+            }
+            else {
                 DB::rollback();
+            }
         }
         catch (Exception $e) {
             Log::warning('-----------> catch : ' . $e->getMessage() . ' <-----------');
@@ -329,6 +334,8 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      */
     public static function creerUtilisateur($fields){
 
+        Log::warning('-----------> creerUtilisateur <-----------');
+
         $bSave = true;
 
         /* Vérifie que l'utilisateur n'existe pas */
@@ -341,7 +348,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             $fieldUser['nom']    = $fields['nom'];
             $fieldUser['prenom'] = $fields['prenom'];
             $fieldUser['email']  = $fields['email'];
-            $fieldUser['photo']  = $fields['photo'];
+            $fieldUser['photo']  = 'app/documents/photo/no.gif';
 
             try {
                 DB::beginTransaction();
@@ -349,22 +356,32 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 // Nouveau profil
                 $idUser = Utilisateur::insertGetId($fieldUser);
 
+                Log::warning('-----------> Utilisateur::insertGetId, $idUser : '.$idUser.' <-----------');
+
                 // Récupère les profils de l'utilisateur
                 $matrice = explode(',', $fields['matrice']);
+                Log::warning('-----------> count($matrice): '.count($matrice).' <-----------');
 
-                for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
-                    $ligne = [];
-                    $ligne['utilisateur_id'] = $idUser;
-                    $ligne['profil_id']      = $matrice[$i + 1];
+                if(count($matrice[0]) >= 1) {
+                    for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
+                        $ligne = [];
+                        $ligne['utilisateur_id'] = $idUser;
+                        $ligne['profil_id'] = $matrice[$i + 1];
 
-                    // Défini les droits associés au profil
-                    $bSave = DB::table('profil_utilisateur')->insert($ligne);
+                        Log::warning('-----------> $ligne: ' . print_r($ligne, true) . ' <-----------');
+                        // Défini les droits associés au profil
+                        $bSave = DB::table('profil_utilisateur')->insert($ligne);
+
+                        Log::warning('-----------> Défini les droits associés au profil <-----------');
+                    }
                 }
 
                 DB::commit();
+                Log::warning('-----------> Commit <-----------');
                 $retour = array('idUser' => $idUser, 'save' => $bSave);
             } catch (Exception $e) {
                 DB::rollback();
+                Log::warning('-----------> rollback <-----------');
                 $retour = array('save' => false);
             }
         }

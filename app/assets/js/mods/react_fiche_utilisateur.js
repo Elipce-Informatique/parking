@@ -58,13 +58,7 @@ function emailChange(value, edit){
             async: false,
             success:  function (good) {
                 /* En vert */
-                if(good.good == true){
-                    retour.isValid = true;
-                    retour.style   = 'success';
-                    retour.tooltip = '';
-                }
-                /* En rouge */
-                else{
+                if(good.good == false){
                     retour.isValid = false;
                     retour.style   = 'error';
                     retour.tooltip = Lang.get('global.utilisateurExist');
@@ -131,6 +125,7 @@ var FicheUser = React.createClass({
     },
 
     render: function () {
+        console.log('this.state : %o', this.state);
         emailInitial = this.state.email;
 
         var titreBis = Lang.get('administration.utilisateur.profilsAssocie');
@@ -150,7 +145,6 @@ var FicheUser = React.createClass({
             var attrs2  = {bsStyle:this.state.retour.style, 'data-valid':this.state.retour.isValid, help:this.state.retour.tooltip};
             console.log('Attrs2 %o', attrs2);
             attrs       = _.extend(attrs, attrs2);
-            attrs.value = this.state.retour.value;
         }
 
         return (
@@ -200,17 +194,12 @@ var FicheUser = React.createClass({
      * @param {object} data
      */
     updateData: function (data) {
-        console.log('Fiche USER data %o',data);
         try {
             this.setState(data);
         }
         catch (e) {
 
         }
-    },
-
-    test: function () {
-        //console.log('Change NOM %o',this.refs)
     }
 });
 module.exports.Composant = FicheUser;
@@ -243,23 +232,27 @@ var ficheUserStore = Reflux.createStore({
     },
 
     setEtatCreateEdit: function(modeCreate_P){
+        console.log('setEtatCreateEdit');
+        isMatriceModuleModif = false;
         this.modeCreate = modeCreate_P;
     },
 
     formChange: function(e){
-        console.log('formChange');
-        var retour = {};
+        var data = {};
 
         if(e.name == 'email'){
             console.log('email');
             if(this.modeCreate)
-                retour = emailCreateChange(e.value);
+                data.retour = emailCreateChange(e.value);
             else
-                retour = emailEditChange(e.value);
-            retour = _.merge(retour, {value:e.value});
+                data.retour = emailEditChange(e.value);
+            data.email = e.value;
         }
-
-        this.trigger({retour:retour});
+        else if(e.name == 'nom')
+            data.nom = e.value;
+        else if(e.name == 'prenom')
+            data.prenom = e.value;
+        this.trigger(data);
     },
 
     radioChange: function(evt){
@@ -273,13 +266,11 @@ var ficheUserStore = Reflux.createStore({
 
         /* Mise à jour du flag pour sauvegarder les modifications sur l'etat des modules */
         this.isMatriceModuleModif = true;
-
-        console.log('Matrice : %o', this.matriceBtnRadio);
     },
 
     // Callback
     getInfosUser: function (idUser) {
-        console.log('getInfosUser');
+
         var that = this;
         // AJAX
         $.ajax({
@@ -288,7 +279,9 @@ var ficheUserStore = Reflux.createStore({
             context: that,
             success: function (data) {
                 Actions.utilisateur.initMatrice();
-
+                if(data.nom != '' && data.prenom != ''){
+                    Actions.utilisateur.updateBandeau(data.nom, data.prenom, idUser);
+                }
                 // Passe variable aux composants qui écoutent l'action actionLoadData
                 that.trigger(data);
             },
@@ -308,17 +301,18 @@ var ficheUserStore = Reflux.createStore({
         var method = idUser === 0 ? 'POST' : 'PUT';
 
         var matrice = [];
-        var that    = this;
-        var indice  = 0;
-        _.each(this.matriceBtnRadio, function($key, $value){
-            matrice.push([$key, $value]);
-        }, that);
+        if(this.isMatriceModuleModif) {
+            var that = this;
+            _.each(this.matriceBtnRadio, function ($key, $value) {
+                matrice.push([$key, $value]);
+            }, that);
+        }
 
         var data = $('form').serializeArray();
         data.push({name: '_token', value: $('#_token').val()});
         data.push({name:'matrice', value:matrice});
 
-        //console.log('DATA %o',data);
+        console.log('DATA %o',data);
 
         // Requête
         $.ajax({
@@ -328,8 +322,10 @@ var ficheUserStore = Reflux.createStore({
             type: method,
             data: data,
             success: function (tab) {
-                if(tab.save === true)
+                if(tab.save == true) {
                     Actions.notif.success(Lang.get('global.notif_success'));
+                    Actions.utilisateur.saveOK(tab.idUser);
+                }
                 else
                     Actions.notif.error(Lang.get('global.notif_erreur'));
             },
@@ -353,11 +349,7 @@ var ficheUserStore = Reflux.createStore({
             type: method,
             data: {'_token': $('#_token').val()},
             success: function (tab) {
-                // TODO NOTIFICATION
-                //Notif tab['save']
-                this.dataUser = tab.data;
-                // Passe variable aux composants qui écoutent l'action actionLoadData
-                this.trigger(tab.data);
+                Actions.utilisateur.supprOK();
             },
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
