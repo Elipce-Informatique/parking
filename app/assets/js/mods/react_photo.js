@@ -1,3 +1,4 @@
+var Input = ReactB.Input;
 /**
  * Photo de protrait
  * @param src: URL de l'image
@@ -8,21 +9,21 @@ var Photo = React.createClass({
 
     propTypes: {
         src: React.PropTypes.string.isRequired,
-        attributes:React.PropTypes.object,
-        evts:React.PropTypes.object
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object
     },
 
-    GetDefaultProps: function(){
-        return{
+    GetDefaultProps: function () {
+        return {
             attributes: {},
             evts: {}
         }
     },
 
-    render: function() {
-       return(
-           <img src={this.props.src} {...this.props.attributes} {...this.props.evts} className="img-thumbnail img-responsive img-editable"/>
-       )
+    render: function () {
+        return (
+            <img src={this.props.src} {...this.props.attributes} {...this.props.evts} className="img-thumbnail img-responsive img-editable"/>
+        )
     }
 });
 module.exports.Photo = Photo;
@@ -36,31 +37,34 @@ module.exports.Photo = Photo;
 var PhotoEditable = React.createClass({
 
     propTypes: {
-        editable:React.PropTypes.bool.isRequired,
-        src:React.PropTypes.string.isRequired,
-        attributes:React.PropTypes.object,
-        evts:React.PropTypes.object
+        editable: React.PropTypes.bool.isRequired,
+        src: React.PropTypes.string.isRequired,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object
     },
 
-    GetDefaultProps: function(){
-        return{
+    GetDefaultProps: function () {
+        return {
             attributes: {},
             evts: {}
         }
     },
 
-    render: function() {
+    render: function () {
         var retour;
         // Editable
-        if(this.props.editable){
-            retour =  <Photo
-                            src={this.props.src}
-                            attributes = {this.props.attributes}
-                            evts = {this.props.evts}
-                        />
+        if (this.props.editable) {
+            retour = <span>
+                <Photo
+                    src={this.props.src}
+                    attributes = {this.props.attributes}
+                    evts = {this.props.evts}
+                />
+                <Input type="file" label="File" class="hide" ref="InputPhoto"/>
+            </span>
         }
         // Non editable
-        else{
+        else {
             retour = <img src={this.props.src} className="img-thumbnail img-responsive"/>;
         }
         return retour;

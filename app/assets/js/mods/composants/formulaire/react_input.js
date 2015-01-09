@@ -64,8 +64,6 @@ var InputText = React.createClass({
 
     render: function () {
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        //var propsattrs = _.omit(this.props.attributes, ['help', 'data-valid']);
-
         var propsAttrs = _.cloneDeep(this.props.attributes);
         propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
         var attrs = _.extend(propsAttrs, this.state.attributes);
@@ -198,7 +196,9 @@ var InputMail = React.createClass({
 
     render: function () {
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var attrs = _.merge(this.state.attributes, this.props.attributes);
+        var propsAttrs = _.cloneDeep(this.props.attributes);
+        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
+        var attrs = _.extend(propsAttrs, this.state.attributes);
 
         // Ajout de l'addon required si besoin
         if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
@@ -326,7 +326,9 @@ var InputPassword = React.createClass({
 
     render: function () {
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var attrs = _.merge(this.state.attributes, this.props.attributes);
+        var propsAttrs = _.cloneDeep(this.props.attributes);
+        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
+        var attrs = _.extend(propsAttrs, this.state.attributes);
 
         // Ajout de l'addon required si besoin
         if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
@@ -601,7 +603,9 @@ var InputNumber = React.createClass({
     render: function () {
 
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var attrs = _.merge(this.state.attributes, this.props.attributes);
+        var propsAttrs = _.cloneDeep(this.props.attributes);
+        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
+        var attrs = _.extend(propsAttrs, this.state.attributes);
 
         // Ajout de l'addon required si besoin
         if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
@@ -735,7 +739,14 @@ var InputTel = React.createClass({
     render: function () {
 
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var attrs = _.merge(this.state.attributes, this.props.attributes);
+        var propsAttrs = _.cloneDeep(this.props.attributes);
+        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
+        var attrs = _.extend(propsAttrs, this.state.attributes);
+
+        // Ajout de l'addon required si besoin
+        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
+            attrs = addRequiredAddon(attrs, this.state.value);
+        }
 
         // 4. ATTRS OK, CREATION INPUT
         return <Input
