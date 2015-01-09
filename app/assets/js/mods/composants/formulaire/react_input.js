@@ -64,8 +64,11 @@ var InputText = React.createClass({
 
     render: function () {
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var propsattrs = _.omit(this.props.attributes, ['help', 'data-valid']);
-        var attrs = _.merge(propsattrs, this.state.attributes);
+        //var propsattrs = _.omit(this.props.attributes, ['help', 'data-valid']);
+
+        var propsAttrs = _.cloneDeep(this.props.attributes);
+        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
+        var attrs = _.extend(propsAttrs, this.state.attributes);
 
         // Ajout de l'addon required si besoin
         if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
@@ -432,7 +435,6 @@ var InputSelect = React.createClass({
     // ATTENTION: getInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
     render: function () {
-        console.log('this.props.evts : %o', this.props.evts);
 
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
         //var attrs = this.props.attributes;
@@ -1100,7 +1102,7 @@ function modeEditableFalse(attr) {
 }
 
 function addRequiredAddon(attrs, value) {
-    return _.merge(attrs, {
+    return _.extend(attrs, {
         addonBefore: <OverlayTrigger placement="top" overlay={<Tooltip>
             {Lang.get('global.champ_obligatoire')}
         </Tooltip>}>
