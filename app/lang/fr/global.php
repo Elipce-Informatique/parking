@@ -69,6 +69,7 @@ Voulez-vous vraiment quitter cette page ?',
     'gerer' => 'Gérer',
     'oui' => 'Oui',
     'non' => 'Non',
+    'modifier' => 'Modifier',
 
     // FORMULAIRE
     'select' => 'Sélection...',

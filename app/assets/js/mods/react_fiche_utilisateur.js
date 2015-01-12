@@ -2,7 +2,7 @@
 var Field = require('./composants/formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputMailEditable = Field.InputMailEditable;
-var react_photo       = require('./react_photo');
+var react_photo       = require('./composants/react_photo');
 var PhotoEditable     = react_photo.PhotoEditable;
 var Row = ReactB.Row;
 var Col = ReactB.Col;
@@ -129,7 +129,7 @@ var FicheUser = React.createClass({
         emailInitial = this.state.email;
 
         var titreBis = Lang.get('administration.utilisateur.profilsAssocie');
-        
+
         var attrs = {
                 label: Lang.get('administration.utilisateur.tableau.email'),
                 name: "email",
@@ -148,10 +148,10 @@ var FicheUser = React.createClass({
         }
 
         return (
-            <Form ref="form">
+            <Form ref="form" className="form_utilisateur">
                 <Row>
                     <Col md={1} mdOffset={2} className="photo">
-                        <PhotoEditable src={this.state.photo} evts={{onClick:this.clickPhoto}} editable={this.props.editable} />
+                        <PhotoEditable name="photo" src={this.state.photo} evts={{onClick:this.clickPhoto}} editable={this.props.editable} />
                     </Col>
                 </Row>
                 <InputTextEditable ref="nom"
@@ -308,19 +308,31 @@ var ficheUserStore = Reflux.createStore({
             }, that);
         }
 
+        // RÉCUPÉRATION DES DONNÉES
         var data = $('form').serializeArray();
-        data.push({name: '_token', value: $('#_token').val()});
-        data.push({name:'matrice', value:matrice});
+        data.push({name: '_token', value:$('#_token').val()});
 
-        console.log('DATA %o',data);
+        // FormData
+        var fData = new FormData();
+        _.forIn(data, function(v,k){
+            fData.append(v.name,v.value);
+        });
+        fData.append('matrice',matrice);
+        fData.append('_method',method);
+        fData.append('photo', $("[name=photo]")[0].files[0]);
 
+        console.log('DATA %o',_.cloneDeep(fData));
+
+        //var request = new XMLHttpRequest();
+        //request.open("POST", url);
+        //request.send(fData);
         // Requête
         $.ajax({
             url: url,
-            dataType: 'json',
-            context: this,
-            type: method,
-            data: data,
+            type: 'POST',
+            data: fData,
+            processData: false,
+            contentType: false,
             success: function (tab) {
                 if(tab.save == true) {
                     Actions.notif.success(Lang.get('global.notif_success'));

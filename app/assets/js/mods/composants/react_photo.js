@@ -1,4 +1,5 @@
 var Input = ReactB.Input;
+var InputFile = require('./formulaire/react_form_fields').InputFile;
 /**
  * Photo de protrait
  * @param src: URL de l'image
@@ -39,6 +40,7 @@ var PhotoEditable = React.createClass({
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
         src: React.PropTypes.string.isRequired,
+        name: React.PropTypes.string.isRequired,
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object
     },
@@ -53,14 +55,15 @@ var PhotoEditable = React.createClass({
     render: function () {
         var retour;
         // Editable
+        console.log('Test');
         if (this.props.editable) {
             retour = <span>
                 <Photo
-                    src={this.props.src}
+                    src = {this.props.src}
                     attributes = {this.props.attributes}
                     evts = {this.props.evts}
                 />
-                <Input type="file" label="File" class="hide" ref="InputPhoto"/>
+                <InputFile name={this.props.name} libelle={Lang.get('global.modifier')} ref="InputPhoto"/>
             </span>
         }
         // Non editable

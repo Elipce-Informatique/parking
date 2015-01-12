@@ -83,6 +83,8 @@ class UtilisateurController extends \BaseController
      */
     public function update($id)
     {
+        Log::warning('-----------> UTILISATEUR CONTROLLER PUT : '.print_r($_REQUEST, true).'<-----------');
+        Log::warning('-----------> UTILISATEUR CONTROLLER : '.print_r(Input::all(), true).'<-----------');
         // Champs du formualaire
         $fields = Input::except('_token');
 

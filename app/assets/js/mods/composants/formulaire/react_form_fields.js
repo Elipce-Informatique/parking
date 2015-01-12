@@ -21,6 +21,6 @@ module.exports = {
     InputNumber: Input.InputNumber,
     InputNumberEditable: Input.InputNumberEditable,
     InputTel: Input.InputTel,
-    InputTelEditable: Input.InputTelEditable
-
+    InputTelEditable: Input.InputTelEditable,
+    InputFile: Input.InputFile
 };

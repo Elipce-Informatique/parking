@@ -258,11 +258,22 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
     public static function updateUser($id, $fields){
 
         Log::warning('-----------> updateUser $id : '.$id.'<-----------');
+        Log::warning('-----------> updateUser $fields : '.print_r($fields, true).'<-----------');
         // Variables
         $bSave = true;
 
         // Trouver le user
         $user = Utilisateur::find($id);
+
+        // Test si photo:
+        if (Input::hasFile('photo'))
+        {
+            Log::warning('-----------> ON A UN FICHIER !!! <-----------');
+            Input::file('photo')->move(storage_path().'/temp', 'test.'.Input::file('photo')->getClientOriginalExtension());
+        }
+        else{
+            Log::warning('-----------> ON A PAS DE FICHIER !!! <-----------');
+        }
 
         // Récupère la donnée de l'utilisateur
         $user->nom    = $fields['nom'];
@@ -335,6 +346,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
     public static function creerUtilisateur($fields){
 
         Log::warning('-----------> creerUtilisateur <-----------');
+        Log::warning(print_r($fields, true));
 
         $bSave = true;
 
@@ -356,6 +368,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 // Nouveau profil
                 $idUser = Utilisateur::insertGetId($fieldUser);
 
+                Log::warning('-----------> Utilisateur::insertGetId, $fields : '.$fields.' <-----------');
                 Log::warning('-----------> Utilisateur::insertGetId, $idUser : '.$idUser.' <-----------');
 
                 // Récupère les profils de l'utilisateur
@@ -382,6 +395,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             } catch (Exception $e) {
                 DB::rollback();
                 Log::warning('-----------> rollback <-----------');
+                Log::warning(print_r($e, true));
                 $retour = array('save' => false);
             }
         }

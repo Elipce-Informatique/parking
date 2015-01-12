@@ -1,14 +1,14 @@
-var Input          = ReactB.Input;
+var Input = ReactB.Input;
 var OverlayTrigger = ReactB.OverlayTrigger;
-var Tooltip        = ReactB.Tooltip;
-var Glyphicon      = ReactB.Glyphicon;
+var Tooltip = ReactB.Tooltip;
+var Glyphicon = ReactB.Glyphicon;
 
 /*********/
 /* Mixin */
-var MixinInput        = require('../../mixins/input_value');
-var MixinInputValue   = MixinInput.InputValueMixin;
+var MixinInput = require('../../mixins/input_value');
+var MixinInputValue = MixinInput.InputValueMixin;
 var MixinInputChecked = MixinInput.InputCheckableMixin;
-var Validator         = require('validator');
+var Validator = require('validator');
 
 /***********************/
 /* Composants Boostrap */
@@ -46,7 +46,7 @@ var InputText = React.createClass({
             evts: {},
             onChange: this.handleChange,
             gestMod: true,
-            area:false,
+            area: false,
             validator: function (val, props, state) {
                 if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
                     return {isValid: false, style: 'default', tooltip: ''};
@@ -75,7 +75,7 @@ var InputText = React.createClass({
 
         // 4. ATTRS OK, CREATION INPUT
         var type = "text";
-        if(this.props.area == true)
+        if (this.props.area == true)
             type = "textarea";
 
         return (<Input
@@ -121,7 +121,7 @@ var InputTextEditable = React.createClass({
             attributes: {},
             evts: {},
             gestMod: true,
-            area:false
+            area: false
         }
     },
 
@@ -572,7 +572,7 @@ var InputNumber = React.createClass({
             validator: function (val, props, state) {
 
                 /* Pour résoudre le problème de float accuracy */
-                var resModulo = (val/props.step).toFixed(1);
+                var resModulo = (val / props.step).toFixed(1);
                 var test = resModulo + '';
                 var aTest = test.split('.');
 
@@ -581,7 +581,7 @@ var InputNumber = React.createClass({
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
                 /* Valeur non correct */
-                else if(val < props.min || val > props.max || aTest[1] != 0){
+                else if (val < props.min || val > props.max || aTest[1] != 0) {
                     var tooltip = Lang.get('global.saisieNumber');
                     tooltip = tooltip.replace('[min]', props.min);
                     tooltip = tooltip.replace('[max]', props.max);
@@ -713,17 +713,17 @@ var InputTel = React.createClass({
             onChange: this.handleChange,
             validator: function (val, props, state) {
 
-                var tel = val+'';
+                var tel = val + '';
                 var telSansEspace = tel.replace(/ /g, '').replace(/\+/g, '');
-                var telNumber = telSansEspace*1;
-                var bool      = !isNaN(telNumber);
+                var telNumber = telSansEspace * 1;
+                var bool = !isNaN(telNumber);
 
                 /* Champ vide */
                 if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
                 /* Valeur non correct */
-                else if(!bool){
+                else if (!bool) {
                     return {isValid: false, style: 'error', tooltip: Lang.get('global.inputTelError')};
                 }
                 /* Valeur correct */
@@ -785,7 +785,7 @@ var InputTelEditable = React.createClass({
 
     getDefaultProps: function () {
         return {
-            attributes: {value:''},
+            attributes: {value: ''},
             evts: {},
             gestMod: true
         }
@@ -810,6 +810,54 @@ var InputTelEditable = React.createClass({
         return retour;
     }
 });
+
+
+/**
+ * Created by yann on 12/01/2015.
+ *
+ * TODO : Snippet de base pour un composant react. Commentaire à éditer
+ * @param name : nom a afficher dans le composant
+ */
+var InputFile = React.createClass({
+
+    propTypes: {
+        name: React.PropTypes.string.isRequired,
+        style: React.PropTypes.string,
+        libelle: React.PropTypes.string,
+        attributes: React.PropTypes.object
+    },
+
+    getDefaultProps: function () {
+        return {
+            style: "btn-primary",
+            libelle: "Upload"
+        };
+    },
+
+    getInitialState: function () {
+        return {};
+    },
+
+    componentDidMount: function () {
+
+    },
+
+    shouldComponentUpdate: function (nextProps, nextState) {
+        return true;
+    },
+
+    render: function () {
+        return (
+            <div className={"fileUpload btn "+this.props.style}>
+                <span>{this.props.libelle}</span>
+                <Input name={this.props.name} type="file" className="upload" {...this.props.attributes} />
+            </div>
+        );
+    }
+});
+
+
+
 /*--------------------------------------------------------------
  CHECKABLE
  ---------------------------------------------------------------- */
@@ -1081,6 +1129,7 @@ module.exports.InputSelect = InputSelect;
 module.exports.InputSelectEditable = InputSelectEditable;
 module.exports.InputNumber = InputNumber;
 module.exports.InputNumberEditable = InputNumberEditable;
+module.exports.InputFile= InputFile;
 
 
 // FONCTIONS

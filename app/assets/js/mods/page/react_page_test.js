@@ -18,7 +18,7 @@ var InputDateEditable           = Field.InputDateEditable;
 var InputSelectEditable         = Field.InputSelectEditable;
 var InputNumberEditable         = Field.InputNumberEditable;
 var InputTelEditable            = Field.InputTelEditable;
-var react_photo                 = require('../react_photo');
+var react_photo                 = require('../composants/react_photo');
 var ImageEditable               = react_photo.PhotoEditable;
 
 var ReactPageTest               = React.createClass({
