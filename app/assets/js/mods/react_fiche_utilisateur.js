@@ -89,7 +89,7 @@ function emailCreateChange (value){
  */
 var FicheUser = React.createClass({
 
-    mixins: [Reflux.ListenerMixin, AuthentMixins, FormValidationMixin],
+    mixins: [Reflux.ListenerMixin, FormValidationMixin],
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
@@ -104,14 +104,9 @@ var FicheUser = React.createClass({
         // Liaison au store
         this.listenTo(ficheUserStore, this.updateData, this.updateData);
 
-        console.log('componentWillMount TOTO');
-
         // Appel du chargement
         Actions.utilisateur.set_etat_create_edit(this.props.idUser==0);
         Actions.utilisateur.load_user_info(this.props.idUser);
-    },
-    componentWillUnmount: function(){
-        console.log('UNMOUNT TOTO');
     },
 
     clickPhoto: function (evt){
@@ -303,8 +298,8 @@ var ficheUserStore = Reflux.createStore({
         var matrice = [];
         if(this.isMatriceModuleModif) {
             var that = this;
-            _.each(this.matriceBtnRadio, function ($key, $value) {
-                matrice.push([$key, $value]);
+            _.each(this.matriceBtnRadio, function (key, value) {
+                matrice.push([key, value]);
             }, that);
         }
 

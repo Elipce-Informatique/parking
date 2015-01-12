@@ -361,6 +361,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             $fieldUser['prenom'] = $fields['prenom'];
             $fieldUser['email']  = $fields['email'];
             $fieldUser['photo']  = 'app/documents/photo/no.gif';
+            $fieldUser['password'] = Hash::make($fields['email']);
 
             try {
                 DB::beginTransaction();
@@ -375,7 +376,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 $matrice = explode(',', $fields['matrice']);
                 Log::warning('-----------> count($matrice): '.count($matrice).' <-----------');
 
-                if(count($matrice[0]) >= 1) {
+                if(count($matrice[0]) > 1) {
                     for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
                         $ligne = [];
                         $ligne['utilisateur_id'] = $idUser;

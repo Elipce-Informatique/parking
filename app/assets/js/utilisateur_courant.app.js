@@ -1,3 +1,5 @@
-/**
- * Created by yann on 09/01/2015.
- */
+// ATTENTION la majuscule est super importante
+
+$(function(){
+
+});
