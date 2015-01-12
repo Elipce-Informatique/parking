@@ -142,8 +142,9 @@ var FicheUser = React.createClass({
             attrs       = _.extend(attrs, attrs2);
         }
 
+        var fAttrs = {className:"form_utilisateur", id:"form_utilisateur"};
         return (
-            <Form ref="form" className="form_utilisateur">
+            <Form ref="form" attributes={fAttrs}>
                 <Row>
                     <Col md={1} mdOffset={2} className="photo">
                         <PhotoEditable name="photo" src={this.state.photo} evts={{onClick:this.clickPhoto}} editable={this.props.editable} />
@@ -304,7 +305,7 @@ var ficheUserStore = Reflux.createStore({
         }
 
         // RÉCUPÉRATION DES DONNÉES
-        var data = $('form').serializeArray();
+        var data = $('#form_utilisateur').serializeArray();
         data.push({name: '_token', value:$('#_token').val()});
 
         // FormData
