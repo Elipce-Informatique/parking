@@ -135,15 +135,13 @@ var FicheUser = React.createClass({
 
         emailInitial = this.state.email;
 
-        var titreBis = Lang.get('administration.utilisateur.profilsAssocie');
-
         var attrs = {
                 label: Lang.get('administration.utilisateur.tableau.email'),
                 name: "email",
                 value: this.state.email,
                 required: true,
                 wrapperClassName: 'col-md-4',
-                labelClassName: 'col-md-2 text-right',
+                labelClassName: 'col-md-1 text-right',
                 groupClassName: 'row'
         };
 
@@ -154,46 +152,66 @@ var FicheUser = React.createClass({
             attrs       = _.extend(attrs, attrs2);
         }
 
+        var SuiteCode = '';
+        /* Mode compte ou page user */
+        if(this.props.modeCompte == true){
+            /* On affiche la modification du password */
+            SuiteCode = <div>
+                            A faire
+                        </div>
+        }
+        else{
+            var titreBis = Lang.get('administration.utilisateur.profilsAssocie');
+
+            /* On affiche le tableau des profils associés */
+            SuiteCode = <div>
+                            <h2>{titreBis}</h2>
+                            <DataTable
+                                id='dataTableProfils'
+                                bUnderline={false}
+                                head={headP}
+                                data={this.state.dataProfil}
+                                hide={hideP}
+                                reactElements={aReactElements}
+                                editable={this.props.editable}/>
+                        </div>;
+        }
+
         var fAttrs = {className:"form_utilisateur", id:"form_utilisateur"};
         var srcPhoto = './app/storage/documents/photo/'+this.state.photo;
         return (
             <Form ref="form" attributes={fAttrs}>
                 <Row>
-                    <Col md={1} mdOffset={2} className="photo">
+                    <Col md={2} className="photo">
                         <PhotoEditable name="photo" alertOn={true} src={srcPhoto} evts={{onClick:this.clickPhoto}} editable={this.props.editable} />
                     </Col>
+                    <Col md={10}>
+                        <InputTextEditable ref="nom"
+                            attributes={
+                            {
+                                label: Lang.get('administration.utilisateur.tableau.nom'),
+                                name: "nom",
+                                value: this.state.nom,
+                                required: true,
+                                wrapperClassName: 'col-md-4', labelClassName: 'col-md-1 text-right', groupClassName: 'row'
+                            }}
+                            editable={this.props.editable}
+                            evts={{onChange: this.test}}/>
+                        <InputTextEditable attributes={{
+                            label: Lang.get('administration.utilisateur.tableau.prenom'),
+                            name: "prenom",
+                            value: this.state.prenom,
+                            required: true,
+                            wrapperClassName: 'col-md-4',
+                            labelClassName: 'col-md-1 text-right',
+                            groupClassName: 'row'
+                        }} editable={this.props.editable} />
+                        <InputMailEditable
+                            attributes={attrs}
+                            editable={this.props.editable} />
+                    </Col>
                 </Row>
-                <InputTextEditable ref="nom"
-                    attributes={
-                    {
-                        label: Lang.get('administration.utilisateur.tableau.nom'),
-                        name: "nom",
-                        value: this.state.nom,
-                        required: true,
-                        wrapperClassName: 'col-md-4', labelClassName: 'col-md-2 text-right', groupClassName: 'row'
-                    }}
-                    editable={this.props.editable}
-                    evts={{onChange: this.test}}/>
-                <InputTextEditable attributes={{
-                    label: Lang.get('administration.utilisateur.tableau.prenom'),
-                    name: "prenom",
-                    value: this.state.prenom,
-                    required: true,
-                    wrapperClassName: 'col-md-4',
-                    labelClassName: 'col-md-2 text-right',
-                    groupClassName: 'row'
-                }} editable={this.props.editable} />
-                <InputMailEditable
-                    attributes={attrs}
-                    editable={this.props.editable} />
-                <h2>{titreBis}</h2>
-                <DataTable id='dataTableProfils'
-                    bUnderline={false}
-                    head={headP}
-                    data={this.state.dataProfil}
-                    hide={hideP}
-                    reactElements={aReactElements}
-                    editable={this.props.editable}/>
+                {SuiteCode}
             </Form>
         );
     },
@@ -345,7 +363,7 @@ var ficheUserStore = Reflux.createStore({
             success: function (tab) {
                 if(tab.save == true) {
                     Actions.notif.success(Lang.get('global.notif_success'));
-                    Actions.utilisateur.saveOK(tab.idUser);
+                    Actions.utilisateur.saveOK(tab.idUser*1);
                 }
                 else
                     Actions.notif.error(Lang.get('global.notif_erreur'));
