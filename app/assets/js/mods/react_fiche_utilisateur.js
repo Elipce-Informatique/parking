@@ -155,6 +155,7 @@ var FicheUser = React.createClass({
         var SuiteCode = '';
         /* Mode compte ou page user */
         if(this.props.modeCompte == true){
+
             /* On affiche la modification du password */
             SuiteCode = <div>
                             A faire
@@ -165,15 +166,21 @@ var FicheUser = React.createClass({
 
             /* On affiche le tableau des profils associés */
             SuiteCode = <div>
-                            <h2>{titreBis}</h2>
-                            <DataTable
-                                id='dataTableProfils'
-                                bUnderline={false}
-                                head={headP}
-                                data={this.state.dataProfil}
-                                hide={hideP}
-                                reactElements={aReactElements}
-                                editable={this.props.editable}/>
+                            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                {titreBis}
+                            </button>
+                            <div class="collapse" id="collapseExample">
+                                <div class="well">
+                                    <DataTable
+                                    id='dataTableProfils'
+                                    bUnderline={false}
+                                    head={headP}
+                                    data={this.state.dataProfil}
+                                    hide={hideP}
+                                    reactElements={aReactElements}
+                                    editable={this.props.editable}/>
+                                </div>
+                            </div>
                         </div>;
         }
 
