@@ -370,23 +370,41 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             $fieldUser['nom']    = $fields['nom'];
             $fieldUser['prenom'] = $fields['prenom'];
             $fieldUser['email']  = $fields['email'];
-            $fieldUser['photo']  = 'app/documents/photo/no.gif';
             $fieldUser['password'] = Hash::make($fields['email']);
+
+            // Test si photo:
+            if (Input::hasFile('photo')){
+                /* Extension du fichier */
+                $extFile = Input::file('photo')->getClientOriginalExtension();
+
+                /* Nom du fichier (email + extension) */
+                $fileName = $fields['email'];
+                $fileName = str_replace('.', '', $fileName);
+                $fileName = str_replace('@', '', $fileName);
+                $fileName .= '.'.$extFile;
+
+                /* Sauvegarde de la photo dans le bon dossier */
+                $destPath = storage_path().'/documents/photo';
+                Input::file('photo')->move($destPath, $fileName);
+
+                /* Mise à jour du champ en base de donnée */
+                $fieldUser['photo']  = $fileName;
+            }
+            else
+                $fieldUser['photo'] = 'no.gif';
 
             try {
                 DB::beginTransaction();
+                Log::warning('-----------> beginTransaction <-----------');
 
                 // Nouveau profil
                 $idUser = Utilisateur::insertGetId($fieldUser);
-
-                Log::warning('-----------> Utilisateur::insertGetId, $fields : '.$fields.' <-----------');
-                Log::warning('-----------> Utilisateur::insertGetId, $idUser : '.$idUser.' <-----------');
 
                 // Récupère les profils de l'utilisateur
                 $matrice = explode(',', $fields['matrice']);
                 Log::warning('-----------> count($matrice): '.count($matrice).' <-----------');
 
-                if(count($matrice[0]) > 1) {
+                if(count($matrice[0]) >= 1 && $matrice[0] != '') {
                     for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
                         $ligne = [];
                         $ligne['utilisateur_id'] = $idUser;
@@ -405,8 +423,8 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 $retour = array('idUser' => $idUser, 'save' => $bSave);
             } catch (Exception $e) {
                 DB::rollback();
-                Log::warning('-----------> rollback <-----------');
                 Log::warning(print_r($e, true));
+                Log::warning('-----------> rollback <-----------');
                 $retour = array('save' => false);
             }
         }
