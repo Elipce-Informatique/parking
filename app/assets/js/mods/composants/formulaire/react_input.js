@@ -793,7 +793,6 @@ var InputTelEditable = React.createClass({
 
     render: function () {
         var retour;
-
         // Editable
         if (this.props.editable) {// 4. ATTRS OK, CREATION INPUT
             retour = <InputTel

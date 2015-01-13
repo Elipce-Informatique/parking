@@ -49,9 +49,9 @@ Route::group(['before' => 'auth'], function () {
     // PAGE D'ACCUEIL
     Route::get('accueil', 'AccueilController@index');
     // FICHE UTILISATEUR
-    Route::get('utilisateur/fiche', 'UtilisateurController@fiche');
-    // UPLOAD FILE
-    Route::post('upload', 'UploadController@upload');
+    Route::get('moncompte', 'UtilisateurController@compte');
+    Route::put('moncompte', 'UtilisateurController@updateCompte');
+
 });
 
 /*

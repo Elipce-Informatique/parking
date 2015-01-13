@@ -59,7 +59,8 @@ class UtilisateurController extends \BaseController
         return Utilisateur::getUtilisateurFromId($id);
     }
 
-    public function getUserAndProfil($id){
+    public function getUserAndProfil($id)
+    {
         return Utilisateur::getUserAndProfil($id);
     }
 
@@ -83,8 +84,8 @@ class UtilisateurController extends \BaseController
      */
     public function update($id)
     {
-        Log::warning('-----------> UTILISATEUR CONTROLLER PUT : '.print_r($_REQUEST, true).'<-----------');
-        Log::warning('-----------> UTILISATEUR CONTROLLER : '.print_r(Input::all(), true).'<-----------');
+        Log::warning('-----------> UTILISATEUR CONTROLLER PUT : ' . print_r($_REQUEST, true) . '<-----------');
+        Log::warning('-----------> UTILISATEUR CONTROLLER : ' . print_r(Input::all(), true) . '<-----------');
         // Champs du formualaire
         $fields = Input::except('_token');
 
@@ -100,26 +101,39 @@ class UtilisateurController extends \BaseController
      */
     public function destroy($id)
     {
-       return json_encode(Utilisateur::deleteUser($id));
+        return json_encode(Utilisateur::deleteUser($id));
     }
 
     /**
      * Récupère tous les utilisateurs
      */
-    public function all(){
+    public function all()
+    {
         return Utilisateur::getUtilisateurs();
     }
 
-    public function getUserExist($email){
+    public function getUserExist($email)
+    {
         return Utilisateur::getUserExist($email);
     }
 
     /**
      * Affiche la fiche de l'utilisateur actuellement connecté.
      */
-    public function fiche(){
+    public function compte()
+    {
         $oUser = Auth::user();
         return View::make('pages.utilisateur_courant')->with('user', $oUser);
+    }
+
+    /**
+     * Affiche la fiche de l'utilisateur actuellement connecté.
+     */
+    public function updateCompte()
+    {
+        $oUser = Auth::user();
+        // TODO : modifier les informations de l'utilisateur connecté en fonction des paramètres
+        Log::warning('Modification des infos de l\'utilisateur avec les params suivants : ' . print_r(Input::all(), true));
     }
 
 }

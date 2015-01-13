@@ -43,6 +43,12 @@ function handleClickRadio(evt){
 
 var emailInitial = '';
 
+/**
+ * Vérification de l'unicité de l'e-mail en BDD
+ * @param value
+ * @param edit
+ * @returns {{}}
+ */
 function emailChange(value, edit){
     /* Varaible de retour */
     var retour = {};
@@ -84,8 +90,8 @@ function emailCreateChange (value){
 
 /**
  * Fiche utilisateur
- * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
- * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param editable: Booléen pour autoriser ou non la modification des données de l'utilisateur
+ * @param idUser: id de l'utilisateur affiché dans cette fiche.
  */
 var FicheUser = React.createClass({
 
@@ -93,7 +99,13 @@ var FicheUser = React.createClass({
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
-        idUser: React.PropTypes.number
+        idUser: React.PropTypes.number,
+        modeCompte: React.PropTypes.bool
+    },
+    getDefaultProps: function () {
+        return {
+            modeCompte: false
+        };
     },
 
     getInitialState: function () {
@@ -142,9 +154,10 @@ var FicheUser = React.createClass({
             attrs       = _.extend(attrs, attrs2);
         }
 
+        var fAttrs = {className:"form_utilisateur", id:"form_utilisateur"};
         var srcPhoto = './app/storage/documents/photo/'+this.state.photo;
         return (
-            <Form ref="form" className="form_utilisateur">
+            <Form ref="form" attributes={fAttrs}>
                 <Row>
                     <Col md={1} mdOffset={2} className="photo">
                         <PhotoEditable name="photo" alertOn={true} src={srcPhoto} evts={{onClick:this.clickPhoto}} editable={this.props.editable} />
@@ -304,7 +317,7 @@ var ficheUserStore = Reflux.createStore({
         }
 
         // RÉCUPÉRATION DES DONNÉES
-        var data = $('form').serializeArray();
+        var data = $('#form_utilisateur').serializeArray();
         data.push({name: '_token', value:$('#_token').val()});
 
         // FormData
@@ -330,9 +343,6 @@ var ficheUserStore = Reflux.createStore({
             contentType: false,
             dataType:'json',
             success: function (tab) {
-                console.log('tab : %o', tab);
-                console.log('tab.save : %o', tab.save);
-                console.log('tab.idUser : %o', tab.idUser);
                 if(tab.save == true) {
                     Actions.notif.success(Lang.get('global.notif_success'));
                     Actions.utilisateur.saveOK(tab.idUser);
@@ -374,3 +384,4 @@ var ficheUserStore = Reflux.createStore({
     }
 });
 module.exports.store = ficheUserStore;
+
