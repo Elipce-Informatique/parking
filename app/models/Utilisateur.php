@@ -258,7 +258,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
     public static function updateUser($id, $fields){
 
         Log::warning('-----------> updateUser $id : '.$id.'<-----------');
-        Log::warning('-----------> updateUser $fields : '.print_r($fields, true).'<-----------');
+
         // Variables
         $bSave = true;
 
@@ -266,20 +266,30 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         $user = Utilisateur::find($id);
 
         // Test si photo:
-        if (Input::hasFile('photo'))
-        {
-            Log::warning('-----------> ON A UN FICHIER !!! <-----------');
-            Input::file('photo')->move(storage_path().'/temp', 'test.'.Input::file('photo')->getClientOriginalExtension());
+        if (Input::hasFile('photo')){
+            /* Extension du fichier */
+            $extFile = Input::file('photo')->getClientOriginalExtension();
+
+            /* Nom du fichier (email + extension) */
+            $fileName = $fields['email'];
+            $fileName = str_replace('.', '', $fileName);
+            $fileName = str_replace('@', '', $fileName);
+            $fileName .= '.'.$extFile;
+
+            /* Sauvegarde de la photo dans le bon dossier */
+            $destPath = storage_path().'/documents/photo';
+            Input::file('photo')->move($destPath, $fileName);
+
+            /* Mise à jour du champ en base de donnée */
+            $user->photo  = $fileName;
         }
-        else{
-            Log::warning('-----------> ON A PAS DE FICHIER !!! <-----------');
-        }
+        else
+            $user->photo = 'no.gif';
 
         // Récupère la donnée de l'utilisateur
         $user->nom    = $fields['nom'];
         $user->prenom = $fields['prenom'];
         $user->email  = $fields['email'];
-        $user->photo  = 'app/documents/photo/no.gif';
 
         // Sauvegarde
         try {
@@ -293,7 +303,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 // Met à jour la relation avec les profils
                 $matrice = explode(',', $fields['matrice']);
 
-                if(count($matrice[0]) >= 1) {
+                if(count($matrice[0]) >= 1 && $matrice[0] != '') {
                     for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
 
                         $idProfil = $matrice[$i + 1];
@@ -322,12 +332,10 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 }
             }
 
-            if($bSave == true) {
+            if($bSave == true)
                 DB::commit();
-            }
-            else {
+            else
                 DB::rollback();
-            }
         }
         catch (Exception $e) {
             Log::warning('-----------> catch : ' . $e->getMessage() . ' <-----------');
@@ -335,7 +343,9 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             DB::rollback();
         }
 
-        return array('save' => $bSave);
+        Log::warning('-----------> $bSave : ' .$bSave. ' <-----------');
+
+        return array('save' => $bSave, 'idUser' => $id);
     }
 
     /**

@@ -793,6 +793,7 @@ var InputTelEditable = React.createClass({
 
     render: function () {
         var retour;
+
         // Editable
         if (this.props.editable) {// 4. ATTRS OK, CREATION INPUT
             retour = <InputTel
@@ -817,45 +818,74 @@ var InputTelEditable = React.createClass({
  *
  * TODO : Snippet de base pour un composant react. Commentaire à éditer
  * @param name : nom a afficher dans le composant
+ * @param typeOfFile : all, docs, word, excel, pdf, txt, img
  */
 var InputFile = React.createClass({
+    mixins: [MixinInputValue],
 
     propTypes: {
-        name: React.PropTypes.string.isRequired,
-        style: React.PropTypes.string,
-        libelle: React.PropTypes.string,
-        attributes: React.PropTypes.object
+        name:       React.PropTypes.string.isRequired,
+        typeOfFile: React.PropTypes.string,
+        alertOn:    React.PropTypes.bool,
+        style:      React.PropTypes.string,
+        libelle:    React.PropTypes.string,
+        attributes: React.PropTypes.object,
+        evts:       React.PropTypes.object,
+        gestMod:    React.PropTypes.bool
     },
 
     getDefaultProps: function () {
         return {
-            style: "btn-primary",
-            libelle: "Upload"
+            attributes: {},
+            evts: {},
+            gestMod:    true,
+            onChange:   this.handleChange,
+            style:      "btn-primary",
+            libelle:    "Upload",
+            typeOfFile: 'all',
+            alertOn:false,
+            validator: function (val, props, state) {
+
+                if(val.length == 0 || checkFileExtension(val, props.typeOfFile, props.alertOn)) {
+                    console.log('isValid: true');
+                    return {isValid: true, style: 'default', tooltip: ''};
+                }
+                else {
+                    console.log('isValid: false');
+                    return {isValid: false, style: 'default', tooltip: ''};
+                }
+            }
         };
     },
 
-    getInitialState: function () {
-        return {};
-    },
-
-    componentDidMount: function () {
-
-    },
-
-    shouldComponentUpdate: function (nextProps, nextState) {
-        return true;
-    },
-
     render: function () {
+        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
+
+        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
+        var propsAttrs = _.cloneDeep(this.props.attributes);
+        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
+        var attrs = _.extend(propsAttrs, this.state.attributes);
+
+
+        // 4. ATTRS OK, CREATION INPUT
         return (
             <div className={"fileUpload btn "+this.props.style}>
                 <span>{this.props.libelle}</span>
-                <Input name={this.props.name} type="file" className="upload" {...this.props.attributes} />
+                <Input
+                    type="file"
+                    name={this.props.name}
+                    className="upload"
+                    {...attrs}
+                    {...gestMod}
+                    {...this.props.evts}
+                    onChange = {this.handleChange}
+                    value={this.state.value}
+                    ref = "InputField"
+                />;
             </div>
         );
     }
 });
-
 
 
 /*--------------------------------------------------------------
@@ -1169,4 +1199,85 @@ function addRequiredAddon(attrs, value) {
             <Glyphicon glyph="asterisk" />
         </OverlayTrigger>
     });
+}
+
+/**
+ * Verifie l'extension d'un fichier
+ * @param value: value de l'input type="file"
+ * @param mode: voir le case (all, docs, word, excel, pdf, txt, img)
+ * @param withAlert: booléen si on affiche ou non une alert si l'extension n'est pas bonne
+ * @return booléen
+ */
+function checkFileExtension(value, mode, withAlert) {
+    var filePath = value;
+    //console.log('checkFileExtension');
+    //console.log('filePath : '+filePath);
+    //console.log('mode : '+mode);
+    //console.log('withAlert : %o', withAlert);
+
+    if(filePath.indexOf('.') == -1)
+        return false;
+
+    var validExtensions = [];
+    var ext = filePath.substring(filePath.lastIndexOf('.') + 1).toLowerCase();
+    switch (mode) {
+        case 'all':
+            validExtensions[0] = 'jpg';
+            validExtensions[1] = 'bmp';
+            validExtensions[2] = 'png';
+            validExtensions[3] = 'gif';
+            validExtensions[4] = 'txt';
+            validExtensions[5] = 'doc';
+            validExtensions[6] = 'docx';
+            validExtensions[7] = 'xls';
+            validExtensions[8] = 'xlsx';
+            validExtensions[9] = 'pdf';
+            break;
+        case 'docs':
+            validExtensions[0] = 'doc';
+            validExtensions[1] = 'docx';
+            validExtensions[2] = 'pdf';
+            break;
+        case 'word':
+            validExtensions[0] = 'doc';
+            validExtensions[1] = 'docx';
+            break;
+        case 'excel':
+            validExtensions[0] = 'xls';
+            validExtensions[1] = 'xlsx';
+            break;
+        case 'pdf':
+            validExtensions[0] = 'pdf';
+            break;
+        case 'txt':
+            validExtensions[0] = 'txt';
+            break;
+        case 'img':
+            validExtensions[0] = 'jpg';
+            validExtensions[1] = 'jpeg';
+            validExtensions[2] = 'bmp';
+            validExtensions[3] = 'png';
+            validExtensions[4] = 'gif';
+            break;
+
+        default:
+            break;
+    }
+
+    for(var i = 0; i < validExtensions.length; i++) {
+        if(ext == validExtensions[i])
+            return true;
+    }
+    var temp = '';
+    for(var i = 0; i < validExtensions.length; i++) {
+        temp = temp + '.'+validExtensions[i]+'\n';
+    }
+
+    var str = Lang.get('global.erreurFileInput');
+    str = str.replace('[extensions]', temp);
+
+    if(withAlert)
+        swal(str);
+
+    return false;
 }

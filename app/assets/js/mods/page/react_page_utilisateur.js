@@ -63,7 +63,6 @@ var PageUser = React.createClass({
                     </div>;
                 break;
             case 'edition':
-                console.log('edition');
                 react =
                     <div key={this.state.etat}>
                         <BandeauEdition mode={1} titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom+' '+this.state.dataUser.prenom}/>

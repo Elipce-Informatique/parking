@@ -17,7 +17,8 @@ var Photo = React.createClass({
     GetDefaultProps: function () {
         return {
             attributes: {},
-            evts: {}
+            evts: {},
+            gestMod: true
         }
     },
 
@@ -42,20 +43,22 @@ var PhotoEditable = React.createClass({
         src: React.PropTypes.string.isRequired,
         name: React.PropTypes.string.isRequired,
         attributes: React.PropTypes.object,
-        evts: React.PropTypes.object
+        evts: React.PropTypes.object,
+        alertOn:React.PropTypes.bool,
+        gestMod: React.PropTypes.bool
     },
 
     GetDefaultProps: function () {
         return {
             attributes: {},
-            evts: {}
+            evts: {},
+            alertOn:false
         }
     },
 
     render: function () {
         var retour;
         // Editable
-        console.log('Test');
         if (this.props.editable) {
             retour = <span>
                 <Photo
@@ -63,7 +66,7 @@ var PhotoEditable = React.createClass({
                     attributes = {this.props.attributes}
                     evts = {this.props.evts}
                 />
-                <InputFile name={this.props.name} libelle={Lang.get('global.modifier')} ref="InputPhoto"/>
+                <InputFile typeOfFile={'img'} alertOn={this.props.alertOn} gestMod={this.props.gestMod} name={this.props.name} libelle={Lang.get('global.modifier')} ref="InputPhoto"/>
             </span>
         }
         // Non editable

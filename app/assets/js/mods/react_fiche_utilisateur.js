@@ -97,7 +97,7 @@ var FicheUser = React.createClass({
     },
 
     getInitialState: function () {
-        return {nom: '', prenom: '', email: '', photo: BASE_URI+'app/documents/photo/no.gif', dataProfil: [], retour: {}};
+        return {nom: '', prenom: '', email: '', photo: 'no.gif', dataProfil: [], retour: {}};
     },
 
     componentWillMount: function () {
@@ -120,7 +120,7 @@ var FicheUser = React.createClass({
     },
 
     render: function () {
-        console.log('this.state : %o', this.state);
+
         emailInitial = this.state.email;
 
         var titreBis = Lang.get('administration.utilisateur.profilsAssocie');
@@ -142,11 +142,12 @@ var FicheUser = React.createClass({
             attrs       = _.extend(attrs, attrs2);
         }
 
+        var srcPhoto = './app/storage/documents/photo/'+this.state.photo;
         return (
             <Form ref="form" className="form_utilisateur">
                 <Row>
                     <Col md={1} mdOffset={2} className="photo">
-                        <PhotoEditable name="photo" src={this.state.photo} evts={{onClick:this.clickPhoto}} editable={this.props.editable} />
+                        <PhotoEditable name="photo" alertOn={true} src={srcPhoto} evts={{onClick:this.clickPhoto}} editable={this.props.editable} />
                     </Col>
                 </Row>
                 <InputTextEditable ref="nom"
@@ -227,7 +228,6 @@ var ficheUserStore = Reflux.createStore({
     },
 
     setEtatCreateEdit: function(modeCreate_P){
-        console.log('setEtatCreateEdit');
         isMatriceModuleModif = false;
         this.modeCreate = modeCreate_P;
     },
@@ -328,7 +328,11 @@ var ficheUserStore = Reflux.createStore({
             data: fData,
             processData: false,
             contentType: false,
+            dataType:'json',
             success: function (tab) {
+                console.log('tab : %o', tab);
+                console.log('tab.save : %o', tab.save);
+                console.log('tab.idUser : %o', tab.idUser);
                 if(tab.save == true) {
                     Actions.notif.success(Lang.get('global.notif_success'));
                     Actions.utilisateur.saveOK(tab.idUser);
