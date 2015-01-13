@@ -847,6 +847,7 @@ var InputFile = React.createClass({
     },
 
     render: function () {
+
         return (
             <div className={"fileUpload btn "+this.props.style}>
                 <span>{this.props.libelle}</span>

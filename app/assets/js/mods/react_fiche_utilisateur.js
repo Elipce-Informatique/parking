@@ -371,3 +371,4 @@ var ficheUserStore = Reflux.createStore({
     }
 });
 module.exports.store = ficheUserStore;
+
