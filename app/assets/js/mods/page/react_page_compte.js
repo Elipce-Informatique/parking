@@ -57,14 +57,14 @@ var PageCompte = React.createClass({
                 comp =
                     <div key={this.state.etat}>
                         <BandeauEdition mode={1} titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}/>
-                        <FicheUser editable={true} idUser={this.props.idUser} modeCompte={true}/>
+                        <FicheUser editable={true} userData={this.props.dataUser} idUser={this.props.idUser} modeCompte={true}/>
                     </div>;
                 break;
             default:
                 comp =
                     <div key={this.state.etat}>
                         <BandeauVisu titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}/>
-                        <FicheUser editable={false} idUser={this.props.idUser} modeCompte={true}/>
+                        <FicheUser editable={false} userData={this.props.dataUser} idUser={this.props.idUser} modeCompte={true}/>
                     </div>;
                 break;
 

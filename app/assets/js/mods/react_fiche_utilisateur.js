@@ -99,17 +99,20 @@ var FicheUser = React.createClass({
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
+        userData : React.PropTypes.object,
         idUser: React.PropTypes.number,
         modeCompte: React.PropTypes.bool
     },
     getDefaultProps: function () {
         return {
-            modeCompte: false
-        };
+            modeCompte: false,
+            userData: {}
+        }
     },
 
     getInitialState: function () {
-        return {nom: '', prenom: '', email: '', photo: 'no.gif', dataProfil: [], retour: {}};
+        var retour = {nom: '', prenom: '', email: '', photo: 'no.gif', dataProfil: [], retour: {}};
+        return retour;
     },
 
     componentWillMount: function () {
@@ -118,7 +121,18 @@ var FicheUser = React.createClass({
 
         // Appel du chargement
         Actions.utilisateur.set_etat_create_edit(this.props.idUser==0);
-        Actions.utilisateur.load_user_info(this.props.idUser);
+        if(!this.props.modeCompte) {
+            Actions.utilisateur.load_user_info(this.props.idUser);
+        }else{
+            console.log('PASS SETSTATE:');
+            var state = {
+                nom: this.props.userData.nom,
+                prenom: this.props.userData.prenom,
+                email: this.props.userData.email
+            };
+            console.log(state);
+            this.setState(state);
+        }
     },
 
     clickPhoto: function (evt){
