@@ -70,7 +70,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      */
     public function menuTopInfosUser()
     {
-        /* TODO dropdown : menu déroulant contenant les raccourcis de l'utilisateur
+        /*
          * [
          *   {label: "profil", route:"/utilisateur/120"},
          *   {label: "parametres", route:"/parametres"}
@@ -80,7 +80,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             'nomUtilisateur' => $this->nom,
             'logoutRoute' => URL::asset('/') . "logout",
             'logoutText' => Lang::get('global.logout'),
-            'dropdown' => [['label' => Lang::get('menu.user.profil'), 'route' => URL::to('utilisateur/fiche')]]
+            'dropdown' => [['label' => Lang::get('menu.user.profil'), 'route' => URL::to('moncompte')]]
         ]);
     }
 

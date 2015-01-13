@@ -43,6 +43,12 @@ function handleClickRadio(evt){
 
 var emailInitial = '';
 
+/**
+ * Vérification de l'unicité de l'e-mail en BDD
+ * @param value
+ * @param edit
+ * @returns {{}}
+ */
 function emailChange(value, edit){
     /* Varaible de retour */
     var retour = {};
@@ -84,8 +90,8 @@ function emailCreateChange (value){
 
 /**
  * Fiche utilisateur
- * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
- * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param editable: Booléen pour autoriser ou non la modification des données de l'utilisateur
+ * @param idUser: id de l'utilisateur affiché dans cette fiche.
  */
 var FicheUser = React.createClass({
 
@@ -93,11 +99,24 @@ var FicheUser = React.createClass({
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
-        idUser: React.PropTypes.number
+        idUser: React.PropTypes.number,
+        modeCompte: React.PropTypes.bool
+    },
+    getDefaultProps: function () {
+        return {
+            modeCompte: false
+        };
     },
 
     getInitialState: function () {
-        return {nom: '', prenom: '', email: '', photo: BASE_URI+'app/documents/photo/no.gif', dataProfil: [], retour: {}};
+        return {
+            nom: '',
+            prenom: '',
+            email: '',
+            photo: BASE_URI + 'app/documents/photo/no.gif',
+            dataProfil: [],
+            retour: {}
+        };
     },
 
     componentWillMount: function () {
