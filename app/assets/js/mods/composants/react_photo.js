@@ -88,7 +88,6 @@ var PhotoEditable = React.createClass({
     },
     onChange: function () {
         var input = $(this.refs.InputPhoto.getDOMNode()).find('input')[0];
-        console.log(input);
 
         if (input.files && input.files[0]) {
             var reader = new FileReader();
