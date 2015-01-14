@@ -12,7 +12,7 @@ var Glyphicon = ReactB.Glyphicon;
 var AuthentMixins = require('./mixins/component_access');
 var FormValidationMixin = require('./mixins/form_validation');
 
-// TEST
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var InputRadioEditable = Field.InputRadioEditable;
 var Form = Field.Form
 
@@ -42,7 +42,6 @@ function handleClickRadio(evt){
 }
 
 var emailInitial = '';
-
 /**
  * Vérification de l'unicité de l'e-mail en BDD
  * @param value
@@ -111,7 +110,7 @@ var FicheUser = React.createClass({
     },
 
     getInitialState: function () {
-        var retour = {nom: '', prenom: '', email: '', photo: 'no.gif', dataProfil: [], retour: {}};
+        var retour = {nom: '', prenom: '', email: '', photo: 'no.gif', dataProfil: [], retour: {}, tabProfilHide:true};
         return retour;
     },
 
@@ -176,26 +175,48 @@ var FicheUser = React.createClass({
                         </div>
         }
         else{
+
             var titreBis = Lang.get('administration.utilisateur.profilsAssocie');
 
+            var fctHideShow    = null;
+            var transitionName = '';
+
+            if(this.state.tabProfilHide == true) {
+                console.log('hide');
+                transitionName = 'hide';
+
+                fctHideShow = function(e) {
+                    Actions.utilisateur.updateHideShowProfil(false);
+                };
+            }else{
+                console.log('show');
+                transitionName = 'show';
+
+                fctHideShow = function(e) {
+                    Actions.utilisateur.updateHideShowProfil(true);
+                };
+            }
+
             /* On affiche le tableau des profils associés */
-            SuiteCode = <div>
-                            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                                {titreBis}
-                            </button>
-                            <div class="collapse" id="collapseExample">
-                                <div class="well">
-                                    <DataTable
-                                    id='dataTableProfils'
-                                    bUnderline={false}
-                                    head={headP}
-                                    data={this.state.dataProfil}
-                                    hide={hideP}
-                                    reactElements={aReactElements}
-                                    editable={this.props.editable}/>
-                                </div>
-                            </div>
-                        </div>;
+            SuiteCode = <Row>
+                            <Col md={2}>
+                                <h3 className="breadcrumb hand-over" onClick={fctHideShow}>
+                                    {titreBis}
+                                </h3>
+                            </Col>
+                            <Col md={10}>
+                                <ReactCSSTransitionGroup transitionName="example">
+                                        <DataTable
+                                            id='dataTableProfils'
+                                            bUnderline={false}
+                                            head={headP}
+                                            data={this.state.dataProfil}
+                                            hide={hideP}
+                                            reactElements={aReactElements}
+                                            editable={this.props.editable}/>
+                                </ReactCSSTransitionGroup>
+                            </Col>
+                        </Row>;
         }
 
         var fAttrs = {className:"form_utilisateur", id:"form_utilisateur"};
@@ -273,10 +294,16 @@ var ficheUserStore = Reflux.createStore({
         this.listenTo(Actions.utilisateur.radio_change,   this.radioChange);
         this.listenTo(Actions.validation.form_field_changed, this.formChange);
         this.listenTo(Actions.utilisateur.set_etat_create_edit, this.setEtatCreateEdit);
+        this.listenTo(Actions.utilisateur.updateHideShowProfil, this.updateHideShowProfil);
     },
 
     initMatrice: function(){
         this.matriceBtnRadio = {};
+    },
+
+    updateHideShowProfil: function(bool){
+        console.log('updateHideShowProfil');
+        this.trigger({tabProfilHide:bool});
     },
 
     setEtatCreateEdit: function(modeCreate_P){

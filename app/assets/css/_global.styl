@@ -135,11 +135,9 @@ input[type=number]:invalid {
     border-color: #A94442;
 }
 
-.img-editable:hover{
-    border-color: #AAAAAA;
-    cursor: pointer;
+.hand-over:hover{
+  cursor: pointer;
 }
-
 /*
 |--------------------------------------------------------------------------
 | Bouton upload
@@ -162,4 +160,22 @@ input[type=number]:invalid {
   cursor: pointer;
   opacity: 0;
   filter: unquote("alpha(opacity=0)")
+}
+
+.example-enter {
+  opacity: 0.01;
+  transition: opacity .5s ease-in;
+}
+
+.example-enter.example-enter-active {
+  opacity: 1;
+}
+
+.example-leave {
+  opacity: 1;
+  transition: opacity .5s ease-in;
+}
+
+.example-leave.example-leave-active {
+  opacity: 0.01;
 }
