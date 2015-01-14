@@ -446,10 +446,18 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
     public static function getUserPassGood($pass){
         $oUser = Auth::user();
-        $passHash = Hash::make($pass);
-        if($oUser['password'] == $passHash)
+
+
+        $res = Hash::check($pass, $oUser->password);
+
+
+        if($res == 1) {
+            Log::warning('-----------> Password GOOD <-----------');
             return array('good' => true);
-        else
+        }
+        else {
+            Log::warning('-----------> Password echec <-----------');
             return array('good' => false);
+        }
     }
 }

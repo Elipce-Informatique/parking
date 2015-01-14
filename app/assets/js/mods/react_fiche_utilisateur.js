@@ -497,6 +497,7 @@ var ficheUserStore = Reflux.createStore({
     emailChange: function(value, edit){
         /* Varaible de retour */
         var retour = {};
+        retour.dataEmail = {};
 
         /* Est-ce que l'email est supérieur à 4 caractère (x@x.xx)? */
         if(value.length>=6 && value != emailInitial){
@@ -510,7 +511,6 @@ var ficheUserStore = Reflux.createStore({
                 success:  function (good) {
                     /* En vert */
                     if(good.good == false){
-                        retour.dataEmail = {};
                         retour.dataEmail.isValid = false;
                         retour.dataEmail.style   = 'error';
                         retour.dataEmail.tooltip = Lang.get('global.utilisateurExist');
@@ -535,6 +535,7 @@ var ficheUserStore = Reflux.createStore({
 
     verifPassOld: function(value){
         var retour = {};
+        retour.passOld = {};
 
         if(value.length >= 6) {
             console.log('Ajax');
@@ -547,7 +548,6 @@ var ficheUserStore = Reflux.createStore({
                 success: function (good) {
                     /* En vert */
                     if (good.good == false) {
-                        retour.passOld = {};
                         retour.passOld.isValid = false;
                         retour.passOld.style = 'error';
                         retour.passOld.tooltip = Lang.get('administration.utilisateur.oldPassConfirmError');
