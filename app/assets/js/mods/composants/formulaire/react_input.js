@@ -182,7 +182,10 @@ var InputMail = React.createClass({
             evts: {},
             gestMod: true,
             validator: function (val, props, state) {
-                if (Validator.isEmail(val)) {
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                    return {isValid: false, style: 'default', tooltip: ''};
+                }
+                else if (Validator.isEmail(val)) {
                     return {isValid: true, style: 'success', tooltip: ''};
                 } else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
@@ -310,7 +313,10 @@ var InputPassword = React.createClass({
             validator: function (val, props, state) {
                 var retour = {};
                 // CHAMP OK
-                if (val.length >= 6 && (!Validator.isAlpha(val) && !Validator.isNumeric(val))) {
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                    return {isValid: false, style: 'default', tooltip: ''};
+                }
+                else if (val.length >= 6 && (!Validator.isAlpha(val) && !Validator.isNumeric(val))) {
                     retour = {isValid: true, style: 'success', tooltip: ''};
                 }
                 // CHAMP KO
@@ -576,8 +582,11 @@ var InputNumber = React.createClass({
                 var test = resModulo + '';
                 var aTest = test.split('.');
 
-                /* Champ vide */
-                if (val.length == 0) {
+                /* Champ vide obligatoire ? */
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                    return {isValid: false, style: 'default', tooltip: ''};
+                }
+                else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
                 /* Valeur non correct */
@@ -719,7 +728,10 @@ var InputTel = React.createClass({
                 var bool = !isNaN(telNumber);
 
                 /* Champ vide */
-                if (val.length == 0) {
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                    return {isValid: false, style: 'default', tooltip: ''};
+                }
+                else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
                 /* Valeur non correct */
@@ -845,12 +857,13 @@ var InputFile = React.createClass({
             alertOn:false,
             validator: function (val, props, state) {
 
-                if(val.length == 0 || checkFileExtension(val, props.typeOfFile, props.alertOn)) {
-                    console.log('isValid: true');
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                    return {isValid: false, style: 'default', tooltip: ''};
+                }
+                else if(val.length == 0 || checkFileExtension(val, props.typeOfFile, props.alertOn)) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
                 else {
-                    console.log('isValid: false');
                     return {isValid: false, style: 'default', tooltip: ''};
                 }
             }
