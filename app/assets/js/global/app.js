@@ -105,7 +105,8 @@
         "saveOK",
         "supprOK",
         "updateBandeau",
-        "updateHideShowProfil"
+        "updateHideShowProfil",
+        "set_etat_compte"
     ]);
 
     /*

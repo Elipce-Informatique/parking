@@ -3,6 +3,7 @@ var Field = require('./composants/formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputMailEditable = Field.InputMailEditable;
 var react_photo       = require('./composants/react_photo');
+var form_data_helper  = require('./helpers/form_data_helper');
 var PhotoEditable     = react_photo.PhotoEditable;
 var Row = ReactB.Row;
 var Col = ReactB.Col;
@@ -89,6 +90,8 @@ var FicheUser = React.createClass({
 
         // Appel du chargement
         Actions.utilisateur.set_etat_create_edit(this.props.idUser==0);
+        Actions.utilisateur.set_etat_compte(this.props.modeCompte);
+
         if(!this.props.modeCompte) {
             Actions.utilisateur.load_user_info(this.props.idUser);
         }
@@ -102,12 +105,13 @@ var FicheUser = React.createClass({
         }
     },
 
-    clickPhoto: function (evt){
+    changePhoto: function (evt){
         var copie = _.clone(evt);
         Actions.utilisateur.changePhoto(copie);
     },
 
     render: function () {
+        console.log('this.state.photo : '+this.state.photo);
         console.log('this.state : %o', this.state);
 
         emailInitial = this.state.email;
@@ -258,7 +262,7 @@ var FicheUser = React.createClass({
             <Form ref="form" attributes={fAttrs}>
                 <Row>
                     <Col md={2} className="photo">
-                        <PhotoEditable name="photo" alertOn={true} src={srcPhoto} evts={{onClick:this.clickPhoto}} editable={this.props.editable} />
+                        <PhotoEditable name="photo" alertOn={true} src={srcPhoto} evts={{onChange:this.changePhoto}} editable={this.props.editable} />
                     </Col>
                     <Col md={10}>
                         <InputTextEditable ref="nom"
@@ -317,6 +321,7 @@ var ficheUserStore = Reflux.createStore({
     matriceBtnRadio: {},
     isMatriceModuleModif:false,
     modeCreate:true,
+    modeCompte:false,
 
     // Initial setup
     init: function () {
@@ -329,6 +334,11 @@ var ficheUserStore = Reflux.createStore({
         this.listenTo(Actions.validation.form_field_changed, this.formChange);
         this.listenTo(Actions.utilisateur.set_etat_create_edit, this.setEtatCreateEdit);
         this.listenTo(Actions.utilisateur.updateHideShowProfil, this.updateHideShowProfil);
+        this.listenTo(Actions.utilisateur.set_etat_compte, this.set_etat_compte);
+    },
+
+    set_etat_compte: function(bool){
+        this.modeCompte = bool;
     },
 
     initMatrice: function(){
@@ -371,6 +381,8 @@ var ficheUserStore = Reflux.createStore({
             data = this.verifPassNew(e.value, $('#passNew')[0].value);
             _.extend(data, {passConfirmvalue:e.value});
         }
+        else if(e.name == 'photo')
+            data.photo = e.value;
 
         this.trigger(data);
     },
@@ -415,7 +427,12 @@ var ficheUserStore = Reflux.createStore({
         //console.log('FICHE USER SAVE '+idUser);
         // Variables
         var url = idUser === 0 ? '' : idUser;
-        url = BASE_URI + 'utilisateur/' + url;
+
+        if(this.modeCompte == true)
+            url = BASE_URI + 'moncompte';
+        else
+            url = BASE_URI + 'utilisateur/' + url;
+
         //console.log('SAVE '+idUser+' URL '+url);
         var method = idUser === 0 ? 'POST' : 'PUT';
 
@@ -432,14 +449,11 @@ var ficheUserStore = Reflux.createStore({
         data.push({name: '_token', value:$('#_token').val()});
 
         // FormData
-        var fData = new FormData();
-        _.forIn(data, function(v,k){
-            fData.append(v.name,v.value);
-        });
-        fData.append('matrice',matrice);
-        fData.append('_method',method);
+        var fData = form_data_helper('form_utilisateur', method);
+        fData.append('matrice', matrice);
         fData.append('photo', $("[name=photo]")[0].files[0]);
 
+        console.log('fData : %o', fData);
         //var request = new XMLHttpRequest();
         //request.open("POST", url);
         //request.send(fData);
@@ -456,6 +470,8 @@ var ficheUserStore = Reflux.createStore({
                     Actions.notif.success(Lang.get('global.notif_success'));
                     Actions.utilisateur.saveOK(tab.idUser*1);
                 }
+                else if(tab.pass !== undefined)
+                    Actions.notif.error(Lang.get('administration.utilisateur.oldPassConfirmError'));
                 else
                     Actions.notif.error(Lang.get('global.notif_erreur'));
             },

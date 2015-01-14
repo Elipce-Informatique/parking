@@ -28,4 +28,4 @@ var formDataBuilder = function (formId, method) {
     return fData;
 };
 
-module.exports.formDataBuilder = formDataBuilder;
+module.exports = formDataBuilder;

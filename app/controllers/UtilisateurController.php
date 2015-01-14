@@ -84,8 +84,6 @@ class UtilisateurController extends \BaseController
      */
     public function update($id)
     {
-        Log::warning('-----------> UTILISATEUR CONTROLLER PUT : ' . print_r($_REQUEST, true) . '<-----------');
-        Log::warning('-----------> UTILISATEUR CONTROLLER : ' . print_r(Input::all(), true) . '<-----------');
         // Champs du formualaire
         $fields = Input::except('_token');
 
@@ -132,7 +130,18 @@ class UtilisateurController extends \BaseController
     public function updateCompte()
     {
         $oUser = Auth::user();
-        Log::warning('Modification des infos de l\'utilisateur avec les params suivants : ' . print_r(Input::all(), true));
+
+        // Champs du formualaire
+        $fields = Input::except('_token');
+
+        $res = ['good'=>true];
+        if($fields['passOld'] != '' && $fields['passNew'] != '')
+            $res = Utilisateur::getUserPassGood($fields['passOld']);
+
+        if($res['good'] == true)
+            return json_encode(Utilisateur::updateUser($oUser->id, $fields));
+        else
+            return json_encode(array('save' => false, 'pass' => 'incorrect'));
     }
 
     /**

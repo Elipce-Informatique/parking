@@ -93,8 +93,7 @@ var PhotoEditable = React.createClass({
             var reader = new FileReader();
 
             reader.onload = function (e) {
-                console.log('pass reader onload');
-                this.setState({src: e.target.result});
+                //this.setState({src: e.target.result});
             }.bind(this);
 
             reader.readAsDataURL(input.files[0]);

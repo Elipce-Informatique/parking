@@ -32,7 +32,7 @@ return array(
         'password_new' => 'Nouveau mot de passe',
         'password_confirm' => 'Confirmation nouveau mot de passe',
         'newPassConfirmError' => 'Les mots de passe sont différents.',
-        'oldPassConfirmError' => 'Mot de passe incorrect',
+        'oldPassConfirmError' => 'Mot de passe incorrect'
     ],
 
     'moncompte' => [

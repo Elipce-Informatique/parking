@@ -258,6 +258,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
     public static function updateUser($id, $fields){
 
         Log::warning('-----------> updateUser $id : '.$id.'<-----------');
+        Log::warning('-----------> updateUser $fields : '.print_r($fields, true).'<-----------');
 
         // Variables
         $bSave = true;
@@ -290,6 +291,11 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         $user->nom    = $fields['nom'];
         $user->prenom = $fields['prenom'];
         $user->email  = $fields['email'];
+
+        if(isset($fields['passNew']) && isset($fields['passOld'])) {
+            Log::warning('-----------> Avec Password <-----------');
+            $user->password = Hash::make($fields['passNew']);
+        }
 
         // Sauvegarde
         try {
@@ -447,17 +453,11 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
     public static function getUserPassGood($pass){
         $oUser = Auth::user();
 
-
         $res = Hash::check($pass, $oUser->password);
 
-
-        if($res == 1) {
-            Log::warning('-----------> Password GOOD <-----------');
+        if($res == 1)
             return array('good' => true);
-        }
-        else {
-            Log::warning('-----------> Password echec <-----------');
+        else
             return array('good' => false);
-        }
     }
 }
