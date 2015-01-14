@@ -44,29 +44,40 @@ var PhotoEditable = React.createClass({
         name: React.PropTypes.string.isRequired,
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        alertOn:React.PropTypes.bool,
+        alertOn: React.PropTypes.bool,
         gestMod: React.PropTypes.bool
     },
 
-    GetDefaultProps: function () {
+    getDefaultProps: function () {
         return {
             attributes: {},
             evts: {},
-            alertOn:false
+            alertOn: false
         }
+    },
+    getInitialState: function () {
+        return {src: this.props.src};
     },
 
     render: function () {
         var retour;
         // Editable
         if (this.props.editable) {
+            var evts = {onChange: this.onChange};
             retour = <span>
                 <Photo
-                    src = {this.props.src}
+                    src = {this.state.src}
                     attributes = {this.props.attributes}
                     evts = {this.props.evts}
                 />
-                <InputFile typeOfFile={'img'} alertOn={this.props.alertOn} gestMod={this.props.gestMod} name={this.props.name} libelle={Lang.get('global.modifier')} ref="InputPhoto"/>
+                <InputFile
+                    typeOfFile={'img'}
+                    alertOn={this.props.alertOn}
+                    gestMod={this.props.gestMod}
+                    name={this.props.name}
+                    libelle={Lang.get('global.modifier')}
+                    evts={evts}
+                    ref="InputPhoto" />
             </span>
         }
         // Non editable
@@ -74,6 +85,21 @@ var PhotoEditable = React.createClass({
             retour = <img src={this.props.src} className="img-thumbnail img-responsive"/>;
         }
         return retour;
+    },
+    onChange: function () {
+        var input = $(this.refs.InputPhoto.getDOMNode()).find('input')[0];
+        console.log(input);
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                console.log('pass reader onload');
+                this.setState({src: e.target.result});
+            }.bind(this);
+
+            reader.readAsDataURL(input.files[0]);
+        }
     }
 });
 module.exports.PhotoEditable = PhotoEditable;
