@@ -27,6 +27,10 @@ return array(
             'email3' => 'E-mail 3'),
         'fiche'=> 'Fiche ',
         'profilsAssocie' => 'Profils associés',
+        'change_password' => 'Changement du mot de passe',
+        'password_old' => 'Mot de passe actuel',
+        'password_new' => 'Nouveau mot de passe',
+        'password_confirm' => 'Confirmation nouveau mot de passe',
     ],
 
     // MODULE PROFILS

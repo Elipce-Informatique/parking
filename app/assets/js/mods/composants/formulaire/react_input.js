@@ -313,6 +313,9 @@ var InputPassword = React.createClass({
                 if (val.length >= 6 && (!Validator.isAlpha(val) && !Validator.isNumeric(val))) {
                     retour = {isValid: true, style: 'success', tooltip: ''};
                 }
+                else if (val.length == 0) {
+                    return {isValid: true, style: 'default', tooltip: ''};
+                }
                 // CHAMP KO
                 else {
                     retour = {isValid: false, style: 'error', tooltip: Lang.get('global.validation_erreur_pass')};

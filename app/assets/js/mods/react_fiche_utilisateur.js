@@ -14,7 +14,8 @@ var FormValidationMixin = require('./mixins/form_validation');
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var InputRadioEditable = Field.InputRadioEditable;
-var Form = Field.Form
+var InputPasswordEditable = Field.InputPasswordEditable;
+var Form = Field.Form;
 
 /* Paramètres du tableau des profils           */
 /* Entête(s) du tableau : "Profils, Accessible */
@@ -166,17 +167,56 @@ var FicheUser = React.createClass({
         }
 
         var SuiteCode = '';
+        var titreBis  = '';
+
         /* Mode compte ou page user */
-        if(this.props.modeCompte == true){
+        if(this.props.modeCompte == true && this.props.editable == true){
+
+            titreBis = Lang.get('administration.utilisateur.change_password');
+
+            /* Attributs des inputs mot de pass */
+            var attrsPass = {
+                wrapperClassName: 'col-md-4',
+                labelClassName: 'col-md-2 text-right',
+                groupClassName: 'row'
+            };
+
+            var attrsPassOld = {
+                label: Lang.get('administration.utilisateur.password_old'),
+                name: "passOld"
+            };
+
+            var attrsPassNew = {
+                label: Lang.get('administration.utilisateur.password_new'),
+                name: "passNew"
+            };
+
+            var attrsPassConfirm = {
+                label: Lang.get('administration.utilisateur.password_confirm'),
+                name: "passConfirm"
+            };
+
+            attrsPassOld     = _.extend(attrsPassOld, attrsPass);
+            attrsPassNew     = _.extend(attrsPassNew, attrsPass);
+            attrsPassConfirm = _.extend(attrsPassConfirm, attrsPass);
 
             /* On affiche la modification du password */
-            SuiteCode = <div>
-                            A faire
-                        </div>
+            SuiteCode = <Row>
+                <Col md={2}>
+                    <h3 className="breadcrumb hand-over">
+                        {titreBis}
+                    </h3>
+                </Col>
+                <Col md={10}>
+                    <InputPasswordEditable attributes={attrsPassOld}    editable={this.props.editable} />
+                    <InputPasswordEditable attributes={attrsPassNew}     editable={this.props.editable} />
+                    <InputPasswordEditable attributes={attrsPassConfirm} editable={this.props.editable} />
+                </Col>
+            </Row>;
         }
-        else{
+        else if(this.props.modeCompte == false){
 
-            var titreBis = Lang.get('administration.utilisateur.profilsAssocie');
+            titreBis = Lang.get('administration.utilisateur.profilsAssocie');
 
             var fctHideShow    = null;
             var transitionName = '';
@@ -235,7 +275,9 @@ var FicheUser = React.createClass({
                                 name: "nom",
                                 value: this.state.nom,
                                 required: true,
-                                wrapperClassName: 'col-md-4', labelClassName: 'col-md-1 text-right', groupClassName: 'row'
+                                wrapperClassName: 'col-md-4',
+                                labelClassName: 'col-md-1 text-right',
+                                groupClassName: 'row'
                             }}
                             editable={this.props.editable}
                             evts={{onChange: this.test}}/>
