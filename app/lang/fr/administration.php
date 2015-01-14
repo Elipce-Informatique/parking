@@ -35,6 +35,10 @@ return array(
         'oldPassConfirmError' => 'Mot de passe incorrect',
     ],
 
+    'moncompte' => [
+        'titre' => 'Mon Compte',
+    ],
+
     // MODULE PROFILS
     'profil' => [
         'visu' => 'Visu',

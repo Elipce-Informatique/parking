@@ -151,7 +151,7 @@ var ReactPageProfil  = React.createClass({
             /*    - le nom du profil NON éditable              */
             /*    - le tableau des modules NON éditable        */
             case 'visu':
-                return <div key={this.state.etatPageProfil}>
+                return <div key="rootPageProfil">
                             <Row>
                                 <BandeauVisu titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
                             </Row>
@@ -171,7 +171,7 @@ var ReactPageProfil  = React.createClass({
             case 'create':
                 mode = 0;
             case 'edit':
-                return  <div key={this.state.etatPageProfil}>
+                return  <div key="rootPageProfil">
                             <Row>
                                 <BandeauEdition mode={mode} titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
                             </Row>
@@ -189,7 +189,7 @@ var ReactPageProfil  = React.createClass({
             /*    - le tableau des profils     */
             case 'liste':
             default:
-                return  <div  key={this.state.etatPageProfil}>
+                return  <div  key="rootPageProfil">
                             <BandeauListe titre={this.state.titrePageIni} />
                             <Row>
                                 <Col md={12}>
