@@ -162,20 +162,27 @@ input[type=number]:invalid {
   filter: unquote("alpha(opacity=0)")
 }
 
-.example-enter {
+
+/*
+|--------------------------------------------------------------------------
+| ANIMATIONS CSS REACT
+|--------------------------------------------------------------------------
+*/
+
+.tabprofil-enter {
   opacity: 0.01;
   transition: opacity .5s ease-in;
 }
 
-.example-enter.example-enter-active {
+.tabprofil-enter.tabprofil-enter-active {
   opacity: 1;
 }
 
-.example-leave {
+.tabprofil-leave {
   opacity: 1;
-  transition: opacity .5s ease-in;
+  transition: opacity .5s ease-out;
 }
 
-.example-leave.example-leave-active {
+.tabprofil-leave.tabprofil-leave-active {
   opacity: 0.01;
 }
