@@ -55,7 +55,7 @@ var PageCompte = React.createClass({
             case 'edition':
                 console.log('edition');
                 comp =
-                    <div key="pageCompteRoot">
+                    <div key="pageCompteRootEdit">
                         <BandeauEdition mode={1} titre={Lang.get('administration.moncompte.titre')} sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}/>
                         <FicheUser editable={true} userData={this.props.dataUser} idUser={this.props.idUser} modeCompte={true}/>
                     </div>;

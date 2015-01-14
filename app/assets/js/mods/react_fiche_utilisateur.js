@@ -344,9 +344,16 @@ var ficheUserStore = Reflux.createStore({
         this.modeCreate           = modeCreate_P;
     },
 
+    /**
+     * Vérifications "Métiers" du formulaire
+     * @param e
+     */
     formChange: function(e){
         var data = {};
 
+        console.log(e);
+
+        // VÉFIR ADRESSE MAIL:
         if(e.name == 'email'){
             console.log('email');
             if(this.modeCreate)
@@ -372,6 +379,7 @@ var ficheUserStore = Reflux.createStore({
             _.extend(data, {passConfirmvalue:e.value});
         }
 
+        console.log('Data dans le store apres vérif : %o', _.cloneDeep(data));
         this.trigger(data);
     },
 
