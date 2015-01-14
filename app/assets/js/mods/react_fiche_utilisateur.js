@@ -208,6 +208,7 @@ var FicheUser = React.createClass({
                         key="testkey"
                         editable={this.props.editable}/> ;
             //tableau = <p key="uniquekey">test</p>;
+            console.log(this.state);
             if(this.state.tabProfilHide){
                 tableau = {};
             }

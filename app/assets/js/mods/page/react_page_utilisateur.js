@@ -57,29 +57,29 @@ var PageUser = React.createClass({
         switch (this.state.etat) {
             case 'visu':
                 react =
-                    <div key={this.state.etat}>
+                    <div key="rootPageuser">
                         <BandeauVisu titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom+' '+this.state.dataUser.prenom}/>
-                        <FicheUser editable={false} idUser={this.state.idUser}/>
+                        <FicheUser key="ficheUserKey" editable={false} idUser={this.state.idUser}/>
                     </div>;
                 break;
             case 'edition':
                 react =
-                    <div key={this.state.etat}>
+                    <div key="rootPageuser">
                         <BandeauEdition mode={1} titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom+' '+this.state.dataUser.prenom}/>
-                        <FicheUser editable={true} idUser={this.state.idUser}/>
+                        <FicheUser key="ficheUserKey" editable={true} idUser={this.state.idUser}/>
                     </div>;
                 break;
             case 'creation':
                 console.log('creation');
                 react =
-                    <div key={this.state.etat}>
+                    <div key="rootPageuser">
                         <BandeauEdition mode={0} titre={Lang.get('administration.utilisateur.titre')}/>
-                        <FicheUser editable={true} idUser={0}/>
+                        <FicheUser key="ficheUserKey" editable={true} idUser={0}/>
                     </div>;
                 break;
             default:
                 react =
-                    <div key={this.state.etat}>
+                    <div key="rootPageuser">
                         <BandeauListe titre={Lang.get('administration.utilisateur.titre')}/>
                         <Row>
                             <Col md={12}>
