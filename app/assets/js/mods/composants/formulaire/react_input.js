@@ -184,11 +184,11 @@ var InputMail = React.createClass({
             validator: function (val, props, state) {
                 if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
                     return {isValid: false, style: 'default', tooltip: ''};
+                } else if (val.length == 0) {
+                    return {isValid: true, style: 'default', tooltip: ''};
                 }
                 else if (Validator.isEmail(val)) {
                     return {isValid: true, style: 'success', tooltip: ''};
-                } else if (val.length == 0) {
-                    return {isValid: true, style: 'default', tooltip: ''};
                 }
                 else {
                     return {isValid: false, style: 'error', tooltip: Lang.get('global.validation_erreur_mail')};
@@ -315,6 +315,8 @@ var InputPassword = React.createClass({
                 // CHAMP OK
                 if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
                     return {isValid: false, style: 'default', tooltip: ''};
+                } else if (val.length == 0) {
+                    return {isValid: true, style: 'default', tooltip: ''};
                 }
                 else if (val.length >= 6 && (!Validator.isAlpha(val) && !Validator.isNumeric(val))) {
                     retour = {isValid: true, style: 'success', tooltip: ''};
@@ -835,32 +837,32 @@ var InputFile = React.createClass({
     mixins: [MixinInputValue],
 
     propTypes: {
-        name:       React.PropTypes.string.isRequired,
+        name: React.PropTypes.string.isRequired,
         typeOfFile: React.PropTypes.string,
-        alertOn:    React.PropTypes.bool,
-        style:      React.PropTypes.string,
-        libelle:    React.PropTypes.string,
+        alertOn: React.PropTypes.bool,
+        style: React.PropTypes.string,
+        libelle: React.PropTypes.string,
         attributes: React.PropTypes.object,
-        evts:       React.PropTypes.object,
-        gestMod:    React.PropTypes.bool
+        evts: React.PropTypes.object,
+        gestMod: React.PropTypes.bool
     },
 
     getDefaultProps: function () {
         return {
             attributes: {},
             evts: {},
-            gestMod:    true,
-            onChange:   this.handleChange,
-            style:      "btn-primary",
-            libelle:    "Upload",
+            gestMod: true,
+            onChange: this.handleChange,
+            style: "btn-primary",
+            libelle: "Upload",
             typeOfFile: 'all',
-            alertOn:false,
+            alertOn: false,
             validator: function (val, props, state) {
 
                 if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
                     return {isValid: false, style: 'default', tooltip: ''};
                 }
-                else if(val.length == 0 || checkFileExtension(val, props.typeOfFile, props.alertOn)) {
+                else if (val.length == 0 || checkFileExtension(val, props.typeOfFile, props.alertOn)) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
                 else {
@@ -881,7 +883,7 @@ var InputFile = React.createClass({
 
         // 4. ATTRS OK, CREATION INPUT
         return (
-            <div className={"fileUpload btn "+this.props.style}>
+            <div className={"fileUpload btn " + this.props.style}>
                 <span>{this.props.libelle}</span>
                 <Input
                     type="file"
@@ -893,7 +895,8 @@ var InputFile = React.createClass({
                     onChange = {this.handleChange}
                     value={this.state.value}
                     ref = "InputField"
-                />;
+                />
+                ;
             </div>
         );
     }
@@ -1171,7 +1174,7 @@ module.exports.InputSelect = InputSelect;
 module.exports.InputSelectEditable = InputSelectEditable;
 module.exports.InputNumber = InputNumber;
 module.exports.InputNumberEditable = InputNumberEditable;
-module.exports.InputFile= InputFile;
+module.exports.InputFile = InputFile;
 
 
 // FONCTIONS
@@ -1227,7 +1230,7 @@ function checkFileExtension(value, mode, withAlert) {
     //console.log('mode : '+mode);
     //console.log('withAlert : %o', withAlert);
 
-    if(filePath.indexOf('.') == -1)
+    if (filePath.indexOf('.') == -1)
         return false;
 
     var validExtensions = [];
@@ -1276,19 +1279,19 @@ function checkFileExtension(value, mode, withAlert) {
             break;
     }
 
-    for(var i = 0; i < validExtensions.length; i++) {
-        if(ext == validExtensions[i])
+    for (var i = 0; i < validExtensions.length; i++) {
+        if (ext == validExtensions[i])
             return true;
     }
     var temp = '';
-    for(var i = 0; i < validExtensions.length; i++) {
-        temp = temp + '.'+validExtensions[i]+'\n';
+    for (var i = 0; i < validExtensions.length; i++) {
+        temp = temp + '.' + validExtensions[i] + '\n';
     }
 
     var str = Lang.get('global.erreurFileInput');
     str = str.replace('[extensions]', temp);
 
-    if(withAlert)
+    if (withAlert)
         swal(str);
 
     return false;
