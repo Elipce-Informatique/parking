@@ -51,7 +51,7 @@ Route::group(['before' => 'auth'], function () {
     // FICHE UTILISATEUR
     Route::get('moncompte', 'UtilisateurController@compte');
     Route::put('moncompte', 'UtilisateurController@updateCompte');
-
+    Route::get('moncompte/verifMPD/{pass}', 'UtilisateurController@verifMDPcompte');
 });
 
 /*

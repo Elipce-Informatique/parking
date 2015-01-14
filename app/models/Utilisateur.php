@@ -443,4 +443,13 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         $user = DB::table('utilisateurs')->where('email', $email)->first(['id']);
         return array('good' => empty($user));
     }
+
+    public static function getUserPassGood($pass){
+        $oUser = Auth::user();
+        $passHash = Hash::make($pass);
+        if($oUser['password'] == $passHash)
+            return array('good' => true);
+        else
+            return array('good' => false);
+    }
 }

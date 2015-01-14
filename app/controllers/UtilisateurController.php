@@ -135,4 +135,12 @@ class UtilisateurController extends \BaseController
         Log::warning('Modification des infos de l\'utilisateur avec les params suivants : ' . print_r(Input::all(), true));
     }
 
+    /**
+     * Vérifie le mot de pass de l'utilisateur actuel
+     * @param $pass : mot de pass à tester
+     */
+    public function verifMDPcompte($pass){
+        return json_encode(Utilisateur::getUserPassGood($pass));
+    }
+
 }

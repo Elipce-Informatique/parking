@@ -43,50 +43,6 @@ function handleClickRadio(evt){
 }
 
 var emailInitial = '';
-/**
- * Vérification de l'unicité de l'e-mail en BDD
- * @param value
- * @param edit
- * @returns {{}}
- */
-function emailChange(value, edit){
-    /* Varaible de retour */
-    var retour = {};
-
-    /* Est-ce que l'email est supérieur à 4 caractère (x@x.xx)? */
-    if(value.length>=6 && value != emailInitial){
-
-        // AJAX
-        $.ajax({
-            url:      BASE_URI + 'utilisateur/email/'+value, /* correspond au module url de la BDD */
-            dataType: 'json',
-            context:  this,
-            async: false,
-            success:  function (good) {
-                /* En vert */
-                if(good.good == false){
-                    retour.isValid = false;
-                    retour.style   = 'error';
-                    retour.tooltip = Lang.get('global.utilisateurExist');
-                }
-            },
-
-            error: function (xhr, status, err) {
-                console.error(status, err.toString());
-            }
-        });
-    }
-    console.log('retour : %o', retour);
-    return retour;
-}
-
-function emailEditChange(value){
-    return emailChange(value, true);
-}
-
-function emailCreateChange (value){
-    return emailChange(value, false);
-}
 
 /**
  * Fiche utilisateur
@@ -111,7 +67,19 @@ var FicheUser = React.createClass({
     },
 
     getInitialState: function () {
-        var retour = {nom: '', prenom: '', email: '', photo: 'no.gif', dataProfil: [], retour: {}, tabProfilHide:true};
+        var retour = {nom: '',
+                      prenom: '',
+                      email: '',
+                      photo: 'no.gif',
+                      passOld: '',
+                      passNew: '',
+                      passConfirm: '',
+                      dataProfil: [],
+                      retour: {},
+                      passNewvalue:'',
+                      passConfirmvalue:'',
+                      passOldvalue:'',
+                      tabProfilHide:true};
         return retour;
     },
 
@@ -123,14 +91,13 @@ var FicheUser = React.createClass({
         Actions.utilisateur.set_etat_create_edit(this.props.idUser==0);
         if(!this.props.modeCompte) {
             Actions.utilisateur.load_user_info(this.props.idUser);
-        }else{
-            console.log('PASS SETSTATE:');
+        }
+        else{
             var state = {
-                nom: this.props.userData.nom,
+                nom:    this.props.userData.nom,
                 prenom: this.props.userData.prenom,
-                email: this.props.userData.email
+                email:  this.props.userData.email
             };
-            console.log(state);
             this.setState(state);
         }
     },
@@ -138,14 +105,10 @@ var FicheUser = React.createClass({
     clickPhoto: function (evt){
         var copie = _.clone(evt);
         Actions.utilisateur.changePhoto(copie);
-
-        /* Ouvrir une boite de dialogue de sélection d'un fichier */
-
-        /* Partir en ajax pour sauvegarder */
-
     },
 
     render: function () {
+        console.log('this.state : %o', this.state);
 
         emailInitial = this.state.email;
 
@@ -160,9 +123,8 @@ var FicheUser = React.createClass({
         };
 
         // Test si besoin de forcer le style de l'email
-        if(this.state.retour.style != undefined ){
-            var attrs2  = {bsStyle:this.state.retour.style, 'data-valid':this.state.retour.isValid, help:this.state.retour.tooltip};
-            console.log('Attrs2 %o', attrs2);
+        if(this.state.dataEmail != undefined ){
+            var attrs2  = {bsStyle:this.state.dataEmail.style, 'data-valid':this.state.dataEmail.isValid, help:this.state.dataEmail.tooltip};
             attrs       = _.extend(attrs, attrs2);
         }
 
@@ -183,22 +145,45 @@ var FicheUser = React.createClass({
 
             var attrsPassOld = {
                 label: Lang.get('administration.utilisateur.password_old'),
-                name: "passOld"
+                name: "passOld",
+                id: "passOld",
+                value: this.state.passOldvalue
             };
 
             var attrsPassNew = {
                 label: Lang.get('administration.utilisateur.password_new'),
-                name: "passNew"
+                name: "passNew",
+                id: "passNew",
+                value: this.state.passNewvalue
             };
 
             var attrsPassConfirm = {
                 label: Lang.get('administration.utilisateur.password_confirm'),
-                name: "passConfirm"
+                name: "passConfirm",
+                id: "passConfirm",
+                value: this.state.passConfirmvalue
             };
 
-            attrsPassOld     = _.extend(attrsPassOld, attrsPass);
-            attrsPassNew     = _.extend(attrsPassNew, attrsPass);
-            attrsPassConfirm = _.extend(attrsPassConfirm, attrsPass);
+            // Test si besoin de forcer le style du pass de confirmation
+            if(this.state.passConfirm != undefined ){
+                var attrs3  = {bsStyle:this.state.passConfirm.style, 'data-valid':this.state.passConfirm.isValid, help:this.state.passConfirm.tooltip};
+                _.extend(attrsPassConfirm, attrs3);
+            }
+
+            // Test si besoin de forcer le style du pass old
+            if(this.state.passOld != undefined ){
+                var attrs4  = {bsStyle:this.state.passOld.style, 'data-valid':this.state.passOld.isValid, help:this.state.passOld.tooltip};
+                _.extend(attrsPassOld, attrs4);
+            }
+
+            // Si nouveau mot de passe, mot de passe actuel obligatoire
+            if(this.state.passNewvalue != '' || this.state.passConfirmvalue != ''){
+                _.extend(attrsPassOld, {required: true});
+            }
+
+            _.extend(attrsPassOld,     attrsPass);
+            _.extend(attrsPassNew,     attrsPass);
+            _.extend(attrsPassConfirm, attrsPass);
 
             /* On affiche la modification du password */
             SuiteCode = <Row>
@@ -208,7 +193,7 @@ var FicheUser = React.createClass({
                     </h3>
                 </Col>
                 <Col md={10}>
-                    <InputPasswordEditable attributes={attrsPassOld}    editable={this.props.editable} />
+                    <InputPasswordEditable attributes={attrsPassOld}     editable={this.props.editable} />
                     <InputPasswordEditable attributes={attrsPassNew}     editable={this.props.editable} />
                     <InputPasswordEditable attributes={attrsPassConfirm} editable={this.props.editable} />
                 </Col>
@@ -338,7 +323,6 @@ var ficheUserStore = Reflux.createStore({
         this.listenTo(Actions.utilisateur.load_user_info, this.getInfosUser);
         this.listenTo(Actions.utilisateur.save_user,      this.sauvegarder);
         this.listenTo(Actions.utilisateur.delete_user,    this.supprimer);
-        this.listenTo(Actions.utilisateur.changePhoto,    this.changePhoto);
         this.listenTo(Actions.utilisateur.initMatrice,    this.initMatrice);
         this.listenTo(Actions.utilisateur.radio_change,   this.radioChange);
         this.listenTo(Actions.validation.form_field_changed, this.formChange);
@@ -351,13 +335,12 @@ var ficheUserStore = Reflux.createStore({
     },
 
     updateHideShowProfil: function(bool){
-        console.log('updateHideShowProfil');
         this.trigger({tabProfilHide:bool});
     },
 
     setEtatCreateEdit: function(modeCreate_P){
-        isMatriceModuleModif = false;
-        this.modeCreate = modeCreate_P;
+        this.isMatriceModuleModif = false;
+        this.modeCreate           = modeCreate_P;
     },
 
     formChange: function(e){
@@ -366,20 +349,32 @@ var ficheUserStore = Reflux.createStore({
         if(e.name == 'email'){
             console.log('email');
             if(this.modeCreate)
-                data.retour = emailCreateChange(e.value);
+                data = this.emailCreateChange(e.value);
             else
-                data.retour = emailEditChange(e.value);
-            data.email = e.value;
+                data = this.emailEditChange(e.value);
+            _.extend(data, {email:e.value});
         }
         else if(e.name == 'nom')
             data.nom = e.value;
         else if(e.name == 'prenom')
             data.prenom = e.value;
+        else if(e.name == 'passNew') {
+            data = this.verifPassNew(e.value, $('#passConfirm')[0].value);
+            data.passNewvalue = e.value;
+        }
+        else if(e.name == 'passOld') {
+            data = this.verifPassOld(e.value);
+            _.extend(data, {passOldvalue:e.value});
+        }
+        else if(e.name == 'passConfirm') {
+            data = this.verifPassNew(e.value, $('#passNew')[0].value);
+            _.extend(data, {passConfirmvalue:e.value});
+        }
+
         this.trigger(data);
     },
 
     radioChange: function(evt){
-        console.log('radioChange');
         /* Récupère les données du radio bouton */
         var Etat     = $(evt.currentTarget).data('etat'); /* 'visu', 'modif' ou 'aucun' */
         var idProfil = $(evt.currentTarget).data('id');   /* id du module concerné      */
@@ -444,8 +439,6 @@ var ficheUserStore = Reflux.createStore({
         fData.append('_method',method);
         fData.append('photo', $("[name=photo]")[0].files[0]);
 
-        console.log('DATA %o',_.cloneDeep(fData));
-
         //var request = new XMLHttpRequest();
         //request.open("POST", url);
         //request.send(fData);
@@ -494,9 +487,91 @@ var ficheUserStore = Reflux.createStore({
         });
     },
 
-    changePhoto: function(evt){
-        console.log('clickImage, evt : %o', evt);
+    /**
+     * Vérification de l'unicité de l'e-mail en BDD
+     * @param value
+     * @param edit
+     * @returns {{}}
+     */
+    emailChange: function(value, edit){
+        /* Varaible de retour */
+        var retour = {};
+
+        /* Est-ce que l'email est supérieur à 4 caractère (x@x.xx)? */
+        if(value.length>=6 && value != emailInitial){
+
+            // AJAX
+            $.ajax({
+                url:      BASE_URI + 'utilisateur/email/'+value, /* correspond au module url de la BDD */
+                dataType: 'json',
+                context:  this,
+                async: false,
+                success:  function (good) {
+                    /* En vert */
+                    if(good.good == false){
+                        retour.dataEmail = {};
+                        retour.dataEmail.isValid = false;
+                        retour.dataEmail.style   = 'error';
+                        retour.dataEmail.tooltip = Lang.get('global.utilisateurExist');
+                    }
+                },
+
+                error: function (xhr, status, err) {
+                    console.error(status, err.toString());
+                }
+            });
+        }
+        return retour;
+    },
+
+    emailEditChange: function (value){
+        return this.emailChange(value, true);
+    },
+
+    emailCreateChange: function (value){
+        return this.emailChange(value, false);
+    },
+
+    verifPassOld: function(value){
+        var retour = {};
+
+        if(value.length >= 6) {
+            console.log('Ajax');
+            // AJAX
+            $.ajax({
+                url: BASE_URI + 'moncompte/verifMPD/' + value, /* correspond au module url de la BDD */
+                dataType: 'json',
+                context: this,
+                async: false,
+                success: function (good) {
+                    /* En vert */
+                    if (good.good == false) {
+                        retour.passOld = {};
+                        retour.passOld.isValid = false;
+                        retour.passOld.style = 'error';
+                        retour.passOld.tooltip = Lang.get('administration.utilisateur.oldPassConfirmError');
+                    }
+                },
+
+                error: function (xhr, status, err) {
+                    console.error(status, err.toString());
+                }
+            });
+        }
+        return retour;
+    },
+
+    verifPassNew: function(value1, value2){
+        console.log('value1 : '+value1+', value2 : '+value2);
+        var retour = {};
+        retour.passConfirm = {};
+        if(value1 != value2){
+            retour.passConfirm.isValid = false;
+            retour.passConfirm.style   = 'error';
+            retour.passConfirm.tooltip = Lang.get('administration.utilisateur.newPassConfirmError');
+        }
+        return retour;
     }
+
 });
 module.exports.store = ficheUserStore;
-

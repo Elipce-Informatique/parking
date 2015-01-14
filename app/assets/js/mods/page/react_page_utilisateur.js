@@ -70,7 +70,6 @@ var PageUser = React.createClass({
                     </div>;
                 break;
             case 'creation':
-                console.log('creation');
                 react =
                     <div key={this.state.etat}>
                         <BandeauEdition mode={0} titre={Lang.get('administration.utilisateur.titre')}/>

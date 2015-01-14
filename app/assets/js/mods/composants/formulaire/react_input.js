@@ -849,11 +849,9 @@ var InputFile = React.createClass({
             validator: function (val, props, state) {
 
                 if(val.length == 0 || checkFileExtension(val, props.typeOfFile, props.alertOn)) {
-                    console.log('isValid: true');
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
                 else {
-                    console.log('isValid: false');
                     return {isValid: false, style: 'default', tooltip: ''};
                 }
             }
