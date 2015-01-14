@@ -104,7 +104,8 @@
         "set_etat_create_edit",
         "saveOK",
         "supprOK",
-        "updateBandeau"
+        "updateBandeau",
+        "updateHideShowProfil"
     ]);
 
     /*
