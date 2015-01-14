@@ -237,6 +237,20 @@ var FicheUser = React.createClass({
                 };
             }
 
+            var tableau = <DataTable
+                        id='dataTableProfils'
+                        bUnderline={false}
+                        head={headP}
+                        data={this.state.dataProfil}
+                        hide={hideP}
+                        reactElements={aReactElements}
+                        key="testkey"
+                        editable={this.props.editable}/> ;
+            //tableau = <p key="uniquekey">test</p>;
+            if(this.state.tabProfilHide){
+                tableau = {};
+            }
+
             /* On affiche le tableau des profils associés */
             SuiteCode = <Row>
                             <Col md={2}>
@@ -244,16 +258,9 @@ var FicheUser = React.createClass({
                                     {titreBis}
                                 </h3>
                             </Col>
-                            <Col md={10}>
-                                <ReactCSSTransitionGroup transitionName="example">
-                                        <DataTable
-                                            id='dataTableProfils'
-                                            bUnderline={false}
-                                            head={headP}
-                                            data={this.state.dataProfil}
-                                            hide={hideP}
-                                            reactElements={aReactElements}
-                                            editable={this.props.editable}/>
+                            <Col md={10} key="colTable">
+                                <ReactCSSTransitionGroup transitionName="tabprofil" key="transitionGroupTable">
+                                {tableau}
                                 </ReactCSSTransitionGroup>
                             </Col>
                         </Row>;

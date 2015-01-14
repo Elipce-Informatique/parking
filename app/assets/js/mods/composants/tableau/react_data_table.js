@@ -16,141 +16,145 @@
 
 var Table = require('./react_table');
 var DataTableReact = React.createClass({
-    
-    oDataTable:{},
-    
+
+    oDataTable: {},
+
     cssLigne: 'row_selected',
-    myEvts : {},
-    userClick: function(){},
-    
+    myEvts: {},
+    userClick: function () {
+    },
+
     propTypes: {
         head: React.PropTypes.array.isRequired,
         hide: React.PropTypes.array.isRequired,
         id: React.PropTypes.string.isRequired,
         data: React.PropTypes.array.isRequired,
-        settings:React.PropTypes.object,
-        attributes:React.PropTypes.object,
-        evts:React.PropTypes.object,
-        bUnderline:React.PropTypes.bool,
+        settings: React.PropTypes.object,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        bUnderline: React.PropTypes.bool,
         onDataTableLineClick: React.PropTypes.func,
         reactElements: React.PropTypes.object,
-        editable:React.PropTypes.bool
+        editable: React.PropTypes.bool
     },
-    
+
     /**
      * Les props par défaut
      */
-    getDefaultProps: function() {
-        
+    getDefaultProps: function () {
+
         return {
-            settings:{
+            settings: {
                 destroy: true,
-                editable:false,
+                editable: false,
                 responsive: true,
                 "language": {
-                    "sProcessing":     Lang.get('global.datatable.sProcessing'),
-                    "sSearch":         Lang.get('global.datatable.sSearch'),
-                    "sLengthMenu":     Lang.get('global.datatable.sLengthMenu'),
-                    "sInfo":           Lang.get('global.datatable.sInfo'),
-                    "sInfoEmpty":      Lang.get('global.datatable.sInfoEmpty'),
-                    "sInfoFiltered":   Lang.get('global.datatable.sInfoFiltered'),
-                    "sInfoPostFix":    Lang.get('global.datatable.sInfoPostFix'),
+                    "sProcessing": Lang.get('global.datatable.sProcessing'),
+                    "sSearch": Lang.get('global.datatable.sSearch'),
+                    "sLengthMenu": Lang.get('global.datatable.sLengthMenu'),
+                    "sInfo": Lang.get('global.datatable.sInfo'),
+                    "sInfoEmpty": Lang.get('global.datatable.sInfoEmpty'),
+                    "sInfoFiltered": Lang.get('global.datatable.sInfoFiltered'),
+                    "sInfoPostFix": Lang.get('global.datatable.sInfoPostFix'),
                     "sLoadingRecords": Lang.get('global.datatable.sLoadingRecords'),
-                    "sZeroRecords":    Lang.get('global.datatable.sZeroRecords'),
-                    "sEmptyTable":     Lang.get('global.datatable.sEmptyTable'),
+                    "sZeroRecords": Lang.get('global.datatable.sZeroRecords'),
+                    "sEmptyTable": Lang.get('global.datatable.sEmptyTable'),
                     "oPaginate": {
-                        "sFirst":      Lang.get('global.datatable.oPaginate.sFirst'),
-                        "sPrevious":   Lang.get('global.datatable.oPaginate.sPrevious'),
-                        "sNext":       Lang.get('global.datatable.oPaginate.sNext'),
-                        "sLast":       Lang.get('global.datatable.oPaginate.sLast')
+                        "sFirst": Lang.get('global.datatable.oPaginate.sFirst'),
+                        "sPrevious": Lang.get('global.datatable.oPaginate.sPrevious'),
+                        "sNext": Lang.get('global.datatable.oPaginate.sNext'),
+                        "sLast": Lang.get('global.datatable.oPaginate.sLast')
                     },
                     "oAria": {
-                        "sSortAscending":  Lang.get('global.datatable.oAria.sSortAscending'),
+                        "sSortAscending": Lang.get('global.datatable.oAria.sSortAscending'),
                         "sSortDescending": Lang.get('global.datatable.oAria.sSortDescending')
                     }
                 }
-        },
+            },
             attributes: {},
-            evts:{},
+            evts: {},
             bUnderline: true,
-            onDataTableLineClick: function(){},
+            onDataTableLineClick: function () {
+            },
             reactElements: {}
         };
     },
-    
-    componentWillMount: function(){
-         
+
+    componentWillMount: function () {
+
         // Copie des evts passés en param
         this.myEvts = _.clone(this.props.evts);
         // Evts définis par le DEV.
-        if(this.myEvts.onClick !== undefined){
+        if (this.myEvts.onClick !== undefined) {
             this.userClick = this.myEvts.onClick;
         }
         // Evt onClick avec prise en charge dataTableBandeau + DataTable + DEV click
         this.myEvts.onClick = this.handleClick;
     },
-    
-    componentWillReceiveProps: function(newProps){
-        
+
+    componentWillReceiveProps: function (newProps) {
+
     },
-    
-    componentWillUpdate: function(newProps, newState){      
+
+    componentWillUpdate: function (newProps, newState) {
         // Suppression datable
         this.destroyDataTable();
-        
+
     },
-    
-    render: function() {
+
+    render: function () {
         return (
-         <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} evts={this.myEvts} reactElements={this.props.reactElements} editable={this.props.editable} />
+            <div className="datatable-root" key="dataTableRoot">
+                <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} evts={this.myEvts} reactElements={this.props.reactElements} editable={this.props.editable} />
+            </div>
         )
     },
-    
+
     /**
      * Après le 1er affichage
      * @returns {undefined}
      */
-    componentDidMount: function(){
+    componentDidMount: function () {
         this.applyDataTable();
     },
-    
+
     /**
      * Après le 2è affichage
      * @returns {undefined}
      */
-    componentDidUpdate: function(){
+    componentDidUpdate: function () {
         // Suppression datable
         this.applyDataTable();
     },
 
-    componentWillUnmount: function(){
+    componentWillUnmount: function () {
 
         // Suppression fixed header
         $('.fixedHeader').remove();
     },
- /*
- |--------------------------------------------------------------------------
- | FONCTIONS NON REACT
- |--------------------------------------------------------------------------
- */
+    /*
+     |--------------------------------------------------------------------------
+     | FONCTIONS NON REACT
+     |--------------------------------------------------------------------------
+     */
     /**
      * On applique le plugin dataTable sur la TABLE HTML
      */
-    applyDataTable: function(){   
+    applyDataTable: function () {
         // Activation datatable
-        this.oDataTable = $('#'+this.props.id).DataTable(this.props.settings);
+        this.oDataTable = $('#' + this.props.id).DataTable(this.props.settings);
         // Tableau à entete fixe
-        new $.fn.dataTable.FixedHeader( this.oDataTable,{
+        new $.fn.dataTable.FixedHeader(this.oDataTable, {
             "offsetTop": 50
         });
     },
-    
+
     /**
      * Destruction du composant dataTable
      * @returns {undefined}
      */
-    destroyDataTable: function(){
-        if(!$.isEmptyObject(this.oDataTable)){
+    destroyDataTable: function () {
+        if (!$.isEmptyObject(this.oDataTable)) {
             this.oDataTable.destroy();
             this.oDataTable.clear();// HYPER IMPORTANT clear() après destroy()
             // suppression fixed header
@@ -162,29 +166,29 @@ var DataTableReact = React.createClass({
      * @param {event} evt: evenement js
      * @returns {undefined}
      */
-    selectRow: function(evt){
+    selectRow: function (evt) {
         var tr = $(evt.currentTarget);
         // GESTION VISUELLE
         if (tr.hasClass(this.cssLigne)) {
-                tr.removeClass(this.cssLigne);
-        }else {
-                tr.parent('tbody').find('tr').removeClass(this.cssLigne);
-                tr.addClass(this.cssLigne);
+            tr.removeClass(this.cssLigne);
+        } else {
+            tr.parent('tbody').find('tr').removeClass(this.cssLigne);
+            tr.addClass(this.cssLigne);
         }
     },
-    
-    handleClick: function(e){
+
+    handleClick: function (e) {
         // Le DEV veut un surlignage sur clic
-        if(this.props.bUnderline){
+        if (this.props.bUnderline) {
             this.selectRow(e);
         }
         // Execution clic data table bandeau
         var monEvenement = _.clone(e);// IMPORTANT VRAI copie et non affectation de références
         this.props.onDataTableLineClick(monEvenement);
-        
+
         // Execution clic défini par DEV
         this.userClick(e);
-        
+
     }
 });
 

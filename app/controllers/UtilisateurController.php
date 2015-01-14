@@ -132,7 +132,6 @@ class UtilisateurController extends \BaseController
     public function updateCompte()
     {
         $oUser = Auth::user();
-        // TODO : modifier les informations de l'utilisateur connecté en fonction des paramètres
         Log::warning('Modification des infos de l\'utilisateur avec les params suivants : ' . print_r(Input::all(), true));
     }
 
