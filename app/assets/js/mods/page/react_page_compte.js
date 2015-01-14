@@ -1,6 +1,6 @@
 // COMPOSANTS PERSO
 var FicheUser = require('../react_fiche_utilisateur').Composant;
-var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');
+var Bandeau = require('../composants/bandeau/react_bandeau');
 var BandeauEdition = require('../composants/bandeau/react_bandeau_edition');
 
 // COMPOSANTS REACTB
@@ -55,17 +55,27 @@ var PageCompte = React.createClass({
             case 'edition':
                 console.log('edition');
                 comp =
-                    <div key={this.state.etat}>
-                        <BandeauEdition mode={1} titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}/>
+                    <div key="pageCompteRoot">
+                        <BandeauEdition mode={1} titre={Lang.get('administration.moncompte.titre')} sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}/>
                         <FicheUser editable={true} userData={this.props.dataUser} idUser={this.props.idUser} modeCompte={true}/>
                     </div>;
                 break;
             default:
-                comp =
-                    <div key={this.state.etat}>
-                        <BandeauVisu titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}/>
+                var btnEditer = [{
+                            libelle: Lang.get('global.edit'),
+                            style: "default",
+                            icon: "edit",
+                            attrs: {disabled: false},
+                            evts: {onClick: this.modeEdition}
+                        }];
+                comp = (
+                    <div key="pageCompteRoot">
+                        <Bandeau
+                            titre={Lang.get('administration.moncompte.titre')}
+                            sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}
+                            btnList={btnEditer}/>
                         <FicheUser editable={false} userData={this.props.dataUser} idUser={this.props.idUser} modeCompte={true}/>
-                    </div>;
+                    </div>);
                 break;
 
         }
@@ -77,9 +87,12 @@ var PageCompte = React.createClass({
         // MAJ data
         this.setState(obj);
     },
+    modeEdition: function(e){
+        this.setState({etat: 'edition'});
+    },
 
     onRetour: function () {
-        this.setState({etat: 'visu', idUser: ''});
+        this.setState({etat: 'visu'});
     }
 });
 

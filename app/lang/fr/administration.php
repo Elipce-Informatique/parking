@@ -29,6 +29,10 @@ return array(
         'profilsAssocie' => 'Profils associés',
     ],
 
+    'moncompte' => [
+        'titre' => 'Mon Compte',
+    ],
+
     // MODULE PROFILS
     'profil' => [
         'visu' => 'Visu',
