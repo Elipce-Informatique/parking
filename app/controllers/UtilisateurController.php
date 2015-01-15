@@ -135,7 +135,7 @@ class UtilisateurController extends \BaseController
         $fields = Input::except('_token');
 
         $res = ['good'=>true];
-        if($fields['passOld'] != '' && $fields['passNew'] != '')
+        if(isset($fields['passOld']) && isset($fields['passNew']))
             $res = Utilisateur::getUserPassGood($fields['passOld']);
 
         if($res['good'] == true)
