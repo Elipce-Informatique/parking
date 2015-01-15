@@ -62,22 +62,24 @@ var PhotoEditable = React.createClass({
         if (this.props.cacheable) {
             state = {src: this.props.src};
         } else {
-            state = {src: this.props.src + "?t=" + time()};
+            var date = new Date();
+            state = {src: this.props.src + "?t=" + date.getMilliseconds()};
         }
-        return {src: this.props.src};
+        return state;
     },
 
     render: function () {
         var retour;
-        // Editable
+        var photo = <Photo
+            src = {this.state.src}
+            attributes = {this.props.attributes}
+            evts = {this.props.evts}
+        />;
+        // EDITABLE
         if (this.props.editable) {
             var evts = {onChange: this.onChange};
             retour = <span>
-                <Photo
-                    src = {this.state.src}
-                    attributes = {this.props.attributes}
-                    evts = {this.props.evts}
-                />
+                    {photo}
                 <InputFile
                     typeOfFile={'img'}
                     alertOn={this.props.alertOn}
@@ -88,9 +90,9 @@ var PhotoEditable = React.createClass({
                     ref="InputPhoto" />
             </span>
         }
-        // Non editable
+        // NON EDITABLE
         else {
-            retour = <img src={this.props.src} className="img-thumbnail img-responsive"/>;
+            retour = photo;
         }
         return retour;
     },
