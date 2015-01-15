@@ -96,10 +96,12 @@ var FicheUser = React.createClass({
             Actions.utilisateur.load_user_info(this.props.idUser);
         }
         else{
+            console.log('user data : %o', _.clone(this.props.userData));
             var state = {
                 nom:    this.props.userData.nom,
                 prenom: this.props.userData.prenom,
-                email:  this.props.userData.email
+                email:  this.props.userData.email,
+                photo:  this.props.userData.photo
             };
             this.setState(state);
         }

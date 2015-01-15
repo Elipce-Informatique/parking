@@ -6,7 +6,7 @@
 
 @section('content')
     <div class="row" id="content_user"/>
-    <input type="hidden" value="{{{$user}}}" name="user_data" id="user_data" />
+    <input type="hidden" value="{{{$user}}}" name="user_data" id="user_data"/>
 @stop
 
 @section('scripts')

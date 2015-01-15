@@ -45,17 +45,25 @@ var PhotoEditable = React.createClass({
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         alertOn: React.PropTypes.bool,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        cacheable: React.PropTypes.bool
     },
 
     getDefaultProps: function () {
         return {
             attributes: {},
             evts: {},
-            alertOn: false
+            alertOn: false,
+            cacheable: true
         }
     },
     getInitialState: function () {
+        var state = {};
+        if (this.props.cacheable) {
+            state = {src: this.props.src};
+        } else {
+            state = {src: this.props.src + "?t=" + time()};
+        }
         return {src: this.props.src};
     },
 
@@ -86,6 +94,14 @@ var PhotoEditable = React.createClass({
         }
         return retour;
     },
+    componentWillReceiveProps: function (np) {
+        if (np.cacheable) {
+            this.setState({src: np.src});
+        } else {
+            var date = new Date();
+            this.setState({src: np.src + "?t=" + date.getMilliseconds()});
+        }
+    },
     onChange: function () {
         var input = $(this.refs.InputPhoto.getDOMNode()).find('input')[0];
 
@@ -93,7 +109,7 @@ var PhotoEditable = React.createClass({
             var reader = new FileReader();
 
             reader.onload = function (e) {
-                //this.setState({src: e.target.result});
+                this.setState({src: e.target.result});
             }.bind(this);
 
             reader.readAsDataURL(input.files[0]);
