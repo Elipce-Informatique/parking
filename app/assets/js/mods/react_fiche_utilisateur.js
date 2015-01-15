@@ -112,6 +112,7 @@ var FicheUser = React.createClass({
     },
 
     render: function () {
+        
 
         emailInitial = this.state.email;
 
@@ -255,7 +256,6 @@ var FicheUser = React.createClass({
         }
 
         var fAttrs = {className:"form_utilisateur", id:"form_utilisateur"};
-        console.log('this.state.photo : '+this.state.photo);
         var srcPhoto = './app/storage/documents/photo/'+this.state.photo;
         return (
             <Form ref="form" attributes={fAttrs}>
@@ -301,8 +301,6 @@ var FicheUser = React.createClass({
      * @param {object} data
      */
     updateData: function (data) {
-        console.log('updateData');
-
         try {
             this.setState(data);
         }
@@ -380,7 +378,7 @@ var ficheUserStore = Reflux.createStore({
 
     /**
      * Vérifications "Métiers" du formulaire
-     * @param e
+     * @param data : Object {name: "email", value: "yann.pltv@gmail.com", form: DOMNode}
      */
     formVerif: function(e){
         var data = {};
@@ -437,7 +435,10 @@ var ficheUserStore = Reflux.createStore({
             }
         }, that);
     },
-
+    /**
+     * Appellé quand on clique sur le bouton sauvegarder
+     * @param idUser
+     */
     sauvegarder: function (idUser) {
         //console.log('FICHE USER SAVE '+idUser);
         // Variables

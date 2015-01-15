@@ -24,14 +24,21 @@ var InputValueMixin = {
         var attrs = this.getStateAttributes(val);
         // MISE À JOUR DE L'ÉTAT DU COMPOSANT
         this.setState({attributes: attrs, value: val});
-        // y. DÉCLENCHEMENT DE LA VALIDATION MÉTIER (AU NIVEAU DU FORMULAIRE) SI CHAMP VALIDE
+
+        // DÉCLENCHEMENT DE LA VALIDATION MÉTIER (AU NIVEAU DU FORMULAIRE) SI CHAMP VALIDE
+        Actions.validation.form_field_changed({
+            name: this.props.attributes.name,
+            value: val,
+            form: this.props.form
+        });
         if (attrs['data-valid']) {
-            Actions.validation.form_field_changed({
+            Actions.validation.form_field_verif({
                 name: this.props.attributes.name,
                 value: val,
                 form: this.props.form
             });
         }
+
         // ONBLUR DEV EXISTE
         if (this.props.evts.onBlur !== undefined) {
             this.props.evts.onBlur(e);
