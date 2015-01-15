@@ -138,6 +138,15 @@ var DataTableModuleReact = React.createClass({
         Actions.profil.set_etat_create_edit((this.props.nameProfil==''?true:false));
     },
 
+    componentWillReceiveProps: function(newProps){
+        /* Défini l'id profil dans le store */
+        Actions.profil.setIdProfil(newProps.idProfil);
+
+        /* Met à jour les données */
+        Actions.profil.module_update();
+        Actions.profil.set_etat_create_edit((newProps.nameProfil==''?true:false));
+    },
+
     render: function() {
         libelleInitial = this.props.nameProfil;
 
@@ -192,7 +201,6 @@ var moduleStore = Reflux.createStore({
 
     /* Met à jour le tableau des modules */
     updateModule: function(evt) {
-
         // AJAX
         $.ajax({
             url:      BASE_URI + 'profils/'+this.idProfil+'/modules', /* correspond au module url de la BDD */
