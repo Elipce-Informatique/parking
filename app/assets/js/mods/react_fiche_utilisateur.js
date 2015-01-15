@@ -207,23 +207,12 @@ var FicheUser = React.createClass({
 
             titreBis = Lang.get('administration.utilisateur.profilsAssocie');
 
-            var fctHideShow    = null;
-            var transitionName = '';
+            var fctHideShow = null;
 
             if(this.state.tabProfilHide == true) {
-                console.log('hide');
-                transitionName = 'hide';
-
-                fctHideShow = function(e) {
-                    Actions.utilisateur.updateHideShowProfil(false);
-                };
+                fctHideShow = function(e) { Actions.utilisateur.updateHideShowProfil(false); };
             }else{
-                console.log('show');
-                transitionName = 'show';
-
-                fctHideShow = function(e) {
-                    Actions.utilisateur.updateHideShowProfil(true);
-                };
+                fctHideShow = function(e) { Actions.utilisateur.updateHideShowProfil(true); };
             }
 
             var tableau = <DataTable
@@ -262,7 +251,7 @@ var FicheUser = React.createClass({
             <Form ref="form" attributes={fAttrs}>
                 <Row>
                     <Col md={2} className="photo">
-                        <PhotoEditable name="photo" alertOn={true} src={srcPhoto} evts={{onChange:this.changePhoto}} editable={this.props.editable} />
+                        <PhotoEditable name="photo" forceReload={true} alertOn={true} src={srcPhoto} evts={{onChange:this.changePhoto}} editable={this.props.editable} />
                     </Col>
                     <Col md={10}>
                         <InputTextEditable ref="nom"

@@ -11,20 +11,29 @@ var Photo = React.createClass({
     propTypes: {
         src: React.PropTypes.string.isRequired,
         attributes: React.PropTypes.object,
-        evts: React.PropTypes.object
+        evts: React.PropTypes.object,
+        forceReload:React.PropTypes.bool
     },
 
     GetDefaultProps: function () {
         return {
             attributes: {},
             evts: {},
-            gestMod: true
+            gestMod: true,
+            forceReload: false
         }
     },
 
     render: function () {
+        var src = this.props.src;
+
+        if(this.props.forceReload == true) {
+            src = src + '?' + Date.now();
+            console.log('Force photo reload');
+        }
+
         return (
-            <img src={this.props.src} {...this.props.attributes} {...this.props.evts} className="img-thumbnail img-responsive img-editable"/>
+            <img src={src} {...this.props.attributes} {...this.props.evts} className="img-thumbnail img-responsive img-editable"/>
         )
     }
 });
@@ -45,14 +54,16 @@ var PhotoEditable = React.createClass({
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         alertOn: React.PropTypes.bool,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        forceReload:React.PropTypes.bool
     },
 
     getDefaultProps: function () {
         return {
             attributes: {},
             evts: {},
-            alertOn: false
+            alertOn: false,
+            forceReload: false
         }
     },
     getInitialState: function () {
@@ -60,32 +71,39 @@ var PhotoEditable = React.createClass({
     },
 
     render: function () {
+
+        console.log('src : %o', this.state.src);
+
         var retour;
+
+        var photo = <Photo
+                        src = {this.state.src}
+                        attributes = {this.props.attributes}
+                        evts = {this.props.evts}
+                        forceReload = {this.props.forceReload}
+                    />;
         // Editable
         if (this.props.editable) {
             var evts = {onChange: this.onChange};
             retour = <span>
-                <Photo
-                    src = {this.state.src}
-                    attributes = {this.props.attributes}
-                    evts = {this.props.evts}
-                />
-                <InputFile
-                    typeOfFile={'img'}
-                    alertOn={this.props.alertOn}
-                    gestMod={this.props.gestMod}
-                    name={this.props.name}
-                    libelle={Lang.get('global.modifier')}
-                    evts={evts}
-                    ref="InputPhoto" />
-            </span>
+                        {photo}
+                        <InputFile
+                            typeOfFile={'img'}
+                            alertOn={this.props.alertOn}
+                            gestMod={this.props.gestMod}
+                            name={this.props.name}
+                            libelle={Lang.get('global.modifier')}
+                            evts={evts}
+                            ref="InputPhoto" />
+                    </span>
         }
         // Non editable
         else {
-            retour = <img src={this.props.src} className="img-thumbnail img-responsive"/>;
+            retour = photo;
         }
         return retour;
     },
+
     onChange: function () {
         var input = $(this.refs.InputPhoto.getDOMNode()).find('input')[0];
 
