@@ -136,7 +136,6 @@ var pageUserStore = Reflux.createStore({
     },
 
     modeCreation: function () {
-        console.log('modeCreation');
         this.stateLocal = {idUser:0, etat: 'creation', dataUser:{nom:'', prenom:''}};
         //console.log('PAGE USER mode création '+this.idUser);
         this.trigger(this.stateLocal);

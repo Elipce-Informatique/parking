@@ -112,7 +112,7 @@ var FicheUser = React.createClass({
     },
 
     render: function () {
-        console.log('react_fiche_user : this.state.photo : '+this.state.photo);
+        
 
         emailInitial = this.state.email;
 

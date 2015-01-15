@@ -871,7 +871,9 @@ var InputFile = React.createClass({
             }
         };
     },
-
+    componentWillMount: function(){
+        console.log('ComponentWillMount !!');
+    },
     render: function () {
         var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
 
@@ -880,7 +882,7 @@ var InputFile = React.createClass({
         propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
         var attrs = _.extend(propsAttrs, this.state.attributes);
 
-
+        console.log('State de l\'input file: %o', _.cloneDeep(this.state));
         // 4. ATTRS OK, CREATION INPUT
         return (
             <div className={"fileUpload btn " + this.props.style}>
@@ -893,12 +895,14 @@ var InputFile = React.createClass({
                     {...gestMod}
                     {...this.props.evts}
                     onChange = {this.handleChange}
-                    value={this.state.value}
                     ref = "InputField"
                 />
                 ;
             </div>
         );
+    },
+    componentDidUpdate: function(){
+        console.log('Attributes de l\'input file : %o', $(this.getDOMNode()).find('input').val());
     }
 });
 

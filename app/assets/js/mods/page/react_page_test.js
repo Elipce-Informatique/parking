@@ -66,18 +66,15 @@ var ReactPageTest               = React.createClass({
         ];
 
         function selectChange(value, aData){
-            console.info('Value : '+value);
 
             var indice = 0;
             _.each(aData, function(val, key){
-                console.info('aData['+indice+'], label : '+aData[indice]['label']+', value : '+aData[indice]['value']);
                 indice++;
             });
         }
 
         function clickImage(evt){
             var copie = _.clone(evt);
-            console.info('clickImage, evt : %o', copie);
         }
         /* FIN : Paramètres Select */
         /***************************/

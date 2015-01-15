@@ -23,7 +23,6 @@ var Photo = React.createClass({
     },
 
     render: function () {
-        console.log('react_photo : this.props.src : '+this.props.src);
         return (
             <img src={this.props.src} {...this.props.attributes} {...this.props.evts} className="img-thumbnail img-responsive img-editable"/>
         )
@@ -46,14 +45,16 @@ var PhotoEditable = React.createClass({
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         alertOn: React.PropTypes.bool,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        cacheable: React.PropTypes.bool
     },
 
     getDefaultProps: function () {
         return {
             attributes: {},
             evts: {},
-            alertOn: false
+            alertOn: false,
+            cacheable: true
         }
     },
     getInitialState: function () {
@@ -77,17 +78,17 @@ var PhotoEditable = React.createClass({
         // EDITABLE
         if (this.props.editable) {
             var evts = {onChange: this.onChange};
-            retour = <span>
-                        {photo}
-                        <InputFile
-                            typeOfFile={'img'}
-                            alertOn={this.props.alertOn}
-                            gestMod={this.props.gestMod}
-                            name={this.props.name}
-                            libelle={Lang.get('global.modifier')}
-                            evts={evts}
-                            ref="InputPhoto" />
-                    </span>
+            retour = <span key='photoEditableWrapper'>
+                    {photo}
+                <InputFile
+                    typeOfFile={'img'}
+                    alertOn={this.props.alertOn}
+                    gestMod={this.props.gestMod}
+                    name={this.props.name}
+                    libelle={Lang.get('global.modifier')}
+                    evts={evts}
+                    ref="InputPhoto" />
+            </span>
         }
         // NON EDITABLE
         else {
