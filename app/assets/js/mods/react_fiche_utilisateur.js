@@ -489,13 +489,14 @@ var ficheUserStore = Reflux.createStore({
                 if(tab.save == true) {
                     Actions.notif.success(Lang.get('global.notif_success'));
                     Actions.utilisateur.saveOK(tab.idUser*1);
-                    Actions.utilisateur.load_user_info(tab.idUser);
+                    Actions.utilisateur.load_user_info(tab.idUser*1);
                 }
                 else if(tab.pass !== undefined)
                     Actions.notif.error(Lang.get('administration.utilisateur.oldPassConfirmError'));
                 else
                     Actions.notif.error(Lang.get('global.notif_erreur'));
             },
+
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
                 Actions.notif.error('AJAX : '+Lang.get('global.notif_erreur'));
