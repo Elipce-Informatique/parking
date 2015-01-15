@@ -78,7 +78,7 @@ var PhotoEditable = React.createClass({
         // EDITABLE
         if (this.props.editable) {
             var evts = {onChange: this.onChange};
-            retour = <span>
+            retour = <span key='photoEditableWrapper'>
                     {photo}
                 <InputFile
                     typeOfFile={'img'}
