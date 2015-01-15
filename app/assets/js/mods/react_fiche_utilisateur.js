@@ -112,8 +112,7 @@ var FicheUser = React.createClass({
     },
 
     render: function () {
-        console.log('this.state.photo : '+this.state.photo);
-        console.log('this.state : %o', this.state);
+        console.log('react_fiche_user : this.state.photo : '+this.state.photo);
 
         emailInitial = this.state.email;
 
@@ -226,7 +225,6 @@ var FicheUser = React.createClass({
                         key="testkey"
                         editable={this.props.editable}/> ;
             //tableau = <p key="uniquekey">test</p>;
-            console.log(this.state);
             if(this.state.tabProfilHide){
                 tableau = {};
             }
@@ -351,11 +349,8 @@ var ficheUserStore = Reflux.createStore({
     formChange: function(e){
         var data = {};
 
-        console.log(e);
-
         // VÉFIR ADRESSE MAIL:
         if(e.name == 'email'){
-            console.log('email');
             if(this.modeCreate)
                 data = this.emailCreateChange(e.value);
             else
@@ -381,7 +376,6 @@ var ficheUserStore = Reflux.createStore({
         else if(e.name == 'photo')
             data.photo = e.value;
 
-        console.log('Data dans le store apres vérif : %o', _.cloneDeep(data));
         this.trigger(data);
     },
 
@@ -443,14 +437,12 @@ var ficheUserStore = Reflux.createStore({
         }
 
         // RÉCUPÉRATION DES DONNÉES
-        var data = $('#form_utilisateur').serializeArray();
-        data.push({name: '_token', value:$('#_token').val()});
 
         // FormData
         var fData = form_data_helper('form_utilisateur', method);
         fData.append('matrice', matrice);
         fData.append('photo', $("[name=photo]")[0].files[0]);
-        
+
         // Requête
         $.ajax({
             url: url,
@@ -548,7 +540,6 @@ var ficheUserStore = Reflux.createStore({
         retour.passOld = {};
 
         if(value.length >= 6) {
-            console.log('Ajax');
             // AJAX
             $.ajax({
                 url: BASE_URI + 'moncompte/verifMPD/' + value, /* correspond au module url de la BDD */
@@ -573,7 +564,6 @@ var ficheUserStore = Reflux.createStore({
     },
 
     verifPassNew: function(value1, value2){
-        console.log('value1 : '+value1+', value2 : '+value2);
         var retour = {};
         retour.passConfirm = {};
         if(value1 != value2){

@@ -23,6 +23,7 @@ var Photo = React.createClass({
     },
 
     render: function () {
+        console.log('react_photo : this.props.src : '+this.props.src);
         return (
             <img src={this.props.src} {...this.props.attributes} {...this.props.evts} className="img-thumbnail img-responsive img-editable"/>
         )
@@ -77,16 +78,16 @@ var PhotoEditable = React.createClass({
         if (this.props.editable) {
             var evts = {onChange: this.onChange};
             retour = <span>
-                    {photo}
-                <InputFile
-                    typeOfFile={'img'}
-                    alertOn={this.props.alertOn}
-                    gestMod={this.props.gestMod}
-                    name={this.props.name}
-                    libelle={Lang.get('global.modifier')}
-                    evts={evts}
-                    ref="InputPhoto" />
-            </span>
+                        {photo}
+                        <InputFile
+                            typeOfFile={'img'}
+                            alertOn={this.props.alertOn}
+                            gestMod={this.props.gestMod}
+                            name={this.props.name}
+                            libelle={Lang.get('global.modifier')}
+                            evts={evts}
+                            ref="InputPhoto" />
+                    </span>
         }
         // NON EDITABLE
         else {
