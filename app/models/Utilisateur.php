@@ -284,8 +284,6 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             /* Mise à jour du champ en base de donnée */
             $user->photo  = $fileName;
         }
-        else
-            $user->photo = 'no.gif';
 
         // Récupère la donnée de l'utilisateur
         $user->nom    = $fields['nom'];

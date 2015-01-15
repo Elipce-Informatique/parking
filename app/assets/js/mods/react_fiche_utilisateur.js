@@ -112,6 +112,7 @@ var FicheUser = React.createClass({
     },
 
     render: function () {
+        
 
         emailInitial = this.state.email;
 
@@ -206,21 +207,12 @@ var FicheUser = React.createClass({
 
             titreBis = Lang.get('administration.utilisateur.profilsAssocie');
 
-            var fctHideShow    = null;
-            var transitionName = '';
+            var fctHideShow = null;
 
             if(this.state.tabProfilHide == true) {
-                transitionName = 'hide';
-
-                fctHideShow = function(e) {
-                    Actions.utilisateur.updateHideShowProfil(false);
-                };
+                fctHideShow = function(e) { Actions.utilisateur.updateHideShowProfil(false); };
             }else{
-                transitionName = 'show';
-
-                fctHideShow = function(e) {
-                    Actions.utilisateur.updateHideShowProfil(true);
-                };
+                fctHideShow = function(e) { Actions.utilisateur.updateHideShowProfil(true); };
             }
 
             var tableau = <DataTable
@@ -445,8 +437,6 @@ var ficheUserStore = Reflux.createStore({
         }
 
         // RÉCUPÉRATION DES DONNÉES
-        var data = $('#form_utilisateur').serializeArray();
-        data.push({name: '_token', value:$('#_token').val()});
 
         // FormData
         var fData = form_data_helper('form_utilisateur', method);

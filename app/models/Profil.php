@@ -149,6 +149,9 @@ class Profil extends Eloquent
      */
     public static function updateProfil($id, $fields)
     {
+        Log::warning('-----------> updateProfil $id : '.$id.'<-----------');
+        Log::warning('-----------> updateProfil $fields : '.print_r($fields, true).'<-----------');
+
         // Trouver le user
         $profil = Profil::find($id);
 
@@ -182,10 +185,10 @@ class Profil extends Eloquent
                         /* Droit à null, on supprime la ligne */
                         if($accesssLevel == 'null') {
                             $bSave = DB::table('profil_module')->delete($ligne->id);
+                            Log::warning('-----------> $bSave : '.$bSave.' <-----------');
                         }
                         /* Nouveau droit */
                         else if ($ligne->access_level != $accesssLevel) {
-                            Log::warning('-----------> updateProfil $accesssLevel : '.$accesssLevel.'<-----------');
                             $update = [];
                             $update['module_id']    = $idModule;
                             $update['profil_id']    = $id;
@@ -195,7 +198,6 @@ class Profil extends Eloquent
                     }
                     /* La ligne n'existe pas, on la créer */
                     else if( $accesssLevel != 'null'){
-                        Log::warning('-----------> updateProfil $accesssLevel : '.$accesssLevel.'<-----------');
                         $ligne = [];
                         $ligne['module_id']    = $idModule;
                         $ligne['profil_id']    = $id;

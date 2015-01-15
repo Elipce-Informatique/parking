@@ -20,7 +20,6 @@ var BandeauListe   = require('../composants/bandeau/react_bandeau_liste');
 
 /*********************************************/
 /* Composant react_data_table_bandeau_profil */
-
 var DataTableBandeauProfil = require('../react_data_table_bandeau_profil');
 
 /* Paramètres du composant react_data_table_bandeau_profil      */
@@ -356,7 +355,7 @@ var pageProfilStore = Reflux.createStore({
             success: function(tab) {
                 // TODO NOTIFICATION
                 //Notif tab['save']
-                if(tab.save === true) {
+                if(tab.save == true) {
                     that.idProfilSelect = tab.idProfil;
 
                     // Passe variable aux composants qui écoutent l'action actionLoadData
@@ -364,9 +363,8 @@ var pageProfilStore = Reflux.createStore({
 
                     Actions.notif.success(Lang.get('global.notif_success'));
                 }
-                else{
+                else
                     Actions.notif.error(Lang.get('global.notif_erreur'));
-                }
             },
             error: function(xhr, status, err) {
                 console.error( status, err.toString());
