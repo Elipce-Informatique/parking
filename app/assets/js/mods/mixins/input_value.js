@@ -6,7 +6,6 @@ var Validator = require('validator');
  */
 var InputValueMixin = {
     handleChange: function (e) {
-        console.log('Pass Onchange Mixin');
         // 1. RÉCUPÉRATION DE LA VALUE
         var val = this.refs.InputField.getValue();
         // CRÉATION DES ATTRIBUTS POUR LE STATE

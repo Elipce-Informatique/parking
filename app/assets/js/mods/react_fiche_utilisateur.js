@@ -29,10 +29,10 @@ var hideP = ['id'];
 /* Libelles : "Visu, Modif, Aucun"                                   */
 /* Name     : "btnVisu, btnModif, btnAucun                           */
 /* Sur clic d'un radio bouton, déclenche l'action "handleClickRadio" */
-var aLibelle = new Array(Lang.get('global.oui'), Lang.get('global.non'));
-var aName    = new Array('oui', 'non');
+var aLibelle = [Lang.get('global.oui'), Lang.get('global.non')];
+var aName    = ['oui', 'non'];
 var aReactElements  = {};
-aReactElements['1'] = new Array();                           /* Colonne n°1 du tableau               */
+aReactElements['1'] = [];                           /* Colonne n°1 du tableau               */
 aReactElements['1'][0] = 'Radio';                            /* Type de composant à ajouter          */
 aReactElements['1'][1] = {'name':aName, 'libelle':aLibelle}; /* Name des radio boutons et libelle    */
 aReactElements['1'][2] = {'onClick':handleClickRadio};       /* Evenement sur click des radio bouton */
@@ -135,7 +135,15 @@ var FicheUser = React.createClass({
         var SuiteCode = '';
         var titreBis  = '';
 
-        /* Mode compte ou page user */
+        var fctHideShow = null;
+
+        if(this.state.tabProfilHide == true) {
+            fctHideShow = function(e) { Actions.utilisateur.updateHideShowProfil(false); };
+        }else{
+            fctHideShow = function(e) { Actions.utilisateur.updateHideShowProfil(true); };
+        }
+
+        /* MODE COMPTE */
         if(this.props.modeCompte == true && this.props.editable == true){
 
             titreBis = Lang.get('administration.utilisateur.change_password');
@@ -190,30 +198,33 @@ var FicheUser = React.createClass({
             _.extend(attrsPassConfirm, attrsPass);
 
             /* On affiche la modification du password */
+            var password = (
+                <span>
+                    <InputPasswordEditable attributes={attrsPassOld}     editable={this.props.editable} />
+                    <InputPasswordEditable attributes={attrsPassNew}     editable={this.props.editable} />
+                    <InputPasswordEditable attributes={attrsPassConfirm} editable={this.props.editable} />
+                </span>);
+            //tableau = <p key="uniquekey">test</p>;
+            if (this.state.tabProfilHide) {
+                password = {};
+            }
             SuiteCode = <Row>
                 <Col md={2}>
-                    <h3 className="breadcrumb hand-over">
+                    <h3 className="btn btn-default hand-over" onClick={fctHideShow}>
                         {titreBis}
                     </h3>
                 </Col>
                 <Col md={10}>
-                    <InputPasswordEditable attributes={attrsPassOld}     editable={this.props.editable} />
-                    <InputPasswordEditable attributes={attrsPassNew}     editable={this.props.editable} />
-                    <InputPasswordEditable attributes={attrsPassConfirm} editable={this.props.editable} />
+                    <ReactCSSTransitionGroup transitionName="tabprofil" key="transitionGroupTable">
+                        {password}
+                    </ReactCSSTransitionGroup >
                 </Col>
             </Row>;
         }
+        // MODE ADMIN
         else if(this.props.modeCompte == false){
 
             titreBis = Lang.get('administration.utilisateur.profilsAssocie');
-
-            var fctHideShow = null;
-
-            if(this.state.tabProfilHide == true) {
-                fctHideShow = function(e) { Actions.utilisateur.updateHideShowProfil(false); };
-            }else{
-                fctHideShow = function(e) { Actions.utilisateur.updateHideShowProfil(true); };
-            }
 
             var tableau = <DataTable
                         id='dataTableProfils'
@@ -232,7 +243,7 @@ var FicheUser = React.createClass({
             /* On affiche le tableau des profils associés */
             SuiteCode = <Row>
                             <Col md={2}>
-                                <h3 className="breadcrumb hand-over" onClick={fctHideShow}>
+                                <h3 className="btn btn-default hand-over" onClick={fctHideShow}>
                                     {titreBis}
                                 </h3>
                             </Col>
