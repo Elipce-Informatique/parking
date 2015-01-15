@@ -29,6 +29,8 @@ var PageCompte = React.createClass({
     },
 
     getInitialState: function () {
+        console.log('Initial state:');
+        console.log(this.props.dataUser);
         return {
             etat: 'visu',
             dataUser: this.props.dataUser
@@ -49,6 +51,7 @@ var PageCompte = React.createClass({
     },
 
     display: function () {
+        console.log('Render, state data user: %o', this.state.dataUser);
         var comp;
 
         switch (this.state.etat) {
@@ -61,12 +64,12 @@ var PageCompte = React.createClass({
                 break;
             default:
                 var btnEditer = [{
-                            libelle: Lang.get('global.edit'),
-                            style: "default",
-                            icon: "edit",
-                            attrs: {disabled: false},
-                            evts: {onClick: this.modeEdition}
-                        }];
+                    libelle: Lang.get('global.edit'),
+                    style: "default",
+                    icon: "edit",
+                    attrs: {disabled: false},
+                    evts: {onClick: this.modeEdition}
+                }];
                 comp = (
                     <div key="pageCompteRoot">
                         <Bandeau
@@ -86,12 +89,12 @@ var PageCompte = React.createClass({
         // MAJ data
         this.setState(obj);
     },
-    modeEdition: function(e){
+    modeEdition: function (e) {
         this.setState({etat: 'edition'});
     },
 
     onRetour: function () {
-        this.setState({etat: 'visu'});
+        window.location.replace(BASE_URI+'moncompte');
     }
 });
 
@@ -112,10 +115,9 @@ var pageCompteStore = Reflux.createStore({
         this.listenTo(Actions.validation.submit_form, this.sauvegarder);
         this.listenTo(Actions.bandeau.supprimer, this.supprimer);
         this.listenTo(Actions.utilisateur.saveOK, this.loadProfil);
-        this.listenTo(Actions.utilisateur.updateBandeau, this.setNomPrenom)
+        this.listenTo(Actions.utilisateur.updateBandeau, this.setNomPrenom);
 
     },
-
     modeVisu: function (idUser) {
         this.stateLocal = {etat: 'visu'};
         this.trigger(this.stateLocal);
@@ -154,5 +156,8 @@ var pageCompteStore = Reflux.createStore({
         // Suppr
         this.stateLocal = {idUser: this.stateLocal.idUser, etat: 'suppression'}
         Actions.utilisateur.delete_user(this.stateLocal.idUser);
+    },
+    loadProfil: function () {
+
     }
 });

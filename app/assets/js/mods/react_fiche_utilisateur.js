@@ -68,19 +68,21 @@ var FicheUser = React.createClass({
     },
 
     getInitialState: function () {
-        var retour = {nom: '',
-                      prenom: '',
-                      email: '',
-                      photo: 'no.gif',
-                      passOld: '',
-                      passNew: '',
-                      passConfirm: '',
-                      dataProfil: [],
-                      retour: {},
-                      passNewvalue:'',
-                      passConfirmvalue:'',
-                      passOldvalue:'',
-                      tabProfilHide:true};
+        var retour = {
+            nom: '',
+            prenom: '',
+            email: '',
+            photo: 'no.gif',
+            passOld: '',
+            passNew: '',
+            passConfirm: '',
+            dataProfil: [],
+            retour: {},
+            passNewvalue: '',
+            passConfirmvalue: '',
+            passOldvalue: '',
+            tabProfilHide: true
+        };
         return retour;
     },
 
@@ -102,6 +104,7 @@ var FicheUser = React.createClass({
                 email:  this.props.userData.email,
                 photo:  this.props.userData.photo
             };
+            Actions.utilisateur.set_initial_state(state);
             this.setState(state);
         }
     },
@@ -336,6 +339,10 @@ var ficheUserStore = Reflux.createStore({
         this.listenTo(Actions.utilisateur.set_etat_create_edit, this.setEtatCreateEdit);
         this.listenTo(Actions.utilisateur.updateHideShowProfil, this.updateHideShowProfil);
         this.listenTo(Actions.utilisateur.set_etat_compte,      this.set_etat_compte);
+        this.listenTo(Actions.utilisateur.set_initial_state,      this.set_initial_state);
+    },
+    set_initial_state: function(data){
+        this.formDataState = data;
     },
 
     set_etat_compte: function(bool){
@@ -477,6 +484,7 @@ var ficheUserStore = Reflux.createStore({
             processData: false,
             contentType: false,
             dataType:'json',
+            context: this,
             success: function (tab) {
                 if(tab.save == true) {
                     Actions.notif.success(Lang.get('global.notif_success'));

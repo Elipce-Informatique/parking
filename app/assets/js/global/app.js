@@ -107,7 +107,8 @@
         "supprOK",
         "updateBandeau",
         "updateHideShowProfil",
-        "set_etat_compte"
+        "set_etat_compte",
+        "set_initial_state"
     ]);
 
     /*
