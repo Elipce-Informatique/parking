@@ -112,7 +112,7 @@ var FicheUser = React.createClass({
     },
 
     render: function () {
-        
+
 
         emailInitial = this.state.email;
 
@@ -317,6 +317,7 @@ var ficheUserStore = Reflux.createStore({
 
     // Variables
     dataUser: {},
+    stateFormData: {},
     matriceBtnRadio: {},
     isMatriceModuleModif:false,
     modeCreate:true,
@@ -355,39 +356,41 @@ var ficheUserStore = Reflux.createStore({
 
     /**
      * Vérifications "Métiers" du formulaire
-     * @param e
+     * @param data : Object {name: "email", value: "yann.pltv@gmail.com", form: DOMNode}
      */
-    formChange: function(e){
-        var data = {};
-
+    formChange: function(data){
+        console.log(data);
         // VÉFIR ADRESSE MAIL:
-        if(e.name == 'email'){
+        if(data.name == 'email'){
             if(this.modeCreate)
-                data = this.emailCreateChange(e.value);
+                this.stateFormData = _.extend(this.stateFormData, this.emailCreateChange(data.value));
             else
-                data = this.emailEditChange(e.value);
-            _.extend(data, {email:e.value});
+                this.stateFormData = _.extend(this.stateFormData,this.emailEditChange(data.value));
+            this.stateFormData = _.extend( this.stateFormData, {email:data.value});
         }
-        else if(e.name == 'nom')
-            data.nom = e.value;
-        else if(e.name == 'prenom')
-            data.prenom = e.value;
-        else if(e.name == 'passNew') {
-            data = this.verifPassNew(e.value, $('#passConfirm')[0].value);
-            data.passNewvalue = e.value;
+        else if(data.name == 'nom')
+            this.stateFormData.nom = data.value;
+        else if(data.name == 'prenom')
+            this.stateFormData.prenom = data.value;
+        else if(data.name == 'passNew') {
+            this.stateFormData = _.extend(this.stateFormData,this.verifPassNew(data.value, $('#passConfirm')[0].value));
+            this.stateFormData.passNewvalue = data.value;
         }
-        else if(e.name == 'passOld') {
-            data = this.verifPassOld(e.value);
-            _.extend(data, {passOldvalue:e.value});
+        else if(data.name == 'passOld') {
+            this.stateFormData = _.extend(this.stateFormData,this.verifPassOld(data.value));
+            _.extend(this.stateFormData, {passOldvalue:data.value});
         }
-        else if(e.name == 'passConfirm') {
-            data = this.verifPassNew(e.value, $('#passNew')[0].value);
-            _.extend(data, {passConfirmvalue:e.value});
+        else if(data.name == 'passConfirm') {
+            this.stateFormData = _.extend(this.stateFormData,this.verifPassNew(data.value, $('#passNew')[0].value));
+            _.extend(this.stateFormData, {passConfirmvalue:data.value});
         }
-        else if(e.name == 'photo')
-            data.photo = e.value;
+        else if(data.name == 'photo')
+            this.stateFormData.photo = data.value;
 
-        this.trigger(data);
+        console.log('State form data a la fin du formChange :');
+        console.log(this.stateFormData);
+
+        this.trigger(this.stateFormData);
     },
 
     radioChange: function(evt){
@@ -425,7 +428,10 @@ var ficheUserStore = Reflux.createStore({
             }
         }, that);
     },
-
+    /**
+     * Appellé quand on clique sur le bouton sauvegarder
+     * @param idUser
+     */
     sauvegarder: function (idUser) {
         //console.log('FICHE USER SAVE '+idUser);
         // Variables
