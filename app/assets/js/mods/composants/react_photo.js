@@ -11,29 +11,20 @@ var Photo = React.createClass({
     propTypes: {
         src: React.PropTypes.string.isRequired,
         attributes: React.PropTypes.object,
-        evts: React.PropTypes.object,
-        forceReload:React.PropTypes.bool
+        evts: React.PropTypes.object
     },
 
     GetDefaultProps: function () {
         return {
             attributes: {},
             evts: {},
-            gestMod: true,
-            forceReload: false
+            gestMod: true
         }
     },
 
     render: function () {
-        var src = this.props.src;
-
-        if(this.props.forceReload == true) {
-            src = src + '?' + Date.now();
-            console.log('Force photo reload');
-        }
-
         return (
-            <img src={src} {...this.props.attributes} {...this.props.evts} className="img-thumbnail img-responsive img-editable"/>
+            <img src={this.props.src} {...this.props.attributes} {...this.props.evts} className="img-thumbnail img-responsive img-editable"/>
         )
     }
 });
@@ -54,56 +45,63 @@ var PhotoEditable = React.createClass({
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         alertOn: React.PropTypes.bool,
-        gestMod: React.PropTypes.bool,
-        forceReload:React.PropTypes.bool
+        gestMod: React.PropTypes.bool
     },
 
     getDefaultProps: function () {
         return {
             attributes: {},
             evts: {},
-            alertOn: false,
-            forceReload: false
+            alertOn: false
         }
     },
     getInitialState: function () {
-        return {src: this.props.src};
+        var state = {};
+        if (this.props.cacheable) {
+            state = {src: this.props.src};
+        } else {
+            var date = new Date();
+            state = {src: this.props.src + "?t=" + date.getMilliseconds()};
+        }
+        return state;
     },
 
     render: function () {
-
-        console.log('src : %o', this.state.src);
-
         var retour;
-
         var photo = <Photo
-                        src = {this.state.src}
-                        attributes = {this.props.attributes}
-                        evts = {this.props.evts}
-                        forceReload = {this.props.forceReload}
-                    />;
-        // Editable
+            src = {this.state.src}
+            attributes = {this.props.attributes}
+            evts = {this.props.evts}
+        />;
+        // EDITABLE
         if (this.props.editable) {
             var evts = {onChange: this.onChange};
             retour = <span>
-                        {photo}
-                        <InputFile
-                            typeOfFile={'img'}
-                            alertOn={this.props.alertOn}
-                            gestMod={this.props.gestMod}
-                            name={this.props.name}
-                            libelle={Lang.get('global.modifier')}
-                            evts={evts}
-                            ref="InputPhoto" />
-                    </span>
+                    {photo}
+                <InputFile
+                    typeOfFile={'img'}
+                    alertOn={this.props.alertOn}
+                    gestMod={this.props.gestMod}
+                    name={this.props.name}
+                    libelle={Lang.get('global.modifier')}
+                    evts={evts}
+                    ref="InputPhoto" />
+            </span>
         }
-        // Non editable
+        // NON EDITABLE
         else {
             retour = photo;
         }
         return retour;
     },
-
+    componentWillReceiveProps: function (np) {
+        if (np.cacheable) {
+            this.setState({src: np.src});
+        } else {
+            var date = new Date();
+            this.setState({src: np.src + "?t=" + date.getMilliseconds()});
+        }
+    },
     onChange: function () {
         var input = $(this.refs.InputPhoto.getDOMNode()).find('input')[0];
 
@@ -111,7 +109,7 @@ var PhotoEditable = React.createClass({
             var reader = new FileReader();
 
             reader.onload = function (e) {
-                //this.setState({src: e.target.result});
+                this.setState({src: e.target.result});
             }.bind(this);
 
             reader.readAsDataURL(input.files[0]);

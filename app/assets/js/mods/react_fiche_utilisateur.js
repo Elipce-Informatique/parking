@@ -99,7 +99,8 @@ var FicheUser = React.createClass({
             var state = {
                 nom:    this.props.userData.nom,
                 prenom: this.props.userData.prenom,
-                email:  this.props.userData.email
+                email:  this.props.userData.email,
+                photo:  this.props.userData.photo
             };
             this.setState(state);
         }
@@ -251,7 +252,7 @@ var FicheUser = React.createClass({
             <Form ref="form" attributes={fAttrs}>
                 <Row>
                     <Col md={2} className="photo">
-                        <PhotoEditable name="photo" forceReload={true} alertOn={true} src={srcPhoto} evts={{onChange:this.changePhoto}} editable={this.props.editable} />
+                        <PhotoEditable name="photo" cacheable={false} alertOn={true} src={srcPhoto} evts={{onChange:this.changePhoto}} editable={this.props.editable} />
                     </Col>
                     <Col md={10}>
                         <InputTextEditable ref="nom"
@@ -449,11 +450,7 @@ var ficheUserStore = Reflux.createStore({
         var fData = form_data_helper('form_utilisateur', method);
         fData.append('matrice', matrice);
         fData.append('photo', $("[name=photo]")[0].files[0]);
-
-        console.log('fData : %o', fData);
-        //var request = new XMLHttpRequest();
-        //request.open("POST", url);
-        //request.send(fData);
+        
         // Requête
         $.ajax({
             url: url,
