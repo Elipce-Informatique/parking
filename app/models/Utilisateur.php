@@ -268,6 +268,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
         // Test si photo:
         if (Input::hasFile('photo')){
+            Log::warning('-----------> save photo <-----------');
             /* Extension du fichier */
             $extFile = Input::file('photo')->getClientOriginalExtension();
 

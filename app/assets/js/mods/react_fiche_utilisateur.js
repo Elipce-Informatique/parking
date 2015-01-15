@@ -112,7 +112,6 @@ var FicheUser = React.createClass({
     },
 
     render: function () {
-        
 
         emailInitial = this.state.email;
 
@@ -245,6 +244,7 @@ var FicheUser = React.createClass({
         }
 
         var fAttrs = {className:"form_utilisateur", id:"form_utilisateur"};
+        console.log('this.state.photo : '+this.state.photo);
         var srcPhoto = './app/storage/documents/photo/'+this.state.photo;
         return (
             <Form ref="form" attributes={fAttrs}>
@@ -290,6 +290,8 @@ var FicheUser = React.createClass({
      * @param {object} data
      */
     updateData: function (data) {
+        console.log('updateData');
+
         try {
             this.setState(data);
         }
@@ -319,10 +321,11 @@ var ficheUserStore = Reflux.createStore({
         this.listenTo(Actions.utilisateur.delete_user,    this.supprimer);
         this.listenTo(Actions.utilisateur.initMatrice,    this.initMatrice);
         this.listenTo(Actions.utilisateur.radio_change,   this.radioChange);
-        this.listenTo(Actions.validation.form_field_changed, this.formChange);
+        this.listenTo(Actions.validation.form_field_changed,    this.formChange);
+        this.listenTo(Actions.validation.form_field_verif,      this.formVerif);
         this.listenTo(Actions.utilisateur.set_etat_create_edit, this.setEtatCreateEdit);
         this.listenTo(Actions.utilisateur.updateHideShowProfil, this.updateHideShowProfil);
-        this.listenTo(Actions.utilisateur.set_etat_compte, this.set_etat_compte);
+        this.listenTo(Actions.utilisateur.set_etat_compte,      this.set_etat_compte);
     },
 
     set_etat_compte: function(bool){
@@ -342,11 +345,33 @@ var ficheUserStore = Reflux.createStore({
         this.modeCreate           = modeCreate_P;
     },
 
+    formChange: function(e){
+        var data = {};
+
+        // Mise à jour du state
+        if(e.name == 'email')
+            data.email = e.value;
+        else if(e.name == 'nom')
+            data.nom = e.value;
+        else if(e.name == 'prenom')
+            data.prenom = e.value;
+        else if(e.name == 'passNew')
+            data.passNewvalue = e.value;
+        else if(e.name == 'passOld')
+            data.passOldvalue = e.value;
+        else if(e.name == 'passConfirm')
+            data.passConfirmvalue = e.value;
+        else if(e.name == 'photo')
+            data.photo = e.value;
+
+        this.trigger(data);
+    },
+
     /**
      * Vérifications "Métiers" du formulaire
      * @param e
      */
-    formChange: function(e){
+    formVerif: function(e){
         var data = {};
 
         // VÉFIR ADRESSE MAIL:
@@ -355,26 +380,13 @@ var ficheUserStore = Reflux.createStore({
                 data = this.emailCreateChange(e.value);
             else
                 data = this.emailEditChange(e.value);
-            _.extend(data, {email:e.value});
         }
-        else if(e.name == 'nom')
-            data.nom = e.value;
-        else if(e.name == 'prenom')
-            data.prenom = e.value;
-        else if(e.name == 'passNew') {
+        else if(e.name == 'passNew')
             data = this.verifPassNew(e.value, $('#passConfirm')[0].value);
-            data.passNewvalue = e.value;
-        }
-        else if(e.name == 'passOld') {
+        else if(e.name == 'passOld')
             data = this.verifPassOld(e.value);
-            _.extend(data, {passOldvalue:e.value});
-        }
-        else if(e.name == 'passConfirm') {
+        else if(e.name == 'passConfirm')
             data = this.verifPassNew(e.value, $('#passNew')[0].value);
-            _.extend(data, {passConfirmvalue:e.value});
-        }
-        else if(e.name == 'photo')
-            data.photo = e.value;
 
         this.trigger(data);
     },
@@ -455,6 +467,7 @@ var ficheUserStore = Reflux.createStore({
                 if(tab.save == true) {
                     Actions.notif.success(Lang.get('global.notif_success'));
                     Actions.utilisateur.saveOK(tab.idUser*1);
+                    Actions.utilisateur.load_user_info(tab.idUser);
                 }
                 else if(tab.pass !== undefined)
                     Actions.notif.error(Lang.get('administration.utilisateur.oldPassConfirmError'));
