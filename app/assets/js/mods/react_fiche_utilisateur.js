@@ -317,6 +317,7 @@ var ficheUserStore = Reflux.createStore({
 
     // Variables
     dataUser: {},
+    formDataState: {},
     matriceBtnRadio: {},
     isMatriceModuleModif:false,
     modeCreate:true,
@@ -373,7 +374,8 @@ var ficheUserStore = Reflux.createStore({
         else if(e.name == 'photo')
             data.photo = e.value;
 
-        this.trigger(data);
+        this.formDataState = _.extend(this.formDataState, data);
+        this.trigger(this.formDataState);
     },
 
     /**
