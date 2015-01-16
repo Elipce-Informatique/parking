@@ -6,9 +6,7 @@ var AuthentLevelMixin = {
     componentWillMount: function () {
         // TEST EXISTANCE MODULE URL
         if (typeof(this.props.module_url) == "undefined") {
-            console.warn('Attention, l\'utilisation du mixin "component_access" dans le composant "' +
-            this._currentElement.type.displayName +
-            '" requiert que la propriété module_url soit renseignée pour gérer les droits d\'accès au module.');
+            this._warningMessage();
         } else {
             this._originalRender = this.render;
             this._setRenderMethod(this.props);
@@ -18,19 +16,15 @@ var AuthentLevelMixin = {
     componentWillUpdate: function (np, ns) {
         // TEST EXISTANCE MODULE URL
         if (typeof(this.props.module_url) == "undefined") {
-            console.warn('Attention, l\'utilisation du mixin "component_access" dans le composant "' +
-            this._currentElement.type.displayName +
-            '" requiert que la propriété module_url soit renseignée pour gérer les droits d\'accès au module.');
+            this._warningMessage();
         } else {
             this._setRenderMethod(np);
         }
     },
-    componentWillReceiveProps: function(np) {
+    componentWillReceiveProps: function (np) {
         // TEST EXISTANCE MODULE URL
         if (typeof(np.module_url) == "undefined") {
-            console.warn('Attention, l\'utilisation du mixin "component_access" dans le composant "' +
-            this._currentElement.type.displayName +
-            '" requiert que la propriété module_url soit renseignée pour gérer les droits d\'accès au module.');
+            this._warningMessage();
         } else {
             this._setVisuState(np);
         }
@@ -43,6 +37,11 @@ var AuthentLevelMixin = {
     },
     _setVisuState: function (props) {
         this.setState({_canModif: Auth.canModif(props.module_url)});
+    },
+    _warningMessage: function () {
+        console.warn('Attention, l\'utilisation du mixin "component_access" dans le composant "' +
+        this._currentElement.type.displayName +
+        '" requiert que la propriété module_url soit renseignée pour gérer les droits d\'accès au module.');
     }
 };
 

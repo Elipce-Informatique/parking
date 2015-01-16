@@ -24,15 +24,16 @@ var BandeauVisu = React.createClass({
 
         propTypes: {
             bandeauType: React.PropTypes.string.isRequired,
-            module_url: React.PropTypes.string.isRequired
+            module_url: React.PropTypes.string.isRequired,
+            avecRetour: React.PropTypes.bool
         },
 
         getDefaultProps: function () {
-            return {};
+            return {avecRetour: false};
         },
 
         getInitialState: function () {
-            return {};
+            return {_canModif: true};
         },
 
         componentDidMount: function () {
