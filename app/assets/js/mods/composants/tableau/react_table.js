@@ -120,21 +120,7 @@ var TableTr = React.createClass({
         return {reactElements:{}};
     },
 
-    shouldComponentUpdate: function (nextProps, nextState) {
-        console.log('nextProps : ', nextProps);
-        console.log('this.props : ', this.props);
-        if(_.isEqual(nextProps, this.props)) {
-            console.log('FALSE');
-            return false;
-        }
-        else {
-            console.log('TRUE');
-            return true;
-        }
-    },
-
     render: function() {
-        console.log('render');
             // Variables
             var tr        = [];
             var that      = this;
