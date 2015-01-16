@@ -425,6 +425,10 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
                 DB::commit();
                 Log::warning('-----------> Commit <-----------');
+
+                /* @todo Créer le mail */
+
+
                 $retour = array('idUser' => $idUser, 'save' => $bSave);
             } catch (Exception $e) {
                 DB::rollback();

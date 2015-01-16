@@ -42,8 +42,6 @@ function handleClickRadio(evt){
     Actions.utilisateur.radio_change(copie);
 }
 
-var emailInitial = '';
-
 /**
  * Fiche utilisateur
  * @param editable: Booléen pour autoriser ou non la modification des données de l'utilisateur
@@ -225,9 +223,7 @@ var FicheUser = React.createClass({
         }
         // MODE ADMIN
         else if(this.props.modeCompte == false){
-
             titreBis = Lang.get('administration.utilisateur.profilsAssocie');
-
             var tableau = <DataTable
                             id='dataTableProfils'
                             bUnderline={false}
@@ -324,6 +320,7 @@ var ficheUserStore = Reflux.createStore({
     isMatriceModuleModif:false,
     modeCreate:true,
     modeCompte:false,
+    emailInitial:'',
 
     // Initial setup
     init: function () {
@@ -340,16 +337,29 @@ var ficheUserStore = Reflux.createStore({
         this.listenTo(Actions.utilisateur.set_etat_compte,      this.set_etat_compte);
         this.listenTo(Actions.utilisateur.set_initial_state,      this.set_initial_state);
     },
+
     set_initial_state: function(data){
         this.formDataState = data;
+        this.emailInitial = data['email'];
+        console.log('this.emailInitial : %o', this.emailInitial);
     },
 
     set_etat_compte: function(bool){
         this.modeCompte = bool;
     },
 
-    initMatrice: function(){
-        this.matriceBtnRadio = {};
+    initMatrice: function(data){
+        this.matriceBtnRadio = _.clone(data);
+        _.extend(this.formDataState, {dataProfil:{}});
+
+
+        /* Mise à jour du state des radios boutons */
+        var that   = this;
+        var indice = 0;
+        this.formDataState.dataProfil = [];
+        _.each(data, function(val, key){
+            that.formDataState.dataProfil[indice++] = _.clone(val);
+        }, that);
     },
 
     updateHideShowProfil: function(bool){
@@ -405,7 +415,8 @@ var ficheUserStore = Reflux.createStore({
         else if(e.name == 'passConfirm')
             data = this.verifPassNew(e.value, $('#passNew')[0].value);
 
-        this.trigger(data);
+        this.formDataState = _.extend(this.formDataState, data);
+        this.trigger(this.formDataState);
     },
 
     radioChange: function(evt){
@@ -415,6 +426,17 @@ var ficheUserStore = Reflux.createStore({
 
         /* Mise a jour de la matrice */
         this.matriceBtnRadio[idProfil] = Etat;
+
+        /* Mise à jour du state des radios boutons */
+        var that   = this;
+        var indice = 0;
+        _.each(this.formDataState.dataProfil, function(val, key){
+            if(val != undefined && val['id'] == idProfil)
+                that.formDataState.dataProfil[indice]['etat'] = Etat;
+            indice++;
+        }, that);
+
+        this.trigger(this.formDataState);
 
         /* Mise à jour du flag pour sauvegarder les modifications sur l'etat des modules */
         this.isMatriceModuleModif = true;
@@ -430,19 +452,22 @@ var ficheUserStore = Reflux.createStore({
             dataType: 'json',
             context: that,
             success: function (data) {
-                Actions.utilisateur.initMatrice();
+                Actions.utilisateur.initMatrice(data.dataProfil);
                 if(data.nom != '' && data.prenom != ''){
+                    this.emailInitial = data.email;
                     Actions.utilisateur.updateBandeau(data.nom, data.prenom, idUser);
                 }
                 // Passe variable aux composants qui écoutent l'action actionLoadData
                 that.trigger(data);
             },
+
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
                 that.trigger({id: 0});
             }
         }, that);
     },
+
     /**
      * Appellé quand on clique sur le bouton sauvegarder
      * @param idUser
@@ -536,9 +561,11 @@ var ficheUserStore = Reflux.createStore({
         var retour = {};
         retour.dataEmail = {};
 
+        console.log('value : %o, emailInitial : %o', value, this.emailInitial);
         /* Est-ce que l'email est supérieur à 4 caractère (x@x.xx)? */
-        if(value.length>=6 && value != emailInitial){
+        if(value.length>=6 && value != this.emailInitial){
 
+            console.log('value : %o, emailInitial : %o', value, this.emailInitial);
             // AJAX
             $.ajax({
                 url:      BASE_URI + 'utilisateur/email/'+value, /* correspond au module url de la BDD */

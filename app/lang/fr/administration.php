@@ -44,6 +44,7 @@ return array(
         'visu' => 'Visu',
         'modif' => 'Modif',
         'aucun' => 'Aucun',
-        'module'=> 'Modules'
+        'module'=> 'Modules',
+        'supprProfilAlert' => 'Au moins un utilisateur est associé à ce profil. Etes-vous sûr de bien vouloir supprimer ce profil ?'
     ]
 );

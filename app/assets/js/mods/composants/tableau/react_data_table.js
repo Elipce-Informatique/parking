@@ -102,8 +102,14 @@ var DataTableReact = React.createClass({
 
     },
 
+    shouldComponentUpdate: function (nextProps, nextState) {
+        if(_.isEqual(nextProps, this.props))
+            return false;
+        else
+            return true;
+    },
+
     render: function () {
-        console.log('render react_data_table');
         return (
             <div className="datatable-root" key="dataTableRoot">
                 <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} evts={this.myEvts} reactElements={this.props.reactElements} editable={this.props.editable} />
