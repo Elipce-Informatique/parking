@@ -3,6 +3,9 @@
  *
  */
 var AuthentLevelMixin = {
+    getInitialState: function(){
+        return {canModif: Auth.canModif(this.props.module_url)};
+    },
     componentWillMount: function () {
         // TEST EXISTANCE MODULE URL
         if (typeof(this.props.module_url) == "undefined") {
@@ -10,7 +13,7 @@ var AuthentLevelMixin = {
         } else {
             this._originalRender = this.render;
             this._setRenderMethod(this.props);
-            this._setVisuState(this.props);
+            //this._setVisuState(this.props);
         }
     },
     componentWillUpdate: function (np, ns) {
@@ -36,7 +39,7 @@ var AuthentLevelMixin = {
         this.render = Auth.canAccess(props.module_url) ? this._originalRender : this._emptyRender;
     },
     _setVisuState: function (props) {
-        this.setState({_canModif: Auth.canModif(props.module_url)});
+        this.setState({canModif: Auth.canModif(props.module_url)});
     },
     _warningMessage: function () {
         console.warn('Attention, l\'utilisation du mixin "component_access" dans le composant "' +

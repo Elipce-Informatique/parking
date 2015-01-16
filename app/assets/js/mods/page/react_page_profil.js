@@ -17,6 +17,7 @@ var MixinGestMod  = require('../mixins/gestion_modif');    /* Pour la gestion de
 var BandeauVisu    = require('../composants/bandeau/react_bandeau_visu');
 var BandeauEdition = require('../composants/bandeau/react_bandeau_edition');
 var BandeauListe   = require('../composants/bandeau/react_bandeau_liste');
+var BandeauGenerique = require('../composants/bandeau/react_bandeau_generique');
 
 /*********************************************/
 /* Composant react_data_table_bandeau_profil */
@@ -89,9 +90,9 @@ var ReactPageProfil  = React.createClass({
 
         return {
             titrePageIni:    Lang.get('global.profils'), /* Titre initial : Profils               */
-            nameProfil :    '',                         /* Pas de profil de sélectionné          */
-            idProfil:       0,                          /* Id NULL au début                      */
-            etatPageProfil: 'liste'                     /*  Affichage initial, liste des profils */
+            nameProfil :    '',                          /* Pas de profil de sélectionné          */
+            idProfil:       0,                           /* Id NULL au début                      */
+            etatPageProfil: 'liste'                      /*  Affichage initial, liste des profils */
         };
     },
 
@@ -152,7 +153,7 @@ var ReactPageProfil  = React.createClass({
             case 'visu':
                 return <div key="rootPageProfil">
                             <Row>
-                                <BandeauVisu titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
+                                <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
                             </Row>
                             <Row>
                                 <Col md={12}>
@@ -172,7 +173,7 @@ var ReactPageProfil  = React.createClass({
             case 'edit':
                 return  <div key="rootPageProfil">
                             <Row>
-                                <BandeauEdition mode={mode} titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
+                                <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" mode={mode} titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
                             </Row>
                             <Row>
                                 <Col md={12}>
@@ -189,7 +190,7 @@ var ReactPageProfil  = React.createClass({
             case 'liste':
             default:
                 return  <div  key="rootPageProfil">
-                            <BandeauListe titre={this.state.titrePageIni} />
+                    <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" titre={this.state.titrePageIni} />
                             <Row>
                                 <Col md={12}>
                                     <DataTableBandeauProfil id="tableProfils" head={headP} hide={hideP} evts={evtsP} />

@@ -6,72 +6,81 @@
  * Created by yann on 16/12/2014.
  */
 var Bandeau = require('./react_bandeau');
-var BandeauListe = require('../composants/bandeau/react_bandeau_liste');
-var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');
-var BandeauEdition = require('../composants/bandeau/react_bandeau_edition');
+var BandeauListe = require('./react_bandeau_liste');
+var BandeauVisu = require('./react_bandeau_visu');
+var BandeauEdition = require('./react_bandeau_edition');
+var BandeauProfilVisu = require('./react_bandeau_profil_visu');
+var BandeauProfilVisuRetour = require('./react_bandeau_profil_visu_retour');
 
-var AuthentMixins = require('../mixins/component_access');
+var AuthentMixins = require('../../mixins/component_access');
 /**
  * Created by yann on 16/12/2014.
  *
  * Bandeau générique à utiliser à chaque fois avec en paramètre le type de bandeau qu'on veut
  *
- * @param string bandeauType : Type du bandeau à afficher
+ * @param string bandeauType : Type du bandeau à afficher edition|creation|visu|liste
  * @param string module_url : pour les droits d'accès au bandeau
  */
-var BandeauVisu = React.createClass({
-        mixins: [AuthentMixins],
+var BandeauGenerique = React.createClass({
+    mixins: [AuthentMixins],
 
-        propTypes: {
-            bandeauType: React.PropTypes.string.isRequired,
-            module_url: React.PropTypes.string.isRequired,
-            avecRetour: React.PropTypes.bool
-        },
+    propTypes: {
+        bandeauType: React.PropTypes.string.isRequired,
+        module_url: React.PropTypes.string.isRequired,
+        avecRetour: React.PropTypes.bool
+    },
 
-        getDefaultProps: function () {
-            return {avecRetour: false};
-        },
+    getDefaultProps: function () {
+        return {avecRetour: false};
+    },
+    getInitialState: function () {
+        return {};
+    },
+    componentWillMount: function () {
+    },
 
-        getInitialState: function () {
-            return {_canModif: true};
-        },
+    componentDidMount: function () {
+    },
 
-        componentDidMount: function () {
+    shouldComponentUpdate: function (nextProps, nextState) {
+        return true;
+    },
 
-        },
+    render: function () {
+        var bandeau = {};
 
-        shouldComponentUpdate: function (nextProps, nextState) {
-            return true;
-        },
-
-        render: function () {
-            var bandeau = {};
-
-            // MODE DROITS DE MODIFICATION
-            if (this.state.Auth.canModif) {
-                switch (this.props.bandeauType) {
-                    case 'edition':
-                    case 'creation':
-                        bandeau = <BandeauEdition {...this.props} />;
-                        break;
-                    case 'visu':
-                        bandeau = <BandeauVisu {...this.props} />;
-                        break;
-                    case 'liste':
-                        bandeau = <BandeauListe {...this.props} />;
-                        break;
-                    default:
-                        break;
-                }
+        // MODE DROITS DE MODIFICATION
+        if (this.state.canModif) {
+            switch (this.props.bandeauType) {
+                case 'edition':
+                case 'creation':
+                    bandeau = <BandeauEdition key="bandeauGenCrea" {...this.props} />;
+                    break;
+                case 'visu':
+                    bandeau = <BandeauVisu key="bandeauGenVisu" {...this.props} titre='toto' />;
+                    break;
+                case 'liste':
+                    bandeau = <BandeauListe key="bandeauGenListe" {...this.props} />;
+                    break;
+                default:
+                    bandeau = <BandeauListe key="bandeauGenListe" {...this.props} />;
+                    break;
             }
-            // MODE LECTURE SEULE
-            else {
-
-            }
-            return bandeau;
         }
+        // MODE LECTURE SEULE
+        else {
+            switch (this.props.bandeauType) {
+                case 'liste':
+                    bandeau = <BandeauProfilVisu key="bandeauGenListeVisu" {...this.props} />;
+                    break;
+                default:
+                    bandeau = <BandeauProfilVisuRetour key="bandeauGenListeVisuRetour" {...this.props} />;
+                    break;
+            }
+        }
+        return <div key="bandeauGenWrapper">{bandeau}</div>;
+    }
 
-    })
-    ;
+});
 
-module.exports = BandeauVisu;
+module.exports = BandeauGenerique;

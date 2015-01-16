@@ -14,12 +14,14 @@ var BandeauProfilVisu = React.createClass({
 
     propTypes: {
         titre: React.PropTypes.string.isRequired,
-        sousTitre: React.PropTypes.string
+        sousTitre: React.PropTypes.string,
+        onRetour: React.PropTypes.func
     },
 
     getDefaultProps: function () {
         return {
-            sousTitre: ""
+            sousTitre: "",
+            onRetour: Actions.bandeau.retour
         };
     },
 
@@ -32,7 +34,7 @@ var BandeauProfilVisu = React.createClass({
     },
 
     render: function () {
-        return (<Bandeau titre={this.props.titre} sousTitre={this.props.sousTitre} />);
+        return (<Bandeau titre={this.props.titre} sousTitre={this.props.sousTitre} onRetour={this.props.onRetour} />);
     }
 });
 

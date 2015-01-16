@@ -3,6 +3,7 @@ var DataTableBandeauUser = require('../react_data_table_bandeau_utilisateur').Co
 var BandeauListe = require('../composants/bandeau/react_bandeau_liste');
 var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');
 var BandeauEdition = require('../composants/bandeau/react_bandeau_edition');
+var BandeauGenerique = require('../composants/bandeau/react_bandeau_generique');
 var Button = ReactB.Button;
 var FicheUser = require('../react_fiche_utilisateur').Composant;
 var Row = ReactB.Row;
@@ -22,7 +23,7 @@ var storeFicheUser = require('../react_fiche_utilisateur').store
  */
 var PageUser = React.createClass({
 
-    mixins: [Reflux.ListenerMixin,AuthentMixins,MixinGestMod],
+    mixins: [Reflux.ListenerMixin,MixinGestMod],
 
 
     getDefaultProps: function () {
@@ -56,28 +57,28 @@ var PageUser = React.createClass({
             case 'visu':
                 react =
                     <div key="rootPageuser">
-                        <BandeauVisu titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom+' '+this.state.dataUser.prenom}/>
+                        <BandeauGenerique key="bandeauVisu" bandeauType={this.state.etat} module_url="utilisateur" titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom+' '+this.state.dataUser.prenom}/>
                         <FicheUser key="ficheUserKey" editable={false} idUser={this.state.idUser}/>
                     </div>;
                 break;
             case 'edition':
                 react =
                     <div key="rootPageuser">
-                        <BandeauEdition mode={1} titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom+' '+this.state.dataUser.prenom}/>
+                        <BandeauGenerique key="bandeauEdition" bandeauType={this.state.etat} module_url="utilisateur" mode={1} titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom+' '+this.state.dataUser.prenom}/>
                         <FicheUser key="ficheUserKey" editable={true} idUser={this.state.idUser}/>
                     </div>;
                 break;
             case 'creation':
                 react =
                     <div key="rootPageuser">
-                        <BandeauEdition mode={0} titre={Lang.get('administration.utilisateur.titre')}/>
+                        <BandeauGenerique key="bandeauCreation" bandeauType={this.state.etat} module_url="utilisateur" mode={0} titre={Lang.get('administration.utilisateur.titre')}/>
                         <FicheUser key="ficheUserKey" editable={true} idUser={0}/>
                     </div>;
                 break;
             default:
                 react =
                     <div key="rootPageuser">
-                        <BandeauListe titre={Lang.get('administration.utilisateur.titre')}/>
+                        <BandeauGenerique key="bandeauListe" bandeauType={this.state.etat} module_url="utilisateur" titre={Lang.get('administration.utilisateur.titre')}/>
                         <Row>
                             <Col md={12}>
                                 <DataTableBandeauUser/>
