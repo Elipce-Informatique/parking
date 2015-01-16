@@ -15,8 +15,6 @@ var MixinGestMod = require('../mixins/gestion_modif');
 // STORE
 var storeFicheUser = require('../react_fiche_utilisateur').store
 
-
-
 /**
  * Page utilisateur
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}

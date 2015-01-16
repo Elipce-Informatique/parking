@@ -219,7 +219,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             $data['dataProfil'] = $aDataProfil;
         } /* Récupère uniquement les profils */
         else {
-            $data = ['id'=>0, 'nom'=> '', 'prenom' => '', 'email' => '', 'photo' => 'app/documents/photo/no.gif'];
+            $data = ['id'=>0, 'nom'=> '', 'prenom' => '', 'email' => '', 'photo' => 'no.gif'];
             $data['dataProfil'] = [];
             $data['dataProfil'] = DB::table('profils')->get(array('id', 'traduction', DB::raw('"non" as etat')));
         }
@@ -287,8 +287,8 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         }
 
         // Récupère la donnée de l'utilisateur
-        $user->nom    = $fields['nom'];
-        $user->prenom = $fields['prenom'];
+        $user->nom    = strtoupper($fields['nom']);
+        $user->prenom = ucfirst(strtolower($fields['prenom']));
         $user->email  = $fields['email'];
 
         if(isset($fields['passNew']) && isset($fields['passOld'])) {
@@ -372,9 +372,9 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
             // Récupère la donnée de l'utilisateur
             $fieldUser = [];
-            $fieldUser['nom']    = $fields['nom'];
-            $fieldUser['prenom'] = $fields['prenom'];
-            $fieldUser['email']  = $fields['email'];
+            $fieldUser['nom']      = strtoupper($fields['nom']);
+            $fieldUser['prenom']   = ucfirst(strtolower($fields['prenom']));
+            $fieldUser['email']    = $fields['email'];
             $fieldUser['password'] = Hash::make($fields['email']);
 
             // Test si photo:

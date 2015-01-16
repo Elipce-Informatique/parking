@@ -1058,12 +1058,12 @@ var InputRadioBootstrapEditable = React.createClass({
         }
 
         return <InputRadioBootstrap
-            attributes = {attr}
-            evts = {this.props.evts}
-            ref="Editable"
-            gestMod={this.props.gestMod} >
-                    {this.props.children}
-        </InputRadioBootstrap>
+                    attributes = {attr}
+                    evts = {this.props.evts}
+                    ref="Editable"
+                    gestMod={this.props.gestMod} >
+                            {this.props.children}
+                </InputRadioBootstrap>
     }
 });
 

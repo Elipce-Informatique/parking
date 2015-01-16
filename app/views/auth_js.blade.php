@@ -20,6 +20,7 @@
             if(typeof url == 'undefined'){
                 retour = true;
             }
+
             // TEST DE LA PRÉSENCE DU MODULE DANS LA LISTE POUR LE MODE LECTURE
             _.each(this.modules, function(module,index,list){
                 if(module.url == url){

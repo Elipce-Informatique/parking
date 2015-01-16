@@ -25,18 +25,19 @@ var Col = ReactB.Col;
 var libelleInitial = '';
 
 function libelleChange(value, edit){
-
+    
     /* Variable de retour */
     var retour = {};
 
     /* Est-ce que le libelle existe? */
     if(value.length>=2 && value != libelleInitial){
+        console.log('Ajax');
         // AJAX
         $.ajax({
             url:      BASE_URI + 'profils/libelle/'+value, /* correspond au module url de la BDD */
             dataType: 'json',
             context:  this,
-            async: false,
+            async:    false,
             success:  function (good) {
 
                 /* En vert */
@@ -139,6 +140,8 @@ var DataTableModuleReact = React.createClass({
     },
 
     componentWillReceiveProps: function(newProps){
+        console.log('componentWillReceiveProps');
+        
         /* Défini l'id profil dans le store */
         Actions.profil.setIdProfil(newProps.idProfil);
 
@@ -171,6 +174,8 @@ var DataTableModuleReact = React.createClass({
      * @returns {undefined}
      */
     updateModule: function(data) {
+        console.log('setState');
+
         // MAJ data automatique, lifecycle "UPDATE"
         this.setState(data);
     }
