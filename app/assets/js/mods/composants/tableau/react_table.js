@@ -43,7 +43,7 @@ var Table = React.createClass({
             // Variables
             var corps = [];
             var that = this;
-            
+
             // Parcours des lignes du tableau
             this.props.data.forEach(function(dataLine, index) {
                 // Ajout du TR
