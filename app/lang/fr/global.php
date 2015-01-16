@@ -69,7 +69,9 @@ Voulez-vous vraiment quitter cette page ?',
     'gerer' => 'Gérer',
     'oui' => 'Oui',
     'non' => 'Non',
+    'annuler' => 'Annuler',
     'modifier' => 'Modifier',
+    'attention' => 'Attention',
 
     // FORMULAIRE
     'select' => 'Sélection...',

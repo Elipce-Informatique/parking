@@ -304,28 +304,51 @@ var pageProfilStore = Reflux.createStore({
             this.nameProfil = '';
         else {
 
-            var that = this;
+            /* Vérification que le profil n'est pas associé à un utilisateur */
+            var suppr = this.getIsProfilUse(this.idProfilSelect);
 
-            // AJAX
-            $.ajax({
-                url: BASE_URI + 'profils/' + this.idProfilSelect, /* correspond au module url de la BDD */
-                dataType: 'json',
-                context: that,
-                type: 'DELETE',
-                data: {'_token':$('#_token').val()},
-                success: function (data) {
-                    that.idProfilSelect = 0;
-                    that.trigger({idProfil:0, etatPageProfil:'liste', nameProfil:''});
+            if(suppr == true){
+                var that = this;
+                swal({
+                        title: Lang.get('global.attention'),
+                        text: Lang.get('administration.profil.supprProfilAlert'),
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: Lang.get('global.oui'),
+                        cancelButtonText: Lang.get('global.annuler'),
+                        closeOnConfirm: true
+                    },
 
-                    Actions.notif.success(Lang.get('global.notif_success'));
-                },
-                error: function (xhr, status, err) {
-                    console.error(status, err.toString());
+                    function(isConfirm) {
+                        if (isConfirm) {
 
-                    Actions.notif.error('AJAX : '+Lang.get('global.notif_erreur'));
-                }
-            }, that);
+                            // AJAX
+                            $.ajax({
+                                url: BASE_URI + 'profils/' + that.idProfilSelect, /* correspond au module url de la BDD */
+                                dataType: 'json',
+                                context: that,
+                                type: 'DELETE',
+                                data: {'_token': $('#_token').val()},
+                                success: function (data) {
+                                    that.idProfilSelect = 0;
+                                    that.trigger({idProfil: 0, etatPageProfil: 'liste', nameProfil: ''});
+
+                                    Actions.notif.success(Lang.get('global.notif_success'));
+                                },
+                                error: function (xhr, status, err) {
+                                    console.error(status, err.toString());
+
+                                    Actions.notif.error('AJAX : ' + Lang.get('global.notif_erreur'));
+                                }
+                            }, that);
+                        }
+                    }, that);
+            }
         }
+    },
+
+    getIsProfilUse: function(idProfil){
+        return true;
     },
 
     saveProfil: function(){

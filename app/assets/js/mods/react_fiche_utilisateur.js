@@ -42,8 +42,6 @@ function handleClickRadio(evt){
     Actions.utilisateur.radio_change(copie);
 }
 
-var emailInitial = '';
-
 /**
  * Fiche utilisateur
  * @param editable: Booléen pour autoriser ou non la modification des données de l'utilisateur
@@ -322,6 +320,7 @@ var ficheUserStore = Reflux.createStore({
     isMatriceModuleModif:false,
     modeCreate:true,
     modeCompte:false,
+    emailInitial:'',
 
     // Initial setup
     init: function () {
@@ -338,8 +337,11 @@ var ficheUserStore = Reflux.createStore({
         this.listenTo(Actions.utilisateur.set_etat_compte,      this.set_etat_compte);
         this.listenTo(Actions.utilisateur.set_initial_state,      this.set_initial_state);
     },
+
     set_initial_state: function(data){
         this.formDataState = data;
+        this.emailInitial = data['email'];
+        console.log('this.emailInitial : %o', this.emailInitial);
     },
 
     set_etat_compte: function(bool){
@@ -452,6 +454,7 @@ var ficheUserStore = Reflux.createStore({
             success: function (data) {
                 Actions.utilisateur.initMatrice(data.dataProfil);
                 if(data.nom != '' && data.prenom != ''){
+                    this.emailInitial = data.email;
                     Actions.utilisateur.updateBandeau(data.nom, data.prenom, idUser);
                 }
                 // Passe variable aux composants qui écoutent l'action actionLoadData
@@ -558,9 +561,11 @@ var ficheUserStore = Reflux.createStore({
         var retour = {};
         retour.dataEmail = {};
 
+        console.log('value : %o, emailInitial : %o', value, this.emailInitial);
         /* Est-ce que l'email est supérieur à 4 caractère (x@x.xx)? */
-        if(value.length>=6 && value != emailInitial){
+        if(value.length>=6 && value != this.emailInitial){
 
+            console.log('value : %o, emailInitial : %o', value, this.emailInitial);
             // AJAX
             $.ajax({
                 url:      BASE_URI + 'utilisateur/email/'+value, /* correspond au module url de la BDD */
