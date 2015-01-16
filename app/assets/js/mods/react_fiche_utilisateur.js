@@ -10,7 +10,6 @@ var Col = ReactB.Col;
 var Button = ReactB.Button;
 var ButtonToolbar = ReactB.ButtonToolbar;
 var Glyphicon = ReactB.Glyphicon;
-var AuthentMixins = require('./mixins/component_access');
 var FormValidationMixin = require('./mixins/form_validation');
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
@@ -32,8 +31,8 @@ var hideP = ['id'];
 var aLibelle = [Lang.get('global.oui'), Lang.get('global.non')];
 var aName    = ['oui', 'non'];
 var aReactElements  = {};
-aReactElements['1'] = [];                           /* Colonne n°1 du tableau               */
-aReactElements['1'][0] = 'Radio';                            /* Type de composant à ajouter          */
+aReactElements['1'] = [];                                    /* Colonne n°1 du tableau               */
+aReactElements['1'][0] = 'RadioBts';                         /* Type de composant à ajouter          */
 aReactElements['1'][1] = {'name':aName, 'libelle':aLibelle}; /* Name des radio boutons et libelle    */
 aReactElements['1'][2] = {'onClick':handleClickRadio};       /* Evenement sur click des radio bouton */
 
@@ -230,14 +229,14 @@ var FicheUser = React.createClass({
             titreBis = Lang.get('administration.utilisateur.profilsAssocie');
 
             var tableau = <DataTable
-                        id='dataTableProfils'
-                        bUnderline={false}
-                        head={headP}
-                        data={this.state.dataProfil}
-                        hide={hideP}
-                        reactElements={aReactElements}
-                        key="testkey"
-                        editable={this.props.editable}/> ;
+                            id='dataTableProfils'
+                            bUnderline={false}
+                            head={headP}
+                            data={this.state.dataProfil}
+                            hide={hideP}
+                            reactElements={aReactElements}
+                            key="testkey"
+                            editable={this.props.editable}/> ;
             //tableau = <p key="uniquekey">test</p>;
             if(this.state.tabProfilHide){
                 tableau = {};

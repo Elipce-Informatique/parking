@@ -1,8 +1,13 @@
 /* Pour les radio boutons */
 var ButtonGroup = ReactB.ButtonGroup;
-var Field              = require('../formulaire/react_form_fields');
-var InputRadioBootstrap         = Field.InputRadioBootstrap;
+var Field                       = require('../formulaire/react_form_fields');
 var InputRadioBootstrapEditable = Field.InputRadioBootstrapEditable;
+var InputRadioEditable          = Field.InputRadioEditable;
+
+/***********************/
+/* Composants Boostrap */
+var Row = ReactB.Row;
+var Col = ReactB.Col;
 
 /**
  * @param array head: array contenant l'entête du tableau ['A', 'B']
@@ -115,7 +120,21 @@ var TableTr = React.createClass({
         return {reactElements:{}};
     },
 
+    shouldComponentUpdate: function (nextProps, nextState) {
+        console.log('nextProps : ', nextProps);
+        console.log('this.props : ', this.props);
+        if(_.isEqual(nextProps, this.props)) {
+            console.log('FALSE');
+            return false;
+        }
+        else {
+            console.log('TRUE');
+            return true;
+        }
+    },
+
     render: function() {
+        console.log('render');
             // Variables
             var tr        = [];
             var that      = this;
@@ -132,30 +151,53 @@ var TableTr = React.createClass({
                  else{
                      /* Cellule contenant un élément React */
                      if(that.props.reactElements !== 'undefined' && Array.isArray(that.props.reactElements[indiceCol.toString()])){
-
+                        var isRadioBts = true;
                         switch(that.props.reactElements[indiceCol.toString()][0]){
                             case 'Radio':
+                                isRadioBts = false;
+                            case 'RadioBts':
                                 var radios   = [];
                                 var indice   = 0;
 
                                 _.each(that.props.reactElements[indiceCol.toString()][1]['name'], function(val2, key){
                                     var etat     = that.props.reactElements[indiceCol.toString()][1]['name'][indice];
                                     var libelle  = that.props.reactElements[indiceCol.toString()][1]['libelle'][indice++];
-                                    var classBtn = '';
 
-                                    /* Si l'état correspond à la valeur du btn, on l'active */
-                                    if(val == etat || (etat == 'null' && val == null))
-                                        classBtn += 'active';
+                                    if(isRadioBts == false) {
+                                        var attributes = {'data-id':that.props.data.id, 'data-etat':etat, value:etat};
+                                        var attrs = {label:libelle, name:"InputRadioEditable[]", wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'};
+                                        //if(val == etat || (etat == 'null' && val == null))
+                                        //    _.extend(attrs, {checked:true});
 
-                                    var attributes = {'data-id':that.props.data.id, 'data-etat':etat, 'value':etat, className:classBtn};
+                                        _.extend(attrs, attributes);
+                                        radios.push(<InputRadioEditable key={'IR' + that.props.data.id + key}
+                                                                        evts={that.props.reactElements[indiceCol.toString()][2]}
+                                                                        editable={that.props.editable}
+                                                                        attributes={attrs} />);
+                                    }
+                                    else{
+                                        var classBtn = '';
 
-                                    radios.push(<InputRadioBootstrapEditable key={'IR' + that.props.data.id + key} evts={that.props.reactElements[indiceCol.toString()][2]} editable={that.props.editable} attributes={attributes}>
-                                                    {libelle}
-                                    </ InputRadioBootstrapEditable>);
+                                        /* Si l'état correspond à la valeur du btn, on l'active */
+                                        if(val == etat || (etat == 'null' && val == null))
+                                            classBtn += 'active';
+
+                                        var attributes = {'data-id':that.props.data.id, 'data-etat':etat, 'value':etat, className:classBtn};
+
+                                        radios.push(<InputRadioBootstrapEditable key={'IR' + that.props.data.id + key} evts={that.props.reactElements[indiceCol.toString()][2]} editable={that.props.editable} attributes={attributes}>
+                                                        {libelle}
+                                                    </ InputRadioBootstrapEditable>);
+                                    }
                                 });
-                                tr.push(<td key={that.props.data.id+key}>
-                                            <ButtonGroup data-toggle="buttons" bsSize="xsmall">{radios}</ButtonGroup>
-                                        </td>);
+                                if(isRadioBts == false){
+                                    tr.push(<td key={that.props.data.id + key}>
+                                                {radios}
+                                            </td>);
+                                }else {
+                                    tr.push(<td key={that.props.data.id + key}>
+                                                <ButtonGroup data-toggle="buttons" bsSize="xsmall">{radios}</ButtonGroup>
+                                            </td>);
+                                }
                                 break;
                             default :
                                 tr.push(<td key={that.props.data.id+key}>Objet React --{that.props.reactElements[indiceCol.toString()][0]}-- non défini</td>);
@@ -172,8 +214,7 @@ var TableTr = React.createClass({
              return <tr {...attr} {...this.props.evts}>{tr}</tr>
            
      
-    },
-    
+    }
     /*
  |--------------------------------------------------------------------------
  | FONCTIONS NON REACT

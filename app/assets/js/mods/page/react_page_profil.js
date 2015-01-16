@@ -58,7 +58,7 @@ var aLibelle = new Array(Lang.get('administration.profil.visu'), Lang.get('admin
 var aName    = new Array('visu', 'modif', 'null');
 var aReactElements  = {};
 aReactElements['1'] = new Array();                           /* Colonne n°1 du tableau               */
-aReactElements['1'][0] = 'Radio';                            /* Type de composant à ajouter          */
+aReactElements['1'][0] = 'RadioBts';                         /* Type de composant à ajouter          */
 aReactElements['1'][1] = {'name':aName, 'libelle':aLibelle}; /* Name des radio boutons et libelle    */
 aReactElements['1'][2] = {'onClick':handleClickRadio};       /* Evenement sur click des radio bouton */
 
@@ -374,6 +374,8 @@ var pageProfilStore = Reflux.createStore({
     },
 
     radioChange: function(evt){
+        console.log('radioChange');
+
         /* Récupère les données du radio bouton */
         Etat      = $(evt.currentTarget).data('etat');     /* 'visu', 'modif' ou 'aucun' */
         idModule  = $(evt.currentTarget).data('id'); /* id du module concerné      */
