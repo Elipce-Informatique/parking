@@ -178,9 +178,9 @@ var ReactPageProfil  = React.createClass({
             /*    - le bandeau                      */
             /*    - le nom du profil EDITABLE       */
             /*    - le tableau des modules EDITABLE */
-            case 'create':
+            case 'creation':
                 mode = 0;
-            case 'edit':
+            case 'edition':
                 return  <div key="rootPageProfil">
                             <Row>
                                 <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" mode={mode} titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
@@ -303,11 +303,11 @@ var pageProfilStore = Reflux.createStore({
 
     createProfil: function(){
         this.idProfilSelect = 0;
-        this.trigger({etatPageProfil:'create', nameProfil:'', idProfil:0});
+        this.trigger({etatPageProfil:'creation', nameProfil:'', idProfil:0});
     },
 
     editProfil: function(){
-        this.trigger({etatPageProfil:'edit'});
+        this.trigger({etatPageProfil:'edition'});
     },
 
     supprProfil: function(){
@@ -393,7 +393,7 @@ var pageProfilStore = Reflux.createStore({
                     that.idProfilSelect = tab.idProfil;
 
                     // Passe variable aux composants qui écoutent l'action actionLoadData
-                    this.trigger({idProfil: (tab.idProfil*1), etatPageProfil: 'edit', nameProfil: tab.nameProfil});
+                    this.trigger({idProfil: (tab.idProfil*1), etatPageProfil: 'edition', nameProfil: tab.nameProfil});
 
                     Actions.notif.success(Lang.get('global.notif_success'));
                 }
