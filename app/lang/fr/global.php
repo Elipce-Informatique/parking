@@ -17,6 +17,10 @@ return array(
     'creation' => 'Création',
     'edition' => 'Edition',
 
+    // BOITES DE DIALOGUES
+    'suppression_titre' => 'Êtes-vous sur?',
+    'suppression_corps' => 'La suppression est une action irréversible.',
+
     // GESTION MODIFS
     'gest_mod_confirm' => 'Des modifications non enregistrées on été effectuées.',
     'gest_mod_confirm_question' => 'Des modifications non enregistrées on été effectuées.
@@ -67,6 +71,7 @@ Voulez-vous vraiment quitter cette page ?',
     'administration' => 'Administration',
     'acceder' => 'Accéder',
     'gerer' => 'Gérer',
+    'ok' => 'Ok',
     'oui' => 'Oui',
     'non' => 'Non',
     'annuler' => 'Annuler',

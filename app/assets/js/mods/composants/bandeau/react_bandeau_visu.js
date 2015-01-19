@@ -66,10 +66,28 @@ var BandeauVisu = React.createClass({
             style: "default", // VOIR DOC REACT-BOTSTRAP
             icon: "remove-sign",  // VOIR DOC BOOTSTRAP ET NE PAS METTRE GLYPHICON DEVANT
             attrs: {},
-            evts: {onClick: this.props.onSupprimer}
+            evts: {onClick: this.confirmSuppression}
         }];
         return (<Bandeau titre={this.props.titre} btnList={btnList} onRetour={this.props.onRetour} sousTitre={this.props.sousTitre} />);
+    },
+    /**
+     * Boite de dialogue de suppression
+     */
+    confirmSuppression: function () {
+        swal({
+            title: Lang.get('global.suppression_titre'),
+            text: Lang.get('global.suppression_corps'),
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: Lang.get('global.ok'),
+            cancelButtonText: Lang.get('global.annuler'),
+            closeOnConfirm: true
+        }, function () {
+            this.props.onSupprimer();
+        }.bind(this));
     }
+
 });
 
 module.exports = BandeauVisu;
