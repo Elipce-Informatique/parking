@@ -173,7 +173,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      */
     public static function getUtilisateurs()
     {
-        $res = Utilisateur::all(array('id', 'nom', 'prenom','email'));//, DB::raw('email as mail2'), DB::raw('email as mail3')
+        $res = Utilisateur::all(array('id', 'nom', 'prenom', 'email'));//, DB::raw('email as mail2'), DB::raw('email as mail3')
         return $res;
     }
 
@@ -187,7 +187,8 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         return $res;
     }
 
-    public static function getUserAndProfil($id){
+    public static function getUserAndProfil($id)
+    {
 
         /* Récupère tout les profils avec les droits associés à l'utilisateur ('oui'/'non') */
         if ($id != 0) {
@@ -203,14 +204,14 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
 
             $aDataProfil = [];
-            for($i = 0; $i < count($dataProfil);$i++){
-                $idProfil   = $dataProfil[$i]->id;
+            for ($i = 0; $i < count($dataProfil); $i++) {
+                $idProfil = $dataProfil[$i]->id;
                 $traduction = $dataProfil[$i]->traduction;
-                $etat       = $dataProfil[$i]->etat;
+                $etat = $dataProfil[$i]->etat;
 
-                $ligne = array('id'=>$idProfil, 'traduction'=>$traduction, 'etat'=>'oui');
+                $ligne = array('id' => $idProfil, 'traduction' => $traduction, 'etat' => 'oui');
 
-                if($etat == '')
+                if ($etat == '')
                     $ligne['etat'] = 'non';
 
                 $aDataProfil[$i] = $ligne;
@@ -219,20 +220,22 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             $data['dataProfil'] = $aDataProfil;
         } /* Récupère uniquement les profils */
         else {
-            $data = ['id'=>0, 'nom'=> '', 'prenom' => '', 'email' => '', 'photo' => 'no.gif'];
+            $data = ['id' => 0, 'nom' => '', 'prenom' => '', 'email' => '', 'photo' => 'no.gif'];
             $data['dataProfil'] = [];
             $data['dataProfil'] = DB::table('profils')->get(array('id', 'traduction', DB::raw('"non" as etat')));
         }
 
         return $data;
     }
+
     /**
      * Supprime un utilisateur
-     * @param $id: ID user
+     * @param $id : ID user
      * @return array('data' => tableau de données, 'save' => bool, enregistrement OK ou KO)
      *
      */
-    public static function deleteUser($id){
+    public static function deleteUser($id)
+    {
         // Variables
         $bSave = true;
 
@@ -240,25 +243,40 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         $user = Utilisateur::find($id);
 
         // Supprimer utilisateur
-        try{
+        try {
+            $user->deletePhoto();
             $user->delete();
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             $bSave = false;
         }
-        return array('data'=>array('id'=>0, 'nom'=>'','prenom'=>'','email'=>''),'save'=>$bSave);
+        return array('data' => array('id' => 0, 'nom' => '', 'prenom' => '', 'email' => ''), 'save' => $bSave);
+    }
+
+    /**
+     * Méthode d'instance pour supprimer la photo attachée à cet utilisateur.
+     *
+     * @return bool : statu de la suppression (false si l'utilisateur n'a pas de photo autre que no.gif)
+     */
+    public function deletePhoto(){
+        $photo = $this->photo;
+        $path = storage_path() . '/documents/photo/' . $photo;
+        if ($photo != "no.gif" && File::exists($path)) {
+            return File::delete($path);
+        }
+        return false;
     }
 
     /**
      * Met à jour les infos d'un utilisateur
-     * @param $id: ID user
-     * @param $fields: array($key=>$value) $key=champ table, $value=valeur
+     * @param $id : ID user
+     * @param $fields : array($key=>$value) $key=champ table, $value=valeur
      * @return array('data' => tableau de données, 'save' => bool, enregistrement OK ou KO)
      */
-    public static function updateUser($id, $fields){
+    public static function updateUser($id, $fields)
+    {
 
-        Log::warning('-----------> updateUser $id : '.$id.'<-----------');
-        Log::warning('-----------> updateUser $fields : '.print_r($fields, true).'<-----------');
+        Log::warning('-----------> updateUser $id : ' . $id . '<-----------');
+        Log::warning('-----------> updateUser $fields : ' . print_r($fields, true) . '<-----------');
 
         // Variables
         $bSave = true;
@@ -267,8 +285,11 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         $user = Utilisateur::find($id);
 
         // Test si photo:
-        if (Input::hasFile('photo')){
+        if (Input::hasFile('photo')) {
             Log::warning('-----------> save photo <-----------');
+            // Suppression de la photo
+            $user->deletePhoto();
+
             /* Extension du fichier */
             $extFile = Input::file('photo')->getClientOriginalExtension();
 
@@ -276,22 +297,22 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             $fileName = $fields['email'];
             $fileName = str_replace('.', '', $fileName);
             $fileName = str_replace('@', '', $fileName);
-            $fileName .= '.'.$extFile;
+            $fileName .= '.' . $extFile;
 
             /* Sauvegarde de la photo dans le bon dossier */
-            $destPath = storage_path().'/documents/photo';
+            $destPath = storage_path() . '/documents/photo';
             Input::file('photo')->move($destPath, $fileName);
 
             /* Mise à jour du champ en base de donnée */
-            $user->photo  = $fileName;
+            $user->photo = $fileName;
         }
 
         // Récupère la donnée de l'utilisateur
-        $user->nom    = strtoupper($fields['nom']);
+        $user->nom = strtoupper($fields['nom']);
         $user->prenom = ucfirst(strtolower($fields['prenom']));
-        $user->email  = $fields['email'];
+        $user->email = $fields['email'];
 
-        if(isset($fields['passNew']) && isset($fields['passOld'])) {
+        if (isset($fields['passNew']) && isset($fields['passOld'])) {
             Log::warning('-----------> Avec Password <-----------');
             $user->password = Hash::make($fields['passNew']);
         }
@@ -303,12 +324,12 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             $bSave = $user->save();
             Log::warning('-----------> save <-----------');
 
-            if($bSave == true) {
+            if ($bSave == true) {
 
                 // Met à jour la relation avec les profils
                 $matrice = explode(',', $fields['matrice']);
 
-                if(count($matrice[0]) >= 1 && $matrice[0] != '') {
+                if (count($matrice[0]) >= 1 && $matrice[0] != '') {
                     for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
 
                         $idProfil = $matrice[$i + 1];
@@ -337,28 +358,28 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 }
             }
 
-            if($bSave == true)
+            if ($bSave == true)
                 DB::commit();
             else
                 DB::rollback();
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             Log::warning('-----------> catch : ' . $e->getMessage() . ' <-----------');
             $bSave = false;
             DB::rollback();
         }
 
-        Log::warning('-----------> $bSave : ' .$bSave. ' <-----------');
+        Log::warning('-----------> $bSave : ' . $bSave . ' <-----------');
 
         return array('save' => $bSave, 'idUser' => $id);
     }
 
     /**
      * Créé un utilisateur
-     * @param $fields: array($key=>$value) $key=champ table, $value=valeur
+     * @param $fields : array($key=>$value) $key=champ table, $value=valeur
      * @return array('idUser' => idUser, 'save' => bool)
      */
-    public static function creerUtilisateur($fields){
+    public static function creerUtilisateur($fields)
+    {
 
         Log::warning('-----------> creerUtilisateur <-----------');
         Log::warning(print_r($fields, true));
@@ -368,17 +389,17 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         /* Vérifie que l'utilisateur n'existe pas */
         $res = Utilisateur::getUserExist($fields['email']);
 
-        if($res['good'] == true) {
+        if ($res['good'] == true) {
 
             // Récupère la donnée de l'utilisateur
             $fieldUser = [];
-            $fieldUser['nom']      = strtoupper($fields['nom']);
-            $fieldUser['prenom']   = ucfirst(strtolower($fields['prenom']));
-            $fieldUser['email']    = $fields['email'];
+            $fieldUser['nom'] = strtoupper($fields['nom']);
+            $fieldUser['prenom'] = ucfirst(strtolower($fields['prenom']));
+            $fieldUser['email'] = $fields['email'];
             $fieldUser['password'] = Hash::make($fields['email']);
 
             // Test si photo:
-            if (Input::hasFile('photo')){
+            if (Input::hasFile('photo')) {
                 /* Extension du fichier */
                 $extFile = Input::file('photo')->getClientOriginalExtension();
 
@@ -386,16 +407,15 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 $fileName = $fields['email'];
                 $fileName = str_replace('.', '', $fileName);
                 $fileName = str_replace('@', '', $fileName);
-                $fileName .= '.'.$extFile;
+                $fileName .= '.' . $extFile;
 
                 /* Sauvegarde de la photo dans le bon dossier */
-                $destPath = storage_path().'/documents/photo';
+                $destPath = storage_path() . '/documents/photo';
                 Input::file('photo')->move($destPath, $fileName);
 
                 /* Mise à jour du champ en base de donnée */
-                $fieldUser['photo']  = $fileName;
-            }
-            else
+                $fieldUser['photo'] = $fileName;
+            } else
                 $fieldUser['photo'] = 'no.gif';
 
             try {
@@ -407,9 +427,9 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
                 // Récupère les profils de l'utilisateur
                 $matrice = explode(',', $fields['matrice']);
-                Log::warning('-----------> count($matrice): '.count($matrice).' <-----------');
+                Log::warning('-----------> count($matrice): ' . count($matrice) . ' <-----------');
 
-                if(count($matrice[0]) >= 1 && $matrice[0] != '') {
+                if (count($matrice[0]) >= 1 && $matrice[0] != '') {
                     for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
                         $ligne = [];
                         $ligne['utilisateur_id'] = $idUser;
@@ -426,12 +446,11 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 /* Création et envoie du mail */
                 $titre = Lang::get('mail.creation_utilisateur_titre');
                 $texte = Lang::get('mail.creation_utilisateur_text');
-                $infos = array('nom'    => $fields['nom'],
-                               'prenom' => $fields['prenom'],
-                               'titre'  => $titre,
-                               'texte'  => $texte);
-                Mail::send('emails.creation_utilisateur', $infos, function($message) use ($fields, $titre)
-                {
+                $infos = array('nom' => $fields['nom'],
+                    'prenom' => $fields['prenom'],
+                    'titre' => $titre,
+                    'texte' => $texte);
+                Mail::send('emails.creation_utilisateur', $infos, function ($message) use ($fields, $titre) {
                     $message->to($fields['email'])->subject($titre);
                 });
                 /* FIN : Création et envoie du mail */
@@ -446,8 +465,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 Log::warning('-----------> rollback <-----------');
                 $retour = array('save' => false);
             }
-        }
-        else
+        } else
             $retour = array('save' => false);
 
         return $retour;
@@ -458,17 +476,19 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      * @param $email email de l'utilisateur
      * @return array(good => true/false)
      */
-    public static function getUserExist($email){
+    public static function getUserExist($email)
+    {
         $user = DB::table('utilisateurs')->where('email', $email)->first(['id']);
         return array('good' => empty($user));
     }
 
-    public static function getUserPassGood($pass){
+    public static function getUserPassGood($pass)
+    {
         $oUser = Auth::user();
 
         $res = Hash::check($pass, $oUser->password);
 
-        if($res == 1)
+        if ($res == 1)
             return array('good' => true);
         else
             return array('good' => false);
