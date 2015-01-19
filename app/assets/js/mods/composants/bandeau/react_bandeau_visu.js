@@ -83,8 +83,9 @@ var BandeauVisu = React.createClass({
             confirmButtonText: Lang.get('global.ok'),
             cancelButtonText: Lang.get('global.annuler'),
             closeOnConfirm: true
-        }, function () {
-            this.props.onSupprimer();
+        }, function (isConfirm) {
+            if(isConfirm == true)
+                this.props.onSupprimer();
         }.bind(this));
     }
 
