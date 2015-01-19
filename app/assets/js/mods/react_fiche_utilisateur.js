@@ -349,9 +349,9 @@ var ficheUserStore = Reflux.createStore({
     },
 
     initMatrice: function(data){
-        this.matriceBtnRadio = _.clone(data);
-        _.extend(this.formDataState, {dataProfil:{}});
+        this.matriceBtnRadio = {};
 
+        _.extend(this.formDataState, {dataProfil:{}});
 
         /* Mise à jour du state des radios boutons */
         var that   = this;
@@ -359,6 +359,8 @@ var ficheUserStore = Reflux.createStore({
         this.formDataState.dataProfil = [];
         _.each(data, function(val, key){
             that.formDataState.dataProfil[indice++] = _.clone(val);
+
+            that.matriceBtnRadio[val.id] = val.etat;
         }, that);
     },
 
@@ -445,6 +447,14 @@ var ficheUserStore = Reflux.createStore({
     // Callback
     getInfosUser: function (idUser) {
 
+        this.formDataState.nom    = '';
+        this.formDataState.prenom = '';
+        this.formDataState.email  = '';
+        this.formDataState.passNewvalue     = '';
+        this.formDataState.passOldvalue     = '';
+        this.formDataState.passConfirmvalue = '';
+        this.emailInitial = '';
+
         var that = this;
         // AJAX
         $.ajax({
@@ -452,6 +462,7 @@ var ficheUserStore = Reflux.createStore({
             dataType: 'json',
             context: that,
             success: function (data) {
+
                 Actions.utilisateur.initMatrice(data.dataProfil);
                 if(data.nom != '' && data.prenom != ''){
                     this.emailInitial = data.email;
