@@ -320,22 +320,21 @@ var pageProfilStore = Reflux.createStore({
 
             /* Un utilisateur est associé au profil, demande de confirmation de suppression */
             if(suppr == true){
-
-                var that = this;
-                swal({
-                        title: Lang.get('global.attention'),
-                        text: Lang.get('administration.profil.supprProfilAlert'),
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonText: Lang.get('global.oui'),
-                        cancelButtonText: Lang.get('global.annuler'),
-                        closeOnConfirm: true
-                    },
-
-                    function(isConfirm) {
-                        if (isConfirm)
-                            this.supprProfilAjax();
-                    }, that);
+                setTimeout(function () {
+                    swal({
+                            title: Lang.get('global.attention'),
+                            text: Lang.get('administration.profil.supprProfilAlert'),
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: Lang.get('global.oui'),
+                            cancelButtonText: Lang.get('global.annuler'),
+                            closeOnConfirm: true
+                        },
+                        function (isConfirm) {
+                            if (isConfirm)
+                                this.supprProfilAjax();
+                        }.bind(this));
+                }.bind(this), 100);
             }
             /* Pas d'utilisateur associé au profil, on peut supprimer */
             else

@@ -82,11 +82,10 @@ var BandeauVisu = React.createClass({
             confirmButtonColor: "#DD6B55",
             confirmButtonText: Lang.get('global.ok'),
             cancelButtonText: Lang.get('global.annuler'),
-            closeOnConfirm: false
+            closeOnConfirm: true
         }, function (isConfirm) {
-            console.log(this);
             this.props.onSupprimer();
-        });
+        }.bind(this));
     }
 
 });
