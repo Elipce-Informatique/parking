@@ -57,7 +57,7 @@ var BandeauGenerique = React.createClass({
                     bandeau = <BandeauEdition key="bandeauGenCrea" {...this.props} />;
                     break;
                 case 'visu':
-                    bandeau = <BandeauVisu key="bandeauGenVisu" {...this.props} titre='toto' />;
+                    bandeau = <BandeauVisu key="bandeauGenVisu" {...this.props} />;
                     break;
                 case 'liste':
                     bandeau = <BandeauListe key="bandeauGenListe" {...this.props} />;
