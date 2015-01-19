@@ -423,11 +423,21 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                     }
                 }
 
+                /* Création et envoie du mail */
+                $titre = Lang::get('mail.creation_utilisateur_titre');
+                $texte = Lang::get('mail.creation_utilisateur_text');
+                $infos = array('nom'    => $fields['nom'],
+                               'prenom' => $fields['prenom'],
+                               'titre'  => $titre,
+                               'texte'  => $texte);
+                Mail::send('emails.creation_utilisateur', $infos, function($message) use ($fields, $titre)
+                {
+                    $message->to($fields['email'])->subject($titre);
+                });
+                /* FIN : Création et envoie du mail */
+
                 DB::commit();
                 Log::warning('-----------> Commit <-----------');
-
-                /* @todo Créer le mail */
-
 
                 $retour = array('idUser' => $idUser, 'save' => $bSave);
             } catch (Exception $e) {
