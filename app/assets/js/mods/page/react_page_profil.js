@@ -83,6 +83,16 @@ var ReactPageProfil  = React.createClass({
     mixins: [Reflux.ListenerMixin,AuthentMixins,MixinGestMod],
 
     /**
+     * Les props par défaut
+     */
+    getDefaultProps: function() {
+
+        return {
+            module_url: 'profils'
+        };
+    },
+
+    /**
      * État initial des données du composant
      * @returns les données de l'état initial
      */

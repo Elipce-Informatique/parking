@@ -112,7 +112,8 @@ var DataTableModuleReact = React.createClass({
             attributes: {},
             evts:{},
             bUnderline: true,
-            reactElements:{}
+            reactElements:{},
+            module_url: 'profils'
         };
     },
 
@@ -174,8 +175,6 @@ var DataTableModuleReact = React.createClass({
      * @returns {undefined}
      */
     updateModule: function(data) {
-        console.log('setState');
-
         // MAJ data automatique, lifecycle "UPDATE"
         this.setState(data);
     }
