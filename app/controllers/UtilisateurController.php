@@ -33,16 +33,8 @@ class UtilisateurController extends \BaseController
      */
     public function store()
     {
-        // Mot de passe généré sur 6 digits
-        $pwd = Hash::make(time());
-        $pwd = substr($pwd, 8, 6);
-        $pwdBdd = Hash::make($pwd);
-
-        // TODO envoyer $pwd par mail.
-
         // Valeurs postées
         $post = Input::except('_token');
-        $post['password'] = $pwdBdd;
 
         return json_encode(Utilisateur::creerUtilisateur($post));
     }

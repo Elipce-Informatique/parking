@@ -393,10 +393,18 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
             // Récupère la donnée de l'utilisateur
             $fieldUser = [];
-            $fieldUser['nom'] = strtoupper($fields['nom']);
-            $fieldUser['prenom'] = ucfirst(strtolower($fields['prenom']));
-            $fieldUser['email'] = $fields['email'];
-            $fieldUser['password'] = Hash::make($fields['email']);
+            $fieldUser['nom']      = strtoupper($fields['nom']);
+            $fieldUser['prenom']   = ucfirst(strtolower($fields['prenom']));
+            $fieldUser['email']    = $fields['email'];
+
+            /* Password */
+            // Mot de passe généré sur 8 digits
+            $pwd    = Hash::make(time());
+            $pwd    = substr($pwd, 8, 6);
+            $pwd    = 'k'.$pwd.'1';
+            $pwdBdd = Hash::make($pwd);
+            $fieldUser['password'] = $pwdBdd;
+            /* FIN : Password */
 
             // Test si photo:
             if (Input::hasFile('photo')) {
@@ -420,14 +428,13 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
             try {
                 DB::beginTransaction();
-                Log::warning('-----------> beginTransaction <-----------');
 
                 // Nouveau profil
                 $idUser = Utilisateur::insertGetId($fieldUser);
 
                 // Récupère les profils de l'utilisateur
                 $matrice = explode(',', $fields['matrice']);
-                Log::warning('-----------> count($matrice): ' . count($matrice) . ' <-----------');
+                Log::warning('-----------> count($matrice): '.count($matrice).' <-----------');
 
                 if (count($matrice[0]) >= 1 && $matrice[0] != '') {
                     for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
@@ -435,22 +442,21 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                         $ligne['utilisateur_id'] = $idUser;
                         $ligne['profil_id'] = $matrice[$i + 1];
 
-                        Log::warning('-----------> $ligne: ' . print_r($ligne, true) . ' <-----------');
                         // Défini les droits associés au profil
                         $bSave = DB::table('profil_utilisateur')->insert($ligne);
-
-                        Log::warning('-----------> Défini les droits associés au profil <-----------');
                     }
                 }
 
                 /* Création et envoie du mail */
                 $titre = Lang::get('mail.creation_utilisateur_titre');
                 $texte = Lang::get('mail.creation_utilisateur_text');
-                $infos = array('nom' => $fields['nom'],
-                    'prenom' => $fields['prenom'],
-                    'titre' => $titre,
-                    'texte' => $texte);
-                Mail::send('emails.creation_utilisateur', $infos, function ($message) use ($fields, $titre) {
+                $texte = str_replace('[-pwd-]', $pwd, $texte);
+                $infos = array('nom'    => $fieldUser['nom'],
+                               'prenom' => $fieldUser['prenom'],
+                               'titre'  => $titre,
+                               'texte'  => $texte);
+                Mail::send('emails.creation_utilisateur', $infos, function($message) use ($fields, $titre)
+                {
                     $message->to($fields['email'])->subject($titre);
                 });
                 /* FIN : Création et envoie du mail */
