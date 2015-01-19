@@ -377,9 +377,10 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             $fieldUser['email']    = $fields['email'];
 
             /* Password */
-            // Mot de passe généré sur 6 digits
+            // Mot de passe généré sur 8 digits
             $pwd    = Hash::make(time());
             $pwd    = substr($pwd, 8, 6);
+            $pwd    = 'k'.$pwd.'1';
             $pwdBdd = Hash::make($pwd);
             $fieldUser['password'] = $pwdBdd;
             /* FIN : Password */
