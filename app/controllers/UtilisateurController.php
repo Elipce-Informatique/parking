@@ -39,7 +39,6 @@ class UtilisateurController extends \BaseController
         return json_encode(Utilisateur::creerUtilisateur($post));
     }
 
-
     /**
      * Display the specified resource.
      *

@@ -465,7 +465,9 @@ var ficheUserStore = Reflux.createStore({
 
                 Actions.utilisateur.initMatrice(data.dataProfil);
                 if(data.nom != '' && data.prenom != ''){
-                    this.emailInitial = data.email;
+                    that.formDataState.nom    = data.nom;
+                    that.formDataState.prenom = data.prenom;
+                    that.emailInitial = data.email;
                     Actions.utilisateur.updateBandeau(data.nom, data.prenom, idUser);
                 }
                 // Passe variable aux composants qui écoutent l'action actionLoadData
