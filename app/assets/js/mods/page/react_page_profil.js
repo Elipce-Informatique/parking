@@ -337,8 +337,9 @@ var pageProfilStore = Reflux.createStore({
                 }.bind(this), 100);
             }
             /* Pas d'utilisateur associé au profil, on peut supprimer */
-            else
+            else {
                 this.supprProfilAjax();
+            }
         }
     },
 
@@ -367,7 +368,25 @@ var pageProfilStore = Reflux.createStore({
     },
 
     getIsProfilUse: function(idProfil){
-        return true;
+        var that = this;
+        var retour = false;
+
+        // AJAX
+        $.ajax({
+            url: BASE_URI + 'profils/use/' + that.idProfilSelect, /* correspond au module url de la BDD */
+            dataType: 'json',
+            context: that,
+            async: false,
+            success: function (good) {
+                retour = good.good;
+            },
+
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+            }
+        });
+
+        return retour;
     },
 
     saveProfil: function(){
