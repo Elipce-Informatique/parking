@@ -78,7 +78,7 @@ return array(
 	|
 	*/
 
-	'key' => 'ceci est une clé secrète!!!',
+	'key' => 'mle_parking_secret_keyODI2389N9#',
 
 	'cipher' => MCRYPT_RIJNDAEL_128,
 

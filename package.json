@@ -22,8 +22,8 @@
     "vinyl-transform": "0.0.1",
     "watchify": "^2.1.1"
   },
-  "name": "elipce_workflow",
-  "description": "Nouveau WorkFlow pour les développements web d'Elipce. - Basé sur **Laravel** côté serveur, on va utiliser **Gulp** comme task runner - **Flux** et **React** comme Frontend engineering libs Puis jQuery et Bootstrap comme utilitaires.",
+  "name": "Parking",
+  "description": "Application de gestion de parking intelligent basée sur notre workflow",
   "version": "0.1.0",
   "main": "gulpfile.js",
   "dependencies": {
@@ -46,12 +46,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Elipce-Informatique/elipce_workflow.git"
+    "url": "https://github.com/Elipce-Informatique/parking.git"
   },
   "author": "Elipce",
   "license": "Copyright",
   "bugs": {
-    "url": "https://github.com/Elipce-Informatique/elipce_workflow/issues"
+    "url": "https://github.com/Elipce-Informatique/parking/issues"
   },
-  "homepage": "https://github.com/Elipce-Informatique/elipce_workflow"
+  "homepage": "https://github.com/Elipce-Informatique/parking"
 }

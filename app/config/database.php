@@ -55,7 +55,7 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => '192.168.1.220',
-			'database'  => 'base_workflow',
+			'database'  => 'parking',
 			'username'  => 'root',
 			'password'  => 'elipce',
 			'charset'   => 'utf8',
