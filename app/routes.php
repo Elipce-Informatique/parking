@@ -104,3 +104,4 @@ Route::group(['before' => 'auth', 'prefix' => 'menu'], function () {
 |--------------------------------------------------------------------------
 */
 Route::get('test', 'TestController@index');
+Route::get('test_carte', 'TestController@indexCarte');
