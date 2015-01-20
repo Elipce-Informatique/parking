@@ -178,9 +178,9 @@ var ReactPageProfil  = React.createClass({
             /*    - le bandeau                      */
             /*    - le nom du profil EDITABLE       */
             /*    - le tableau des modules EDITABLE */
-            case 'create':
+            case 'creation':
                 mode = 0;
-            case 'edit':
+            case 'edition':
                 return  <div key="rootPageProfil">
                             <Row>
                                 <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" mode={mode} titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
@@ -303,11 +303,11 @@ var pageProfilStore = Reflux.createStore({
 
     createProfil: function(){
         this.idProfilSelect = 0;
-        this.trigger({etatPageProfil:'create', nameProfil:'', idProfil:0});
+        this.trigger({etatPageProfil:'creation', nameProfil:'', idProfil:0});
     },
 
     editProfil: function(){
-        this.trigger({etatPageProfil:'edit'});
+        this.trigger({etatPageProfil:'edition'});
     },
 
     supprProfil: function(){
@@ -318,48 +318,75 @@ var pageProfilStore = Reflux.createStore({
             /* Vérification que le profil n'est pas associé à un utilisateur */
             var suppr = this.getIsProfilUse(this.idProfilSelect);
 
+            /* Un utilisateur est associé au profil, demande de confirmation de suppression */
             if(suppr == true){
-                var that = this;
-                swal({
-                        title: Lang.get('global.attention'),
-                        text: Lang.get('administration.profil.supprProfilAlert'),
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonText: Lang.get('global.oui'),
-                        cancelButtonText: Lang.get('global.annuler'),
-                        closeOnConfirm: true
-                    },
-
-                    function(isConfirm) {
-                        if (isConfirm) {
-
-                            // AJAX
-                            $.ajax({
-                                url: BASE_URI + 'profils/' + that.idProfilSelect, /* correspond au module url de la BDD */
-                                dataType: 'json',
-                                context: that,
-                                type: 'DELETE',
-                                data: {'_token': $('#_token').val()},
-                                success: function (data) {
-                                    that.idProfilSelect = 0;
-                                    that.trigger({idProfil: 0, etatPageProfil: 'liste', nameProfil: ''});
-
-                                    Actions.notif.success(Lang.get('global.notif_success'));
-                                },
-                                error: function (xhr, status, err) {
-                                    console.error(status, err.toString());
-
-                                    Actions.notif.error('AJAX : ' + Lang.get('global.notif_erreur'));
-                                }
-                            }, that);
-                        }
-                    }, that);
+                setTimeout(function () {
+                    swal({
+                            title: Lang.get('global.attention'),
+                            text: Lang.get('administration.profil.supprProfilAlert'),
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: Lang.get('global.oui'),
+                            cancelButtonText: Lang.get('global.annuler'),
+                            closeOnConfirm: true
+                        },
+                        function (isConfirm) {
+                            if (isConfirm)
+                                this.supprProfilAjax();
+                        }.bind(this));
+                }.bind(this), 100);
+            }
+            /* Pas d'utilisateur associé au profil, on peut supprimer */
+            else {
+                this.supprProfilAjax();
             }
         }
     },
 
+    supprProfilAjax: function(){
+        var that = this;
+
+        // AJAX
+        $.ajax({
+            url: BASE_URI + 'profils/' + that.idProfilSelect, /* correspond au module url de la BDD */
+            dataType: 'json',
+            context: that,
+            type: 'DELETE',
+            data: {'_token': $('#_token').val()},
+            success: function (data) {
+                that.idProfilSelect = 0;
+                that.trigger({idProfil: 0, etatPageProfil: 'liste', nameProfil: ''});
+
+                Actions.notif.success(Lang.get('global.notif_success'));
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+
+                Actions.notif.error('AJAX : ' + Lang.get('global.notif_erreur'));
+            }
+        }, that);
+    },
+
     getIsProfilUse: function(idProfil){
-        return true;
+        var that = this;
+        var retour = false;
+
+        // AJAX
+        $.ajax({
+            url: BASE_URI + 'profils/use/' + that.idProfilSelect, /* correspond au module url de la BDD */
+            dataType: 'json',
+            context: that,
+            async: false,
+            success: function (good) {
+                retour = good.good;
+            },
+
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+            }
+        });
+
+        return retour;
     },
 
     saveProfil: function(){
@@ -393,7 +420,7 @@ var pageProfilStore = Reflux.createStore({
                     that.idProfilSelect = tab.idProfil;
 
                     // Passe variable aux composants qui écoutent l'action actionLoadData
-                    this.trigger({idProfil: (tab.idProfil*1), etatPageProfil: 'edit', nameProfil: tab.nameProfil});
+                    this.trigger({idProfil: (tab.idProfil*1), etatPageProfil: 'edition', nameProfil: tab.nameProfil});
 
                     Actions.notif.success(Lang.get('global.notif_success'));
                 }

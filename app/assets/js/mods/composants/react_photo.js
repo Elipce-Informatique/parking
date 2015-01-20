@@ -14,7 +14,7 @@ var Photo = React.createClass({
         evts: React.PropTypes.object
     },
 
-    GetDefaultProps: function () {
+    getDefaultProps: function () {
         return {
             attributes: {},
             evts: {},

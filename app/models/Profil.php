@@ -63,6 +63,11 @@ class Profil extends Eloquent
         return array('good' => empty($profil));
     }
 
+    public static function getIsProfilUse($idProfil){
+        $profil = DB::table('profil_utilisateur')->where('profil_id', $idProfil)->first(['id']);
+        return array('good' => !empty($profil));
+    }
+
     /**
      * Supprime un profil
      * @param $id : ID profil

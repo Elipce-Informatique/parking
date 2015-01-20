@@ -108,4 +108,8 @@ class ProfilController extends \BaseController {
     public function getProfilExistLibelle($libelle){
         return Profil::getProfilExistLibelle($libelle);
     }
+
+	public function getIsProfilUse($idProfil){
+		return Profil::getIsProfilUse($idProfil);
+	}
 }

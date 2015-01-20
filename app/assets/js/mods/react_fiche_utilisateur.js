@@ -106,6 +106,11 @@ var FicheUser = React.createClass({
         }
     },
 
+    componentWillReceiveProps: function(newProps){
+        if(this.props.idUser != newProps.idUser)
+            Actions.utilisateur.load_user_info(newProps.idUser);
+    },
+
     changePhoto: function (evt){
         var copie = _.clone(evt);
         Actions.utilisateur.changePhoto(copie);
@@ -371,6 +376,11 @@ var ficheUserStore = Reflux.createStore({
     setEtatCreateEdit: function(modeCreate_P){
         this.isMatriceModuleModif = false;
         this.modeCreate           = modeCreate_P;
+        if(this.modeCreate == true){
+            console.log('Mode création');
+        }
+        else
+            console.log('Mode édition');
     },
 
     formChange: function(e){
@@ -453,6 +463,7 @@ var ficheUserStore = Reflux.createStore({
         this.formDataState.passNewvalue     = '';
         this.formDataState.passOldvalue     = '';
         this.formDataState.passConfirmvalue = '';
+        this.formDataState.dataEmail        = undefined;
         this.emailInitial = '';
 
         var that = this;
@@ -465,8 +476,9 @@ var ficheUserStore = Reflux.createStore({
 
                 Actions.utilisateur.initMatrice(data.dataProfil);
                 if(data.nom != '' && data.prenom != ''){
-                    that.formDataState.nom    = data.nom;
-                    that.formDataState.prenom = data.prenom;
+                    that.formDataState.nom       = data.nom;
+                    that.formDataState.prenom    = data.prenom;
+                    that.formDataState.email     = data.email;
                     that.emailInitial = data.email;
                     Actions.utilisateur.updateBandeau(data.nom, data.prenom, idUser);
                 }
