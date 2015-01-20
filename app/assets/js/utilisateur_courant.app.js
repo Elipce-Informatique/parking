@@ -5,7 +5,7 @@ $(function () {
     var userInfos = JSON.parse($('#user_data').val());
     var idUser = userInfos.id;
 
-    // Création de la fiche utilisateur. TODO : passer les bons params pour etre en mode édition de sois-même only
+    // Création de la fiche utilisateur.
 
     var oReactPageUser = React.render(
         <PageUser idUser={idUser} dataUser={userInfos} />,
