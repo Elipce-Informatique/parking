@@ -20,6 +20,8 @@ var InputNumberEditable         = Field.InputNumberEditable;
 var InputTelEditable            = Field.InputTelEditable;
 var react_photo                 = require('../composants/react_photo');
 var ImageEditable               = react_photo.PhotoEditable;
+var react_color                 = require('../composants/react_color');
+var ColorPickerEditable         = react_color.ColorPickerEditable;
 
 var ReactPageTest               = React.createClass({
 
@@ -106,7 +108,13 @@ var ReactPageTest               = React.createClass({
 
             <Row id="InputImageEditable">
                 <Col md={12}>
-                    <ImageEditable src='./app/assets/images/portrait_vide.gif' evts={{onClick:clickImage}} attributes={{name:"InputImageEditable", imgCol:4,labelCol:2}} editable={editable} />
+                    <ImageEditable src='./app/assets/images/portrait_vide.gif' evts={{onClick:clickImage}} name="InputImageEditable" attributes={{name:"InputImageEditable", imgCol:4,labelCol:2}} editable={editable} />
+                </Col>
+            </Row>
+
+            <Row id="InputColorEditable">
+                <Col md={12}>
+                    <ColorPickerEditable color="#123456" attributes={{label:"Couleur", colorCol:4,labelCol:2}} editable={editable} />
                 </Col>
             </Row>
 
