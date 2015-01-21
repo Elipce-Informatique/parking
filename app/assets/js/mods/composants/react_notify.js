@@ -42,7 +42,6 @@ var StoreNotif = Reflux.createStore({
 /**
  * Created by yann on 19/12/2014.
  *
- * TODO : Snippet de base pour un composant react. Commentaire à éditer
  * @param name : nom a afficher dans le composant
  */
 var Notify = React.createClass({
@@ -93,7 +92,7 @@ var Notify = React.createClass({
     },
 
     render: function () {
-        return <span></span>;
+        return <span key="uniquespankey"></span>;
     },
     displayNotif: function (data) {
         $.notify(data.message, data.style);
