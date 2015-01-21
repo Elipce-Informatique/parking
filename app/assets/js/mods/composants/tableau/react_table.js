@@ -148,6 +148,7 @@ var TableTr = React.createClass({
                      /* Cellule contenant un élément React */
                      if(that.props.reactElements !== 'undefined' && Array.isArray(that.props.reactElements[indiceCol.toString()])){
                         var isRadioBts = true;
+
                         switch(that.props.reactElements[indiceCol.toString()][0]){
                             case 'Couleur':
                                 tr.push(<td key={that.props.data.id + key}>
