@@ -15,7 +15,7 @@ return [
     "side" => [
         'utilisateurs' => 'Utilisateurs',
         'profils' => 'Profils',
-        "etats_d_occupation" => "Etat d'occupation"
+        "etats_d_occupation" => "Etats d'occupation"
 
     ],
 

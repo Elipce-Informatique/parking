@@ -12,6 +12,10 @@ var Col = ReactB.Col;
 var AuthentMixins = require('../mixins/component_access'); /* Pour le listenTo           */
 var MixinGestMod  = require('../mixins/gestion_modif');    /* Pour la gestion des modifs */
 
+/*****************************************************************/
+/* Pour récupérer les datas du formulaire avant l'envoie en Ajax */
+var form_data_helper  = require('../helpers/form_data_helper');
+
 /***************************/
 /* Composant react Bandeau */
 var BandeauVisu      = require('../composants/bandeau/react_bandeau_visu');
@@ -21,7 +25,7 @@ var BandeauGenerique = require('../composants/bandeau/react_bandeau_generique');
 
 /************************************************************************************************/
 /*                                                                                              */
-/*                         COMPOSANT REACT PAGE ETATS D'OCCUPATION                              */
+/*                         COMPOSANT REACT PAGE : "Etats d'occupation                           */
 /*                                                                                              */
 /************************************************************************************************/
 var ReactPageEtatsDoccupation  = React.createClass({
@@ -77,7 +81,6 @@ var ReactPageEtatsDoccupation  = React.createClass({
      * @returns {XML}
      */
     render: function () {
-        console.log('Render états d\'occupation');
         return this.getComponentSwitchState();
     },
 
@@ -170,7 +173,7 @@ module.exports = ReactPageEtatsDoccupation;
 
 
 /************************************************************************/
-/*                PAGEETATSDOCCUPATIONSTORE                             */
+/*                Store de la page états d'occupation                   */
 /*              Store associé à la page états d'occupation              */
 /************************************************************************/
 var pageEtatsDoccupationStore = Reflux.createStore({
@@ -180,10 +183,10 @@ var pageEtatsDoccupationStore = Reflux.createStore({
     // Initial setup
     init: function() {
         this.listenTo(Actions.etats_d_occupation.select, this.select);
-        this.listenTo(Actions.bandeau.creer,          this.create);
-        this.listenTo(Actions.bandeau.editer,         this.editn);
-        this.listenTo(Actions.bandeau.supprimer,      this.suppr);
-        this.listenTo(Actions.validation.submit_form, this.save);
+        this.listenTo(Actions.bandeau.creer,             this.create);
+        this.listenTo(Actions.bandeau.editer,            this.editn);
+        this.listenTo(Actions.bandeau.supprimer,         this.suppr);
+        this.listenTo(Actions.validation.submit_form,    this.save);
     },
 
     getInitialState:function(){
@@ -258,16 +261,7 @@ var pageEtatsDoccupationStore = Reflux.createStore({
 
         var method = this.idSelect===0?'POST':'PUT';
 
-        var matrice = [];
-        var that    = this;
-        var indice  = 0;
-        _.each(this.matriceBtnRadio, function($key, $value){
-            matrice.push([$key, $value]);
-        }, that);
-
-        var data = $('form').serializeArray();
-        data.push({name:'_token',  value:$('#_token').val()});
-        data.push({name:'matrice', value:matrice});
+        var fData = form_data_helper('form_etat_d_occupation', method);
 
         // Requête
         $.ajax({
@@ -275,7 +269,7 @@ var pageEtatsDoccupationStore = Reflux.createStore({
             dataType: 'json',
             context: this,
             type: method,
-            data: data,
+            data: fData,
             success: function(tab) {
                 // TODO NOTIFICATION
                 //Notif tab['save']
