@@ -43,6 +43,7 @@ var JS_LIBS_DEST = './public/js/libs';
 var IMG_SRC = './app/assets/images/**/*.*';
 var IMG_DEST = './public/images';
 var LANG_SRC = './app/lang/**/*.php';
+var LANG_CONF = './app/config/packages/andywer/js-localization/config.php';
 
 /*
  |--------------------------------------------------------------------------
@@ -70,6 +71,7 @@ gulp.task('watch',  function () {
     gulp.watch(IMG_SRC, ['images']);
     // Watch des LANG
     gulp.watch(LANG_SRC, ['lang_js']);
+    gulp.watch(LANG_CONF, ['lang_js']);
 
 });
 
