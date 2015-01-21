@@ -64,6 +64,7 @@ Route::group(['before' => 'auth'], function () {
 |
 */
 Route::group(['before' => 'auth|auth.canaccess'], function () {
+
     // GESTION DES UTILISATEURS
     Route::get('utilisateur/all', 'UtilisateurController@all');
     Route::get('utilisateur/profil/{idProfil}', 'UtilisateurController@getUserAndProfil');
@@ -80,6 +81,9 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
 
     // administration
     Route::get('administration',['as'=>'administration', 'uses'=>'AdministrationController@index'] );
+
+    // administration parking
+    Route::get('administration_parking',['as'=>'administration_parking', 'uses'=>'AdministrationParkingController@index'] );
 
     // test
     Route::resource('test', 'TestController');

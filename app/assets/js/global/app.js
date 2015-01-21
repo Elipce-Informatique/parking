@@ -18,7 +18,6 @@
     global.Select = require('react-select');
     global.ReactColorPicker = require('react-color-picker');
 
-
     /*
      |--------------------------------------------------------------------------
      | DEFINITION DE GLOBALES
