@@ -8,12 +8,17 @@
 
 return [
     "top" => [
-        "administration" => "Administration"
+        "administration" => "Administration",
+        "administration_parking" => "Administration parking"
     ],
+
     "side" => [
         'utilisateurs' => 'Utilisateurs',
-        'profils' => 'Profils'
+        'profils' => 'Profils',
+        "etats_d_occupation" => "Etat d'occupation"
+
     ],
+
     "user" => [
         "profil" => "Profil",
         "params" => "Paramètres"

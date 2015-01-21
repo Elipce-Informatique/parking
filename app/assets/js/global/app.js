@@ -111,6 +111,10 @@
         "set_initial_state"
     ]);
 
+    global.Actions.etats_d_occupation = Reflux.createActions([
+        "select"
+    ]);
+
     /*
      |--------------------------------------------------------------------------
      | ACTION PROFIL REFLUX

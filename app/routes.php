@@ -65,13 +65,17 @@ Route::group(['before' => 'auth'], function () {
 */
 Route::group(['before' => 'auth|auth.canaccess'], function () {
 
-    // GESTION DES UTILISATEURS
+    /*
+     * Gestion des utilisateurs
+     */
     Route::get('utilisateur/all', 'UtilisateurController@all');
     Route::get('utilisateur/profil/{idProfil}', 'UtilisateurController@getUserAndProfil');
     Route::resource('utilisateur', 'UtilisateurController');
     Route::get('utilisateur/email/{email}', 'UtilisateurController@getUserExist');
 
-    // GESTION PROFILS (association profiles module)
+    /*
+     * Gestion profils (association profiles module)
+     */
     Route::get('profils/all', 'ProfilController@all');
     Route::get('profils/{profils}/modules', 'ProfilController@getProfilModule');
     Route::resource('profils', 'ProfilController');
@@ -79,13 +83,24 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     Route::get('profils/libelle/{libelle}', 'ProfilController@getProfilExistLibelle');
     Route::get('profils/use/{profil}', 'ProfilController@getIsProfilUse');
 
-    // administration
+    /*
+    /* Etats d'occupation (d'une place de parking, menu Administration parking)
+     */
+    Route::get('etats_d_occupation',['as'=>'etats_d_occupation', 'uses'=>'EtatsDoccupationController@index'] );
+
+    /*
+     * Administration
+     */
     Route::get('administration',['as'=>'administration', 'uses'=>'AdministrationController@index'] );
 
-    // administration parking
+    /*
+     * Administration parking
+     */
     Route::get('administration_parking',['as'=>'administration_parking', 'uses'=>'AdministrationParkingController@index'] );
 
-    // test
+    /*
+     * Test
+     */
     Route::resource('test', 'TestController');
 });
 
