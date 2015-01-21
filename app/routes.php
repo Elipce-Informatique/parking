@@ -87,6 +87,7 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     /* Etats d'occupation (d'une place de parking, menu Administration parking)
      */
     Route::get('etats_d_occupation',['as'=>'etats_d_occupation', 'uses'=>'EtatsDoccupationController@index'] );
+    Route::get('etats_d_occupation/all', 'EtatsDoccupationController@all');
 
     /*
      * Administration

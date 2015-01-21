@@ -112,7 +112,8 @@
     ]);
 
     global.Actions.etats_d_occupation = Reflux.createActions([
-        "select"
+        "select",
+        "getInfosEtatsDoccupation"
     ]);
 
     /*

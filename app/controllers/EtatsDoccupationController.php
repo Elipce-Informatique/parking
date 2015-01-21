@@ -46,6 +46,10 @@ class EtatsDoccupationController extends \BaseController {
 		//
 	}
 
+	public function all(){
+        return json_encode(EtatsDoccupation::getAll());
+	}
+
 
 	/**
 	 * Show the form for editing the specified resource.

@@ -12,7 +12,13 @@ return array(
 
     // MODULE ETAT D'OCCUPATION
     'etats_d_occupation' => [
-        'texte' => 'Administration des états d\'une place. Permet de définir la couleur, le libelle, son état et son type.'
+        'texte' => 'Administration des états d\'une place. Permet de définir la couleur, le libelle, son état et son type.',
+        'tableau' => [
+            'couleur' => 'Couleur',
+            'type_place' => 'Type de place',
+            'etat_place' => 'Etat de la place',
+            'logo' => 'Logo'
+            ]
     ]
 );
 
