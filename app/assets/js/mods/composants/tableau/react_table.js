@@ -151,7 +151,7 @@ var TableTr = React.createClass({
                         switch(that.props.reactElements[indiceCol.toString()][0]){
                             case 'Couleur':
                                 tr.push(<td key={that.props.data.id + key}>
-                                            <ColorPicker color={val} />
+                                            <ColorPicker attributes={{value:val}} sansLabelModeNonEditable={true} />
                                         </td>);
                                 break;
                             case 'Image':

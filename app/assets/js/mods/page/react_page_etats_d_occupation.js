@@ -35,6 +35,9 @@ aReactElements['4'] = new Array();  /* Colonne n°4 du tableau               */
 aReactElements['4'][0] = 'Image';   /* Type de composant à ajouter          */
 aReactElements['4'][1] = 'app/storage/documents/logo_type_place/'; /* Path à rajouter devant les images */
 
+/*************************************/
+/* Composant react_etat_d_occupation */
+var ReactEtatDoccupation = require('../react_etat_d_occupation');
 
 /************************************************************************************************/
 /*                                                                                              */
@@ -139,7 +142,7 @@ var ReactPageEtatsDoccupation  = React.createClass({
                     </Row>
                     <Row>
                         <Col md={12}>
-                            !!! Mode visu à faire !!!
+                            <ReactEtatDoccupation id={this.state.id}/>
                         </Col>
                     </Row>
                 </div>;
@@ -159,7 +162,7 @@ var ReactPageEtatsDoccupation  = React.createClass({
                     </Row>
                     <Row>
                         <Col md={12}>
-                            !!! Mode création ou édition à faire !!!
+                            <ReactEtatDoccupation id={this.state.id} editable={true} />
                         </Col>
                     </Row>
                 </div>;
@@ -251,27 +254,7 @@ var pageEtatsDoccupationStore = Reflux.createStore({
 
         this.idSelect = id;
 
-        if(this.idSelect == 0)
-            this.nameEtatDoccupation = '';
-        else {
-
-            var that = this;
-
-            // AJAX
-            $.ajax({
-                url: BASE_URI + 'etats_d_occupation/' + this.idSelect, /* correspond au module url de la BDD */
-                dataType: 'json',
-                context: that,
-                async: false,
-                success: function (data) {
-                    that.nameEtatDoccupation = data.libelle;
-                    that.trigger({id:that.idSelect, etatPage:'visu', name:that.name});
-                },
-                error: function (xhr, status, err) {
-                    console.error(status, err.toString());
-                }
-            });
-        }
+        this.trigger({id:this.idSelect, etatPage:'visu'});
     },
 
     create: function(){

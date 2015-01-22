@@ -18,7 +18,8 @@ return array(
             'type_place' => 'Type de place',
             'etat_place' => 'Etat de la place',
             'logo' => 'Logo'
-            ]
+            ],
+        'libelleExist' => 'Cet état d\'occupation existe déjà.'
     ]
 );
 

@@ -77,6 +77,7 @@ Voulez-vous vraiment quitter cette page ?',
     'annuler' => 'Annuler',
     'modifier' => 'Modifier',
     'attention' => 'Attention',
+    'libelle' => 'Libelle',
 
     // FORMULAIRE
     'select' => 'Sélection...',

@@ -43,13 +43,28 @@ class EtatsDoccupationController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		//
+		return json_encode(EtatsDoccupation::getInfosEtatById($id));
 	}
 
 	public function all(){
         return json_encode(EtatsDoccupation::getAll());
 	}
 
+	public function getTypesPlace(){
+		return json_encode(EtatsDoccupation::getTypesPlace());
+	}
+
+	public function getEtatsPlace(){
+		return json_encode(EtatsDoccupation::getEtatsPlace());
+	}
+
+	public function getEtatsCapteur(){
+		return json_encode(EtatsDoccupation::getEtatsCapteur());
+	}
+
+	public function getLibelleExist($libelle){
+		return json_encode(EtatsDoccupation::getLibelleExist($libelle));
+	}
 
 	/**
 	 * Show the form for editing the specified resource.

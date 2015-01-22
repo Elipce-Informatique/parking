@@ -113,7 +113,12 @@
 
     global.Actions.etats_d_occupation = Reflux.createActions([
         "select",
-        "getInfosEtatsDoccupation"
+        "getInfosEtatsDoccupation",
+        "show",
+        "getTypePlace",
+        "getEtatPlace",
+        "getEtatCapteur",
+        "changeCouleur"
     ]);
 
     /*
