@@ -20,6 +20,9 @@ return array(
             'logo' => 'Logo'
             ],
         'libelleExist' => 'Cet état d\'occupation existe déjà.'
+    ],
+    'carte'=> [
+        'erreur_polygon'=> 'Les lignes d\'un polygon ne peuvent pas se croiser'
     ]
 );
 

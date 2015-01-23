@@ -70,6 +70,33 @@ function isPolygonInPolygonByCenter(polygon, surface) {
 }
 
 /**
+ * Test si tous les points de "polygon" appartient à "surface"
+ * Les deux paramètres sont un tableau de lat lng comme suit:
+ * [
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy}
+ * ]
+ * @param polygon : Le polygon dont on va tester l'appartenance à surface
+ * @param surface : Le polygon servant de surface de test. C'est lui qui contient ou non polygon
+ *
+ * @return: true ou false
+ */
+function isPolygonInPolygon(polygon, surface) {
+    var retour = true;
+    _.each(polygon, function (coord) {
+        if(!isPointInPolygon(surface, coord)){
+            retour = false;
+            return false;
+        }
+    });
+
+    return retour;
+}
+
+/**
  * Transforme un tableau d'objets au format lat lng en un tableau de coordonnées
  * @param aLatLng [
  *  {lat: xx,yyy, lng: xx,yyy},
@@ -93,9 +120,34 @@ function getLatLngArrayFromCoordsArray(aLatLng) {
     });
 }
 
+/**
+ * Transforme un tableau de coordonnées au format tableau en format objet
+ * @param aCoords [
+ *  [xx,yyy, xx,yyy],
+ *  [xx,yyy, xx,yyy],
+ *  [xx,yyy, xx,yyy],
+ *  [xx,yyy, xx,yyy],
+ *  [xx,yyy, xx,yyy]
+ * ]
+ *
+ * @returns {Array} [
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy}
+ * ]
+ */
+function getCoordsArrayFromLatLngArray(aCoords) {
+    return _.map(aCoords, function (latln) {
+        return {lat: latln[0], lng: latln[1]};
+    });
+}
+
 module.exports = {
     getCentroid: getCentroid,
     isPointInPolygon: isPointInPolygon,
     isPolygonInPolygonByCenter: isPolygonInPolygonByCenter,
-    getLatLngArrayFromCoordsArray: getLatLngArrayFromCoordsArray
+    getLatLngArrayFromCoordsArray: getLatLngArrayFromCoordsArray,
+    isPolygonInPolygon: isPolygonInPolygon
 };
