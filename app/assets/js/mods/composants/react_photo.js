@@ -54,7 +54,7 @@ var PhotoEditable = React.createClass({
             attributes: {},
             evts: {},
             alertOn: false,
-            cacheable: true
+            cacheable: false
         }
     },
     getInitialState: function () {

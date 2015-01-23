@@ -23,6 +23,22 @@ var BandeauEdition   = require('../composants/bandeau/react_bandeau_edition');
 var BandeauListe     = require('../composants/bandeau/react_bandeau_liste');
 var BandeauGenerique = require('../composants/bandeau/react_bandeau_generique');
 
+/********************************************/
+/* Composant tableau des états d'occupation */
+var DataTable            = require('../composants/tableau/react_data_table');
+
+/* Pour la colonne couleur du tableau, utilisation du composant ReactColor  */
+var aReactElements  = {};
+aReactElements['1'] = new Array();  /* Colonne n°1 du tableau               */
+aReactElements['1'][0] = 'Couleur'; /* Type de composant à ajouter          */
+aReactElements['4'] = new Array();  /* Colonne n°4 du tableau               */
+aReactElements['4'][0] = 'Image';   /* Type de composant à ajouter          */
+aReactElements['4'][1] = 'app/storage/documents/logo_type_place/'; /* Path à rajouter devant les images */
+
+/*************************************/
+/* Composant react_etat_d_occupation */
+var ReactEtatDoccupation = require('../react_etat_d_occupation');
+
 /************************************************************************************************/
 /*                                                                                              */
 /*                         COMPOSANT REACT PAGE : "Etats d'occupation                           */
@@ -33,6 +49,12 @@ var ReactPageEtatsDoccupation  = React.createClass({
     /* Ce composant gère les droits d'accès et les modifications */
     mixins: [Reflux.ListenerMixin,AuthentMixins,MixinGestMod],
 
+    head : [Lang.get('menu.side.etats_d_occupation'),
+            Lang.get('administration_parking.etats_d_occupation.tableau.couleur'),
+            Lang.get('administration_parking.etats_d_occupation.tableau.type_place'),
+            Lang.get('administration_parking.etats_d_occupation.tableau.etat_place'),
+            Lang.get('administration_parking.etats_d_occupation.tableau.logo')],
+    hide : ['id'],
     /**
      * Les props par défaut
      */
@@ -53,7 +75,8 @@ var ReactPageEtatsDoccupation  = React.createClass({
             titrePageIni: Lang.get('menu.side.etats_d_occupation'), /* Titre initial : Etats d'occupation              */
             etatPage:     'liste',                                  /* Affichage initial, liste des etats d'occupation */
             name: '',                                               /* Nom de l'état d'occupation sélectionné          */
-            id:0
+            id:0,
+            data: []
         };
     },
 
@@ -63,6 +86,9 @@ var ReactPageEtatsDoccupation  = React.createClass({
     componentWillMount: function () {
         /* On abonne ReactPageEtatsDoccupation au store "pageEtatsDoccupationStore" : */
         this.listenTo(pageEtatsDoccupationStore, this.updateState, this.updateState);
+
+        /* Récupération des données du tableau */
+        Actions.etats_d_occupation.getInfosEtatsDoccupation();
     },
 
     /**
@@ -116,7 +142,7 @@ var ReactPageEtatsDoccupation  = React.createClass({
                     </Row>
                     <Row>
                         <Col md={12}>
-                            !!! Mode visu à faire !!!
+                            <ReactEtatDoccupation id={this.state.id}/>
                         </Col>
                     </Row>
                 </div>;
@@ -136,7 +162,7 @@ var ReactPageEtatsDoccupation  = React.createClass({
                     </Row>
                     <Row>
                         <Col md={12}>
-                            !!! Mode création ou édition à faire !!!
+                            <ReactEtatDoccupation id={this.state.id} editable={true} />
                         </Col>
                     </Row>
                 </div>;
@@ -152,12 +178,24 @@ var ReactPageEtatsDoccupation  = React.createClass({
                     <BandeauGenerique {...attrBandeau} />
                     <Row>
                         <Col md={12}>
-                            !!! Liste des états d'occupation !!!
+                            <DataTable id="dataTableEtatsDoccupation"
+                                       head={this.head}
+                                       data={this.state.data}
+                                       hide={this.hide}
+                                       bUnderline={true}
+                                       evts={{onClick:this.displayEtatDoccupation}}
+                                       reactElements={aReactElements}/>
                         </Col>
                     </Row>
                 </div>;
                 break;
         }
+    },
+
+    displayEtatDoccupation: function(e){
+        // Ligne du tableau
+        var id = $(e.currentTarget).data('id');
+        Actions.etats_d_occupation.select(id);
     },
 
     onRetour: function(){
@@ -183,8 +221,9 @@ var pageEtatsDoccupationStore = Reflux.createStore({
     // Initial setup
     init: function() {
         this.listenTo(Actions.etats_d_occupation.select, this.select);
+        this.listenTo(Actions.etats_d_occupation.getInfosEtatsDoccupation, this.getInfos);
         this.listenTo(Actions.bandeau.creer,             this.create);
-        this.listenTo(Actions.bandeau.editer,            this.editn);
+        this.listenTo(Actions.bandeau.editer,            this.edit);
         this.listenTo(Actions.bandeau.supprimer,         this.suppr);
         this.listenTo(Actions.validation.submit_form,    this.save);
     },
@@ -193,33 +232,29 @@ var pageEtatsDoccupationStore = Reflux.createStore({
         return {etatPage:'liste'};
     },
 
-    select: function(evt){
-        /* On a un état d'occupation de sélectionné */
-        if($(evt.currentTarget).hasClass('row_selected')) {
-            this.idSelect = $(evt.currentTarget).data('id');
-        }
+    getInfos: function(){
+        var that = this;
 
-        if(this.idSelect == 0)
-            this.nameEtatDoccupation = '';
-        else {
+        // AJAX
+        $.ajax({
+            url: BASE_URI + 'etats_d_occupation/all', /* correspond au module url de la BDD */
+            dataType: 'json',
+            context: that,
+            async: false,
+            success: function (data) {
+                that.trigger({data:data});
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+            }
+        }, that);
+    },
 
-            var that = this;
+    select: function(id){
 
-            // AJAX
-            $.ajax({
-                url: BASE_URI + 'etats_d_occupation/' + this.idSelect, /* correspond au module url de la BDD */
-                dataType: 'json',
-                context: that,
-                async: false,
-                success: function (data) {
-                    that.nameEtatDoccupation = data.libelle;
-                    that.trigger({id:that.idSelect, etatPage:'visu', name:that.name});
-                },
-                error: function (xhr, status, err) {
-                    console.error(status, err.toString());
-                }
-            });
-        }
+        this.idSelect = id;
+
+        this.trigger({id:this.idSelect, etatPage:'visu'});
     },
 
     create: function(){

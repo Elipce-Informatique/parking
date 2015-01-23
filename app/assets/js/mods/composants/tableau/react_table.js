@@ -4,6 +4,16 @@ var Field                       = require('../formulaire/react_form_fields');
 var InputRadioBootstrapEditable = Field.InputRadioBootstrapEditable;
 var InputRadioEditable          = Field.InputRadioEditable;
 
+/*********************/
+/* Composant couleur */
+var react_color = require('../react_color');
+var ColorPicker = react_color.ColorPicker;
+
+/*******************/
+/* Composant image */
+var react_photo = require('../react_photo');
+var Image       = react_photo.Photo;
+
 /***********************/
 /* Composants Boostrap */
 var Row = ReactB.Row;
@@ -139,6 +149,28 @@ var TableTr = React.createClass({
                      if(that.props.reactElements !== 'undefined' && Array.isArray(that.props.reactElements[indiceCol.toString()])){
                         var isRadioBts = true;
                         switch(that.props.reactElements[indiceCol.toString()][0]){
+                            case 'Couleur':
+                                tr.push(<td key={that.props.data.id + key}>
+                                            <ColorPicker attributes={{value:val}} sansLabelModeNonEditable={true} />
+                                        </td>);
+                                break;
+                            case 'Image':
+                                var img = '';
+                                var src = that.props.reactElements[indiceCol.toString()][1] + val;
+                                if(val != '') {
+                                    var splitterStyle = {
+                                        height: "20px",
+                                        width: "20px"
+                                    };
+                                    img = <div style={splitterStyle}>
+                                        <Image src={src} />
+                                    </div>;
+                                }
+
+                                tr.push(<td key={that.props.data.id + key}>
+                                            {img}
+                                        </td>);
+                                break;
                             case 'Radio':
                                 isRadioBts = false;
                             case 'RadioBts':

@@ -2898,9 +2898,9 @@ var jscolor = {
     binding : true, // automatic binding via <input class="...">
     preloading : true, // use image preloading?
 
-    install : function() {
-        jscolor.addEvent(window, 'load', jscolor.init);
-    },
+    //install : function() {
+    //    jscolor.addEvent(window, 'load', jscolor.init);
+    //},
 
     init : function() {
         if(jscolor.binding) {
@@ -3896,4 +3896,3 @@ var jscolor = {
     }
 
 };
-jscolor.install();

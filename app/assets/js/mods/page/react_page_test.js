@@ -34,10 +34,14 @@ var ReactPageTest               = React.createClass({
         return {};
     },
 
-    /**
-     * Avant le premier Render()
-     */
-    componentWillMount: function () {},
+
+    componentDidUpdate: function(pp, ps) {
+        jscolor.init();
+    },
+
+    componentDidMount: function(){
+        jscolor.init();
+    },
 
     /**
      * Test si le composant doit être réaffiché avec les nouvelles données
@@ -55,7 +59,7 @@ var ReactPageTest               = React.createClass({
      * @returns {XML}
      */
     render: function () {
-        var editable = true;
+        var editable = false;
 
         /*********************/
         /* Paramètres Select */
@@ -114,7 +118,7 @@ var ReactPageTest               = React.createClass({
 
             <Row id="InputColorEditable">
                 <Col md={12}>
-                    <ColorPickerEditable color="#123456" attributes={{label:"Couleur", colorCol:4,labelCol:2}} editable={editable} />
+                    <ColorPickerEditable attributes={{label:'Couleur', value:'FFF111', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
                 </Col>
             </Row>
 

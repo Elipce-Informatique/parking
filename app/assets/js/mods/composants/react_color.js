@@ -4,7 +4,11 @@ var Row   = ReactB.Row;
 var Col   = ReactB.Col;
 var Input = ReactB.Input;
 
-//var ReactColorPicker = require('react-color-picker');
+/*********/
+/* Mixin */
+var MixinInput = require('../mixins/input_value');
+var MixinInputValue = MixinInput.InputValueMixin;
+
 /**
  * Photo de protrait
  * @param src: URL de l'image
@@ -14,8 +18,8 @@ var Input = ReactB.Input;
 var ColorPicker = React.createClass({
 
     propTypes: {
-        color: React.PropTypes.string.isRequired,
         attributes: React.PropTypes.object,
+        sansLabelModeNonEditable: React.PropTypes.bool,
         evts: React.PropTypes.object
     },
 
@@ -24,35 +28,41 @@ var ColorPicker = React.createClass({
             attributes: {},
             evts: {},
             height: 20,
-            width: 50
+            width: 50,
+            sansLabelModeNonEditable: false
         }
     },
 
     render: function () {
+        var color = (this.props.attributes.value !== undefined ? this.props.attributes.value : 'FFFFFF');
+
         var splitterStyle = {
-            background:this.props.color,
+            background:color,
             height:this.props.height,
             width:this.props.width,
             boxShadow: '3px 3px 3px #888888',
             borderRadius: "5px"
         };
-        console.log('this.props.color : %o', this.props.color);
-        console.log('this.props.width : %o', this.props.width);
-        console.log('this.props.attributes : %o', this.props.attributes);
-        var mdLabel = (this.props.attributes.labelCol !== undefined ? this.props.attributes.labelCol : 1);
-        var mdColor = (this.props.attributes.colorCol !== undefined ? this.props.attributes.colorCol : 1);
 
-        return (<Row>
-                    <Col md={mdLabel}>
-                        <label>
-                            {this.props.attributes.label}
-                        </label>
-                    </Col>
-                    <Col md={mdColor}>
+        var label = (this.props.attributes.label !== undefined ? this.props.attributes.label : '');
+        var classRow   = (this.props.attributes.groupClassName !== undefined ? {className: this.props.attributes.groupClassName} : {});
+        var classLabel = (this.props.attributes.labelClassName !== undefined ? {className: this.props.attributes.labelClassName} : {});
+        var classTexte = (this.props.attributes.wrapperClassName !== undefined ? {className: this.props.attributes.wrapperClassName} : {});
+
+        var labelCp = '';
+
+        if(this.props.sansLabelModeNonEditable == false){
+            labelCp = <label {...classLabel}>
+                          <span>{label}</span>
+                      </label>;
+        }
+
+        return (<div {...classRow}>
+                    {labelCp}
+                    <div {...classTexte}>
                         <div style={splitterStyle}></div>
-                    </Col>
-                </Row>
-        )
+                    </div>
+                </div>);
     }
 });
 module.exports.ColorPicker = ColorPicker;
@@ -65,11 +75,15 @@ module.exports.ColorPicker = ColorPicker;
  */
 var ColorPickerEditable = React.createClass({
 
+    mixins: [MixinInputValue],
+
     propTypes: {
-        color:      React.PropTypes.string.isRequired,
+        onChange:   React.PropTypes.func,
+        onBlur:     React.PropTypes.func,
         attributes: React.PropTypes.object,
         evts:       React.PropTypes.object,
         gestMod:    React.PropTypes.bool,
+        sansLabelModeNonEditable: React.PropTypes.bool,
         editable:   React.PropTypes.bool
     },
 
@@ -77,50 +91,47 @@ var ColorPickerEditable = React.createClass({
         return {
             attributes: {},
             evts:       {},
-            editable:   false
+            editable:   false,
+            onChange:  this.handleChange,
+            onBlur:    this.handleBlur,
+            gestMod:   true,
+            validator: function (val, props, state) {
+                return {isValid: true, style: 'default', tooltip: ''};
+            }
         }
     },
 
-    getInitialState: function () {
-        return {color: this.props.color};
-    },
-
-    onChange: function(e){
-        console.log('onChange');
-        console.log('e : %o0', e.target.value);
-        this.setState({color:e.target.value});
-    },
-
-    onBlur: function(e){
-        console.log('onBlur');
-        console.log('e : %o', e.target.value);
-        this.setState({color:e.target.value});
+    componentWillReceiveProps: function(np){
+        this.setState({value:np.color});
     },
 
     render: function () {
-        var retour;
+        var retour = '';
 
         // EDITABLE
         if (this.props.editable) {
             var mdLabel = (this.props.attributes.labelCol !== undefined ? this.props.attributes.labelCol : 1);
             var mdColor = (this.props.attributes.colorCol !== undefined ? this.props.attributes.colorCol : 1);
 
-            //<ReactColorPicker defaultValue={this.props.color} saturationHeight={80}/>
+            // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
+            var propsAttrs = _.cloneDeep(this.props.attributes);
+            propsAttrs     = _.omit(propsAttrs, ['help', 'data-valid']);
+            var attrs      = _.extend(propsAttrs, this.state.attributes);
 
-            retour = <Row>
-                        <Col md={mdLabel}>
-                            <label>
-                                    {this.props.attributes.label}
-                            </label>
-                        </Col>
-                        <Col md={mdColor}>
-                            <Input type="text" addonBefore="#" value={this.state.color} onChange={this.onChange} onBlur={this.onBlur} className="color {pickerFaceColor:'transparent',pickerFace:3,pickerBorder:0,pickerInsetColor:'black'}" />
-                        </Col>
-                    </Row>;
+            retour = <Input type="text"
+                       ref = "InputField"
+                       hasFeedback
+                       addonBefore="#"
+                       value={this.state.value}
+                       onChange={this.handleChange}
+                       onBlur={this.handleBlur}
+                       {...attrs}
+                       {...this.props.evts}
+                       className="color {pickerFaceColor:'transparent',pickerFace:3,pickerBorder:0,pickerInsetColor:'black'}" />;
         }
         // NON EDITABLE
         else{
-            retour = <ColorPicker color={this.props.color} evts={this.props.evts} attributes={this.props.attributes}/>;
+            retour = <ColorPicker attributes={this.props.attributes}/>;
         }
 
         return retour;
