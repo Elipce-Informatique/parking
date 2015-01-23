@@ -34,7 +34,7 @@ var ColorPicker = React.createClass({
     },
 
     render: function () {
-        var color = (this.props.attributes.value !== undefined ? this.props.attributes.value : 'FFFFFF');
+        var color = (this.props.attributes.value !== undefined ? '#'+this.props.attributes.value : '#FFFFFF');
 
         var splitterStyle = {
             background:color,

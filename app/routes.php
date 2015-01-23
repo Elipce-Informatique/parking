@@ -87,12 +87,10 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     /* Etats d'occupation (d'une place de parking, menu Administration parking)
      */
     Route::get('etats_d_occupation',['as'=>'etats_d_occupation', 'uses'=>'EtatsDoccupationController@index'] );
-    Route::get('etats_d_occupation/all',           'EtatsDoccupationController@all');
-    Route::get('etats_d_occupation/{id}',          'EtatsDoccupationController@show');
-    Route::get('etats_d_occupation/types_place',   'EtatsDoccupationController@getTypesPlace');
-    Route::get('etats_d_occupation/etats_place',   'EtatsDoccupationController@getEtatsPlace');
-    Route::get('etats_d_occupation/etats_capteur', 'EtatsDoccupationController@getEtatsCapteur');
+    Route::get('etats_d_occupation/all',               'EtatsDoccupationController@all');
+    Route::get('etats_d_occupation/{id}',              'EtatsDoccupationController@show');
     Route::get('etats_d_occupation/libelle/{libelle}', 'EtatsDoccupationController@getLibelleExist');
+    Route::resource('etats_d_occupation', 'EtatsDoccupationController');
 
     /*
      * Administration

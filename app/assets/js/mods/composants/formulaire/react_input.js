@@ -427,6 +427,7 @@ var InputSelect = React.createClass({
     propTypes: {
         data: React.PropTypes.array.isRequired,
         selectedValue: React.PropTypes.array,
+        required: React.PropTypes.bool,
         placeholder: React.PropTypes.string,
         multi: React.PropTypes.bool,
         attributes: React.PropTypes.object,
@@ -434,48 +435,77 @@ var InputSelect = React.createClass({
         gestMod: React.PropTypes.bool
     },
 
+    getInitialState:function(){
+        return {value:this.props.selectedValue};
+    },
+
     getDefaultProps: function () {
         return {
             attributes: {},
             evts: {},
-            gestMod: true
+            gestMod: true,
+            required:false
         };
     },
 
+    handleChange: function(e, data){
+        Actions.global.gestion_modif_change();
+        // ONCHANGE DEV EXISTE
+        if (this.props.evts.onChange !== undefined) {
+            this.props.evts.onChange(e, data);
+        }
+        this.setState({value:e.split(',')});
+    },
+
     // ATTENTION: getInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
-
     render: function () {
-
-        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        //var attrs = this.props.attributes;
-        //attrs = _.merge(this.state.attributes, this.props.attributes);
+        console.log('render select');
+        /* Gestion si le champ est required ou pas */
+        var required = required = <div data-valid={true} />;
+        if(this.props.attributes.required !== undefined){
+            if(this.props.attributes.required == true && (this.state.value[0] == '' || this.state.value == '')){
+                console.log('Not valid');
+                required = <div data-valid={false} />;
+            }
+        }
+        var select = <Select
+                        name={this.props.attributes.name}
+                        value={this.state.value}
+                        options={this.props.data}
+                        placeholder={this.props.placeholder}
+                        multi={this.props.multi}
+                        {...this.props.attributes}
+                        onChange={this.handleChange}
+                        matchProp="label"
+                        ref = "InputField"
+                        hasFeedback
+                    />;
+        var ctnSelect = '';
+        if(this.props.attributes.required == true){
+            ctnSelect = <div className="input-group">
+                            <span className="input-group-addon glyphicon glyphicon-asterisk" id="basic-addon1"></span>
+                            {select}
+                        </div>;
+        }
+        else
+            ctnSelect = select;
 
         return <Row>
-            <Col md={(this.props.attributes.labelCol !== undefined ? this.props.attributes.labelCol : 6)}>
-                <label>{(this.props.attributes.label !== undefined ? this.props.attributes.label : '')}</label>
-            </Col>
-            <Col md={(this.props.attributes.selectCol !== undefined ? this.props.attributes.selectCol : 6)}>
-                <Select
-                    name={this.props.attributes.name}
-                    value={this.props.selectedValue}
-                    options={this.props.data}
-                    placeholder={this.props.placeholder}
-                    multi={this.props.multi}
-                    {...this.props.attributes}
-                    {...this.props.evts}
-                    matchProp="label"
-                    ref = "InputField"
-                    hasFeedback
-                />
-            </Col>
-        </Row>;
+                <Col md={(this.props.attributes.labelCol !== undefined ? this.props.attributes.labelCol : 6)}>
+                    {required}
+                    <label>{(this.props.attributes.label !== undefined ? this.props.attributes.label : '')}</label>
+                </Col>
+                <Col md={(this.props.attributes.selectCol !== undefined ? this.props.attributes.selectCol : 6)}>
+                    {ctnSelect}
+                </Col>
+            </Row>;
     }
 });
 
 /**
  * Champ select editable => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
- * @param data: array(array(label:'Framboise', value:0), array(label:'Pomme', value:1))
+ * @param data: array(array(label:'Framboise', value:0, ce que l'on veut...), array(label:'Pomme', value:1, ce que l'on veut...))
  * @param selectedValue: array('0', '1')
  * @param placeholder: string, par défaut 'Sélection..'
  * @param multi: bool, à choix multiple, par défaut non
@@ -487,6 +517,7 @@ var InputSelectEditable = React.createClass({
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
         data: React.PropTypes.array.isRequired,
+        required: React.PropTypes.bool,
         selectedValue: React.PropTypes.array,
         placeholder: React.PropTypes.string,
         multi: React.PropTypes.bool,
@@ -518,6 +549,7 @@ var InputSelectEditable = React.createClass({
                 gestMod    = {this.props.gestMod}
                 data       = {this.props.data}
                 multi      = {this.props.multi}
+                required   = {this.props.required}
                 autocomplete="both"/>;
         }
         // Non editable
@@ -525,18 +557,33 @@ var InputSelectEditable = React.createClass({
 
             /* Récupère les valeurs depuis les datas en mode non éditable */
             var attrs = this.props.attributes;
-            var that = this;
-            var firstPassage = true;
-            attrs.value = '';
-            _.each(this.props.selectedValue, function (val) {
-                if (firstPassage == false)
-                    attrs.value += ', ';
-                attrs.value += that.props.data[val]['label'];
-                firstPassage = false;
-            }, that);
-            /* FIN : Récupère les valeurs depuis les datas en mode non éditable */
+            
+            if(this.props.data.length > 0) {
+                var that = this;
+                var firstPassage = true;
+                attrs.value = '';
 
-            retour = modeEditableFalse(attrs);
+                _.each(this.props.selectedValue, function (val) {
+                    if (firstPassage == false)
+                        attrs.value += ', ';
+                    _.each(that.props.data, function(val2){
+                        if(val2['value'] == val) {
+                            attrs.value += val2['label'];
+                        }
+                    });
+                    firstPassage = false;
+                }, that);
+                /* FIN : Récupère les valeurs depuis les datas en mode non éditable */
+            }
+
+            retour = <Row>
+                        <Col md={(attrs.labelCol !== undefined ? attrs.labelCol : 6)}>
+                            <label>{(attrs.label !== undefined ? attrs.label : '')}</label>
+                        </Col>
+                        <Col md={(attrs.selectCol !== undefined ? attrs.selectCol : 6)}>
+                            {attrs.value}
+                        </Col>
+                    </Row>;
         }
 
         return retour;
