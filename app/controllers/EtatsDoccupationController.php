@@ -12,18 +12,6 @@ class EtatsDoccupationController extends \BaseController {
 		return View::make('pages.etats_d_occupation');
 	}
 
-
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		//
-	}
-
-
 	/**
 	 * Store a newly created resource in storage.
 	 *
@@ -31,10 +19,32 @@ class EtatsDoccupationController extends \BaseController {
 	 */
 	public function store()
 	{
-		//
+		// Valeurs postées
+		$fields = Input::except('_token');
+
+		return json_encode(EtatsDoccupation::creerEtatOccupation($fields));
 	}
 
-
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function update($id)
+	{
+		// Champs du formualaire
+		$fields = Input::except('_token');
+		Log::warning('-----------> UPDATE, $post : '.print_r($fields, true).' <-----------');
+//			[libelle] => Test 2
+//			[data_etat_place] => 2
+//    		[_method] => PUT
+//    		[type_place_id] => 1
+//    		[etat_place_id] => 1
+//    		[couleur] => FFFFFF
+//			[id] => 52
+		return json_encode(EtatsDoccupation::updateEtatDoccupation($id, $fields));
+	}
 	/**
 	 * Display the specified resource.
 	 *
@@ -65,30 +75,6 @@ class EtatsDoccupationController extends \BaseController {
 	public function getLibelleExist($libelle){
 		return json_encode(EtatsDoccupation::getLibelleExist($libelle));
 	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		//
-	}
-
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
-
 
 	/**
 	 * Remove the specified resource from storage.

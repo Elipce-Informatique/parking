@@ -59,16 +59,16 @@ var ReactPageTest               = React.createClass({
      * @returns {XML}
      */
     render: function () {
-        var editable = false;
+        var editable = true;
 
         /*********************/
         /* Paramètres Select */
         var options = [
-            { value: '0', label: 'Fraise' },
-            { value: '1', label: 'Abricot' },
             { value: '2', label: 'Framboise' },
-            { value: '3', label: 'Pomme' },
-            { value: '4', label: 'Poire' }
+            { value: '0', label: 'Fraise' },
+            { value: '4', label: 'Poire' },
+            { value: '1', label: 'Abricot' },
+            { value: '3', label: 'Pomme' }
         ];
 
         function selectChange(value, aData){
@@ -124,7 +124,7 @@ var ReactPageTest               = React.createClass({
 
             <Row id="Select">
                 <Col md={12}>
-                    <InputSelectEditable multi={true} evts={{onChange:selectChange}} attributes={{label:'Select', name:"Select", selectCol:4,labelCol:2}} data={options} editable={editable} selectedValue={['2']} placeholder={'PlaceHolder...'}/>
+                    <InputSelectEditable multi={true} evts={{onChange:selectChange}} attributes={{label:'Select', name:"Select", selectCol:4,labelCol:2}} data={options} editable={editable} selectedValue={['2', '4']} placeholder={Lang.get('global.selection')}/>
                 </Col>
             </Row>
 

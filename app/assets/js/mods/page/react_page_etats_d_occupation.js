@@ -154,8 +154,8 @@ var ReactPageEtatsDoccupation  = React.createClass({
             /*    - les infos éditable              */
             case 'creation':
                 mode = 0;
-            case 'edition':
                 attrBandeau = _.omit(attrBandeau, 'sousTitre');
+            case 'edition':
                 return  <div key="rootPageEtatsDoccupation">
                     <Row>
                         <BandeauGenerique {...attrBandeau} mode={mode} />
@@ -215,17 +215,16 @@ module.exports = ReactPageEtatsDoccupation;
 /*              Store associé à la page états d'occupation              */
 /************************************************************************/
 var pageEtatsDoccupationStore = Reflux.createStore({
-    name:'',
     idSelect:0,
 
     // Initial setup
     init: function() {
         this.listenTo(Actions.etats_d_occupation.select, this.select);
         this.listenTo(Actions.etats_d_occupation.getInfosEtatsDoccupation, this.getInfos);
+        this.listenTo(Actions.etats_d_occupation.setLibelle, this.setLibelle);
+        this.listenTo(Actions.etats_d_occupation.goModif, this.goModif);
         this.listenTo(Actions.bandeau.creer,             this.create);
         this.listenTo(Actions.bandeau.editer,            this.edit);
-        this.listenTo(Actions.bandeau.supprimer,         this.suppr);
-        this.listenTo(Actions.validation.submit_form,    this.save);
     },
 
     getInitialState:function(){
@@ -262,67 +261,16 @@ var pageEtatsDoccupationStore = Reflux.createStore({
         this.trigger({etatPage:'creation', name:'', id:0});
     },
 
+    setLibelle: function(libelle){
+        console.log('setLibelle : %o', libelle);
+        this.trigger({name:libelle});
+    },
+
     edit: function(){
         this.trigger({etatPage:'edition'});
     },
 
-    suppr: function(){
-        var that = this;
-
-        // AJAX
-        $.ajax({
-            url: BASE_URI + 'profils/' + that.idSelect, /* correspond au module url de la BDD */
-            dataType: 'json',
-            context: that,
-            type: 'DELETE',
-            data: {'_token': $('#_token').val()},
-            success: function (data) {
-                that.idSelect = 0;
-                that.trigger({id: 0, etatPage: 'liste', name: ''});
-
-                Actions.notif.success(Lang.get('global.notif_success'));
-            },
-            error: function (xhr, status, err) {
-                console.error(status, err.toString());
-
-                Actions.notif.error('AJAX : ' + Lang.get('global.notif_erreur'));
-            }
-        }, that);
-    },
-
-    save: function(){
-        // Variables
-        var url = BASE_URI+'profils/'+(this.idSelect===0?'':this.idSelect);
-
-        var method = this.idSelect===0?'POST':'PUT';
-
-        var fData = form_data_helper('form_etat_d_occupation', method);
-
-        // Requête
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            context: this,
-            type: method,
-            data: fData,
-            success: function(tab) {
-                // TODO NOTIFICATION
-                //Notif tab['save']
-                if(tab.save == true) {
-                    that.idSelect = tab.id;
-
-                    // Passe variable aux composants qui écoutent l'action actionLoadData
-                    this.trigger({id: (tab.id*1), etatPage: 'edition', name: tab.name});
-
-                    Actions.notif.success(Lang.get('global.notif_success'));
-                }
-                else
-                    Actions.notif.error(Lang.get('global.notif_erreur'));
-            },
-            error: function(xhr, status, err) {
-                console.error( status, err.toString());
-                Actions.notif.error('AJAX : '+Lang.get('global.notif_erreur'));
-            }
-        }, that);
+    goModif: function(id, libelle){
+        this.trigger({etatPage:'edition', id:id, name:libelle});
     }
 });
