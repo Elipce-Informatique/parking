@@ -13,6 +13,6 @@
 @section('scripts')
     <script src="{{URL::asset('public/js/test_carte.app.js')}}"></script>
     <script src="{{URL::asset('public/js/libs/leaflet.min.js')}}"></script>
-    <script src="{{URL::asset('public/js/libs/leaflet.min.js')}}"></script>
+    <script src="{{URL::asset('public/js/libs/leaflet.plugins.js')}}"></script>
 
 @stop

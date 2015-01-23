@@ -40,6 +40,7 @@
     "react-color-picker": "^2.1.4",
     "react-select": "^0.2.13",
     "reflux": "^0.2.0",
+    "robust-point-in-polygon": "^1.0.0",
     "validator": "^3.26.0"
   },
   "scripts": {
