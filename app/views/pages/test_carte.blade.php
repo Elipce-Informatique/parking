@@ -1,8 +1,8 @@
 @extends('layouts.default')
 
 @section('css')
+    <link href="{{URL::asset('public/css/leaflet_plugins.css')}}" rel="stylesheet">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 @stop
 
 @section('content')
@@ -12,8 +12,7 @@
 @stop
 
 @section('scripts')
-    <script src="{{URL::asset('public/js/test_carte.app.js')}}"></script>
     <script src="{{URL::asset('public/js/libs/leaflet.min.js')}}"></script>
     <script src="{{URL::asset('public/js/libs/leaflet.plugins.js')}}"></script>
-
+    <script src="{{URL::asset('public/js/test_carte.app.js')}}"></script>
 @stop
