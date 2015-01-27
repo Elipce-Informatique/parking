@@ -18,14 +18,18 @@ return array(
             'type_place' => 'Type de place',
             'etat_place' => 'Etat de la place',
             'logo' => 'Logo'
-            ],
+        ],
         'libelleExist' => 'Cet état d\'occupation existe déjà.',
         'etat_place' => 'Etat place',
         'type_place' => 'Type place',
         'errorExist' => 'Cet état d\'occupation existe déjà.'
     ],
-    'carte'=> [
-        'erreur_polygon'=> 'Les lignes d\'un polygon ne peuvent pas se croiser'
+    'carte' => [
+        'erreur_polygon' => 'Les lignes d\'un polygon ne peuvent pas se croiser',
+        'ajouter_carte' => 'Ajouter une place',
+        'ajouter_allee' => 'Ajouter une allée',
+        'ajouter_zone' => 'Ajouter une zone',
+        'ajouter_afficheur' => 'Ajouter un afficheur'
     ]
 );
 

@@ -88,6 +88,29 @@
 
     /*
      |--------------------------------------------------------------------------
+     | ACTIONS CARTE REFLUX
+     |--------------------------------------------------------------------------
+     */
+    global.Actions.map = Reflux.createActions([
+        // ACTIONS MAP GENERALES
+        "map_initialized",
+        // ACTIONS DE DESSIN
+        "draw_created",
+        "draw_deleted",
+        "draw_drawstart",
+        "draw_drawstop",
+        "draw_editstart",
+        "draw_editstop",
+        "draw_deletestart",
+        "draw_deletestop",
+        // ACTIONS DE MODE DE DESSIN
+        "mode_place",
+        "mode_allee",
+        "mode_zone",
+        "mode_afficheur"
+    ]);
+    /*
+     |--------------------------------------------------------------------------
      | ACTIONS USER REFLUX
      |--------------------------------------------------------------------------
      */

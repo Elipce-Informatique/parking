@@ -7,7 +7,7 @@
 
 @section('content')
     <div id="page_test">
-        <div id="map_test" style="height: 400px;width: 800px;"></div>
+        <div id="map_test" style="height: 600px;width: 900px;"></div>
     </div>
 @stop
 
