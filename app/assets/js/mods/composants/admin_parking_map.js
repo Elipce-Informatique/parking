@@ -2,26 +2,33 @@ var mapOptions = require('../helpers/map_options');
 // STORE DE LA CARTE
 var mapStore = require('../stores/admin_parking_map_store');
 
-// UTILITAIRES À VIRER D'ICI?
-var isPointInPolygon = require('../helpers/map_helper').isPointInPolygon;
-var getCentroid = require('../helpers/map_helper').getCentroid;
-var isPolygonInPolygonByCenter = require('../helpers/map_helper').isPolygonInPolygonByCenter;
-var isPolygonInPolygon = require('../helpers/map_helper').isPolygonInPolygon;
+// UTILITAIRES
 var ListenerMixin = Reflux.ListenerMixin;
 
 /**
  * Created by yann on 27/01/2015.
+ *
+ * Composant pour créer une carte de parking en mode administration outils de dessins.
+ *
+ * @param defaultDrawMode :
  */
 var parkingMap = React.createClass({
     mixins: [ListenerMixin],
+    /**
+     * Définition du type des props du composant.
+     */
     propTypes: {
         divId: React.PropTypes.string.isRequired,
         imgUrl: React.PropTypes.string.isRequired,
-        defaultDrawMode: React.PropTypes.number
+        defaultDrawMode: React.PropTypes.number,
+        iconPlace: React.PropTypes.string,
+        iconAllee: React.PropTypes.string,
+        iconZone: React.PropTypes.string,
+        iconAfficheur: React.PropTypes.string
     },
     /**
-     * Variables d'instance du composant
-     * Utilisées pour intéragir avec la carte
+     * Variables d'instance du composant.
+     * Utilisées pour intéragir avec la carte.
      */
     _inst: {
         map: {},
@@ -81,10 +88,12 @@ var parkingMap = React.createClass({
     initMap: function () {
         var origine = [0, 0];
         var haut_droit = [100, 100];
+
         // CRÉATION DE LA MAP
         this._inst.map = new L.Map('map_test', {
             fullscreenControl: true
         }).setView([50, 50], 3);
+
         // AJOUT DE L'IMAGE DE FOND
         L.imageOverlay(this.props.imgUrl, [origine, haut_droit]).addTo(this._inst.map);
         Actions.map.map_initialized(this._inst.map);
@@ -98,7 +107,6 @@ var parkingMap = React.createClass({
         this._inst.map.addLayer(this._inst.zonesGroup);
         this._inst.afficheursGroup = new L.featureGroup();
         this._inst.map.addLayer(this._inst.afficheursGroup);
-        console.log('inst clonné : %o', this._inst);
     },
     /**
      * Paramètre le plugin de dessin sur la carte lors de l'INIT de la map
@@ -112,8 +120,6 @@ var parkingMap = React.createClass({
             // QUAND UNE FORME EST CRÉÉE
         this._inst.map.on('draw:created', function (e) {
             var data = {e: {}};
-            console.log('Pass map draw created');
-            console.log(e);
             data.e = e;
             Actions.map.draw_created(data);
         });
@@ -266,7 +272,6 @@ var parkingMap = React.createClass({
             }
         };
 
-        console.log('Pass change controls avec options: %o', options);
 
         this._inst.drawControl = new L.Control.Draw(options);
         this._inst.map.addControl(this._inst.drawControl);
@@ -279,15 +284,11 @@ var parkingMap = React.createClass({
      * @param data
      */
     onModeChange: function (data) {
-        console.log('Pass onModechange');
-        console.log(data);
-
         /**
          * Fonction locale pour sélectionner un bouton
          * @param className : classe du bouton
          */
         var selectButton = function (className) {
-            console.log('Pass select bouton');
             $('.btn-fa-selected').removeClass('btn-fa-selected');
             $('.' + className).parent().addClass('btn-fa-selected');
         };
@@ -306,7 +307,6 @@ var parkingMap = React.createClass({
                 selectButton(mapOptions.icon.zone);
                 break;
             case mapOptions.dessin.afficheur:
-                // TODO : voir pourquoi l'outil marker ne s'affiche pas
                 this.changeDrawToolbar(data.data.mode);
                 selectButton(mapOptions.icon.afficheur);
                 break;
@@ -323,11 +323,8 @@ var parkingMap = React.createClass({
      * @param data : le couple type-data envoyé par le store
      */
     onFormeAdded: function (data) {
-        console.log('onFormeAdded, data : %o', data);
-        // TODO : ajouter la forme au layer courant
         var layer = data.data.e.layer;
         var layerGroup = this._inst[mapOptions.control.groups[this._inst.currentMode]];
-        console.log('LayerGroup : %o', layerGroup);
         layerGroup.addLayer(layer);
     },
 
@@ -364,10 +361,5 @@ var parkingMap = React.createClass({
         this.orderLayerGroups();
     }
 });
-
-function selectCustomButton(link) {
-    $('.btn-fa-selected').removeClass('btn-fa-selected');
-    $(link).addClass('btn-fa-selected');
-}
 
 module.exports = parkingMap;
