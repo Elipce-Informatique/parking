@@ -251,7 +251,7 @@ var parkingMap = React.createClass({
             }
         } : false;
         // ------- LES MARKERS ----------
-        var marker = (this._inst.currentMode == mapOptions.dessin.afficheur) ? {icon: mapOptions.afficheurMarker} : false;
+        var marker = (this._inst.currentMode == mapOptions.dessin.afficheur) ? {icon: new mapOptions.afficheurMarker()} : false;
 
         // 3 : Init du layerGroup pour la modif
         var group = this._inst[mapOptions.control.groups[this._inst.currentMode]];
@@ -267,7 +267,7 @@ var parkingMap = React.createClass({
                 marker: marker
             },
             edit: {
-                featureGroup: this._inst[mapOptions.control.groups[this._inst.currentMode]], // LAYER POUR LES MODIFS
+                featureGroup: group,
                 remove: true
             }
         };

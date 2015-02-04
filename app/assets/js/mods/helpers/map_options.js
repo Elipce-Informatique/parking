@@ -61,11 +61,10 @@ module.exports.type_messages = {
 };
 
 /**
- *
+ * PUTIN ça marchait hier !!
  */
 module.exports.afficheurMarker = L.Icon.extend({
     options: {
-        shadowUrl: null,
         iconAnchor: new L.Point(12, 40),
         iconSize: new L.Point(25, 41),
         iconUrl: BASE_URI + 'public/images/marker-icon.png'
