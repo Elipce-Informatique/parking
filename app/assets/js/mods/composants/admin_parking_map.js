@@ -177,9 +177,19 @@ var parkingMap = React.createClass({
         L.easyButton(
             mapOptions.icon.place,
             function () {
-                Actions.map.mode_place(this._link);
+                Actions.map.mode_place();
             },
-            Lang.get('ajouter_place'),
+            Lang.get('administration_parking.carte.ajouter_place'),
+            this._inst.map
+        );
+
+        // PLACE DE PARKING MODE AUTOMATIQUE
+        L.easyButton(
+            mapOptions.icon.place_auto,
+            function () {
+                Actions.map.mode_place_auto();
+            },
+            Lang.get('administration_parking.carte.ajouter_place_auto'),
             this._inst.map
         );
 
@@ -187,9 +197,9 @@ var parkingMap = React.createClass({
         L.easyButton(
             mapOptions.icon.allee,
             function () {
-                Actions.map.mode_allee(this._link);
+                Actions.map.mode_allee();
             },
-            Lang.get('ajouter_allee'),
+            Lang.get('administration_parking.carte.ajouter_allee'),
             this._inst.map
         );
 
@@ -197,9 +207,9 @@ var parkingMap = React.createClass({
         L.easyButton(
             mapOptions.icon.zone,
             function () {
-                Actions.map.mode_zone(this._link);
+                Actions.map.mode_zone();
             },
-            Lang.get('ajouter_zone'),
+            Lang.get('administration_parking.carte.ajouter_zone'),
             this._inst.map
         );
 
@@ -207,9 +217,9 @@ var parkingMap = React.createClass({
         L.easyButton(
             mapOptions.icon.afficheur,
             function () {
-                Actions.map.mode_afficheur(this._link);
+                Actions.map.mode_afficheur();
             },
-            Lang.get('ajouter_afficheur'),
+            Lang.get('administration_parking.carte.ajouter_afficheur'),
             this._inst.map
         );
 

@@ -26,7 +26,8 @@ return array(
     ],
     'carte' => [
         'erreur_polygon' => 'Les lignes d\'un polygon ne peuvent pas se croiser',
-        'ajouter_carte' => 'Ajouter une place',
+        'ajouter_place' => 'Ajouter une place',
+        'ajouter_place_auto' => 'Ajouter une série de places',
         'ajouter_allee' => 'Ajouter une allée',
         'ajouter_zone' => 'Ajouter une zone',
         'ajouter_afficheur' => 'Ajouter un afficheur'

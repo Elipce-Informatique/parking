@@ -10,7 +10,8 @@ module.exports.dessin = {
     place: 1,
     allee: 2,
     zone: 3,
-    afficheur: 4
+    afficheur: 4,
+    place_auto: 1
 };
 
 /**
@@ -21,7 +22,8 @@ module.exports.icon = {
     place: "fa-car",
     allee: "fa-exchange",
     zone: "fa-circle-o",
-    afficheur: "fa-desktop"
+    afficheur: "fa-desktop",
+    place_auto: "fa-magic"
 };
 
 // PRÉPARATION DE L'OBJET COLOR :

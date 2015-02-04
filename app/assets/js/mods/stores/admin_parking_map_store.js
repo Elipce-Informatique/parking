@@ -95,6 +95,17 @@ var store = Reflux.createStore({
         };
         this.trigger(retour);
     },
+    onMode_place_auto: function (data) {
+        this._inst.currentMode = mapOptions.dessin.place_auto;
+
+        var retour = {
+            type: mapOptions.type_messages.mode_change,
+            data: {
+                mode: mapOptions.dessin.place_auto
+            }
+        };
+        this.trigger(retour);
+    },
     onMode_allee: function (data) {
         this._inst.currentMode = mapOptions.dessin.allee;
 

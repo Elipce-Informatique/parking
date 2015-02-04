@@ -87,7 +87,7 @@ function isPolygonInPolygonByCenter(polygon, surface) {
 function isPolygonInPolygon(polygon, surface) {
     var retour = true;
     _.each(polygon, function (coord) {
-        if(!isPointInPolygon(surface, coord)){
+        if (!isPointInPolygon(surface, coord)) {
             retour = false;
             return false;
         }
@@ -144,6 +144,25 @@ function getCoordsArrayFromLatLngArray(aCoords) {
     });
 }
 
+
+/**
+ *
+ */
+function createGroupPlacesFromTriangle(triangle){
+
+}
+
+/**
+ *
+ */
+function getGroupProfondeurDeltas(){
+
+}
+
+/**
+ * Ce que le module exporte.
+ * @type {{getCentroid: getCentroid, isPointInPolygon: isPointInPolygon, isPolygonInPolygonByCenter: isPolygonInPolygonByCenter, getLatLngArrayFromCoordsArray: getLatLngArrayFromCoordsArray, isPolygonInPolygon: isPolygonInPolygon}}
+ */
 module.exports = {
     getCentroid: getCentroid,
     isPointInPolygon: isPointInPolygon,
@@ -151,3 +170,4 @@ module.exports = {
     getLatLngArrayFromCoordsArray: getLatLngArrayFromCoordsArray,
     isPolygonInPolygon: isPolygonInPolygon
 };
+

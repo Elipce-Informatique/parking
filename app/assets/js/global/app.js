@@ -105,6 +105,7 @@
         "draw_deletestop",
         // ACTIONS DE MODE DE DESSIN
         "mode_place",
+        "mode_place_auto",
         "mode_allee",
         "mode_zone",
         "mode_afficheur"
