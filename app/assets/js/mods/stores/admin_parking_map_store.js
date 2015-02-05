@@ -66,6 +66,7 @@ var store = Reflux.createStore({
     onDraw_drawstop: function (data) {
         console.log(data);
     },
+    // A VOIR COMMENT RECUP LES DESSINS
     onDraw_editstart: function (data) {
         console.log(data);
     },

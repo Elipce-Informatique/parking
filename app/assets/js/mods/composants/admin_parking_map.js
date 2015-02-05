@@ -99,13 +99,13 @@ var parkingMap = React.createClass({
         Actions.map.map_initialized(this._inst.map);
 
         // INIT des layers
-        this._inst.placesGroup = new L.featureGroup();
+        this._inst.placesGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.placesGroup);
-        this._inst.alleesGroup = new L.featureGroup();
+        this._inst.alleesGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.alleesGroup);
-        this._inst.zonesGroup = new L.featureGroup();
+        this._inst.zonesGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.zonesGroup);
-        this._inst.afficheursGroup = new L.featureGroup();
+        this._inst.afficheursGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.afficheursGroup);
     },
     /**
@@ -250,7 +250,8 @@ var parkingMap = React.createClass({
             },
             shapeOptions: {
                 color: mapOptions.control.draw.colors[this._inst.currentMode]
-            }
+            },
+            repeatMode: true
         } : false;
         // ------- LES CERCLES ----------
         var circle = false;
@@ -258,10 +259,14 @@ var parkingMap = React.createClass({
         var rectangle = (this._inst.currentMode == mapOptions.dessin.place || this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone) ? {
             shapeOptions: {
                 color: mapOptions.control.draw.colors[this._inst.currentMode]
-            }
+            },
+            repeatMode: true
         } : false;
         // ------- LES MARKERS ----------
-        var marker = (this._inst.currentMode == mapOptions.dessin.afficheur) ? {icon: new mapOptions.afficheurMarker()} : false;
+        var marker = (this._inst.currentMode == mapOptions.dessin.afficheur) ? {
+            icon: new mapOptions.afficheurMarker(),
+            repeatMode: true
+        } : false;
 
         // 3 : Init du layerGroup pour la modif
         var group = this._inst[mapOptions.control.groups[this._inst.currentMode]];
