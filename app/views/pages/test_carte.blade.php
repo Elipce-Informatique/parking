@@ -6,8 +6,8 @@
 @stop
 
 @section('content')
-    <div id="page_test">
-        <div id="map_test" style="height: 300px;width: 900px;"></div>
+    <div id="page_test" class="row">
+        <div id="map_test" class="col-md-12"></div>
     </div>
 @stop
 

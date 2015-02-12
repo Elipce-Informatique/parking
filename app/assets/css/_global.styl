@@ -22,6 +22,9 @@ c_bordure_grise = #dddddd
 | Template bootstrap
 |--------------------------------------------------------------------------
 */
+html,body {
+  height:100%;
+}
 /* Move down content because we have a fixed navbar that is 50px tall */
 body
   padding-top 50px
@@ -161,14 +164,63 @@ input[type=number]:invalid {
   opacity: 0;
   filter: unquote("alpha(opacity=0)")
 }
+/*
+|--------------------------------------------------------------------------
+| Collapse sidebar
+|--------------------------------------------------------------------------
+*/
 
+/* ---------- MODE LEFT ---------- */
+.collapse-sidebar-left{
+  margin-left: -1px!important;
+  padding-right: 25px!important;
+  padding-left: 0px!important;
+}
+.collapse-collapsed{
+  margin-left: 0px!important;
+  padding-right: 0px!important;
+}
+.collapse-sidebar-left .sidebar-content{
+  padding: 15px;
+  background-color: c_gris_sidebar;
+  border: 1px solid c_bordure_grise;
+  border-bottom-right-radius: 10px;
+}
+/* La rotation initiale se fait sur un div de largeur 0px
+Donc la translation n'affecte pas la position du couton
+Ce qui n'est pas le cas du mode "déplié" pour lequel le div
+fait toute la largeur du bloc de sidebar */
+.collapse-sidebar-left .vertical-text{
+  transform: rotate(90deg) translate(100%, 0);
+  transform-origin: bottom right;
+}
 
+/* ---------- MODE RIGHT ---------- */
+.collapse-sidebar-right .sidebar-content{
+  padding: 15px;
+  background-color: c_gris_sidebar;
+  border: 1px solid c_bordure_grise;
+  border-bottom-left-radius: 10px;
+}
+
+/*.collapse-sidebar-right .vertical-text{*/
+  /*width: 0px !important;*/
+/*}*/
+.collapse-sidebar-right .vertical-text{
+  transform:rotate(-90deg) translateX(-100%);
+  transform-origin: bottom left;
+  text-align: right;
+  display: inline-block
+}
+
+.collapse-row{
+  overflow: hidden;
+}
 /*
 |--------------------------------------------------------------------------
 | ANIMATIONS CSS REACT
 |--------------------------------------------------------------------------
 */
-
 .tabprofil-enter {
   opacity: 0.01;
   transition: opacity .2s ease-in;

@@ -6,6 +6,13 @@ var mapStore = require('../stores/admin_parking_map_store');
 var ListenerMixin = Reflux.ListenerMixin;
 
 /**
+ *
+ *
+ *
+ *
+ */
+
+/**
  * Created by yann on 27/01/2015.
  *
  * Composant pour créer une carte de parking en mode administration outils de dessins.
@@ -20,11 +27,8 @@ var parkingMap = React.createClass({
     propTypes: {
         divId: React.PropTypes.string.isRequired,
         imgUrl: React.PropTypes.string.isRequired,
-        defaultDrawMode: React.PropTypes.number,
-        iconPlace: React.PropTypes.string,
-        iconAllee: React.PropTypes.string,
-        iconZone: React.PropTypes.string,
-        iconAfficheur: React.PropTypes.string
+        mapHeight: React.PropTypes.number,
+        defaultDrawMode: React.PropTypes.number
     },
     /**
      * Variables d'instance du composant.
@@ -43,10 +47,7 @@ var parkingMap = React.createClass({
     getDefaultProps: function () {
         return {
             defaultDrawMode: mapOptions.dessin.place,
-            iconPlace: mapOptions.icon.place,
-            iconAllee: mapOptions.icon.allee,
-            iconZone: mapOptions.icon.zone,
-            iconAfficheur: mapOptions.icon.afficheur
+            mapHeight: 300
         };
     },
 
@@ -76,7 +77,8 @@ var parkingMap = React.createClass({
     },
 
     render: function () {
-        return <div id={this.props.divId}> </div>;
+        var style = {height: this.props.mapHeight + "px"};
+        return <div id={this.props.divId} style={style}> </div>;
     },
     /**
      * ------------------------------------------
@@ -90,7 +92,7 @@ var parkingMap = React.createClass({
         var haut_droit = [100, 100];
 
         // CRÉATION DE LA MAP
-        this._inst.map = new L.Map('map_test', {
+        this._inst.map = new L.Map(this.props.divId, {
             fullscreenControl: true
         }).setView([50, 50], 3);
 
