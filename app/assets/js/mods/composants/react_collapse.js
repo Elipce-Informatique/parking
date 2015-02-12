@@ -151,7 +151,8 @@ var Collapse = React.createClass({
             // CLONAGE DES DEUX ÉLÉMENTS POUR AJOUTER DES PROPS
             var propsSide = {
                 onToggleClick: this.toggleSidebar,
-                isCollapsed: this.state.isCollapsed
+                isCollapsed: this.state.isCollapsed,
+                isLeft: (this.props.align == "left")
             };
             var sideBar = React.addons.cloneWithProps(this.props.children[1], propsSide);
 
@@ -239,13 +240,13 @@ var CollapseSidebar = React.createClass({
         onToggleClick: React.PropTypes.func.isRequired,
         isCollapsed: React.PropTypes.bool.isRequired,
         title: React.PropTypes.string.isRequired,
-        isRight: React.PropTypes.bool,
+        isLeft: React.PropTypes.bool,
         icon: React.PropTypes.string
     },
 
     getDefaultProps: function () {
         return {
-            isRight: false,
+            isLeft: false,
             icon: "chevron-up"
         };
     },
@@ -268,9 +269,19 @@ var CollapseSidebar = React.createClass({
 
     render: function () {
 
+        var toggleContent = {};
+        if (this.props.isLeft) {
+            toggleContent = <span className="btn btn-default btn-xs">
+                <Glyphicon glyph={this.props.icon}/>{this.props.title}
+            </span>;
+        } else {
+            toggleContent = <span className="btn btn-default btn-xs">
+                {this.props.title}
+                <Glyphicon glyph={this.props.icon}/>
+            </span>;
+        }
         var toggle = (<div className="vertical-text" onClick={this.props.onToggleClick}>
-            <span className="btn btn-default btn-xs">
-                <Glyphicon glyph={this.props.icon}/>{this.props.title}</span>
+            {toggleContent}
         </div>);
         var content = <div className="sidebar-content">{this.props.children}</div>;
 
@@ -279,7 +290,6 @@ var CollapseSidebar = React.createClass({
         } else {
             var retour = <div>{toggle} {content}</div>;
         }
-
         return (retour);
     }
 });
