@@ -21,6 +21,9 @@ var AppName = React.createClass({
      * @param nextProps : Nouvelles propriétés
      * @param nextState : Nouvel état
      * @returns {boolean} : true ou false selon si le composant doit être mis à jour
+     *
+     *
+     *
      */
     shouldComponentUpdate: function (nextProps, nextState) {
         return false;
@@ -39,8 +42,12 @@ var AppName = React.createClass({
                     <span className="icon-bar"></span>
                     <span className="icon-bar"></span>
                 </button>
-                <a className="navbar-brand" href={this.props.url}>
-                    <Glyphicon glyph="home"/>{this.props.name}</a>
+
+                <span>
+                    <button type="button" className="navbar-toggle navbar-toggle-menuleft" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
+                        <a><Glyphicon glyph="th-list"/></a>
+                    </button>
+                </span>
 
             </div>
         )
