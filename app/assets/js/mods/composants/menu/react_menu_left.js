@@ -1,5 +1,6 @@
 var PanelGroup = require('../react_bootstrap_accordion').PanelGroup;
 var Panel = require('../react_bootstrap_accordion').Panel;
+var Glyphicon = ReactB.Glyphicon;
 
 var storeMenuLeft = require('../../stores/stores_menus').menu_left;
 
@@ -15,7 +16,9 @@ var MenuLeft = React.createClass({
      * Vérification éventuelle des types des propriétés
      */
     propTypes: {
-        data: React.PropTypes.array
+        data: React.PropTypes.array,
+        appName: React.PropTypes.string,
+        appUrl: React.PropTypes.string
     },
     /**
      * Méthode appellée à la création du composant,
@@ -23,7 +26,11 @@ var MenuLeft = React.createClass({
      * @returns object
      */
     getDefaultProps: function () {
-        return {data: []};
+        return {
+            data: [],
+            appName: "Project Name",
+            appUrl: BASE_URI
+        };
     },
     /**
      * État initial des données du composant
@@ -56,7 +63,6 @@ var MenuLeft = React.createClass({
      * @returns {XML}
      */
     render: function () {
-        // TODO : Créer les Panels
         var items = [];
 
         // MISE EN FORME DES DONNEES POUR L'AFFICHAGE
@@ -70,9 +76,13 @@ var MenuLeft = React.createClass({
         }, this);
 
         return (
-            <PanelGroup id="accordion-menu-left">
-                {panels}
-            </PanelGroup>
+            <div>
+                <a className="navmenu-brand navmenu-bordered-brand" href={this.props.appUrl}>
+                    <Glyphicon glyph="home"/> {this.props.appName}</a>
+                <PanelGroup id="accordion-menu-left">
+                    {panels}
+                </PanelGroup>
+            </div>
         )
     },
 
