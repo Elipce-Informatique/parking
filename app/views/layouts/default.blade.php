@@ -5,19 +5,22 @@
 @stop
 
 @section('struct_content')
-    <!--[if lt IE 8]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
-    <!-- Menu header de l'application -->
-    <nav id="menu-top" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    {{-- ICI ON EST JUSTE APRÈS LE <body> --}}
 
-    </nav>
+    <!--[if lt IE 8]>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <!-- Menu left de l'application -->
+    <div id="menu-left" class="navmenu navmenu-default navmenu-fixed-left offcanvas">
+    </div>
+    <!-- Menu header de l'application -->
+    <nav id="menu-top" class="navbar navbar-inverse navbar-fixed-top" role="navigation"></nav>
+
     <!-- Contenu de l'application -->
     <div class="container-fluid">
         <div class="row">
-            <div id="menu-left" class="col-sm-3 col-md-2 sidebar">
-            </div>
-            <div  id="content" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div  id="content" class="col-sm-12 col-md-12 main">
                 @yield('content')
             </div>
         </div>

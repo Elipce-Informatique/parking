@@ -12,8 +12,8 @@ var Glyphicon = ReactB.Glyphicon;
 var AppName = React.createClass({
     getDefaultProps: function () {
         return {
-            name: "Mon Application",
-            url: "#"
+            url: "#",
+            toggleMenu: false
         };
     },
     /**
@@ -31,6 +31,15 @@ var AppName = React.createClass({
      * @returns {XML}
      */
     render: function () {
+        var toggleMenu = this.props.toggleMenu ?
+            (<span>
+                <button type="button" className="navbar-toggle navbar-toggle-menuleft" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
+                    <a>
+                        <Glyphicon glyph="th-list"/>
+                    </a>
+                </button>
+            </span>) : (<a className="navbar-brand" href={this.props.url}>
+            <Glyphicon glyph="home"/> {this.props.name}</a>);
         return (
             <div className="navbar-header">
                 <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -39,8 +48,8 @@ var AppName = React.createClass({
                     <span className="icon-bar"></span>
                     <span className="icon-bar"></span>
                 </button>
-                <a className="navbar-brand" href={this.props.url}>
-                    <Glyphicon glyph="home"/>{this.props.name}</a>
+
+            {toggleMenu}
 
             </div>
         )
@@ -272,16 +281,23 @@ var MenuTop = React.createClass({
      * @returns {XML}
      */
     render: function () {
+        var appName = {};
+        if (Auth.menu_left.length != 0) {
+            appName = <AppName toggleMenu={true} name={this.props.appName} url={this.props.appUrl} />;
+        }
+        else {
+            appName = <AppName toggleMenu={false} name={this.props.appName} url={this.props.appUrl} />;
+        }
         return (
             <div className="container-fluid">
-                <AppName name={this.props.appName} url={this.props.appUrl} />
+                {appName}
                 <div id="navbar" className="navbar-collapse collapse">
                     <ListItemsMenu dataMenu={this.state.dataItems} />
 
                     <UserInfos {...this.state.userInfos} />
                 </div>
             </div>
-        )
+        );
     },
     refreshUserInfos: function (infos) {
         this.setState({userInfos: infos});
