@@ -23,15 +23,7 @@ var CollapseSidebar = require('../mods/composants/react_collapse').CollapseSideb
         // CRÉATION DU MENU GAUCHE SI LA PAGE LE PERMET
         if (document.getElementById('menu-left')) {
 
-            React.render(
-                <Collapse align="right" sideWidth={12}>
-                    <CollapseBody>
-                        <MenuLeft/>
-                    </CollapseBody>
-                    <CollapseSidebar title="Menu">
-                        <span></span>
-                    </CollapseSidebar>
-                </Collapse>, document.getElementById('menu-left'));
+            React.render(<MenuLeft/>, document.getElementById('menu-left'));
         }
     });
 
