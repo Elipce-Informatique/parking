@@ -172,7 +172,6 @@ input[type=number]:invalid {
   padding: 15px;
   background-color: c_gris_sidebar;
   border: 1px solid c_bordure_grise;
-  border-bottom-right-radius: 10px;
 }
 /* La rotation initiale se fait sur un div de largeur 0px
 Donc la translation n'affecte pas la position du couton
@@ -188,7 +187,6 @@ fait toute la largeur du bloc de sidebar */
   padding: 15px;
   background-color: c_gris_sidebar;
   border: 1px solid c_bordure_grise;
-  border-bottom-left-radius: 10px;
 }
 .collapse-sidebar-right .vertical-text .glyphicon{
   margin-right: 0px;
@@ -198,12 +196,16 @@ fait toute la largeur du bloc de sidebar */
   transform:rotate(-90deg) translateX(-100%);
   transform-origin: bottom left;
   text-align: right;
-  display: inline-block
+  display: inline-block;
 }
 .collapse-sidebar-right{
   margin-right: -15px;
 }
 
+/* ---------- GÉNÉRALITÉS ---------- */
+.collapse-sidebar {
+  margin-top: -21px;
+}
 .collapse-row{
   overflow: hidden;
 }
