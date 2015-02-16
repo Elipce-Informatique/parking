@@ -1,6 +1,6 @@
-var mapOptions = require('../helpers/map_options');
+var mapOptions = require('../../helpers/map_options');
 // STORE DE LA CARTE
-var mapStore = require('../stores/admin_parking_map_store');
+var mapStore = require('../../stores/admin_parking_map_store');
 
 // UTILITAIRES
 var ListenerMixin = Reflux.ListenerMixin;

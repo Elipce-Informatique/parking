@@ -8,7 +8,8 @@
     {{-- ICI ON EST JUSTE APRÈS LE <body> --}}
 
     <!--[if lt IE 8]>
-    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a
+            href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
     <!-- Menu left de l'application -->
@@ -19,8 +20,8 @@
 
     <!-- Contenu de l'application -->
     <div class="container-fluid">
-        <div class="row">
-            <div  id="content" class="col-sm-12 col-md-12 main">
+        <div class="row full-height">
+            <div id="content" class="col-sm-12 col-md-12 main full-height">
                 @yield('content')
             </div>
         </div>

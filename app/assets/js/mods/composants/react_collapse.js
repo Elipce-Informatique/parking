@@ -143,9 +143,9 @@ var Collapse = React.createClass({
 
             // PRÉPARATION DES ATTRIBUTS ----------------------
             if (this.state.isCollapsed == true) {
-                var sideClass = {className: "collapse-sidebar collapse-collapsed collapse-sidebar-" + this.props.align + " pull-" + this.props.align};
+                var sideClass = {className: "full-height collapse-sidebar collapse-collapsed collapse-sidebar-" + this.props.align + " pull-" + this.props.align};
             } else {
-                var sideClass = {className: "collapse-sidebar collapse-sidebar-" + this.props.align + " pull-" + this.props.align};
+                var sideClass = {className: "full-height collapse-sidebar collapse-sidebar-" + this.props.align + " pull-" + this.props.align};
             }
 
             // CLONAGE DES DEUX ÉLÉMENTS POUR AJOUTER DES PROPS
@@ -160,17 +160,17 @@ var Collapse = React.createClass({
             console.log(this.state.sideWidth);
             var content = {};
             if (this.props.align == "left") {
-                content = (<Row className="collapse-row">
+                content = (<Row className="collapse-row full-height">
                     <Col {...this.state.sideWidth} {...sideClass}>
                         {sideBar}
                     </Col>
-                    <Col {...this.state.bodyWidth} className="collapse-body">
+                    <Col {...this.state.bodyWidth} className="collapse-body full-height">
                         {this.props.children[0]}
                     </Col>
                 </Row>);
             } else {
-                content = (<Row className="collapse-row">
-                    <Col {...this.state.bodyWidth} className="collapse-body">
+                content = (<Row className="collapse-row full-height">
+                    <Col {...this.state.bodyWidth} className="collapse-body full-height">
                         {this.props.children[0]}
                     </Col>
                     <Col {...this.state.sideWidth} {...sideClass}>
@@ -222,7 +222,7 @@ var CollapseBody = React.createClass({
         console.log(this.props.children);
 
         return (
-            <div className="">{this.props.children}</div>
+            <div className="full-height">{this.props.children}</div>
         );
     }
 });
