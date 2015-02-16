@@ -10,6 +10,9 @@ return array(
     // NOM DE L'APPLI
     'app_name' => 'Elipce Workflow',
 
+    // MENU TOP
+    'toggle_menu_left' => 'Menu de gauche',
+
     // GÉNÉRALITÉS BANDEAU
     'edit' => 'Editer',
     'create' => 'Créer',
@@ -58,7 +61,7 @@ Voulez-vous vraiment quitter cette page ?',
     'login_error' => "Erreur lors de la tentative de connexion. L'e-mail et le mot de passe fournis ne correspondent pas.",
     'password_oublie' => "Mot de passe oublié ?",
 
-    // Profil
+    // PROFIL
     'profils' => 'Profils',
     'profil' => 'Profil',
     'droits' => 'Droits',

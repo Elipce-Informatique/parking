@@ -3,6 +3,8 @@ var menuItemsDataStore = require('../../stores/stores_menus').menu_top_items;
 var menuUserDataStore = require('../../stores/stores_menus').menu_top_user;
 var actionMenuDidMount = Actions.menu.menu_top_did_mount;
 var Glyphicon = ReactB.Glyphicon;
+var OverlayTrigger = ReactB.OverlayTrigger;
+var Tooltip = ReactB.Tooltip;
 
 /**
  * Created by yann on 19/11/2014.
@@ -31,15 +33,16 @@ var AppName = React.createClass({
      * @returns {XML}
      */
     render: function () {
+
+        // CONDITION D'AFFICHAGE DU BOUTON MENU GAUCHE OU DU TITRE DE L'APPLI
         var toggleMenu = this.props.toggleMenu ?
-            (<span>
-                <button type="button" className="navbar-toggle navbar-toggle-menuleft" data-toggle="offcanvas" data-target=".navmenu" data-canvas="body">
-                    <a>
-                        <Glyphicon glyph="th-list"/>
-                    </a>
-                </button>
-            </span>) : (<a className="navbar-brand" href={this.props.url}>
-            <Glyphicon glyph="home"/> {this.props.name}</a>);
+            (<button type="button" className="navbar-toggle navbar-toggle-menuleft" data-toggle="offcanvas" title={Lang.get('global.toggle_menu_left')} data-target=".navmenu" data-canvas="body">
+                <a>
+                    <Glyphicon glyph="th-list"/>
+                </a>
+            </button>) : (<a className="navbar-brand" href={this.props.url}>
+            <Glyphicon glyph="home"/> {this.props.name}</a>
+        );
         return (
             <div className="navbar-header">
                 <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -48,9 +51,7 @@ var AppName = React.createClass({
                     <span className="icon-bar"></span>
                     <span className="icon-bar"></span>
                 </button>
-
-            {toggleMenu}
-
+                    {toggleMenu}
             </div>
         )
     }
