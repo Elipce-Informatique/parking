@@ -214,6 +214,7 @@ fait toute la largeur du bloc de sidebar */
 | ANIMATIONS CSS REACT
 |--------------------------------------------------------------------------
 */
+/* PROFIL */
 .tabprofil-enter {
   opacity: 0.01;
   transition: opacity .2s ease-in;
@@ -232,3 +233,41 @@ fait toute la largeur du bloc de sidebar */
   opacity: 0.01;
 
 }
+
+/* ***************** COLLAPSE ***************** */
+
+@keyframes moveFromRight {
+  0% {
+    opacity: 0;
+    max-width: 0%;
+  }
+  100% {
+    opacity: 100%;
+    width: 50%;
+  }
+}
+
+@keyframes animBody {
+  0% {
+    width: 100%;
+  }
+  100% {
+    width: 50%;
+  }
+}
+
+.collapse-collapsed{
+
+}
+
+
+.collapse-expanded > .collapse-sidebar{
+  animation: moveFromRight 300ms ease;
+  width: 50%;
+}
+.collapse-expanded > .collapse-body{
+  animation: animBody 300ms ease;
+  width: 50%;
+}
+
+/*****************/
