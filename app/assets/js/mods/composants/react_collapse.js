@@ -169,7 +169,7 @@ var Collapse = React.createClass({
             console.log(this.state.sideWidth);
             var content = {};
             if (this.props.align == "left") {
-                content = (<Row className={"collapse-row full-height "+collapseClass}>
+                content = (<Row className={"collapse-row full-height collapse-left "+collapseClass}>
                     <Col  {...this.state.sideWidth} {...sideClass}>
                         {sideBar}
                     </Col>
@@ -178,7 +178,7 @@ var Collapse = React.createClass({
                     </Col>
                 </Row>);
             } else {
-                content = (<Row className={"collapse-row full-height "+collapseClass}>
+                content = (<Row className={"collapse-row full-height collapse-right "+collapseClass}>
                     <Col {...this.state.bodyWidth} className="collapse-body full-height">
                         {this.props.children[0]}
                     </Col>

@@ -1,4 +1,5 @@
 @require 'variables.styl'
+@require 'animations_collapse.styl'
 
 /*
 |--------------------------------------------------------------------------
@@ -161,12 +162,14 @@ input[type=number]:invalid {
 /* ---------- MODE LEFT ---------- */
 .collapse-sidebar-left{
   margin-left: -1px!important;
-  padding-right: 25px!important;
+  padding-right: 0px!important;
   padding-left: 0px!important;
 }
-.collapse-collapsed{
-  margin-left: 0px!important;
+.collapse-collapsed.collapse-left{
   padding-right: 0px!important;
+}
+.collapse-expanded.collapse-left .collapse-body{
+  padding-left: 35px!important;
 }
 .collapse-sidebar-left .sidebar-content{
   padding: 15px;
@@ -201,6 +204,10 @@ fait toute la largeur du bloc de sidebar */
 .collapse-sidebar-right{
   margin-right: -15px;
 }
+.collapse-collapsed.collapse-right{
+  margin-left: 0px!important;
+  padding-right: 0px!important;
+}
 
 /* ---------- GÉNÉRALITÉS ---------- */
 .collapse-sidebar {
@@ -233,41 +240,3 @@ fait toute la largeur du bloc de sidebar */
   opacity: 0.01;
 
 }
-
-/* ***************** COLLAPSE ***************** */
-
-@keyframes moveFromRight {
-  0% {
-    opacity: 0;
-    max-width: 0%;
-  }
-  100% {
-    opacity: 100%;
-    width: 50%;
-  }
-}
-
-@keyframes animBody {
-  0% {
-    width: 100%;
-  }
-  100% {
-    width: 50%;
-  }
-}
-
-.collapse-collapsed{
-
-}
-
-
-.collapse-expanded > .collapse-sidebar{
-  animation: moveFromRight 300ms ease;
-  width: 50%;
-}
-.collapse-expanded > .collapse-body{
-  animation: animBody 300ms ease;
-  width: 50%;
-}
-
-/*****************/
