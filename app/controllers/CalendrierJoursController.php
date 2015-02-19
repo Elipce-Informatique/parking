@@ -9,7 +9,7 @@ class CalendrierJoursController extends \BaseController {
 	 */
 	public function index()
 	{
-		return View::make('calendrier_jours.blade.php')
+		return View::make('pages.calendrier_jours');
 	}
 
 
