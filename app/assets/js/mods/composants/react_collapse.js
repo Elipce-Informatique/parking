@@ -123,10 +123,6 @@ var Collapse = React.createClass({
                     };
                     bodyWidth = {md: 12};
                 }
-                // TODO A VIRER
-                //sideWidth.md = 0;
-                //bodyWidth.md = 12;
-                // TODO
 
                 state = {
                     isCollapsed: false,
@@ -156,6 +152,8 @@ var Collapse = React.createClass({
                 var sideClass = {className: "full-height collapse-sidebar collapse-sidebar-" + this.props.align + " pull-" + this.props.align};
             }
 
+            collapseClass += " md-"+this.props.sideWidth;
+
             // CLONAGE DES DEUX ÉLÉMENTS POUR AJOUTER DES PROPS
             var propsSide = {
                 onToggleClick: this.toggleSidebar,
@@ -164,8 +162,6 @@ var Collapse = React.createClass({
             };
             var sideBar = React.addons.cloneWithProps(this.props.children[1], propsSide);
 
-            console.log('Width du collapse');
-            console.log(this.state.sideWidth);
             var content = {};
             if (this.props.align == "left") {
                 content = (<Row className={"collapse-row full-height collapse-left "+collapseClass}>
