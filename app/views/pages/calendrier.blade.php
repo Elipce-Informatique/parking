@@ -5,7 +5,7 @@
         <div class="jumbotron">
             <div class="container">
                 <h1>{{Lang::get('menu.side.calendrier')}}</h1>
-                <p>{{Lang::get('administration_parking.calendrier.texte')}}</p>
+                <p>{{Lang::get('calendrier.calendrier.texte')}}</p>
             </div>
         </div>
     </div>

@@ -24,18 +24,6 @@ return array(
         'type_place' => 'Type place',
         'errorExist' => 'Cet état d\'occupation existe déjà.'
     ],
-    // MODULE CALENDRIER
-    'calendrier' => [
-        'texte' => 'La partie calendrier permet de gérer la mise en service d\'un parking ainsi que le mode veille économique'
-    ],
-    // MODULE JOURS PREDEFINIS
-    'jours_predef' => [
-        'texte' => 'Administration des jours prédéfinis'
-    ],
-    // MODULE PROGRAMMATION HORAIRE
-    'prog_horaire' => [
-        'texte' => 'Administration des ouverture, fermeture, veille économique du parking'
-    ],
     // MODULE CARTE
     'carte' => [
         'erreur_polygon' => 'Les lignes d\'un polygon ne peuvent pas se croiser',

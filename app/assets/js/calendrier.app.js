@@ -9,7 +9,7 @@ $(function () {
     var urlJour = BASE_URI + 'calendrier_jours';
     React.render(<Block
             titre={Lang.get('menu.side.jours_predef')}
-            texte={Lang.get('administration_parking.jours_predef.texte')}
+            texte={Lang.get('calendrier.jours.texte')}
             bouton={Lang.get('global.gerer')}
             bouton_url={urlJour}
             module_url="calendrier_jours"/>,
@@ -19,7 +19,7 @@ $(function () {
     var urlProg = BASE_URI + 'calendrier_programmation';
     React.render(<Block
             titre={Lang.get('menu.side.prog_horaire')}
-            texte={Lang.get('administration_parking.prog_horaire.texte')}
+            texte={Lang.get('calendrier.prog_horaire.texte')}
             bouton={Lang.get('global.gerer')}
             bouton_url={urlJour}
             module_url="calendrier_programmation"/>,
