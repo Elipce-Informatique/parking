@@ -283,12 +283,12 @@ var CollapseSidebar = React.createClass({
         var toggle = (<div className="vertical-text" onClick={this.props.onToggleClick}>
             {toggleContent}
         </div>);
-        var content = <div className="sidebar-content">{this.props.children}</div>;
+        var content = <div className="sidebar-content full-height">{this.props.children}</div>;
 
         if (this.props.isCollapsed) {
             var retour = toggle;
         } else {
-            var retour = <div>{toggle} {content}</div>;
+            var retour = <div className="full-height">{toggle} {content}</div>;
         }
         return (retour);
     }
