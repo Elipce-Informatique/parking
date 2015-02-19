@@ -8,8 +8,10 @@
 
 return [
     "top" => [
-        "administration" => "Administration",
-        "administration_parking" => "Administration parking"
+        "administration" => "Administration portail",
+        "administration_parking" => "Administration parking",
+        "supervision" => "Supervision parking",
+        "calendrier" => "Calendrier"
     ],
 
     "side" => [

@@ -9,7 +9,14 @@ class AccueilController extends \BaseController {
 	 */
 	public function index()
 	{
-		return View::make('pages.accueil');
+        $aModule = ['administration'=>'', 'administration_parking'=>'', 'supervision'=>'', 'calendrier'=>''];
+        // Parcours des modules
+        foreach($aModule as $key=>&$ligne) {
+            if (!Auth::user()->isModuleAccessibleByUrl($key)) {
+                $ligne = 'hide';
+            }
+        }
+		return View::make('pages.accueil')->with('url',$aModule);
 	}
 
 

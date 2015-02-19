@@ -11,8 +11,8 @@
     </div>
 
     <div class="row" id="blocks_admin">
-        <div class="col-md-offset-2 col-md-4 col-sm-6" id="block_etats_d_occupation"></div>
-
+        <div class="col-md-4" id="block_etats_d_occupation"></div>
+        <div class="col-md-4" id="block_calendrier"></div>
     </div>
 @stop
 
