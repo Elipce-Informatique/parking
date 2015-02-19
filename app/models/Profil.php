@@ -55,6 +55,22 @@ class Profil extends Eloquent
         else
             $aTabModule = Module::all(array('id', 'traduction', DB::raw('"null" as etat')));
 
+        // Traduction
+        foreach($aTabModule as &$ligne){
+            // Menu haut
+            if( Lang::has('menu.top.'.$ligne['traduction'])){
+                $ligne['traduction'] = Lang::get('menu.top.' . $ligne['traduction']);
+            }
+            // Menu gauche
+            else if( Lang::has('menu.side.'.$ligne['traduction'])) {
+                $ligne['traduction'] = Lang::get('menu.side.' . $ligne['traduction']);
+            }
+            // Pas de traduction
+            else{
+                $ligne['traduction'] = 'menu.side.' . $ligne['traduction'];
+            }
+        }
+
         return $aTabModule;
     }
 

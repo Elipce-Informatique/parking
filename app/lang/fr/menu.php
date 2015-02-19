@@ -15,7 +15,10 @@ return [
     "side" => [
         'utilisateurs' => 'Utilisateurs',
         'profils' => 'Profils',
-        "etats_d_occupation" => "Etats d'occupation"
+        "etats_d_occupation" => "Etats d'occupation",
+        "calendrier" => "Calendrier",
+        "jours_predef" => "Jours prédéfinis",
+        "prog_horaire" => "Programmation horaire",
 
     ],
 

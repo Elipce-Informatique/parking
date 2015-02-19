@@ -102,6 +102,12 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
      */
     Route::get('administration_parking',['as'=>'administration_parking', 'uses'=>'AdministrationParkingController@index'] );
 
+
+    /*
+     * Calendrier
+     */
+    Route::resource('calendrier', 'CalendrierController');
+
     /*
      * Test
      */
