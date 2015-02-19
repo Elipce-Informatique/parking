@@ -1,4 +1,5 @@
 @require 'variables.styl'
+@require 'animations_collapse.styl'
 
 /*
 |--------------------------------------------------------------------------
@@ -161,15 +162,33 @@ input[type=number]:invalid {
 /* ---------- MODE LEFT ---------- */
 .collapse-sidebar-left{
   margin-left: -1px!important;
-  padding-right: 25px!important;
+  padding-right: 0px!important;
   padding-left: 0px!important;
 }
-.collapse-collapsed{
-  margin-left: 0px!important;
+
+.collapse-collapsed.collapse-left{
   padding-right: 0px!important;
 }
+
+// SIDEBAR LEFT
+.collapse-expanded .collapse-sidebar-left{
+  padding-right: 23px!important;
+}
+.collapse-collapsed .collapse-sidebar-left{
+  padding-right: 0px!important;
+}
+
+// BODY LEFT
+.collapse-left.collapse-expanded .collapse-body{
+  padding-left: 0px!important;
+}
+.collapse-left.collapse-collapsed .collapse-body{
+  padding-left: 23px!important;
+}
+
+// Contenu de la sidebar left
 .collapse-sidebar-left .sidebar-content{
-  padding: 15px;
+  padding: 5px;
   background-color: c_gris_sidebar;
   border: 1px solid c_bordure_grise;
 }
@@ -192,7 +211,7 @@ fait toute la largeur du bloc de sidebar */
   margin-right: 0px;
   margin-left: 10px;
 }
-.collapse-sidebar-right .vertical-text{
+.collapse-sidebar-right .vertical-text {
   transform:rotate(-90deg) translateX(-100%);
   transform-origin: bottom left;
   text-align: right;
@@ -200,6 +219,13 @@ fait toute la largeur du bloc de sidebar */
 }
 .collapse-sidebar-right{
   margin-right: -15px;
+}
+.collapse-collapsed.collapse-right{
+  margin-left: 0px!important;
+  padding-right: 0px!important;
+}
+.collapse-right.collapse-expanded .collapse-body{
+  padding-right: 0px!important;
 }
 
 /* ---------- GÉNÉRALITÉS ---------- */
@@ -214,6 +240,7 @@ fait toute la largeur du bloc de sidebar */
 | ANIMATIONS CSS REACT
 |--------------------------------------------------------------------------
 */
+/* PROFIL */
 .tabprofil-enter {
   opacity: 0.01;
   transition: opacity .2s ease-in;

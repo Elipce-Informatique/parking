@@ -1,6 +1,7 @@
 var Row = ReactB.Row;
 var Col = ReactB.Col;
 var Glyphicon = ReactB.Glyphicon;
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 /************************************************************************
  * Created by yann on 05/02/2015.
  *
@@ -54,12 +55,11 @@ var Collapse = React.createClass({
                     bodyWidth: {
                         md: 12,
                         style: {
-                            paddingLeft: "35px"
                         }
                     }
                 };
             }
-            // Alignement DROITE TODO
+            // Alignement DROITE
             else {
                 state = {
                     isCollapsed: true,
@@ -106,7 +106,7 @@ var Collapse = React.createClass({
                     bodyWidth: bodyWidth
                 };
             }
-            // Alignement DROITE TODO
+            // Alignement DROITE
             else {
                 // CALIBRATION DE LA LARGEUR
                 var sideWidth = {md: this.props.sideWidth};
@@ -123,11 +123,13 @@ var Collapse = React.createClass({
                     };
                     bodyWidth = {md: 12};
                 }
+
                 state = {
                     isCollapsed: false,
                     sideWidth: sideWidth,
                     bodyWidth: bodyWidth
                 };
+
             }
         }
         return state;
@@ -143,10 +145,14 @@ var Collapse = React.createClass({
 
             // PRÉPARATION DES ATTRIBUTS ----------------------
             if (this.state.isCollapsed == true) {
-                var sideClass = {className: "full-height collapse-sidebar collapse-collapsed collapse-sidebar-" + this.props.align + " pull-" + this.props.align};
+                var collapseClass = "collapse-collapsed";
+                var sideClass = {className: "full-height collapse-sidebar collapse-sidebar-" + this.props.align + " pull-" + this.props.align};
             } else {
+                var collapseClass = "collapse-expanded";
                 var sideClass = {className: "full-height collapse-sidebar collapse-sidebar-" + this.props.align + " pull-" + this.props.align};
             }
+
+            collapseClass += " md-"+this.props.sideWidth;
 
             // CLONAGE DES DEUX ÉLÉMENTS POUR AJOUTER DES PROPS
             var propsSide = {
@@ -156,12 +162,10 @@ var Collapse = React.createClass({
             };
             var sideBar = React.addons.cloneWithProps(this.props.children[1], propsSide);
 
-            console.log('Width du collapse');
-            console.log(this.state.sideWidth);
             var content = {};
             if (this.props.align == "left") {
-                content = (<Row className="collapse-row full-height">
-                    <Col {...this.state.sideWidth} {...sideClass}>
+                content = (<Row className={"collapse-row full-height collapse-left "+collapseClass}>
+                    <Col  {...this.state.sideWidth} {...sideClass}>
                         {sideBar}
                     </Col>
                     <Col {...this.state.bodyWidth} className="collapse-body full-height">
@@ -169,7 +173,7 @@ var Collapse = React.createClass({
                     </Col>
                 </Row>);
             } else {
-                content = (<Row className="collapse-row full-height">
+                content = (<Row className={"collapse-row full-height collapse-right "+collapseClass}>
                     <Col {...this.state.bodyWidth} className="collapse-body full-height">
                         {this.props.children[0]}
                     </Col>
@@ -280,17 +284,24 @@ var CollapseSidebar = React.createClass({
                 <Glyphicon glyph={this.props.icon}/>
             </span>;
         }
-        var toggle = (<div className="vertical-text" onClick={this.props.onToggleClick}>
-            {toggleContent}
-        </div>);
-        var content = <div className="sidebar-content full-height">{this.props.children}</div>;
 
-        if (this.props.isCollapsed) {
-            var retour = toggle;
-        } else {
-            var retour = <div className="full-height">{toggle} {content}</div>;
-        }
-        return (retour);
+        // PRÉPARATION DU BOUTON TOGGLE
+        var toggle = (
+            <div className="vertical-text" onClick={this.props.onToggleClick}>
+                {toggleContent}
+            </div>);
+        // PRÉPARATION DU CONTENU
+        var content = !this.props.isCollapsed ? <div className="sidebar-content full-height" key='kctd'>{this.props.children}</div> : {};
+
+        return (<div className="full-height">
+            {[toggle, content]}
+
+        </div>);
+        /*
+         <ReactCSSTransitionGroup transitionName="collapse-body">
+         {[toggle, content]}
+         </ReactCSSTransitionGroup>
+         */
     }
 });
 
