@@ -55,7 +55,6 @@ var Collapse = React.createClass({
                     bodyWidth: {
                         md: 12,
                         style: {
-                            paddingLeft: "35px"
                         }
                     }
                 };

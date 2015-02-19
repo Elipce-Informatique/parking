@@ -12,7 +12,7 @@ $(function () {
 
     var url = BASE_URI + 'public/images/test_carte.svg';
     var map = React.render(
-        <Collapse align="left" sideWidth={3}>
+        <Collapse align="right" sideWidth={1}>
             <CollapseBody>
                 <ParkingMap imgUrl={url} divId="div_carte"/>
             </CollapseBody>
