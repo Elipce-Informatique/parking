@@ -1,5 +1,5 @@
 // Composants REACT
-var DataTableBandeauUser = require('../react_data_table_bandeau_calendrier_jours').Composant;
+var DataTableBandeauJours = require('../react_data_table_bandeau_calendrier_jours').Composant;
 var BandeauListe = require('../composants/bandeau/react_bandeau_liste');
 var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');
 var BandeauEdition = require('../composants/bandeau/react_bandeau_edition');
@@ -52,32 +52,29 @@ var PageCalendrierJours = React.createClass({
         switch (this.state.etat) {
             case 'visu':
                 react =
-                    <div key="rootPageuser">
+                    <div key="root">
                         <BandeauGenerique key="bandeauVisu" bandeauType={this.state.etat} module_url="utilisateur" titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom+' '+this.state.dataUser.prenom}/>
-                        <FicheUser key="ficheUserKey" editable={false} idUser={this.state.idUser}/>
                     </div>;
                 break;
             case 'edition':
                 react =
-                    <div key="rootPageuser">
+                    <div key="root">
                         <BandeauGenerique key="bandeauEdition" bandeauType={this.state.etat} module_url="utilisateur" mode={1} titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom+' '+this.state.dataUser.prenom}/>
-                        <FicheUser key="ficheUserKey" editable={true} idUser={this.state.idUser}/>
                     </div>;
                 break;
             case 'creation':
                 react =
-                    <div key="rootPageuser">
+                    <div key="root">
                         <BandeauGenerique key="bandeauCreation" bandeauType={this.state.etat} module_url="utilisateur" mode={0} titre={Lang.get('administration.utilisateur.titre')}/>
-                        <FicheUser key="ficheUserKey" editable={true} idUser={0}/>
                     </div>;
                 break;
             default:
                 react =
-                    <div key="rootPageuser">
+                    <div key="root">
                         <BandeauGenerique key="bandeauListe" bandeauType={this.state.etat} module_url="utilisateur" titre={Lang.get('administration.utilisateur.titre')}/>
                         <Row>
                             <Col md={12}>
-                                <DataTableBandeauUser/>
+                                <DataTableBandeauJours/>
                             </Col>
                         </Row>
                     </div>;
