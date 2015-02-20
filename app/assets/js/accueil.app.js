@@ -2,6 +2,7 @@
  * Created by yann on 02/12/2014.
  * @param name : nom a afficher dans le composant
  */
+require('./global/global');
 var BlockAccueil = require('./mods/composants/react_block_accueil');
 
 $(function () {

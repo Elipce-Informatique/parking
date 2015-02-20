@@ -1,4 +1,5 @@
 // ATTENTION la majuscule est super importante
+require('./global/global');
 var PageUser = require('./mods/page/react_page_utilisateur').Composant;
 
 $(function(){

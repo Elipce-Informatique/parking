@@ -22,6 +22,7 @@ var react_photo                 = require('../composants/react_photo');
 var ImageEditable               = react_photo.PhotoEditable;
 var react_color                 = require('../composants/react_color');
 var ColorPickerEditable         = react_color.ColorPickerEditable;
+var DateTimePicker              = require('react-bootstrap-datetimepicker');
 
 var ReactPageTest               = React.createClass({
 
@@ -88,7 +89,7 @@ var ReactPageTest               = React.createClass({
         return  <div>
             <Row id="Champ_texte">
                 <Col md={12}>
-                    <InputTextEditable attributes={{label:'InputTextEditable', name:"InputTextEditable", value:'InputTextEditable', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
+                    <InputTextEditable attributes={{label:'InputTextEditable', name:"InputTextEditable", value:'Vivian', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
                 </Col>
             </Row>
 
@@ -112,7 +113,7 @@ var ReactPageTest               = React.createClass({
 
             <Row id="InputImageEditable">
                 <Col md={12}>
-                    <ImageEditable src='./app/assets/images/portrait_vide.gif' evts={{onClick:clickImage}} name="InputImageEditable" attributes={{name:"InputImageEditable", imgCol:4,labelCol:2}} editable={editable} />
+                    <ImageEditable src='./app/assets/images/cross.gif' evts={{onClick:clickImage}} name="InputImageEditable" attributes={{name:"InputImageEditable", imgCol:4,labelCol:2}} editable={editable} />
                 </Col>
             </Row>
 
@@ -174,6 +175,17 @@ var ReactPageTest               = React.createClass({
                     <InputCheckboxEditable key={'bt1'} attributes={{label:'InputCheckboxEditable', name:"InputCheckboxEditable", wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
                 </Col>
             </Row>
+
+            <Row id="Champ_datetime">
+                <Col md={2}>
+                    TEST date time picker
+                </Col>
+                <Col md={10}>
+                    <DateTimePicker />
+                </Col>
+            </Row>
+
+
         </div>;
     },
 

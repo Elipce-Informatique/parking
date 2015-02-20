@@ -37,6 +37,7 @@
     "q": "^1.1.1",
     "react": "^0.12.0",
     "react-bootstrap": "^0.14.0",
+    "react-bootstrap-datetimepicker": "0.0.9",
     "react-color-picker": "^2.1.4",
     "react-select": "^0.2.13",
     "reflux": "^0.2.0",

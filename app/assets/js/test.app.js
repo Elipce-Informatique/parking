@@ -1,4 +1,5 @@
 /* Composant react de la page test */
+require('./global/global');
 var ReactPageTest = require('./mods/page/react_page_test');
 
 $(function(){
