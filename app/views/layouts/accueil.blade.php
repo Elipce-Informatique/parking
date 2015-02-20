@@ -1,5 +1,7 @@
 @extends('...structure')
-
+@section('page_title')
+    {{Lang::get('accueil.bienvenue_titre')}}
+@stop
 @section('struct_css')
     @yield('css')
 @stop
