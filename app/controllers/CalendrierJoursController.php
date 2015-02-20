@@ -13,6 +13,10 @@ class CalendrierJoursController extends \BaseController {
 	}
 
 
+    public function all(){
+        return CalendrierJours::getJoursPredefinis();
+    }
+
 	/**
 	 * Show the form for creating a new resource.
 	 *
@@ -43,7 +47,7 @@ class CalendrierJoursController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		//
+		return CalendrierJours::getInfosJoursPredefinis($id);
 	}
 
 

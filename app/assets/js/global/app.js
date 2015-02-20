@@ -151,22 +151,38 @@
         "setLibelle"
     ]);
 
+/*
+ |--------------------------------------------------------------------------
+ | ACTION PROFIL REFLUX
+ |--------------------------------------------------------------------------
+ */
+global.Actions.profil = Reflux.createActions([
+    "profil_select", /* Sélection d'une ligne sur le tableau profil                                          */
+    "profil_update", /* Recharge les données du tableau des profils                                          */
+    "module_update", /* Recharge les données du tableau des modules                                          */
+    "radio_change", /* Action déclenchée lors du changement d'état d'un radio bouton du tableau des modules */
+    "libelle_change", /* Onchange du libelle du profil                                                        */
+    "setIdProfil",
+    "initMatrice",
+    "set_etat_create_edit"
+]);
+
     /*
      |--------------------------------------------------------------------------
-     | ACTION PROFIL REFLUX
+     | ACTIONS JOURS PREDEFINIS
      |--------------------------------------------------------------------------
      */
-    global.Actions.profil = Reflux.createActions([
-        "profil_select", /* Sélection d'une ligne sur le tableau profil                                          */
-        "profil_update", /* Recharge les données du tableau des profils                                          */
-        "module_update", /* Recharge les données du tableau des modules                                          */
-        "radio_change", /* Action déclenchée lors du changement d'état d'un radio bouton du tableau des modules */
-        "libelle_change", /* Onchange du libelle du profil                                                        */
-        "setIdProfil",
-        "initMatrice",
-        "set_etat_create_edit"
+    global.Actions.jours = Reflux.createActions([
+        "display_jours", /* Sélection d'une ligne sur le tableau profil                                          */
+        "jours_update"
     ]);
+
+
+
 })(window);
+
+
+
 
 /*
  |--------------------------------------------------------------------------
