@@ -1,3 +1,4 @@
+require('./global/global');
 var PageUser = require('./mods/page/react_page_compte').Composant;
 
 $(function () {

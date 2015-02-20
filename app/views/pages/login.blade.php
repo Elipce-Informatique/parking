@@ -22,4 +22,6 @@
         {{Form::submit(Lang::get('global.login'), ['class'=>'btn btn-lg btn-primary btn-block'])}}
         {{ link_to('/password/remind', Lang::get('global.password_oublie')) }}
     {{ Form::close() }}
+    <script type="text/javascript" src="{{URL::asset('/public/js/global/app.js')}}"></script>
 @stop
+
