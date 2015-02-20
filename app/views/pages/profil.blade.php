@@ -5,7 +5,7 @@
 {{--@stop--}}
 
 @section('content')
-    <div id="page_profil"></div>
+    <div id="page_profil" class="row"></div>
 @stop
 
 @section('scripts')

@@ -74,6 +74,7 @@ class Module extends Eloquent
             ->where('module_module.parent_id', $idParent)
             ->where('module_module.is_menu', 1)
             ->distinct()
+            ->orderBy('module_module.ordre')
             ->get(['modules.*']);
 
         if (count($res) > 0) {

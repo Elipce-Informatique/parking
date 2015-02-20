@@ -1,5 +1,9 @@
 @extends('...structure')
 
+@section('page_title')
+    {{Lang::get('accueil.bienvenue_titre')}}
+@stop
+
 @section('struct_css')
     <link rel="stylesheet" type="text/css" href="{{URL::asset('public/css/login.css')}}">
     @yield('css')

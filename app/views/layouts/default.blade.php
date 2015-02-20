@@ -4,6 +4,10 @@
     @yield('css')
 @stop
 
+@section('page_title')
+    {{Lang::get('accueil.bienvenue_titre')}}
+@stop
+
 @section('struct_content')
     {{-- ICI ON EST JUSTE APRÈS LE <body> --}}
 
