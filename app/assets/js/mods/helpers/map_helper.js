@@ -148,14 +148,14 @@ function getCoordsArrayFromLatLngArray(aCoords) {
 /**
  *
  */
-function createGroupPlacesFromTriangle(triangle){
+function createGroupPlacesFromTriangle(triangle) {
 
 }
 
 /**
  *
  */
-function getGroupProfondeurDeltas(){
+function getGroupProfondeurDeltas() {
 
 }
 

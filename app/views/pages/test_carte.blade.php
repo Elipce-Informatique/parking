@@ -6,9 +6,14 @@
 @stop
 
 @section('content')
-    <div id="page_test" class="row full-height">
-        <div id="map_test" class="col-md-12 full-height"></div>
+    <div id="row_tremps_reel" class="row" style="height:20%">
+        <div id="zone_temps_reel" class="col-md-12">
 
+        </div>
+    </div>
+
+    <div id="page_test" class="row" style="height:80%">
+        <div id="map_test" class="col-md-12 full-height"></div>
     </div>
 @stop
 
