@@ -56,6 +56,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 ->where('module_module.is_menu', 1)
                 ->whereNull('module_module.parent_id')
                 ->groupBy('modules.id')
+                ->orderBy('module_module.ordre')
                 ->get(['modules.*', DB::raw('1 as accessible')]);
             Session::put('menu_top_items', $modules);
         }
