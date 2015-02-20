@@ -20,7 +20,8 @@ return array(
             'ouvert' => 'Ouverture',
             'fermer' => 'Fermeture',
             'couleur' => 'Couleur'
-        ]
+        ],
+        'titre' => "Jours prédéfinis"
     ],
 
     // MODULE PROGRAMMATION HORAIRE
