@@ -32,6 +32,14 @@ return array(
         'ajouter_allee' => 'Ajouter une allée',
         'ajouter_zone' => 'Ajouter une zone',
         'ajouter_afficheur' => 'Ajouter un afficheur'
+    ],
+
+    // MODULE TEMPS REEL
+    'treel' => [
+        'alerte' => "Alertes",
+        'journal' => "Journal",
+        'anomalie' => 'Anomalies matériel',
+        'test' => "Tests"
     ]
 );
 
