@@ -22,7 +22,9 @@ var react_photo                 = require('../composants/react_photo');
 var ImageEditable               = react_photo.PhotoEditable;
 var react_color                 = require('../composants/react_color');
 var ColorPickerEditable         = react_color.ColorPickerEditable;
-var DateTimePicker              = require('react-bootstrap-datetimepicker');
+//var DateTimePicker              = require('react-bootstrap-datetimepicker');
+var InputDate                   =    Field.InputDate;
+var InputDateEditable           =    Field.InputDateEditable;
 
 var ReactPageTest               = React.createClass({
 
@@ -174,10 +176,10 @@ var ReactPageTest               = React.createClass({
 
             <Row id="Champ_datetime">
                 <Col md={2}>
-                    TEST date time picker
+                    TEST DATE NATIF
                 </Col>
-                <Col md={10}>
-                    <DateTimePicker />
+                <Col md={3}>
+                    <InputDate attributes={{value:'23/02/2015'}} />
                 </Col>
             </Row>
 

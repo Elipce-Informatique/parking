@@ -2,13 +2,17 @@ var Input = ReactB.Input;
 var OverlayTrigger = ReactB.OverlayTrigger;
 var Tooltip = ReactB.Tooltip;
 var Glyphicon = ReactB.Glyphicon;
+var Validator = require('validator');
+// Time
+var moment = require('moment');
+require('moment/locale/fr');
+moment.locale(Lang.locale());
 
 /*********/
 /* Mixin */
 var MixinInput = require('../../mixins/input_value');
 var MixinInputValue = MixinInput.InputValueMixin;
 var MixinInputChecked = MixinInput.InputCheckableMixin;
-var Validator = require('validator');
 
 /***********************/
 /* Composants Boostrap */
@@ -899,6 +903,114 @@ var InputFile = React.createClass({
     }
 });
 
+/**
+ * Champ Date
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ */
+var InputDate = React.createClass({
+    mixins: [MixinInputValue],
+
+    propTypes: {
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        onChange: React.PropTypes.func,
+        gestMod: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+        return {
+            attributes: {},
+            evts: {},
+            onChange: this.handleChange,
+            gestMod: true,
+            validator: function (val, props, state) {
+                // Champ obligatoire + vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                    return {isValid: false, style: 'default', tooltip: ''};
+                // Champ optionnel + vide
+                } else if (val.length == 0) {
+                    return {isValid: true, style: 'default', tooltip: ''};
+                }
+                // Champ rempli
+                else if (moment().isValid(val)) {
+                    return {isValid: true, style: 'success', tooltip: ''};
+                }
+                else {
+                    return {isValid: false, style: 'error', tooltip: Lang.get('global.validation_erreur_date')};
+                }
+            }
+        }
+    },
+
+    // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
+
+    render: function () {
+        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
+        return (
+            <Input
+                type="date"
+                {...this.props.attributes}
+                {...this.props.evts}
+                {...gestMod}
+                value = {this.state.value}
+                onChange={this.handleChange}
+                ref = "InputField"
+            />
+        );
+    }
+});
+
+/**
+ * Champ date editable => si pas editable INPUT devient LABEL.
+ * @param editable: (bool) Si true alors INPUT sinon LABEL
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ * {
+ *      isValid: false|true
+ *      style: 'success|warning|error|default',
+ *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
+ * }
+ */
+var InputDateEditable = React.createClass({
+
+    propTypes: {
+        editable: React.PropTypes.bool.isRequired,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        gestMod: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+        return {
+            attributes: {value: ''},
+            evts: {},
+            gestMod: true
+        }
+    },
+
+    render: function () {
+        var retour;
+        // Editable
+        if (this.props.editable) {
+            retour = <InputDate
+                defaultValue = {this.props.attributes.value}
+                attributes = {this.props.attributes}
+                evts       = {this.props.evts}
+                ref        = "Editable"
+                gestMod    = {this.props.gestMod}
+            />
+        }
+        // Non editable
+        else
+            retour = modeEditableFalse(this.props.attributes);
+
+        return retour;
+    }
+});
+
 
 /*--------------------------------------------------------------
  CHECKABLE
@@ -1172,6 +1284,8 @@ module.exports.InputSelectEditable = InputSelectEditable;
 module.exports.InputNumber = InputNumber;
 module.exports.InputNumberEditable = InputNumberEditable;
 module.exports.InputFile = InputFile;
+module.exports.InputDate = InputDate;
+module.exports.InputDateEditable = InputDateEditable;
 
 
 // FONCTIONS
