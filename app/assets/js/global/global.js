@@ -17,7 +17,6 @@
     global.Select = require('react-select');
     global.ReactColorPicker = require('react-color-picker');
 
-
     /*
      |--------------------------------------------------------------------------
      | DEFINITION DE GLOBALES
@@ -88,6 +87,30 @@
 
     /*
      |--------------------------------------------------------------------------
+     | ACTIONS CARTE REFLUX
+     |--------------------------------------------------------------------------
+     */
+    global.Actions.map = Reflux.createActions([
+        // ACTIONS MAP GENERALES
+        "map_initialized",
+        // ACTIONS DE DESSIN
+        "draw_created",
+        "draw_deleted",
+        "draw_drawstart",
+        "draw_drawstop",
+        "draw_editstart",
+        "draw_editstop",
+        "draw_deletestart",
+        "draw_deletestop",
+        // ACTIONS DE MODE DE DESSIN
+        "mode_place",
+        "mode_place_auto",
+        "mode_allee",
+        "mode_zone",
+        "mode_afficheur"
+    ]);
+    /*
+     |--------------------------------------------------------------------------
      | ACTIONS USER REFLUX
      |--------------------------------------------------------------------------
      */
@@ -111,6 +134,22 @@
         "set_initial_state"
     ]);
 
+    global.Actions.etats_d_occupation = Reflux.createActions([
+        "select",
+        "getInfosEtatsDoccupation",
+        "show",
+        "getTypePlace",
+        "getEtatPlace",
+        "getEtatCapteur",
+        "changeCouleur",
+        "changeEtatPlace",
+        "changeTypePlace",
+        "setLibelleInitial",
+        "setId",
+        "goModif",
+        "setLibelle"
+    ]);
+
     /*
      |--------------------------------------------------------------------------
      | ACTION PROFIL REFLUX
@@ -125,6 +164,16 @@
         "setIdProfil",
         "initMatrice",
         "set_etat_create_edit"
+    ]);
+
+    /*
+     |--------------------------------------------------------------------------
+     | ACTIONS JOURS PREDEFINIS
+     |--------------------------------------------------------------------------
+     */
+    global.Actions.jours = Reflux.createActions([
+        "display_jours", /* Sélection d'une ligne sur le tableau profil                                          */
+        "jours_update"
     ]);
 })(window);
 
