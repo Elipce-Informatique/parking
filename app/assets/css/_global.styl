@@ -87,9 +87,44 @@ body
 | Classes Elipce generales
 |--------------------------------------------------------------------------
 */
-#zone_temps_reel .panel{
+
+// ZONE TEMPS RÉEL //////////////////////////
+#zone_temps_reel, .row_temps_reel, .row_temps_reel>div, #zone_temps_reel .panel{
   height: 100%;
 }
+#zone_temps_reel {
+  min-height: 100px;
+}
+#zone_temps_reel, .row_temps_reel>div{
+  padding-bottom: 5px;
+}
+
+.row_temps_reel{
+  padding-top: 5px;
+  border-bottom: 1px solid c_bordure_grise;
+  background-color: c_gris_sidebar;
+}
+
+.row_temps_reel .panel-heading, .row_temps_reel .panel-body{
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+.panel{
+  overflow-y: auto;
+}
+.row_temps_reel .panel-body{
+  font-family: "Lucida Console", Monaco, monospace;
+  font-size: 90% ;
+  line-height: 115%;
+}
+.alert-message{
+  font-size: 75% !important;
+}
+.alert-message-wrapper .glyphicon{
+  margin-right 0
+}
+// FIN ZONE TEMPS RÉEL //////////////////////////
+
 .glyphicon{
   margin-right: 5px;
 }

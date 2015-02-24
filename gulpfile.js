@@ -180,7 +180,7 @@ gulp.task('lang_js',  function () {
         gutil.log("Remise en cache des langues terminée avec le code", code);
         //gutil.log("You access complete stdout and stderr from here"); // stdout, stderr
     });
-})
+});
 
 // TACHE BROWSERIFY FONCTIONNELLE MULTI BUNDLE
 gulp.task('browserify',  function (callback) {
