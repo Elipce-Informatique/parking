@@ -9,6 +9,7 @@ var Col = ReactB.Col;
 var Panel = ReactB.Panel;
 var Label = ReactB.Label;
 var Badge = ReactB.Badge;
+var Glyph = ReactB.Glyphicon;
 
 /**
  * Created by yann on 20/02/2015.
@@ -49,8 +50,11 @@ var ZoneTempsReel = React.createClass({
                         <AlertMessage bsStyle="warning" label="Ventouse" message="sur la place p42."/>
                         <AlertMessage bsStyle="danger" label="Zone 1" message="est complète."/>
                         <AlertMessage bsStyle="info" label="Niveau 2" message="s'est allumé."/>
+                        <AlertMessage bsStyle="success" label="Zone 2" message="est vide."/>
                         <AlertMessage bsStyle="danger" label="allée 42" message="est complète."/>
                         <AlertMessage bsStyle="danger" label="niveau 3" message="est complète."/>
+                        <AlertMessage bsStyle="info" label="Niveau 2" message="s'est allumé."/>
+                        <AlertMessage bsStyle="warning" label="Ventouse" message="sur la place p24."/>
 
                     </Panel>
                 </Col>
@@ -59,38 +63,14 @@ var ZoneTempsReel = React.createClass({
                         header={<strong>{Lang.get('administration_parking.treel.journal')}</strong>}
                         bsStyle="warning"
                         className="treel-journal">
-                        -
-                        <Label bsStyle="success">P8</Label>
-                        se libère.
-                        <br/>
-                        -
-                        <Label bsStyle="success">P312</Label>
-                        se libère.
-                        <br/>
-                        -
-                        <Label bsStyle="warning">P21</Label>
-                        est occupée.
-                        <br/>
-                        -
-                        <Label bsStyle="success">P534</Label>
-                        se libère.
-                        <br/>
-                        -
-                        <Label bsStyle="warning">P850</Label>
-                        est occupée.
-                        <br/>
-                        -
-                        <Label bsStyle="warning">P73</Label>
-                        est occupée.
-                        <br/>
-                        -
-                        <Label bsStyle="warning">P245</Label>
-                        est occupée.
-                        <br/>
-                        -
-                        <Label bsStyle="success">P42</Label>
-                        se libère.
-                        <br/>
+                        <AlertMessage bsStyle="success" label="P8" message="se libère."/>
+                        <AlertMessage bsStyle="success" label="P32" message="se libère."/>
+                        <AlertMessage bsStyle="warning" label="P21" message="est occupée."/>
+                        <AlertMessage bsStyle="success" label="P534" message="se libère."/>
+                        <AlertMessage bsStyle="warning" label="P850" message="est occupée."/>
+                        <AlertMessage bsStyle="warning" label="P73" message="est occupée."/>
+                        <AlertMessage bsStyle="warning" label="P245" message="est occupée."/>
+                        <AlertMessage bsStyle="success" label="P42" message="se libère."/>
                     </Panel>
                 </Col>
                 <Col md={3}>
@@ -98,7 +78,13 @@ var ZoneTempsReel = React.createClass({
                         header={<strong>{Lang.get('administration_parking.treel.anomalie')}</strong>}
                         bsStyle="warning"
                         className="treel-anomalie">
-                        Panel content
+                        <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 01-03-128 ne fonctionne plus."/>
+                        <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 04-02-136 ne fonctionne plus."/>
+                        <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 01-05-037 ne fonctionne plus."/>
+                        <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 03-06-201 ne fonctionne plus."/>
+                        <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 03-00-205 ne fonctionne plus."/>
+                        <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 01-08-209 ne fonctionne plus."/>
+                        <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 02-04-204 ne fonctionne plus."/>
                     </Panel>
                 </Col>
                 <Col md={3}>
@@ -146,10 +132,10 @@ var AlertMessage = React.createClass({
     },
 
     render: function () {
-        return (<span>
-            <Badge>{this.props.datetime}</Badge>
+        return (<span className="alert-message-wrapper">
+            <Label bsStyle="default">{this.props.datetime}</Label>
             <Label bsStyle={this.props.bsStyle}>{this.props.label}</Label>
-            {" " + this.props.message}
+            <span className="alert-message">{" " + this.props.message}</span>
             <br/>
         </span>);
     }
