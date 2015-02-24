@@ -22,5 +22,7 @@ module.exports = {
     InputNumberEditable: Input.InputNumberEditable,
     InputTel: Input.InputTel,
     InputTelEditable: Input.InputTelEditable,
-    InputFile: Input.InputFile
+    InputFile: Input.InputFile,
+    InputTime: Input.InputTime,
+    InputTimeEditable: Input.InputTimeEditable
 };

@@ -6,6 +6,7 @@ var Validator = require('validator');
 // Time
 var moment = require('moment');
 require('moment/locale/fr');
+require('moment/locale/en-gb');
 moment.locale(Lang.locale());
 
 /*********/
@@ -367,12 +368,6 @@ var InputPassword = React.createClass({
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
- * {
- *      isValid: false|true
- *      style: 'success|warning|error|default',
- *      tooltip: 'La donnée saisie est déjà présente dans la base de données.'
- * }
  */
 var InputPasswordEditable = React.createClass({
 
@@ -647,12 +642,6 @@ var InputNumber = React.createClass({
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
- * {
- *      isValid: false|true
- *      style: 'success|warning|error|default',
- *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
- * }
  */
 var InputNumberEditable = React.createClass({
 
@@ -785,12 +774,6 @@ var InputTel = React.createClass({
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
- * {
- *      isValid: false|true
- *      style: 'success|warning|error|default',
- *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
- * }
  */
 var InputTelEditable = React.createClass({
 
@@ -908,6 +891,12 @@ var InputFile = React.createClass({
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
  * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ * {
+ *      isValid: false|true
+ *      style: 'success|warning|error|default',
+ *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
+ * }
  */
 var InputDate = React.createClass({
     mixins: [MixinInputValue],
@@ -927,16 +916,18 @@ var InputDate = React.createClass({
             gestMod: true,
             validator: function (val, props, state) {
                 // Champ obligatoire + vide
+                //console.log('length:'+val.length+' required: '+typeof(props.attributes.required));
                 if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
                     return {isValid: false, style: 'default', tooltip: ''};
                 // Champ optionnel + vide
                 } else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
-                // Champ rempli
+                // Champ rempli + valide
                 else if (moment().isValid(val)) {
                     return {isValid: true, style: 'success', tooltip: ''};
                 }
+                // Format erroné
                 else {
                     return {isValid: false, style: 'error', tooltip: Lang.get('global.validation_erreur_date')};
                 }
@@ -947,16 +938,27 @@ var InputDate = React.createClass({
     // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
     render: function () {
-        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
+
+
+        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
+        var propsAttrs = _.cloneDeep(this.props.attributes);
+        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
+        var attrs = _.extend(propsAttrs, this.state.attributes);
+
+        // Ajout de l'addon required si besoin
+        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
+            attrs = addRequiredAddon(attrs, this.state.value);
+        }
+        // Affichage
         return (
             <Input
                 type="date"
-                {...this.props.attributes}
+                {...attrs}
                 {...this.props.evts}
-                {...gestMod}
-                value = {this.state.value}
-                onChange={this.handleChange}
+                onChange = {this.handleChange}
+                value={this.state.value}
                 ref = "InputField"
+                hasFeedback
             />
         );
     }
@@ -967,12 +969,6 @@ var InputDate = React.createClass({
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
- * {
- *      isValid: false|true
- *      style: 'success|warning|error|default',
- *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
- * }
  */
 var InputDateEditable = React.createClass({
 
@@ -996,6 +992,150 @@ var InputDateEditable = React.createClass({
         // Editable
         if (this.props.editable) {
             retour = <InputDate
+                        defaultValue = {this.props.attributes.value}
+                        attributes = {this.props.attributes}
+                        evts       = {this.props.evts}
+                        ref        = "Editable"
+                        gestMod    = {this.props.gestMod}
+            />
+        }
+        // Non editable
+        else {
+            // Format d'affichage de la date en fonction de la langue
+            var date = moment(this.props.attributes.value).format('L');
+            var attrs = _.cloneDeep(this.props.attributes);
+            attrs.value = date;
+            // Création du HTML
+            retour = modeEditableFalse(attrs);
+        }
+
+        return retour;
+    }
+});
+
+
+/**
+ * Champ Time: heure / min / sec
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ * {
+ *      isValid: false|true
+ *      style: 'success|warning|error|default',
+ *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
+ * }
+ */
+var InputTime = React.createClass({
+    mixins: [MixinInputValue],
+
+    propTypes: {
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        onChange: React.PropTypes.func,
+        gestMod: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+
+        return {
+            attributes: {},
+            evts: {},
+            onChange: this.handleChange,
+            gestMod: true,
+            validator: function (val, props, state, inputNode) {
+                //console.log('length:'+val.length+' required: '+typeof(props.attributes.required));
+
+                // Champ obligatoire + vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                    var tooltip = '';
+                    // Champ invalidé par HTML + vidé automatiquement => Le test est effectué dans le mixin pour ce qui est de la coloration rouge
+                    if(inputNode !== undefined && $(inputNode).find(':invalid').length > 0){
+                        tooltip = Lang.get('global.validation_erreur_time');
+                    }
+                    return {isValid: false, style: 'default', tooltip: tooltip};
+                }
+                // Champ optionnel + vide
+                else if (val.length == 0) {
+                    var tooltip = '';
+                    // Champ invalidé par HTML + vidé automatiquement
+                    if(inputNode !== undefined && $(inputNode).find(':invalid').length > 0){
+                        tooltip = Lang.get('global.validation_erreur_time');
+                    }
+                    return {isValid: true, style: 'default', tooltip: tooltip};
+                }
+                // Champ rempli + valide
+                else if (moment().isValid(val)) {
+                    return {isValid: true, style: 'success', tooltip: ''};
+                }
+                // Format erroné => NE PEUT PASSER DANS CE CAS CAR HTML5 VIDE LE CHAMP
+                else {
+                    return {isValid: false, style: 'error', tooltip: Lang.get('global.validation_erreur_time')};
+                }
+            }
+        }
+    },
+
+    // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
+
+    render: function () {
+
+
+        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
+        var propsAttrs = _.cloneDeep(this.props.attributes);
+        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
+        var attrs = _.extend(propsAttrs, this.state.attributes);
+
+        // Ajout de l'addon required si besoin
+        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
+            attrs = addRequiredAddon(attrs, this.state.value);
+        }
+
+        // Affichage
+        return (
+            <Input
+                type="time"
+                {...attrs}
+                {...this.props.evts}
+                onChange = {this.handleChange}
+                value={this.state.value}
+                ref = "InputField"
+                hasFeedback
+            />
+        );
+    }
+});
+
+
+
+/**
+ * Champ time editable => si pas editable INPUT devient LABEL.
+ * @param editable: (bool) Si true alors INPUT sinon LABEL
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ */
+var InputTimeEditable = React.createClass({
+
+    propTypes: {
+        editable: React.PropTypes.bool.isRequired,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        gestMod: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+        return {
+            attributes: {value: ''},
+            evts: {},
+            gestMod: true
+        }
+    },
+
+    render: function () {
+        var retour;
+        // Editable
+        if (this.props.editable) {
+            retour = <InputTime
                 defaultValue = {this.props.attributes.value}
                 attributes = {this.props.attributes}
                 evts       = {this.props.evts}
@@ -1004,13 +1144,14 @@ var InputDateEditable = React.createClass({
             />
         }
         // Non editable
-        else
+        else {
+            // Création du HTML
             retour = modeEditableFalse(this.props.attributes);
+        }
 
         return retour;
     }
 });
-
 
 /*--------------------------------------------------------------
  CHECKABLE
@@ -1286,6 +1427,8 @@ module.exports.InputNumberEditable = InputNumberEditable;
 module.exports.InputFile = InputFile;
 module.exports.InputDate = InputDate;
 module.exports.InputDateEditable = InputDateEditable;
+module.exports.InputTime = InputTime;
+module.exports.InputTimeEditable = InputTimeEditable;
 
 
 // FONCTIONS
