@@ -22,7 +22,11 @@ var react_photo                 = require('../composants/react_photo');
 var ImageEditable               = react_photo.PhotoEditable;
 var react_color                 = require('../composants/react_color');
 var ColorPickerEditable         = react_color.ColorPickerEditable;
-var DateTimePicker              = require('react-bootstrap-datetimepicker');
+//var DateTimePicker              = require('react-bootstrap-datetimepicker');
+var InputDate                   =    Field.InputDate;
+var InputDateEditable           =    Field.InputDateEditable;
+var InputTime                   =    Field.InputTime;
+var InputTimeEditable           =    Field.InputTimeEditable;
 
 var ReactPageTest               = React.createClass({
 
@@ -60,7 +64,7 @@ var ReactPageTest               = React.createClass({
      * @returns {XML}
      */
     render: function () {
-        var editable = true;
+        var editable = false;
 
         /*********************/
         /* Paramètres Select */
@@ -85,7 +89,7 @@ var ReactPageTest               = React.createClass({
         }
         /* FIN : Paramètres Select */
         /***************************/
-
+        
         return  <div>
             <Row id="Champ_texte">
                 <Col md={12}>
@@ -177,14 +181,22 @@ var ReactPageTest               = React.createClass({
             </Row>
 
             <Row id="Champ_datetime">
-                <Col md={2}>
-                    TEST date time picker
-                </Col>
-                <Col md={10}>
-                    <DateTimePicker />
+                    <Col md={12}>
+                    <InputDate attributes={{label:'Champ date natif',value:'2015-02-23',required:true, wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} />
                 </Col>
             </Row>
 
+            <Row id="Champ_datetime_editable">
+                <Col md={12}>
+                    <InputDateEditable attributes={{label:'Champ date editable',value:'2015-02-23',required:true, wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
+                </Col>
+            </Row>
+
+            <Row id="Champ_time_editable">
+                <Col md={12}>
+                    <InputTimeEditable attributes={{label:'Champ time editable',value:'10:00:25', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
+                </Col>
+            </Row>
 
         </div>;
     },

@@ -71,12 +71,19 @@ var InputValueMixin = {
         // MISE À JOUR DE L'ÉTAT DU COMPOSANT
         this.setState({attributes: attrs, value: val});
     },
+    /**
+     * Calcule les attributs à envoyer dans le state.
+     * Entre autre mais IMPORTANT :Teste la validité d'un champ HTML ex: input type=date :invalid si saisie --/03/15
+     * @param val: value de l'input
+     * @param DOM: Element DOM input (facultatif)
+     * @returns {{}}
+     */
     getStateAttributes: function (val, DOM) {
         var attrs = {};
         // 1. MERGE ATTRS AVEC GESTION MODIF
         attrs = _.extend((this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {}), attrs);
         // 2. VALIDATION VALUE
-        var validation = this.props.validator(val, this.props, this.state);
+        var validation = this.props.validator(val, this.props, this.state, DOM);
         // 3. ATTR DATA-VALID
         var html5Validity = true;
         if (typeof(DOM) != 'undefined') {

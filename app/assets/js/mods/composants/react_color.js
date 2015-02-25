@@ -43,6 +43,11 @@ var ColorPicker = React.createClass({
             boxShadow: '3px 3px 3px #888888',
             borderRadius: "5px"
         };
+        console.log('this.props.color : %o', this.props.color);
+        console.log('this.props.width : %o', this.props.width);
+        console.log('this.props.attributes : %o', this.props.attributes);
+        var mdLabel = (this.props.attributes.labelCol !== undefined ? this.props.attributes.labelCol : 1);
+        var mdColor = (this.props.attributes.colorCol !== undefined ? this.props.attributes.colorCol : 1);
 
         var label = (this.props.attributes.label !== undefined ? this.props.attributes.label : '');
         var classRow   = (this.props.attributes.groupClassName !== undefined ? {className: this.props.attributes.groupClassName} : {});
