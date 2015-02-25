@@ -105,7 +105,10 @@ var ZoneTempsReel = React.createClass({
 var AlertMessage = React.createClass({
 
     propTypes: {
-        label: React.PropTypes.string.isRequired,
+        label: React.PropTypes.oneOfType([
+            React.PropTypes.string,
+            React.PropTypes.object
+        ]),
         message: React.PropTypes.string.isRequired,
         datetime: React.PropTypes.string,
         bsStyle: React.PropTypes.string

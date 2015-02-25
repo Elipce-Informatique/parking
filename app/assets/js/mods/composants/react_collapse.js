@@ -222,8 +222,6 @@ var CollapseBody = React.createClass({
     },
 
     render: function () {
-        console.log('Children du collapse BODY : ');
-        console.log(this.props.children);
 
         return (
             <div className="full-height">{this.props.children}</div>
