@@ -6,6 +6,9 @@ var CollapseBody = require('./mods/composants/react_collapse').CollapseBody;
 var CollapseSidebar = require('./mods/composants/react_collapse').CollapseSidebar;
 var ZoneTempsReel = require('./mods/react_supervision_temps_reel');
 
+// Test D3
+var TestD3 = require('./mods/charts/test_d3');
+
 /**
  * Au chargement du DOM
  * Préparation de la carte
@@ -21,7 +24,7 @@ $(function () {
                 <ParkingMap imgUrl={url} divId="div_carte"/>
             </CollapseBody>
             <CollapseSidebar title="Reporting">
-                <span>Voici le contenu de la sidebar Voici le contenu de la sidebar Voici le contenu de la sidebar Voici le contenu de la sidebar Voici le contenu de la sidebar</span>
+                <TestD3 />
             </CollapseSidebar>
         </Collapse>,
         document.getElementById('map_test')
