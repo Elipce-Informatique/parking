@@ -21,6 +21,7 @@ var InputTelEditable            = Field.InputTelEditable;
 var react_photo                 = require('../composants/react_photo');
 var ImageEditable               = react_photo.PhotoEditable;
 var react_color                 = require('../composants/react_color');
+var ColorPicker                 = react_color.ColorPicker;
 var ColorPickerEditable         = react_color.ColorPickerEditable;
 //var ColorPicker                 = react_color.ColorPicker;
 //var DateTimePicker              = require('react-bootstrap-datetimepicker');
@@ -28,9 +29,14 @@ var InputDate                   =    Field.InputDate;
 var InputDateEditable           =    Field.InputDateEditable;
 var InputTime                   =    Field.InputTime;
 var InputTimeEditable           =    Field.InputTimeEditable;
+var Form                        = Field.Form;
+
+// MIXINS ////
+var MixinGestMod = require('../mixins/gestion_modif');
 
 var ReactPageTest               = React.createClass({
 
+    mixins: [MixinGestMod, Reflux.ListenerMixin],
     /**
      * État initial des données du composant
      * @returns les données de l'état initial
@@ -87,7 +93,7 @@ var ReactPageTest               = React.createClass({
         /* FIN : Paramètres Select */
         /***************************/
         
-        return  <div>
+        return  <Form>
             <Row id="Champ_texte">
                 <Col md={12}>
                     <InputTextEditable attributes={{label:'InputTextEditable', name:"InputTextEditable", value:'Vivian', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
@@ -117,9 +123,14 @@ var ReactPageTest               = React.createClass({
                     <ImageEditable src='./app/assets/images/cross.gif' evts={{onClick:clickImage}} name="InputImageEditable" attributes={{name:"InputImageEditable", imgCol:4,labelCol:2}} editable={editable} />
                 </Col>
             </Row>
+            <Row id="InputColor">
+                <Col md={12}>
+                    <ColorPicker color="#123456" label="Couleur" mdColor={4} mdLabel={2} />
+                </Col>
+            </Row>
             <Row id="InputColorEditable">
                 <Col md={12}>
-                    <ColorPickerEditable color="#123456" attributes={{label:"Couleur", colorCol:4,labelCol:2, name:"toto"}} editable={editable} />
+                    <ColorPickerEditable color="#AAAAAA" label="Couleur" mdColor={4} mdLabel={2} attributes={{name:"toto"}} editable={editable} />
                 </Col>
             </Row>
 
@@ -194,7 +205,7 @@ var ReactPageTest               = React.createClass({
                 </Col>
             </Row>
 
-        </div>;
+        </Form>;
     },
 
     /**
@@ -204,6 +215,10 @@ var ReactPageTest               = React.createClass({
     updateState: function(data) {
         // MAJ data automatique, lifecycle "UPDATE"
         this.setState(data);
+    },
+
+    onRetour: function(){
+
     }
 });
 module.exports = ReactPageTest;
