@@ -22,6 +22,7 @@ var react_photo                 = require('../composants/react_photo');
 var ImageEditable               = react_photo.PhotoEditable;
 var react_color                 = require('../composants/react_color');
 var ColorPickerEditable         = react_color.ColorPickerEditable;
+//var ColorPicker                 = react_color.ColorPicker;
 //var DateTimePicker              = require('react-bootstrap-datetimepicker');
 var InputDate                   =    Field.InputDate;
 var InputDateEditable           =    Field.InputDateEditable;
@@ -60,7 +61,7 @@ var ReactPageTest               = React.createClass({
      * @returns {XML}
      */
     render: function () {
-        var editable = false;
+        var editable = true;
 
         /*********************/
         /* Paramètres Select */
@@ -116,10 +117,9 @@ var ReactPageTest               = React.createClass({
                     <ImageEditable src='./app/assets/images/cross.gif' evts={{onClick:clickImage}} name="InputImageEditable" attributes={{name:"InputImageEditable", imgCol:4,labelCol:2}} editable={editable} />
                 </Col>
             </Row>
-
             <Row id="InputColorEditable">
                 <Col md={12}>
-                    <ColorPickerEditable color="#123456" attributes={{label:"Couleur", colorCol:4,labelCol:2}} editable={editable} />
+                    <ColorPickerEditable color="#123456" attributes={{label:"Couleur", colorCol:4,labelCol:2, name:"toto"}} editable={editable} />
                 </Col>
             </Row>
 
