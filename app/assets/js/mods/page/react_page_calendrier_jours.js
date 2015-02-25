@@ -7,7 +7,8 @@ var BandeauGenerique = require('../composants/bandeau/react_bandeau_generique');
 var Button = ReactB.Button;
 var Row = ReactB.Row;
 var Col = ReactB.Col;
-
+var FormJours = require('../react_form_calendrier_jours').Composant;
+//console.log(FormJours);console.log(Col);
 // MIXINS
 var AuthentMixins = require('../mixins/component_access');
 var MixinGestMod = require('../mixins/gestion_modif');
@@ -48,7 +49,6 @@ var PageCalendrierJours = React.createClass({
 
     display: function () {
         var react;
-
         //console.log('STATE %o', this.state);
         switch (this.state.etat) {
             case 'visu':
@@ -72,6 +72,7 @@ var PageCalendrierJours = React.createClass({
                 react =
                     <div key="root">
                         <BandeauGenerique key="bandeauCreation" bandeauType={this.state.etat} module_url="calendrier_jours" mode={0} titre={Lang.get('calendrier.jours.titre')}/>
+                        <FormJours editable={true} jourData={this.state.dataJour} idJour={this.state.idJour} />
                     </div>;
                 break;
             default:
@@ -121,7 +122,7 @@ var storeCalendrierJours = Reflux.createStore({
 
         // Register statusUpdate action
         this.listenTo(Actions.jours.display_jours, this.modeVisu);
-        //this.listenTo(Actions.bandeau.creer, this.modeCreation);
+        this.listenTo(Actions.bandeau.creer, this.modeCreation);
         //this.listenTo(Actions.bandeau.editer, this.modeEdition);
         //this.listenTo(Actions.validation.submit_form, this.sauvegarder);
         //this.listenTo(Actions.bandeau.supprimer, this.supprimer);
@@ -174,9 +175,7 @@ var storeCalendrierJours = Reflux.createStore({
     },
 
     modeCreation: function () {
-        console.log('Mode création');
-        this.stateLocal = {idJour:0, etat: 'creation', dataJour:{nom:'', prenom:''}};
-        //console.log('PAGE USER mode création '+this.idJour);
+        this.stateLocal = {idJour:0, etat: 'creation', dataJour:{'libelle' : '','ouverture' : '','fermeture' : '','couleur' : ''}};
         this.trigger(this.stateLocal);
     },
 

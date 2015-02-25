@@ -1,20 +1,19 @@
 // COMPOSANTS REACT
 var Field = require('./composants/formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
-var InputMailEditable = Field.InputMailEditable;
-var react_photo       = require('./composants/react_photo');
-var form_data_helper  = require('./helpers/form_data_helper');
+var Color = require('./composants/react_color').ColorPickerEditable;
 var Row = ReactB.Row;
 var Col = ReactB.Col;
 var Button = ReactB.Button;
 var ButtonToolbar = ReactB.ButtonToolbar;
 var Glyphicon = ReactB.Glyphicon;
-var FormValidationMixin = require('./mixins/form_validation');
-
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var InputRadioEditable = Field.InputRadioEditable;
 var InputPasswordEditable = Field.InputPasswordEditable;
 var Form = Field.Form;
+var InputTimeEditable = Field.InputTimeEditable;
+
+// Mixin
+var FormValidationMixin = require('./mixins/form_validation');
 
 /**
  * Formulaire de jours prédéfinis
@@ -32,111 +31,64 @@ var FormJours = React.createClass({
     },
     getDefaultProps: function () {
         return {
-            jourData: {}
+            jourData: {},
+            idJour: 0
         }
-    },
-
-    getInitialState: function () {
-        var retour = {
-           'libelle' : '',
-            'ouverture' : '',
-            'fermeture' : '',
-            'couleur' : ''
-        };
-        return retour;
-    },
-
-    componentWillMount: function () {
-        // Liaison au store
-        this.listenTo(ficheUserStore, this.updateData, this.updateData);
-
-        // Appel du chargement
-        Actions.utilisateur.set_etat_create_edit(this.props.idJour==0);
-        Actions.utilisateur.set_etat_compte(this.props.modeCompte);
-
-        if(!this.props.modeCompte) {
-            Actions.utilisateur.load_user_info(this.props.idJour);
-        }
-        else{
-            var state = {
-                nom:    this.props.jourData.nom,
-                prenom: this.props.jourData.prenom,
-                email:  this.props.jourData.email,
-                photo:  this.props.jourData.photo
-            };
-            Actions.utilisateur.set_initial_state(state);
-            this.setState(state);
-        }
-    },
-
-    componentWillReceiveProps: function(newProps){
-        if(this.props.idJour != newProps.idJour)
-            Actions.utilisateur.load_user_info(newProps.idJour);
-    },
-
-    changePhoto: function (evt){
-        var copie = _.clone(evt);
-        Actions.utilisateur.changePhoto(copie);
     },
 
     render: function () {
-        
-
-            titreBis = Lang.get('administration.utilisateur.profilsAssocie');
-            var tableau = <DataTable
-                            id='dataTableProfils'
-                            bUnderline={false}
-                            head={headP}
-                            data={this.state.dataProfil}
-                            hide={hideP}
-                            reactElements={aReactElements}
-                            key="testkey"
-                            editable={this.props.editable}/> ;
-            //tableau = <p key="uniquekey">test</p>;
-            if(this.state.tabProfilHide){
-                tableau = {};
-            }
-
 
         return (
-            <Form attributes={{id:"form_utilisateur"}}>
-                    <InputTextEditable
-                        attributes={{
-                            label: Lang.get('calendrier.jours.tableau.nom'),
-                            name: "nom",
-                            value: this.state.libelle,
-                            required: true,
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-1 text-right',
-                            groupClassName: 'row'
-                        }}
-                        editable={this.props.editable}
-                        evts={{onChange: this.test}}/>
-                    <InputTextEditable attributes={{
-                        label: Lang.get('administration.utilisateur.tableau.prenom'),
-                        name: "prenom",
-                        value: this.state.prenom,
+            <Form attributes={{id:"form_jours"}}>
+                <Row />
+                <InputTextEditable
+                    attributes={{
+                        label: Lang.get('calendrier.jours.tableau.nom'),
+                        name: "nom",
+                        value: this.props.jourData.libelle,
                         required: true,
                         wrapperClassName: 'col-md-4',
                         labelClassName: 'col-md-1 text-right',
                         groupClassName: 'row'
-                    }} editable={this.props.editable} />
+                    }}
+                    editable={this.props.editable}
+                    evts={{onChange: this.test}}/>
+                <InputTimeEditable
+                    attributes={{
+                        label: Lang.get('calendrier.jours.tableau.ouvert'),
+                        name: "ouverture",
+                        value: this.props.jourData.ouverture,
+                        required: true,
+                        wrapperClassName: 'col-md-1',
+                        labelClassName: 'col-md-1 text-right',
+                        groupClassName: 'row'
+                    }}
+                    editable={this.props.editable} />
+                <InputTimeEditable
+                    attributes={{
+                        label: Lang.get('calendrier.jours.tableau.fermer'),
+                        name: "fermeture",
+                        value: this.props.jourData.fermeture,
+                        required: true,
+                        wrapperClassName: 'col-md-1',
+                        labelClassName: 'col-md-1 text-right',
+                        groupClassName: 'row'
+                    }}
+                    editable={this.props.editable} />
+                <Color
+                    color = {this.props.jourData.couleur}
+                    label = {Lang.get('calendrier.jours.tableau.couleur')}
+                    attributes={{
+                        name: "couleur",
+                        required: true
+                    }}
+                    editable={this.props.editable}
+                    mdLabel={1} mdColor={2}
+                />
 
             </Form>
         );
-    },
-
-    /**
-     * Mise à jour des données utilisateur
-     * @param {object} data
-     */
-    updateData: function (data) {
-        try {
-            this.setState(data);
-        }
-        catch (e) {
-
-        }
     }
+
 });
-module.exports.Composant = FicheUser;
+module.exports.Composant = FormJours;

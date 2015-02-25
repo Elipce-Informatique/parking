@@ -128,13 +128,17 @@ var reactEtatDoccupation = React.createClass({
                             />
                         </Col>
                         <Col md={12}>
-                            <ColorPickerEditable evts={{onBlur:this.onBlurCouleur}}
-                                                 attributes={{value:           this.state.couleur,
-                                                              label:           Lang.get('administration_parking.etats_d_occupation.tableau.couleur'),
-                                                              wrapperClassName:'col-md-4',
-                                                              labelClassName:  'col-md-2',
-                                                              groupClassName:  'row'}}
-                                                 editable={this.props.editable} />
+                            <ColorPickerEditable
+                                color = {this.state.couleur}
+                                label = {Lang.get('administration_parking.etats_d_occupation.tableau.couleur')}
+                                attributes={{
+                                    name: "couleur",
+                                    required: true
+                                }}
+                                editable={this.props.editable}
+                                mdLabel={2} mdColor={2}
+                                evts={{onBlur:this.onBlurCouleur}}
+                            />
                         </Col>
                         <Col md={12}>
                             <InputSelectEditable evts      ={{onChange:this.etatPlaceChange}}

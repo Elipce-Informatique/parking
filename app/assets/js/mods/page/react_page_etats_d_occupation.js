@@ -27,13 +27,6 @@ var BandeauGenerique = require('../composants/bandeau/react_bandeau_generique');
 /* Composant tableau des états d'occupation */
 var DataTable            = require('../composants/tableau/react_data_table');
 
-/* Pour la colonne couleur du tableau, utilisation du composant ReactColor  */
-var aReactElements  = {};
-aReactElements['1'] = new Array();  /* Colonne n°1 du tableau               */
-aReactElements['1'][0] = 'Couleur'; /* Type de composant à ajouter          */
-aReactElements['4'] = new Array();  /* Colonne n°4 du tableau               */
-aReactElements['4'][0] = 'Image';   /* Type de composant à ajouter          */
-aReactElements['4'][1] = 'app/storage/documents/logo_type_place/'; /* Path à rajouter devant les images */
 
 /*************************************/
 /* Composant react_etat_d_occupation */
@@ -55,6 +48,7 @@ var ReactPageEtatsDoccupation  = React.createClass({
             Lang.get('administration_parking.etats_d_occupation.tableau.etat_place'),
             Lang.get('administration_parking.etats_d_occupation.tableau.logo')],
     hide : ['id'],
+    aReactElements : {'1':['Couleur'], '4':['Image','app/storage/documents/logo_type_place/']},
     /**
      * Les props par défaut
      */
@@ -184,7 +178,7 @@ var ReactPageEtatsDoccupation  = React.createClass({
                                        hide={this.hide}
                                        bUnderline={true}
                                        evts={{onClick:this.displayEtatDoccupation}}
-                                       reactElements={aReactElements}/>
+                                       reactElements={this.aReactElements}/>
                         </Col>
                     </Row>
                 </div>;

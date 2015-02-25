@@ -11,6 +11,7 @@ var DataTableBandeauJourReact = React.createClass({
 
     head : [Lang.get('calendrier.jours.tableau.nom'),Lang.get('calendrier.jours.tableau.ouvert'),Lang.get('calendrier.jours.tableau.fermer'), Lang.get('calendrier.jours.tableau.couleur')],
     hide : ['id'],
+    aReactElements : {'3':['Couleur']},
     // evts ne pas mettre ici car this.displayJours n'est pas encore connu
 
 
@@ -32,7 +33,7 @@ var DataTableBandeauJourReact = React.createClass({
     render: function() {
 
         return (
-         <DataTableBandeau id="tab_jours" head={this.head} data={this.props.data} hide={this.hide} attributes={this.attributes} bUnderline={true} evts={{onClick:this.displayJours}}/>
+         <DataTableBandeau id="tab_jours" head={this.head} reactElements={this.aReactElements} data={this.props.data} hide={this.hide} attributes={this.attributes} bUnderline={true} evts={{onClick:this.displayJours}}/>
         )
     },
     
