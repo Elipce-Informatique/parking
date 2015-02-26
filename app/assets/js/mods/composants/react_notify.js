@@ -93,7 +93,7 @@ var Notify = React.createClass({
     },
 
     render: function () {
-        return <span></span>;
+        return <span key="uniquespankey"></span>;
     },
     displayNotif: function (data) {
         $.notify(data.message, data.style);

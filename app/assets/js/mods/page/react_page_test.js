@@ -23,7 +23,6 @@ var ImageEditable               = react_photo.PhotoEditable;
 var react_color                 = require('../composants/react_color');
 var ColorPicker                 = react_color.ColorPicker;
 var ColorPickerEditable         = react_color.ColorPickerEditable;
-//var ColorPicker                 = react_color.ColorPicker;
 //var DateTimePicker              = require('react-bootstrap-datetimepicker');
 var InputDate                   =    Field.InputDate;
 var InputDateEditable           =    Field.InputDateEditable;
@@ -125,12 +124,19 @@ var ReactPageTest               = React.createClass({
             </Row>
             <Row id="InputColor">
                 <Col md={12}>
-                    <ColorPicker color="#123456" label="Couleur" mdColor={4} mdLabel={2} />
+                    <ColorPicker color="AAAAAA" label="Couleur" mdColor={4} mdLabel={2} />
                 </Col>
             </Row>
             <Row id="InputColorEditable">
                 <Col md={12}>
-                    <ColorPickerEditable color="#AAAAAA" label="Couleur" mdColor={4} mdLabel={2} attributes={{name:"toto"}} editable={editable} />
+                    <ColorPickerEditable
+                        evts={{onBlur:function(e){console.log('blur color');}}}
+                        label="Couleur modifiable"
+                        mdColor={4}
+                        mdLabel={2}
+                        gestMod={true}
+                        attributes={{name:"toto",value:"AAAAAA"}}
+                        editable={editable} />
                 </Col>
             </Row>
 
