@@ -458,7 +458,7 @@ var InputSelect = React.createClass({
 
     // ATTENTION: getInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
     render: function () {
-        console.log('render select');
+        //console.log('render select');
         /* Gestion si le champ est required ou pas */
         var required = required = <div data-valid={true} />;
         if(this.props.attributes.required !== undefined){

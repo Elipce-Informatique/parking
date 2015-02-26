@@ -29,7 +29,7 @@ var ColorPicker = React.createClass({
 
     getDefaultProps: function () {
         return {
-            color: '000000',
+            color: 'FFFFFF',
             attributes: {},
             evts: {},
             height: 20,
@@ -49,7 +49,7 @@ var ColorPicker = React.createClass({
             boxShadow: '3px 3px 3px #888888',
             borderRadius: "5px"
         };
-
+        //console.log('COLOR PICKER splitterStyle %o',splitterStyle);
         return (<Row>
             <Col md={this.props.mdLabel}>
                 <label>{this.props.label}</label>
@@ -91,7 +91,7 @@ var ColorPickerEditable = React.createClass({
 
     getDefaultProps: function () {
         return {
-            color: '000000',
+            color: 'FFFFFF',
             attributes: {},
             gestMod: true,
             validator: function(){
@@ -104,7 +104,12 @@ var ColorPickerEditable = React.createClass({
     },
 
     getInitialState: function () {
+        //console.log('INITIAL color '+this.props.color);
         return {color: this.props.color};
+    },
+
+    componentWillReceiveProps: function(newProps){
+        this.setState({color:newProps.color});
     },
 
     onChange: function(e){
@@ -118,6 +123,8 @@ var ColorPickerEditable = React.createClass({
     render: function () {
         var retour;
 
+        //var StateLocal = _.cloneDeep(this.state);
+        //console.log('COLORPICKER EDITABLE State %o',StateLocal);
         // EDITABLE
         if (this.props.editable) {
 
@@ -132,7 +139,7 @@ var ColorPickerEditable = React.createClass({
         }
         // NON EDITABLE
         else{
-            retour = <ColorPicker color={this.state.color} label={this.props.label} mdLabel={this.props.mdLabel} mdColor={this.props.mdColor}/>;
+            retour = <ColorPicker color={this.props.color} label={this.props.label} mdLabel={this.props.mdLabel} mdColor={this.props.mdColor}/>;
         }
 
         return retour;
