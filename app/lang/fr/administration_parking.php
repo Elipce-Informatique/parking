@@ -24,6 +24,10 @@ return array(
         'type_place' => 'Type place',
         'errorExist' => 'Cet état d\'occupation existe déjà.'
     ],
+    // MODULE ETAT D'OCCUPATION
+    'configuration_parking' => [
+        'texte' => 'Configuration de la topologie d\'un parking: Création de niveaux, de zones, d\'allées et de places. Association des places avec des capteurs etc...'
+    ],
     // MODULE CARTE
     'carte' => [
         'erreur_polygon' => 'Les lignes d\'un polygon ne peuvent pas se croiser',

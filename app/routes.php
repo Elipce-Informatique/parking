@@ -65,6 +65,11 @@ Route::group(['before' => 'auth'], function () {
 */
 Route::group(['before' => 'auth|auth.canaccess'], function () {
 
+
+    /* **************************************************************************
+    * Administration
+    */
+    Route::get('administration',['as'=>'administration', 'uses'=>'AdministrationController@index'] );
     /*
      * Gestion des utilisateurs
      */
@@ -83,8 +88,13 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     Route::get('profils/libelle/{libelle}', 'ProfilController@getProfilExistLibelle');
     Route::get('profils/use/{profil}', 'ProfilController@getIsProfilUse');
 
+    /* **************************************************************************
+     * Administration parking
+     */
+    Route::get('administration_parking',['as'=>'administration_parking', 'uses'=>'AdministrationParkingController@index'] );
+
     /*
-    /* Etats d'occupation (d'une place de parking, menu Administration parking)
+     * Etats d'occupation (d'une place de parking, menu Administration parking)
      */
     Route::get('etats_d_occupation',['as'=>'etats_d_occupation', 'uses'=>'EtatsDoccupationController@index'] );
     Route::get('etats_d_occupation/all',               'EtatsDoccupationController@all');
@@ -93,17 +103,11 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     Route::resource('etats_d_occupation', 'EtatsDoccupationController');
 
     /*
-     * Administration
+     * Configuration d'un parking
      */
-    Route::get('administration',['as'=>'administration', 'uses'=>'AdministrationController@index'] );
+    Route::resource('configuration_parking', 'ConfigurationParkingController');
 
-    /*
-     * Administration parking
-     */
-    Route::get('administration_parking',['as'=>'administration_parking', 'uses'=>'AdministrationParkingController@index'] );
-
-
-    /*
+    /* **************************************************************************
      * Calendrier
      */
     Route::resource('calendrier', 'CalendrierController');
@@ -116,7 +120,7 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
 
 
 
-    /*
+    /* **************************************************************************
      * Test
      */
     Route::resource('test', 'TestController');
