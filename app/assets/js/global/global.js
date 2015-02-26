@@ -106,7 +106,7 @@
         "editer",
         "supprimer",
         "sauvegarder",
-        "retour", // NE PAS ECOUTER SI VOUS VOULEZ LA GESTION DES MODIFS
+        "retour", // /!\ NE PAS ECOUTER SI VOUS VOULEZ LA GESTION DES MODIFS /!\
         "boutons_perso"
     ]);
 
