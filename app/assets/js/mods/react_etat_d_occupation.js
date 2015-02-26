@@ -42,7 +42,7 @@ var reactEtatDoccupation = React.createClass({
     },
 
     getInitialState: function () {
-        console.log('getInitialState');
+        //console.log('getInitialState');
         return  {libelle:        '',
                  couleur:        'FFFFFF',
                  etat_place_id:  '',
@@ -53,7 +53,7 @@ var reactEtatDoccupation = React.createClass({
     },
 
     componentWillMount: function () {
-        console.log('componentWillMount');
+        //console.log('componentWillMount');
         // Liaison au store
         this.listenTo(reactEtatDoccupationStore, this.updateData, this.updateData);
 
@@ -90,7 +90,9 @@ var reactEtatDoccupation = React.createClass({
     },
 
     render: function () {
-        console.log('Render avec state : %o', this.state);
+        //var stateLocal = _.cloneDeep(this.state);
+        //console.log('FORM ETAT OCCUP Render %o', stateLocal);
+
         var fAttrs   = {className:"form_etat_d_occupation", id:"form_etat_d_occupation"};
 
         var etatPlaceSelected = [];
@@ -203,7 +205,7 @@ var reactEtatDoccupationStore = Reflux.createStore({
     },
 
     onSetLibelleInitial: function(libelleIni){
-        console.log('onSetLibelleInitial : %o', libelleIni);
+        //console.log('onSetLibelleInitial : %o', libelleIni);
         this.libelleInitial = libelleIni;
     },
 
@@ -285,7 +287,7 @@ var reactEtatDoccupationStore = Reflux.createStore({
         var retour = {};
         retour.dataLibelle = {};
 
-        console.log('this.libelleInitial : %o, value : %o', this.libelleInitial, value);
+        //console.log('this.libelleInitial : %o, value : %o', this.libelleInitial, value);
         /* Est-ce que l'email est supérieur à 4 caractère (x@x.xx)? */
         if(value.length>=1 && value != this.libelleInitial){
 
@@ -326,7 +328,7 @@ var reactEtatDoccupationStore = Reflux.createStore({
      * @param idEtat
      */
     onSubmit_form: function (e) {
-        console.log('this.state : %o', this.state);
+        //console.log('this.state : %o', this.state);
 
         //console.log('FICHE USER SAVE '+idUser);
         // Variables

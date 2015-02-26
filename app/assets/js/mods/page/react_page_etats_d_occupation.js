@@ -256,7 +256,7 @@ var pageEtatsDoccupationStore = Reflux.createStore({
     },
 
     setLibelle: function(libelle){
-        console.log('setLibelle : %o', libelle);
+        //console.log('setLibelle : %o', libelle);
         this.trigger({name:libelle});
     },
 
