@@ -49,6 +49,16 @@ var ColorPickerEditable = React.createClass({
         }
     },
 
+    componentDidMount: function(){
+        // Init du plugin color
+        jscolor.init();
+    },
+
+    componentDidUpdate: function(){
+        // Init du plugin color
+        jscolor.init();
+    },
+
     render: function () {
         var retour;
 
