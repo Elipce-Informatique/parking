@@ -78,7 +78,7 @@ var BandeauGenerique = React.createClass({
                     break;
             }
         }
-        return <div key="bandeauGenWrapper">{bandeau}</div>;
+        return bandeau;
     }
 
 });
