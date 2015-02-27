@@ -162,11 +162,7 @@ var ReactPageProfil  = React.createClass({
             /*    - le tableau des modules NON éditable        */
             case 'visu':
                 return <Col md={12} key="rootPageProfil">
-                            <Row>
-                                <Col md={12}>
                                 <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
-                                </Col>
-                            </Row>
                             <Row>
                                 <Col md={12}>
                                     <DataTableModule head={headMP} hide={hideMP} idProfil={this.state.idProfil} nameProfil={this.state.nameProfil} editable={false} id="tab_module" bUnderline={false} reactElements={aReactElements} />
@@ -184,11 +180,7 @@ var ReactPageProfil  = React.createClass({
                 mode = 0;
             case 'edition':
                 return  <Col md={12} key="rootPageProfil">
-                            <Row>
-                                <Col md={12}>
                                 <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" mode={mode} titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
-                                </Col>
-                            </Row>
                             <Row>
                                 <Col md={12}>
                                     <DataTableModule head={headMP} hide={hideMP} editable={true} idProfil={this.state.idProfil} nameProfil={this.state.nameProfil}  id="tab_module" bUnderline={false} reactElements={aReactElements} />
@@ -203,18 +195,15 @@ var ReactPageProfil  = React.createClass({
             /*    - le tableau des profils     */
             case 'liste':
             default:
-                return <Col md={12}  key="rootPageProfil">
-                    <Row>
-                        <Col md={12}>
-                            <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" titre={this.state.titrePageIni} />
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col md={12}>
-                            <DataTableBandeauProfil id="tableProfils" head={headP} hide={hideP} evts={evtsP} />
-                        </Col>
-                    </Row>
-                </Col>;
+                return  <Col md={12}  key="rootPageProfil">
+
+                    <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" titre={this.state.titrePageIni} />
+                            <Row>
+                                <Col md={12}>
+                                    <DataTableBandeauProfil id="tableProfils" head={headP} hide={hideP} evts={evtsP} />
+                                </Col>
+                            </Row>
+                        </Col>;
                 break;
         }
     },
