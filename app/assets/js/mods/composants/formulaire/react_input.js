@@ -68,31 +68,25 @@ var InputText = React.createClass({
     // ATTENTION: getInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
     render: function () {
-        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var propsAttrs = _.cloneDeep(this.props.attributes);
-        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
-        var attrs = _.extend(propsAttrs, this.state.attributes);
 
-        // Ajout de l'addon required si besoin
-        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
-            attrs = addRequiredAddon(attrs, this.state.value);
-        }
+        // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
+        var attrs = this.generateAttributes();
 
-        // 4. ATTRS OK, CREATION INPUT
-        var type = "text";
-        if (this.props.area == true)
-            type = "textarea";
+        // Text ou Textarea
+        var type = this.props.area ? "textarea" : "text";
 
-        return (<Input
-            type={type}
-            {...attrs}
-            {...this.props.evts}
-            onChange = {this.handleChange}
-            onBlur = {this.handleBlur}
-            value={this.state.value}
-            ref = "InputField"
-            hasFeedback
-        />);
+        return (
+            <Input
+                type={type}
+                {...attrs}
+                {...this.props.evts}
+                onChange = {this.handleChange}
+                onBlur = {this.handleBlur}
+                value={this.state.value}
+                ref = "InputField"
+                hasFeedback
+            />
+        );
     }
 });
 
@@ -203,15 +197,9 @@ var InputMail = React.createClass({
     },
 
     render: function () {
-        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var propsAttrs = _.cloneDeep(this.props.attributes);
-        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
-        var attrs = _.extend(propsAttrs, this.state.attributes);
 
-        // Ajout de l'addon required si besoin
-        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
-            attrs = addRequiredAddon(attrs, this.state.value);
-        }
+        // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
+        var attrs = this.generateAttributes();
 
         return (
             <Input
@@ -338,15 +326,9 @@ var InputPassword = React.createClass({
     // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
     render: function () {
-        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var propsAttrs = _.cloneDeep(this.props.attributes);
-        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
-        var attrs = _.extend(propsAttrs, this.state.attributes);
 
-        // Ajout de l'addon required si besoin
-        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
-            attrs = addRequiredAddon(attrs, this.state.value);
-        }
+        // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
+        var attrs = this.generateAttributes();
 
         return (
             <Input
@@ -434,8 +416,8 @@ var InputSelect = React.createClass({
         gestMod: React.PropTypes.bool
     },
 
-    getInitialState:function(){
-        return {value:this.props.selectedValue};
+    getInitialState: function () {
+        return {value: this.props.selectedValue};
     },
 
     getDefaultProps: function () {
@@ -443,17 +425,17 @@ var InputSelect = React.createClass({
             attributes: {},
             evts: {},
             gestMod: true,
-            required:false
+            required: false
         };
     },
 
-    handleChange: function(e, data){
+    handleChange: function (e, data) {
         Actions.global.gestion_modif_change();
         // ONCHANGE DEV EXISTE
         if (this.props.evts.onChange !== undefined) {
             this.props.evts.onChange(e, data);
         }
-        this.setState({value:e.split(',')});
+        this.setState({value: e.split(',')});
     },
 
     // ATTENTION: getInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
@@ -461,43 +443,44 @@ var InputSelect = React.createClass({
         //console.log('render select');
         /* Gestion si le champ est required ou pas */
         var required = required = <div data-valid={true} />;
-        if(this.props.attributes.required !== undefined){
-            if(this.props.attributes.required == true && (this.state.value[0] == '' || this.state.value == '')){
+        if (this.props.attributes.required !== undefined) {
+            if (this.props.attributes.required == true && (this.state.value[0] == '' || this.state.value == '')) {
                 console.log('Not valid');
                 required = <div data-valid={false} />;
             }
         }
-        var select = <Select
-                        name={this.props.attributes.name}
-                        value={this.state.value}
-                        options={this.props.data}
-                        placeholder={this.props.placeholder}
-                        multi={this.props.multi}
-                        {...this.props.attributes}
-                        onChange={this.handleChange}
-                        matchProp="label"
-                        ref = "InputField"
-                        hasFeedback
-                    />;
+        var select =
+            <Select
+                name={this.props.attributes.name}
+                value={this.state.value}
+                options={this.props.data}
+                placeholder={this.props.placeholder}
+                multi={this.props.multi}
+                            {...this.props.attributes}
+                onChange={this.handleChange}
+                matchProp="label"
+                ref = "InputField"
+                hasFeedback
+            />;
         var ctnSelect = '';
-        if(this.props.attributes.required == true){
+        if (this.props.attributes.required == true) {
             ctnSelect = <div className="input-group">
-                            <span className="input-group-addon glyphicon glyphicon-asterisk" id="basic-addon1"></span>
+                <span className="input-group-addon glyphicon glyphicon-asterisk" id="basic-addon1"></span>
                             {select}
-                        </div>;
+            </div>;
         }
         else
             ctnSelect = select;
 
         return <Row>
-                <Col md={(this.props.attributes.labelCol !== undefined ? this.props.attributes.labelCol : 6)}>
+            <Col md={(this.props.attributes.labelCol !== undefined ? this.props.attributes.labelCol : 6)}>
                     {required}
-                    <label>{(this.props.attributes.label !== undefined ? this.props.attributes.label : '')}</label>
-                </Col>
-                <Col md={(this.props.attributes.selectCol !== undefined ? this.props.attributes.selectCol : 6)}>
+                <label>{(this.props.attributes.label !== undefined ? this.props.attributes.label : '')}</label>
+            </Col>
+            <Col md={(this.props.attributes.selectCol !== undefined ? this.props.attributes.selectCol : 6)}>
                     {ctnSelect}
-                </Col>
-            </Row>;
+            </Col>
+        </Row>;
     }
 });
 
@@ -556,8 +539,18 @@ var InputSelectEditable = React.createClass({
 
             /* Récupère les valeurs depuis les datas en mode non éditable */
             var attrs = this.props.attributes;
-            
-            if(this.props.data.length > 0) {
+            var that = this;
+            var firstPassage = true;
+            attrs.value = '';
+            _.each(this.props.selectedValue, function (val) {
+                if (firstPassage == false)
+                    attrs.value += ', ';
+                attrs.value += that.props.data[val]['label'];
+                firstPassage = false;
+            }, that);
+            /* FIN : Récupère les valeurs depuis les datas en mode non éditable */
+
+            if (this.props.data.length > 0) {
                 var that = this;
                 var firstPassage = true;
                 attrs.value = '';
@@ -565,8 +558,8 @@ var InputSelectEditable = React.createClass({
                 _.each(this.props.selectedValue, function (val) {
                     if (firstPassage == false)
                         attrs.value += ', ';
-                    _.each(that.props.data, function(val2){
-                        if(val2['value'] == val) {
+                    _.each(that.props.data, function (val2) {
+                        if (val2['value'] == val) {
                             attrs.value += val2['label'];
                         }
                     });
@@ -576,13 +569,13 @@ var InputSelectEditable = React.createClass({
             }
 
             retour = <Row>
-                        <Col md={(attrs.labelCol !== undefined ? attrs.labelCol : 6)}>
-                            <label>{(attrs.label !== undefined ? attrs.label : '')}</label>
-                        </Col>
-                        <Col md={(attrs.selectCol !== undefined ? attrs.selectCol : 6)}>
+                <Col md={(attrs.labelCol !== undefined ? attrs.labelCol : 6)}>
+                    <label>{(attrs.label !== undefined ? attrs.label : '')}</label>
+                </Col>
+                <Col md={(attrs.selectCol !== undefined ? attrs.selectCol : 6)}>
                             {attrs.value}
-                        </Col>
-                    </Row>;
+                </Col>
+            </Row>;
         }
 
         return retour;
@@ -659,27 +652,21 @@ var InputNumber = React.createClass({
 
     render: function () {
 
-        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var propsAttrs = _.cloneDeep(this.props.attributes);
-        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
-        var attrs = _.extend(propsAttrs, this.state.attributes);
+        // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
+        var attrs = this.generateAttributes();
 
-        // Ajout de l'addon required si besoin
-        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
-            attrs = addRequiredAddon(attrs, this.state.value);
-        }
-
-        // 4. ATTRS OK, CREATION INPUT
-        return <Input
-            type="number"
-            step={this.props.step}
-            {...attrs}
-            {...this.props.evts}
-            onChange = {this.handleChange}
-            value={this.state.value}
-            ref = "InputField"
-            hasFeedback
-        />;
+        return(
+            <Input
+                type="number"
+                step={this.props.step}
+                {...attrs}
+                {...this.props.evts}
+                onChange = {this.handleChange}
+                value={this.state.value}
+                ref = "InputField"
+                hasFeedback
+            />
+        )
     }
 });
 
@@ -792,17 +779,9 @@ var InputTel = React.createClass({
 
     render: function () {
 
-        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var propsAttrs = _.cloneDeep(this.props.attributes);
-        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
-        var attrs = _.extend(propsAttrs, this.state.attributes);
+        // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
+        var attrs = this.generateAttributes();
 
-        // Ajout de l'addon required si besoin
-        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
-            attrs = addRequiredAddon(attrs, this.state.value);
-        }
-
-        // 4. ATTRS OK, CREATION INPUT
         return <Input
             type="tel"
             {...attrs}
@@ -863,7 +842,7 @@ var InputTelEditable = React.createClass({
 /**
  * Created by yann on 12/01/2015.
  *
- * TODO : Snippet de base pour un composant react. Commentaire à éditer
+ * Champ upload stylé
  * @param name : nom a afficher dans le composant
  * @param typeOfFile : all, docs, word, excel, pdf, txt, img
  */
@@ -906,14 +885,10 @@ var InputFile = React.createClass({
         };
     },
     render: function () {
-        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
 
-        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var propsAttrs = _.cloneDeep(this.props.attributes);
-        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
-        var attrs = _.extend(propsAttrs, this.state.attributes);
+        // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
+        var attrs = this.generateAttributes();
 
-        // 4. ATTRS OK, CREATION INPUT
         return (
             <div className={"fileUpload btn " + this.props.style}>
                 <span>{this.props.libelle}</span>
@@ -922,7 +897,6 @@ var InputFile = React.createClass({
                     name={this.props.name}
                     className="upload"
                     {...attrs}
-                    {...gestMod}
                     {...this.props.evts}
                     onChange = {this.handleChange}
                     ref = "InputField"
@@ -966,7 +940,7 @@ var InputDate = React.createClass({
                 //console.log('length:'+val.length+' required: '+typeof(props.attributes.required));
                 if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
                     return {isValid: false, style: 'default', tooltip: ''};
-                // Champ optionnel + vide
+                    // Champ optionnel + vide
                 } else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
@@ -986,16 +960,9 @@ var InputDate = React.createClass({
 
     render: function () {
 
+        // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
+        var attrs = this.generateAttributes();
 
-        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var propsAttrs = _.cloneDeep(this.props.attributes);
-        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
-        var attrs = _.extend(propsAttrs, this.state.attributes);
-
-        // Ajout de l'addon required si besoin
-        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
-            attrs = addRequiredAddon(attrs, this.state.value);
-        }
         // Affichage
         return (
             <Input
@@ -1039,11 +1006,11 @@ var InputDateEditable = React.createClass({
         // Editable
         if (this.props.editable) {
             retour = <InputDate
-                        defaultValue = {this.props.attributes.value}
-                        attributes = {this.props.attributes}
-                        evts       = {this.props.evts}
-                        ref        = "Editable"
-                        gestMod    = {this.props.gestMod}
+                defaultValue = {this.props.attributes.value}
+                attributes = {this.props.attributes}
+                evts       = {this.props.evts}
+                ref        = "Editable"
+                gestMod    = {this.props.gestMod}
             />
         }
         // Non editable
@@ -1097,7 +1064,7 @@ var InputTime = React.createClass({
                 if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
                     var tooltip = '';
                     // Champ invalidé par HTML + vidé automatiquement => Le test est effectué dans le mixin pour ce qui est de la coloration rouge
-                    if(inputNode !== undefined && $(inputNode).find(':invalid').length > 0){
+                    if (inputNode !== undefined && $(inputNode).find(':invalid').length > 0) {
                         tooltip = Lang.get('global.validation_erreur_time');
                     }
                     return {isValid: false, style: 'default', tooltip: tooltip};
@@ -1106,7 +1073,7 @@ var InputTime = React.createClass({
                 else if (val.length == 0) {
                     var tooltip = '';
                     // Champ invalidé par HTML + vidé automatiquement
-                    if(inputNode !== undefined && $(inputNode).find(':invalid').length > 0){
+                    if (inputNode !== undefined && $(inputNode).find(':invalid').length > 0) {
                         tooltip = Lang.get('global.validation_erreur_time');
                     }
                     return {isValid: true, style: 'default', tooltip: tooltip};
@@ -1127,16 +1094,8 @@ var InputTime = React.createClass({
 
     render: function () {
 
-
-        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
-        var propsAttrs = _.cloneDeep(this.props.attributes);
-        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
-        var attrs = _.extend(propsAttrs, this.state.attributes);
-
-        // Ajout de l'addon required si besoin
-        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
-            attrs = addRequiredAddon(attrs, this.state.value);
-        }
+        // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
+        var attrs = this.generateAttributes();
 
         // Affichage
         return (
@@ -1152,7 +1111,6 @@ var InputTime = React.createClass({
         );
     }
 });
-
 
 
 /**
@@ -1358,12 +1316,12 @@ var InputRadioBootstrapEditable = React.createClass({
         }
 
         return <InputRadioBootstrap
-                    attributes = {attr}
-                    evts = {this.props.evts}
-                    ref="Editable"
-                    gestMod={this.props.gestMod} >
+            attributes = {attr}
+            evts = {this.props.evts}
+            ref="Editable"
+            gestMod={this.props.gestMod} >
                             {this.props.children}
-                </InputRadioBootstrap>
+        </InputRadioBootstrap>
     }
 });
 
@@ -1505,16 +1463,6 @@ function modeEditableFalse(attr) {
             </div>
         </div>
     )
-}
-
-function addRequiredAddon(attrs, value) {
-    return _.extend(attrs, {
-        addonBefore: <OverlayTrigger placement="top" overlay={<Tooltip>
-            {Lang.get('global.champ_obligatoire')}
-        </Tooltip>}>
-            <Glyphicon glyph="asterisk" />
-        </OverlayTrigger>
-    });
 }
 
 /**
