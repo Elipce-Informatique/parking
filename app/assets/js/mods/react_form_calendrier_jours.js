@@ -76,14 +76,15 @@ var FormJours = React.createClass({
                     }}
                     editable={this.props.editable} />
                 <Color
-                    color = {this.props.jourData.couleur}
                     label = {Lang.get('calendrier.jours.tableau.couleur')}
                     attributes={{
                         name: "couleur",
-                        required: true
+                        required: true,
+                        value: this.props.jourData.couleur
                     }}
                     editable={this.props.editable}
-                    mdLabel={1} mdColor={2}
+                    mdLabel={1}
+                    mdColor={2}
                 />
 
             </Form>

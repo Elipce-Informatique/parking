@@ -100,8 +100,6 @@ module.exports.ColorPickerEditable = ColorPickerEditable;
  */
 var ColorPicker = React.createClass({
 
-    mixins: [MixinInputValue],
-
     propTypes: {
         color: React.PropTypes.string,
         label: React.PropTypes.string,

@@ -43,7 +43,7 @@ var InputValueMixin = {
 
         // ONBLUR DEV EXISTE
         if (this.props.evts.onBlur !== undefined) {
-            console.log('onBlur DEV');
+            //console.log('onBlur DEV');
             this.props.evts.onBlur(e);
         }
     },
