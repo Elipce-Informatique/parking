@@ -21,6 +21,7 @@ return [
         "calendrier" => "Calendrier",
         "jours_predef" => "Jours prédéfinis",
         "prog_horaire" => "Programmation horaire",
+        "configuration_parking" => "Configuration parking"
 
     ],
 

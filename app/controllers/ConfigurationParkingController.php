@@ -1,6 +1,6 @@
 <?php
 
-class AdministrationParkingController extends \BaseController
+class ConfigurationParkingController extends \BaseController
 {
 
     /**
@@ -10,7 +10,7 @@ class AdministrationParkingController extends \BaseController
      */
     public function index()
     {
-        return View::make('pages.administration_parking');
+        return View::make('pages.configuration_parking');
     }
 
 
