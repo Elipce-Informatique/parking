@@ -2899,7 +2899,7 @@ var jscolor = {
     preloading : true, // use image preloading?
 
     install : function() {
-        jscolor.addEvent(window, 'load', jscolor.init);
+        //jscolor.addEvent(window, 'load', jscolor.init);// GESTION DANS LE COMPOSANT REACT
     },
 
     init : function() {

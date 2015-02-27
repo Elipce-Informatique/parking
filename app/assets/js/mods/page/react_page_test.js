@@ -91,7 +91,6 @@ var ReactPageTest               = React.createClass({
         }
         /* FIN : Paramètres Select */
         /***************************/
-        
         return  <Form>
             <Row id="Champ_texte">
                 <Col md={12}>
