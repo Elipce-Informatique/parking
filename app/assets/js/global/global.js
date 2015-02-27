@@ -14,8 +14,6 @@
     global._ = require('lodash');
     global.Reflux = require('reflux');
     global.ReactB = require('react-bootstrap');
-    global.Select = require('react-select');
-    global.ReactColorPicker = require('react-color-picker');
 
 
     /*

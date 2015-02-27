@@ -3,6 +3,7 @@ var OverlayTrigger = ReactB.OverlayTrigger;
 var Tooltip = ReactB.Tooltip;
 var Glyphicon = ReactB.Glyphicon;
 var Validator = require('validator');
+var Select = require('react-select');
 // Time
 var moment = require('moment');
 require('moment/locale/fr');
@@ -396,7 +397,7 @@ var InputPasswordEditable = React.createClass({
 
 /**
  * Champ select (react-select)
- * @param data: array(array(label:'Framboise', value:0), array(label:'Pomme', value:1))
+ * @param data: array({label:'Framboise', value:0}, {label:'Pomme', value:1})
  * @param selectedValue: array('0', '1')
  * @param placeholder: string, par défaut 'Sélection..'
  * @param multi: bool, à choix multiple, par défaut non
@@ -408,7 +409,6 @@ var InputSelect = React.createClass({
     propTypes: {
         data: React.PropTypes.array.isRequired,
         selectedValue: React.PropTypes.array,
-        required: React.PropTypes.bool,
         placeholder: React.PropTypes.string,
         multi: React.PropTypes.bool,
         attributes: React.PropTypes.object,
@@ -422,65 +422,68 @@ var InputSelect = React.createClass({
 
     getDefaultProps: function () {
         return {
-            attributes: {},
+            attributes: {labelCol:'6', selectCol:'6'},
             evts: {},
             gestMod: true,
-            required: false
+            delimiter: '[-]'
         };
     },
 
     handleChange: function (e, data) {
+        // Gestion des modifications
         Actions.global.gestion_modif_change();
-        // ONCHANGE DEV EXISTE
+
+        // onChange DEV
         if (this.props.evts.onChange !== undefined) {
             this.props.evts.onChange(e, data);
         }
-        this.setState({value: e.split(',')});
+        // Nouvelle value
+        this.setState({value: e.split(this.props.delimiter)});
     },
 
-    // ATTENTION: getInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
     render: function () {
-        //console.log('render select');
-        /* Gestion si le champ est required ou pas */
-        var required = required = <div data-valid={true} />;
-        if (this.props.attributes.required !== undefined) {
-            if (this.props.attributes.required == true && (this.state.value[0] == '' || this.state.value == '')) {
-                console.log('Not valid');
-                required = <div data-valid={false} />;
-            }
+        // Copie attributes
+        var attrs = _.cloneDeep(this.props.attributes);
+
+        // Champ requis
+        if (this.props.attributes.required !== undefined && this.props.attributes.required == true) {
+           var required = {'data-valid': !(this.state.value.length == 0)};
+            attrs = _.extend(required, attrs);
         }
         var select =
             <Select
-                name={this.props.attributes.name}
+                {...attrs}
                 value={this.state.value}
                 options={this.props.data}
                 placeholder={this.props.placeholder}
                 multi={this.props.multi}
-                            {...this.props.attributes}
                 onChange={this.handleChange}
                 matchProp="label"
-                ref = "InputField"
-                hasFeedback
+                ref = "SelectField"
+                delimiter = {this.props.delimiter}
             />;
-        var ctnSelect = '';
-        if (this.props.attributes.required == true) {
-            ctnSelect = <div className="input-group">
-                <span className="input-group-addon glyphicon glyphicon-asterisk" id="basic-addon1"></span>
-                            {select}
-            </div>;
-        }
-        else
-            ctnSelect = select;
 
-        return <Row>
-            <Col md={(this.props.attributes.labelCol !== undefined ? this.props.attributes.labelCol : 6)}>
+        // Select non requis
+        var ctnSelect = select;
+        // Select requis
+        if (this.props.attributes.required == true) {
+            ctnSelect =
+                <div className="input-group">
+                    <span className="input-group-addon glyphicon glyphicon-asterisk" id="basic-addon1"></span>
+                    {select}
+                </div>;
+        }
+
+        return(
+            <Row>
+                <Col md={this.props.attributes.labelCol}>
                     {required}
-                <label>{(this.props.attributes.label !== undefined ? this.props.attributes.label : '')}</label>
-            </Col>
-            <Col md={(this.props.attributes.selectCol !== undefined ? this.props.attributes.selectCol : 6)}>
+                    <label>{this.props.attributes.label}</label>
+                </Col>
+                <Col md={this.props.attributes.selectCol}>
                     {ctnSelect}
-            </Col>
-        </Row>;
+                </Col>
+            </Row>);
     }
 });
 
@@ -499,7 +502,6 @@ var InputSelectEditable = React.createClass({
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
         data: React.PropTypes.array.isRequired,
-        required: React.PropTypes.bool,
         selectedValue: React.PropTypes.array,
         placeholder: React.PropTypes.string,
         multi: React.PropTypes.bool,
@@ -510,7 +512,7 @@ var InputSelectEditable = React.createClass({
 
     getDefaultProps: function () {
         return {
-            attributes: {},
+            attributes: {labelCol:'6', selectCol:'6'},
             evts: {},
             gestMod: true,
             placeholder: Lang.get('global.select'),
@@ -522,17 +524,18 @@ var InputSelectEditable = React.createClass({
         var retour;
         // Editable
         if (this.props.editable) {
-            retour = <InputSelect
-                attributes = {this.props.attributes}
-                evts       = {this.props.evts}
-                selectedValue = {this.props.selectedValue}
-                placeholder   = {this.props.placeholder}
-                ref        = "Editable"
-                gestMod    = {this.props.gestMod}
-                data       = {this.props.data}
-                multi      = {this.props.multi}
-                required   = {this.props.required}
-                autocomplete="both"/>;
+            retour =
+                <InputSelect
+                    attributes = {this.props.attributes}
+                    evts       = {this.props.evts}
+                    selectedValue = {this.props.selectedValue}
+                    placeholder   = {this.props.placeholder}
+                    ref        = "Editable"
+                    gestMod    = {this.props.gestMod}
+                    data       = {this.props.data}
+                    multi      = {this.props.multi}
+                    autocomplete="both"
+                />;
         }
         // Non editable
         else {

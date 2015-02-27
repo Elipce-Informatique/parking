@@ -71,7 +71,7 @@ var ReactPageTest               = React.createClass({
         /*********************/
         /* Paramètres Select */
         var options = [
-            { value: '0', label: 'Fraise' },
+            { value: '5', label: 'Fraise' },
             { value: '1', label: 'Abricot' },
             { value: '2', label: 'Framboise' },
             { value: '3', label: 'Pomme' },
@@ -141,7 +141,14 @@ var ReactPageTest               = React.createClass({
 
             <Row id="Select">
                 <Col md={12}>
-                    <InputSelectEditable multi={true} evts={{onChange:selectChange}} attributes={{label:'Select', name:"Select", selectCol:4,labelCol:2}} data={options} editable={editable} selectedValue={['2']} placeholder={'PlaceHolder...'}/>
+                    <InputSelectEditable
+                        multi={true}
+                        evts={{onChange:selectChange}}
+                        attributes={{label:'Select', name:"Select", selectCol:4,labelCol:2, required:true}}
+                        data={options}
+                        editable={editable}
+                        selectedValue={['2']}
+                        placeholder={'PlaceHolder...'}/>
                 </Col>
             </Row>
 
