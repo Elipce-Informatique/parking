@@ -76,6 +76,7 @@ var PageUser = React.createClass({
                     </div>;
                 break;
             default:
+                // Mode liste par défaut
                 react =
                     <div key="rootPageuser">
                         <BandeauGenerique key="bandeauListe" bandeauType={this.state.etat} module_url="utilisateur" titre={Lang.get('administration.utilisateur.titre')}/>
