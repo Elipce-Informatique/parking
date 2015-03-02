@@ -131,14 +131,15 @@ var reactEtatDoccupation = React.createClass({
                         </Col>
                         <Col md={12}>
                             <ColorPickerEditable
-                                color = {this.state.couleur}
                                 label = {Lang.get('administration_parking.etats_d_occupation.tableau.couleur')}
                                 attributes={{
                                     name: "couleur",
-                                    required: true
+                                    required: true,
+                                    value: this.state.couleur
                                 }}
                                 editable={this.props.editable}
-                                mdLabel={2} mdColor={2}
+                                mdLabel={2}
+                                mdColor={2}
                                 evts={{onBlur:this.onBlurCouleur}}
                             />
                         </Col>

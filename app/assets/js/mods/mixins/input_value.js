@@ -1,4 +1,6 @@
 var Validator = require('validator');
+// HELPER
+var addRequiredAddon = require('../helpers/field_helper').addRequiredAddon;
 /**
  * Mixin permettant le gérer la value des inputs
  * Pré-requis: le mixin est utilisé sur un composant ayant une ref="InputField"
@@ -41,7 +43,7 @@ var InputValueMixin = {
 
         // ONBLUR DEV EXISTE
         if (this.props.evts.onBlur !== undefined) {
-            console.log('onBlur DEV');
+            //console.log('onBlur DEV');
             this.props.evts.onBlur(e);
         }
     },
@@ -99,6 +101,23 @@ var InputValueMixin = {
             style.help = validation.tooltip;
         }
         attrs = _.extend(style, attrs);
+        return attrs;
+    },
+
+    /**
+     * Génère les attributs à passer au render des composant react de type Input.
+     * @returns {*}
+     */
+    generateAttributes: function(){
+        // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
+        var propsAttrs = _.cloneDeep(this.props.attributes);
+        propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);
+        var attrs = _.extend(propsAttrs, this.state.attributes);
+
+        // Ajout de l'addon required si besoin
+        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
+            attrs = addRequiredAddon(attrs, this.state.value);
+        }
         return attrs;
     }
 };

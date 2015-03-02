@@ -33,7 +33,15 @@ var DataTableBandeauJourReact = React.createClass({
     render: function() {
 
         return (
-         <DataTableBandeau id="tab_jours" head={this.head} reactElements={this.aReactElements} data={this.props.data} hide={this.hide} attributes={this.attributes} bUnderline={true} evts={{onClick:this.displayJours}}/>
+         <DataTableBandeau
+             id="tab_jours"
+             head={this.head}
+             reactElements={this.aReactElements}
+             data={this.props.data}
+             hide={this.hide}
+             attributes={this.attributes}
+             bUnderline={true}
+             evts={{onClick:this.displayJours}}/>
         )
     },
     
