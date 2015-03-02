@@ -12,6 +12,8 @@ var FormJours = require('../react_form_calendrier_jours').Composant;
 // MIXINS
 var AuthentMixins = require('../mixins/component_access');
 var MixinGestMod = require('../mixins/gestion_modif');
+// HELPERS
+var pageState = require('../helpers/page_helper').pageState;
 
 /**
  * Page calendrier jours
@@ -20,7 +22,7 @@ var MixinGestMod = require('../mixins/gestion_modif');
  */
 var PageCalendrierJours = React.createClass({
 
-    mixins: [Reflux.ListenerMixin,MixinGestMod],
+    mixins: [Reflux.ListenerMixin, MixinGestMod],
 
 
     getDefaultProps: function () {
@@ -29,7 +31,7 @@ var PageCalendrierJours = React.createClass({
 
     getInitialState: function () {
         return {
-            etat: 'liste',
+            etat: pageState.liste,
             idJour: 0,
             dataJour: []
         };
@@ -51,7 +53,7 @@ var PageCalendrierJours = React.createClass({
         var react;
         //console.log('STATE %o', this.state);
         switch (this.state.etat) {
-            case 'visu':
+            case pageState.visu:
                 react =
                     <div key="root">
                         <BandeauGenerique key="bandeauVisu" bandeauType={this.state.etat} module_url="calendrier_jours" titre={Lang.get('calendrier.jours.titre')} sousTitre={this.state.dataJour.libelle}/>
@@ -62,13 +64,13 @@ var PageCalendrierJours = React.createClass({
                         </Row>
                     </div>;
                 break;
-            case 'edition':
+            case pageState.edition:
                 react =
                     <div key="root">
                         <BandeauGenerique key="bandeauEdition" bandeauType={this.state.etat} module_url="calendrier_jours" mode={1} titre={Lang.get('calendrier.jours.titre')} sousTitre={this.state.dataJour.libelle}/>
                     </div>;
                 break;
-            case 'creation':
+            case pageState.creation:
                 react =
                     <div key="root">
                         <BandeauGenerique key="bandeauCreation" bandeauType={this.state.etat} module_url="calendrier_jours" mode={0} titre={Lang.get('calendrier.jours.titre')}/>
@@ -97,21 +99,18 @@ var PageCalendrierJours = React.createClass({
         this.setState(obj);
     },
 
-    onRetour: function(){
-        this.setState({etat: 'liste', idJour: ''});
+    onRetour: function () {
+        this.setState({etat: pageState.liste, idJour: ''});
     }
 });
 module.exports.Composant = PageCalendrierJours;
-
-
-
 
 
 // Creates a DataStore
 var storeCalendrierJours = Reflux.createStore({
 
     // Variables
-    stateLocal : {idJour:0, etat: 'liste', dataJour:[]},
+    stateLocal: {idJour: 0, etat: pageState.liste, dataJour: []},
 
     // Initial setup
     init: function () {
@@ -132,18 +131,18 @@ var storeCalendrierJours = Reflux.createStore({
 
     },
 
-    getInitialState:function(){
+    getInitialState: function () {
         // AJAX
         $.ajax({
-            url: BASE_URI+'calendrier_jours/all',
+            url: BASE_URI + 'calendrier_jours/all',
             dataType: 'json',
             context: this,
-            async:false,
-            success: function(data) {
+            async: false,
+            success: function (data) {
                 this.stateLocal.dataJour = data;
                 //console.log(data);
             },
-            error: function(xhr, status, err) {
+            error: function (xhr, status, err) {
                 console.error(status, err.toString());
                 this.stateLocal.dataJour = [];
             }
@@ -154,19 +153,19 @@ var storeCalendrierJours = Reflux.createStore({
     modeVisu: function (idJour) {
         // Infos
         this.stateLocal.idJour = idJour;
-        this.stateLocal.etat = 'visu';
+        this.stateLocal.etat = pageState.visu;
         // AJAX
         $.ajax({
-            url: BASE_URI+'calendrier_jours/'+idJour,
+            url: BASE_URI + 'calendrier_jours/' + idJour,
             dataType: 'json',
             context: this,
-            async:true,
-            success: function(data) {
+            async: true,
+            success: function (data) {
                 this.stateLocal.dataJour = data;
                 this.trigger(this.stateLocal);
                 //console.log(data);
             },
-            error: function(xhr, status, err) {
+            error: function (xhr, status, err) {
                 console.error(status, err.toString());
                 this.stateLocal.dataJour = [];
                 this.trigger(this.stateLocal);
@@ -175,25 +174,39 @@ var storeCalendrierJours = Reflux.createStore({
     },
 
     modeCreation: function () {
-        this.stateLocal = {idJour:0, etat: 'creation', dataJour:{'libelle' : '','ouverture' : '','fermeture' : '','couleur' : ''}};
+        this.stateLocal = {
+            idJour: 0,
+            etat: pageState.creation,
+            dataJour: {
+                libelle: '',
+                ouverture: '',
+                fermeture: '',
+                couleur: ''
+            }
+        };
         this.trigger(this.stateLocal);
     },
 
     modeEdition: function () {
-        console.log('Mode édition');
-        this.stateLocal = {idJour:this.stateLocal.idJour, etat: 'edition'}
+        this.stateLocal = {
+            idJour: this.stateLocal.idJour,
+            etat: pageState.edition
+        };
         this.trigger(this.stateLocal);
     },
 
     modeListe: function () {
-        this.stateLocal = {idJour:0, etat: 'liste'}
+        this.stateLocal = {
+            idJour: 0,
+            etat: pageState.liste
+        };
         this.trigger(this.stateLocal);
     },
 
     /**
      * Indique à la fiche utilisateur de sauvegarder les données
      */
-    sauvegarder: function(){
+    sauvegarder: function () {
         // La fiche user enregistre l'utilisateur
         Actions.utilisateur.save_user(this.stateLocal.idJour);
     },
@@ -202,20 +215,20 @@ var storeCalendrierJours = Reflux.createStore({
      * Retour de la fiche utilisateur pour mise à jour des infos de la page
      * @param data
      */
-    setNomPrenom: function(nom, prenom, id){
+    setNomPrenom: function (nom, prenom, id) {
         this.stateLocal.idJour = id;
         //console.log('PAGE USER trigger %o', this.stateLocal);
-        this.trigger({dataJour:{nom:nom, prenom:prenom}, idJour:id});
+        this.trigger({dataJour: {nom: nom, prenom: prenom}, idJour: id});
     },
 
     /**
      * Suppression d'un utilisateur
      */
-    supprimer : function(){
+    supprimer: function () {
         // Boite de confirmation
 
         // Suppr
-        this.stateLocal = {idJour:this.stateLocal.idJour, etat: 'suppression'}
+        this.stateLocal = {idJour: this.stateLocal.idJour, etat: pageState.suppression};
         Actions.utilisateur.delete_user(this.stateLocal.idJour);
     }
 });

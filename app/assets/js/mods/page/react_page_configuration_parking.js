@@ -4,6 +4,8 @@ var AuthentMixins = require('../mixins/component_access');
 /* Pour le listenTo           */
 var MixinGestMod = require('../mixins/gestion_modif');
 /* Pour la gestion des modifs */
+// HELPERS
+var pageState = require('../helpers/page_helper').pageState;
 
 /************************************************************************************************/
 /*                                                                                              */
@@ -25,7 +27,7 @@ var Page = React.createClass({
      */
     getInitialState: function () {
         return {
-            etatPage: 'liste'
+            etatPage: pageState.liste
         };
     },
 
@@ -55,7 +57,7 @@ var Page = React.createClass({
 
         // Switch la structure de la page en fonction de l'état courant
         switch (this.state.etatPage) {
-            case 'liste':
+            case pageState.liste:
                 retour = <div>Hello liste !</div>;
                 break;
             default:

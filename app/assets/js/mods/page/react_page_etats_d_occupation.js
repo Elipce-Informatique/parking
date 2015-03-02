@@ -9,23 +9,27 @@ var Col = ReactB.Col;
 
 /********************************************/
 /* Gestion de la modification et des droits */
-var AuthentMixins = require('../mixins/component_access'); /* Pour le listenTo           */
-var MixinGestMod  = require('../mixins/gestion_modif');    /* Pour la gestion des modifs */
+var AuthentMixins = require('../mixins/component_access');
+/* Pour le listenTo           */
+var MixinGestMod = require('../mixins/gestion_modif');
+/* Pour la gestion des modifs */
 
 /*****************************************************************/
 /* Pour récupérer les datas du formulaire avant l'envoie en Ajax */
-var form_data_helper  = require('../helpers/form_data_helper');
+var form_data_helper = require('../helpers/form_data_helper');
+// HELPERS
+var pageState = require('../helpers/page_helper').pageState;
 
 /***************************/
 /* Composant react Bandeau */
-var BandeauVisu      = require('../composants/bandeau/react_bandeau_visu');
-var BandeauEdition   = require('../composants/bandeau/react_bandeau_edition');
-var BandeauListe     = require('../composants/bandeau/react_bandeau_liste');
+var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');
+var BandeauEdition = require('../composants/bandeau/react_bandeau_edition');
+var BandeauListe = require('../composants/bandeau/react_bandeau_liste');
 var BandeauGenerique = require('../composants/bandeau/react_bandeau_generique');
 
 /********************************************/
 /* Composant tableau des états d'occupation */
-var DataTable            = require('../composants/tableau/react_data_table');
+var DataTable = require('../composants/tableau/react_data_table');
 
 
 /*************************************/
@@ -37,22 +41,22 @@ var ReactEtatDoccupation = require('../react_etat_d_occupation');
 /*                         COMPOSANT REACT PAGE : "Etats d'occupation                           */
 /*                                                                                              */
 /************************************************************************************************/
-var ReactPageEtatsDoccupation  = React.createClass({
+var ReactPageEtatsDoccupation = React.createClass({
 
     /* Ce composant gère les droits d'accès et les modifications */
-    mixins: [Reflux.ListenerMixin,AuthentMixins,MixinGestMod],
+    mixins: [Reflux.ListenerMixin, AuthentMixins, MixinGestMod],
 
-    head : [Lang.get('menu.side.etats_d_occupation'),
-            Lang.get('administration_parking.etats_d_occupation.tableau.couleur'),
-            Lang.get('administration_parking.etats_d_occupation.tableau.type_place'),
-            Lang.get('administration_parking.etats_d_occupation.tableau.etat_place'),
-            Lang.get('administration_parking.etats_d_occupation.tableau.logo')],
-    hide : ['id'],
-    aReactElements : {'1':['Couleur'], '4':['Image','app/storage/documents/logo_type_place/']},
+    head: [Lang.get('menu.side.etats_d_occupation'),
+        Lang.get('administration_parking.etats_d_occupation.tableau.couleur'),
+        Lang.get('administration_parking.etats_d_occupation.tableau.type_place'),
+        Lang.get('administration_parking.etats_d_occupation.tableau.etat_place'),
+        Lang.get('administration_parking.etats_d_occupation.tableau.logo')],
+    hide: ['id'],
+    aReactElements: {'1': ['Couleur'], '4': ['Image', 'app/storage/documents/logo_type_place/']},
     /**
      * Les props par défaut
      */
-    getDefaultProps: function() {
+    getDefaultProps: function () {
 
         return {
             module_url: 'etats_d_occupation'
@@ -67,9 +71,9 @@ var ReactPageEtatsDoccupation  = React.createClass({
 
         return {
             titrePageIni: Lang.get('menu.side.etats_d_occupation'), /* Titre initial : Etats d'occupation              */
-            etatPage:     'liste',                                  /* Affichage initial, liste des etats d'occupation */
-            name: '',                                               /* Nom de l'état d'occupation sélectionné          */
-            id:0,
+            etatPage: pageState.liste, /* Affichage initial, liste des etats d'occupation */
+            name: '', /* Nom de l'état d'occupation sélectionné          */
+            id: 0,
             data: []
         };
     },
@@ -108,28 +112,30 @@ var ReactPageEtatsDoccupation  = React.createClass({
      * Retour du store "pageEtatsDoccupationStore", met à jour le state de la page
      * @param data
      */
-    updateState: function(data) {
+    updateState: function (data) {
         // MAJ data automatique, lifecycle "UPDATE"
         this.setState(data);
     },
 
-    getComponentSwitchState: function(){
+    getComponentSwitchState: function () {
 
         var mode = 1;
 
-        var attrBandeau = {bandeauType:this.state.etatPage,
-                           module_url:this.props.module_url,
-                           titre:this.state.titrePageIni,
-                           sousTitre:this.state.name};
+        var attrBandeau = {
+            bandeauType: this.state.etatPage,
+            module_url: this.props.module_url,
+            titre: this.state.titrePageIni,
+            sousTitre: this.state.name
+        };
 
         /* Selon l'état de la page */
-        switch(this.state.etatPage){
+        switch (this.state.etatPage) {
 
             /* On a sélectionné un etat d'occupation           */
             /* On affiche :                                    */
             /*    - le bandeau (Retour/Créer/Editer/Supprimer) */
             /*    - les infos non éditable                     */
-            case 'visu':
+            case pageState.visu:
                 return <div key="rootPageEtatsDoccupation">
                     <Row>
                         <BandeauGenerique {...attrBandeau} />
@@ -146,11 +152,11 @@ var ReactPageEtatsDoccupation  = React.createClass({
             /* On affiche :                         */
             /*    - le bandeau                      */
             /*    - les infos éditable              */
-            case 'creation':
+            case pageState.creation:
                 mode = 0;
                 attrBandeau = _.omit(attrBandeau, 'sousTitre');
-            case 'edition':
-                return  <div key="rootPageEtatsDoccupation">
+            case pageState.edition:
+                return <div key="rootPageEtatsDoccupation">
                     <Row>
                         <BandeauGenerique {...attrBandeau} mode={mode} />
                     </Row>
@@ -166,19 +172,19 @@ var ReactPageEtatsDoccupation  = React.createClass({
             /* On affiche :                               */
             /*    - le bandeau (Créer)                    */
             /*    - le tableau des etats d'occupation     */
-            case 'liste':
+            case pageState.liste:
             default:
-                return  <div  key="rootPageEtatsDoccupation">
+                return <div  key="rootPageEtatsDoccupation">
                     <BandeauGenerique {...attrBandeau} />
                     <Row>
                         <Col md={12}>
                             <DataTable id="dataTableEtatsDoccupation"
-                                       head={this.head}
-                                       data={this.state.data}
-                                       hide={this.hide}
-                                       bUnderline={true}
-                                       evts={{onClick:this.displayEtatDoccupation}}
-                                       reactElements={this.aReactElements}/>
+                                head={this.head}
+                                data={this.state.data}
+                                hide={this.hide}
+                                bUnderline={true}
+                                evts={{onClick: this.displayEtatDoccupation}}
+                                reactElements={this.aReactElements}/>
                         </Col>
                     </Row>
                 </div>;
@@ -186,14 +192,14 @@ var ReactPageEtatsDoccupation  = React.createClass({
         }
     },
 
-    displayEtatDoccupation: function(e){
+    displayEtatDoccupation: function (e) {
         // Ligne du tableau
         var id = $(e.currentTarget).data('id');
         Actions.etats_d_occupation.select(id);
     },
 
-    onRetour: function(){
-        this.setState({etatPage:'liste', titrePage:Lang.get('menu.side.etats_d_occupation'), name:''});
+    onRetour: function () {
+        this.setState({etatPage: pageState.liste, titrePage: Lang.get('menu.side.etats_d_occupation'), name: ''});
     }
 });
 module.exports = ReactPageEtatsDoccupation;
@@ -209,23 +215,23 @@ module.exports = ReactPageEtatsDoccupation;
 /*              Store associé à la page états d'occupation              */
 /************************************************************************/
 var pageEtatsDoccupationStore = Reflux.createStore({
-    idSelect:0,
+    idSelect: 0,
 
     // Initial setup
-    init: function() {
+    init: function () {
         this.listenTo(Actions.etats_d_occupation.select, this.select);
         this.listenTo(Actions.etats_d_occupation.getInfosEtatsDoccupation, this.getInfos);
         this.listenTo(Actions.etats_d_occupation.setLibelle, this.setLibelle);
         this.listenTo(Actions.etats_d_occupation.goModif, this.goModif);
-        this.listenTo(Actions.bandeau.creer,             this.create);
-        this.listenTo(Actions.bandeau.editer,            this.edit);
+        this.listenTo(Actions.bandeau.creer, this.create);
+        this.listenTo(Actions.bandeau.editer, this.edit);
     },
 
-    getInitialState:function(){
-        return {etatPage:'liste'};
+    getInitialState: function () {
+        return {etatPage: pageState.liste};
     },
 
-    getInfos: function(){
+    getInfos: function () {
         var that = this;
 
         // AJAX
@@ -235,7 +241,7 @@ var pageEtatsDoccupationStore = Reflux.createStore({
             context: that,
             async: false,
             success: function (data) {
-                that.trigger({data:data});
+                that.trigger({data: data});
             },
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
@@ -243,28 +249,28 @@ var pageEtatsDoccupationStore = Reflux.createStore({
         }, that);
     },
 
-    select: function(id){
+    select: function (id) {
 
         this.idSelect = id;
 
-        this.trigger({id:this.idSelect, etatPage:'visu'});
+        this.trigger({id: this.idSelect, etatPage: pageState.visu});
     },
 
-    create: function(){
+    create: function () {
         this.idEtatDoccupationSelect = 0;
-        this.trigger({etatPage:'creation', name:'', id:0});
+        this.trigger({etatPage: pageState.creation, name: '', id: 0});
     },
 
-    setLibelle: function(libelle){
+    setLibelle: function (libelle) {
         //console.log('setLibelle : %o', libelle);
-        this.trigger({name:libelle});
+        this.trigger({name: libelle});
     },
 
-    edit: function(){
-        this.trigger({etatPage:'edition'});
+    edit: function () {
+        this.trigger({etatPage: pageState.edition});
     },
 
-    goModif: function(id, libelle){
-        this.trigger({etatPage:'edition', id:id, name:libelle});
+    goModif: function (id, libelle) {
+        this.trigger({etatPage: pageState.edition, id: id, name: libelle});
     }
 });

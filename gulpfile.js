@@ -92,10 +92,14 @@ gulp.task('clean', function (cb) {
  */
 
 // MANIPULATION DES CSS
-gulp.task('css', ['stylus', 'css_natif', 'libs_css_statiques', 'css_fonts']);
+gulp.task('css', ['stylus', 'css_natif', 'libs_css_statiques', 'css_fonts'], function(){
+    notify({message: 'All CSS tasks completed.'});
+});
 
 // MANIPULATION DES JS
-gulp.task('js', ['libs_js_statiques', 'browserify', 'lang_js']);
+gulp.task('js', ['libs_js_statiques', 'browserify', 'lang_js'], function(){
+    notify({message: 'All JS tasks completed.'});
+});
 
 // LIBS JS (/libs/*.js)
 gulp.task('libs_js_statiques',  function () {
@@ -104,8 +108,7 @@ gulp.task('libs_js_statiques',  function () {
         .pipe(changed(JS_LIBS_DEST))
         .pipe(uglify())
         .on('error', gutil.log)
-        .pipe(gulp.dest(JS_LIBS_DEST))
-        .pipe(notify({message: 'Static JS task completed.'}));
+        .pipe(gulp.dest(JS_LIBS_DEST));
 });
 
 // STYLUS (*.styl)
@@ -116,8 +119,7 @@ gulp.task('stylus',  function () {
         .pipe(stylus())
         .pipe(autoprefixer('> 1%'))
         .pipe(minifycss())
-        .pipe(gulp.dest(CSS_DEST))
-        .pipe(notify({message: 'Stylus task completed.'}));
+        .pipe(gulp.dest(CSS_DEST));
 });
 
 // CSS NATIF (*.css)
@@ -127,8 +129,7 @@ gulp.task('css_natif',  function () {
         .pipe(changed(CSS_DEST))
         .pipe(autoprefixer('> 1%'))
         .pipe(minifycss())
-        .pipe(gulp.dest(CSS_DEST))
-        .pipe(notify({message: 'CSS natif task completed.'}));
+        .pipe(gulp.dest(CSS_DEST));
 });
 
 // LIBS CSS (/libs/*.css)
@@ -138,8 +139,7 @@ gulp.task('libs_css_statiques',  function () {
         .pipe(replace('../images/', '../../images/'))
         .pipe(minifycss())
         .pipe(concat('all.css'))
-        .pipe(gulp.dest(CSS_LIBS_DEST))
-        .pipe(notify({message: 'Static CSS task completed.'}));
+        .pipe(gulp.dest(CSS_LIBS_DEST));
 });
 
 // FONTS CSS (/css/fonts)
