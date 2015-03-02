@@ -14,6 +14,9 @@ var AuthentMixins = require('../mixins/component_access');
 var MixinGestMod = require('../mixins/gestion_modif');
 /* Pour la gestion des modifs */
 
+// HELPERS
+var pageState = require('../helpers/page_helper').pageState;
+
 /***************************/
 /* Composant react Bandeau */
 var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');
@@ -108,7 +111,7 @@ var ReactPageProfil = React.createClass({
             titrePageIni: Lang.get('global.profils'), /* Titre initial : Profils               */
             nameProfil: '', /* Pas de profil de sélectionné          */
             idProfil: 0, /* Id NULL au début                      */
-            etatPageProfil: 'liste'                      /*  Affichage initial, liste des profils */
+            etatPageProfil: pageState.liste                      /*  Affichage initial, liste des profils */
         };
     },
 
@@ -166,7 +169,7 @@ var ReactPageProfil = React.createClass({
             /*    - le bandeau (Retour/Créer/Editer/Supprimer) */
             /*    - le nom du profil NON éditable              */
             /*    - le tableau des modules NON éditable        */
-            case 'visu':
+            case pageState.visu:
                 return <Col md={12} key="rootPageProfil">
                     <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
                     <Row>
@@ -182,9 +185,9 @@ var ReactPageProfil = React.createClass({
             /*    - le bandeau                      */
             /*    - le nom du profil EDITABLE       */
             /*    - le tableau des modules EDITABLE */
-            case 'creation':
+            case pageState.creation:
                 mode = 0;
-            case 'edition':
+            case pageState.edition:
                 return <Col md={12} key="rootPageProfil">
                     <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" mode={mode} titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
                     <Row>
@@ -199,10 +202,9 @@ var ReactPageProfil = React.createClass({
             /* On affiche :                    */
             /*    - le bandeau (Créer)         */
             /*    - le tableau des profils     */
-            case 'liste':
+            case pageState.liste:
             default:
                 return <Col md={12}  key="rootPageProfil">
-
                     <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" titre={this.state.titrePageIni} />
                     <Row>
                         <Col md={12}>
@@ -215,7 +217,12 @@ var ReactPageProfil = React.createClass({
     },
 
     onRetour: function () {
-        this.setState({etatPageProfil: 'liste', titrePage: Lang.get('global.profils'), idProfil: 0, nameProfil: ''});
+        this.setState({
+            etatPageProfil: pageState.liste,
+            titrePage: Lang.get('global.profils'),
+            idProfil: 0,
+            nameProfil: ''
+        });
     }
 });
 module.exports = ReactPageProfil;
@@ -256,7 +263,7 @@ var pageProfilStore = Reflux.createStore({
     },
 
     getInitialState: function () {
-        return {etatPageProfil: 'liste'};
+        return {etatPageProfil: pageState.liste};
     },
 
     initMatrice: function (data) {
@@ -295,7 +302,7 @@ var pageProfilStore = Reflux.createStore({
                 async: false,
                 success: function (data) {
                     that.nameProfil = data.traduction;
-                    that.trigger({idProfil: that.idProfilSelect, etatPageProfil: 'visu', nameProfil: that.nameProfil});
+                    that.trigger({idProfil: that.idProfilSelect, etatPageProfil: pageState.visu, nameProfil: that.nameProfil});
                 },
                 error: function (xhr, status, err) {
                     console.error(status, err.toString());
@@ -306,11 +313,11 @@ var pageProfilStore = Reflux.createStore({
 
     createProfil: function () {
         this.idProfilSelect = 0;
-        this.trigger({etatPageProfil: 'creation', nameProfil: '', idProfil: 0});
+        this.trigger({etatPageProfil: pageState.creation, nameProfil: '', idProfil: 0});
     },
 
     editProfil: function () {
-        this.trigger({etatPageProfil: 'edition'});
+        this.trigger({etatPageProfil: pageState.edition});
     },
 
     supprProfil: function () {
@@ -323,6 +330,9 @@ var pageProfilStore = Reflux.createStore({
 
             /* Un utilisateur est associé au profil, demande de confirmation de suppression */
             if (suppr == true) {
+
+                // Timeout utile pour permettre au swal de s'afficher
+                // #CestCacaMaisOnaPasLeChoix
                 setTimeout(function () {
                     swal({
                             title: Lang.get('global.attention'),
@@ -349,7 +359,7 @@ var pageProfilStore = Reflux.createStore({
     supprProfilAjax: function () {
         var that = this;
 
-        // AJAX
+        // AJAX TODO utiliser le param context et virer ce that pourrit
         $.ajax({
             url: BASE_URI + 'profils/' + that.idProfilSelect, /* correspond au module url de la BDD */
             dataType: 'json',
@@ -358,7 +368,7 @@ var pageProfilStore = Reflux.createStore({
             data: {'_token': $('#_token').val()},
             success: function (data) {
                 that.idProfilSelect = 0;
-                that.trigger({idProfil: 0, etatPageProfil: 'liste', nameProfil: ''});
+                that.trigger({idProfil: 0, etatPageProfil: pageState.liste, nameProfil: ''});
 
                 Actions.notif.success(Lang.get('global.notif_success'));
             },
@@ -423,7 +433,7 @@ var pageProfilStore = Reflux.createStore({
                     that.idProfilSelect = tab.idProfil;
 
                     // Passe variable aux composants qui écoutent l'action actionLoadData
-                    this.trigger({idProfil: (tab.idProfil * 1), etatPageProfil: 'edition', nameProfil: tab.nameProfil});
+                    this.trigger({idProfil: (tab.idProfil * 1), etatPageProfil: pageState.edition, nameProfil: tab.nameProfil});
 
                     Actions.notif.success(Lang.get('global.notif_success'));
                 }

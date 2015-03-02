@@ -30,6 +30,9 @@ var InputTime                   =    Field.InputTime;
 var InputTimeEditable           =    Field.InputTimeEditable;
 var Form                        = Field.Form;
 
+// HELPERS
+var pageState = require('../helpers/page_helper').pageState;
+
 // MIXINS ////
 var MixinGestMod = require('../mixins/gestion_modif');
 

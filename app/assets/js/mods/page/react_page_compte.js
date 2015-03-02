@@ -8,6 +8,8 @@ var Col = ReactB.Col;
 
 // MIXINS
 var MixinGestMod = require('../mixins/gestion_modif');
+// HELPERS
+var pageState = require('../helpers/page_helper').pageState;
 
 /**
  * Created by yann on 13/01/2015.
@@ -32,7 +34,7 @@ var PageCompte = React.createClass({
         console.log('Initial state:');
         console.log(this.props.dataUser);
         return {
-            etat: 'visu',
+            etat: pageState.visu,
             dataUser: this.props.dataUser
         };
     },
@@ -51,11 +53,10 @@ var PageCompte = React.createClass({
     },
 
     display: function () {
-        console.log('Render, state data user: %o', this.state.dataUser);
         var comp;
 
         switch (this.state.etat) {
-            case 'edition':
+            case pageState.edition:
                 comp =
                     <div key="pageCompteRootEdit">
                         <BandeauEdition mode={1} titre={Lang.get('administration.moncompte.titre')} sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}/>
@@ -90,7 +91,7 @@ var PageCompte = React.createClass({
         this.setState(obj);
     },
     modeEdition: function (e) {
-        this.setState({etat: 'edition'});
+        this.setState({etat: pageState.edition});
     },
 
     onRetour: function () {
