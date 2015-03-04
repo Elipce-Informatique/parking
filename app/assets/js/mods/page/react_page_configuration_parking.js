@@ -1,4 +1,4 @@
-/********************************************/
+var AdminMap = require('../composants/maps/admin_parking_map');
 /* Gestion de la modification et des droits */
 var AuthentMixins = require('../mixins/component_access');
 /* Pour le listenTo           */
@@ -32,7 +32,7 @@ var Page = React.createClass({
     },
 
     componentWillMount: function () {
-        this.listenTo(store, this.updateState, this.updateState);
+        this.listenTo(store, this._updateState, this._updateState);
     },
 
     componentDidMount: function () {
@@ -43,13 +43,50 @@ var Page = React.createClass({
         return true;
     },
 
+    onRetour: function () {
+
+    },
+
     /**
      * Retour du store, met à jour le state de la page
      * @param data : les nouvelles données venant du store
      */
-    updateState: function (data) {
+    _updateState: function (data) {
         // MAJ data automatique, lifecycle "UPDATE"
         this.setState(data);
+    },
+
+    /**
+     * Page en mode liste
+     * @returns {XML}
+     * @private
+     */
+    _liste: function () {
+        return <div>Hello liste !</div>;
+    },
+
+    /**
+     * page en mode visu
+     * @returns {XML}
+     * @private
+     */
+    _visu: function () {
+        return <div>Hello world !</div>;
+    },
+
+    /**
+     * Page en mode creation
+     * @returns {XML}
+     * @private
+     */
+    _creation: function () {
+        return <div>Hello world !</div>;
+    },
+
+    // Affiche la carte
+    _carte: function () {
+        var url = BASE_URI + 'public/images/test_carte_bis_2.svg';
+        return <AdminMap imgUrl={url} divId="div_carte"/>;
     },
 
     render: function () {
@@ -58,16 +95,16 @@ var Page = React.createClass({
         // Switch la structure de la page en fonction de l'état courant
         switch (this.state.etatPage) {
             case pageState.liste:
-                retour = <div>Hello liste !</div>;
+                retour = this._carte();
                 break;
             default:
-                retour = <div>Hello World !</div>;
+                retour = this._liste();
         }
         return retour;
     }
 });
 
-module.exports = page;
+module.exports = Page;
 
 /************************************************************************************************/
 /*                                                                                              */
@@ -75,8 +112,11 @@ module.exports = page;
 /*                                                                                              */
 /************************************************************************************************/
 var store = Reflux.createStore({
+    state: {
+        pageState: pageState.liste
+    },
     getInitialState: function () {
-        return {};
+        return {pageState: this.state.pageState};
     },
     // Initial setup
     init: function () {
