@@ -136,8 +136,12 @@ var DataTableReact = React.createClass({
 
     componentWillUnmount: function () {
 
-        // Suppression fixed header
-        $('.fixedHeader').remove();
+        /* Suppresion datatable OBLIGATOIRE
+        Lorsqu'un composant datatable est inclus dans un autre composant et qu'il possède plus de 10 lignes
+        seulement 10 lignes existent dans le DOM, les autres lignes sont supprimées. Lors d'un setState()
+        lorsque REACT compare ses 2 renders, il lui manque des lignes et il affiche une FATAL ERROR
+        Le fait de supprimer le plugin JQuery lors du unMount règle le problème */
+        this.destroyDataTable();
     },
     /*
      |--------------------------------------------------------------------------
