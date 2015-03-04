@@ -20,7 +20,7 @@ var FormValidationMixin = {
     componentWillMount: function () {
         // CHECK MIXIN
         if (typeof(this.listenTo) == 'undefined') {
-            console.error('Oulalalala, tu n\'a pas mis le mixin Reflux.ListenerMixin dans ton composant "' +
+            console.error('Oulalalala, tu n\'as pas mis le mixin Reflux.ListenerMixin dans ton composant "' +
             this._currentElement.type.displayName + '" !!! Corrige vite ça si tu veux que ça marche !');
         } else {
             this.listenTo(storeVerif, this.verifyForm);

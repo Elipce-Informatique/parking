@@ -30,11 +30,7 @@ var hideP = ['id'];
 /* Sur clic d'un radio bouton, déclenche l'action "handleClickRadio" */
 var aLibelle = [Lang.get('global.oui'), Lang.get('global.non')];
 var aName    = ['oui', 'non'];
-var aReactElements  = {};
-aReactElements['1'] = [];                                    /* Colonne n°1 du tableau               */
-aReactElements['1'][0] = 'RadioBts';                         /* Type de composant à ajouter          */
-aReactElements['1'][1] = {'name':aName, 'libelle':aLibelle}; /* Name des radio boutons et libelle    */
-aReactElements['1'][2] = {'onClick':handleClickRadio};       /* Evenement sur click des radio bouton */
+var aReactElements  = {'1':['RadioBts',{'name':aName, 'libelle':aLibelle},{'onClick':handleClickRadio}]};
 
 /* Fonction handleClickRadio */
 function handleClickRadio(evt){

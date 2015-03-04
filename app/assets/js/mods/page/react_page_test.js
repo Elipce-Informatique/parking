@@ -3,6 +3,7 @@
 /* Composants Boostrap */
 var Row = ReactB.Row;
 var Col = ReactB.Col;
+var Button = ReactB.Button;
 
 /*********************************************/
 /* Composant input pour le libelle du profil */
@@ -15,6 +16,7 @@ var ButtonGroup                 = ReactB.ButtonGroup;
 var InputRadioBootstrapEditable = Field.InputRadioBootstrapEditable;
 var InputCheckboxEditable       = Field.InputCheckboxEditable;
 var InputDateEditable           = Field.InputDateEditable;
+var InputSelect                 = Field.InputSelect;
 var InputSelectEditable         = Field.InputSelectEditable;
 var InputNumberEditable         = Field.InputNumberEditable;
 var InputTelEditable            = Field.InputTelEditable;
@@ -30,12 +32,22 @@ var InputTime                   =    Field.InputTime;
 var InputTimeEditable           =    Field.InputTimeEditable;
 var Form                        = Field.Form;
 
-// MIXINS ////
+/*****************************************************
+/* MIXINS */
 var MixinGestMod = require('../mixins/gestion_modif');
+var FormValidationMixin = require('../mixins/form_validation')
 
+/*****************************************************
+ /* HELPERS */
+var form_data_helper  = require('../helpers/form_data_helper');
+
+
+/**************************************************
+ * PAGE REACT
+ */
 var ReactPageTest               = React.createClass({
 
-    mixins: [MixinGestMod, Reflux.ListenerMixin],
+    mixins: [MixinGestMod, Reflux.ListenerMixin, FormValidationMixin],
     /**
      * État initial des données du composant
      * @returns les données de l'état initial
@@ -67,23 +79,24 @@ var ReactPageTest               = React.createClass({
      */
     render: function () {
         var editable = true;
+        var indice = 0;
 
         /*********************/
         /* Paramètres Select */
         var options = [
-            { value: '5', label: 'Fraise' },
-            { value: '1', label: 'Abricot' },
-            { value: '2', label: 'Framboise' },
-            { value: '3', label: 'Pomme' },
-            { value: '4', label: 'Poire' }
+            { value: '1abricot', label: 'Abricot' },
+            { value: '2fambroise', label: 'Framboise' },
+            { value: '3pomme', label: 'Pomme' },
+            { value: '4poire', label: 'Poire' },
+            { value: '5fraise', label: 'Fraise' }
         ];
 
         function selectChange(value, aData){
 
-            var indice = 0;
             _.each(aData, function(val, key){
                 indice++;
             });
+            //console.log('ChangeSelect '+indice);
         }
 
         function clickImage(evt){
@@ -91,7 +104,8 @@ var ReactPageTest               = React.createClass({
         }
         /* FIN : Paramètres Select */
         /***************************/
-        return  <Form>
+        return(
+        <Form attributes={{id:"form_test"}}>
             <Row id="Champ_texte">
                 <Col md={12}>
                     <InputTextEditable attributes={{label:'InputTextEditable', name:"InputTextEditable", value:'Vivian', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
@@ -106,13 +120,13 @@ var ReactPageTest               = React.createClass({
 
             <Row id="Champ_mail">
                 <Col md={12}>
-                    <InputMailEditable attributes={{label:'InputMailEditable', name:"InputMailEditable", value:'InputMailEditable', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
+                    <InputMailEditable attributes={{label:'InputMailEditable', name:"InputMailEditable", value:'InputMailEditable@elipce.com', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
                 </Col>
             </Row>
 
             <Row id="Champ_password">
                 <Col md={12}>
-                    <InputPasswordEditable attributes={{label:'InputPasswordEditable', name:"InputPasswordEditable", value:"InputPasswordEditable", wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
+                    <InputPasswordEditable attributes={{label:'InputPasswordEditable', name:"InputPasswordEditable", value:"", wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
                 </Col>
             </Row>
 
@@ -139,18 +153,26 @@ var ReactPageTest               = React.createClass({
                 </Col>
             </Row>
 
-            <Row id="Select">
-                <Col md={12}>
-                    <InputSelectEditable
-                        multi={true}
-                        evts={{onChange:selectChange}}
-                        attributes={{label:'Select', name:"Select", selectCol:4,labelCol:2, required:true}}
-                        data={options}
-                        editable={editable}
-                        selectedValue={['2']}
-                        placeholder={'PlaceHolder...'}/>
-                </Col>
-            </Row>
+            <InputSelectEditable
+                multi={true}
+                evts={{onChange:selectChange}}
+                attributes={{label:'Mes fruits', name:"Select", selectCol:4,labelCol:2, required:true}}
+                data={options}
+                editable={editable}
+                selectedValue={["5fraise","3pomme"]}
+                placeholder={'PlaceHolder...'}/>
+
+            <Button
+                bsStyle="success"
+                onClick={function(){
+                            var fData = form_data_helper('form_test', 'POST');
+                            //console.log('DATA: %o',fData);
+                            var f = $('#form_test').serializeArray();
+                            //console.log('DATA %o',f);
+                            // Vérif champ erronés
+                            Actions.validation.verify_form_save();
+                        }}
+            >Valider</Button>
 
             <Row id="Input number">
                 <Col md={12}>
@@ -217,7 +239,7 @@ var ReactPageTest               = React.createClass({
                 </Col>
             </Row>
 
-        </Form>;
+        </Form>)
     },
 
     /**
