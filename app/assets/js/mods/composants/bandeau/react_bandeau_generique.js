@@ -28,7 +28,7 @@ var BandeauGenerique = React.createClass({
     mixins: [AuthentMixins],
 
     propTypes: {
-        bandeauType: React.PropTypes.string.isRequired,
+        bandeauType: React.PropTypes.number.isRequired,
         module_url: React.PropTypes.string.isRequired,
         avecRetour: React.PropTypes.bool
     },
