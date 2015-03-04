@@ -11,7 +11,7 @@ module.exports.dessin = {
     allee: 2,
     zone: 3,
     afficheur: 4,
-    place_auto: 1
+    place_auto: 5
 };
 
 /**

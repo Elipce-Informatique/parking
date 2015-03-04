@@ -104,7 +104,7 @@ var parkingMap = React.createClass({
         //});
     },
     /**
-     * Paramètre le plugin de dessin sur la carte lors de l'INIT de la map Ç
+     * Paramètre le plugin de dessin sur la carte lors de l'INIT de la map
      */
     initDrawPlugin: function () {
         this.changeDrawToolbar(this.props.defaultDrawMode);
@@ -299,6 +299,7 @@ var parkingMap = React.createClass({
          * @param className : classe du bouton
          */
         var selectButton = function (className) {
+            console.log('pass select bouton : ' + className);
             $('.btn-fa-selected').removeClass('btn-fa-selected');
             $('.' + className).parent().addClass('btn-fa-selected');
         };
@@ -307,6 +308,10 @@ var parkingMap = React.createClass({
             case mapOptions.dessin.place:
                 this.changeDrawToolbar(data.data.mode);
                 selectButton(mapOptions.icon.place);
+                break;
+            case mapOptions.dessin.place_auto:
+                this.changeDrawToolbar(data.data.mode);
+                selectButton(mapOptions.icon.place_auto);
                 break;
             case mapOptions.dessin.allee:
                 this.changeDrawToolbar(data.data.mode);
