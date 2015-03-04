@@ -41,7 +41,7 @@
     "react-bootstrap": "^0.14.0",
     "react-bootstrap-datetimepicker": "0.0.9",
     "react-color-picker": "^2.1.4",
-    "react-select": "^0.2.13",
+    "react-select": "^0.3.4",
     "reflux": "^0.2.0",
     "robust-point-in-polygon": "^1.0.0",
     "validator": "^3.26.0"

@@ -1,6 +1,6 @@
 // Composant de la map
 require('./global/global');
-var ParkingMap = require('./mods/composants/maps/supervision_parking_map');
+var ParkingMap = require('./mods/composants/maps/admin_parking_map');
 var Collapse = require('./mods/composants/react_collapse').Collapse;
 var CollapseBody = require('./mods/composants/react_collapse').CollapseBody;
 var CollapseSidebar = require('./mods/composants/react_collapse').CollapseSidebar;
@@ -15,7 +15,7 @@ var TestD3 = require('./mods/charts/test_d3');
  */
 $(function () {
 
-    var url = BASE_URI + 'public/images/test_carte.svg';
+    var url = BASE_URI + 'public/images/test_carte_bis_2.svg';
 
     var zoneTRb = React.render(<ZoneTempsReel />, document.getElementById('zone_temps_reel'));
     var map = React.render(

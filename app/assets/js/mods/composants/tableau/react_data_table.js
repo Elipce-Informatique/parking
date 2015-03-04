@@ -157,7 +157,6 @@ var DataTableReact = React.createClass({
 
         // Supression du data-reactid
         $('.fixedHeader table').removeAttr('data-reactid');
-
     },
 
     /**

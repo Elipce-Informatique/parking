@@ -1475,10 +1475,6 @@ function modeEditableFalse(attr) {
  */
 function checkFileExtension(value, mode, withAlert) {
     var filePath = value;
-    //console.log('checkFileExtension');
-    //console.log('filePath : '+filePath);
-    //console.log('mode : '+mode);
-    //console.log('withAlert : %o', withAlert);
 
     if (filePath.indexOf('.') == -1)
         return false;

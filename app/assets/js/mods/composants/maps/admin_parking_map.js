@@ -6,17 +6,8 @@ var mapStore = require('../../stores/admin_parking_map_store');
 var ListenerMixin = Reflux.ListenerMixin;
 
 /**
- *
- *
- *
- *
- */
-
-/**
  * Created by yann on 27/01/2015.
- *
  * Composant pour créer une carte de parking en mode administration outils de dessins.
- *
  * @param defaultDrawMode :
  */
 var parkingMap = React.createClass({
@@ -76,10 +67,7 @@ var parkingMap = React.createClass({
         return false;
     },
 
-    render: function () {
-        var style = {height: this.props.mapHeight + "px"};
-        return <div id={this.props.divId} style={style}> </div>;
-    },
+
     /**
      * ------------------------------------------
      * INITIALISATION DE LA CARTE ---------------
@@ -93,8 +81,8 @@ var parkingMap = React.createClass({
 
         // CRÉATION DE LA MAP
         this._inst.map = new L.Map(this.props.divId, {
-            fullscreenControl: true
-        }).setView([50, 50], 3);
+            maxZoom: 7
+        }).setView([65, 50], 4);
 
         // AJOUT DE L'IMAGE DE FOND
         L.imageOverlay(this.props.imgUrl, [origine, haut_droit]).addTo(this._inst.map);
@@ -109,9 +97,14 @@ var parkingMap = React.createClass({
         this._inst.map.addLayer(this._inst.zonesGroup);
         this._inst.afficheursGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.afficheursGroup);
+
+        // test event
+        //this._inst.map.on('zoomend', function (e) {
+        //    console.log(e);
+        //});
     },
     /**
-     * Paramètre le plugin de dessin sur la carte lors de l'INIT de la map
+     * Paramètre le plugin de dessin sur la carte lors de l'INIT de la map Ç
      */
     initDrawPlugin: function () {
         this.changeDrawToolbar(this.props.defaultDrawMode);
@@ -376,6 +369,14 @@ var parkingMap = React.createClass({
                 break;
         }
         this.orderLayerGroups();
+    },
+    /**
+     * Affichage du composant
+     * @returns {XML}
+     */
+    render: function () {
+        var style = {height: "100%"};
+        return <div id={this.props.divId} style={style}> </div>;
     }
 });
 
