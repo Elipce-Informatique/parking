@@ -59,7 +59,7 @@ var FormJours = React.createClass({
                         name: "ouverture",
                         value: this.props.jourData.ouverture,
                         required: true,
-                        wrapperClassName: 'col-md-1',
+                        wrapperClassName: 'col-md-2',
                         labelClassName: 'col-md-1 text-right',
                         groupClassName: 'row'
                     }}
@@ -70,7 +70,7 @@ var FormJours = React.createClass({
                         name: "fermeture",
                         value: this.props.jourData.fermeture,
                         required: true,
-                        wrapperClassName: 'col-md-1',
+                        wrapperClassName: 'col-md-2',
                         labelClassName: 'col-md-1 text-right',
                         groupClassName: 'row'
                     }}
