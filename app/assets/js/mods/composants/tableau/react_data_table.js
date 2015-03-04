@@ -154,6 +154,10 @@ var DataTableReact = React.createClass({
         new $.fn.dataTable.FixedHeader(this.oDataTable, {
             "offsetTop": 50
         });
+
+        // Supression du data-reactid
+        $('.fixedHeader table').removeAttr('data-reactid');
+
     },
 
     /**

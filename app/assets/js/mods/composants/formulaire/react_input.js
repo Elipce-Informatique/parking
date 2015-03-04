@@ -3,6 +3,7 @@ var OverlayTrigger = ReactB.OverlayTrigger;
 var Tooltip = ReactB.Tooltip;
 var Glyphicon = ReactB.Glyphicon;
 var Validator = require('validator');
+var Select = require('react-select');
 // Time
 var moment = require('moment');
 require('moment/locale/fr');
