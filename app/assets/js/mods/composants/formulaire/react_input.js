@@ -350,7 +350,12 @@ var InputPassword = React.createClass({
  * Champ mot de passe => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
- * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction} @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ * {
+ *      isValid: false|true
+ *      style: 'success|warning|error|default',
+ *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
+ * }
  */
 var InputPasswordEditable = React.createClass({
 
@@ -407,6 +412,14 @@ var InputPasswordEditable = React.createClass({
  *                  - labelCol: nombre de colonnes bootstrap du label
  *                  - selectCol: nombre de colonnes bootstrap du select
  * @param evts: evenements de Input (react bootstrap)  ex: {onChange: maFonction}
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ * {
+ *      isValid: false|true
+ *      style: 'success|warning|error|default',
+ *      tooltip 'La donnée saisie est déjà présente dans la base de données.'
+ * }
+ * @param labelClass: string: classe CSS à ajouter au Col qui entoure le label ex: text-right
  */
 var InputSelect = React.createClass({
 
@@ -421,7 +434,8 @@ var InputSelect = React.createClass({
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool,
-        validator: React.PropTypes.func
+        validator: React.PropTypes.func,
+        labelClass: React.PropTypes.string
     },
 
     getInitialState: function () {
@@ -442,6 +456,7 @@ var InputSelect = React.createClass({
             gestMod: true,
             delimiter: '[-]',
             name: '',
+            labelClass : '',
             validator: function (val, props, state) {
                 var retour = {};
                 // Value vide
@@ -455,6 +470,15 @@ var InputSelect = React.createClass({
                 return retour;
             }
         };
+    },
+
+    componentWillMount: function(){
+
+        // Validations syntaxiques
+        var validations = this.props.validator(this.props.selectedValue, this.props, this.state);
+
+        // Nouvelle value
+        this.setState({attributes: validations});
     },
 
     handleChange: function (e, data) {
@@ -509,8 +533,8 @@ var InputSelect = React.createClass({
         }
 
         return(
-            <Row>
-                <Col md={this.props.attributes.labelCol} className={attrs['data-class']}>
+            <Row className="form-group">
+                <Col md={this.props.attributes.labelCol} className={attrs['data-class']+' '+this.props.labelClass}>
                     <label className="control-label">{this.props.attributes.label}</label>
                 </Col>
                 <Col md={this.props.attributes.selectCol}>
@@ -531,6 +555,8 @@ var InputSelect = React.createClass({
  * @param multi: bool, à choix multiple, par défaut non
  * @param attributes: props de Input (react bootstrap) ex: {label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
+ * @param labelClass: string: classe CSS à ajouter au Col qui entoure le label ex: text-right
  */
 var InputSelectEditable = React.createClass({
 
@@ -545,7 +571,8 @@ var InputSelectEditable = React.createClass({
         multi: React.PropTypes.bool,
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        labelClass: React.PropTypes.string
     },
 
     getDefaultProps: function () {
@@ -556,7 +583,8 @@ var InputSelectEditable = React.createClass({
             gestMod: true,
             placeholder: Lang.get('global.select'),
             multi: false,
-            selectedValue: ''
+            selectedValue: '',
+            labelClass : ''
         }
     },
 
@@ -574,6 +602,7 @@ var InputSelectEditable = React.createClass({
                     gestMod    = {this.props.gestMod}
                     data       = {this.props.data}
                     multi      = {this.props.multi}
+                    labelClass  = {this.props.labelClass}
                     autocomplete="both"
                 />;
         }
@@ -583,23 +612,26 @@ var InputSelectEditable = React.createClass({
             var aValues = [];
             // Valeurs multiples
             if(this.props.multi){
-                // Parcours des valeurs sélectionnées
-                this.props.selectedValue.forEach(function(val, indexSelect){
-                    // Parcours des données du selecteur
-                    this.props.data.forEach(function(obj, indexData){
-                        if(obj.value !== undefined && obj.value == val){
-                            aValues.push( obj.label);
-                        }
-                    }.bind(this))
+                // Tableau de values existe
+                if(typeof this.props.selectedValue === 'object') {
+                    // Parcours des valeurs sélectionnées
+                    this.props.selectedValue.forEach(function (val, indexSelect) {
+                        // Parcours des données du selecteur
+                        this.props.data.forEach(function (obj, indexData) {
+                            if (obj.value !== undefined && obj.value == val) {
+                                aValues.push(obj.label);
+                            }
+                        }.bind(this))
 
-                }.bind(this));
+                    }.bind(this));
+                }
             }
             // Mode combobox
             else{
                 // Parcours des data
                 this.props.data.forEach(function(obj, index){
                     // Donnée sélectionnée
-                    if(obj.value === this.props.selectedValue){
+                    if(obj.value == this.props.selectedValue){
                         aValues.push( obj.label);
                     }
                 }.bind(this));
@@ -607,7 +639,7 @@ var InputSelectEditable = React.createClass({
             // Chaines de caractères
             retour = (
                 <Row>
-                    <Col md={this.props.attributes.labelCol}>
+                    <Col md={this.props.attributes.labelCol} className={this.props.labelClass}>
                         <label>
                             <span>{this.props.attributes.label}</span>
                         </label>
