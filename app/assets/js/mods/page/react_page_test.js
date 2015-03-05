@@ -173,8 +173,10 @@ var ReactPageTest               = React.createClass({
                 attributes={{label:'Mes fruits', name:"Select", selectCol:4,labelCol:2, required:true}}
                 data={options}
                 editable={editable}
+                placeholder={'PlaceHolder...'}
+                labelClass='text-right'
                 selectedValue={["5fraise","3pomme"]}
-                placeholder={'PlaceHolder...'}/>
+            />
 
             <Button
                 bsStyle="success"
