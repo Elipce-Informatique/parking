@@ -457,6 +457,15 @@ var InputSelect = React.createClass({
         };
     },
 
+    componentWillMount: function(){
+
+        // Validations syntaxiques
+        var validations = this.props.validator(this.props.selectedValue, this.props, this.state);
+
+        // Nouvelle value
+        this.setState({attributes: validations});
+    },
+
     handleChange: function (e, data) {
         // Gestion des modifications
         Actions.global.gestion_modif_change();
@@ -510,7 +519,7 @@ var InputSelect = React.createClass({
 
         return(
             <Row>
-                <Col md={this.props.attributes.labelCol} className={attrs['data-class']}>
+                <Col md={this.props.attributes.labelCol} className={attrs['data-class']+' text-right'}>
                     <label className="control-label">{this.props.attributes.label}</label>
                 </Col>
                 <Col md={this.props.attributes.selectCol}>
@@ -598,16 +607,17 @@ var InputSelectEditable = React.createClass({
             else{
                 // Parcours des data
                 this.props.data.forEach(function(obj, index){
-                    // Donnée sélectionnée
-                    if(obj.value === this.props.selectedValue){
+                    // Donnée sélectionnée ATTENTION
+                    if(obj.value == this.props.selectedValue){
                         aValues.push( obj.label);
                     }
                 }.bind(this));
             }
+
             // Chaines de caractères
             retour = (
                 <Row>
-                    <Col md={this.props.attributes.labelCol}>
+                    <Col md={this.props.attributes.labelCol} className="text-right">
                         <label>
                             <span>{this.props.attributes.label}</span>
                         </label>

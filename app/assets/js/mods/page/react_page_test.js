@@ -166,6 +166,7 @@ var ReactPageTest               = React.createClass({
                 </Col>
             </Row>
 
+
             <InputSelectEditable
                 multi={true}
                 evts={{onChange:selectChange}}

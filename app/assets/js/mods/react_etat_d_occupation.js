@@ -19,7 +19,7 @@ var ColorPickerEditable = react_color.ColorPickerEditable;
 var InputSelectEditable         = Field.InputSelectEditable;
 
 /**********/
-/* Mixinx */
+/* Mixin */
 var FormValidationMixin = require('./mixins/form_validation');
 
 var reactEtatDoccupation = React.createClass({
@@ -104,16 +104,20 @@ var reactEtatDoccupation = React.createClass({
             typePlaceSelected = [this.state.type_place_id.toString()];
 
         // Test si besoin de forcer le style du libelle
-        attrs = {value:           this.state.libelle,
+        var attrs = {
+            value:           this.state.libelle,
             label:           Lang.get('global.libelle'),
             name:            'libelle',
             wrapperClassName:'col-md-4',
-            labelClassName:  'col-md-2',
+            labelClassName:  'col-md-1 text-right',
             groupClassName:  'row',
             required:true};
+        // Après sauvegarde mais pourquoi ??
         if(this.state.dataLibelle != undefined ){
-            var attrs2  = {bsStyle:this.state.dataLibelle.style, 'data-valid':this.state.dataLibelle.isValid, help:this.state.dataLibelle.tooltip};
-            attrs       = _.merge(attrs, attrs2);
+            //console.log('passe');
+            attrs       = _.merge(attrs, {  bsStyle:this.state.dataLibelle.style,
+                                            'data-valid':this.state.dataLibelle.isValid,
+                                            help:this.state.dataLibelle.tooltip});
         }
 
         /* Défini le libelleInitial */
@@ -123,51 +127,48 @@ var reactEtatDoccupation = React.createClass({
         }
 
         return (<Form ref="form" attributes={fAttrs}>
-                    <Row>
-                        <Col md={12}>
-                            <InputTextEditable attributes={attrs}
-                                               editable={this.props.editable}
-                            />
-                        </Col>
-                        <Col md={12}>
-                            <ColorPickerEditable
-                                label = {Lang.get('administration_parking.etats_d_occupation.tableau.couleur')}
-                                attributes={{
-                                    name: "couleur",
-                                    required: true,
-                                    value: this.state.couleur
-                                }}
-                                editable={this.props.editable}
-                                mdLabel={2}
-                                mdColor={2}
-                                evts={{onBlur:this.onBlurCouleur}}
-                            />
-                        </Col>
-                        <Col md={12}>
-                            <InputSelectEditable evts      ={{onChange:this.etatPlaceChange}}
-                                                 attributes={{label:    Lang.get('administration_parking.etats_d_occupation.etat_place'),
-                                                              name:     "data_etat_place",
-                                                              selectCol:4,
-                                                              labelCol: 2,
-                                                              required:true}}
-                                                 data         ={this.state.dataEtatsPlace}
-                                                 editable     ={this.props.editable}
-                                                 selectedValue={etatPlaceSelected}
-                                                 placeholder  ={Lang.get('global.selection')}/>
-                        </Col>
-                        <Col md={12}>
-                            <InputSelectEditable evts      ={{onChange:this.typePlaceChange}}
-                                                 attributes={{label:    Lang.get('administration_parking.etats_d_occupation.type_place'),
-                                                              name:     "data_etat_place",
-                                                              selectCol:4,
-                                                              labelCol: 2,
-                                                              required:true}}
-                                                 data         ={this.state.dataTypesPlace}
-                                                 editable     ={this.props.editable}
-                                                 selectedValue={typePlaceSelected}
-                                                 placeholder  ={Lang.get('global.selection')}/>
-                        </Col>
-                    </Row>
+                    <InputTextEditable
+                        attributes={attrs}
+                        editable={this.props.editable}
+                    />
+                    <ColorPickerEditable
+                        label = {Lang.get('administration_parking.etats_d_occupation.tableau.couleur')}
+                        attributes={{
+                            name: "couleur",
+                            required: true,
+                            value: this.state.couleur
+                        }}
+                        editable={this.props.editable}
+                        mdLabel={1}
+                        mdColor={2}
+                        labelClass="text-right"
+                        evts={{onBlur:this.onBlurCouleur}}
+                    />
+                    <InputSelectEditable
+                        evts      ={{onChange:this.etatPlaceChange}}
+                        attributes={{label:    Lang.get('administration_parking.etats_d_occupation.etat_place'),
+                                      name:     "etat_place",
+                                      selectCol:4,
+                                      labelCol: 1,
+                                      required:true}}
+                        data         ={this.state.dataEtatsPlace}
+                        editable     ={this.props.editable}
+                        selectedValue={etatPlaceSelected}
+                        placeholder  ={Lang.get('global.selection')}
+                        multi={false}
+                    />
+                    <InputSelectEditable
+                        evts      ={{onChange:this.typePlaceChange}}
+                         attributes={{label:    Lang.get('administration_parking.etats_d_occupation.type_place'),
+                                      name:     "type_place",
+                                      selectCol:4,
+                                      labelCol: 1,
+                                      required:true}}
+                         data         ={this.state.dataTypesPlace}
+                         editable     ={this.props.editable}
+                         selectedValue={typePlaceSelected}
+                         placeholder  ={Lang.get('global.selection')}
+                    />
                 </Form>
         );
     },
@@ -337,18 +338,11 @@ var reactEtatDoccupationStore = Reflux.createStore({
 
         url = BASE_URI + 'etats_d_occupation/' + url;
 
-        //console.log('SAVE '+idUser+' URL '+url);
+        //console.log('SAVE '+this.id);
         var method = this.id === 0 ? 'POST' : 'PUT';
 
         // FormData
         var fData = form_data_helper('form_etat_d_occupation', method);
-
-
-        fData.append('type_place_id', this.state.type_place_id);
-        fData.append('etat_place_id', this.state.type_place_id);
-        fData.append('couleur',       this.state.couleur);
-        fData.append('id',            this.id);
-
 
         // Requête
         $.ajax({
@@ -375,27 +369,6 @@ var reactEtatDoccupationStore = Reflux.createStore({
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
                 Actions.notif.error('AJAX : '+Lang.get('global.notif_erreur'));
-            }
-        });
-    },
-
-    onSupprimer: function (e) {
-        // Variables
-        var url = BASE_URI + 'etats_d_occupation/' + this.id;
-        var method = 'DELETE';
-
-        // Requête
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            context: this,
-            type: method,
-            data: {'_token': $('#_token').val()},
-            success: function (tab) {
-                Actions.utilisateur.supprOK();
-            },
-            error: function (xhr, status, err) {
-                console.error(status, err.toString());
             }
         });
     }

@@ -14,7 +14,7 @@ class Module extends Eloquent
     | ATTRIBUTS
     |--------------------------------------------------------------------------
     */
-    public $timestamp = false;
+    public $timestamps = false;
 
     protected $fillable = ['traduction', 'is_menu'];
 

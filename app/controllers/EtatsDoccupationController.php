@@ -35,14 +35,7 @@ class EtatsDoccupationController extends \BaseController {
 	{
 		// Champs du formualaire
 		$fields = Input::except('_token');
-		Log::warning('-----------> UPDATE, $post : '.print_r($fields, true).' <-----------');
-//			[libelle] => Test 2
-//			[data_etat_place] => 2
-//    		[_method] => PUT
-//    		[type_place_id] => 1
-//    		[etat_place_id] => 1
-//    		[couleur] => FFFFFF
-//			[id] => 52
+		Log::warning('-----------> UPDATE : '.print_r($fields, true).' <-----------');
 		return json_encode(EtatsDoccupation::updateEtatDoccupation($id, $fields));
 	}
 	/**
@@ -84,7 +77,7 @@ class EtatsDoccupationController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+		return json_encode(EtatsDoccupation::deleteEtatDoccupation($id));
 	}
 
 

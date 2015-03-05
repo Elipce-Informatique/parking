@@ -1,14 +1,11 @@
 <?php
 
-use Illuminate\Auth\UserTrait;
-use Illuminate\Auth\UserInterface;
-use Illuminate\Auth\Reminders\RemindableTrait;
-use Illuminate\Auth\Reminders\RemindableInterface;
-
-class EtatsDoccupation extends Eloquent implements UserInterface, RemindableInterface
+class EtatsDoccupation extends Eloquent
 {
+    public $timestamps = false;
 
-    use UserTrait, RemindableTrait;
+    protected $fillable = ['libelle'];
+    protected $table='etat_occupation';
 
     /*
     |--------------------------------------------------------------------------
@@ -162,14 +159,35 @@ class EtatsDoccupation extends Eloquent implements UserInterface, RemindableInte
      * Mise à jour d'un état d'occupation
      */
     public static function updateEtatDoccupation($id, $fields){
-        // Trouver le user
-        $oDataOccupation = DB::table('etat_occupation')->find($id);
+        // Trouver l'état d'occupation
+        $oDataOccupation = EtatsDoccupation::find($id);
+        // Modifier l'état d'occupation
         $oDataOccupation->libelle       = $fields['libelle'];
         $oDataOccupation->couleur       = $fields['couleur'];
-        $oDataOccupation->type_place_id = $fields['type_place_id'];
-        $oDataOccupation->etat_place_id = $fields['etat_place_id'];
+        $oDataOccupation->type_place_id = $fields['type_place'];
+        $oDataOccupation->etat_place_id = $fields['etat_place'];
+        // Sauvegarder l'état d'occupation
         $bSave = $oDataOccupation->save();
 
         return ['save'=>$bSave];
+    }
+
+    /*
+     * Suppression d'un état d'occupation
+     */
+    public static function deleteEtatDoccupation($id){ // Variables
+        $bSave = true;
+
+        // Chercher l'état d'occupataion
+        $etat = EtatsDoccupation::find($id);
+
+        // Supprimer l'état d'occupataion
+        try {
+            $etat->delete();
+        }
+        catch (Exception $e) {
+            $bSave = false;
+        }
+        return $bSave;
     }
 }
