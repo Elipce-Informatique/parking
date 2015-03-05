@@ -51,6 +51,7 @@ var store = Reflux.createStore({
      */
     // CRÉATION D'UN DESSIN FINIE (Ajout a la carte)
     onDraw_created: function (data) {
+        console.log('Pass onDraw_created');
         var retour = {
             type: mapOptions.type_messages.add_forme,
             data: data

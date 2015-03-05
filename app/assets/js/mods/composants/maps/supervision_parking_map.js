@@ -41,8 +41,7 @@ var parkingMap = React.createClass({
     },
 
     getDefaultProps: function () {
-        return {
-        };
+        return {};
     },
 
     getInitialState: function () {
@@ -71,6 +70,7 @@ var parkingMap = React.createClass({
         var style = {height: "100%"};
         return <div id={this.props.divId} style={style}> </div>;
     },
+
     /**
      * ------------------------------------------
      * INITIALISATION DE LA CARTE ---------------
