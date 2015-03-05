@@ -108,7 +108,15 @@ var ReactPageTest               = React.createClass({
         <Form attributes={{id:"form_test"}}>
             <Row id="Champ_texte">
                 <Col md={12}>
-                    <InputTextEditable attributes={{label:'InputTextEditable', name:"InputTextEditable", value:'Vivian', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
+                    <InputTextEditable
+                        attributes={
+                            {   label:'InputTextEditable',
+                                name:"InputTextEditable",
+                                value:'Vivian',
+                                wrapperClassName:'col-md-4',
+                                labelClassName:'col-md-2',
+                                groupClassName:'row'}}
+                        editable={editable} />
                 </Col>
             </Row>
 
@@ -143,12 +151,13 @@ var ReactPageTest               = React.createClass({
             <Row id="InputColorEditable">
                 <Col md={12}>
                     <ColorPickerEditable
-                        evts={{onBlur:function(e){console.log('blur color');}}}
+                        evts={{onBlur:function(e){console.log('blur color '+$(e.currentTarget).val());}}}
                         label="Couleur modifiable"
                         mdColor={4}
                         mdLabel={2}
+                        labelClass="text-right"
                         gestMod={true}
-                        attributes={{name:"toto",value:"AAAAAA"}}
+                        attributes={{name:"color", required:false, value:'E2156B'}}
                         editable={editable} />
                 </Col>
             </Row>
