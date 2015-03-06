@@ -152,20 +152,16 @@ var ReactPageTest               = React.createClass({
                     <ColorPicker color="AAAAAA" label="Couleur" mdColor={4} mdLabel={2} />
                 </Col>
             </Row>
-            <Row id="InputColorEditable">
-                <Col md={12}>
-                    <ColorPickerEditable
-                        evts={{onBlur:function(e){console.log('blur color '+$(e.currentTarget).val());}}}
-                        label="Couleur modifiable"
-                        mdColor={4}
-                        mdLabel={2}
-                        labelClass="text-right"
-                        gestMod={true}
-                        attributes={{name:"color", required:false, value:'E2156B'}}
-                        editable={editable} />
-                </Col>
-            </Row>
 
+            <ColorPickerEditable
+                evts={{onBlur:function(e){console.log('blur color '+$(e.currentTarget).val());}}}
+                label="Couleur modifiable"
+                mdColor={4}
+                mdLabel={2}
+                labelClass="text-right"
+                gestMod={true}
+                attributes={{name:"color", required:false, value:'E2156B'}}
+                editable={editable} />
 
             <InputSelectEditable
                 multi={true}

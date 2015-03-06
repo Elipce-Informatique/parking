@@ -1,5 +1,6 @@
 /**
  * Created by Pierre on 22/01/2015.
+ * Modified bu Vivian on 06/03/2015
  */
 
 /***********************/
@@ -36,141 +37,37 @@ var reactEtatDoccupation = React.createClass({
     getDefaultProps: function () {
         return {
             editable: false,
-            id: 0,
-            data: {}
+            id: 0
         }
     },
 
     getInitialState: function () {
         //console.log('getInitialState');
-        return  {libelle:        '',
-                 couleur:        'FFFFFF',
-                 etat_place_id:  '',
-                 type_place_id:  '',
-                 dataEtatsPlace: [],
-                 dataTypesPlace: []
+        return  {
+            libelle:        '',
+            validation: {},// Etat de validation du champ libelle: {isValid, style, tooltip}
+            couleur:        'FFFFFF',
+            etat_place_id:  '',
+            type_place_id:  '',
+            dataEtatsPlace: [], // Données de la liste déroulante etat_place_id
+            dataTypesPlace: []  // Données de la liste déroulante data_place_id
                 };
     },
 
     componentWillMount: function () {
-        //console.log('componentWillMount');
         // Liaison au store
         this.listenTo(reactEtatDoccupationStore, this.updateData, this.updateData);
 
-        // Données de l'état d'occupation
+        // Données de l'état d'occupation + les 2 combos
         Actions.etats_d_occupation.show(this.props.id);
-
-        // Données des combos
-        Actions.etats_d_occupation.getTypePlace(this.props.idUser==0);
-        Actions.etats_d_occupation.getEtatPlace(this.props.modeCompte);
     },
 
-    componentDidUpdate: function(pp, ps) {
-        jscolor.init();
-    },
-
-    componentDidMount: function(){
-        jscolor.init();
-        Actions.etats_d_occupation.setId(this.props.id);
-        Actions.etats_d_occupation.changeCouleur(this.state.couleur);
-
-    },
-
-    onBlurCouleur: function(e) {
-        console.log('onBlurCouleur');
-        Actions.etats_d_occupation.changeCouleur(e.target.value);
-    },
-
-    etatPlaceChange: function(e, data){
-        Actions.etats_d_occupation.changeEtatPlace((data[0] !== undefined?data[0]['value']:''));
-    },
-
-    typePlaceChange: function(e, data){
-        Actions.etats_d_occupation.changeTypePlace((data[0] !== undefined?data[0]['value']:''));
-    },
-
-    render: function () {
-        //var stateLocal = _.cloneDeep(this.state);
-        //console.log('FORM ETAT OCCUP Render %o', stateLocal);
-
-        var fAttrs   = {className:"form_etat_d_occupation", id:"form_etat_d_occupation"};
-
-        var etatPlaceSelected = [];
-        if(this.state.etat_place_id != '')
-            etatPlaceSelected = [this.state.etat_place_id.toString()];
-
-        var typePlaceSelected = [];
-        if(this.state.type_place_id != '')
-            typePlaceSelected = [this.state.type_place_id.toString()];
-
-        // Test si besoin de forcer le style du libelle
-        var attrs = {
-            value:           this.state.libelle,
-            label:           Lang.get('global.libelle'),
-            name:            'libelle',
-            wrapperClassName:'col-md-4',
-            labelClassName:  'col-md-1 text-right',
-            groupClassName:  'row',
-            required:true};
-        // Après sauvegarde mais pourquoi ??
-        if(this.state.dataLibelle != undefined ){
-            //console.log('passe');
-            attrs       = _.merge(attrs, {  bsStyle:this.state.dataLibelle.style,
-                                            'data-valid':this.state.dataLibelle.isValid,
-                                            help:this.state.dataLibelle.tooltip});
+    componentWillReceiveProps: function (np) {
+        // l'ID de l'état d'occupatation à afficher a changé
+        if(this.props.id !== np.id) {
+            // Données de l'état d'occupation + les 2 combos
+            Actions.etats_d_occupation.show(np.id);
         }
-
-        /* Défini le libelleInitial */
-        if(this.id != 0 && this.libelleIniDefine == false && this.state.libelle != ''){
-            this.libelleIniDefine = true;
-            Actions.etats_d_occupation.setLibelleInitial(this.state.libelle);
-        }
-
-        return (<Form ref="form" attributes={fAttrs}>
-                    <InputTextEditable
-                        attributes={attrs}
-                        editable={this.props.editable}
-                    />
-                    <ColorPickerEditable
-                        label = {Lang.get('administration_parking.etats_d_occupation.tableau.couleur')}
-                        attributes={{
-                            name: "couleur",
-                            required: true,
-                            value: this.state.couleur
-                        }}
-                        editable={this.props.editable}
-                        mdLabel={1}
-                        mdColor={2}
-                        labelClass="text-right"
-                        evts={{onBlur:this.onBlurCouleur}}
-                    />
-                    <InputSelectEditable
-                        evts      ={{onChange:this.etatPlaceChange}}
-                        attributes={{label:    Lang.get('administration_parking.etats_d_occupation.etat_place'),
-                                      name:     "etat_place",
-                                      selectCol:4,
-                                      labelCol: 1,
-                                      required:true}}
-                        data         ={this.state.dataEtatsPlace}
-                        editable     ={this.props.editable}
-                        selectedValue={etatPlaceSelected}
-                        placeholder  ={Lang.get('global.selection')}
-                        multi={false}
-                    />
-                    <InputSelectEditable
-                        evts      ={{onChange:this.typePlaceChange}}
-                         attributes={{label:    Lang.get('administration_parking.etats_d_occupation.type_place'),
-                                      name:     "type_place",
-                                      selectCol:4,
-                                      labelCol: 1,
-                                      required:true}}
-                         data         ={this.state.dataTypesPlace}
-                         editable     ={this.props.editable}
-                         selectedValue={typePlaceSelected}
-                         placeholder  ={Lang.get('global.selection')}
-                    />
-                </Form>
-        );
     },
 
     /**
@@ -184,6 +81,76 @@ var reactEtatDoccupation = React.createClass({
         catch (e) {
 
         }
+    },
+
+    render: function () {
+
+        // Attributs de base du libellé
+        var attrs = {
+            value:           this.state.libelle,
+            label:           Lang.get('global.libelle'),
+            name:            'libelle',
+            wrapperClassName:'col-md-4',
+            labelClassName:  'col-md-1 text-right',
+            groupClassName:  'row',
+            required:true};
+
+
+        // Etat de validation du champ libelle (rouge ou vert)
+        if(_.keys(this.state.validation).length > 0){
+            // Attributs validator
+            attrs       = _.merge(attrs, {  bsStyle:this.state.validation.style,
+                                            'data-valid':this.state.validation.isValid,
+                                            help:this.state.validation.tooltip});
+        }
+
+        // RENDER
+        return (
+            <Form   ref="form"
+                    attributes={{  className:"form_etat_d_occupation",
+                                    id:"form_etat_d_occupation"}}
+            >
+                <InputTextEditable
+                    attributes={attrs}
+                    editable={this.props.editable}
+                />
+                <ColorPickerEditable
+                    label = {Lang.get('administration_parking.etats_d_occupation.tableau.couleur')}
+                    attributes={{
+                        name: "couleur",
+                        required: true,
+                        value: this.state.couleur
+                    }}
+                    editable={this.props.editable}
+                    mdLabel={1}
+                    mdColor={2}
+                    labelClass="text-right"
+                />
+                <InputSelectEditable
+                    attributes={{label:    Lang.get('administration_parking.etats_d_occupation.etat_place'),
+                                  name:     "etat_place_id",
+                                  selectCol:4,
+                                  labelCol: 1,
+                                  required:true}}
+                    data         ={this.state.dataEtatsPlace}
+                    editable     ={this.props.editable}
+                    selectedValue={this.state.etat_place_id}
+                    placeholder  ={Lang.get('global.selection')}
+                    multi={false}
+                />
+                <InputSelectEditable
+                     attributes={{label:    Lang.get('administration_parking.etats_d_occupation.type_place'),
+                                  name:     "type_place_id",
+                                  selectCol:4,
+                                  labelCol: 1,
+                                  required:true}}
+                     data         ={this.state.dataTypesPlace}
+                     editable     ={this.props.editable}
+                    selectedValue={this.state.type_place_id}
+                     placeholder  ={Lang.get('global.selection')}
+                />
+            </Form>
+        );
     }
 });
 module.exports = reactEtatDoccupation;
@@ -192,7 +159,7 @@ module.exports = reactEtatDoccupation;
 var reactEtatDoccupationStore = Reflux.createStore({
 
     state:{},
-    libelleInitial:'',
+    libelleInitial:'',// En mode édition, libellé en BDD
     id:0,
 
     // Initial setup
@@ -202,28 +169,29 @@ var reactEtatDoccupationStore = Reflux.createStore({
         this.listenToMany(Actions.validation);
     },
 
-    onSetId: function(newId){
-        this.id = newId;
-    },
-
-    onSetLibelleInitial: function(libelleIni){
-        //console.log('onSetLibelleInitial : %o', libelleIni);
-        this.libelleInitial = libelleIni;
-    },
-
+    /**
+     * Affichage du détail de l'état d'occupation
+     * @param idEtat: ID etat_occupation
+     */
     onShow: function(idEtat){
-        var that = this;
-
+        // ID dans le STORE
+        this.id = idEtat;
         // AJAX
         $.ajax({
-            url: BASE_URI + 'etats_d_occupation/' + idEtat, /* correspond au module url de la BDD */
+            url: BASE_URI + 'etats_d_occupation/' + idEtat,
             dataType: 'json',
-            context: that,
+            context: this,
             async: false,
             success: function (data) {
-                that.nameEtatDoccupation = data.libelle;
-                that.trigger(data);
+
+                // MAJ state STORE
+                this.state = _.extend(this.state, data);
+                // Envoi data
+                this.trigger(data);
+                // MAJ libellé bandeau
                 Actions.etats_d_occupation.setLibelle(data.libelle);
+                // Libellé initial
+                this.libelleInitial = data.libelle;
             },
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
@@ -231,67 +199,45 @@ var reactEtatDoccupationStore = Reflux.createStore({
         });
     },
 
-    onChangeCouleur: function(value){
-        this.state = _.extend(this.state, {couleur:value});
-    },
-
+    /**
+     * onChange de n'importe quel élément du FORM
+     * @param e: evt
+     */
     onForm_field_changed: function(e){
         var data = {};
-
-        // Mise à jour du state
-        if(e.name == 'libelle')
-            data.libelle = e.value;
-        else if(e.name == 'etat_place')
-            data.etat_place_id = e.value;
-        else if(e.name == 'type_place')
-            data.type_place_id = e.value;
-
+        // MAJ du state STORE
+        data[e.name] = e.value
         this.state = _.extend(this.state, data);
-
-        this.trigger(this.state);
-    },
-
-    onChangeEtatPlace: function(idEtatPlace){
-        this.state = _.extend(this.state, {etat_place_id:idEtatPlace});
-    },
-
-    onChangeTypePlace: function(idTypePlace){
-        this.state = _.extend(this.state, {type_place_id:idTypePlace});
     },
 
     /**
-     * Vérifications "Métiers" du formulaire
+     * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
      * @param data : Object {name: "email", value: "yann.pltv@gmail.com", form: DOMNode}
      */
     onForm_field_verif: function(e){
         var data = {};
 
-        // VÉFIR ADRESSE MAIL:
+        // Vérif champ libellé:
         if(e.name == 'libelle'){
-            if(this.modeCreate)
-                data = this.libelleCreateChange(e.value);
-            else
-                data = this.libelleEditChange(e.value);
+            //  booléen en fonction du mode créatioon ou édition
+            this.state.validation = this.libelleChange(e.value, (this.id !== 0));
+            this.trigger(this.state);
         }
 
-        this.state = _.extend(this.state, data);
-        this.trigger(this.state);
     },
 
     /**
      * Vérification de l'unicité du libelle en BDD
-     * @param value
-     * @param edit
+     * @param value: valeur du champ libelle
+     * @param edit: booléen true:mode édition; false: mode création
      * @returns {{}}
      */
     libelleChange: function(value, edit){
-        /* Varaible de retour */
+        /* Variable de retour */
         var retour = {};
-        retour.dataLibelle = {};
 
-        //console.log('this.libelleInitial : %o, value : %o', this.libelleInitial, value);
-        /* Est-ce que l'email est supérieur à 4 caractère (x@x.xx)? */
-        if(value.length>=1 && value != this.libelleInitial){
+        /* libelle  non vide et non identique au libellé de départ */
+        if(value.length>0 && value != this.libelleInitial){
 
             // AJAX
             $.ajax({
@@ -299,12 +245,12 @@ var reactEtatDoccupationStore = Reflux.createStore({
                 dataType: 'json',
                 context:  this,
                 async: false,
-                success:  function (good) {
-                    /* En vert */
-                    if(good.good == false){
-                        retour.dataLibelle.isValid = false;
-                        retour.dataLibelle.style   = 'error';
-                        retour.dataLibelle.tooltip = Lang.get('administration_parking.etats_d_occupation.libelleExist');
+                success:  function (ret) {
+                    // Le libellé existe déjà
+                    if(!ret.good){
+                        retour.isValid = false;
+                        retour.style   = 'error';
+                        retour.tooltip = Lang.get('administration_parking.etats_d_occupation.libelleExist');
                     }
                 },
 
@@ -316,29 +262,14 @@ var reactEtatDoccupationStore = Reflux.createStore({
         return retour;
     },
 
-    libelleEditChange: function (value){
-        return this.libelleChange(value, true);
-    },
-
-    libelleCreateChange: function (value){
-        return this.libelleChange(value, false);
-    },
-
-
     /**
-     * Appellé quand on clique sur le bouton sauvegarder
-     * @param idEtat
+     * Sauvegarder
+     * @param e: evt click du bouton
      */
     onSubmit_form: function (e) {
-        //console.log('this.state : %o', this.state);
-
-        //console.log('FICHE USER SAVE '+idUser);
         // Variables
         var url = this.id === 0 ? '' : this.id;
-
         url = BASE_URI + 'etats_d_occupation/' + url;
-
-        //console.log('SAVE '+this.id);
         var method = this.id === 0 ? 'POST' : 'PUT';
 
         // FormData
@@ -354,16 +285,23 @@ var reactEtatDoccupationStore = Reflux.createStore({
             dataType:'json',
             context: this,
             success: function (tab) {
+                // Sauvegarde OK
                 if(tab.save == true) {
                     Actions.notif.success(Lang.get('global.notif_success'));
+                    //console.log('ID: '+tab.id+ ' '+this.state.libelle);
+                    // On indique à la page qu'on passe en mode edition
                     Actions.etats_d_occupation.goModif(tab.id, this.state.libelle);
+                    // Le store est informé du nouvel ID
+                    this.id = tab.id
                 }
-                /* Etat déjà existant */
+                // Etat d'occupation existe déjà
                 else if(tab.save == false && tab.errorBdd == false){
                     Actions.notif.error(Lang.get('administration_parking.etats_d_occupation.errorExist'));
                 }
-                else
+                // Erreur SQL
+                else {
                     Actions.notif.error(Lang.get('global.notif_erreur'));
+                }
             },
 
             error: function (xhr, status, err) {

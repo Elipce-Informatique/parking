@@ -137,14 +137,6 @@
         "select",
         "getInfosEtatsDoccupation",
         "show",
-        "getTypePlace",
-        "getEtatPlace",
-        "getEtatCapteur",
-        "changeCouleur",
-        "changeEtatPlace",
-        "changeTypePlace",
-        "setLibelleInitial",
-        "setId",
         "goModif",
         "setLibelle"
     ]);

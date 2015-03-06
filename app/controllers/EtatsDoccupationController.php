@@ -35,7 +35,7 @@ class EtatsDoccupationController extends \BaseController {
 	{
 		// Champs du formualaire
 		$fields = Input::except('_token');
-		Log::warning('-----------> UPDATE : '.print_r($fields, true).' <-----------');
+		Log::warning('-----------> UPDATE '.$id.': '.print_r($fields, true).' <-----------');
 		return json_encode(EtatsDoccupation::updateEtatDoccupation($id, $fields));
 	}
 	/**

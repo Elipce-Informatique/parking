@@ -128,6 +128,7 @@ var ReactPageEtatsDoccupation = React.createClass({
             sousTitre: this.state.name
         };
 
+        //console.log('etat page '+this.state.etatPage);
         /* Selon l'état de la page */
         switch (this.state.etatPage) {
 

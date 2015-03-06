@@ -33,6 +33,9 @@ class EtatsDoccupation extends Eloquent
     public static function getInfosEtatById($id){
         $retour = [];
 
+        // Mpde Array
+        DB::setFetchMode(PDO::FETCH_ASSOC);
+
         /* Récupération des données pour un état */
         if($id != 0) {
             $resEtat = DB::table('etat_occupation')
@@ -44,19 +47,22 @@ class EtatsDoccupation extends Eloquent
                 })
                 ->groupBy('etat_occupation.id')
                 ->where('etat_occupation.id', $id)
-                ->get(['etat_occupation.libelle', 'etat_occupation.couleur', 'type_place.id as type_place_id', 'etat_place.id as etat_place_id', 'type_place.logo']);
+                ->get(['etat_occupation.libelle', 'etat_occupation.couleur', DB::raw('CAST(type_place.id AS char) as type_place_id'), DB::raw('CAST(etat_place.id AS char)as etat_place_id'), 'type_place.logo'])
+                ;
+            $resEtat = $resEtat[0];
         }
         /* Récupération des données pour une création d'état */
         else {
-            $resEtat = [];
-            $resEtat[0] = [];
-            $resEtat[0]['libelle'] = '';
+            $resEtat = [
+                'libelle' => '',
+                'couleur' => 'FFFFFF',
+                'type_place_id'  => '',
+                'etat_place_id' => '',
+                'logo' => ''
+                        ] ;
         }
-
-        /* Conversion des datas en array... */
-        foreach($resEtat[0] as $key=>$value){
-            $retour[$key] = $value;
-        };
+        // Données etat d'occupation
+        $retour = $resEtat;
 
         /* Données des combos */
         $retour['dataTypesPlace'] = EtatsDoccupation::getTypesPlace();
@@ -87,6 +93,7 @@ class EtatsDoccupation extends Eloquent
      * ['id', 'libelle', 'etat_capteur.id']
      */
     public static function getEtatsPlace(){
+//        Log::warning('passe getEtataPlace');
         $retour = [];
 
         $res = DB::table('etat_place')->get(['etat_place.id as value', 'etat_place.libelle as label', 'etat_place.etat_capteur_id']);
@@ -164,8 +171,8 @@ class EtatsDoccupation extends Eloquent
         // Modifier l'état d'occupation
         $oDataOccupation->libelle       = $fields['libelle'];
         $oDataOccupation->couleur       = $fields['couleur'];
-        $oDataOccupation->type_place_id = $fields['type_place'];
-        $oDataOccupation->etat_place_id = $fields['etat_place'];
+        $oDataOccupation->type_place_id = $fields['type_place_id'];
+        $oDataOccupation->etat_place_id = $fields['etat_place_id'];
         // Sauvegarder l'état d'occupation
         $bSave = $oDataOccupation->save();
 
