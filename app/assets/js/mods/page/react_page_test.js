@@ -57,13 +57,11 @@ var ReactPageTest               = React.createClass({
         return {};
     },
 
-
-    componentDidUpdate: function(pp, ps) {
-        jscolor.init();
-    },
-
-    componentDidMount: function(){
-        jscolor.init();
+    /**
+     * Avant le premier Render()
+     */
+    componentWillMount: function () {
+        this.listenTo(storeTest,this.update);
     },
 
     /**
@@ -76,6 +74,9 @@ var ReactPageTest               = React.createClass({
         return true;
     },
 
+    update: function(data){
+      this.setState(data);
+    },
     /**
      * Méthode appellée pour construire le composant.
      * A chaque fois que son contenu est mis à jour.
@@ -164,7 +165,7 @@ var ReactPageTest               = React.createClass({
                 editable={editable} />
 
             <InputSelectEditable
-                multi={true}
+                multi={false}
                 evts={{onChange:selectChange}}
                 attributes={{label:'Mes fruits', name:"Select", selectCol:4,labelCol:2, required:true}}
                 data={options}
@@ -268,3 +269,28 @@ var ReactPageTest               = React.createClass({
     }
 });
 module.exports = ReactPageTest;
+
+// Creates a DataStore
+var storeTest = Reflux.createStore({
+
+    // Initial setup
+    init: function () {
+        this.listenToMany(Actions.validation);
+    },
+
+    /**
+     * onChange de n'importe quel élément du FORM
+     * @param e: evt
+     */
+    onForm_field_changed: function (e) {
+        console.log('CHANGED');
+    },
+
+    /**
+     * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
+     */
+    onForm_field_verif: function (e) {
+        console.log('VERIF');
+
+    }
+});
