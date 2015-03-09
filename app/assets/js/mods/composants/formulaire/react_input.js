@@ -481,20 +481,60 @@ var InputSelect = React.createClass({
         this.setState({attributes: validations});
     },
 
-    handleChange: function (e, data) {
+    /**
+     * Gestion des modifications+
+     * Action field_change +
+     * Action field_verif (vérifications métier)
+     *
+     * @param val: value du select
+     * @param data: array of selected options
+     */
+    handleChange: function (val, data) {
         // Gestion des modifications
         Actions.global.gestion_modif_change();
 
-        // onChange DEV
-        if (this.props.evts.onChange !== undefined) {
-            this.props.evts.onChange(e, data);
-        }
         // Validations syntaxiques
-        var validations = this.props.validator(e, this.props, this.state);
+        var validations = this.props.validator(val, this.props, this.state);
+
+        // Action indiquant un CHANGE => permet de mettre à jour le state du store
+        Actions.validation.form_field_changed({
+            name: this.props.attributes.name,
+            value: val,
+            form: this.props.form
+        });
+
+        // Validation syntaxique OK => envoi d'une action permettant une éventuelle vérification métier
+        if (validations['data-valid']) {
+            Actions.validation.form_field_verif({
+                name: this.props.attributes.name,
+                value: val,
+                form: this.props.form
+            });
+        }
 
         // Nouvelle value
-        this.setState({attributes: validations, value: e.split(this.props.delimiter)});
+        this.setState({attributes: validations, value: val.split(this.props.delimiter)});
+
+        // onChange DEV
+        if (this.props.evts.onChange !== undefined) {
+            this.props.evts.onChange(val, data);
+        }
     },
+
+    /**
+     * Seulement les evenements définis par le user
+     * @param e
+     * @param data
+     */
+    handleBlur: function (e, data) {
+
+        // onBlur DEV
+        if (this.props.evts.onBlur !== undefined) {
+            this.props.evts.onBlur(e, data);
+        }
+    },
+
+
 
     render: function () {
         // Copie attributes
@@ -516,6 +556,7 @@ var InputSelect = React.createClass({
                 placeholder={this.props.placeholder}
                 multi={this.props.multi}
                 onChange={this.handleChange}
+                onBlur={this.handleBlur}
                 matchProp="label"
                 ref = "SelectField"
                 delimiter = {this.props.delimiter}
