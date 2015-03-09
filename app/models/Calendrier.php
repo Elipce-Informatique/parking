@@ -14,7 +14,7 @@ class Calendrier extends Eloquent
     | ATTRIBUTS
     |--------------------------------------------------------------------------
     */
-    public $timestamp = false;
+    public $timestamps = false;
 
     protected $fillable = ['jour'];
 

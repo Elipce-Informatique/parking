@@ -57,13 +57,11 @@ var ReactPageTest               = React.createClass({
         return {};
     },
 
-
-    componentDidUpdate: function(pp, ps) {
-        jscolor.init();
-    },
-
-    componentDidMount: function(){
-        jscolor.init();
+    /**
+     * Avant le premier Render()
+     */
+    componentWillMount: function () {
+        this.listenTo(storeTest,this.update);
     },
 
     /**
@@ -76,6 +74,9 @@ var ReactPageTest               = React.createClass({
         return true;
     },
 
+    update: function(data){
+      this.setState(data);
+    },
     /**
      * Méthode appellée pour construire le composant.
      * A chaque fois que son contenu est mis à jour.
@@ -112,7 +113,15 @@ var ReactPageTest               = React.createClass({
         <Form attributes={{id:"form_test"}}>
             <Row id="Champ_texte">
                 <Col md={12}>
-                    <InputTextEditable attributes={{label:'InputTextEditable', name:"InputTextEditable", value:'Vivian', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
+                    <InputTextEditable
+                        attributes={
+                            {   label:'InputTextEditable',
+                                name:"InputTextEditable",
+                                value:'Vivian',
+                                wrapperClassName:'col-md-4',
+                                labelClassName:'col-md-2',
+                                groupClassName:'row'}}
+                        editable={editable} />
                 </Col>
             </Row>
 
@@ -144,27 +153,27 @@ var ReactPageTest               = React.createClass({
                     <ColorPicker color="AAAAAA" label="Couleur" mdColor={4} mdLabel={2} />
                 </Col>
             </Row>
-            <Row id="InputColorEditable">
-                <Col md={12}>
-                    <ColorPickerEditable
-                        evts={{onBlur:function(e){console.log('blur color');}}}
-                        label="Couleur modifiable"
-                        mdColor={4}
-                        mdLabel={2}
-                        gestMod={true}
-                        attributes={{name:"toto",value:"AAAAAA"}}
-                        editable={editable} />
-                </Col>
-            </Row>
+
+            <ColorPickerEditable
+                evts={{onBlur:function(e){console.log('blur color '+$(e.currentTarget).val());}}}
+                label="Couleur modifiable"
+                mdColor={4}
+                mdLabel={2}
+                labelClass="text-right"
+                gestMod={true}
+                attributes={{name:"color", required:false, value:'E2156B'}}
+                editable={editable} />
 
             <InputSelectEditable
-                multi={true}
+                multi={false}
                 evts={{onChange:selectChange}}
                 attributes={{label:'Mes fruits', name:"Select", selectCol:4,labelCol:2, required:true}}
                 data={options}
                 editable={editable}
+                placeholder={'PlaceHolder...'}
+                labelClass='text-right'
                 selectedValue={["5fraise","3pomme"]}
-                placeholder={'PlaceHolder...'}/>
+            />
 
             <Button
                 bsStyle="success"
@@ -260,3 +269,28 @@ var ReactPageTest               = React.createClass({
     }
 });
 module.exports = ReactPageTest;
+
+// Creates a DataStore
+var storeTest = Reflux.createStore({
+
+    // Initial setup
+    init: function () {
+        this.listenToMany(Actions.validation);
+    },
+
+    /**
+     * onChange de n'importe quel élément du FORM
+     * @param e: evt
+     */
+    onForm_field_changed: function (e) {
+        console.log('CHANGED');
+    },
+
+    /**
+     * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
+     */
+    onForm_field_verif: function (e) {
+        console.log('VERIF');
+
+    }
+});

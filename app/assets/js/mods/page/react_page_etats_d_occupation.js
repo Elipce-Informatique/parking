@@ -128,6 +128,7 @@ var ReactPageEtatsDoccupation = React.createClass({
             sousTitre: this.state.name
         };
 
+        //console.log('etat page '+this.state.etatPage);
         /* Selon l'état de la page */
         switch (this.state.etatPage) {
 
@@ -136,16 +137,15 @@ var ReactPageEtatsDoccupation = React.createClass({
             /*    - le bandeau (Retour/Créer/Editer/Supprimer) */
             /*    - les infos non éditable                     */
             case pageState.visu:
-                return <div key="rootPageEtatsDoccupation">
-                    <Row>
-                        <BandeauGenerique {...attrBandeau} />
-                    </Row>
+                return(
+                <div key="rootPageEtatsDoccupation">
+                    <BandeauGenerique {...attrBandeau} />
                     <Row>
                         <Col md={12}>
                             <ReactEtatDoccupation id={this.state.id}/>
                         </Col>
                     </Row>
-                </div>;
+                </div>);
                 break;
 
             /* On édite/créer un états d'occupation */
@@ -156,16 +156,15 @@ var ReactPageEtatsDoccupation = React.createClass({
                 mode = 0;
                 attrBandeau = _.omit(attrBandeau, 'sousTitre');
             case pageState.edition:
-                return <div key="rootPageEtatsDoccupation">
-                    <Row>
-                        <BandeauGenerique {...attrBandeau} mode={mode} />
-                    </Row>
+                return(
+                <div key="rootPageEtatsDoccupation">
+                    <BandeauGenerique {...attrBandeau} mode={mode} />
                     <Row>
                         <Col md={12}>
                             <ReactEtatDoccupation id={this.state.id} editable={true} />
                         </Col>
                     </Row>
-                </div>;
+                </div>);
                 break;
 
             /* On arrive sur la page "Etats d'occupation" */
@@ -174,7 +173,8 @@ var ReactPageEtatsDoccupation = React.createClass({
             /*    - le tableau des etats d'occupation     */
             case pageState.liste:
             default:
-                return <div  key="rootPageEtatsDoccupation">
+                return (
+                <div  key="rootPageEtatsDoccupation">
                     <BandeauGenerique {...attrBandeau} />
                     <Row>
                         <Col md={12}>
@@ -187,7 +187,7 @@ var ReactPageEtatsDoccupation = React.createClass({
                                 reactElements={this.aReactElements}/>
                         </Col>
                     </Row>
-                </div>;
+                </div>);
                 break;
         }
     },
@@ -199,7 +199,10 @@ var ReactPageEtatsDoccupation = React.createClass({
     },
 
     onRetour: function () {
+        // Changement de state
         this.setState({etatPage: pageState.liste, titrePage: Lang.get('menu.side.etats_d_occupation'), name: ''});
+        // MAJ infos liste
+        Actions.etats_d_occupation.getInfosEtatsDoccupation();
     }
 });
 module.exports = ReactPageEtatsDoccupation;
@@ -225,6 +228,7 @@ var pageEtatsDoccupationStore = Reflux.createStore({
         this.listenTo(Actions.etats_d_occupation.goModif, this.goModif);
         this.listenTo(Actions.bandeau.creer, this.create);
         this.listenTo(Actions.bandeau.editer, this.edit);
+        this.listenTo(Actions.bandeau.supprimer, this.supprimer);
     },
 
     getInitialState: function () {
@@ -272,5 +276,38 @@ var pageEtatsDoccupationStore = Reflux.createStore({
 
     goModif: function (id, libelle) {
         this.trigger({etatPage: pageState.edition, id: id, name: libelle});
+    },
+
+    supprimer: function () {
+        // Variables
+        var url = BASE_URI + 'etats_d_occupation/' + this.idSelect;
+        var method = 'DELETE';
+
+        // Requête
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            context: this,
+            type: method,
+            data: {'_token': $('#_token').val()},
+            success: function (bool) {
+                // suppression OK
+                if(bool) {
+                    this.idSelect = 0;
+                    this.trigger({etatPage: pageState.liste, id: 0, name: ''});
+                    // Maj liste
+                    this.getInfos();
+                    Actions.notif.success(Lang.get('global.notif_success'));
+                }
+                // Suppression KO
+                else{
+                    Actions.notif.error(Lang.get('global.notif_erreur'));
+                }
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+                Actions.notif.error(Lang.get('global.notif_erreur'));
+            }
+        });
     }
 });

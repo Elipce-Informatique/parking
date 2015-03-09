@@ -14,7 +14,7 @@ class CalendrierJours extends Eloquent
     | ATTRIBUTS
     |--------------------------------------------------------------------------
     */
-    public $timestamp = false;
+    public $timestamps = false;
 
     protected $fillable = ['libelle'];
     protected $table='jour_calendrier';

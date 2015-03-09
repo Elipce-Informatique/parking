@@ -15,7 +15,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
     | ATTRIBUTS
     |--------------------------------------------------------------------------
     */
-    public $timestamp = false;
+    public $timestamps = false;
 
     protected $fillable = ['nom', 'prenom', 'email', 'password'];
 
