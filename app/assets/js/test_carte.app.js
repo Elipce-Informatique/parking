@@ -15,7 +15,7 @@ var TestD3 = require('./mods/charts/test_d3');
  */
 $(function () {
 
-    var url = BASE_URI + 'public/images/test_carte_bis_2.svg';
+    var url = BASE_URI + 'public/images/test_carte_2.svg';
 
     var zoneTRb = React.render(<ZoneTempsReel />, document.getElementById('zone_temps_reel'));
     var map = React.render(

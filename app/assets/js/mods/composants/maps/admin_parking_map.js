@@ -81,12 +81,12 @@ var parkingMap = React.createClass({
 
         // CRÉATION DE LA MAP
         this._inst.map = new L.Map(this.props.divId, {
+            crs: L.CRS.Simple,
             maxZoom: 7
         }).setView([65, 50], 4);
 
         // AJOUT DE L'IMAGE DE FOND
-        L.imageOverlay("", [origine, haut_droit]).addTo(this._inst.map);
-        //L.imageOverlay(this.props.imgUrl, [origine, haut_droit]).addTo(this._inst.map);
+        L.imageOverlay(this.props.imgUrl, [origine, haut_droit]).addTo(this._inst.map);
         Actions.map.map_initialized(this._inst.map);
 
         // INIT des layers
@@ -99,10 +99,6 @@ var parkingMap = React.createClass({
         this._inst.afficheursGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.afficheursGroup);
 
-        // test event
-        //this._inst.map.on('zoomend', function (e) {
-        //    console.log(e);
-        //});
     },
     /**
      * Paramètre le plugin de dessin sur la carte lors de l'INIT de la map
@@ -236,9 +232,9 @@ var parkingMap = React.createClass({
 
         // 2 CONSTRUCTION DES OPTIONS
         // ------- LES POLYLINES ----------
-        var polyline = (this._inst.currentMode == mapOptions.dessin.place_auto);
+        var polyline = false;
         // ------- LES POLYGONS ----------
-        var polygon = (this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone) ? {
+        var polygon = (this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone || this._inst.currentMode == mapOptions.dessin.place_auto) ? {
             allowIntersection: false, // Restricts shapes to simple polygons
             drawError: {
                 color: '#e1e100', // Color the shape will turn when intersects
@@ -266,9 +262,6 @@ var parkingMap = React.createClass({
 
         // 3 : Init du layerGroup pour la modif
         var group = this._inst[mapOptions.control.groups[this._inst.currentMode]];
-        console.log('Current mode: ' + this._inst.currentMode);
-        console.log('Mapoptions mapOptions.control.groups[this._inst.currentMode] : %o', mapOptions.control.groups[this._inst.currentMode]);
-        console.log('this._inst : %o', this._inst);
 
 
         // 3 CRÉATION DU NOUVEAU CONTRÔLE
@@ -304,7 +297,6 @@ var parkingMap = React.createClass({
          * @param className : classe du bouton
          */
         var selectButton = function (className) {
-            console.log('pass select bouton : ' + className);
             $('.btn-fa-selected').removeClass('btn-fa-selected');
             $('.' + className).parent().addClass('btn-fa-selected');
         };
@@ -345,12 +337,7 @@ var parkingMap = React.createClass({
     onFormeAdded: function (data) {
         var layer = data.data.e.layer;
         var layerGroup = this._inst[mapOptions.control.groups[this._inst.currentMode]];
-        console.log('onFormeAdded');
-        console.log(this._inst[mapOptions.control.groups[this._inst.currentMode]]);
         layerGroup.addLayer(layer);
-        layerGroup.removeLayer(layer);
-        //this._inst.map.addLayer(layer);
-        console.log(this._inst.map);
     },
 
     /**
@@ -371,7 +358,6 @@ var parkingMap = React.createClass({
      * Déclenché par la mise à jour des données du store
      */
     onStoreTrigger: function (data) {
-        console.log('Pass storeTrigger');
         switch (data.type) {
             case mapOptions.type_messages.mode_change:
                 this.onModeChange(data);

@@ -144,19 +144,27 @@ function getCoordsArrayFromLatLngArray(aCoords) {
     });
 }
 
-
 /**
- *
+ * Calcule et retourne le dernier point d'un parallèlogramme en fonction des 3 premiers
+ * @param latlngs : array de 3 points exactement
  */
-function createGroupPlacesFromTriangle(triangle) {
+function getLastPointOfParallelogramme(latlngs) {
+    if (latlngs.length != 3) {
+        return {};
+    } else {
+        console.log('latlngs : %o', latlngs);
+        // Parallélogramme ABCD de milieu K
+        var A = latlngs[0], B = latlngs[1], C = latlngs[2], D = {lat: 0, lng: 0}, K = {lat: 0, lng: 0};
 
-}
+        // I - Calcule du milieu K
+        K.lat = ((A.lat + C.lat) / 2);
+        K.lng = ((A.lng + C.lng) / 2);
 
-/**
- *
- */
-function getGroupProfondeurDeltas() {
-
+        // II - calcule des coordonnées de D en fonction de B et K
+        D.lat = A.lat + C.lat - B.lat;
+        D.lng = A.lng + C.lng - B.lng;
+        return D;
+    }
 }
 
 /**
@@ -168,6 +176,7 @@ module.exports = {
     isPointInPolygon: isPointInPolygon,
     isPolygonInPolygonByCenter: isPolygonInPolygonByCenter,
     getLatLngArrayFromCoordsArray: getLatLngArrayFromCoordsArray,
-    isPolygonInPolygon: isPolygonInPolygon
+    isPolygonInPolygon: isPolygonInPolygon,
+    getLastPointOfParallelogramme: getLastPointOfParallelogramme
 };
 
