@@ -162,12 +162,10 @@ var store = Reflux.createStore({
             swal('Merci de tracer exactement 3 points !');
             return {};
         } else {
-            // TODO : Calcul du 4eme point
             var lastPoint = mapHelper.getLastPointOfParallelogramme(data.e.layer._latlngs);
             data.e.layer._latlngs.push(lastPoint);
             return data;
         }
-
 
     }
 });

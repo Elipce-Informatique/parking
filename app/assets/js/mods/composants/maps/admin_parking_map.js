@@ -2,8 +2,13 @@ var mapOptions = require('../../helpers/map_options');
 // STORE DE LA CARTE
 var mapStore = require('../../stores/admin_parking_map_store');
 
+// COMPOSANTS
+var Modal = ReactB.Modal;
+var Button = ReactB.Button;
+
 // UTILITAIRES
 var ListenerMixin = Reflux.ListenerMixin;
+
 
 /**
  * Created by yann on 27/01/2015.
@@ -11,7 +16,7 @@ var ListenerMixin = Reflux.ListenerMixin;
  * @param defaultDrawMode :
  */
 var parkingMap = React.createClass({
-    mixins: [ListenerMixin],
+    mixins: [ListenerMixin, ReactB.OverlayMixin],
     /**
      * Définition du type des props du composant.
      */
@@ -44,7 +49,8 @@ var parkingMap = React.createClass({
 
     getInitialState: function () {
         return {
-            currentDrawGroup: mapOptions.control.groups[this._inst.currentMode]
+            currentDrawGroup: mapOptions.control.groups[this._inst.currentMode],
+            isModalOpen: true
         };
     },
 
@@ -64,7 +70,7 @@ var parkingMap = React.createClass({
      * On ne veut pas écraser la map a chaque mise à jour, juste la modifier avec ses méthodes
      */
     shouldComponentUpdate: function (nextProps, nextState) {
-        return false;
+        return true;
     },
 
 
@@ -98,7 +104,6 @@ var parkingMap = React.createClass({
         this._inst.map.addLayer(this._inst.zonesGroup);
         this._inst.afficheursGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.afficheursGroup);
-
     },
     /**
      * Paramètre le plugin de dessin sur la carte lors de l'INIT de la map
@@ -372,6 +377,35 @@ var parkingMap = React.createClass({
         }
         this.orderLayerGroups();
     },
+
+    /**
+     * Méthode appellée par le "OverlayMixin", au moment du montage initial et de chaque update.
+     * La valeur retournée est ajoutée au body de la page.
+     * @returns {XML}
+     */
+    renderOverlay: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        }
+
+        // Test modal retourné si le state est open
+        return (
+            <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+                <div className="modal-body">
+                    This modal is controlled by our custom trigger component.
+                </div>
+                <div className="modal-footer">
+                    <Button onClick={this.handleToggle}>Close</Button>
+                </div>
+            </Modal>
+        );
+    },
+    handleToggle: function () {
+        this.setState({
+            isModalOpen: !this.state.isModalOpen
+        });
+    },
+
     /**
      * Affichage du composant
      * @returns {XML}
