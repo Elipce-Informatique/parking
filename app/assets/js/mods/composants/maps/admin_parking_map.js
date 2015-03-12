@@ -3,8 +3,13 @@ var mapOptions = require('../../helpers/map_options');
 var mapStore = require('../../stores/admin_parking_map_store');
 
 // COMPOSANTS
+var ModalPlaces = require('../modals/mod_places_multiples');
+var Field = require('../formulaire/react_form_fields');
+var InputTextEditable = Field.InputTextEditable;
+var InputNumberEditable = Field.InputNumberEditable;
 var Modal = ReactB.Modal;
 var Button = ReactB.Button;
+
 
 // UTILITAIRES
 var ListenerMixin = Reflux.ListenerMixin;
@@ -31,13 +36,13 @@ var parkingMap = React.createClass({
      * Utilisées pour intéragir avec la carte.
      */
     _inst: {
-        map: {},
-        currentMode: mapOptions.dessin.place,
-        placesGroup: {},
-        alleesGroup: {},
-        zonesGroup: {},
-        afficheursGroup: {},
-        drawControl: {}
+        map: {},                                // Instance de la carte leaflet
+        currentMode: mapOptions.dessin.place,   // Mode de dessin actuel
+        placesGroup: {},                        // Layer group contenant toutes les places
+        alleesGroup: {},                        // Layer group contenant toutes les allées
+        zonesGroup: {},                         // Layer group contenant toutes les zones
+        afficheursGroup: {},                    // Layer group contenant tous les afficheurs
+        drawControl: {}                         // Barre d'outils de dessin active sur la carte
     },
 
     getDefaultProps: function () {
@@ -50,7 +55,7 @@ var parkingMap = React.createClass({
     getInitialState: function () {
         return {
             currentDrawGroup: mapOptions.control.groups[this._inst.currentMode],
-            isModalOpen: true
+            isModalOpen: false
         };
     },
 
@@ -359,6 +364,7 @@ var parkingMap = React.createClass({
         this._inst.placesGroup.bringToFront();
         this._inst.afficheursGroup.bringToFront()
     },
+
     /**
      * Déclenché par la mise à jour des données du store
      */
@@ -370,6 +376,9 @@ var parkingMap = React.createClass({
             case mapOptions.type_messages.add_forme:
                 this.onFormeAdded(data);
                 break;
+            case mapOptions.type_messages.new_place_auto:
+                this._onNewPlaceAuto(data);
+                break;
             case mapOptions.type_messages.delete_forme:
                 break;
             default:
@@ -379,26 +388,191 @@ var parkingMap = React.createClass({
     },
 
     /**
-     * Méthode appellée par le "OverlayMixin", au moment du montage initial et de chaque update.
-     * La valeur retournée est ajoutée au body de la page.
-     * @returns {XML}
+     * Appellée par la méthode onStoreTrigger quand l'utilisateur a tracé un triangle de place auto.
+     *
+     * Renseigne les informations nécessaires dans le state pour l'affichage de la modale de saisie des infos
+     * @param data
+     * @private
      */
-    renderOverlay: function () {
+    _onNewPlaceAuto: function (data) {
+        this.setState({
+            modalType: mapOptions.modal_type.place_multiple,
+            isModalOpen: true,
+            parallelogramme_places: data
+        })
+    },
+
+    /*******************************************************************/
+    /*******************************************************************/
+    /*******************************************************************/
+    /**
+     * TODO : Modal de saisie des informations pour créer une zone
+     * @returns {XML}
+     * @private
+     */
+    _modalZone: function () {
         if (!this.state.isModalOpen) {
             return <span/>;
-        }
-
-        // Test modal retourné si le state est open
-        return (
-            <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+        } else {
+            return (<Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
                 <div className="modal-body">
                     This modal is controlled by our custom trigger component.
                 </div>
                 <div className="modal-footer">
                     <Button onClick={this.handleToggle}>Close</Button>
                 </div>
-            </Modal>
-        );
+            </Modal>);
+        }
+    },
+    /**
+     * TODO : Modal de saisie des informations pour créer une allée
+     * @returns {XML}
+     * @private
+     */
+    _modalAllee: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        } else {
+            return (<Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+                <div className="modal-body">
+                    This modal is controlled by our custom trigger component.
+                </div>
+                <div className="modal-footer">
+                    <Button onClick={this.handleToggle}>Close</Button>
+                </div>
+            </Modal>);
+        }
+    },
+    /**
+     * TODO : Modal de saisie des informations pour créer un afficheur
+     * @returns {XML}
+     * @private
+     */
+    _modalAfficheur: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        } else {
+            return (<Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+                <div className="modal-body">
+                    This modal is controlled by our custom trigger component.
+                </div>
+                <div className="modal-footer">
+                    <Button onClick={this.handleToggle}>Close</Button>
+                </div>
+            </Modal>);
+        }
+    },
+    /**
+     * Modal de saisie des informations pour créer un ensemble de places
+     * @returns {XML}
+     * @private
+     */
+    _modalPlaceMultiple: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        } else {
+            return (
+                <ModalPlaces
+                    onToggle={this.handleToggle}
+                    onSave={Actions.map.pm_creer}
+                />
+            );
+        }
+    },
+    /**
+     * TODO : Modal de saisie des informations pour créer une place
+     * @returns {XML}
+     * @private
+     */
+    _modalPlaceSimple: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        } else {
+            return (<Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+                <div className="modal-body">
+                    This modal is controlled by our custom trigger component.
+                </div>
+                <div className="modal-footer">
+                    <Button onClick={this.handleToggle}>Close</Button>
+                </div>
+            </Modal>);
+        }
+    },
+    /**
+     * TODO : Modal de saisie des informations pour créer un capteur
+     * @returns {XML}
+     * @private
+     */
+    _modalCapteur: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        } else {
+            return (<Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+                <div className="modal-body">
+                    This modal is controlled by our custom trigger component.
+                </div>
+                <div className="modal-footer">
+                    <Button onClick={this.handleToggle}>Close</Button>
+                </div>
+            </Modal>);
+        }
+    },
+    /**
+     * TODO : Modal de saisie des informations pour régler la luminosité
+     * @returns {XML}
+     * @private
+     */
+    _modalLuminosite: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        } else {
+            return (<Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+                <div className="modal-body">
+                    This modal is controlled by our custom trigger component.
+                </div>
+                <div className="modal-footer">
+                    <Button onClick={this.handleToggle}>Close</Button>
+                </div>
+            </Modal>);
+        }
+    },
+
+    /**
+     * Méthode appellée par le "OverlayMixin", au moment du montage initial et de chaque update.
+     * La valeur retournée est ajoutée au body de la page.
+     * @returns {XML}
+     */
+    renderOverlay: function () {
+        console.log('Pass renderOverlay');
+        var retour = {};
+        switch (this.state.modalType) {
+            case mapOptions.modal_type.zone:
+                retour = this._modalZone();
+                break;
+            case mapOptions.modal_type.allee:
+                retour = this._modalAllee();
+                break;
+            case mapOptions.modal_type.afficheur:
+                retour = this._modalAfficheur();
+                break;
+            case mapOptions.modal_type.place_multiple:
+                retour = this._modalPlaceMultiple();
+                break;
+            case mapOptions.modal_type.place_simple:
+                retour = this._modalPlaceSimple();
+                break;
+            case mapOptions.modal_type.capteur:
+                retour = this._modalCapteur();
+                break;
+            case mapOptions.modal_type.luminosite:
+                retour = this._modalLuminosite();
+                break;
+            default:
+                retour = <span/>;
+                break;
+        }
+
+        return retour;
     },
     handleToggle: function () {
         this.setState({

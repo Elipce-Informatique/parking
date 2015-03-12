@@ -61,7 +61,8 @@ module.exports.control = {
 module.exports.type_messages = {
     mode_change: 1,
     add_forme: 2,
-    delete_forme: 3
+    delete_forme: 3,
+    new_place_auto: 4
 };
 
 /**
@@ -74,3 +75,17 @@ module.exports.afficheurMarker = L.Icon.extend({
         iconUrl: BASE_URI + 'public/images/marker-icon.png'
     }
 });
+
+/**
+ *
+ * @type {{}}
+ */
+module.exports.modal_type = {
+    zone: 1,
+    allee: 2,
+    afficheur: 3,
+    place_multiple: 4,
+    place_simple: 5,
+    capteur: 6,
+    luminosite: 7
+};
