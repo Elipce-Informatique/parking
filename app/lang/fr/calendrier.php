@@ -21,7 +21,8 @@ return array(
             'fermer' => 'Fermeture',
             'couleur' => 'Couleur'
         ],
-        'titre' => "Jours prédéfinis"
+        'titre' => "Jours prédéfinis",
+        'libelleExists' => "Ce jour prédéfini existe déjà"
     ],
 
     // MODULE PROGRAMMATION HORAIRE

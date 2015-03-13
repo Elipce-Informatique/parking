@@ -37,4 +37,13 @@ class CalendrierJours extends Eloquent
         $res = CalendrierJours::find($id);
         return $res;
     }
+
+    /*
+     * calcule si le libelle passé en param existe déjà
+     */
+    public static function isLibelleExists($libelle){
+        $result = CalendrierJours::where('libelle','=',$libelle)->count();
+//        dd($result);
+        return ($result > 0);
+    }
 }

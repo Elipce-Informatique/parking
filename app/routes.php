@@ -116,6 +116,7 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
      * Jours prédéfinis
      */
     Route::get('calendrier_jours/all', 'CalendrierJoursController@all');
+    Route::get('calendrier_jours/libelle/{libelle}', 'CalendrierJoursController@verifLibelle');
     Route::resource('calendrier_jours', 'CalendrierJoursController');
 
 
