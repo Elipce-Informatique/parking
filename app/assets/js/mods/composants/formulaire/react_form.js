@@ -1,9 +1,14 @@
+// MIXIN
+var FormValidationMixin = require('../../mixins/form_validation')
+
 /**
  * Formulaire
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
  */
 var Form = React.createClass({
+
+    mixins: [Reflux.ListenerMixin, FormValidationMixin],
 
     propTypes: {
         attributes:React.PropTypes.object,

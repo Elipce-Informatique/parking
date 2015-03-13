@@ -84,10 +84,9 @@ var Form              = Field.Form;
 
 var AuthentMixins        = require('./mixins/component_access');
 var DataTable            = require('./composants/tableau/react_data_table');
-var FormValidationMixin  = require('./mixins/form_validation');
 var DataTableModuleReact = React.createClass({
 
-    mixins: [Reflux.ListenerMixin,AuthentMixins, FormValidationMixin],
+    mixins: [Reflux.ListenerMixin,AuthentMixins],
 
     propTypes: {
         head:          React.PropTypes.array.isRequired,

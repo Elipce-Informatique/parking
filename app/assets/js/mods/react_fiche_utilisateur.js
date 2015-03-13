@@ -10,7 +10,6 @@ var Col = ReactB.Col;
 var Button = ReactB.Button;
 var ButtonToolbar = ReactB.ButtonToolbar;
 var Glyphicon = ReactB.Glyphicon;
-var FormValidationMixin = require('./mixins/form_validation');
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var InputRadioEditable = Field.InputRadioEditable;
@@ -45,7 +44,7 @@ function handleClickRadio(evt){
  */
 var FicheUser = React.createClass({
 
-    mixins: [Reflux.ListenerMixin, FormValidationMixin],
+    mixins: [Reflux.ListenerMixin],
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
