@@ -147,12 +147,13 @@ function getCoordsArrayFromLatLngArray(aCoords) {
 /**
  * Calcule et retourne le dernier point d'un parallèlogramme en fonction des 3 premiers
  * @param latlngs : array de 3 points exactement
+ *
+ * @return : object Dernier point du paral
  */
 function getLastPointOfParallelogramme(latlngs) {
     if (latlngs.length != 3) {
         return {};
     } else {
-        console.log('latlngs : %o', latlngs);
         // Parallélogramme ABCD de milieu K
         var A = latlngs[0], B = latlngs[1], C = latlngs[2], D = {lat: 0, lng: 0}, K = {lat: 0, lng: 0};
 

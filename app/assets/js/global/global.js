@@ -86,12 +86,14 @@
         "draw_editstop",
         "draw_deletestart",
         "draw_deletestop",
-        // ACTIONS DE MODE DE DESSIN
+        // ACTIONS DE CHANGMENT MODE DE DESSIN
         "mode_place",
         "mode_place_auto",
         "mode_allee",
         "mode_zone",
-        "mode_afficheur"
+        "mode_afficheur",
+        // ACTIONS POUR LES MODALES
+        "pm_creer" // places multiples
     ]);
 
     /*
