@@ -54,18 +54,27 @@ var store = Reflux.createStore({
     onDraw_created: function (data) {
         console.log('Pass onDraw_created %o', data);
 
-        // Si en mode place auto, on va calculer le parallèlogramme
+        // SI EN MODE PLACE AUTO, ON VA CALCULER LE PARALLÈLOGRAMME
         if (this._inst.currentMode == mapOptions.dessin.place_auto) {
             data = this.createParallelogramme(data);
+
+            // LE PARALLÉLOGRAMME N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
+            if (!_.isEmpty(data)) {
+                var retour = {
+                    type: mapOptions.type_messages.new_place_auto,
+                    data: data
+                };
+                this.trigger(retour);
+            }
         }
-
-        // TODO : afficher le parallèlogramme fini si mode place auto
-        var retour = {
-            type: mapOptions.type_messages.add_forme,
-            data: data
-        };
-
-        this.trigger(retour);
+        // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
+        else {
+            var retour = {
+                type: mapOptions.type_messages.add_forme,
+                data: data
+            };
+            this.trigger(retour);
+        }
     },
     onDraw_deleted: function (data) {
         console.log('Pass onDraw_created %o', data);
@@ -159,15 +168,13 @@ var store = Reflux.createStore({
         console.log('createParallelogramme : %o', data);
 
         if (data.e.layer._latlngs.length != 3) {
-            swal('Merci de tracer exactement 3 points !');
+            swal(Lang.get('administration_parking.carte.3_points_seulement'));
             return {};
         } else {
-            // TODO : Calcul du 4eme point
             var lastPoint = mapHelper.getLastPointOfParallelogramme(data.e.layer._latlngs);
             data.e.layer._latlngs.push(lastPoint);
             return data;
         }
-
 
     }
 });

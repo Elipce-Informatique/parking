@@ -35,7 +35,11 @@ return array(
         'ajouter_place_auto' => 'Ajouter une série de places',
         'ajouter_allee' => 'Ajouter une allée',
         'ajouter_zone' => 'Ajouter une zone',
-        'ajouter_afficheur' => 'Ajouter un afficheur'
+        'ajouter_afficheur' => 'Ajouter un afficheur',
+        'nb_places' => 'Nombre de places',
+        'nb_poteaux' => 'Nombre de poteaux',
+        'largeur_poteaux' => 'Largeur des poteaux',
+        '3_points_seulement'=>'Merci de tracer exactement 3 points !',
     ],
 
     // MODULE TEMPS REEL
