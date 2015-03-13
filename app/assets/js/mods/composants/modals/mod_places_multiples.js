@@ -1,5 +1,5 @@
 /* Gestion de la modification et des droits */
-var AuthentMixins = require('../../mixins/component_access');
+var ComponentAccessMixins = require('../../mixins/component_access');
 /* Pour le listenTo */
 var MixinGestMod = require('../../mixins/gestion_modif');
 
@@ -16,7 +16,7 @@ var Button = ReactB.Button;
  */
 var ModalPlaces = React.createClass({
 
-    mixins: [AuthentMixins, MixinGestMod],
+    mixins: [ComponentAccessMixins, MixinGestMod],
 
     propTypes: {
         onToggle: React.PropTypes.func.isRequired,
@@ -24,7 +24,7 @@ var ModalPlaces = React.createClass({
     },
 
     getDefaultProps: function () {
-        return {};
+        return {module_url: 'configuration_parking'};
     },
 
     getInitialState: function () {
@@ -44,6 +44,7 @@ var ModalPlaces = React.createClass({
             <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.props.onToggle}>
                 <div className="modal-body">
 
+                    // NOMBRE DE PLACES
                     <InputNumberEditable
                         attributes={
                         {
@@ -58,6 +59,56 @@ var ModalPlaces = React.createClass({
                         }}
                         editable={true}
                         evts={{}} />
+
+                    // NOMBRE DE POTEAUX
+                    <InputNumberEditable
+                        attributes={
+                        {
+                            label: Lang.get('administration_parking.carte.nb_places'),
+                            min: '0',
+                            name: "nb_place",
+                            value: this.state.nom,
+                            required: false,
+                            groupClassName: 'row',
+                            wrapperClassName: 'col-md-4',
+                            labelClassName: 'col-md-4 text-right'
+                        }}
+                        editable={true}
+                        evts={{}} />
+
+                    // TAILLE DES POTEAUX
+                    <InputNumberEditable
+                        attributes={
+                        {
+                            label: Lang.get('administration_parking.carte.nb_places'),
+                            min: '0',
+                            name: "nb_place",
+                            value: this.state.nom,
+                            required: false,
+                            groupClassName: 'row',
+                            wrapperClassName: 'col-md-4',
+                            labelClassName: 'col-md-4 text-right'
+                        }}
+                        editable={true}
+                        evts={{}} />
+
+                    //
+                    <InputNumberEditable
+                        attributes={
+                        {
+                            label: Lang.get('administration_parking.carte.nb_places'),
+                            min: '0',
+                            name: "nb_place",
+                            value: this.state.nom,
+                            required: false,
+                            groupClassName: 'row',
+                            wrapperClassName: 'col-md-4',
+                            labelClassName: 'col-md-4 text-right'
+                        }}
+                        editable={true}
+                        evts={{}} />
+
+
 
                 </div>
                 <div className="modal-footer">

@@ -19,7 +19,7 @@ var Page = React.createClass({
     propTypes: {},
 
     getDefaultProps: function () {
-        return {};
+        return {module_url: 'configuration_parking'};
     },
 
     /**

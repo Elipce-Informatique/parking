@@ -1,5 +1,5 @@
 var PanelGroup = require('../react_bootstrap_accordion').PanelGroup;
-var Panel = require('../react_bootstrap_accordion').Panel;
+var PanelA = require('../react_bootstrap_accordion').Panel;
 var Glyphicon = ReactB.Glyphicon;
 
 var storeMenuLeft = require('../../stores/stores_menus').menu_left;
@@ -72,7 +72,15 @@ var MenuLeft = React.createClass({
         // PARCOURS DES HEADERS POUR CREER LES ELEMENTS REACT
         var panels = _.map(panelsData, function (child, i, list) {
             var id = "pan-menu-" + child.id;
-            return <Panel id={id} key={id} icon={child.icon} title={child.traduction} url={child.url} collapseData={child.children} />;
+            return <PanelA
+                id={id}
+                key={id}
+                icon={child.icon}
+                title={child.traduction}
+                url={child.url}
+                collapseData={child.children}
+                groupId="accordion-menu-left"
+            />;
         }, this);
 
         return (
