@@ -11,7 +11,7 @@ module.exports.dessin = {
     allee: 2,
     zone: 3,
     afficheur: 4,
-    place_auto: 1
+    place_auto: 5
 };
 
 /**
@@ -29,12 +29,14 @@ module.exports.icon = {
 // PRÉPARATION DE L'OBJET COLOR :
 var colors = {};
 colors[module.exports.dessin.place] = '#bada55';
+colors[module.exports.dessin.place_auto] = '#bada55';
 colors[module.exports.dessin.allee] = '#5478da';
 colors[module.exports.dessin.zone] = '#da5454';
 
 // PRÉPARATION DE L'OBJET GROUPS:
 var groups = {};
 groups[module.exports.dessin.place] = 'placesGroup';
+groups[module.exports.dessin.place_auto] = 'placesGroup';
 groups[module.exports.dessin.allee] = 'alleesGroup';
 groups[module.exports.dessin.zone] = 'zonesGroup';
 groups[module.exports.dessin.afficheur] = 'afficheursGroup';

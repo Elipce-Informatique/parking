@@ -81,6 +81,7 @@ var parkingMap = React.createClass({
 
         // CRÉATION DE LA MAP
         this._inst.map = new L.Map(this.props.divId, {
+            crs: L.CRS.Simple,
             maxZoom: 7
         }).setView([65, 50], 4);
 
@@ -98,13 +99,9 @@ var parkingMap = React.createClass({
         this._inst.afficheursGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.afficheursGroup);
 
-        // test event
-        //this._inst.map.on('zoomend', function (e) {
-        //    console.log(e);
-        //});
     },
     /**
-     * Paramètre le plugin de dessin sur la carte lors de l'INIT de la map Ç
+     * Paramètre le plugin de dessin sur la carte lors de l'INIT de la map
      */
     initDrawPlugin: function () {
         this.changeDrawToolbar(this.props.defaultDrawMode);
@@ -237,7 +234,7 @@ var parkingMap = React.createClass({
         // ------- LES POLYLINES ----------
         var polyline = false;
         // ------- LES POLYGONS ----------
-        var polygon = (this._inst.currentMode == mapOptions.dessin.place || this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone) ? {
+        var polygon = (this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone || this._inst.currentMode == mapOptions.dessin.place_auto) ? {
             allowIntersection: false, // Restricts shapes to simple polygons
             drawError: {
                 color: '#e1e100', // Color the shape will turn when intersects
@@ -251,20 +248,21 @@ var parkingMap = React.createClass({
         // ------- LES CERCLES ----------
         var circle = false;
         // ------- LES RECTANGLES ----------
-        var rectangle = (this._inst.currentMode == mapOptions.dessin.place || this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone) ? {
+        var rectangle = (this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone) ? {
             shapeOptions: {
                 color: mapOptions.control.draw.colors[this._inst.currentMode]
             },
             repeatMode: true
         } : false;
         // ------- LES MARKERS ----------
-        var marker = (this._inst.currentMode == mapOptions.dessin.afficheur) ? {
+        var marker = (this._inst.currentMode == mapOptions.dessin.place || this._inst.currentMode == mapOptions.dessin.afficheur) ? {
             icon: new mapOptions.afficheurMarker(),
             repeatMode: true
         } : false;
 
         // 3 : Init du layerGroup pour la modif
         var group = this._inst[mapOptions.control.groups[this._inst.currentMode]];
+
 
         // 3 CRÉATION DU NOUVEAU CONTRÔLE
         var options = {
@@ -307,6 +305,10 @@ var parkingMap = React.createClass({
             case mapOptions.dessin.place:
                 this.changeDrawToolbar(data.data.mode);
                 selectButton(mapOptions.icon.place);
+                break;
+            case mapOptions.dessin.place_auto:
+                this.changeDrawToolbar(data.data.mode);
+                selectButton(mapOptions.icon.place_auto);
                 break;
             case mapOptions.dessin.allee:
                 this.changeDrawToolbar(data.data.mode);

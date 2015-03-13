@@ -160,7 +160,7 @@ var TestD3 = React.createClass({
     render: function () {
         return (<div className="test-d3">
             <h3>Occupation des places : </h3>
-            <svg className="donut-graph" style={{height: "200px", width: "200px"}}></svg>
+            <svg className="donut-graph" style={{height: "120px", width: "120px"}}></svg>
             <h3>Occupation des zones : </h3>
             <svg className="stacked-graph" style={{height: "300px", width: "250px"}}></svg>
         </div>);
