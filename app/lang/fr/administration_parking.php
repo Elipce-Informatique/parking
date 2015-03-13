@@ -39,7 +39,10 @@ return array(
         'nb_places' => 'Nombre de places',
         'nb_poteaux' => 'Nombre de poteaux',
         'largeur_poteaux' => 'Largeur des poteaux',
-        '3_points_seulement'=>'Merci de tracer exactement 3 points !',
+        'pref' => 'Pref.',
+        'incr' => 'Inc.',
+        'suff' => 'Suff.',
+        '3_points_seulement' => 'Merci de tracer exactement 3 points !',
     ],
 
     // MODULE TEMPS REEL
