@@ -46,4 +46,41 @@ class CalendrierJours extends Eloquent
 //        dd($result);
         return ($result > 0);
     }
+
+    /*
+   * Crée un état d'occupation
+   */
+    public static function createCalendrierJour($fields){
+        // Variable de retour
+        $retour = array('save' => false, 'errorBdd' => false);
+
+        /* Vérifie que le jour n'existe pas */
+        $bJourExists = CalendrierJours::isLibelleExists($fields['libelle']);
+
+        // Le jour n'existe pas en BDD
+        if (!$bJourExists) {
+            // Champs filtrés
+            $filteredFields = [];
+
+            // Champ à enregistrer
+            $aFieldsSave = array('libelle', 'ouverture', 'fermeture', 'couleur');
+
+            // Parcours de tous les champs
+            foreach($aFieldsSave as $key){
+                // On ne garde que les clés qui nous interessent
+                $filteredFields[$key] = $fields[$key];
+            }
+
+            // Essai d'enregistrement
+            try {
+                // Création du jour
+                $newDay = CalendrierJours::create($filteredFields);
+                $retour = array('save' => true, 'errorBdd' => false, 'id' => $newDay->id);
+            }
+            catch(Exception $e){
+                $retour = array('save' => false, 'errorBdd' => true);
+            }
+        }
+        return $retour;
+    }
 }

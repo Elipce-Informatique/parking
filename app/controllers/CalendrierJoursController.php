@@ -35,7 +35,7 @@ class CalendrierJoursController extends \BaseController {
 	 */
 	public function store()
 	{
-		//
+        return json_encode(CalendrierJours::createCalendrierJour(Input::all()));
 	}
 
 

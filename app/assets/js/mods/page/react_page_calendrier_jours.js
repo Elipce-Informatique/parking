@@ -14,6 +14,7 @@ var AuthentMixins = require('../mixins/component_access');
 var MixinGestMod = require('../mixins/gestion_modif');
 // HELPERS
 var pageState = require('../helpers/page_helper').pageState;
+var form_data_helper  = require('../helpers/form_data_helper');
 
 /**
  * Page calendrier jours
@@ -295,13 +296,14 @@ var storeCalendrierJours = Reflux.createStore({
      * @param e: evt click du bouton
      */
     onSubmit_form: function (e) {
+        console.log('UUU');
         // Variables
-        var url = this.id === 0 ? '' : this.stateLocal.idJour;
+        var url = this.stateLocal.idJour === 0 ? '' : this.stateLocal.idJour;
         url = BASE_URI + 'calendrier_jours/' + url;
-        var method = this.id === 0 ? 'POST' : 'PUT';
+        var method = this.stateLocal.idJour === 0 ? 'POST' : 'PUT';
 
         // FormData
-        var fData = form_data_helper('form_etat_d_occupation', method);
+        var fData = form_data_helper('form_jours', method);
 
         // Requête
         $.ajax({
@@ -314,17 +316,18 @@ var storeCalendrierJours = Reflux.createStore({
             context: this,
             success: function (tab) {
                 // Sauvegarde OK
-                if (tab.save == true) {
+                if (tab.save) {
+                    // Notification
                     Actions.notif.success(Lang.get('global.notif_success'));
-                    //console.log('ID: '+tab.id+ ' '+this.state.libelle);
-                    // On indique à la page qu'on passe en mode edition
-                    Actions.etats_d_occupation.goModif(tab.id, this.state.libelle);
-                    // Le store est informé du nouvel ID
-                    this.id = tab.id
+                    // Mode edition
+                    this.stateLocal.etat = pageState.edition;
+                    // Nouvel ID
+                    this.stateLocal.idJour = tab.id;
                 }
-                // Etat d'occupation existe déjà
+                // Le jour existe déjà
                 else if (tab.save == false && tab.errorBdd == false) {
-                    Actions.notif.error(Lang.get('administration_parking.etats_d_occupation.errorExist'));
+                    // Notification
+                    Actions.notif.error(Lang.get('calendrier.jours.libelleExists'));
                 }
                 // Erreur SQL
                 else {
