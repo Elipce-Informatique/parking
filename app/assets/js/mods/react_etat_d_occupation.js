@@ -8,6 +8,7 @@
 var Row = ReactB.Row;
 var Col = ReactB.Col;
 
+// HELPER
 var form_data_helper  = require('./helpers/form_data_helper');
 
 /*************************/
@@ -19,13 +20,10 @@ var react_color         = require('./composants/react_color');
 var ColorPickerEditable = react_color.ColorPickerEditable;
 var InputSelectEditable         = Field.InputSelectEditable;
 
-/**********/
-/* Mixin */
-var FormValidationMixin = require('./mixins/form_validation');
 
 var reactEtatDoccupation = React.createClass({
 
-    mixins: [Reflux.ListenerMixin, FormValidationMixin],
+    mixins: [Reflux.ListenerMixin],
 
     libelleIniDefine:false,
 

@@ -8,8 +8,6 @@ var Button = ReactB.Button;
 var Form = Field.Form;
 var InputTimeEditable = Field.InputTimeEditable;
 
-// Mixin
-var FormValidationMixin = require('./mixins/form_validation');
 
 /**
  * Formulaire de jours prédéfinis
@@ -18,7 +16,7 @@ var FormValidationMixin = require('./mixins/form_validation');
  */
 var FormJours = React.createClass({
 
-    mixins: [Reflux.ListenerMixin, FormValidationMixin],
+    mixins: [Reflux.ListenerMixin],
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
