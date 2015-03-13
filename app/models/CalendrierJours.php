@@ -16,7 +16,7 @@ class CalendrierJours extends Eloquent
     */
     public $timestamps = false;
 
-    protected $fillable = ['libelle'];
+    protected $fillable = ['libelle', 'ouverture', 'fermeture','couleur'];
     protected $table='jour_calendrier';
 
     /**
@@ -75,6 +75,7 @@ class CalendrierJours extends Eloquent
             try {
                 // Création du jour
                 $newDay = CalendrierJours::create($filteredFields);
+                Log::warning(print_r($newDay,true));
                 $retour = array('save' => true, 'errorBdd' => false, 'id' => $newDay->id);
             }
             catch(Exception $e){
@@ -82,5 +83,25 @@ class CalendrierJours extends Eloquent
             }
         }
         return $retour;
+    }
+
+    /*
+     * Suppression d'un jour prédéfini
+     */
+    public static function deleteCalendrierJour($id){
+        // Variables
+        $bSave = true;
+
+        // Chercher l'état d'occupataion
+        $etat = CalendrierJours::find($id);
+
+        // Supprimer l'état d'occupataion
+        try {
+            $etat->delete();
+        }
+        catch (Exception $e) {
+            $bSave = false;
+        }
+        return $bSave;
     }
 }

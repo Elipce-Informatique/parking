@@ -65,7 +65,7 @@ var DataTableBandeauJourReact = React.createClass({
     displayJours: function(e){
         // Ligne du tableau
         var id = $(e.currentTarget).data('id');
-        Actions.jours.display_jours(id);
+        Actions.jours.display_detail_jour(id);
     }
 });
 

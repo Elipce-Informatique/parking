@@ -52,7 +52,7 @@ var PageCalendrierJours = React.createClass({
     onRetour: function () {
         this.setState({etat: pageState.liste, idJour: 0});
         // Maj liste des jours prédéfinis
-        Actions.jours.display_jours();
+        Actions.jours.display_all_jours();
     },
 
     /**
@@ -70,11 +70,7 @@ var PageCalendrierJours = React.createClass({
                 react =
                     <div key="root">
                         <BandeauGenerique key="bandeauVisu" bandeauType={this.state.etat} module_url="calendrier_jours" titre={Lang.get('calendrier.jours.titre')} sousTitre={this.state.detailJour.libelle}/>
-                        <Row>
-                            <Col md={12}>
-
-                            </Col>
-                        </Row>
+                        <FormJours editable={false} detailJour={this.state.detailJour} idJour={this.state.idJour} validationLibelle={this.state.validationLibelle} />
                     </div>;
                 break;
             case pageState.creation:
@@ -83,7 +79,7 @@ var PageCalendrierJours = React.createClass({
                 react =
                     <div key="root">
                         <BandeauGenerique key="bandeauCreation" bandeauType={this.state.etat} module_url="calendrier_jours" mode={mode} titre={Lang.get('calendrier.jours.titre')}/>
-                        <FormJours editable={true} detailJour={this.state.detailJour} idJour={this.state.idJour} validationLibelle={this.state.validationLibelle} />
+                        <FormJours editable={true} detailJour={this.state.detailJour} idJour={this.state.idJour} />
                     </div>;
                 break;
             default:
@@ -130,8 +126,8 @@ var storeCalendrierJours = Reflux.createStore({
     // Initial setup
     init: function () {
         // Register statusUpdate action
-        this.listenTo(Actions.jours.display_jours, this.modeVisu);
-        this.listenTo(Actions.bandeau.creer, this.modeCreation);
+        this.listenTo(Actions.jours.display_all_jours, this.modeListe);
+        this.listenTo(Actions.jours.display_detail_jour, this.modeVisu);
         // Toutes les actions de bandeau et validation
         this.listenToMany(Actions.bandeau);
         this.listenToMany(Actions.validation);
@@ -175,13 +171,12 @@ var storeCalendrierJours = Reflux.createStore({
             context: this,
             async: true,
             success: function (data) {
-                // Détail du jour
+                // Détail du jour + id
                 this.stateLocal.detailJour = data;
                 // Maj page
                 this.trigger(this.stateLocal);
                 // Maj libelle + id
                 this.libelleInitial = data.libelle;
-                this.stateLocal.id = idJour;
             },
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
@@ -192,7 +187,7 @@ var storeCalendrierJours = Reflux.createStore({
     /**
      * Création d'un jour prédéfini, formulaire vide
      */
-    modeCreation: function () {
+    onCreer: function () {
         this.stateLocal = {
             idJour: 0,
             etat: pageState.creation,
@@ -225,7 +220,23 @@ var storeCalendrierJours = Reflux.createStore({
             idJour: 0,
             etat: pageState.liste
         };
-        this.trigger(this.stateLocal);
+
+        // AJAX
+        $.ajax({
+            url: BASE_URI + 'calendrier_jours/all',
+            dataType: 'json',
+            context: this,
+            async: true,
+            success: function (data) {
+                // Tous les jours prédéfinis en BDD
+                this.stateLocal.listeJours = data;
+                this.trigger(this.stateLocal);
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+                this.stateLocal.listeJours = [];
+            }
+        });
     },
 
     /**
@@ -296,7 +307,6 @@ var storeCalendrierJours = Reflux.createStore({
      * @param e: evt click du bouton
      */
     onSubmit_form: function (e) {
-        console.log('UUU');
         // Variables
         var url = this.stateLocal.idJour === 0 ? '' : this.stateLocal.idJour;
         url = BASE_URI + 'calendrier_jours/' + url;
@@ -338,6 +348,42 @@ var storeCalendrierJours = Reflux.createStore({
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
                 Actions.notif.error('AJAX : ' + Lang.get('global.notif_erreur'));
+            }
+        });
+    },
+
+    /**
+     * Suppression d'un jour prédéfini
+     */
+    onSupprimer: function () {
+        // Variables
+        var url = BASE_URI + 'calendrier_jours/' + this.stateLocal.idJour;
+        var method = 'DELETE';
+
+        // Requête
+        $.ajax({
+            url: url,
+            dataType: 'json',
+            context: this,
+            type: method,
+            data: {'_token': $('#_token').val()},
+            success: function (bool) {
+                // suppression OK
+                if(bool) {
+                    // Mode liste
+                    this.modeListe();
+                    // Notification green
+                    Actions.notif.success(Lang.get('global.notif_success'));
+                }
+                // Suppression KO
+                else{
+                    // Notifictaion erreur
+                    Actions.notif.error(Lang.get('global.notif_erreur'));
+                }
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+                Actions.notif.error(Lang.get('global.notif_erreur'));
             }
         });
     }

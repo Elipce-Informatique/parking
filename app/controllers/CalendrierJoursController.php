@@ -83,7 +83,7 @@ class CalendrierJoursController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+		return json_encode(CalendrierJours::deleteCalendrierJour($id));
 	}
 
     /**
