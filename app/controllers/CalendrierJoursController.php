@@ -71,7 +71,7 @@ class CalendrierJoursController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+		return json_encode(CalendrierJours::updateCalendrierJour($id, Input::all()));
 	}
 
 
@@ -88,10 +88,12 @@ class CalendrierJoursController extends \BaseController {
 
     /**
      * Vérifie si le libellé passé en paramètre existe déjà en BDD
-     * @param $libelle
+     * @param $libelle: libellé à vérifier
+     * @param $id: ID à ne pas prendre en compte (mode édition)
+     *
      */
-    public function verifLibelle($libelle){
-        return json_encode(CalendrierJours::isLibelleExists($libelle));
+    public function verifLibelle($libelle, $id=''){
+        return json_encode(CalendrierJours::isLibelleExists($libelle, $id));
 
     }
 
