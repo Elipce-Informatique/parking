@@ -11,8 +11,8 @@ var storeVerif = Reflux.createStore({
         // Register statusUpdate action
         this.listenTo(Actions.validation.verify_form_save, this.triggerValidation);
     },
-    triggerValidation: function (data) {
-        this.trigger(data);
+    triggerValidation: function (form_id) {
+        this.trigger(form_id);
     }
 });
 
@@ -30,20 +30,23 @@ var FormValidationMixin = {
      * Data au cas ou action perso ??
      * @param data
      */
-    verifyForm: function (data) {
+    verifyForm: function (form_id) {
 
         // Récupération du formulaire
         var $form = $(this.getDOMNode());
 
-        // Test si champs invalides
-        if ($form.find('[data-valid=false]').length == 0) {
-            Actions.validation.submit_form(this.getDOMNode());
-        }
-        // Test si champs obligatoires remplis
+        // Si on est sur le bon form !
+        if (($form.find('form').attr('id') == form_id) || (form_id == '')) {
 
-        // Tout va très bien, on peut enregistrer !
-        else {
-            $.notify(Lang.get('global.form_incorrect'), 'error');
+            // Test si champs invalides
+            if ($form.find('[data-valid=false]').length == 0) {
+                Actions.validation.submit_form(this.getDOMNode(), form_id);
+            }
+
+            // Tout va très bien, on peut enregistrer !
+            else {
+                $.notify(Lang.get('global.form_incorrect'), 'error');
+            }
         }
     }
 };
