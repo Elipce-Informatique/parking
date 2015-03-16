@@ -24,9 +24,12 @@ var Col = ReactB.Col;
 /**
  * Champ texte
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: active ou non la gestion des modifications sur le champ
  * @param area: bool, input type area ou non, false par défaut
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -40,7 +43,6 @@ var InputText = React.createClass({
     propTypes: {
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange: React.PropTypes.func,
         gestMod: React.PropTypes.bool,
         area: React.PropTypes.bool,
         validator: React.PropTypes.func
@@ -50,7 +52,6 @@ var InputText = React.createClass({
         return {
             attributes: {},
             evts: {},
-            onChange: this.handleChange,
             gestMod: true,
             area: false,
             validator: function (val, props, state) {
@@ -96,7 +97,11 @@ var InputText = React.createClass({
  * Champ texte editable => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: active ou non la gestion des modifications sur le champ
  * @param area: bool, input type area ou non, false par défaut
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
@@ -160,6 +165,12 @@ var InputTextEditable = React.createClass({
 
 /**
  * Champ mail
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: active ou non la gestion des modifications sur le champ
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -222,7 +233,11 @@ var InputMail = React.createClass({
  * Champ mail editable => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: active ou non la gestion des modifications sur le champ
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -278,8 +293,11 @@ var InputMailEditable = React.createClass({
 /**
  * Champ mot de passe
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param gestMod: booléen: active ou non la gestion des modifications sur le champ
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -293,7 +311,6 @@ var InputPassword = React.createClass({
     propTypes: {
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange: React.PropTypes.func,
         gestMod: React.PropTypes.bool,
         validator: React.PropTypes.func
     },
@@ -350,7 +367,12 @@ var InputPassword = React.createClass({
  * Champ mot de passe => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
- * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction} @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: active ou non la gestion des modifications sur le champ
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
  *      style: 'success|warning|error|default',
@@ -411,6 +433,9 @@ var InputPasswordEditable = React.createClass({
  *                  - label: label devant le select
  *                  - labelCol: nombre de colonnes bootstrap du label
  *                  - selectCol: nombre de colonnes bootstrap du select
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onChange: maFonction}
  * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
@@ -594,7 +619,14 @@ var InputSelect = React.createClass({
  * @param selectedValue: array('0', '1') ou valeur
  * @param placeholder: string, par défaut 'Sélection..'
  * @param multi: bool, à choix multiple, par défaut non
- * @param attributes: props de Input (react bootstrap) ex: {label: Champ texte:}
+ * @param attributes: attributs HTML du select:
+ *                  - name
+ *                  - label: label devant le select
+ *                  - labelCol: nombre de colonnes bootstrap du label
+ *                  - selectCol: nombre de colonnes bootstrap du select
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
  * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  * @param labelClass: string: classe CSS à ajouter au Col qui entoure le label ex: text-right
@@ -698,9 +730,15 @@ var InputSelectEditable = React.createClass({
 
 /**
  * Champ nombre
+ * @param min: valeur minimale du champ InputNumber. ex: 0
+ * @param max: valeur minimale du champ InputNumber. ex: 100
+ * @param step: pas d'incrémentation ou de décrémentation, par défaut 1.
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -718,7 +756,7 @@ var InputNumber = React.createClass({
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool,
-        onChange: React.PropTypes.func
+        validator: React.PropTypes.func
     },
 
     getDefaultProps: function () {
@@ -729,7 +767,6 @@ var InputNumber = React.createClass({
             attributes: {},
             evts: {},
             gestMod: true,
-            onChange: this.handleChange,
             validator: function (val, props, state) {
 
                 /* Pour résoudre le problème de float accuracy */
@@ -776,6 +813,7 @@ var InputNumber = React.createClass({
                 {...attrs}
                 {...this.props.evts}
                 onChange = {this.handleChange}
+                onBlur = {this.handleBlur}
                 value={this.state.value}
                 ref = "InputField"
                 hasFeedback
@@ -787,9 +825,13 @@ var InputNumber = React.createClass({
 
 /**
  * Champ texte editable => si pas editable INPUT devient LABEL.
+ * @param min: valeur minimale du champ InputNumber. ex: 0
+ * @param max: valeur minimale du champ InputNumber. ex: 100
+ * @param step: pas d'incrémentation ou de décrémentation, par défaut 1.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputNumberEditable = React.createClass({
 
@@ -838,8 +880,11 @@ var InputNumberEditable = React.createClass({
 /**
  * Champ nombre
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -854,7 +899,7 @@ var InputTel = React.createClass({
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool,
-        onChange: React.PropTypes.func
+        validator: React.PropTypes.func
     },
 
     getDefaultProps: function () {
@@ -862,7 +907,6 @@ var InputTel = React.createClass({
             attributes: {},
             evts: {},
             gestMod: true,
-            onChange: this.handleChange,
             validator: function (val, props, state) {
 
                 var tel = val + '';
@@ -901,6 +945,7 @@ var InputTel = React.createClass({
             {...attrs}
             {...this.props.evts}
             onChange = {this.handleChange}
+            onBlur = {this.handleBlur}
             value={this.state.value}
             ref = "InputField"
             hasFeedback
@@ -913,7 +958,11 @@ var InputTel = React.createClass({
  * Champ texte editable => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputTelEditable = React.createClass({
 
@@ -1024,8 +1073,11 @@ var InputFile = React.createClass({
 /**
  * Champ Date
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -1039,15 +1091,14 @@ var InputDate = React.createClass({
     propTypes: {
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange: React.PropTypes.func,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        validator: React.PropTypes.func
     },
 
     getDefaultProps: function () {
         return {
             attributes: {},
             evts: {},
-            onChange: this.handleChange,
             gestMod: true,
             validator: function (val, props, state) {
                 // Champ obligatoire + vide
@@ -1084,6 +1135,7 @@ var InputDate = React.createClass({
                 {...attrs}
                 {...this.props.evts}
                 onChange = {this.handleChange}
+                onBlur = {this.handleBlur}
                 value={this.state.value}
                 ref = "InputField"
                 hasFeedback
@@ -1096,7 +1148,11 @@ var InputDate = React.createClass({
  * Champ date editable => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputDateEditable = React.createClass({
 
@@ -1145,8 +1201,11 @@ var InputDateEditable = React.createClass({
 /**
  * Champ Time: heure / min / sec
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -1160,8 +1219,8 @@ var InputTime = React.createClass({
     propTypes: {
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange: React.PropTypes.func,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        validator: React.PropTypes.func
     },
 
     getDefaultProps: function () {
@@ -1169,7 +1228,6 @@ var InputTime = React.createClass({
         return {
             attributes: {},
             evts: {},
-            onChange: this.handleChange,
             gestMod: true,
             validator: function (val, props, state, inputNode) {
                 //console.log('length:'+val.length+' required: '+typeof(props.attributes.required));
@@ -1218,6 +1276,7 @@ var InputTime = React.createClass({
                 {...attrs}
                 {...this.props.evts}
                 onChange = {this.handleChange}
+                onBlur = {this.handleBlur}
                 value={this.state.value}
                 ref = "InputField"
                 hasFeedback
@@ -1231,7 +1290,11 @@ var InputTime = React.createClass({
  * Champ time editable => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputTimeEditable = React.createClass({
 

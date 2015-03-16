@@ -110,61 +110,69 @@ var ReactPageTest               = React.createClass({
         /***************************/
         return(
         <Form attributes={{id:"form_test"}}>
-            <Row id="Champ_texte">
-                <Col md={12}>
-                    <InputTextEditable
-                        attributes={
-                            {   label:'InputTextEditable',
-                                name:"InputTextEditable",
-                                value:'Vivian',
-                                wrapperClassName:'col-md-4',
-                                labelClassName:'col-md-2',
-                                groupClassName:'row'}}
-                        editable={editable} />
-                </Col>
-            </Row>
 
-            <Row id="Champ_texte_area">
-                <Col md={12}>
-                    <InputTextEditable area={true} attributes={{label:'InputTextEditableArea', name:"InputTextEditableArea", value:'InputTextEditableArea', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
-                </Col>
-            </Row>
+            <InputTextEditable
+                attributes={
+                    {   label:'InputTextEditable',
+                        name:"InputTextEditable",
+                        value:'Vivian',
+                        wrapperClassName:'col-md-4',
+                        labelClassName:'col-md-2',
+                        groupClassName:'row'}}
+                editable={editable} />
 
-            <Row id="Champ_mail">
-                <Col md={12}>
-                    <InputMailEditable attributes={{label:'InputMailEditable', name:"InputMailEditable", value:'InputMailEditable@elipce.com', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
-                </Col>
-            </Row>
+            <InputTextEditable
+                area={true}
+                attributes={{
+                    label:'InputTextEditableArea',
+                    name:"InputTextEditableArea",
+                    value:'InputTextEditableArea',
+                    wrapperClassName:'col-md-4',
+                    labelClassName:'col-md-2',
+                    groupClassName:'row'}}
+                editable={editable} />
 
-            <Row id="Champ_password">
-                <Col md={12}>
-                    <InputPasswordEditable attributes={{label:'InputPasswordEditable', name:"InputPasswordEditable", value:"", wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
-                </Col>
-            </Row>
+            <InputMailEditable
+                attributes={{
+                    label:'InputMailEditable',
+                    name:"InputMailEditable",
+                    value:'InputMailEditable@elipce.com',
+                    wrapperClassName:'col-md-4',
+                    labelClassName:'col-md-2',
+                    groupClassName:'row'}}
+                editable={editable} />
 
-            <Row id="InputImageEditable">
-                <Col md={12}>
-                    <ImageEditable src='./app/assets/images/cross.gif' evts={{onClick:clickImage}} name="InputImageEditable" attributes={{name:"InputImageEditable", imgCol:4,labelCol:2}} editable={editable} />
-                </Col>
-            </Row>
-            <Row id="InputColor">
-                <Col md={12}>
-                    <ColorPicker color="AAAAAA" label="Couleur" mdColor={4} mdLabel={2} />
-                </Col>
-            </Row>
-            <Row id="InputColorEditable">
-                <Col md={12}>
-                    <ColorPickerEditable
-                        evts={{onBlur:function(e){console.log('blur color '+$(e.currentTarget).val());}}}
-                        label="Couleur modifiable"
-                        mdColor={4}
-                        mdLabel={2}
-                        labelClass="text-right"
-                        gestMod={true}
-                        attributes={{name:"color", required:false, value:'E2156B'}}
-                        editable={editable} />
-                </Col>
-            </Row>
+            <InputPasswordEditable
+                attributes={{
+                    label:'InputPasswordEditable',
+                    name:"InputPasswordEditable",
+                    value:"",
+                    wrapperClassName:'col-md-4',
+                    labelClassName:'col-md-2',
+                    groupClassName:'row'}}
+                editable={editable} />
+
+
+            <ImageEditable
+                src='./app/assets/images/cross.gif'
+                evts={{onClick:clickImage}}
+                name="InputImageEditable"
+                attributes={{
+                    name:"InputImageEditable",
+                    imgCol:4,
+                    labelCol:2}}
+                editable={editable} />
+
+
+            <ColorPickerEditable
+                evts={{onBlur:function(e){console.log('blur color '+$(e.currentTarget).val());}}}
+                label="Couleur modifiable"
+                mdColor={4}
+                mdLabel={2}
+                labelClass="text-right"
+                gestMod={true}
+                attributes={{name:"color", required:false, value:'E2156B'}}
+                editable={editable} />
 
             <InputSelectEditable
                 multi={false}
@@ -189,71 +197,106 @@ var ReactPageTest               = React.createClass({
                         }}
             >Valider</Button>
 
-            <Row id="Input number">
-                <Col md={12}>
-                    <InputNumberEditable min={-10} max={10} step={0.01} attributes={{label:'Input number', name:"InputNumber", value:5, wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
-                </Col>
-            </Row>
+            <InputNumberEditable
+                min={-10}
+                max={10}
+                step={0.01}
+                attributes={{
+                    label:'Input number',
+                    name:"InputNumber",
+                    value:5,
+                    wrapperClassName:'col-md-4',
+                    labelClassName:'col-md-2',
+                    groupClassName:'row'}}
+                editable={editable} />
 
-            <Row id="Input tel">
-                <Col md={12}>
-                    <InputTelEditable attributes={{label:'Input tel', name:"InputTel", value:'0475757575', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
-                </Col>
-            </Row>
+            <InputTelEditable
+                attributes={{
+                    label:'Input tel',
+                    name:"InputTel",
+                    htmlFor : 'form_test',
+                    value:'0475757575',
+                    wrapperClassName:'col-md-4',
+                    labelClassName:'col-md-2',
+                    groupClassName:'row'}}
+                editable={editable} />
 
             <Row id="Champ_radioBoostrap">
                 <Col md={2}>
                     <label>Radio Boostrap</label>
                 </Col>
                 <Col md={4}>
-                    <ButtonGroup data-toggle="buttons" bsSize="xsmall">
-                        <InputRadioBootstrapEditable key={'bt1'} editable={editable} attributes={{className:'active'}}>Btn 1</ InputRadioBootstrapEditable>
-                        <InputRadioBootstrapEditable key={'bt2'} editable={editable}>Btn 2</ InputRadioBootstrapEditable>
+                    <ButtonGroup
+                        data-toggle="buttons"
+                        bsSize="xsmall">
+                        <InputRadioBootstrapEditable
+                            key={'bt1'}
+                            editable={editable}
+                            attributes={{
+                                className:'active'}}
+                        >Btn 1</ InputRadioBootstrapEditable>
+                        <InputRadioBootstrapEditable
+                            key={'bt2'}
+                            editable={editable}
+                        >Btn 2</ InputRadioBootstrapEditable>
                     </ButtonGroup>
                 </Col>
             </Row>
 
-            <Row id="Champ_radio">
-                    <Col md={2}>
-                    </Col>
-                    <Col md={10}>
-                        <InputRadioEditable key={'bt1'} editable={editable} attributes={{label:'InputRadioEditable 1', checked:true, name:"InputRadioEditable[]", wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} />
-                    </Col>
-                </Row>
-                <Row >
-                    <Col md={2}>
-                    </Col>
-                    <Col md={10}>
-                        <InputRadioEditable key={'bt2'} editable={editable} attributes={{label:'InputRadioEditable 2', name:"InputRadioEditable[]", wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} />
-                    </Col>
-            </Row>
+            <InputRadioEditable
+                key={'bta'}
+                editable={editable}
+                attributes={{
+                    label:'InputRadioEditable 1',
+                    checked:true,
+                    name:"InputRadioEditable[]",
+                    wrapperClassName:'col-md-4',
+                    labelClassName:'col-md-2',
+                    groupClassName:'row'}}
+            />
 
-            <Row id="Champ_checkBox">
-                <Col md={2}>
-                </Col>
-                <Col md={10}>
-                    <InputCheckboxEditable key={'bt1'} attributes={{label:'InputCheckboxEditable', name:"InputCheckboxEditable", wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
-                </Col>
-            </Row>
+            <InputRadioEditable
+                key={'btb'}
+                editable={editable}
+                attributes={{
+                    label:'InputRadioEditable 2',
+                    name:"InputRadioEditable[]",
+                    wrapperClassName:'col-md-4',
+                    labelClassName:'col-md-2',
+                    groupClassName:'row'}} />
 
-            <Row id="Champ_datetime">
-                    <Col md={12}>
-                    <InputDate attributes={{label:'Champ date natif',value:'2015-02-23',required:true, wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} />
-                </Col>
-            </Row>
+            <InputCheckboxEditable
+                key={'bty'}
+                attributes={{
+                    label:'InputCheckboxEditable',
+                    name:"InputCheckboxEditable",
+                    htmlFor : 'form_test',
+                    wrapperClassName:'col-md-4',
+                    labelClassName:'col-md-2',
+                    groupClassName:'row'}}
+                editable={editable} />
 
-            <Row id="Champ_datetime_editable">
-                <Col md={12}>
-                    <InputDateEditable attributes={{label:'Champ date editable',value:'2015-02-23',required:true, wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
-                </Col>
-            </Row>
+            <InputDateEditable
+                attributes={{
+                    label:'Champ date editable',
+                    value:'2015-02-23',
+                    htmlFor : 'form_test',
+                    required:true,
+                    wrapperClassName:'col-md-4',
+                    labelClassName:'col-md-2',
+                    groupClassName:'row'}}
+                editable={editable} />
 
-            <Row id="Champ_time_editable">
-                <Col md={12}>
-                    <InputTimeEditable attributes={{label:'Champ time editable',value:'10:00:25', wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'}} editable={editable} />
-                </Col>
-            </Row>
-
+            <InputTimeEditable
+                attributes={{
+                    label:'Champ time editable',
+                    name: 'time_field',
+                    value:'10:00:25',
+                    htmlFor: 'form_test',
+                    wrapperClassName:'col-md-4',
+                    labelClassName:'col-md-2',
+                    groupClassName:'row'}}
+                editable={editable} />
         </Form>)
     },
 
@@ -282,17 +325,17 @@ var storeTest = Reflux.createStore({
 
     /**
      * onChange de n'importe quel élément du FORM
-     * @param e: evt
+     * @param e: {name, value, form}
      */
     onForm_field_changed: function (e) {
-        console.log('CHANGED');
+        console.log('CHANGED '+e.name+' %o',e);
     },
 
     /**
      * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
      */
     onForm_field_verif: function (e) {
-        console.log('VERIF');
+        console.log('VERIF '+e.name);
 
     }
 });
