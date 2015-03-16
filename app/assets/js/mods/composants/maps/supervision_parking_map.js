@@ -7,13 +7,6 @@ var mapOptions = require('../../helpers/map_options');
 var ListenerMixin = Reflux.ListenerMixin;
 
 /**
- *
- *
- *
- *
- */
-
-/**
  * Created by yann on 27/01/2015.
  *
  * Composant pour créer une carte de parking en mode administration outils de dessins.

@@ -16,6 +16,11 @@ var storeVerif = Reflux.createStore({
     }
 });
 
+/**
+ * Ce mixin doit être implémenté dans le composant qui contient le formulaire à l'intérieur de son DOM
+ * Il se base sur getDOMNode pour récupérer les infos dans le form.
+ * @type {{componentWillMount: Function, verifyForm: Function}}
+ */
 var FormValidationMixin = {
     componentWillMount: function () {
         // CHECK MIXIN
@@ -39,7 +44,6 @@ var FormValidationMixin = {
         if ($form.find('[data-valid=false]').length == 0) {
             Actions.validation.submit_form(this.getDOMNode());
         }
-        // Test si champs obligatoires remplis
 
         // Tout va très bien, on peut enregistrer !
         else {
@@ -48,4 +52,4 @@ var FormValidationMixin = {
     }
 };
 
-module.exports = FormValidationMixin;
+module.exports = FormValidationMixin

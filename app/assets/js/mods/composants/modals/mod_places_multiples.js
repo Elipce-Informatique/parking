@@ -19,7 +19,7 @@ var Button = ReactB.Button;
  */
 var ModalPlaces = React.createClass({
 
-    mixins: [ComponentAccessMixins, MixinGestMod],
+    mixins: [Reflux.ListenerMixin, ComponentAccessMixins, MixinGestMod],
 
     propTypes: {
         onToggle: React.PropTypes.func.isRequired,
@@ -35,11 +35,17 @@ var ModalPlaces = React.createClass({
     },
 
     componentDidMount: function () {
-
+        console.log('Dom node modale : ');
+        console.log(this.getDOMNode());
     },
 
     shouldComponentUpdate: function (nextProps, nextState) {
         return true;
+    },
+
+    // Rien à faire dans la popup à priori
+    onRetour: function () {
+
     },
 
     render: function () {
