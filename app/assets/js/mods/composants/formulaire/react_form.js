@@ -1,3 +1,4 @@
+var React = require('react/addons');
 // MIXIN
 var FormValidationMixin = require('../../mixins/form_validation')
 

@@ -10,7 +10,6 @@
      | INCLUSIONS DE MODULES GLOBAUX
      |--------------------------------------------------------------------------
      */
-    global.React = require('react/addons');
     global._ = require('lodash');
     global.Reflux = require('reflux');
     console.log('avant');
@@ -139,6 +138,7 @@
  |--------------------------------------------------------------------------
  */
 $(function () {
+    var React = require('react/addons');
     var Notify = require('../mods/composants/react_notify');
     React.render(<Notify />, document.getElementById('composant_react_notifications'));
 

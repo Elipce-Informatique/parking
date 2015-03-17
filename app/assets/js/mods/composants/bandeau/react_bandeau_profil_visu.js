@@ -1,6 +1,7 @@
 /**
  * Created by yann on 16/01/2015.
  */
+var React = require('react/addons');
 var Bandeau = require('./react_bandeau');
 /**
  * Created by yann on 16/12/2014.

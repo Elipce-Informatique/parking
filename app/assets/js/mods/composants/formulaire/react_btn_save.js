@@ -1,3 +1,4 @@
+var React = require('react/addons');
 var Button = ReactB.Button;
 var Glyphicon = ReactB.Glyphicon;
 

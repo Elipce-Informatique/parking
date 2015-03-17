@@ -1,7 +1,7 @@
 /**
  * Created by Pierre on 16/12/2014.
  */
-
+var React = require('react/addons');
 /***********************/
 /* Composants Boostrap */
 var Row = ReactB.Row;

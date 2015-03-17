@@ -1,3 +1,4 @@
+var React = require('react/addons');
 var Input = ReactB.Input;
 var OverlayTrigger = ReactB.OverlayTrigger;
 var Tooltip = ReactB.Tooltip;

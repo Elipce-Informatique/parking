@@ -1,4 +1,5 @@
 /***********************/
+var React = require('react/addons');
 /* Composants Boostrap */
 var Row = ReactB.Row;
 var Col = ReactB.Col;

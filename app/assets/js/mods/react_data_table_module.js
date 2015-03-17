@@ -78,6 +78,7 @@ function libelleCreateChange (value){
 
 /*********************************************/
 /* Composant input pour le libelle du profil */
+var React = require('react/addons');
 var Field             = require('./composants/formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var Form              = Field.Form;

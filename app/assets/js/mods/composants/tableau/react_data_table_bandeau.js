@@ -12,7 +12,7 @@
  *                            FALSE: pas d'évènement par défaut.
  * @param object reactElements: voire composant react 'TableTr'
  */
-
+var React = require('react/addons');
 var DataTable = require('./react_data_table'); 
 var DataTableBandeauReact = React.createClass({
     
