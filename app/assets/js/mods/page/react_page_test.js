@@ -31,8 +31,8 @@ var InputTime = Field.InputTime;
 var InputTimeEditable = Field.InputTimeEditable;
 var Form = Field.Form;
 
-//var Modal1 = require('../composants/modals/test_modal_1');
-//var Modal2 = require('../composants/modals/test_modal_2');
+var Modal1 = require('../composants/modals/test_modal_1');
+var Modal2 = require('../composants/modals/test_modal_2');
 var Modal = ReactB.Modal;
 
 /*****************************************************
@@ -109,15 +109,7 @@ var ReactPageTest = React.createClass({
                 if (!this.state.isModalOpen) {
                     retour = <span/>;
                 } else {
-                    retour = (<Modal bsStyle="primary" title="Modal 1" onRequestHide={this.toggleModal}>
-                        <div className="modal-body">
-                            This modal is controlled by our custom trigger component.
-                        </div>
-                        <div className="modal-footer">
-                            <Button onClick={this.toggleModal}>Close</Button>
-                            <Button onClick={Actions.test.modal1_save}>Save</Button>
-                        </div>
-                    </Modal>);
+                    retour = <Modal1 onToggle={this.toggleModal} />;
 
                 }
                 break;
@@ -126,15 +118,7 @@ var ReactPageTest = React.createClass({
                 if (!this.state.isModalOpen) {
                     retour = <span/>;
                 } else {
-                    retour = (<Modal bsStyle="primary" title="Modal 2" onRequestHide={this.toggleModal}>
-                        <div className="modal-body">
-                            This modal is controlled by our custom trigger component.
-                        </div>
-                        <div className="modal-footer">
-                            <Button onClick={this.toggleModal}>Close</Button>
-                            <Button onClick={Actions.test.modal2_save}>Save</Button>
-                        </div>
-                    </Modal>);
+                    retour = <Modal2 onToggle={this.toggleModal} />;
                 }
                 break;
         }
