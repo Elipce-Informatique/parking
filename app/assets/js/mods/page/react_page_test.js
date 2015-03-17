@@ -31,8 +31,8 @@ var InputTime = Field.InputTime;
 var InputTimeEditable = Field.InputTimeEditable;
 var Form = Field.Form;
 
-var Modal1 = require('../composants/modals/test_modal_1');
-var Modal2 = require('../composants/modals/test_modal_2');
+//var Modal1 = require('../composants/modals/test_modal_1');
+//var Modal2 = require('../composants/modals/test_modal_2');
 var Modal = ReactB.Modal;
 
 /*****************************************************
