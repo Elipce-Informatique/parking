@@ -13,8 +13,9 @@
     global.React = require('react/addons');
     global._ = require('lodash');
     global.Reflux = require('reflux');
+    console.log('avant');
     global.ReactB = require('react-bootstrap');
-
+    console.log('apres');
 
     /*
      |--------------------------------------------------------------------------

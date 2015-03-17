@@ -116,6 +116,7 @@ var ReactPageTest               = React.createClass({
                     {   label:'InputTextEditable',
                         name:"InputTextEditable",
                         value:'Vivian',
+                        htmlFor: 'form_test',
                         wrapperClassName:'col-md-4',
                         labelClassName:'col-md-2',
                         groupClassName:'row'}}
@@ -127,6 +128,7 @@ var ReactPageTest               = React.createClass({
                     label:'InputTextEditableArea',
                     name:"InputTextEditableArea",
                     value:'InputTextEditableArea',
+                    htmlFor: 'form_test',
                     wrapperClassName:'col-md-4',
                     labelClassName:'col-md-2',
                     groupClassName:'row'}}
@@ -137,6 +139,7 @@ var ReactPageTest               = React.createClass({
                     label:'InputMailEditable',
                     name:"InputMailEditable",
                     value:'InputMailEditable@elipce.com',
+                    htmlFor: 'form_test',
                     wrapperClassName:'col-md-4',
                     labelClassName:'col-md-2',
                     groupClassName:'row'}}
@@ -146,6 +149,7 @@ var ReactPageTest               = React.createClass({
                 attributes={{
                     label:'InputPasswordEditable',
                     name:"InputPasswordEditable",
+                    htmlFor: 'form_test',
                     value:"",
                     wrapperClassName:'col-md-4',
                     labelClassName:'col-md-2',
@@ -159,6 +163,7 @@ var ReactPageTest               = React.createClass({
                 name="InputImageEditable"
                 attributes={{
                     name:"InputImageEditable",
+                    htmlFor: 'form_test',
                     imgCol:4,
                     labelCol:2}}
                 editable={editable} />
@@ -171,13 +176,23 @@ var ReactPageTest               = React.createClass({
                 mdLabel={2}
                 labelClass="text-right"
                 gestMod={true}
-                attributes={{name:"color", required:false, value:'E2156B'}}
+                attributes={{
+                    name:"color",
+                    required:false,
+                    value:'E2156B',
+                    htmlFor: 'form_test'}}
                 editable={editable} />
 
             <InputSelectEditable
                 multi={false}
                 evts={{onChange:selectChange}}
-                attributes={{label:'Mes fruits', name:"Select", selectCol:4,labelCol:2, required:true}}
+                attributes={{
+                    label:'Mes fruits',
+                    name:"Select",
+                    htmlFor: 'form_test',
+                    selectCol:4,
+                    labelCol:2,
+                    required:true}}
                 data={options}
                 editable={editable}
                 placeholder={'PlaceHolder...'}
@@ -205,6 +220,7 @@ var ReactPageTest               = React.createClass({
                     label:'Input number',
                     name:"InputNumber",
                     value:5,
+                    htmlFor: 'form_test',
                     wrapperClassName:'col-md-4',
                     labelClassName:'col-md-2',
                     groupClassName:'row'}}
@@ -233,6 +249,7 @@ var ReactPageTest               = React.createClass({
                             key={'bt1'}
                             editable={editable}
                             attributes={{
+                                htmlFor: 'form_test',
                                 className:'active'}}
                         >Btn 1</ InputRadioBootstrapEditable>
                         <InputRadioBootstrapEditable
@@ -243,13 +260,17 @@ var ReactPageTest               = React.createClass({
                 </Col>
             </Row>
 
+
+            <ButtonGroup>
             <InputRadioEditable
                 key={'bta'}
                 editable={editable}
                 attributes={{
                     label:'InputRadioEditable 1',
                     checked:true,
-                    name:"InputRadioEditable[]",
+                    name:"radio",
+                    value : '1',
+                    htmlFor: 'form_test',
                     wrapperClassName:'col-md-4',
                     labelClassName:'col-md-2',
                     groupClassName:'row'}}
@@ -260,10 +281,12 @@ var ReactPageTest               = React.createClass({
                 editable={editable}
                 attributes={{
                     label:'InputRadioEditable 2',
-                    name:"InputRadioEditable[]",
+                    name:"radio",
+                    htmlFor: 'form_test',
                     wrapperClassName:'col-md-4',
                     labelClassName:'col-md-2',
                     groupClassName:'row'}} />
+            </ButtonGroup>
 
             <InputCheckboxEditable
                 key={'bty'}
@@ -279,6 +302,7 @@ var ReactPageTest               = React.createClass({
             <InputDateEditable
                 attributes={{
                     label:'Champ date editable',
+                    name: 'date_field',
                     value:'2015-02-23',
                     htmlFor : 'form_test',
                     required:true,

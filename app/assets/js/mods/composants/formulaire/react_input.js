@@ -525,7 +525,7 @@ var InputSelect = React.createClass({
         Actions.validation.form_field_changed({
             name: this.props.attributes.name,
             value: val,
-            form: this.props.form
+            form: this.props.attributes.htmlFor
         });
 
         // Validation syntaxique OK => envoi d'une action permettant une éventuelle vérification métier
@@ -533,7 +533,7 @@ var InputSelect = React.createClass({
             Actions.validation.form_field_verif({
                 name: this.props.attributes.name,
                 value: val,
-                form: this.props.form
+                form: this.props.attributes.htmlFor
             });
         }
 
@@ -1341,9 +1341,10 @@ var InputTimeEditable = React.createClass({
 
 /**
  * Champ radio
+ * Doit être utilisé dans un RadioGroup pour la gestion multi-radio avec le même name
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputRadio = React.createClass({
     mixins: [MixinInputChecked],
@@ -1351,7 +1352,6 @@ var InputRadio = React.createClass({
     propTypes: {
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange: React.PropTypes.func,
         gestMod: React.PropTypes.bool
     },
 
@@ -1359,7 +1359,6 @@ var InputRadio = React.createClass({
         return {
             attributes: {},
             evts: {},
-            onChange: this.handleChange,
             gestMod: true
         }
     },
@@ -1367,14 +1366,19 @@ var InputRadio = React.createClass({
     // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
     render: function () {
+        // Gestion des modifications
         var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
+        // Suppression de l'attribut checked
+        var attrs = _.omit(this.props.attributes, 'checked');
+
+        console.log('RENDER state '+ this.props.attributes.label +'%o',_.cloneDeep(this.state), attrs);
         return (
             <Input
                 type="radio"
-                {...this.props.attributes}
+                {...attrs}
                 {...this.props.evts}
                 {...gestMod}
-                value = {this.state.value}
+                checked = {this.state.checked}
                 onChange={this.handleChange}
                 ref = "Checkable"
             />
@@ -1383,10 +1387,11 @@ var InputRadio = React.createClass({
 });
 
 /**
- * Champ texte editable => si pas editable INPUT devient READONLY.
+ * Champ radio editable  => si pas editable INPUT devient READONLY.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputRadioEditable = React.createClass({
 
@@ -1409,7 +1414,7 @@ var InputRadioEditable = React.createClass({
         var attr = this.props.attributes;
         // Editable
         if (!this.props.editable) {
-            attr = _.extend(attr, {disabled: true});
+            attr = _.extend(attr, {readonly: true});
         }
         //console.log(attr);
         return <InputRadio
@@ -1420,6 +1425,44 @@ var InputRadioEditable = React.createClass({
         />
     }
 });
+
+///**
+// * Champ radio groupe. Permet de gérer un ensemble de radio
+// * @param editable: (bool) Si true alors INPUT sinon LABEL
+// * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+// * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+// * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
+// */
+//var RadioGroup = React.createClass({
+//
+//    propTypes: {
+//        editable: React.PropTypes.bool.isRequired,
+//        attributes: React.PropTypes.object,
+//        gestMod: React.PropTypes.bool
+//    },
+//
+//    getDefaultProps: function () {
+//        return {
+//            attributes: {},
+//            gestMod: true
+//        }
+//    },
+//
+//    getInitialState : function (){
+//        return {};
+//    },
+//
+//    render: function () {
+//
+//        //console.log(attr);
+//        return
+//        <div
+//            attributes = {this.props.attributes}
+//            ref="radioGroup">
+//                {this.props.children}
+//        </div>
+//    }
+//});
 
 /**
  * Champ radio
