@@ -1,4 +1,5 @@
 /* Gestion de la modification et des droits */
+var React = require('react/addons');
 var ComponentAccessMixins = require('../../mixins/component_access');
 /* Pour le listenTo */
 var MixinGestMod = require('../../mixins/gestion_modif');
