@@ -35,7 +35,6 @@ var Form                        = Field.Form;
 /*****************************************************
 /* MIXINS */
 var MixinGestMod = require('../mixins/gestion_modif');
-var FormValidationMixin = require('../mixins/form_validation')
 
 /*****************************************************
  /* HELPERS */
@@ -47,7 +46,7 @@ var form_data_helper  = require('../helpers/form_data_helper');
  */
 var ReactPageTest               = React.createClass({
 
-    mixins: [MixinGestMod, Reflux.ListenerMixin, FormValidationMixin],
+    mixins: [MixinGestMod, Reflux.ListenerMixin],
     /**
      * État initial des données du composant
      * @returns les données de l'état initial

@@ -5,15 +5,9 @@ var Color = require('./composants/react_color').ColorPickerEditable;
 var Row = ReactB.Row;
 var Col = ReactB.Col;
 var Button = ReactB.Button;
-var ButtonToolbar = ReactB.ButtonToolbar;
-var Glyphicon = ReactB.Glyphicon;
-var InputRadioEditable = Field.InputRadioEditable;
-var InputPasswordEditable = Field.InputPasswordEditable;
 var Form = Field.Form;
 var InputTimeEditable = Field.InputTimeEditable;
 
-// Mixin
-var FormValidationMixin = require('./mixins/form_validation');
 
 /**
  * Formulaire de jours prédéfinis
@@ -22,42 +16,45 @@ var FormValidationMixin = require('./mixins/form_validation');
  */
 var FormJours = React.createClass({
 
-    mixins: [Reflux.ListenerMixin, FormValidationMixin],
+    mixins: [Reflux.ListenerMixin],
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
-        jourData : React.PropTypes.object,
-        idJour: React.PropTypes.number
+        detailJour : React.PropTypes.object,
+        idJour: React.PropTypes.number,
+        validationLibelle :  React.PropTypes.object // Permet de colorer le champ en fonction des vérifications métiers effectuées dans la page
     },
     getDefaultProps: function () {
         return {
-            jourData: {},
-            idJour: 0
+            detailJour: {},
+            idJour: 0,
+            validationLibelle : {}
         }
     },
 
     render: function () {
 
+
         return (
             <Form attributes={{id:"form_jours"}}>
                 <Row />
                 <InputTextEditable
-                    attributes={{
+                    attributes={_.extend({
                         label: Lang.get('calendrier.jours.tableau.nom'),
-                        name: "nom",
-                        value: this.props.jourData.libelle,
+                        name: "libelle",
+                        value: this.props.detailJour.libelle,
                         required: true,
                         wrapperClassName: 'col-md-4',
                         labelClassName: 'col-md-1 text-right',
                         groupClassName: 'row'
-                    }}
+                    }, this.props.validationLibelle)}
                     editable={this.props.editable}
                     evts={{onChange: this.test}}/>
                 <InputTimeEditable
                     attributes={{
                         label: Lang.get('calendrier.jours.tableau.ouvert'),
                         name: "ouverture",
-                        value: this.props.jourData.ouverture,
+                        value: this.props.detailJour.ouverture,
                         required: true,
                         wrapperClassName: 'col-md-2',
                         labelClassName: 'col-md-1 text-right',
@@ -68,7 +65,7 @@ var FormJours = React.createClass({
                     attributes={{
                         label: Lang.get('calendrier.jours.tableau.fermer'),
                         name: "fermeture",
-                        value: this.props.jourData.fermeture,
+                        value: this.props.detailJour.fermeture,
                         required: true,
                         wrapperClassName: 'col-md-2',
                         labelClassName: 'col-md-1 text-right',
@@ -80,11 +77,12 @@ var FormJours = React.createClass({
                     attributes={{
                         name: "couleur",
                         required: true,
-                        value: this.props.jourData.couleur
+                        value: this.props.detailJour.couleur
                     }}
                     editable={this.props.editable}
                     mdLabel={1}
                     mdColor={2}
+                    labelClass="text-right"
                 />
 
             </Form>

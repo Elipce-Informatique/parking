@@ -27,6 +27,6 @@ return array(
     |   array('mynamespace.test1', 'mynamespace.test2')
     |
     */
-    'messages' => array('auth','global','menu','utilisateur','accueil', 'administration', 'administration_parking','calendrier'),
+    'messages' => array('auth','global','menu','accueil', 'administration', 'administration_parking','calendrier'),
 
 );

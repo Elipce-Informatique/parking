@@ -35,7 +35,7 @@ class CalendrierJoursController extends \BaseController {
 	 */
 	public function store()
 	{
-		//
+        return json_encode(CalendrierJours::createCalendrierJour(Input::all()));
 	}
 
 
@@ -83,8 +83,17 @@ class CalendrierJoursController extends \BaseController {
 	 */
 	public function destroy($id)
 	{
-		//
+		return json_encode(CalendrierJours::deleteCalendrierJour($id));
 	}
+
+    /**
+     * Vérifie si le libellé passé en paramètre existe déjà en BDD
+     * @param $libelle
+     */
+    public function verifLibelle($libelle){
+        return json_encode(CalendrierJours::isLibelleExists($libelle));
+
+    }
 
 
 }

@@ -165,8 +165,8 @@
      |--------------------------------------------------------------------------
      */
     global.Actions.jours = Reflux.createActions([
-        "display_jours", /* Sélection d'une ligne sur le tableau profil                                          */
-        "jours_update"
+        "display_detail_jour", /* Sélection d'une ligne sur le tableau profil                                          */
+        "display_all_jours" /* Affiche tous les jours prédéfinis */
     ]);
 })(window);
 

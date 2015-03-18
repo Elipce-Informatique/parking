@@ -2913,8 +2913,9 @@ var jscolor = {
 
     getDir : function() {
         if(!jscolor.dir) {
-            var detected = jscolor.detectDir();
-            jscolor.dir = detected!==false ? detected : 'app/assets/images/';
+            //var detected = jscolor.detectDir();
+            //jscolor.dir = detected!==false ? detected : 'app/assets/images/';
+            jscolor.dir = BASE_URI + 'public/images/';
         }
         return jscolor.dir;
     },
