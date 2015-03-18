@@ -8,6 +8,7 @@ module.exports = {
     InputMailEditable: Input.InputMailEditable,
     InputPassword: Input.InputPassword,
     InputPasswordEditable: Input.InputPasswordEditable,
+    RadioGroup: Input.RadioGroup,
     InputRadio: Input.InputRadio,
     InputRadioEditable: Input.InputRadioEditable,
     InputCheckbox: Input.InputCheckbox,

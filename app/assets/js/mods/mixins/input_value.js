@@ -146,8 +146,8 @@ var InputCheckableMixin = {
             coche = this.props.attributes.checked;
         }
         return {checked: coche};
-    }
-    /*,
+    },
+
     componentWillReceiveProps: function (newProps) {
         // Value par défaut
         var coche = false;
@@ -156,7 +156,6 @@ var InputCheckableMixin = {
         }
         this.setState({checked: coche});
     }
-    */
 };
 module.exports.InputValueMixin = InputValueMixin;
 module.exports.InputCheckableMixin = InputCheckableMixin;

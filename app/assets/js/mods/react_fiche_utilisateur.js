@@ -342,7 +342,7 @@ var ficheUserStore = Reflux.createStore({
     set_initial_state: function(data){
         this.formDataState = data;
         this.emailInitial = data['email'];
-        console.log('this.emailInitial : %o', this.emailInitial);
+        //console.log('this.emailInitial : %o', this.emailInitial);
     },
 
     set_etat_compte: function(bool){
@@ -372,11 +372,6 @@ var ficheUserStore = Reflux.createStore({
     setEtatCreateEdit: function(modeCreate_P){
         this.isMatriceModuleModif = false;
         this.modeCreate           = modeCreate_P;
-        if(this.modeCreate == true){
-            console.log('Mode création');
-        }
-        else
-            console.log('Mode édition');
     },
 
     formChange: function(e){
@@ -582,11 +577,11 @@ var ficheUserStore = Reflux.createStore({
         var retour = {};
         retour.dataEmail = {};
 
-        console.log('value : %o, emailInitial : %o', value, this.emailInitial);
+        //console.log('value : %o, emailInitial : %o', value, this.emailInitial);
         /* Est-ce que l'email est supérieur à 4 caractère (x@x.xx)? */
         if(value.length>=6 && value != this.emailInitial){
 
-            console.log('value : %o, emailInitial : %o', value, this.emailInitial);
+            //console.log('value : %o, emailInitial : %o', value, this.emailInitial);
             // AJAX
             $.ajax({
                 url:      BASE_URI + 'utilisateur/email/'+value, /* correspond au module url de la BDD */

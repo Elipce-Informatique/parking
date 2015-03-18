@@ -53,7 +53,7 @@ var BandeauGenerique = React.createClass({
 
     render: function () {
         var bandeau = {};
-        console.log('form id depuis le bandeau généraique' + this.props.form_id);
+        //console.log('form id depuis le bandeau généraique' + this.props.form_id);
 
         // MODE DROITS DE MODIFICATION
         if (this.state.canModif) {
