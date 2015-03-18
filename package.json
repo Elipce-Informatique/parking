@@ -36,7 +36,7 @@
     "lodash": "^2.4.1",
     "moment": "^2.9.0",
     "q": "^1.1.1",
-    "react": "^0.13.0",
+    "react": "^0.12.0",
     "react-bootstrap": "^0.16.0",
     "react-color-picker": "^2.1.4",
     "react-select": "^0.4.0",
