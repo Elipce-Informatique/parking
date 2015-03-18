@@ -1,3 +1,4 @@
+var React = require('react/addons');
 /**
  * Utilise la propriété this.props.module_url pour identifier le module
  *

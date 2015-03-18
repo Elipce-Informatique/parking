@@ -32,8 +32,8 @@ var InputTime = Field.InputTime;
 var InputTimeEditable = Field.InputTimeEditable;
 var Form = Field.Form;
 
-//var Modal1 = require('../composants/modals/test_modal_1');
-//var Modal2 = require('../composants/modals/test_modal_2');
+var ModalUn = require('../composants/modals/test_modal_1');
+var Modal2 = require('../composants/modals/test_modal_2');
 var Modal = ReactB.Modal;
 
 /*****************************************************
@@ -103,28 +103,23 @@ var ReactPageTest = React.createClass({
      * Le code retourné est ajouté à la fin du <body> de la page.
      */
     renderOverlay: function () {
-        console.log('Pass renderOverlay');
-        var retour = {};
         switch (this.state.modalType) {
             case 1:
                 if (!this.state.isModalOpen) {
-                    retour = <span/>;
+                    return <span key="modal-test"/>;
                 } else {
-                    retour = <Modal1 onToggle={this.toggleModal} />;
-
+                    return <ModalUn key="modal-test" onToggle={this.toggleModal} />;
                 }
                 break;
 
             default:
                 if (!this.state.isModalOpen) {
-                    retour = <span/>;
+                    return <span key="modal-test"/>;
                 } else {
-                    retour = <Modal2 onToggle={this.toggleModal} />;
+                    return <Modal2 key="modal-test" onToggle={this.toggleModal} />;
                 }
                 break;
         }
-        console.log('retour : %o', retour);
-        return retour;
     },
 
     /**

@@ -1,4 +1,3 @@
-var React = require('react/addons');
 /* Gestion de la modification et des droits */
 var React = require('react/addons');
 var ComponentAccessMixins = require('../../mixins/component_access');
@@ -8,6 +7,7 @@ var MixinGestMod = require('../../mixins/gestion_modif');
 var Field = require('../formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputNumberEditable = Field.InputNumberEditable;
+var ButtonSave = require('../formulaire/react_btn_save');
 var Modal = ReactB.Modal;
 var Button = ReactB.Button;
 
@@ -16,16 +16,16 @@ var Button = ReactB.Button;
  *
  * Modal pour créer un groupe de places
  */
-var Modal1 = React.createClass({
+var ModalUn = React.createClass({
 
-    mixins: [ComponentAccessMixins, MixinGestMod],
+    mixins: [MixinGestMod, Reflux.ListenerMixin],
 
     propTypes: {
         onToggle: React.PropTypes.func.isRequired
     },
 
     getDefaultProps: function () {
-        return {module_url: 'configuration_parking'};
+        return {module_url: 'test'};
     },
 
     getInitialState: function () {
@@ -38,6 +38,10 @@ var Modal1 = React.createClass({
 
     shouldComponentUpdate: function (nextProps, nextState) {
         return true;
+    },
+
+    onRetour: function(){
+
     },
 
     render: function () {
@@ -120,4 +124,4 @@ var Modal1 = React.createClass({
     }
 });
 
-module.exports = Modal1;
+module.exports = ModalUn;

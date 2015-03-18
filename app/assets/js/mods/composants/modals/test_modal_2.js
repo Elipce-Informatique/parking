@@ -1,4 +1,3 @@
-var React = require('react/addons');
 /* Gestion de la modification et des droits */
 var React = require('react/addons');
 var ComponentAccessMixins = require('../../mixins/component_access');
@@ -19,14 +18,14 @@ var Button = ReactB.Button;
  */
 var Modal2 = React.createClass({
 
-    mixins: [ComponentAccessMixins, MixinGestMod],
+    mixins: [MixinGestMod, Reflux.ListenerMixin],
 
     propTypes: {
         onToggle: React.PropTypes.func.isRequired
     },
 
     getDefaultProps: function () {
-        return {module_url: 'configuration_parking'};
+        return {module_url: 'test'};
     },
 
     getInitialState: function () {
@@ -39,6 +38,10 @@ var Modal2 = React.createClass({
 
     shouldComponentUpdate: function (nextProps, nextState) {
         return true;
+    },
+
+    onRetour: function () {
+
     },
 
     render: function () {
