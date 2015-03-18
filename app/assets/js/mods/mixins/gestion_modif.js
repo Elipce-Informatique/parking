@@ -7,14 +7,12 @@ var mixinGestionModif = {
         // CHECK MIXIN
         if (typeof(this.listenTo) == 'undefined') {
             console.error('Oulalalala, tu n\'a pas mis le mixin Reflux.ListenerMixin dans ton composant ' +
-            (this._reactInternalInstance !== undefined ? this._reactInternalInstance._currentElement.type.displayName : this._reactInternalInstance._currentElement.type.displayName) +
-            ' !!! Corrige vite ça si tu veux que ça marche !');
+            this._reactInternalInstance._currentElement.type.displayName + ' !!! Corrige vite ça si tu veux que ça marche !');
         }
         // CHECK ONRETOUR
         if (typeof(this.onRetour) == 'undefined') {
             console.error('Oulalalala, tu n\'a pas défini la méthode onRetour dans ton composant ' +
-            (this._reactInternalInstance !== undefined ? this._reactInternalInstance._currentElement.type.displayName : this._reactInternalInstance._currentElement.type.displayName) +
-            ' !!! Corrige vite ça si tu veux que ça marche !');
+            this._reactInternalInstance._currentElement.type.displayName + ' !!! Corrige vite ça si tu veux que ça marche !');
         }
 
         // ECOUTE
