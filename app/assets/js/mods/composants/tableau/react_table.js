@@ -1,4 +1,4 @@
-/* Pour les radio boutons */
+var React = require('react/addons');
 var ButtonGroup = ReactB.ButtonGroup;
 var Field                       = require('../formulaire/react_form_fields');
 var InputRadioBootstrapEditable = Field.InputRadioBootstrapEditable;

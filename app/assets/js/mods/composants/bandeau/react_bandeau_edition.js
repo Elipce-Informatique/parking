@@ -1,6 +1,7 @@
 /**
  * Created by yann on 16/12/2014.
  */
+var React = require('react/addons');
 var Bandeau = require('./react_bandeau');
 var bHelper = require('../../helpers/bandeau_helper').type_btn;
 

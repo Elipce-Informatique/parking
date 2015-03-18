@@ -1,3 +1,4 @@
+var React = require('react/addons');
 var Glyphicon = ReactB.Glyphicon;
 /**
  * Created by yann on 09/12/2014.

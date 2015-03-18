@@ -1,3 +1,4 @@
+var React = require('react/addons');
 var Input = ReactB.Input;
 var OverlayTrigger = ReactB.OverlayTrigger;
 var Tooltip = ReactB.Tooltip;
@@ -465,28 +466,32 @@ var InputSelect = React.createClass({
 
     getInitialState: function () {
         return {
-                    value: this.props.selectedValue,
-                    attributes:{
-                                'data-valid': true,
-                                'data-class': 'has-default',
-                                'data-tooltip': ''
-                                }
-                };
+            value: this.props.selectedValue,
+            attributes: {
+                'data-valid': true,
+                'data-class': 'has-default',
+                'data-tooltip': ''
+            }
+        };
     },
 
     getDefaultProps: function () {
         return {
-            attributes: {labelCol:'6', selectCol:'6', required: false},
+            attributes: {labelCol: '6', selectCol: '6', required: false},
             evts: {},
             gestMod: true,
             delimiter: '[-]',
             name: '',
-            labelClass : '',
+            labelClass: '',
             validator: function (val, props, state) {
                 var retour = {};
                 // Value vide
                 if (val.length == 0) {
-                    retour =  {'data-valid': !props.attributes.required, 'data-class': (props.attributes.required?'has-error':'has-default'), 'data-tooltip': ''};
+                    retour = {
+                        'data-valid': !props.attributes.required,
+                        'data-class': (props.attributes.required ? 'has-error' : 'has-default'),
+                        'data-tooltip': ''
+                    };
                 }
                 // Option sélectionnée
                 else {
@@ -497,7 +502,7 @@ var InputSelect = React.createClass({
         };
     },
 
-    componentWillMount: function(){
+    componentWillMount: function () {
 
         // Validations syntaxiques
         var validations = this.props.validator(this.props.selectedValue, this.props, this.state);
@@ -525,7 +530,7 @@ var InputSelect = React.createClass({
         Actions.validation.form_field_changed({
             name: this.props.attributes.name,
             value: val,
-            form: this.props.form
+            form: this.props.attributes.htmlFor
         });
 
         // Validation syntaxique OK => envoi d'une action permettant une éventuelle vérification métier
@@ -533,7 +538,7 @@ var InputSelect = React.createClass({
             Actions.validation.form_field_verif({
                 name: this.props.attributes.name,
                 value: val,
-                form: this.props.form
+                form: this.props.attributes.htmlFor
             });
         }
 
@@ -558,7 +563,6 @@ var InputSelect = React.createClass({
             this.props.evts.onBlur(e, data);
         }
     },
-
 
 
     render: function () {
@@ -598,9 +602,9 @@ var InputSelect = React.createClass({
                 </div>;
         }
 
-        return(
+        return (
             <Row className="form-group">
-                <Col md={this.props.attributes.labelCol} className={attrs['data-class']+' '+this.props.labelClass}>
+                <Col md={this.props.attributes.labelCol} className={attrs['data-class'] + ' ' + this.props.labelClass}>
                     <label className="control-label">{this.props.attributes.label}</label>
                 </Col>
                 <Col md={this.props.attributes.selectCol}>
@@ -650,14 +654,14 @@ var InputSelectEditable = React.createClass({
 
     getDefaultProps: function () {
 
-        return{
-            attributes: {labelCol:'6', selectCol:'6'},
+        return {
+            attributes: {labelCol: '6', selectCol: '6'},
             evts: {},
             gestMod: true,
             placeholder: Lang.get('global.select'),
             multi: false,
             selectedValue: '',
-            labelClass : ''
+            labelClass: ''
         }
     },
 
@@ -684,9 +688,9 @@ var InputSelectEditable = React.createClass({
             /* Récupération des libellés en fonction des valeurs */
             var aValues = [];
             // Valeurs multiples
-            if(this.props.multi){
+            if (this.props.multi) {
                 // Tableau de values existe
-                if(typeof this.props.selectedValue === 'object') {
+                if (typeof this.props.selectedValue === 'object') {
                     // Parcours des valeurs sélectionnées
                     this.props.selectedValue.forEach(function (val, indexSelect) {
                         // Parcours des données du selecteur
@@ -700,12 +704,12 @@ var InputSelectEditable = React.createClass({
                 }
             }
             // Mode combobox
-            else{
+            else {
                 // Parcours des data
-                this.props.data.forEach(function(obj, index){
+                this.props.data.forEach(function (obj, index) {
                     // Donnée sélectionnée
-                    if(obj.value == this.props.selectedValue){
-                        aValues.push( obj.label);
+                    if (obj.value == this.props.selectedValue) {
+                        aValues.push(obj.label);
                     }
                 }.bind(this));
             }
@@ -806,7 +810,7 @@ var InputNumber = React.createClass({
         // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
         var attrs = this.generateAttributes();
 
-        return(
+        return (
             <Input
                 type="number"
                 step={this.props.step}
@@ -1341,9 +1345,10 @@ var InputTimeEditable = React.createClass({
 
 /**
  * Champ radio
+ * Doit être utilisé dans un RadioGroup pour la gestion multi-radio avec le même name
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputRadio = React.createClass({
     mixins: [MixinInputChecked],
@@ -1351,7 +1356,6 @@ var InputRadio = React.createClass({
     propTypes: {
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange: React.PropTypes.func,
         gestMod: React.PropTypes.bool
     },
 
@@ -1359,7 +1363,6 @@ var InputRadio = React.createClass({
         return {
             attributes: {},
             evts: {},
-            onChange: this.handleChange,
             gestMod: true
         }
     },
@@ -1367,14 +1370,19 @@ var InputRadio = React.createClass({
     // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
     render: function () {
+        // Gestion des modifications
         var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
+        // Suppression de l'attribut checked
+        var attrs = _.omit(this.props.attributes, 'checked');
+
+        console.log('RENDER state ' + this.props.attributes.label + '%o', _.cloneDeep(this.state), attrs);
         return (
             <Input
                 type="radio"
-                {...this.props.attributes}
+                {...attrs}
                 {...this.props.evts}
                 {...gestMod}
-                value = {this.state.value}
+                checked = {this.state.checked}
                 onChange={this.handleChange}
                 ref = "Checkable"
             />
@@ -1383,10 +1391,11 @@ var InputRadio = React.createClass({
 });
 
 /**
- * Champ texte editable => si pas editable INPUT devient READONLY.
+ * Champ radio editable  => si pas editable INPUT devient READONLY.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputRadioEditable = React.createClass({
 
@@ -1409,7 +1418,7 @@ var InputRadioEditable = React.createClass({
         var attr = this.props.attributes;
         // Editable
         if (!this.props.editable) {
-            attr = _.extend(attr, {disabled: true});
+            attr = _.extend(attr, {readonly: true});
         }
         //console.log(attr);
         return <InputRadio
@@ -1420,6 +1429,44 @@ var InputRadioEditable = React.createClass({
         />
     }
 });
+
+///**
+// * Champ radio groupe. Permet de gérer un ensemble de radio
+// * @param editable: (bool) Si true alors INPUT sinon LABEL
+// * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+// * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+// * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
+// */
+//var RadioGroup = React.createClass({
+//
+//    propTypes: {
+//        editable: React.PropTypes.bool.isRequired,
+//        attributes: React.PropTypes.object,
+//        gestMod: React.PropTypes.bool
+//    },
+//
+//    getDefaultProps: function () {
+//        return {
+//            attributes: {},
+//            gestMod: true
+//        }
+//    },
+//
+//    getInitialState : function (){
+//        return {};
+//    },
+//
+//    render: function () {
+//
+//        //console.log(attr);
+//        return
+//        <div
+//            attributes = {this.props.attributes}
+//            ref="radioGroup">
+//                {this.props.children}
+//        </div>
+//    }
+//});
 
 /**
  * Champ radio

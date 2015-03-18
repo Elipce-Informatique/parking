@@ -1,4 +1,5 @@
 /* Composant react de la page profils */
+var React = require('react/addons');
 require('./global/global');
 var ReactPageProfil = require('./mods/page/react_page_profil');
 

@@ -1,3 +1,4 @@
+var React = require('react/addons');
 var PanelGroup = require('../react_bootstrap_accordion').PanelGroup;
 var Panel = require('../react_bootstrap_accordion').Panel;
 
@@ -66,7 +67,7 @@ var MenuLeft = React.createClass({
         // PARCOURS DES HEADERS POUR CREER LES ELEMENTS REACT
         var panels = _.map(panelsData, function (child, i, list) {
             var id = "pan-menu-" + child.id;
-            return <Panel id={id} key={id} icon={child.icon} title={child.traduction} url={child.url} collapseData={child.children} />;
+            return <Panel groupId="accordion-menu-left" id={id} key={id} icon={child.icon} title={child.traduction} url={child.url} collapseData={child.children} />;
         }, this);
 
         return (

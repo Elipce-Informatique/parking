@@ -12,6 +12,7 @@
  *      evts: {onClick: function}
  * }
  */
+var React = require('react/addons');
 var bHelper = require('../../helpers/bandeau_helper').type_btn;
 var ButtonSave = require('../formulaire/react_btn_save');
 var Button = ReactB.Button;

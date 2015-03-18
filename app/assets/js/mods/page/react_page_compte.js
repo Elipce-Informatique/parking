@@ -1,3 +1,4 @@
+var React = require('react/addons');
 // COMPOSANTS PERSO
 var FicheUser = require('../react_fiche_utilisateur').Composant;
 var Bandeau = require('../composants/bandeau/react_bandeau');
