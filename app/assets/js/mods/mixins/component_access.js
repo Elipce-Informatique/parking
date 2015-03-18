@@ -43,7 +43,7 @@ var AuthentLevelMixin = {
     },
     _warningMessage: function () {
         console.warn('Attention, l\'utilisation du mixin "component_access" dans le composant "' +
-        this._reactInternalInstance._currentElement.type.displayName +
+        (this._reactInternalInstance !== undefined ? this._reactInternalInstance._currentElement.type.displayName : this._reactInternalInstance._currentElement.type.displayName) +
         '" requiert que la propriété module_url soit renseignée pour gérer les droits d\'accès au module.');
     }
 };

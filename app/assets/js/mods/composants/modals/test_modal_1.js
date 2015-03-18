@@ -1,3 +1,4 @@
+var React = require('react/addons');
 /* Gestion de la modification et des droits */
 var React = require('react/addons');
 var ComponentAccessMixins = require('../../mixins/component_access');
