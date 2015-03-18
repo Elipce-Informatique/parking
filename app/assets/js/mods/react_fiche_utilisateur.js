@@ -1,4 +1,5 @@
 // COMPOSANTS REACT
+var React = require('react/addons');
 var Field = require('./composants/formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputMailEditable = Field.InputMailEditable;

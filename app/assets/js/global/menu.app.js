@@ -4,6 +4,7 @@
  */
 
 (function () {
+    var React = require('react/addons');
     var MenuTop = require('../mods/composants/menu/react_menu_top');
     var MenuLeft = require('../mods/composants/menu/react_menu_left');
 

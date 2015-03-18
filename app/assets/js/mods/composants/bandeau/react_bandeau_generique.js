@@ -5,6 +5,7 @@
 /**
  * Created by yann on 16/12/2014.
  */
+var React = require('react/addons');
 var Bandeau = require('./react_bandeau');
 var BandeauListe = require('./react_bandeau_liste');
 var BandeauVisu = require('./react_bandeau_visu');

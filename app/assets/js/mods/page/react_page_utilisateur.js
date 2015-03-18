@@ -1,4 +1,5 @@
 // Composants REACT
+var React = require('react/addons');
 var DataTableBandeauUser = require('../react_data_table_bandeau_utilisateur').Composant;
 var BandeauListe = require('../composants/bandeau/react_bandeau_liste');
 var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');

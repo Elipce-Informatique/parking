@@ -1,3 +1,4 @@
+var React = require('react/addons');
 var Button = ReactB.Button;
 var Glyphicon = ReactB.Glyphicon;
 
@@ -15,8 +16,8 @@ var ButtonSave = React.createClass({
     propTypes: {
         form_id: React.PropTypes.string.isRequired,
         libelle: React.PropTypes.string,
-        evts: React.PropTypes.object,
-        attrs: React.PropTypes.object
+        evts   : React.PropTypes.object,
+        attrs  : React.PropTypes.object
     },
 
     getDefaultProps: function () {
