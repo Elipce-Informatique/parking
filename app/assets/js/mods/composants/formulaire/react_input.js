@@ -466,28 +466,32 @@ var InputSelect = React.createClass({
 
     getInitialState: function () {
         return {
-                    value: this.props.selectedValue,
-                    attributes:{
-                                'data-valid': true,
-                                'data-class': 'has-default',
-                                'data-tooltip': ''
-                                }
-                };
+            value: this.props.selectedValue,
+            attributes: {
+                'data-valid': true,
+                'data-class': 'has-default',
+                'data-tooltip': ''
+            }
+        };
     },
 
     getDefaultProps: function () {
         return {
-            attributes: {labelCol:'6', selectCol:'6', required: false},
+            attributes: {labelCol: '6', selectCol: '6', required: false},
             evts: {},
             gestMod: true,
             delimiter: '[-]',
             name: '',
-            labelClass : '',
+            labelClass: '',
             validator: function (val, props, state) {
                 var retour = {};
                 // Value vide
                 if (val.length == 0) {
-                    retour =  {'data-valid': !props.attributes.required, 'data-class': (props.attributes.required?'has-error':'has-default'), 'data-tooltip': ''};
+                    retour = {
+                        'data-valid': !props.attributes.required,
+                        'data-class': (props.attributes.required ? 'has-error' : 'has-default'),
+                        'data-tooltip': ''
+                    };
                 }
                 // Option sélectionnée
                 else {
@@ -498,7 +502,7 @@ var InputSelect = React.createClass({
         };
     },
 
-    componentWillMount: function(){
+    componentWillMount: function () {
 
         // Validations syntaxiques
         var validations = this.props.validator(this.props.selectedValue, this.props, this.state);
@@ -561,7 +565,6 @@ var InputSelect = React.createClass({
     },
 
 
-
     render: function () {
         // Copie attributes
         var attrs = _.cloneDeep(this.props.attributes);
@@ -599,9 +602,9 @@ var InputSelect = React.createClass({
                 </div>;
         }
 
-        return(
+        return (
             <Row className="form-group">
-                <Col md={this.props.attributes.labelCol} className={attrs['data-class']+' '+this.props.labelClass}>
+                <Col md={this.props.attributes.labelCol} className={attrs['data-class'] + ' ' + this.props.labelClass}>
                     <label className="control-label">{this.props.attributes.label}</label>
                 </Col>
                 <Col md={this.props.attributes.selectCol}>
@@ -651,14 +654,14 @@ var InputSelectEditable = React.createClass({
 
     getDefaultProps: function () {
 
-        return{
-            attributes: {labelCol:'6', selectCol:'6'},
+        return {
+            attributes: {labelCol: '6', selectCol: '6'},
             evts: {},
             gestMod: true,
             placeholder: Lang.get('global.select'),
             multi: false,
             selectedValue: '',
-            labelClass : ''
+            labelClass: ''
         }
     },
 
@@ -685,9 +688,9 @@ var InputSelectEditable = React.createClass({
             /* Récupération des libellés en fonction des valeurs */
             var aValues = [];
             // Valeurs multiples
-            if(this.props.multi){
+            if (this.props.multi) {
                 // Tableau de values existe
-                if(typeof this.props.selectedValue === 'object') {
+                if (typeof this.props.selectedValue === 'object') {
                     // Parcours des valeurs sélectionnées
                     this.props.selectedValue.forEach(function (val, indexSelect) {
                         // Parcours des données du selecteur
@@ -701,12 +704,12 @@ var InputSelectEditable = React.createClass({
                 }
             }
             // Mode combobox
-            else{
+            else {
                 // Parcours des data
-                this.props.data.forEach(function(obj, index){
+                this.props.data.forEach(function (obj, index) {
                     // Donnée sélectionnée
-                    if(obj.value == this.props.selectedValue){
-                        aValues.push( obj.label);
+                    if (obj.value == this.props.selectedValue) {
+                        aValues.push(obj.label);
                     }
                 }.bind(this));
             }
@@ -807,7 +810,7 @@ var InputNumber = React.createClass({
         // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
         var attrs = this.generateAttributes();
 
-        return(
+        return (
             <Input
                 type="number"
                 step={this.props.step}
@@ -1372,7 +1375,7 @@ var InputRadio = React.createClass({
         // Suppression de l'attribut checked
         var attrs = _.omit(this.props.attributes, 'checked');
 
-        console.log('RENDER state '+ this.props.attributes.label +'%o',_.cloneDeep(this.state), attrs);
+        console.log('RENDER state ' + this.props.attributes.label + '%o', _.cloneDeep(this.state), attrs);
         return (
             <Input
                 type="radio"
