@@ -31,7 +31,7 @@ function libelleChange(value, edit){
 
     /* Est-ce que le libelle existe? */
     if(value.length>=2 && value != libelleInitial){
-        console.log('Ajax');
+        //console.log('Ajax');
         // AJAX
         $.ajax({
             url:      BASE_URI + 'profils/libelle/'+value, /* correspond au module url de la BDD */
@@ -78,6 +78,7 @@ function libelleCreateChange (value){
 
 /*********************************************/
 /* Composant input pour le libelle du profil */
+var React = require('react/addons');
 var Field             = require('./composants/formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var Form              = Field.Form;
@@ -140,7 +141,7 @@ var DataTableModuleReact = React.createClass({
     },
 
     componentWillReceiveProps: function(newProps){
-        console.log('componentWillReceiveProps');
+        //console.log('componentWillReceiveProps');
         
         /* Défini l'id profil dans le store */
         Actions.profil.setIdProfil(newProps.idProfil);

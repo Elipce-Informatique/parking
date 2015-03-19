@@ -1,3 +1,4 @@
+var React = require('react/addons');
 /**
  * Utilise la propriété this.props.module_url pour identifier le module
  *
@@ -43,7 +44,7 @@ var AuthentLevelMixin = {
     },
     _warningMessage: function () {
         console.warn('Attention, l\'utilisation du mixin "component_access" dans le composant "' +
-        this._reactInternalInstance._currentElement.type.displayName +
+        (this._reactInternalInstance !== undefined ? this._reactInternalInstance._currentElement.type.displayName : this._reactInternalInstance._currentElement.type.displayName) +
         '" requiert que la propriété module_url soit renseignée pour gérer les droits d\'accès au module.');
     }
 };

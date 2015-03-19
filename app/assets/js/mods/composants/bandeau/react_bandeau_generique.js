@@ -5,6 +5,7 @@
 /**
  * Created by yann on 16/12/2014.
  */
+var React = require('react/addons');
 var Bandeau = require('./react_bandeau');
 var BandeauListe = require('./react_bandeau_liste');
 var BandeauVisu = require('./react_bandeau_visu');
@@ -30,11 +31,15 @@ var BandeauGenerique = React.createClass({
     propTypes: {
         bandeauType: React.PropTypes.number.isRequired,
         module_url: React.PropTypes.string.isRequired,
+        form_id: React.PropTypes.string,
         avecRetour: React.PropTypes.bool
     },
 
     getDefaultProps: function () {
-        return {avecRetour: false};
+        return {
+            avecRetour: false,
+            form_id: ''
+        };
     },
     getInitialState: function () {
         return {};
@@ -51,6 +56,7 @@ var BandeauGenerique = React.createClass({
 
     render: function () {
         var bandeau = {};
+        //console.log('form id depuis le bandeau généraique' + this.props.form_id);
 
         // MODE DROITS DE MODIFICATION
         if (this.state.canModif) {

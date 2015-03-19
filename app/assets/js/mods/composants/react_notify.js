@@ -1,3 +1,5 @@
+var React = require('react/addons');
+
 var StoreNotif = Reflux.createStore({
     getInitialState: function () {
         return {};
