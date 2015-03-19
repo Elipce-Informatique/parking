@@ -317,29 +317,35 @@ var ReactPageTest = React.createClass({
 
                 <Row id="Champ_radioBoostrap">
                     <Col md={2}>
-                        <label>Radio Boostrap</label>
+                        <label>Radio Boostrap NEW generation</label>
                     </Col>
                     <Col md={4}>
-                        <ButtonGroup
-                            data-toggle="buttons"
-                            bsSize="xsmall">
+                        <RadioGroup attributes={{name: "bootstrap"}} bootstrap={true}>
                             <InputRadioBootstrapEditable
                                 key={'bt1'}
                                 editable={editable}
                                 attributes={{
-                                    className: 'active'
+                                    /*className: 'active',*/
+                                    checked : true,
+                                    value : 'btn1'
                                 }}
-                            >Btn 1</ InputRadioBootstrapEditable>
+                            >
+                                Btn 1
+                            </ InputRadioBootstrapEditable>
                             <InputRadioBootstrapEditable
                                 key={'bt2'}
                                 editable={editable}
-                            >Btn 2</ InputRadioBootstrapEditable>
-                        </ButtonGroup>
+                                attributes={{
+                                    value : 'btn2'
+                                }}
+                            >
+                                Btn 2
+                            </ InputRadioBootstrapEditable>
+                        </RadioGroup>
                     </Col>
                 </Row>
             {/* EXemple de radio inline*/}
                 <RadioGroup
-                    editable={editable}
                     attributes={{
                         name: "radio"
                     }}>
@@ -379,7 +385,7 @@ var ReactPageTest = React.createClass({
                             checked: true,
                             name: "a_ecraser",
                             value : 'A',
-                            groupClassName: 'col-md-12'
+                            groupClassName: 'col-md-12 hide'
                         }}
                         key = "a"
                     />
@@ -390,7 +396,7 @@ var ReactPageTest = React.createClass({
                             checked: false,
                             name: "a_ecraser",
                             value : 'B',
-                            groupClassName: 'col-md-12'
+                            groupClassName: 'col-md-12 hide'
                         }}
                         key = "b"/>
                 </RadioGroup>
@@ -410,6 +416,7 @@ var ReactPageTest = React.createClass({
                 <InputDateEditable
                     attributes={{
                         label: 'Champ date editable',
+                        name : 'date',
                         value: '2015-02-23',
                         htmlFor: 'form_test',
                         required: true,

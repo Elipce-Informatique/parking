@@ -5,6 +5,7 @@ var Tooltip = ReactB.Tooltip;
 var Glyphicon = ReactB.Glyphicon;
 var Validator = require('validator');
 var Select = require('react-select');
+var ButtonGroup = ReactB.ButtonGroup;
 // Time
 var moment = require('moment');
 require('moment/locale/fr');
@@ -1403,9 +1404,7 @@ var InputRadioEditable = React.createClass({
 
     getDefaultProps: function () {
         return {
-            attributes: {
-                key : Math.random()
-            },
+            attributes: {},
             evts: {},
             gestMod: true
         }
@@ -1415,7 +1414,7 @@ var InputRadioEditable = React.createClass({
         var attr = this.props.attributes;
         // Editable
         if (!this.props.editable) {
-            attr = _.extend(attr, {readonly: true});
+            attr = _.extend(attr, {disabled: true});// readOnly ne fait rien
         }
         //console.log(attr);
         return <InputRadio
@@ -1428,25 +1427,26 @@ var InputRadioEditable = React.createClass({
 });
 
 /**
-* Champ radio groupe. Permet de gérer un ensemble de radio
-* @param editable: (bool) Si true alors INPUT sinon LABEL
-* @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
-* @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
-* @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
+ * Champ radio groupe. Permet de gérer un ensemble de radio
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
+ * @param bootstrap: Mode d'affichage des radio
+ *                  Si true: mettre des InputRadioBootstrapEditable en enfant
+ *                  Sinon mettre des InputRadioEditable
 */
 var RadioGroup = React.createClass({
-    //mixins: [MixinInputChecked],
 
     propTypes: {
-        editable: React.PropTypes.bool.isRequired,
         attributes: React.PropTypes.object,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        bootstrap: React.PropTypes.bool // mode d'affichage bootstrap (boutons)
     },
 
     getDefaultProps: function () {
         return {
             attributes: {},
-            gestMod: true
+            gestMod: true,
+            bootstrap: false
         }
     },
 
@@ -1463,7 +1463,7 @@ var RadioGroup = React.createClass({
     },
 
     handleChange : function(evt){
-
+        console.log('change');
         // Attribut index du radio qui a déclenché le change
         var index = $(evt.currentTarget).data('index');
 
@@ -1493,6 +1493,34 @@ var RadioGroup = React.createClass({
         this.setState(matrice);
     },
 
+    /**
+     *
+     * @param enfants
+     */
+    display : function(enfants){
+        var code = '';
+        // Mode bootstrap
+        if(this.props.bootstrap){
+            code = (
+                <ButtonGroup
+                    data-toggle="buttons"
+                    bsSize="xsmall"
+                    key={'radio_'+this.props.attributes.name}>
+
+                {enfants}
+                </ButtonGroup>
+            )
+        }
+        // Mode classique
+        else{
+            code =(
+                <div className="row" key={'radio_'+this.props.attributes.name}>
+                    {enfants}
+                </div>);
+        }
+        return code;
+    },
+
     render: function () {
 
         // Parcours des chidren
@@ -1500,7 +1528,7 @@ var RadioGroup = React.createClass({
             //console.log('CHILD '+index+' %o',child);
             // Props à ajouter
             var newProps = {
-                evts : {onChange: this.handleChange},
+                evts : {onClick: this.handleChange},
                 attributes : _.extend(child.props.attributes, {
                     checked : this.state[this.props.attributes.name+index],
                     name: this.props.attributes.name,
@@ -1513,91 +1541,8 @@ var RadioGroup = React.createClass({
         }.bind(this));
 
         // Affichage du groupe de radio
-        return (
-            <div className="row" key={'radio_'+this.props.attributes.name}>
-                {enfants}
-            </div>
-        )
-    }
-});
+        return this.display(enfants);
 
-/**
- * Champ radio
- * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
- * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
- */
-var InputRadioBootstrap = React.createClass({
-
-    propTypes: {
-        attributes: React.PropTypes.object,
-        evts: React.PropTypes.object,
-        onChange: React.PropTypes.func,
-        gestMod: React.PropTypes.bool
-    },
-
-    getDefaultProps: function () {
-        return {
-            attributes: {},
-            evts: {},
-            onChange: this.handleChange,
-            gestMod: true
-        }
-    },
-
-    // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
-
-    render: function () {
-        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
-        var classBtn = 'btn btn-default';
-
-        return (
-            <label {...this.props.evts} {...this.props.attributes} className={classBtn + ' ' + this.props.attributes.className}>
-                <input {...gestMod} type="radio" name={this.props.name} />{this.props.children}
-            </label>
-        );
-    }
-});
-
-/**
- * Champ texte editable => si pas editable INPUT devient READONLY.
- * @param editable: (bool) Si true alors INPUT sinon LABEL
- * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
- * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- */
-var InputRadioBootstrapEditable = React.createClass({
-
-    propTypes: {
-        editable: React.PropTypes.bool.isRequired,
-        attributes: React.PropTypes.object,
-        evts: React.PropTypes.object,
-        gestMod: React.PropTypes.bool
-    },
-
-    getDefaultProps: function () {
-        return {
-            attributes: {},
-            evts: {},
-            gestMod: true
-        }
-    },
-
-    render: function () {
-        var attr = this.props.attributes;
-        // Editable
-        if (!this.props.editable) {
-            attr = _.extend(attr, {disabled: true});
-        } else {
-            attr = _.extend(attr, {disabled: false});
-        }
-
-        return <InputRadioBootstrap
-            attributes = {attr}
-            evts = {this.props.evts}
-            ref="Editable"
-            gestMod={this.props.gestMod} >
-                            {this.props.children}
-        </InputRadioBootstrap>
     }
 });
 
@@ -1684,6 +1629,95 @@ var InputCheckboxEditable = React.createClass({
             ref="Editable"
             gestMod={this.props.gestMod}
         />
+    }
+});
+
+
+/**
+ * Champ radio
+ * @param attributes: props du radio
+ * @param evts: evenements du btn
+ */
+var InputRadioBootstrap = React.createClass({
+
+    propTypes: {
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        gestMod: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+        return {
+            attributes: {},
+            evts: {},
+            gestMod: true
+        }
+    },
+
+    // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
+
+    render: function () {
+        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
+        var classBtn = 'btn btn-default';
+
+        console.log('ATTRS %o', this.props.attributes);
+
+        return (
+            <label
+                {...this.props.evts}
+                className={classBtn + ' ' + this.props.attributes.className}>
+
+                <input
+                    {...gestMod}
+                    type="radio"
+                    {...this.props.attributes}
+                />
+
+                {this.props.children}
+            </label>
+        );
+    }
+});
+
+/**
+ * DEPRECATED: utiliser plutot RadioGroup + InputRadio
+ * Champ texte editable => si pas editable INPUT devient READONLY.
+ * @param editable: (bool) Si true alors INPUT sinon LABEL
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ */
+var InputRadioBootstrapEditable = React.createClass({
+
+    propTypes: {
+        editable: React.PropTypes.bool.isRequired,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        gestMod: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+        return {
+            attributes: {},
+            evts: {},
+            gestMod: true
+        }
+    },
+
+    render: function () {
+        var attr = this.props.attributes;
+        // Editable
+        attr = _.extend(attr, {disabled: (!this.props.editable)});
+
+        return (
+            <InputRadioBootstrap
+                attributes = {attr}
+                evts = {this.props.evts}
+                ref="Editable"
+                gestMod={this.props.gestMod} >
+
+            {this.props.children}
+            </InputRadioBootstrap>
+        );
     }
 });
 
