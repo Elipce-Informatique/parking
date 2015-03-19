@@ -3,7 +3,9 @@ var React = require('react/addons');
 var FormValidationMixin = require('../../mixins/form_validation')
 
 /**
- * Formulaire
+ * Formulaire contenant le mixin FormValidation pour gérer la validation syntaxique des champs
+ * et déclencher la validation métier si la syntaxe est ok
+ *
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
  */
