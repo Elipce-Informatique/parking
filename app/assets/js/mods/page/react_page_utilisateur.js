@@ -44,7 +44,6 @@ var PageUser = React.createClass({
     },
 
     render: function () {
-        console.log('PASS icic');
         var dynamic = this.display();
         return (
             <Col md={12}>
@@ -170,14 +169,14 @@ var pageUserStore = Reflux.createStore({
     },
 
     modeCreation: function () {
-        console.log('Mode création');
+        //console.log('Mode création');
         this.stateLocal = {idUser: 0, etat: 'creation', dataUser: {nom: '', prenom: ''}};
         //console.log('PAGE USER mode création '+this.idUser);
         this.trigger(this.stateLocal);
     },
 
     modeEdition: function () {
-        console.log('Mode édition');
+        //console.log('Mode édition');
         this.stateLocal = {idUser: this.stateLocal.idUser, etat: 'edition'}
         this.trigger(this.stateLocal);
     },

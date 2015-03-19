@@ -11,6 +11,7 @@ var Field = require('../composants/formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputMailEditable = Field.InputMailEditable;
 var InputPasswordEditable = Field.InputPasswordEditable;
+var RadioGroup = Field.RadioGroup;
 var InputRadioEditable = Field.InputRadioEditable;
 var ButtonGroup = ReactB.ButtonGroup;
 var InputRadioBootstrapEditable = Field.InputRadioBootstrapEditable;
@@ -103,6 +104,8 @@ var ReactPageTest = React.createClass({
      * Le code retourné est ajouté à la fin du <body> de la page.
      */
     renderOverlay: function () {
+        //console.log('Pass renderOverlay');
+        var retour = {};
         switch (this.state.modalType) {
             case 1:
                 if (!this.state.isModalOpen) {
@@ -120,6 +123,8 @@ var ReactPageTest = React.createClass({
                 }
                 break;
         }
+        //console.log('retour : %o', retour);
+        return retour;
     },
 
     /**
@@ -331,29 +336,32 @@ var ReactPageTest = React.createClass({
                     </Col>
                 </Row>
 
-                <InputRadioEditable
-                    key={'bta'}
+                <RadioGroup
                     editable={editable}
                     attributes={{
-                        label: 'InputRadioEditable 1',
-                        checked: true,
-                        name: "InputRadioEditable[]",
-                        wrapperClassName: 'col-md-4',
-                        labelClassName: 'col-md-2',
-                        groupClassName: 'row'
-                    }}
-                />
-
-                <InputRadioEditable
-                    key={'btb'}
-                    editable={editable}
-                    attributes={{
-                        label: 'InputRadioEditable 2',
-                        name: "InputRadioEditable[]",
-                        wrapperClassName: 'col-md-4',
-                        labelClassName: 'col-md-2',
-                        groupClassName: 'row'
-                    }} />
+                        name: "radio"
+                    }}>
+                    <InputRadioEditable
+                        editable={editable}
+                        attributes={{
+                            label: 'InputRadioEditable 1',
+                            checked: true,
+                            name: "a_ecraser",
+                            wrapperClassName: 'col-md-4',
+                            labelClassName: 'col-md-2',
+                            groupClassName: 'row'
+                        }}
+                    />
+                    <InputRadioEditable
+                        editable={editable}
+                        attributes={{
+                            label: 'InputRadioEditable 2',
+                            name: "a_ecraser",
+                            wrapperClassName: 'col-md-4',
+                            labelClassName: 'col-md-2',
+                            groupClassName: 'row'
+                        }} />
+                </RadioGroup>
 
                 <InputCheckboxEditable
                     key={'bty'}

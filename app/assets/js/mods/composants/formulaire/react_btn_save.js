@@ -32,6 +32,7 @@ var ButtonSave = React.createClass({
     },
 
     render: function () {
+        //console.log('form id depuis le button' + this.props.form_id);
         return (
             <Button {...this.props.attrs} {...this.props.evts} onClick={this.onClick} bsStyle="success" form={this.props.form_id} >
                 <Glyphicon glyph="floppy-disk"/>{this.props.libelle}

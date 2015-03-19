@@ -5,7 +5,6 @@ var ReactPageTest = require('./mods/page/react_page_test');
 
 $(function(){
 
-    console.log(React);
     /* Ajout de l'élément react_page_profil à l'ID "page_profil" défini dans profil.app.js */
     var oReactPageTest = React.render(
         <ReactPageTest id="page_test"/>,
