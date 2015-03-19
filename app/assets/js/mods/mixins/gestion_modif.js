@@ -7,12 +7,14 @@ var mixinGestionModif = {
         // CHECK MIXIN
         if (typeof(this.listenTo) == 'undefined') {
             console.error('Oulalalala, tu n\'a pas mis le mixin Reflux.ListenerMixin dans ton composant ' +
-            this._reactInternalInstance._currentElement.type.displayName + ' !!! Corrige vite ça si tu veux que ça marche !');
+            this._reactInternalInstance._currentElement.type.displayName + ' !!! Corrige vite ça si tu veux que ça marche ! ' +
+            'Ceci est un message du mixin Gestion Modifs.');
         }
         // CHECK ONRETOUR
         if (typeof(this.onRetour) == 'undefined') {
             console.error('Oulalalala, tu n\'a pas défini la méthode onRetour dans ton composant ' +
-            this._reactInternalInstance._currentElement.type.displayName + ' !!! Corrige vite ça si tu veux que ça marche !');
+            this._reactInternalInstance._currentElement.type.displayName + ' !!! Corrige vite ça si tu veux que ça marche ! ' +
+            'Ceci est un message du mixin Gestion Modifs.');
         }
 
         // ECOUTE
@@ -40,7 +42,7 @@ var mixinGestionModif = {
                     this.triggerReset();
                     this.onRetour();
                 }
-                else if(!data.confirm){
+                else if (!data.confirm) {
                     this.onRetour();
                 }
                 break;
@@ -48,7 +50,7 @@ var mixinGestionModif = {
                 if (data.confirm && confirm(Lang.get('global.gest_mod_confirm_question'))) {
                     this.triggerReset();
                     this.onClickBandeauPerso(data.evt);
-                }else if(!data.confirm){
+                } else if (!data.confirm) {
                     this.onRetour();
                 }
                 break;
