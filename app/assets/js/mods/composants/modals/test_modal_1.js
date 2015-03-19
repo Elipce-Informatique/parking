@@ -1,4 +1,3 @@
-var React = require('react/addons');
 /* Gestion de la modification et des droits */
 var React = require('react/addons');
 var ComponentAccessMixins = require('../../mixins/component_access');
@@ -6,8 +5,10 @@ var ComponentAccessMixins = require('../../mixins/component_access');
 var MixinGestMod = require('../../mixins/gestion_modif');
 
 var Field = require('../formulaire/react_form_fields');
+var Form = Field.Form;
 var InputTextEditable = Field.InputTextEditable;
 var InputNumberEditable = Field.InputNumberEditable;
+var ButtonSave = require('../formulaire/react_btn_save');
 var Modal = ReactB.Modal;
 var Button = ReactB.Button;
 
@@ -16,16 +17,16 @@ var Button = ReactB.Button;
  *
  * Modal pour créer un groupe de places
  */
-var Modal1 = React.createClass({
+var ModalUn = React.createClass({
 
-    mixins: [ComponentAccessMixins, MixinGestMod],
+    mixins: [MixinGestMod, Reflux.ListenerMixin],
 
     propTypes: {
         onToggle: React.PropTypes.func.isRequired
     },
 
     getDefaultProps: function () {
-        return {module_url: 'configuration_parking'};
+        return {module_url: 'test'};
     },
 
     getInitialState: function () {
@@ -40,84 +41,42 @@ var Modal1 = React.createClass({
         return true;
     },
 
+    onRetour: function () {
+
+    },
+
     render: function () {
         return (
             <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.props.onToggle}>
                 <div className="modal-body">
+                    <Form attributes={{id: "form_modal_test_1"}}>
 
-                    // NOMBRE DE PLACES
-                    <InputNumberEditable
-                        attributes={
-                        {
-                            label: Lang.get('administration_parking.carte.nb_places'),
-                            min: '0',
-                            name: "nb_place",
-                            value: this.state.nom,
-                            required: false,
-                            groupClassName: 'row',
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-4 text-right'
-                        }}
-                        editable={true}
-                        evts={{}} />
-
-                    // NOMBRE DE POTEAUX
-                    <InputNumberEditable
-                        attributes={
-                        {
-                            label: Lang.get('administration_parking.carte.nb_places'),
-                            min: '0',
-                            name: "nb_place",
-                            value: this.state.nom,
-                            required: false,
-                            groupClassName: 'row',
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-4 text-right'
-                        }}
-                        editable={true}
-                        evts={{}} />
-
-                    // TAILLE DES POTEAUX
-                    <InputNumberEditable
-                        attributes={
-                        {
-                            label: Lang.get('administration_parking.carte.nb_places'),
-                            min: '0',
-                            name: "nb_place",
-                            value: this.state.nom,
-                            required: false,
-                            groupClassName: 'row',
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-4 text-right'
-                        }}
-                        editable={true}
-                        evts={{}} />
-
-                    //
-                    <InputNumberEditable
-                        attributes={
-                        {
-                            label: Lang.get('administration_parking.carte.nb_places'),
-                            min: '0',
-                            name: "nb_place",
-                            value: this.state.nom,
-                            required: false,
-                            groupClassName: 'row',
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-4 text-right'
-                        }}
-                        editable={true}
-                        evts={{}} />
-
-
-
+                        <InputNumberEditable
+                            attributes={
+                            {
+                                label: "Ceci est un chiffre",
+                                min: '0',
+                                name: "nb_place",
+                                value: this.state.nom,
+                                required: false,
+                                groupClassName: 'row',
+                                wrapperClassName: 'col-md-4',
+                                labelClassName: 'col-md-4 text-right'
+                            }}
+                            editable={true}
+                            evts={{}} />
+                    </Form>
                 </div>
                 <div className="modal-footer">
                     <Button onClick={this.props.onToggle}>{Lang.get('global.annuler')}</Button>
+                    <ButtonSave
+                        form_id="form_modal_test_1"
+                        libelle="Save"
+                    />
                 </div>
             </Modal>
         );
     }
 });
 
-module.exports = Modal1;
+module.exports = ModalUn;

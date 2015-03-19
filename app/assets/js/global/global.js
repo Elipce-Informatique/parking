@@ -122,12 +122,6 @@
         "initMatrice",
         "set_etat_create_edit"
     ]);
-
-    global.Actions.test = Reflux.createActions([
-        'modal1_save',
-        'modal2_save'
-    ]);
-
 })(window);
 
 /*

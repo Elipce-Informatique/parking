@@ -33,8 +33,8 @@ var InputTime = Field.InputTime;
 var InputTimeEditable = Field.InputTimeEditable;
 var Form = Field.Form;
 
-//var Modal1 = require('../composants/modals/test_modal_1');
-//var Modal2 = require('../composants/modals/test_modal_2');
+var ModalUn = require('../composants/modals/test_modal_1');
+var Modal2 = require('../composants/modals/test_modal_2');
 var Modal = ReactB.Modal;
 
 /*****************************************************
@@ -109,18 +109,17 @@ var ReactPageTest = React.createClass({
         switch (this.state.modalType) {
             case 1:
                 if (!this.state.isModalOpen) {
-                    retour = <span/>;
+                    return <span key="modal-test"/>;
                 } else {
-                    retour = <Modal1 onToggle={this.toggleModal} />;
-
+                    return <ModalUn key="modal-test" onToggle={this.toggleModal} />;
                 }
                 break;
 
             default:
                 if (!this.state.isModalOpen) {
-                    retour = <span/>;
+                    return <span key="modal-test"/>;
                 } else {
-                    retour = <Modal2 onToggle={this.toggleModal} />;
+                    return <Modal2 key="modal-test" onToggle={this.toggleModal} />;
                 }
                 break;
         }
@@ -181,7 +180,6 @@ var ReactPageTest = React.createClass({
             _.each(aData, function (val, key) {
                 indice++;
             });
-            //console.log('ChangeSelect '+indice);
         }
 
         function clickImage(evt) {
@@ -454,23 +452,48 @@ var storeTest = Reflux.createStore({
     // Initial setup
     init: function () {
         this.listenToMany(Actions.validation);
-        this.listenToMany(Actions.test);
     },
 
     /**
-     * Appellé lors du click sur le bouton save du modal 1
+     * Appelé apprès la sélection du formulaire dans le listener de l'action 'submit_form'
      * @param data
      */
     onModal1_save: function (data) {
-        console.log('Save MODAL 1 : %o', data);
+        console.log('Save MODAL 1 : %o', $(data).serializeArray());
+        this.trigger({
+            isModalOpen: false
+        });
     },
 
     /**
-     * Appellé lors du click sur le bouton save du modal 2
+     * Appelé apprès la sélection du formulaire dans le listener de l'action 'submit_form'
      * @param data
      */
     onModal2_save: function (data) {
-        console.log('Save MODAL 2 : %o', data);
+        console.log('Save MODAL 2 : %o', $(data).serializeArray());
+        this.trigger({
+            isModalOpen: false
+        });
+    },
+
+    /**
+     * Appellée par le mixin form verif
+     */
+    onSubmit_form: function (domNode, idForm) {
+        console.group('------ Submit form ');
+        console.log('domNode : %o', domNode);
+        console.log('idForm : %o', idForm);
+        switch (idForm) {
+            case "form_modal_test_1":
+                this.onModal1_save(domNode);
+                break;
+            case "form_modal_test_2":
+                this.onModal2_save(domNode);
+                break;
+            default:
+
+        }
+        console.groupEnd();
     },
     /**
      * onChange de n'importe quel élément du FORM

@@ -3,9 +3,6 @@
  */
 
 var storeVerif = Reflux.createStore({
-    getInitialState: function () {
-        return {};
-    },
     // Initial setup
     init: function () {
         // Register statusUpdate action
@@ -42,13 +39,11 @@ var FormValidationMixin = {
      * @param form_id : id du formulaire à tester
      */
     verifyForm: function (form_id) {
-
         // Récupération du formulaire
         var $form = $(this.getDOMNode());
 
         // Si on est sur le bon form !
-        if (($form.find('form').attr('id') == form_id) || (form_id == '')) {
-
+        if (($form.find('form').attr('id') == form_id) || ($form.attr('id') == form_id)|| (form_id == '')) {
             // Aucuns champs ne sont invalides, on déclenche
             // l'action d'enregistrement avec en params le form
             if ($form.find('[data-valid=false]').length == 0) {
