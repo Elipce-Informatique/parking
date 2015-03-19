@@ -1,5 +1,7 @@
+var React = require('react/addons');
 var Collapse = require('../mods/composants/react_collapse').Collapse;
 var CollapseBody = require('../mods/composants/react_collapse').CollapseBody;
+
 var CollapseSidebar = require('../mods/composants/react_collapse').CollapseSidebar;
 
 /**
@@ -7,7 +9,6 @@ var CollapseSidebar = require('../mods/composants/react_collapse').CollapseSideb
  * Instantiation des menus de l'application
  */
 (function () {
-    var React = require('react/addons');
     var MenuTop = require('../mods/composants/menu/react_menu_top');
     var MenuLeft = require('../mods/composants/menu/react_menu_left');
 

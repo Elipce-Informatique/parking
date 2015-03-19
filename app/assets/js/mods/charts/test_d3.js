@@ -1,6 +1,7 @@
 /**
  * Created by yann on 24/02/2015.
  */
+var React = require('react/addons');
 var d3 = require('d3');
 require('../../libs/nvd3');
 

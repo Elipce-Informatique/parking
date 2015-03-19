@@ -1,7 +1,7 @@
 /**
  * @param array data: données du tableau
  */
-
+var React = require('react/addons');
 var AuthentMixins = require('./mixins/component_access');
 var DataTableBandeau = require('./composants/tableau/react_data_table_bandeau');
 

@@ -1,3 +1,4 @@
+var React = require('react/addons');
 /**
  * Composant permettant d'afficher le libelle du profil avec le tableau des modules correspondant
  *
@@ -17,18 +18,12 @@
  *                            FALSE: pas d'évènement par défaut.
  */
 
-/***********************/
-/* Composants Boostrap */
-var Row = ReactB.Row;
-var Col = ReactB.Col;
-
-var libelleInitial = '';
 
 function libelleChange(value, edit){
-    
-    /* Variable de retour */
-    var retour = {};
 
+    /* Variable de retour */
+
+    var retour = {};
     /* Est-ce que le libelle existe? */
     if(value.length>=2 && value != libelleInitial){
         //console.log('Ajax');
@@ -60,13 +55,20 @@ function libelleChange(value, edit){
         });
     }
     /* En rouge */
-    else if(value.length<2){
+else if(value.length<2){
         retour.isValid = false;
         retour.style   = 'error';
         retour.tooltip = Lang.get('global.profilTooMuch');
     }
     return retour;
 }
+/***********************/
+/* Composants Boostrap */
+var Row = ReactB.Row;
+
+var Col = ReactB.Col;
+
+var libelleInitial = '';
 
 function libelleEditChange(value){
     return libelleChange(value, true);
@@ -78,7 +80,6 @@ function libelleCreateChange (value){
 
 /*********************************************/
 /* Composant input pour le libelle du profil */
-var React = require('react/addons');
 var Field             = require('./composants/formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var Form              = Field.Form;

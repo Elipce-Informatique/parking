@@ -1,4 +1,5 @@
 // Gestion du temps
+var React = require('react/addons');
 var moment = require('moment');
 require('moment/locale/fr');
 moment.locale(Lang.locale());

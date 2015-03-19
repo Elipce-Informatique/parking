@@ -1,3 +1,4 @@
+var React = require('react/addons');
 /**
  * Created by Yann on 15/11/2014.
  * Inclusion des libs globales (ex: React, jQuery) installées via NPM
@@ -175,7 +176,7 @@
  |--------------------------------------------------------------------------
  */
 $(function () {
-    var React = require('react/addons');
+
     var Notify = require('../mods/composants/react_notify');
     React.render(<Notify />, document.getElementById('composant_react_notifications'));
 

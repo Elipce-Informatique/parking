@@ -1,5 +1,6 @@
 // Composant de la map
 require('./global/global');
+var React = require('react/addons');
 var ParkingMap = require('./mods/composants/maps/admin_parking_map');
 var Collapse = require('./mods/composants/react_collapse').Collapse;
 var CollapseBody = require('./mods/composants/react_collapse').CollapseBody;
