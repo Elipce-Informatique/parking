@@ -1,3 +1,4 @@
+var React = require('react/addons');
 var AccessMixin = require('../mixins/component_access');
 
 /**

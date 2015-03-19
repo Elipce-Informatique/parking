@@ -1,9 +1,11 @@
+var React = require('react/addons');
 var Input = ReactB.Input;
 var OverlayTrigger = ReactB.OverlayTrigger;
 var Tooltip = ReactB.Tooltip;
 var Glyphicon = ReactB.Glyphicon;
 var Validator = require('validator');
 var Select = require('react-select');
+var ButtonGroup = ReactB.ButtonGroup;
 // Time
 var moment = require('moment');
 require('moment/locale/fr');
@@ -24,9 +26,12 @@ var Col = ReactB.Col;
 /**
  * Champ texte
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: active ou non la gestion des modifications sur le champ
  * @param area: bool, input type area ou non, false par défaut
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -40,7 +45,6 @@ var InputText = React.createClass({
     propTypes: {
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange: React.PropTypes.func,
         gestMod: React.PropTypes.bool,
         area: React.PropTypes.bool,
         validator: React.PropTypes.func
@@ -50,7 +54,6 @@ var InputText = React.createClass({
         return {
             attributes: {},
             evts: {},
-            onChange: this.handleChange,
             gestMod: true,
             area: false,
             validator: function (val, props, state) {
@@ -96,7 +99,11 @@ var InputText = React.createClass({
  * Champ texte editable => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: active ou non la gestion des modifications sur le champ
  * @param area: bool, input type area ou non, false par défaut
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
@@ -160,6 +167,12 @@ var InputTextEditable = React.createClass({
 
 /**
  * Champ mail
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: active ou non la gestion des modifications sur le champ
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -222,7 +235,11 @@ var InputMail = React.createClass({
  * Champ mail editable => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: active ou non la gestion des modifications sur le champ
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -278,8 +295,11 @@ var InputMailEditable = React.createClass({
 /**
  * Champ mot de passe
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param gestMod: booléen: active ou non la gestion des modifications sur le champ
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -293,7 +313,6 @@ var InputPassword = React.createClass({
     propTypes: {
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange: React.PropTypes.func,
         gestMod: React.PropTypes.bool,
         validator: React.PropTypes.func
     },
@@ -350,7 +369,12 @@ var InputPassword = React.createClass({
  * Champ mot de passe => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
- * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction} @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: active ou non la gestion des modifications sur le champ
+ * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
  *      style: 'success|warning|error|default',
@@ -411,6 +435,9 @@ var InputPasswordEditable = React.createClass({
  *                  - label: label devant le select
  *                  - labelCol: nombre de colonnes bootstrap du label
  *                  - selectCol: nombre de colonnes bootstrap du select
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onChange: maFonction}
  * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
@@ -440,28 +467,32 @@ var InputSelect = React.createClass({
 
     getInitialState: function () {
         return {
-                    value: this.props.selectedValue,
-                    attributes:{
-                                'data-valid': true,
-                                'data-class': 'has-default',
-                                'data-tooltip': ''
-                                }
-                };
+            value: this.props.selectedValue,
+            attributes: {
+                'data-valid': true,
+                'data-class': 'has-default',
+                'data-tooltip': ''
+            }
+        };
     },
 
     getDefaultProps: function () {
         return {
-            attributes: {labelCol:'6', selectCol:'6', required: false},
+            attributes: {labelCol: '6', selectCol: '6', required: false},
             evts: {},
             gestMod: true,
             delimiter: '[-]',
             name: '',
-            labelClass : '',
+            labelClass: '',
             validator: function (val, props, state) {
                 var retour = {};
                 // Value vide
                 if (val.length == 0) {
-                    retour =  {'data-valid': !props.attributes.required, 'data-class': (props.attributes.required?'has-error':'has-default'), 'data-tooltip': ''};
+                    retour = {
+                        'data-valid': !props.attributes.required,
+                        'data-class': (props.attributes.required ? 'has-error' : 'has-default'),
+                        'data-tooltip': ''
+                    };
                 }
                 // Option sélectionnée
                 else {
@@ -472,7 +503,7 @@ var InputSelect = React.createClass({
         };
     },
 
-    componentWillMount: function(){
+    componentWillMount: function () {
 
         // Validations syntaxiques
         var validations = this.props.validator(this.props.selectedValue, this.props, this.state);
@@ -500,7 +531,7 @@ var InputSelect = React.createClass({
         Actions.validation.form_field_changed({
             name: this.props.attributes.name,
             value: val,
-            form: this.props.form
+            form: this.props.attributes.htmlFor
         });
 
         // Validation syntaxique OK => envoi d'une action permettant une éventuelle vérification métier
@@ -508,7 +539,7 @@ var InputSelect = React.createClass({
             Actions.validation.form_field_verif({
                 name: this.props.attributes.name,
                 value: val,
-                form: this.props.form
+                form: this.props.attributes.htmlFor
             });
         }
 
@@ -533,7 +564,6 @@ var InputSelect = React.createClass({
             this.props.evts.onBlur(e, data);
         }
     },
-
 
 
     render: function () {
@@ -573,9 +603,9 @@ var InputSelect = React.createClass({
                 </div>;
         }
 
-        return(
+        return (
             <Row className="form-group">
-                <Col md={this.props.attributes.labelCol} className={attrs['data-class']+' '+this.props.labelClass}>
+                <Col md={this.props.attributes.labelCol} className={attrs['data-class'] + ' ' + this.props.labelClass}>
                     <label className="control-label">{this.props.attributes.label}</label>
                 </Col>
                 <Col md={this.props.attributes.selectCol}>
@@ -594,7 +624,14 @@ var InputSelect = React.createClass({
  * @param selectedValue: array('0', '1') ou valeur
  * @param placeholder: string, par défaut 'Sélection..'
  * @param multi: bool, à choix multiple, par défaut non
- * @param attributes: props de Input (react bootstrap) ex: {label: Champ texte:}
+ * @param attributes: attributs HTML du select:
+ *                  - name
+ *                  - label: label devant le select
+ *                  - labelCol: nombre de colonnes bootstrap du label
+ *                  - selectCol: nombre de colonnes bootstrap du select
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
  * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  * @param labelClass: string: classe CSS à ajouter au Col qui entoure le label ex: text-right
@@ -618,14 +655,14 @@ var InputSelectEditable = React.createClass({
 
     getDefaultProps: function () {
 
-        return{
-            attributes: {labelCol:'6', selectCol:'6'},
+        return {
+            attributes: {labelCol: '6', selectCol: '6'},
             evts: {},
             gestMod: true,
             placeholder: Lang.get('global.select'),
             multi: false,
             selectedValue: '',
-            labelClass : ''
+            labelClass: ''
         }
     },
 
@@ -652,9 +689,9 @@ var InputSelectEditable = React.createClass({
             /* Récupération des libellés en fonction des valeurs */
             var aValues = [];
             // Valeurs multiples
-            if(this.props.multi){
+            if (this.props.multi) {
                 // Tableau de values existe
-                if(typeof this.props.selectedValue === 'object') {
+                if (typeof this.props.selectedValue === 'object') {
                     // Parcours des valeurs sélectionnées
                     this.props.selectedValue.forEach(function (val, indexSelect) {
                         // Parcours des données du selecteur
@@ -668,12 +705,12 @@ var InputSelectEditable = React.createClass({
                 }
             }
             // Mode combobox
-            else{
+            else {
                 // Parcours des data
-                this.props.data.forEach(function(obj, index){
+                this.props.data.forEach(function (obj, index) {
                     // Donnée sélectionnée
-                    if(obj.value == this.props.selectedValue){
-                        aValues.push( obj.label);
+                    if (obj.value == this.props.selectedValue) {
+                        aValues.push(obj.label);
                     }
                 }.bind(this));
             }
@@ -698,9 +735,15 @@ var InputSelectEditable = React.createClass({
 
 /**
  * Champ nombre
+ * @param min: valeur minimale du champ InputNumber. ex: 0
+ * @param max: valeur minimale du champ InputNumber. ex: 100
+ * @param step: pas d'incrémentation ou de décrémentation, par défaut 1.
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -718,7 +761,7 @@ var InputNumber = React.createClass({
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool,
-        onChange: React.PropTypes.func
+        validator: React.PropTypes.func
     },
 
     getDefaultProps: function () {
@@ -729,7 +772,6 @@ var InputNumber = React.createClass({
             attributes: {},
             evts: {},
             gestMod: true,
-            onChange: this.handleChange,
             validator: function (val, props, state) {
 
                 /* Pour résoudre le problème de float accuracy */
@@ -769,13 +811,14 @@ var InputNumber = React.createClass({
         // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
         var attrs = this.generateAttributes();
 
-        return(
+        return (
             <Input
                 type="number"
                 step={this.props.step}
                 {...attrs}
                 {...this.props.evts}
                 onChange = {this.handleChange}
+                onBlur = {this.handleBlur}
                 value={this.state.value}
                 ref = "InputField"
                 hasFeedback
@@ -787,9 +830,13 @@ var InputNumber = React.createClass({
 
 /**
  * Champ texte editable => si pas editable INPUT devient LABEL.
+ * @param min: valeur minimale du champ InputNumber. ex: 0
+ * @param max: valeur minimale du champ InputNumber. ex: 100
+ * @param step: pas d'incrémentation ou de décrémentation, par défaut 1.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputNumberEditable = React.createClass({
 
@@ -838,8 +885,11 @@ var InputNumberEditable = React.createClass({
 /**
  * Champ nombre
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -854,7 +904,7 @@ var InputTel = React.createClass({
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
         gestMod: React.PropTypes.bool,
-        onChange: React.PropTypes.func
+        validator: React.PropTypes.func
     },
 
     getDefaultProps: function () {
@@ -862,7 +912,6 @@ var InputTel = React.createClass({
             attributes: {},
             evts: {},
             gestMod: true,
-            onChange: this.handleChange,
             validator: function (val, props, state) {
 
                 var tel = val + '';
@@ -901,6 +950,7 @@ var InputTel = React.createClass({
             {...attrs}
             {...this.props.evts}
             onChange = {this.handleChange}
+            onBlur = {this.handleBlur}
             value={this.state.value}
             ref = "InputField"
             hasFeedback
@@ -913,7 +963,11 @@ var InputTel = React.createClass({
  * Champ texte editable => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputTelEditable = React.createClass({
 
@@ -1024,8 +1078,11 @@ var InputFile = React.createClass({
 /**
  * Champ Date
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -1039,15 +1096,14 @@ var InputDate = React.createClass({
     propTypes: {
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange: React.PropTypes.func,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        validator: React.PropTypes.func
     },
 
     getDefaultProps: function () {
         return {
             attributes: {},
             evts: {},
-            onChange: this.handleChange,
             gestMod: true,
             validator: function (val, props, state) {
                 // Champ obligatoire + vide
@@ -1084,6 +1140,7 @@ var InputDate = React.createClass({
                 {...attrs}
                 {...this.props.evts}
                 onChange = {this.handleChange}
+                onBlur = {this.handleBlur}
                 value={this.state.value}
                 ref = "InputField"
                 hasFeedback
@@ -1096,7 +1153,11 @@ var InputDate = React.createClass({
  * Champ date editable => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputDateEditable = React.createClass({
 
@@ -1145,8 +1206,11 @@ var InputDateEditable = React.createClass({
 /**
  * Champ Time: heure / min / sec
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  * @param validator: function - facultatif, appellé sur onChange pour valider le contenu de l'input, retourne un objet comme ci-dessous:
  * {
  *      isValid: false|true
@@ -1160,8 +1224,8 @@ var InputTime = React.createClass({
     propTypes: {
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange: React.PropTypes.func,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        validator: React.PropTypes.func
     },
 
     getDefaultProps: function () {
@@ -1169,7 +1233,6 @@ var InputTime = React.createClass({
         return {
             attributes: {},
             evts: {},
-            onChange: this.handleChange,
             gestMod: true,
             validator: function (val, props, state, inputNode) {
                 //console.log('length:'+val.length+' required: '+typeof(props.attributes.required));
@@ -1218,6 +1281,7 @@ var InputTime = React.createClass({
                 {...attrs}
                 {...this.props.evts}
                 onChange = {this.handleChange}
+                onBlur = {this.handleBlur}
                 value={this.state.value}
                 ref = "InputField"
                 hasFeedback
@@ -1231,7 +1295,11 @@ var InputTime = React.createClass({
  * Champ time editable => si pas editable INPUT devient LABEL.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputTimeEditable = React.createClass({
 
@@ -1278,9 +1346,10 @@ var InputTimeEditable = React.createClass({
 
 /**
  * Champ radio
+ * Doit être utilisé dans un RadioGroup pour la gestion multi-radio avec le même name
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputRadio = React.createClass({
     mixins: [MixinInputChecked],
@@ -1288,7 +1357,6 @@ var InputRadio = React.createClass({
     propTypes: {
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange: React.PropTypes.func,
         gestMod: React.PropTypes.bool
     },
 
@@ -1296,7 +1364,6 @@ var InputRadio = React.createClass({
         return {
             attributes: {},
             evts: {},
-            onChange: this.handleChange,
             gestMod: true
         }
     },
@@ -1304,15 +1371,15 @@ var InputRadio = React.createClass({
     // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
 
     render: function () {
+        // Gestion des modifications
         var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
+
         return (
             <Input
                 type="radio"
                 {...this.props.attributes}
                 {...this.props.evts}
                 {...gestMod}
-                value = {this.state.value}
-                onChange={this.handleChange}
                 ref = "Checkable"
             />
         );
@@ -1320,10 +1387,11 @@ var InputRadio = React.createClass({
 });
 
 /**
- * Champ texte editable => si pas editable INPUT devient READONLY.
+ * Champ radio editable  => si pas editable INPUT devient READONLY.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputRadioEditable = React.createClass({
 
@@ -1346,7 +1414,7 @@ var InputRadioEditable = React.createClass({
         var attr = this.props.attributes;
         // Editable
         if (!this.props.editable) {
-            attr = _.extend(attr, {disabled: true});
+            attr = _.extend(attr, {disabled: true});// readOnly ne fait rien
         }
         //console.log(attr);
         return <InputRadio
@@ -1359,83 +1427,122 @@ var InputRadioEditable = React.createClass({
 });
 
 /**
- * Champ radio
+ * Champ radio groupe. Permet de gérer un ensemble de radio
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
- * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
- */
-var InputRadioBootstrap = React.createClass({
-    mixins: [MixinInputChecked],
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
+ * @param bootstrap: Mode d'affichage des radio
+ *                  Si true: mettre des InputRadioBootstrapEditable en enfant
+ *                  Sinon mettre des InputRadioEditable
+*/
+var RadioGroup = React.createClass({
 
     propTypes: {
         attributes: React.PropTypes.object,
-        evts: React.PropTypes.object,
-        onChange: React.PropTypes.func,
-        gestMod: React.PropTypes.bool
+        gestMod: React.PropTypes.bool,
+        bootstrap: React.PropTypes.bool // mode d'affichage bootstrap (boutons)
     },
 
     getDefaultProps: function () {
         return {
             attributes: {},
-            evts: {},
-            onChange: this.handleChange,
-            gestMod: true
+            gestMod: true,
+            bootstrap: false
         }
     },
 
-    // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
+    getInitialState : function (){
+
+        var matrice = {};
+        // Parcours des chidren
+        _.forEach(this.props.children, function(child, index) {
+            //console.log('CHILD index %o', child);
+            // On est sur le radio cliqué
+            matrice[this.props.attributes.name+index] = child.props.attributes.checked !== undefined ? child.props.attributes.checked : false;
+        }.bind(this));
+        return matrice;
+    },
+
+    handleChange : function(evt){
+        console.log('change');
+        // Attribut index du radio qui a déclenché le change
+        var index = $(evt.currentTarget).data('index');
+
+        // Matrice {n° radio : cheched, ....}
+        var matrice = {};
+        // Parcours des chidren
+        _.forEach(this.props.children, function(child) {
+            //console.log('CHILD index %o', child);
+            // On est sur le radio cliqué
+            matrice[child.props.attributes['data-index']] = (child.props.attributes['data-index'] == index);
+        });
+
+        // DÉCLENCHEMENT DE LA VALIDATION MÉTIER
+        Actions.validation.form_field_changed({
+            name: this.props.attributes.name,
+            value: $(evt.currentTarget).val(),
+            form: this.props.attributes.htmlFor
+        });
+        Actions.validation.form_field_verif({
+            name: this.props.attributes.name,
+            value: $(evt.currentTarget).val(),
+            form: this.props.attributes.htmlFor
+        });
+
+        //console.log('MATRICE %o',matrice);
+        // Maj render
+        this.setState(matrice);
+    },
+
+    /**
+     *
+     * @param enfants
+     */
+    display : function(enfants){
+        var code = '';
+        // Mode bootstrap
+        if(this.props.bootstrap){
+            code = (
+                <ButtonGroup
+                    data-toggle="buttons"
+                    bsSize="xsmall"
+                    key={'radio_'+this.props.attributes.name}>
+
+                {enfants}
+                </ButtonGroup>
+            )
+        }
+        // Mode classique
+        else{
+            code =(
+                <div className="row" key={'radio_'+this.props.attributes.name}>
+                    {enfants}
+                </div>);
+        }
+        return code;
+    },
 
     render: function () {
-        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
-        var classBtn = 'btn btn-default';
 
-        return (
-            <label {...this.props.evts} {...this.props.attributes} className={classBtn + ' ' + this.props.attributes.className}>
-                <input {...gestMod} type="radio" name={this.props.name} />{this.props.children}
-            </label>
-        );
-    }
-});
+        // Parcours des chidren
+        var enfants = _.map(this.props.children, function(child, index) {
+            //console.log('CHILD '+index+' %o',child);
+            // Props à ajouter
+            var newProps = {
+                evts : {onClick: this.handleChange},
+                attributes : _.extend(child.props.attributes, {
+                    checked : this.state[this.props.attributes.name+index],
+                    name: this.props.attributes.name,
+                    'data-index' : this.props.attributes.name+index // index unique permettant d'identifier chaque radio
+                })
+            };
+            // Clone du radio
+            return React.cloneElement(child, newProps);
 
-/**
- * Champ texte editable => si pas editable INPUT devient READONLY.
- * @param editable: (bool) Si true alors INPUT sinon LABEL
- * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
- * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- */
-var InputRadioBootstrapEditable = React.createClass({
+        }.bind(this));
 
-    propTypes: {
-        editable: React.PropTypes.bool.isRequired,
-        attributes: React.PropTypes.object,
-        evts: React.PropTypes.object,
-        gestMod: React.PropTypes.bool
-    },
+        // Affichage du groupe de radio
+        return this.display(enfants);
 
-    getDefaultProps: function () {
-        return {
-            attributes: {},
-            evts: {},
-            gestMod: true
-        }
-    },
-
-    render: function () {
-        var attr = this.props.attributes;
-        // Editable
-        if (!this.props.editable) {
-            attr = _.extend(attr, {disabled: true});
-        } else {
-            attr = _.extend(attr, {disabled: false});
-        }
-
-        return <InputRadioBootstrap
-            attributes = {attr}
-            evts = {this.props.evts}
-            ref="Editable"
-            gestMod={this.props.gestMod} >
-                            {this.props.children}
-        </InputRadioBootstrap>
     }
 });
 
@@ -1475,7 +1582,7 @@ var InputCheckbox = React.createClass({
                 {...this.props.attributes}
                 {...this.props.evts}
                 {...gestMod}
-                value = {this.state.value}
+                checked = {this.state.checked}
                 onChange={this.handleChange}
                 ref = "Checkable"
             />
@@ -1525,12 +1632,102 @@ var InputCheckboxEditable = React.createClass({
     }
 });
 
+
+/**
+ * Champ radio
+ * @param attributes: props du radio
+ * @param evts: evenements du btn
+ */
+var InputRadioBootstrap = React.createClass({
+
+    propTypes: {
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        gestMod: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+        return {
+            attributes: {},
+            evts: {},
+            gestMod: true
+        }
+    },
+
+    // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
+
+    render: function () {
+        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
+        var classBtn = 'btn btn-default';
+
+        console.log('ATTRS %o', this.props.attributes);
+
+        return (
+            <label
+                {...this.props.evts}
+                className={classBtn + ' ' + this.props.attributes.className}>
+
+                <input
+                    {...gestMod}
+                    type="radio"
+                    {...this.props.attributes}
+                />
+
+                {this.props.children}
+            </label>
+        );
+    }
+});
+
+/**
+ * DEPRECATED: utiliser plutot RadioGroup + InputRadio
+ * Champ texte editable => si pas editable INPUT devient READONLY.
+ * @param editable: (bool) Si true alors INPUT sinon LABEL
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ */
+var InputRadioBootstrapEditable = React.createClass({
+
+    propTypes: {
+        editable: React.PropTypes.bool.isRequired,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        gestMod: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+        return {
+            attributes: {},
+            evts: {},
+            gestMod: true
+        }
+    },
+
+    render: function () {
+        var attr = this.props.attributes;
+        // Editable
+        attr = _.extend(attr, {disabled: (!this.props.editable)});
+
+        return (
+            <InputRadioBootstrap
+                attributes = {attr}
+                evts = {this.props.evts}
+                ref="Editable"
+                gestMod={this.props.gestMod} >
+
+            {this.props.children}
+            </InputRadioBootstrap>
+        );
+    }
+});
+
 module.exports.InputText = InputText;
 module.exports.InputTextEditable = InputTextEditable;
 module.exports.InputMail = InputMail;
 module.exports.InputMailEditable = InputMailEditable;
 module.exports.InputPassword = InputPassword;
 module.exports.InputPasswordEditable = InputPasswordEditable;
+module.exports.RadioGroup = RadioGroup;
 module.exports.InputRadio = InputRadio;
 module.exports.InputRadioEditable = InputRadioEditable;
 module.exports.InputRadioBootstrap = InputRadioBootstrap;

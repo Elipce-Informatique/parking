@@ -12,7 +12,9 @@
  *      evts: {onClick: function}
  * }
  */
-
+var React = require('react/addons');
+var bHelper = require('../../helpers/bandeau_helper').type_btn;
+var ButtonSave = require('../formulaire/react_btn_save');
 var Button = ReactB.Button;
 var ButtonToolbar = ReactB.ButtonToolbar;
 var ButtonGroup = ReactB.ButtonGroup;
@@ -27,7 +29,8 @@ var ReactBandeau = React.createClass({
         sousTitre: React.PropTypes.string,
         tailleTitre: React.PropTypes.number,
         onRetour: React.PropTypes.func,
-        btnList: React.PropTypes.array
+        btnList: React.PropTypes.array,
+        form_id: React.PropTypes.string
     },
 
     /**
@@ -37,7 +40,8 @@ var ReactBandeau = React.createClass({
         return {
             sousTitre: "",
             tailleTitre: 3,
-            btnList: []
+            btnList: [],
+            form_id: ''
         };
     },
 
@@ -111,11 +115,23 @@ var ReactBandeau = React.createClass({
 
         // CRÉATION DES BOUTONS
         btnList = _.map(this.props.btnList, function (btn, index) {
-            return (
-                <Button key={"btnbandeau-" + index} {...btn.attrs} {...btn.evts} bsStyle={btn.style} >
-                    <Glyphicon glyph={btn.icon}/>{btn.libelle}
-                </Button>);
-        });
+            switch (btn.type) {
+                case bHelper.save:
+                    // TODO : créer le bouton de type save
+                    return <ButtonSave
+                        key={"btnbandeau-" + index}
+                        {...btn.attrs}
+                        {...btn.evts}
+                        form_id={this.props.form_id} />;
+                    break;
+                default :
+                    return (
+                        <Button key={"btnbandeau-" + index} {...btn.attrs} {...btn.evts} bsStyle={btn.style} >
+                            <Glyphicon glyph={btn.icon}/>{btn.libelle}
+                        </Button>);
+                    break;
+            }
+        }.bind(this));
 
         // CRÉATION DU BOUTON BACK
         if (typeof(this.props.onRetour) != 'undefined') {

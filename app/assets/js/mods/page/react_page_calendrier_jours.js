@@ -1,4 +1,5 @@
 // Composants REACT
+var React = require('react/addons');
 var DataTableBandeauJours = require('../react_data_table_bandeau_calendrier_jours').Composant;
 var BandeauListe = require('../composants/bandeau/react_bandeau_liste');
 var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');

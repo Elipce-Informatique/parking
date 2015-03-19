@@ -31,13 +31,13 @@ var InputValueMixin = {
         Actions.validation.form_field_changed({
             name: this.props.attributes.name,
             value: val,
-            form: this.props.form
+            form: this.props.attributes.htmlFor
         });
         if (attrs['data-valid']) {
             Actions.validation.form_field_verif({
                 name: this.props.attributes.name,
                 value: val,
-                form: this.props.form
+                form: this.props.attributes.htmlFor
             });
         }
 
@@ -129,7 +129,7 @@ var InputValueMixin = {
 var InputCheckableMixin = {
     handleChange: function (e) {
         // Mise à jour de l'état du composant
-        //console.log('Checked %o',this.refs.Checkable.getChecked());
+        console.log('Checked '+ this.refs.Checkable.props.label+ ' %o',this.refs.Checkable.getChecked());
         this.setState({
             checked: this.refs.Checkable.getChecked()
         });
@@ -139,13 +139,16 @@ var InputCheckableMixin = {
         }
     },
     getInitialState: function () {
-        // Etat par défaut
+        // Etat par défaut: décoché
         var coche = false;
+        // Attribut checked passé
         if (this.props.attributes.checked !== undefined) {
+            // Maj du state
             coche = this.props.attributes.checked;
         }
         return {checked: coche};
     },
+
     componentWillReceiveProps: function (newProps) {
         // Value par défaut
         var coche = false;

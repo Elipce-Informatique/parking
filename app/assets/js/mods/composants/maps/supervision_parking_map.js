@@ -1,3 +1,4 @@
+var React = require('react/addons');
 // Options pour paramétrer la carte
 var mapOptions = require('../../helpers/map_options');
 // STORE DE LA CARTE

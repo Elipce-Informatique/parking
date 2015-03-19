@@ -1,4 +1,5 @@
 // Composants REACT
+var React = require('react/addons');
 var DataTableBandeauUser = require('../react_data_table_bandeau_utilisateur').Composant;
 var BandeauListe = require('../composants/bandeau/react_bandeau_liste');
 var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');
@@ -35,7 +36,7 @@ var PageUser = React.createClass({
 
     getInitialState: function () {
         return {
-            etat: pageState.liste,
+            etat: 'liste',
             idUser: 0,
             dataUser: {nom: '', prenom: ''}
         };
@@ -61,29 +62,61 @@ var PageUser = React.createClass({
             case pageState.visu:
                 react =
                     <div key="rootPageuser">
-                        <BandeauGenerique key="bandeauVisu" bandeauType={this.state.etat} module_url="utilisateur" titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}/>
-                        <FicheUser key="ficheUserKey" editable={false} idUser={this.state.idUser}/>
+                        <BandeauGenerique
+                            key="bandeauVisu"
+                            bandeauType={this.state.etat}
+                            module_url="utilisateur"
+                            titre={Lang.get('administration.utilisateur.titre')}
+                            sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}/>
+                        <FicheUser
+                            key="ficheUserKey"
+                            editable={false}
+                            idUser={this.state.idUser}/>
                     </div>;
                 break;
             case pageState.edition:
                 react =
                     <div key="rootPageuser">
-                        <BandeauGenerique key="bandeauEdition" bandeauType={this.state.etat} module_url="utilisateur" mode={1} titre={Lang.get('administration.utilisateur.titre')} sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}/>
-                        <FicheUser key="ficheUserKey" editable={true} idUser={this.state.idUser}/>
+                        <BandeauGenerique
+                            key="bandeauEdition"
+                            form_id="form_utilisateur"
+                            bandeauType={this.state.etat}
+                            module_url="utilisateur"
+                            mode={1}
+                            titre={Lang.get('administration.utilisateur.titre')}
+                            sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}
+                        />
+                        <FicheUser
+                            key="ficheUserKey"
+                            editable={true}
+                            idUser={this.state.idUser}/>
                     </div>;
                 break;
             case pageState.creation:
                 react =
                     <div key="rootPageuser">
-                        <BandeauGenerique key="bandeauCreation" bandeauType={this.state.etat} module_url="utilisateur" mode={0} titre={Lang.get('administration.utilisateur.titre')}/>
-                        <FicheUser key="ficheUserKey" editable={true} idUser={0}/>
+                        <BandeauGenerique
+                            key="bandeauCreation"
+                            form_id="form_utilisateur"
+                            bandeauType={this.state.etat}
+                            module_url="utilisateur"
+                            mode={0}
+                            titre={Lang.get('administration.utilisateur.titre')}/>
+                        <FicheUser
+                            key="ficheUserKey"
+                            editable={true}
+                            idUser={0}/>
                     </div>;
                 break;
             default:
                 // Mode liste par défaut
                 react =
                     <div key="rootPageuser">
-                        <BandeauGenerique key="bandeauListe" bandeauType={this.state.etat} module_url="utilisateur" titre={Lang.get('administration.utilisateur.titre')}/>
+                        <BandeauGenerique
+                            key="bandeauListe"
+                            bandeauType={this.state.etat}
+                            module_url="utilisateur"
+                            titre={Lang.get('administration.utilisateur.titre')}/>
                         <Row>
                             <Col md={12}>
                                 <DataTableBandeauUser/>
@@ -140,20 +173,20 @@ var pageUserStore = Reflux.createStore({
     },
 
     modeCreation: function () {
-        console.log('Mode création');
+        //console.log('Mode création');
         this.stateLocal = {idUser: 0, etat: pageState.creation, dataUser: {nom: '', prenom: ''}};
         //console.log('PAGE USER mode création '+this.idUser);
         this.trigger(this.stateLocal);
     },
 
     modeEdition: function () {
-        console.log('Mode édition');
+        //console.log('Mode édition');
         this.stateLocal = {idUser: this.stateLocal.idUser, etat: pageState.edition}
         this.trigger(this.stateLocal);
     },
 
     modeListe: function () {
-        this.stateLocal = {idUser: 0, etat: pageState.liste}
+        this.stateLocal = {idUser: 0, etat: pageState.liste};
         this.trigger(this.stateLocal);
     },
 
@@ -182,7 +215,7 @@ var pageUserStore = Reflux.createStore({
         // Boite de confirmation
 
         // Suppr
-        this.stateLocal = {idUser: this.stateLocal.idUser, etat: pageState.suppression}
+        this.stateLocal = {idUser: this.stateLocal.idUser, etat: pageState.suppression};
         Actions.utilisateur.delete_user(this.stateLocal.idUser);
     }
 });

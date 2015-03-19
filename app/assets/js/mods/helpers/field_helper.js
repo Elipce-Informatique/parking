@@ -2,6 +2,7 @@
  * Created by vivian on 26/02/2015.
  */
 // Composants
+var React = require('react/addons');
 var OverlayTrigger = ReactB.OverlayTrigger;
 var Tooltip = ReactB.Tooltip;
 var Glyphicon = ReactB.Glyphicon;

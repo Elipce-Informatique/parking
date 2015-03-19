@@ -13,7 +13,7 @@
  * @param function onDataTableLineClick: sur clic ligne de tableau DataTable
  * @param object reactElements: voire composant react 'TableTr'
  */
-
+var React = require('react/addons');
 var Table = require('./react_table');
 var DataTableReact = React.createClass({
 

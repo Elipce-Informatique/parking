@@ -1,5 +1,7 @@
+var React = require('react/addons');
 var Collapse = require('../mods/composants/react_collapse').Collapse;
 var CollapseBody = require('../mods/composants/react_collapse').CollapseBody;
+
 var CollapseSidebar = require('../mods/composants/react_collapse').CollapseSidebar;
 
 /**
