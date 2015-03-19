@@ -1372,10 +1372,6 @@ var InputRadio = React.createClass({
     render: function () {
         // Gestion des modifications
         var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
-        // Suppression de l'attribut checked
-        //var attrs = _.omit(this.props.attributes, 'checked');
-
-        console.log('RENDER state ' + this.props.attributes.label + '%o', this.props.attributes);
 
         return (
             <Input
@@ -1455,13 +1451,21 @@ var RadioGroup = React.createClass({
     },
 
     getInitialState : function (){
-        return {};
+
+        var matrice = {};
+        // Parcours des chidren
+        _.forEach(this.props.children, function(child, index) {
+            //console.log('CHILD index %o', child);
+            // On est sur le radio cliqué
+            matrice[this.props.attributes.name+index] = child.props.attributes.checked !== undefined ? child.props.attributes.checked : false;
+        }.bind(this));
+        return matrice;
     },
 
     handleChange : function(evt){
 
-        // Attribut key du radio qui a déclenché le change
-        var index = $(evt.currentTarget).data('key');
+        // Attribut index du radio qui a déclenché le change
+        var index = $(evt.currentTarget).data('index');
 
         // Matrice {n° radio : cheched, ....}
         var matrice = {};
@@ -1469,8 +1473,21 @@ var RadioGroup = React.createClass({
         _.forEach(this.props.children, function(child) {
             //console.log('CHILD index %o', child);
             // On est sur le radio cliqué
-            matrice[child.props.attributes.key] = (child.props.attributes.key == index);
+            matrice[child.props.attributes['data-index']] = (child.props.attributes['data-index'] == index);
         });
+
+        // DÉCLENCHEMENT DE LA VALIDATION MÉTIER
+        Actions.validation.form_field_changed({
+            name: this.props.attributes.name,
+            value: $(evt.currentTarget).val(),
+            form: this.props.attributes.htmlFor
+        });
+        Actions.validation.form_field_verif({
+            name: this.props.attributes.name,
+            value: $(evt.currentTarget).val(),
+            form: this.props.attributes.htmlFor
+        });
+
         //console.log('MATRICE %o',matrice);
         // Maj render
         this.setState(matrice);
@@ -1487,8 +1504,7 @@ var RadioGroup = React.createClass({
                 attributes : _.extend(child.props.attributes, {
                     checked : this.state[this.props.attributes.name+index],
                     name: this.props.attributes.name,
-                    key: this.props.attributes.name+index,
-                    'data-key' : this.props.attributes.name+index
+                    'data-index' : this.props.attributes.name+index // index unique permettant d'identifier chaque radio
                 })
             };
             // Clone du radio
@@ -1498,7 +1514,7 @@ var RadioGroup = React.createClass({
 
         // Affichage du groupe de radio
         return (
-            <div>
+            <div className="row" key={'radio_'+this.props.attributes.name}>
                 {enfants}
             </div>
         )

@@ -337,7 +337,7 @@ var ReactPageTest = React.createClass({
                         </ButtonGroup>
                     </Col>
                 </Row>
-
+            {/* EXemple de radio inline*/}
                 <RadioGroup
                     editable={editable}
                     attributes={{
@@ -349,20 +349,50 @@ var ReactPageTest = React.createClass({
                             label: 'InputRadioEditable 1',
                             checked: true,
                             name: "a_ecraser",
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-2',
-                            groupClassName: 'row'
+                            value : 'un',
+                            groupClassName: 'col-md-2'
                         }}
+                        key = "zouzou"
                     />
                     <InputRadioEditable
                         editable={editable}
                         attributes={{
                             label: 'InputRadioEditable 2',
+                            checked: false,
                             name: "a_ecraser",
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-2',
-                            groupClassName: 'row'
-                        }} />
+                            value : 'deux',
+                            groupClassName: 'col-md-2'
+                        }}
+                        key = "pitchoune"/>
+                </RadioGroup>
+
+                 {/* EXemple de radio les uns sous les autres*/}
+                <RadioGroup
+                    editable={editable}
+                    attributes={{
+                        name: "ab"
+                    }}>
+                    <InputRadioEditable
+                        editable={editable}
+                        attributes={{
+                            label: 'A',
+                            checked: true,
+                            name: "a_ecraser",
+                            value : 'A',
+                            groupClassName: 'col-md-12'
+                        }}
+                        key = "a"
+                    />
+                    <InputRadioEditable
+                        editable={editable}
+                        attributes={{
+                            label: 'B',
+                            checked: false,
+                            name: "a_ecraser",
+                            value : 'B',
+                            groupClassName: 'col-md-12'
+                        }}
+                        key = "b"/>
                 </RadioGroup>
 
                 <InputCheckboxEditable
@@ -448,6 +478,16 @@ var storeTest = Reflux.createStore({
      */
     onForm_field_verif: function (e) {
         console.log('VERIF ' + e.name);
+
+    },
+
+    /**
+     * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
+     */
+    onSubmit_form: function (e) {
+        //console.log('DATA: %o',fData);
+        var f = $('#form_test').serializeArray();
+        console.log('DATA sur validation  %o',f);
 
     }
 });
