@@ -448,8 +448,6 @@ var storeTest = Reflux.createStore({
             default:
 
         }
-
-
         console.groupEnd();
     },
     /**

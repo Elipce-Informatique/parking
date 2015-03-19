@@ -50,59 +50,11 @@ var ModalUn = React.createClass({
             <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.props.onToggle}>
                 <div className="modal-body">
                     <Form attributes={{id: "form_modal_test_1"}}>
-                        // NOMBRE DE PLACES
-                        <InputNumberEditable
-                            attributes={
-                            {
-                                label: Lang.get('administration_parking.carte.nb_places'),
-                                min: '0',
-                                name: "nb_place",
-                                value: this.state.nom,
-                                required: false,
-                                groupClassName: 'row',
-                                wrapperClassName: 'col-md-4',
-                                labelClassName: 'col-md-4 text-right'
-                            }}
-                            editable={true}
-                            evts={{}} />
 
-                        // NOMBRE DE POTEAUX
                         <InputNumberEditable
                             attributes={
                             {
-                                label: Lang.get('administration_parking.carte.nb_places'),
-                                min: '0',
-                                name: "nb_place",
-                                value: this.state.nom,
-                                required: false,
-                                groupClassName: 'row',
-                                wrapperClassName: 'col-md-4',
-                                labelClassName: 'col-md-4 text-right'
-                            }}
-                            editable={true}
-                            evts={{}} />
-
-                        // TAILLE DES POTEAUX
-                        <InputNumberEditable
-                            attributes={
-                            {
-                                label: Lang.get('administration_parking.carte.nb_places'),
-                                min: '0',
-                                name: "nb_place",
-                                value: this.state.nom,
-                                required: false,
-                                groupClassName: 'row',
-                                wrapperClassName: 'col-md-4',
-                                labelClassName: 'col-md-4 text-right'
-                            }}
-                            editable={true}
-                            evts={{}} />
-
-                        //
-                        <InputNumberEditable
-                            attributes={
-                            {
-                                label: Lang.get('administration_parking.carte.nb_places'),
+                                label: "Ceci est un chiffre",
                                 min: '0',
                                 name: "nb_place",
                                 value: this.state.nom,
