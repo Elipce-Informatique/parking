@@ -1459,13 +1459,14 @@ var RadioGroup = React.createClass({
             // On est sur le radio cliqué
             matrice[this.props.attributes.name+index] = child.props.attributes.checked !== undefined ? child.props.attributes.checked : false;
         }.bind(this));
+
         return matrice;
     },
 
     handleChange : function(evt){
-        console.log('change');
+
         // Attribut index du radio qui a déclenché le change
-        var index = $(evt.currentTarget).data('index');
+        var index = $(evt.currentTarget).prop('tagName') == 'INPUT' ?  $(evt.currentTarget).data('index') : $(evt.currentTarget).find('input').data('index');
 
         // Matrice {n° radio : cheched, ....}
         var matrice = {};
@@ -1479,16 +1480,16 @@ var RadioGroup = React.createClass({
         // DÉCLENCHEMENT DE LA VALIDATION MÉTIER
         Actions.validation.form_field_changed({
             name: this.props.attributes.name,
-            value: $(evt.currentTarget).val(),
+            value: $(evt.currentTarget).prop('tagName') == 'INPUT' ?  $(evt.currentTarget).val() : $(evt.currentTarget).find('input').val(),
             form: this.props.attributes.htmlFor
         });
         Actions.validation.form_field_verif({
             name: this.props.attributes.name,
-            value: $(evt.currentTarget).val(),
+            value: $(evt.currentTarget).prop('tagName') == 'INPUT' ?  $(evt.currentTarget).val() : $(evt.currentTarget).find('input').val(),
             form: this.props.attributes.htmlFor
         });
 
-        //console.log('MATRICE %o',matrice);
+        //console.log('INDEX '+ index +' MATRICE  %o',matrice);
         // Maj render
         this.setState(matrice);
     },
@@ -1525,16 +1526,19 @@ var RadioGroup = React.createClass({
 
         // Parcours des chidren
         var enfants = _.map(this.props.children, function(child, index) {
-            //console.log('CHILD '+index+' %o',child);
             // Props à ajouter
             var newProps = {
-                evts : {onClick: this.handleChange},
+                evts : {},
                 attributes : _.extend(child.props.attributes, {
                     checked : this.state[this.props.attributes.name+index],
                     name: this.props.attributes.name,
                     'data-index' : this.props.attributes.name+index // index unique permettant d'identifier chaque radio
                 })
             };
+            // Evt en fonction de bootsrap ou radio classique
+            var keyEvt = this.props.bootstrap ? 'onClick' : 'onChange';
+            newProps.evts[keyEvt] = this.handleChange;
+
             // Clone du radio
             return React.cloneElement(child, newProps);
 
@@ -1546,20 +1550,72 @@ var RadioGroup = React.createClass({
     }
 });
 
-
 /**
- * Champ checkbox
- * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
- * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- * @param onChange: fonction: Par défaut mise à jour de value du champ par rapport aux saisies user. Si pas de onChange alors champ en READONLY
+ * Champ radio bootstrap (visuel bouton)
+ * @param attributes: props du radio
+ * @param evts: evenements du btn
+ * @param gestMod: bool: gestion des modifications
+ * @param attributesLabel: props du label
  */
-var InputCheckbox = React.createClass({
-    mixins: [MixinInputChecked],
+var InputRadioBootstrap = React.createClass({
 
     propTypes: {
+        attributes: React.PropTypes.object, // attributs du input type radio
+        evts: React.PropTypes.object, // Evts du Label (visuel bouton)
+        gestMod: React.PropTypes.bool,
+        attributesLabel: React.PropTypes.object // attributs du label
+    },
+
+    getDefaultProps: function () {
+        return {
+            attributes: {},
+            evts: {},
+            gestMod: true,
+            attributesLabel: {}
+        }
+    },
+
+
+    render: function () {
+        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
+        var classBtn = 'btn btn-default ';
+        classBtn += this.props.attributes.checked ? 'active' : '';
+
+        //console.log('ATTRS '+this.props.attributes.value+' %o', this.props.attributes);
+
+        return (
+            <label
+                {...this.props.evts}
+                {...this.props.attributesLabel}
+                className={classBtn + ' ' + this.props.attributes.className}>
+
+                <input
+                    {...gestMod}
+                    type="radio"
+                    {...this.props.attributes}
+                    onChange = {function(){}}
+                />
+
+                {this.props.children}
+            </label>
+        );
+    }
+});
+
+/**
+ * Champ texte editable => si pas editable INPUT devient DISABLED.
+ * A utiliser dans un RadioGroup
+ * @param editable: (bool) Si true alors INPUT sinon LABEL
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: bool: gestion des modifications
+ */
+var InputRadioBootstrapEditable = React.createClass({
+
+    propTypes: {
+        editable: React.PropTypes.bool.isRequired,
         attributes: React.PropTypes.object,
         evts: React.PropTypes.object,
-        onChange: React.PropTypes.func,
         gestMod: React.PropTypes.bool
     },
 
@@ -1567,7 +1623,46 @@ var InputCheckbox = React.createClass({
         return {
             attributes: {},
             evts: {},
-            onChange: this.handleChange,
+            gestMod: true
+        }
+    },
+
+    render: function () {;
+
+        return (
+            <InputRadioBootstrap
+                attributes = {this.props.attributes}
+                attributesLabel = {{disabled: (!this.props.editable)}}
+                evts = {this.props.evts}
+                ref="Editable"
+                gestMod={this.props.gestMod} >
+
+            {this.props.children}
+            </InputRadioBootstrap>
+        );
+    }
+});
+
+
+/**
+ * Champ checkbox
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: bool: gestion des modifications
+ */
+var InputCheckbox = React.createClass({
+    mixins: [MixinInputChecked],
+
+    propTypes: {
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        gestMod: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+        return {
+            attributes: {},
+            evts: {},
             gestMod: true
         }
     },
@@ -1629,95 +1724,6 @@ var InputCheckboxEditable = React.createClass({
             ref="Editable"
             gestMod={this.props.gestMod}
         />
-    }
-});
-
-
-/**
- * Champ radio
- * @param attributes: props du radio
- * @param evts: evenements du btn
- */
-var InputRadioBootstrap = React.createClass({
-
-    propTypes: {
-        attributes: React.PropTypes.object,
-        evts: React.PropTypes.object,
-        gestMod: React.PropTypes.bool
-    },
-
-    getDefaultProps: function () {
-        return {
-            attributes: {},
-            evts: {},
-            gestMod: true
-        }
-    },
-
-    // ATTENTION: GetInitialState est déclaré dans le MIXIN, ne pas  réimplémenter la clé value dans un eventuel getInitialState local.
-
-    render: function () {
-        var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
-        var classBtn = 'btn btn-default';
-
-        console.log('ATTRS %o', this.props.attributes);
-
-        return (
-            <label
-                {...this.props.evts}
-                className={classBtn + ' ' + this.props.attributes.className}>
-
-                <input
-                    {...gestMod}
-                    type="radio"
-                    {...this.props.attributes}
-                />
-
-                {this.props.children}
-            </label>
-        );
-    }
-});
-
-/**
- * DEPRECATED: utiliser plutot RadioGroup + InputRadio
- * Champ texte editable => si pas editable INPUT devient READONLY.
- * @param editable: (bool) Si true alors INPUT sinon LABEL
- * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
- * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
- */
-var InputRadioBootstrapEditable = React.createClass({
-
-    propTypes: {
-        editable: React.PropTypes.bool.isRequired,
-        attributes: React.PropTypes.object,
-        evts: React.PropTypes.object,
-        gestMod: React.PropTypes.bool
-    },
-
-    getDefaultProps: function () {
-        return {
-            attributes: {},
-            evts: {},
-            gestMod: true
-        }
-    },
-
-    render: function () {
-        var attr = this.props.attributes;
-        // Editable
-        attr = _.extend(attr, {disabled: (!this.props.editable)});
-
-        return (
-            <InputRadioBootstrap
-                attributes = {attr}
-                evts = {this.props.evts}
-                ref="Editable"
-                gestMod={this.props.gestMod} >
-
-            {this.props.children}
-            </InputRadioBootstrap>
-        );
     }
 });
 

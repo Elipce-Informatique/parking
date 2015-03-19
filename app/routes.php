@@ -81,10 +81,19 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     // administration
     Route::get('administration',['as'=>'administration', 'uses'=>'AdministrationController@index'] );
 
-    // test
-    Route::resource('test', 'TestController');
 });
 
+/*
+ |--------------------------------------------------------------------------
+| GROUPE RIVERSIDE
+|--------------------------------------------------------------------------
+ */
+
+// test
+Route::post('post_dump', function(){
+    dd(Input::all());
+});
+Route::resource('test', 'TestController');
 /*
 |--------------------------------------------------------------------------
 | GROUPE API MENU

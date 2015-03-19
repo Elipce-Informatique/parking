@@ -323,9 +323,8 @@ var ReactPageTest = React.createClass({
                                 key={'bt1'}
                                 editable={editable}
                                 attributes={{
-                                    /*className: 'active',*/
-                                    checked : true,
-                                    value : 'btn1'
+                                    checked: true,
+                                    value: 'btn1'
                                 }}
                             >
                                 Btn 1
@@ -334,7 +333,7 @@ var ReactPageTest = React.createClass({
                                 key={'bt2'}
                                 editable={editable}
                                 attributes={{
-                                    value : 'btn2'
+                                    value: 'btn2'
                                 }}
                             >
                                 Btn 2
@@ -353,7 +352,7 @@ var ReactPageTest = React.createClass({
                             label: 'InputRadioEditable 1',
                             checked: true,
                             name: "a_ecraser",
-                            value : 'un',
+                            value: 'un',
                             groupClassName: 'col-md-2'
                         }}
                         key = "zouzou"
@@ -364,7 +363,7 @@ var ReactPageTest = React.createClass({
                             label: 'InputRadioEditable 2',
                             checked: false,
                             name: "a_ecraser",
-                            value : 'deux',
+                            value: 'deux',
                             groupClassName: 'col-md-2'
                         }}
                         key = "pitchoune"/>
@@ -382,8 +381,8 @@ var ReactPageTest = React.createClass({
                             label: 'A',
                             checked: true,
                             name: "a_ecraser",
-                            value : 'A',
-                            groupClassName: 'col-md-12 hide'
+                            value: 'A',
+                            groupClassName: 'col-md-12'
                         }}
                         key = "a"
                     />
@@ -393,28 +392,41 @@ var ReactPageTest = React.createClass({
                             label: 'B',
                             checked: false,
                             name: "a_ecraser",
-                            value : 'B',
-                            groupClassName: 'col-md-12 hide'
+                            value: 'B',
+                            groupClassName: 'col-md-12'
                         }}
                         key = "b"/>
                 </RadioGroup>
 
-                <InputCheckboxEditable
-                    key={'bty'}
-                    attributes={{
-                        label: 'InputCheckboxEditable',
-                        name: "InputCheckboxEditable",
-                        htmlFor: 'form_test',
-                        wrapperClassName: 'col-md-4',
-                        labelClassName: 'col-md-2',
-                        groupClassName: 'row'
-                    }}
-                    editable={editable} />
+                <Row>
+                    <InputCheckboxEditable
+                        key={'bty'}
+                        attributes={{
+                            label: 'check1',
+                            name: "check[]",
+                            value: 'check1',
+                            checked: true,
+                            htmlFor: 'form_test',
+                            groupClassName: 'col-md-2'
+                        }}
+                        editable={editable} />
 
+                    <InputCheckboxEditable
+                        key={'btz'}
+                        attributes={{
+                            label: 'check2',
+                            name: "check[]",
+                            value: 'check2',
+                            checked: true,
+                            htmlFor: 'form_test',
+                            groupClassName: 'col-md-2'
+                        }}
+                        editable={editable} />
+                </Row>
                 <InputDateEditable
                     attributes={{
                         label: 'Champ date editable',
-                        name : 'date',
+                        name: 'date',
                         value: '2015-02-23',
                         htmlFor: 'form_test',
                         required: true,
@@ -517,7 +529,24 @@ var storeTest = Reflux.createStore({
     onSubmit_form: function (e) {
         //console.log('DATA: %o',fData);
         var f = $('#form_test').serializeArray();
-        console.log('DATA sur validation  %o',f);
+        f.push({name: '_token', value: $('#_token').val()});
+        console.log('DATA sur validation  %o', f);
+
+
+        $.ajax({
+            url: BASE_URI + 'post_dump',
+            data: f,
+            dataType: 'json',
+            context: this,
+            method: 'POST',
+            async: false,
+            success: function (good) {
+            },
+
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+            }
+        });
 
     }
 });
