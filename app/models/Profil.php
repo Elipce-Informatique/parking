@@ -53,7 +53,7 @@ class Profil extends Eloquent
                 ->get(['modules.id', 'modules.traduction', 'profil_module.access_level']);
         } /* Récupère uniquement les modules */
         else
-            $aTabModule = Module::all(array('id', 'traduction', DB::raw('"null" as etat')));
+            $aTabModule = Module::all(array('id', 'traduction', DB::raw('"no_access" AS etat')));
 
         return $aTabModule;
     }
@@ -104,7 +104,8 @@ class Profil extends Eloquent
         /* Vérifie que le profil n'existe pas */
         $res = Profil::getProfilExistLibelle($inputs['libelle']);
 
-        if($res['good'] == true) {
+        // Le profil n'existe pas
+        if($res['good']) {
 
             // Récupère la donnée du profil
             $fieldProfil = [];
@@ -116,31 +117,39 @@ class Profil extends Eloquent
                 // Nouveau profil
                 $idProfil = Profil::insertGetId($fieldProfil);
 
-                // Récupère les droits d'accès du profil
-                // module_id, profil_id, access_level
-                $matrice = explode(',', $inputs['matrice']);
+                // Parcours tous les champs envoyés par l'utilisateur
+                foreach ($inputs as $value => $key) {
+                    // On coupe le name courant
+                    $aEtat = explode('_',  $key);
+                    // Radio
+                    if($aEtat[0] == 'etat') {
+                        // Un accès au module est défini
+                        if ($value !== 'no_access') {
+                            // Préparation requête
+                            $ligne = [
+                                'module_id' => $aEtat[1],
+                                'profil_id' => $idProfil,
+                                'access_level' => $value
+                            ];
 
-                for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
-                    if ($matrice[$i] != 'null') {
-                        $ligne = [];
-                        $ligne['module_id'] = $matrice[$i + 1];
-                        $ligne['profil_id'] = $idProfil;
-                        $ligne['access_level'] = $matrice[$i];
-
-                        // Défini les droits associés au profil
-                        $bSave = DB::table('profil_module')->insert($ligne);
+                            // Insertion accès au module et niveau d'accès
+                            $bSave = DB::table('profil_module')->insert($ligne);
+                        }
                     }
                 }
-
+                // Envoi transaction
                 DB::commit();
                 $retour = array('idProfil' => $idProfil, 'nameProfil' => $fieldProfil['traduction'], 'save' => $bSave);
             } catch (Exception $e) {
+                // Transaction annulée
                 DB::rollback();
                 $retour = array('save' => false);
             }
         }
-        else
+        // Le profil existe déjà
+        else {
             $retour = array('save' => false);
+        }
 
         return $retour;
     }

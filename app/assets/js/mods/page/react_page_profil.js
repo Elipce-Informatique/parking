@@ -9,14 +9,16 @@ var Col = ReactB.Col;
 
 /********************************************/
 /* Gestion de la modification et des droits */
-var AuthentMixins = require('../mixins/component_access'); /* Pour le listenTo           */
-var MixinGestMod  = require('../mixins/gestion_modif');    /* Pour la gestion des modifs */
+var AuthentMixins = require('../mixins/component_access');
+/* Pour le listenTo           */
+var MixinGestMod = require('../mixins/gestion_modif');
+/* Pour la gestion des modifs */
 
 /***************************/
 /* Composant react Bandeau */
-var BandeauVisu    = require('../composants/bandeau/react_bandeau_visu');
+var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');
 var BandeauEdition = require('../composants/bandeau/react_bandeau_edition');
-var BandeauListe   = require('../composants/bandeau/react_bandeau_liste');
+var BandeauListe = require('../composants/bandeau/react_bandeau_liste');
 var BandeauGenerique = require('../composants/bandeau/react_bandeau_generique');
 
 /*********************************************/
@@ -29,11 +31,11 @@ var DataTableBandeauProfil = require('../react_data_table_bandeau_profil');
 /* Sur clic d'une ligne, déclenche l'action "handleClickProfil" */
 var headP = [Lang.get('global.profils')];
 var hideP = ['id'];
-var evtsP = {'onClick':handleClickProfil};
+var evtsP = {'onClick': handleClickProfil};
 
 /* Fonction handleClickProfil                                   */
 /* On passe par un handle pour faire la copie de l'objet cliqué */
-function handleClickProfil(evt){
+function handleClickProfil(evt) {
     var copie = _.clone(evt);
     Actions.profil.profil_select(copie);
 }
@@ -59,15 +61,17 @@ var aReactElements =
 {
     '1': {
         type: 'RadioBts',
-        names: ['visu', 'modif', 'null'],
-        libelles : [Lang.get('administration.profil.visu'), Lang.get('administration.profil.modif'), Lang.get('administration.profil.aucun')],
-        values : 'id',
-        onClick: handleClickRadio
+        name_prefix: 'etat_',
+        name_dynamic: 'id',
+        libelles: [Lang.get('administration.profil.visu'), Lang.get('administration.profil.modif'), Lang.get('administration.profil.aucun')],
+        values: ['visu','modif','no_access'],
+        onClick: handleClickRadio,
+        checked: 'access_level'
     }
 }
 
 /* Fonction handleClickRadio */
-function handleClickRadio(evt){
+function handleClickRadio(evt) {
     var copie = _.clone(evt);
     Actions.profil.radio_change(copie);
 }
@@ -80,15 +84,15 @@ function handleClickRadio(evt){
 /*                               COMPOSANT REACT PAGE PROFIL                                    */
 /*                                                                                              */
 /************************************************************************************************/
-var ReactPageProfil  = React.createClass({
+var ReactPageProfil = React.createClass({
 
     /* Ce composant gère les droits d'accès et les modifications */
-    mixins: [Reflux.ListenerMixin,AuthentMixins,MixinGestMod],
+    mixins: [Reflux.ListenerMixin, AuthentMixins, MixinGestMod],
 
     /**
      * Les props par défaut
      */
-    getDefaultProps: function() {
+    getDefaultProps: function () {
 
         return {
             module_url: 'profils'
@@ -102,9 +106,9 @@ var ReactPageProfil  = React.createClass({
     getInitialState: function () {
 
         return {
-            titrePageIni:    Lang.get('global.profils'), /* Titre initial : Profils               */
-            nameProfil :    '',                          /* Pas de profil de sélectionné          */
-            idProfil:       0,                           /* Id NULL au début                      */
+            titrePageIni: Lang.get('global.profils'), /* Titre initial : Profils               */
+            nameProfil: '', /* Pas de profil de sélectionné          */
+            idProfil: 0, /* Id NULL au début                      */
             etatPageProfil: 'liste'                      /*  Affichage initial, liste des profils */
         };
     },
@@ -146,17 +150,17 @@ var ReactPageProfil  = React.createClass({
      * Retour du store "pageProfilStore", met à jour le state de la page
      * @param data
      */
-    updateState: function(data) {
+    updateState: function (data) {
         // MAJ data automatique, lifecycle "UPDATE"
         this.setState(data);
     },
 
-    getComponentSwitchState: function(){
+    getComponentSwitchState: function () {
 
         var mode = 1;
 
         /* Selon l'état de la page */
-        switch(this.state.etatPageProfil){
+        switch (this.state.etatPageProfil) {
 
             /* On a sélectionné un profil                      */
             /* On affiche :                                    */
@@ -165,13 +169,13 @@ var ReactPageProfil  = React.createClass({
             /*    - le tableau des modules NON éditable        */
             case 'visu':
                 return <Col md={12} key="rootPageProfil">
-                                <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
-                            <Row>
-                                <Col md={12}>
-                                    <DataTableModule head={headMP} hide={hideMP} idProfil={this.state.idProfil} nameProfil={this.state.nameProfil} editable={false} id="tab_module" bUnderline={false} reactElements={aReactElements} />
-                                </Col>
-                            </Row>
-                        </Col>;
+                    <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
+                    <Row>
+                        <Col md={12}>
+                            <DataTableModule head={headMP} hide={hideMP} idProfil={this.state.idProfil} nameProfil={this.state.nameProfil} editable={false} id="tab_module" bUnderline={false} reactElements={aReactElements} />
+                        </Col>
+                    </Row>
+                </Col>;
                 break;
 
             /* On édite/créer un profil             */
@@ -182,14 +186,14 @@ var ReactPageProfil  = React.createClass({
             case 'creation':
                 mode = 0;
             case 'edition':
-                return  <Col md={12} key="rootPageProfil">
-                                <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" mode={mode} titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
-                            <Row>
-                                <Col md={12}>
-                                    <DataTableModule head={headMP} hide={hideMP} editable={true} idProfil={this.state.idProfil} nameProfil={this.state.nameProfil}  id="tab_module" bUnderline={false} reactElements={aReactElements} />
-                                </Col>
-                            </Row>
-                        </Col>;
+                return <Col md={12} key="rootPageProfil">
+                    <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" mode={mode} titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
+                    <Row>
+                        <Col md={12}>
+                            <DataTableModule head={headMP} hide={hideMP} editable={true} idProfil={this.state.idProfil} nameProfil={this.state.nameProfil}  id="tab_module" bUnderline={false} reactElements={aReactElements} />
+                        </Col>
+                    </Row>
+                </Col>;
                 break;
 
             /* On arrive sur la page "Profils" */
@@ -198,21 +202,21 @@ var ReactPageProfil  = React.createClass({
             /*    - le tableau des profils     */
             case 'liste':
             default:
-                return  <Col md={12}  key="rootPageProfil">
+                return <Col md={12}  key="rootPageProfil">
 
                     <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" titre={this.state.titrePageIni} />
-                            <Row>
-                                <Col md={12}>
-                                    <DataTableBandeauProfil id="tableProfils" head={headP} hide={hideP} evts={evtsP} />
-                                </Col>
-                            </Row>
-                        </Col>;
+                    <Row>
+                        <Col md={12}>
+                            <DataTableBandeauProfil id="tableProfils" head={headP} hide={hideP} evts={evtsP} />
+                        </Col>
+                    </Row>
+                </Col>;
                 break;
         }
     },
 
-    onRetour: function(){
-        this.setState({etatPageProfil:'liste', titrePage:Lang.get('global.profils'), idProfil:0, nameProfil:''});
+    onRetour: function () {
+        this.setState({etatPageProfil: 'liste', titrePage: Lang.get('global.profils'), idProfil: 0, nameProfil: ''});
     }
 });
 module.exports = ReactPageProfil;
@@ -235,36 +239,36 @@ module.exports = ReactPageProfil;
 /*              Store associé à la page profil                          */
 /************************************************************************/
 var pageProfilStore = Reflux.createStore({
-    idProfilSelect:0,
-    nameProfil:'',
-    isNameProfilModif:false,
+    idProfilSelect: 0,
+    nameProfil: '',
+    isNameProfilModif: false,
     matriceBtnRadio: {},
-    isMatriceModuleModif:false,
+    isMatriceModuleModif: false,
 
     // Initial setup
-    init: function() {
+    init: function () {
         this.listenTo(Actions.profil.profil_select, this.profilSelect);
-        this.listenTo(Actions.profil.initMatrice,   this.initMatrice);
-        this.listenTo(Actions.bandeau.creer,        this.createProfil);
-        this.listenTo(Actions.bandeau.editer,       this.editProfil);
-        this.listenTo(Actions.bandeau.supprimer,    this.supprProfil);
+        this.listenTo(Actions.profil.initMatrice, this.initMatrice);
+        this.listenTo(Actions.bandeau.creer, this.createProfil);
+        this.listenTo(Actions.bandeau.editer, this.editProfil);
+        this.listenTo(Actions.bandeau.supprimer, this.supprProfil);
         this.listenTo(Actions.validation.submit_form, this.saveProfil);
-        this.listenTo(Actions.profil.radio_change,  this.radioChange);
+        this.listenTo(Actions.profil.radio_change, this.radioChange);
     },
 
-    getInitialState:function(){
-        return {etatPageProfil:'liste'};
+    getInitialState: function () {
+        return {etatPageProfil: 'liste'};
     },
 
-    initMatrice: function(data){
+    initMatrice: function (data) {
         var indice = 0;
-        var etat   = '';
+        var etat = '';
         this.matriceBtnRadio = {};
 
-        _.each(data, function(val, key){
-            etat =  data[indice]['access_level'];
+        _.each(data, function (val, key) {
+            etat = data[indice]['access_level'];
 
-            if(etat != 'visu' && etat != 'modif')
+            if (etat != 'visu' && etat != 'modif')
                 etat = 'null';
 
             this.matriceBtnRadio[data[indice]['id']] = etat;
@@ -272,14 +276,14 @@ var pageProfilStore = Reflux.createStore({
         }, this);
     },
 
-    profilSelect: function(evt){
+    profilSelect: function (evt) {
         /* On a un profil de sélectionné */
-        if($(evt.currentTarget).hasClass('row_selected')) {
+        if ($(evt.currentTarget).hasClass('row_selected')) {
             this.idProfilSelect = $(evt.currentTarget).data('id');
         }
 
-        if(this.idProfilSelect == 0)
-             this.nameProfil = '';
+        if (this.idProfilSelect == 0)
+            this.nameProfil = '';
         else {
 
             var that = this;
@@ -292,7 +296,7 @@ var pageProfilStore = Reflux.createStore({
                 async: false,
                 success: function (data) {
                     that.nameProfil = data.traduction;
-                    that.trigger({idProfil:that.idProfilSelect, etatPageProfil:'visu', nameProfil:that.nameProfil});
+                    that.trigger({idProfil: that.idProfilSelect, etatPageProfil: 'visu', nameProfil: that.nameProfil});
                 },
                 error: function (xhr, status, err) {
                     console.error(status, err.toString());
@@ -301,17 +305,17 @@ var pageProfilStore = Reflux.createStore({
         }
     },
 
-    createProfil: function(){
+    createProfil: function () {
         this.idProfilSelect = 0;
-        this.trigger({etatPageProfil:'creation', nameProfil:'', idProfil:0});
+        this.trigger({etatPageProfil: 'creation', nameProfil: '', idProfil: 0});
     },
 
-    editProfil: function(){
-        this.trigger({etatPageProfil:'edition'});
+    editProfil: function () {
+        this.trigger({etatPageProfil: 'edition'});
     },
 
-    supprProfil: function(){
-        if(this.idProfilSelect == 0)
+    supprProfil: function () {
+        if (this.idProfilSelect == 0)
             this.nameProfil = '';
         else {
 
@@ -319,7 +323,7 @@ var pageProfilStore = Reflux.createStore({
             var suppr = this.getIsProfilUse(this.idProfilSelect);
 
             /* Un utilisateur est associé au profil, demande de confirmation de suppression */
-            if(suppr == true){
+            if (suppr == true) {
                 setTimeout(function () {
                     swal({
                             title: Lang.get('global.attention'),
@@ -343,7 +347,7 @@ var pageProfilStore = Reflux.createStore({
         }
     },
 
-    supprProfilAjax: function(){
+    supprProfilAjax: function () {
         var that = this;
 
         // AJAX
@@ -367,7 +371,7 @@ var pageProfilStore = Reflux.createStore({
         }, that);
     },
 
-    getIsProfilUse: function(idProfil){
+    getIsProfilUse: function (idProfil) {
         var that = this;
         var retour = false;
 
@@ -389,22 +393,22 @@ var pageProfilStore = Reflux.createStore({
         return retour;
     },
 
-    saveProfil: function(){
+    saveProfil: function () {
         // Variables
-        var url = BASE_URI+'profils/'+(this.idProfilSelect===0?'':this.idProfilSelect);
+        var url = BASE_URI + 'profils/' + (this.idProfilSelect === 0 ? '' : this.idProfilSelect);
 
-        var method = this.idProfilSelect===0?'POST':'PUT';
+        var method = this.idProfilSelect === 0 ? 'POST' : 'PUT';
 
         var matrice = [];
-        var that    = this;
-        var indice  = 0;
-        _.each(this.matriceBtnRadio, function($key, $value){
+        var that = this;
+        var indice = 0;
+        _.each(this.matriceBtnRadio, function ($key, $value) {
             matrice.push([$key, $value]);
         }, that);
 
         var data = $('form').serializeArray();
-        data.push({name:'_token',  value:$('#_token').val()});
-        data.push({name:'matrice', value:matrice});
+        data.push({name: '_token', value: $('#_token').val()});
+        //data.push({name: 'matrice', value: matrice});
 
         // Requête
         $.ajax({
@@ -413,35 +417,35 @@ var pageProfilStore = Reflux.createStore({
             context: this,
             type: method,
             data: data,
-            success: function(tab) {
-                // TODO NOTIFICATION
-                //Notif tab['save']
-                if(tab.save == true) {
+            success: function (tab) {
+                if (tab.save == true) {
                     that.idProfilSelect = tab.idProfil;
 
                     // Passe variable aux composants qui écoutent l'action actionLoadData
-                    this.trigger({idProfil: (tab.idProfil*1), etatPageProfil: 'edition', nameProfil: tab.nameProfil});
+                    this.trigger({idProfil: (tab.idProfil * 1), etatPageProfil: 'edition', nameProfil: tab.nameProfil});
 
                     Actions.notif.success(Lang.get('global.notif_success'));
                 }
                 else
                     Actions.notif.error(Lang.get('global.notif_erreur'));
             },
-            error: function(xhr, status, err) {
-                console.error( status, err.toString());
-                Actions.notif.error('AJAX : '+Lang.get('global.notif_erreur'));
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+                Actions.notif.error('AJAX : ' + Lang.get('global.notif_erreur'));
             }
         }, that);
     },
 
-    radioChange: function(evt){
+    radioChange: function (evt) {
         //console.log('radioChange');
 
         /* Récupère les données du radio bouton */
-        Etat      = $(evt.currentTarget).data('etat');     /* 'visu', 'modif' ou 'aucun' */
-        idModule  = $(evt.currentTarget).data('id'); /* id du module concerné      */
+        Etat = $(evt.currentTarget).data('etat');
+        /* 'visu', 'modif' ou 'aucun' */
+        idModule = $(evt.currentTarget).data('id');
+        /* id du module concerné      */
 
-        if(Etat != 'visu' && Etat != 'modif')
+        if (Etat != 'visu' && Etat != 'modif')
             Etat = 'null';
 
         /* Mise a jour de la matrice */
@@ -454,7 +458,7 @@ var pageProfilStore = Reflux.createStore({
     /**
      * Modification du libelle du profil
      */
-    libelleChange: function() {
+    libelleChange: function () {
         this.isNameProfilModif = true;
     }
 });
