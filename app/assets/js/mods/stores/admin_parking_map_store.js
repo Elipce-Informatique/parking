@@ -30,9 +30,15 @@ var store = Reflux.createStore({
         allees: [],
         zones: [],
         afficheurs: [],
-        lastDraw: {}
+        lastDraw: {},
+        lastParallelogramme: {}
     },
-    listenables: Actions.map,
+
+    /**
+     * GROUPES D'ACTIONS À ÉCOUTER
+     */
+    listenables: [Actions.map, Actions.validation],
+
     getInitialState: function () {
         return {};
     },
@@ -60,6 +66,8 @@ var store = Reflux.createStore({
 
             // LE PARALLÉLOGRAMME N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
             if (!_.isEmpty(data)) {
+                // on garde le parallélogramme dans le store pour le retour de la popup
+                this._inst.lastParallelogramme = data;
                 var retour = {
                     type: mapOptions.type_messages.new_place_auto,
                     data: data
@@ -160,6 +168,66 @@ var store = Reflux.createStore({
         this.trigger(retour);
     },
 
+    /**
+     * ---------------------------------------------------------------------------
+     * VALIDATION DES FORMULAIRES ------------------------------------------------
+     * ---------------------------------------------------------------------------
+     */
+
+    /**
+     * Appellée quand un formulaire a été validé syntaxiquement et métierment parlent.
+     * @param formDom : noeud racine contenant le formulaire
+     * @param formId : id du formulaire
+     */
+    onSubmit_form: function (formDom, formId) {
+        console.group('- - - - - Pass onSubmitForm');
+        console.log('DOM du form : %o', formDom);
+        console.log('ID du form : ' + formId);
+        console.groupEnd();
+
+        // SÉLECTION DU FORMULAIRE POUR TRAITER L'ACTION
+        switch (formId) {
+            case "form_mod_places_multiples":
+                this.handlePlacesMultiples(formDom);
+                break;
+            default:
+        }
+    },
+
+    /**
+     * Récupère les données de la popup de création de plusieurs places.
+     *
+     */
+    handlePlacesMultiples: function (formDom) {
+        console.log('Parallélogramme pour créer les places multiples : %o', this._inst.lastParallelogramme.e.layer._latlngs);
+        var $form = $(formDom);
+        var nbPlaces = $form.find('[name=nb_place]').val(),
+            spacePoteaux = $form.find('[name=nb_poteaux]').val(),
+            largPoteaux = $form.find('[name=taille_poteaux]').val(),
+            pref = $form.find('[name=prefixe]').val(),
+            inc = $form.find('[name=increment]').val(),
+            suff = $form.find('[name=suffixe]').val();
+        console.log(
+            'Places : ' + nbPlaces +
+            ' Espace poteaux : ' + spacePoteaux +
+            ' Largeur poteaux : ' + largPoteaux +
+            ' Préfixe : ' + pref +
+            ' Inc : ' + inc +
+            ' Suff : ' + suff);
+
+        // CONTRÔLE DES NOMBRES ENTRÉS
+        if (parseInt(spacePoteaux) < parseInt(nbPlaces)) {
+            console.log('Nombre de poteaux OK');
+        } else {
+            swal(Lang.get('administration_parking.carte.swal_interval_incorrect'));
+        }
+    },
+
+    /**
+     * ---------------------------------------------------------------------------
+     * UTILITAIRES DIVERSES ------------------------------------------------------
+     * ---------------------------------------------------------------------------
+     */
     /**
      * Les data correspondent au layer créé par le plugin. Le premier test consiste à vérifier qu'on ait 3 points
      * @param data : le Layer créé par le plugin de map

@@ -13,7 +13,6 @@ var Button = ReactB.Button;
 
 
 // UTILITAIRES
-var ListenerMixin = Reflux.ListenerMixin;
 
 
 /**
@@ -22,7 +21,7 @@ var ListenerMixin = Reflux.ListenerMixin;
  * @param defaultDrawMode :
  */
 var parkingMap = React.createClass({
-    mixins: [ListenerMixin, ReactB.OverlayMixin],
+    mixins: [Reflux.ListenerMixin, ReactB.OverlayMixin],
     /**
      * Définition du type des props du composant.
      */

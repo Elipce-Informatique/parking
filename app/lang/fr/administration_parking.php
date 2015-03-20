@@ -31,18 +31,20 @@ return array(
     // MODULE CARTE
     'carte' => [
         'erreur_polygon' => 'Les lignes d\'un polygon ne peuvent pas se croiser',
+        'titre_places_multiples' => 'Configuration de la série de places',
         'ajouter_place' => 'Ajouter une place',
         'ajouter_place_auto' => 'Ajouter une série de places',
         'ajouter_allee' => 'Ajouter une allée',
         'ajouter_zone' => 'Ajouter une zone',
         'ajouter_afficheur' => 'Ajouter un afficheur',
         'nb_places' => 'Nombre de places',
-        'nb_poteaux' => 'Nombre de poteaux',
-        'largeur_poteaux' => 'Largeur des poteaux',
+        'intervalle_poteaux' => 'Espacement poteaux (nb places)',
+        'largeur_poteaux' => 'Largeur des poteaux (cm)',
         'pref' => 'Pref.',
         'incr' => 'Inc.',
         'suff' => 'Suff.',
         '3_points_seulement' => 'Merci de tracer exactement 3 points !',
+        'swal_interval_incorrect' => 'L\'interval entre les poteaux est incorrect, il doit être inférieur au nombre de places saisi.'
     ],
 
     // MODULE TEMPS REEL

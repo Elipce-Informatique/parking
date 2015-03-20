@@ -52,9 +52,12 @@ var ModalPlaces = React.createClass({
 
     render: function () {
         return (
-            <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.props.onToggle}>
-                <div className="modal-body">
+            <Modal
+                bsStyle="primary"
+                title={Lang.get('administration_parking.carte.titre_places_multiples')}
+                onRequestHide={this.props.onToggle}>
 
+                <div className="modal-body">
                     <Form attributes={{id: "form_mod_places_multiples"}}>
                     {/***********************************************************************/}
                     {/* NB PLACES */}
@@ -73,13 +76,13 @@ var ModalPlaces = React.createClass({
                             editable={true}
                             evts={{}} />
 
-                    {/* NB POTEAUX */}
+                    {/* INTERVALLE POTEAUX */}
                         <InputNumberEditable
                             attributes={
                             {
-                                label: Lang.get('administration_parking.carte.nb_poteaux'),
+                                label: Lang.get('administration_parking.carte.intervalle_poteaux'),
                                 min: '0',
-                                name: "nb_place",
+                                name: "nb_poteaux",
                                 value: this.state.nom,
                                 required: false,
                                 groupClassName: 'row',
@@ -95,7 +98,7 @@ var ModalPlaces = React.createClass({
                             {
                                 label: Lang.get('administration_parking.carte.largeur_poteaux'),
                                 min: '0',
-                                name: "nb_place",
+                                name: "taille_poteaux",
                                 value: this.state.nom,
                                 required: false,
                                 groupClassName: 'row',
@@ -109,69 +112,68 @@ var ModalPlaces = React.createClass({
                         <Row>
                     {/* PRÉFIXE */}
                             <Col md={4}>
-                                <Row>
-                                    <InputTextEditable
-                                        attributes={
-                                        {
-                                            label: Lang.get('administration_parking.carte.pref'),
-                                            name: "nb_place",
-                                            value: this.state.nom,
-                                            required: false,
-                                            groupClassName: '',
-                                            wrapperClassName: 'col-md-9',
-                                            labelClassName: 'col-md-3 text-right'
-                                        }}
-                                        editable={true}
-                                        evts={{}} />
-                                </Row>
+                                <InputTextEditable
+                                    attributes={
+                                    {
+                                        label: Lang.get('administration_parking.carte.pref'),
+                                        name: "prefixe",
+                                        value: this.state.nom,
+                                        required: false,
+                                        groupClassName: 'row',
+                                        wrapperClassName: 'col-md-9',
+                                        labelClassName: 'col-md-3 text-right'
+                                    }}
+                                    editable={true}
+                                    evts={{}} />
                             </Col>
 
                     {/* INCREMENT */}
                             <Col md={4}>
-                                <Row>
-                                    <InputNumberEditable
-                                        attributes={
-                                        {
-                                            label: Lang.get('administration_parking.carte.incr'),
-                                            min: '0',
-                                            name: "nb_place",
-                                            value: this.state.nom,
-                                            required: false,
-                                            groupClassName: '',
-                                            wrapperClassName: 'col-md-9',
-                                            labelClassName: 'col-md-3 text-right'
-                                        }}
-                                        editable={true}
-                                        evts={{}} />
-                                </Row>
+                                <InputNumberEditable
+                                    attributes={
+                                    {
+                                        label: Lang.get('administration_parking.carte.incr'),
+                                        min: '0',
+                                        name: "increment",
+                                        value: this.state.nom,
+                                        required: false,
+                                        groupClassName: 'row',
+                                        wrapperClassName: 'col-md-9',
+                                        labelClassName: 'col-md-3 text-right'
+                                    }}
+                                    editable={true}
+                                    evts={{}} />
                             </Col>
 
                     {/* SUFFIXE */}
                             <Col md={4}>
-                                <Row>
-                                    <InputTextEditable
-                                        attributes={
-                                        {
-                                            label: Lang.get('administration_parking.carte.suff'),
-                                            name: "nb_place",
-                                            value: this.state.nom,
-                                            required: false,
-                                            groupClassName: '',
-                                            wrapperClassName: 'col-md-9',
-                                            labelClassName: 'col-md-3 text-right'
-                                        }}
-                                        editable={true}
-                                        evts={{}} />
-                                </Row>
+                                <InputTextEditable
+                                    attributes={
+                                    {
+                                        label: Lang.get('administration_parking.carte.suff'),
+                                        name: "suffixe",
+                                        value: this.state.nom,
+                                        required: false,
+                                        groupClassName: 'row',
+                                        wrapperClassName: 'col-md-9',
+                                        labelClassName: 'col-md-3 text-right'
+                                    }}
+                                    editable={true}
+                                    evts={{}} />
                             </Col>
                         </Row>
                 {/***********************************************************************/}
                     </Form>
-
                 </div>
+
                 <div className="modal-footer">
-                    <Button onClick={this.props.onToggle}>{Lang.get('global.annuler')}</Button>
-                    <BtnSave form_id="form_mod_places_multiples" libelle={Lang.get('global.create')} />
+                    <Button
+                        onClick={this.props.onToggle}>
+                            {Lang.get('global.annuler')}
+                    </Button>
+                    <BtnSave
+                        form_id="form_mod_places_multiples"
+                        libelle={Lang.get('global.create')} />
                 </div>
             </Modal>
         );
