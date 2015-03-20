@@ -5,7 +5,8 @@ var ComponentAccessMixins = require('../../mixins/component_access');
 var MixinGestMod = require('../../mixins/gestion_modif');
 
 var Field = require('../formulaire/react_form_fields');
-var Form = require('../formulaire/react_form_fields');
+var Form = Field.Form;
+var BtnSave = Field.BtnSave;
 var InputTextEditable = Field.InputTextEditable;
 var InputNumberEditable = Field.InputNumberEditable;
 var Modal = ReactB.Modal;
@@ -54,122 +55,123 @@ var ModalPlaces = React.createClass({
             <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.props.onToggle}>
                 <div className="modal-body">
 
-
+                    <Form attributes={{id: "form_mod_places_multiples"}}>
                     {/***********************************************************************/}
                     {/* NB PLACES */}
-                    <InputNumberEditable
-                        attributes={
-                        {
-                            label: Lang.get('administration_parking.carte.nb_places'),
-                            min: '0',
-                            name: "nb_place",
-                            value: this.state.nom,
-                            required: false,
-                            groupClassName: 'row',
-                            wrapperClassName: 'col-md-3',
-                            labelClassName: 'col-md-6 text-right'
-                        }}
-                        editable={true}
-                        evts={{}} />
+                        <InputNumberEditable
+                            attributes={
+                            {
+                                label: Lang.get('administration_parking.carte.nb_places'),
+                                min: '0',
+                                name: "nb_place",
+                                value: this.state.nom,
+                                required: false,
+                                groupClassName: 'row',
+                                wrapperClassName: 'col-md-3',
+                                labelClassName: 'col-md-6 text-right'
+                            }}
+                            editable={true}
+                            evts={{}} />
 
                     {/* NB POTEAUX */}
-                    <InputNumberEditable
-                        attributes={
-                        {
-                            label: Lang.get('administration_parking.carte.nb_poteaux'),
-                            min: '0',
-                            name: "nb_place",
-                            value: this.state.nom,
-                            required: false,
-                            groupClassName: 'row',
-                            wrapperClassName: 'col-md-3',
-                            labelClassName: 'col-md-6 text-right'
-                        }}
-                        editable={true}
-                        evts={{}} />
+                        <InputNumberEditable
+                            attributes={
+                            {
+                                label: Lang.get('administration_parking.carte.nb_poteaux'),
+                                min: '0',
+                                name: "nb_place",
+                                value: this.state.nom,
+                                required: false,
+                                groupClassName: 'row',
+                                wrapperClassName: 'col-md-3',
+                                labelClassName: 'col-md-6 text-right'
+                            }}
+                            editable={true}
+                            evts={{}} />
 
                     {/* TAILLE POTEAUX */}
-                    <InputNumberEditable
-                        attributes={
-                        {
-                            label: Lang.get('administration_parking.carte.largeur_poteaux'),
-                            min: '0',
-                            name: "nb_place",
-                            value: this.state.nom,
-                            required: false,
-                            groupClassName: 'row',
-                            wrapperClassName: 'col-md-3',
-                            labelClassName: 'col-md-6 text-right'
-                        }}
-                        editable={true}
-                        evts={{}} />
+                        <InputNumberEditable
+                            attributes={
+                            {
+                                label: Lang.get('administration_parking.carte.largeur_poteaux'),
+                                min: '0',
+                                name: "nb_place",
+                                value: this.state.nom,
+                                required: false,
+                                groupClassName: 'row',
+                                wrapperClassName: 'col-md-3',
+                                labelClassName: 'col-md-6 text-right'
+                            }}
+                            editable={true}
+                            evts={{}} />
 
                     {/***********************************************************************/}
-                    <Row>
+                        <Row>
                     {/* PRÉFIXE */}
-                        <Col md={4}>
-                            <Row>
-                                <InputTextEditable
-                                    attributes={
-                                    {
-                                        label: Lang.get('administration_parking.carte.pref'),
-                                        name: "nb_place",
-                                        value: this.state.nom,
-                                        required: false,
-                                        groupClassName: '',
-                                        wrapperClassName: 'col-md-9',
-                                        labelClassName: 'col-md-3 text-right'
-                                    }}
-                                    editable={true}
-                                    evts={{}} />
-                            </Row>
-                        </Col>
+                            <Col md={4}>
+                                <Row>
+                                    <InputTextEditable
+                                        attributes={
+                                        {
+                                            label: Lang.get('administration_parking.carte.pref'),
+                                            name: "nb_place",
+                                            value: this.state.nom,
+                                            required: false,
+                                            groupClassName: '',
+                                            wrapperClassName: 'col-md-9',
+                                            labelClassName: 'col-md-3 text-right'
+                                        }}
+                                        editable={true}
+                                        evts={{}} />
+                                </Row>
+                            </Col>
 
                     {/* INCREMENT */}
-                        <Col md={4}>
-                            <Row>
-                                <InputNumberEditable
-                                    attributes={
-                                    {
-                                        label: Lang.get('administration_parking.carte.incr'),
-                                        min: '0',
-                                        name: "nb_place",
-                                        value: this.state.nom,
-                                        required: false,
-                                        groupClassName: '',
-                                        wrapperClassName: 'col-md-9',
-                                        labelClassName: 'col-md-3 text-right'
-                                    }}
-                                    editable={true}
-                                    evts={{}} />
-                            </Row>
-                        </Col>
+                            <Col md={4}>
+                                <Row>
+                                    <InputNumberEditable
+                                        attributes={
+                                        {
+                                            label: Lang.get('administration_parking.carte.incr'),
+                                            min: '0',
+                                            name: "nb_place",
+                                            value: this.state.nom,
+                                            required: false,
+                                            groupClassName: '',
+                                            wrapperClassName: 'col-md-9',
+                                            labelClassName: 'col-md-3 text-right'
+                                        }}
+                                        editable={true}
+                                        evts={{}} />
+                                </Row>
+                            </Col>
 
                     {/* SUFFIXE */}
-                        <Col md={4}>
-                            <Row>
-                                <InputTextEditable
-                                    attributes={
-                                    {
-                                        label: Lang.get('administration_parking.carte.suff'),
-                                        name: "nb_place",
-                                        value: this.state.nom,
-                                        required: false,
-                                        groupClassName: '',
-                                        wrapperClassName: 'col-md-9',
-                                        labelClassName: 'col-md-3 text-right'
-                                    }}
-                                    editable={true}
-                                    evts={{}} />
-                            </Row>
-                        </Col>
-                    </Row>
+                            <Col md={4}>
+                                <Row>
+                                    <InputTextEditable
+                                        attributes={
+                                        {
+                                            label: Lang.get('administration_parking.carte.suff'),
+                                            name: "nb_place",
+                                            value: this.state.nom,
+                                            required: false,
+                                            groupClassName: '',
+                                            wrapperClassName: 'col-md-9',
+                                            labelClassName: 'col-md-3 text-right'
+                                        }}
+                                        editable={true}
+                                        evts={{}} />
+                                </Row>
+                            </Col>
+                        </Row>
                 {/***********************************************************************/}
+                    </Form>
 
                 </div>
                 <div className="modal-footer">
                     <Button onClick={this.props.onToggle}>{Lang.get('global.annuler')}</Button>
-                    <Button bsStyle="success" onClick={this.props.onToggle}>{Lang.get('global.sauvegarder')}</Button>
+                    <BtnSave form_id="form_mod_places_multiples" libelle={Lang.get('global.create')} />
                 </div>
             </Modal>
         );
