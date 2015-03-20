@@ -98,6 +98,8 @@ class Profil extends Eloquent
      */
     public static function creerProfil($inputs)
     {
+        Log::warning('Creer profil'.print_r($inputs, true));
+
         // Variables
         $bSave    = true;
 

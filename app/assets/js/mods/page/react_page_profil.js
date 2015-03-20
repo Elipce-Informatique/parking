@@ -1,5 +1,6 @@
 /**
  * Created by Pierre on 16/12/2014.
+ * Modified by Vivian on 20/03/2015
  */
 var React = require('react/addons');
 /***********************/
@@ -7,76 +8,20 @@ var React = require('react/addons');
 var Row = ReactB.Row;
 var Col = ReactB.Col;
 
-/********************************************/
-/* Gestion de la modification et des droits */
+/*******   MIXIN  ************/
 var AuthentMixins = require('../mixins/component_access');
-/* Pour le listenTo           */
 var MixinGestMod = require('../mixins/gestion_modif');
-/* Pour la gestion des modifs */
 
 /***************************/
-/* Composant react Bandeau */
+/* Composants react  */
 var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');
 var BandeauEdition = require('../composants/bandeau/react_bandeau_edition');
 var BandeauListe = require('../composants/bandeau/react_bandeau_liste');
 var BandeauGenerique = require('../composants/bandeau/react_bandeau_generique');
-
-/*********************************************/
-/* Composant react_data_table_bandeau_profil */
 var DataTableBandeauProfil = require('../react_data_table_bandeau_profil');
-
-/* Paramètres du composant react_data_table_bandeau_profil      */
-/* Entête(s) du tableau : "Profils"                             */
-/* Champ(s) caché(s)    : "id"                                  */
-/* Sur clic d'une ligne, déclenche l'action "handleClickProfil" */
-var headP = [Lang.get('global.profils')];
-var hideP = ['id'];
-var evtsP = {'onClick': handleClickProfil};
-
-/* Fonction handleClickProfil                                   */
-/* On passe par un handle pour faire la copie de l'objet cliqué */
-function handleClickProfil(evt) {
-    var copie = _.clone(evt);
-    Actions.profil.profil_select(copie);
-}
-/*       FIN : Composant react_data_table_bandeau_profil        */
-/****************************************************************/
-
-/****************************************************************/
-/*          Composant react_data_table_bandeau_module           */
-
 var DataTableModule = require('../react_data_table_module').composant;
 
-/* Paramètres du composant react_data_table_module_profil            */
-/* Entête(s) du tableau : "Module, Droits                            */
-/* Champ(s) caché(s)    : "idModule"                                 */
-var headMP = [Lang.get('administration.profil.module'), Lang.get('global.droits')];
-var hideMP = ['id'];
 
-/* Paramètres pour les radios Boutons                                */
-/* Libelles : "Visu, Modif, Aucun"                                   */
-/* Name     : "btnVisu, btnModif, btnAucun                           */
-/* Sur clic d'un radio bouton, déclenche l'action "handleClickRadio" */
-var aReactElements =
-{
-    '1': {
-        type: 'RadioBts',
-        name_prefix: 'etat_',
-        name_dynamic: 'id',
-        libelles: [Lang.get('administration.profil.visu'), Lang.get('administration.profil.modif'), Lang.get('administration.profil.aucun')],
-        values: ['visu','modif','no_access'],
-        onClick: handleClickRadio,
-        checked: 'access_level'
-    }
-}
-
-/* Fonction handleClickRadio */
-function handleClickRadio(evt) {
-    var copie = _.clone(evt);
-    Actions.profil.radio_change(copie);
-}
-/*      FIN : Composant react_data_table_bandeau_module         */
-/****************************************************************/
 
 
 /************************************************************************************************/
@@ -85,6 +30,8 @@ function handleClickRadio(evt) {
 /*                                                                                              */
 /************************************************************************************************/
 var ReactPageProfil = React.createClass({
+
+
 
     /* Ce composant gère les droits d'accès et les modifications */
     mixins: [Reflux.ListenerMixin, AuthentMixins, MixinGestMod],
@@ -137,13 +84,12 @@ var ReactPageProfil = React.createClass({
         return true;
     },
 
-    /**
-     * Méthode appellée pour construire le composant.
-     * A chaque fois que son contenu est mis à jour.
-     * @returns {XML}
-     */
-    render: function () {
-        return this.getComponentSwitchState();
+    handleClickProfil : function(evt) {
+        Actions.profil.profil_select(_.clone(evt));
+    },
+
+    handleClickRadio: function(evt) {
+        Actions.profil.radio_change(_.clone(evt));
     },
 
     /**
@@ -156,8 +102,21 @@ var ReactPageProfil = React.createClass({
     },
 
     getComponentSwitchState: function () {
-
+        // Variables
         var mode = 1;
+        // Paramètres pour les radios Boutons
+        var aReactElements =
+        {
+            '1': {
+                type: 'RadioBts',
+                name_prefix: 'etat_',
+                name_dynamic: 'id',
+                libelles: [Lang.get('administration.profil.visu'), Lang.get('administration.profil.modif'), Lang.get('administration.profil.aucun')],
+                values: ['visu','modif','no_access'],
+                onClick: this.handleClickRadio,
+                checked: 'access_level'
+            }
+        }
 
         /* Selon l'état de la page */
         switch (this.state.etatPageProfil) {
@@ -172,7 +131,15 @@ var ReactPageProfil = React.createClass({
                     <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
                     <Row>
                         <Col md={12}>
-                            <DataTableModule head={headMP} hide={hideMP} idProfil={this.state.idProfil} nameProfil={this.state.nameProfil} editable={false} id="tab_module" bUnderline={false} reactElements={aReactElements} />
+                            <DataTableModule
+                                head={[Lang.get('administration.profil.module'), Lang.get('global.droits')]}
+                                hide={['id']}
+                                idProfil={this.state.idProfil}
+                                nameProfil={this.state.nameProfil}
+                                editable={false}
+                                id="tab_module"
+                                bUnderline={false}
+                                reactElements={aReactElements} />
                         </Col>
                     </Row>
                 </Col>;
@@ -190,7 +157,15 @@ var ReactPageProfil = React.createClass({
                     <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" mode={mode} titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
                     <Row>
                         <Col md={12}>
-                            <DataTableModule head={headMP} hide={hideMP} editable={true} idProfil={this.state.idProfil} nameProfil={this.state.nameProfil}  id="tab_module" bUnderline={false} reactElements={aReactElements} />
+                            <DataTableModule
+                                head={[Lang.get('administration.profil.module'), Lang.get('global.droits')]}
+                                hide={['id']}
+                                editable={true}
+                                idProfil={this.state.idProfil}
+                                nameProfil={this.state.nameProfil}
+                                id="tab_module"
+                                bUnderline={false}
+                                reactElements={aReactElements} />
                         </Col>
                     </Row>
                 </Col>;
@@ -207,7 +182,11 @@ var ReactPageProfil = React.createClass({
                     <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" titre={this.state.titrePageIni} />
                     <Row>
                         <Col md={12}>
-                            <DataTableBandeauProfil id="tableProfils" head={headP} hide={hideP} evts={evtsP} />
+                            <DataTableBandeauProfil
+                                id="tableProfils"
+                                head={[Lang.get('global.profils')]}
+                                hide={['id']}
+                                evts={{'onClick': this.handleClickProfil}} />
                         </Col>
                     </Row>
                 </Col>;
@@ -217,6 +196,16 @@ var ReactPageProfil = React.createClass({
 
     onRetour: function () {
         this.setState({etatPageProfil: 'liste', titrePage: Lang.get('global.profils'), idProfil: 0, nameProfil: ''});
+    },
+
+
+    /**
+     * Méthode appellée pour construire le composant.
+     * A chaque fois que son contenu est mis à jour.
+     * @returns {XML}
+     */
+    render: function () {
+        return this.getComponentSwitchState();
     }
 });
 module.exports = ReactPageProfil;
