@@ -1417,7 +1417,8 @@ var InputRadioEditable = React.createClass({
             attr = _.extend(attr, {disabled: true});// readOnly ne fait rien
         }
         //console.log(attr);
-        return <InputRadio
+        return
+        <InputRadio
             attributes = {attr}
             evts = {this.props.evts}
             ref="Editable"

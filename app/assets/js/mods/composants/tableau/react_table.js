@@ -1,5 +1,5 @@
 var React = require('react/addons');
-var ButtonGroup = ReactB.ButtonGroup;
+var RadioGroup = ReactB.RadioGroup;
 var Field                       = require('../formulaire/react_form_fields');
 var InputRadioBootstrapEditable = Field.InputRadioBootstrapEditable;
 var InputRadioEditable          = Field.InputRadioEditable;
@@ -57,7 +57,14 @@ var Table = React.createClass({
             // Parcours des lignes du tableau
             this.props.data.forEach(function(dataLine, index) {
                 // Ajout du TR
-                corps.push(<TableTr key={index} data={dataLine} hide={that.props.hide} evts={that.props.evts} reactElements={that.props.reactElements} editable={that.props.editable} />)
+                corps.push(
+                    <TableTr
+                        key={index}
+                        data={dataLine}
+                        hide={that.props.hide}
+                        evts={that.props.evts}
+                        reactElements={that.props.reactElements}
+                        editable={that.props.editable} />)
             });
             
             // ID
@@ -108,10 +115,14 @@ var TableHeader = React.createClass({
  *                    ex: l'url AJAX retourne les données suivantes {'id':1, 'nom':'PEREZ', 'prenom':'Vivian'}
  *                        var data = ['id']
  * @param object reactElements: défini les propriétés des éléments react à afficher dans la colonne
- *                              {indiceColonne0:['NomDuComposantReact1',{paramètres du composant NomDuComposantReact1}],
- *                               indiceColonne2:['NomDuComposantReact2',{paramètres du composant NomDuComposantReact2}],
- *                               indiceColonne5:['NomDuComposantReact1',{paramètres du composant NomDuComposantReact1}]
- *                              }
+*        indiceColonne: {
+            type: 'RadioBts',
+            names: ['visu', 'modif', 'null'],
+            libelles : [libVisu, libModif, LibNull],
+            values : 'id',
+            checked : 'visu'
+            onClick: handleClickRadio
+        }
  */
 var TableTr = React.createClass({
     
@@ -127,36 +138,39 @@ var TableTr = React.createClass({
      * Les props par défaut
      */
     getDefaultProps: function() {
-        return {reactElements:{}};
+        return {reactElements:null};
     },
 
     render: function() {
             // Variables
             var tr        = [];
-            var that      = this;
             var attr      = {};
             var indiceCol = 0;
 
             // Parcours des data
              _.each(this.props.data,function(val,key) {
                  // Champ caché, on créé un data-key
-                 if(that.props.hide.length > 0 && _.indexOf(that.props.hide,key)>-1){
+                 if(this.props.hide.length > 0 && _.indexOf(this.props.hide,key)>-1){
                      attr['data-'+key] = val;
                  }
                  // Cellule de la ligne
                  else{
                      /* Cellule contenant un élément React */
-                     if(that.props.reactElements !== 'undefined' && Array.isArray(that.props.reactElements[indiceCol.toString()])){
+                     if(_.isPlainObject(this.props.reactElements[indiceCol.toString()])){
+                         // Element react en cours de traitement
+                         var reactEltCourant = this.props.reactElements[indiceCol.toString()];
+                         // Variable radio bootstrap
                         var isRadioBts = true;
-                        switch(that.props.reactElements[indiceCol.toString()][0]){
+                         // Les différents types
+                        switch(reactEltCourant.type){
                             case 'Couleur':
-                                tr.push(<td key={that.props.data.id + key}>
+                                tr.push(<td key={this.props.data.id + key}>
                                             <ColorPicker color={val} />
                                         </td>);
                                 break;
                             case 'Image':
                                 var img = '';
-                                var src = that.props.reactElements[indiceCol.toString()][1] + val;
+                                var src = this.props.reactElements[indiceCol.toString()][1] + val;
                                 if(val != '') {
                                     var splitterStyle = {
                                         height: "20px",
@@ -167,7 +181,7 @@ var TableTr = React.createClass({
                                     </div>;
                                 }
 
-                                tr.push(<td key={that.props.data.id + key}>
+                                tr.push(<td key={this.props.data.id + key}>
                                             {img}
                                         </td>);
                                 break;
@@ -177,61 +191,113 @@ var TableTr = React.createClass({
                                 var radios   = [];
                                 var indice   = 0;
 
-                                _.each(that.props.reactElements[indiceCol.toString()][1]['name'], function(val2, key){
-                                    var etat     = that.props.reactElements[indiceCol.toString()][1]['name'][indice];
-                                    var libelle  = that.props.reactElements[indiceCol.toString()][1]['libelle'][indice++];
+                                // Parcours des names
+                                _.each(reactEltCourant.names, function(name, key){
+                                    var libelle  = reactEltCourant.libelles.key;
 
-                                    if(isRadioBts == false) {
-                                        var attributes = {'data-id':that.props.data.id, 'data-etat':etat, value:etat};
-                                        var attrs = {label:libelle, name:"InputRadioEditable[]", wrapperClassName:'col-md-4',labelClassName:'col-md-2',groupClassName:'row'};
-                                        //if(val == etat || (etat == 'null' && val == null))
-                                        //    _.extend(attrs, {checked:true});
+                                    // Btn Radio clasique
+                                    if(!isRadioBts) {
+                                        var attributes = {
+                                            'data-id':this.props.data.id,
+                                            'data-etat':etat,
+                                            value:etat};
 
+                                        var attrs = {
+                                            label:libelle,
+                                            name:"InputRadioEditable[]",
+                                            wrapperClassName:'col-md-4',
+                                            labelClassName:'col-md-2',
+                                            groupClassName:'row'};
+
+                                        // Merge des attributs
                                         _.extend(attrs, attributes);
-                                        radios.push(<InputRadioEditable key={'IR' + that.props.data.id + key}
-                                                                        evts={that.props.reactElements[indiceCol.toString()][2]}
-                                                                        editable={that.props.editable}
+                                        radios.push(<InputRadioEditable key={'IR' + this.props.data.id + key}
+                                                                        evts={this.props.reactElements[indiceCol.toString()][2]}
+                                                                        editable={this.props.editable}
                                                                         attributes={attrs} />);
                                     }
+                                    // Btn Radio Bootstrap
                                     else{
                                         var classBtn = '';
 
-                                        /* Si l'état correspond à la valeur du btn, on l'active */
-                                        if(val == etat || (etat == 'null' && val == null))
-                                            classBtn += 'active';
+                                        // Le radio coché
+                                        var checked = (reactEltCourant.checked == reactEltCourant.name);
+                                        // Attributs du radio
+                                        var attributes = {
+                                            value : this.props.data[reactEltCourant.values],
+                                            checked : checked};
 
-                                        var attributes = {'data-id':that.props.data.id, 'data-etat':etat, 'value':etat, className:classBtn};
+                                        // Ajout du radio
+                                        var reactRadio = (
+                                            <InputRadioBootstrapEditable
+                                                key={name+'_'+key}
+                                                evts={{onClick : reactEltCourant.onClick}}
+                                                editable={this.props.editable}
+                                                attributes={attributes}>
 
-                                        radios.push(<InputRadioBootstrapEditable key={'IR' + that.props.data.id + key} evts={that.props.reactElements[indiceCol.toString()][2]} editable={that.props.editable} attributes={attributes}>
-                                                        {libelle}
-                                                    </ InputRadioBootstrapEditable>);
+                                            {libelle}
+                                            </ InputRadioBootstrapEditable>
+                                        );
+                                        //radios.push(reactRadio);
                                     }
-                                });
-                                if(isRadioBts == false){
-                                    tr.push(<td key={that.props.data.id + key}>
-                                                {radios}
-                                            </td>);
-                                }else {
-                                    tr.push(<td key={that.props.data.id + key}>
-                                                <ButtonGroup data-toggle="buttons" bsSize="xsmall">{radios}</ButtonGroup>
-                                            </td>);
-                                }
+                                }.bind(this));
+
+                                // Ajout du TD au TR
+                                var monTd = (
+                                    <td key={this.props.data.id + key}>
+                                        <RadioGroup attributes={{name: "bootstrap"}} bootstrap={true}>
+                                            <InputRadioBootstrapEditable
+                                                key={'bt1'}
+                                                editable={true}
+                                                attributes={{
+                                                    checked: true,
+                                                    value: 'btn1'
+                                                }}
+                                            >
+                                                Btn 1
+                                            </ InputRadioBootstrapEditable>
+                                            <InputRadioBootstrapEditable
+                                                key={'bt2'}
+                                                editable={true}
+                                                attributes={{
+                                                    value: 'btn2'
+                                                }}
+                                            >
+                                                Btn 2
+                                            </ InputRadioBootstrapEditable>
+                                        </RadioGroup>
+                                    </td>
+                                );
+                                console.log('mon td %o',monTd);
+                                tr.push(monTd);
                                 break;
+
+                            // Le type d'element react est inconnu
                             default :
-                                tr.push(<td key={that.props.data.id+key}>Objet React --{that.props.reactElements[indiceCol.toString()][0]}-- non défini</td>);
+                                tr.push(<td key={this.props.data.id+key}>
+                                            Objet React --{reactEltCourant.type}-- non défini
+                                        </td>);
                                 break;
                         }
                      }
-                     /* Cellule "normal", un champ texte */
-                     else
-                        tr.push(<td key={that.props.data.id+key}>{val}</td>);
+                     /* Cellule "normale", un champ texte */
+                     else {
+                         tr.push(<td key={this.props.data.id + key}>{val}</td>);
+                     }
                      indiceCol++;
                   }
-             });
+             }.bind(this));
              // Ajout du tr
-             return <tr {...attr} {...this.props.evts}>{tr}</tr>
-           
-     
+             var retour = (
+                 <tr
+                    {...attr}
+                    {...this.props.evts}
+                 >
+                    {tr}
+                 </tr>
+             );
+        console.log('TR %o', retour);
+            return retour;
     }
     /*
  |--------------------------------------------------------------------------

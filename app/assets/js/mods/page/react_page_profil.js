@@ -55,13 +55,16 @@ var hideMP = ['id'];
 /* Libelles : "Visu, Modif, Aucun"                                   */
 /* Name     : "btnVisu, btnModif, btnAucun                           */
 /* Sur clic d'un radio bouton, déclenche l'action "handleClickRadio" */
-var aLibelle = new Array(Lang.get('administration.profil.visu'), Lang.get('administration.profil.modif'), Lang.get('administration.profil.aucun'));
-var aName    = new Array('visu', 'modif', 'null');
-var aReactElements  = {};
-aReactElements['1'] = new Array();                           /* Colonne n°1 du tableau               */
-aReactElements['1'][0] = 'RadioBts';                         /* Type de composant à ajouter          */
-aReactElements['1'][1] = {'name':aName, 'libelle':aLibelle}; /* Name des radio boutons et libelle    */
-aReactElements['1'][2] = {'onClick':handleClickRadio};       /* Evenement sur click des radio bouton */
+var aReactElements =
+{
+    '1': {
+        type: 'RadioBts',
+        names: ['visu', 'modif', 'null'],
+        libelles : [Lang.get('administration.profil.visu'), Lang.get('administration.profil.modif'), Lang.get('administration.profil.aucun')],
+        values : 'id',
+        onClick: handleClickRadio
+    }
+}
 
 /* Fonction handleClickRadio */
 function handleClickRadio(evt){
@@ -432,7 +435,7 @@ var pageProfilStore = Reflux.createStore({
     },
 
     radioChange: function(evt){
-        console.log('radioChange');
+        //console.log('radioChange');
 
         /* Récupère les données du radio bouton */
         Etat      = $(evt.currentTarget).data('etat');     /* 'visu', 'modif' ou 'aucun' */

@@ -318,6 +318,9 @@ var ReactPageTest = React.createClass({
                         <label>Radio Boostrap NEW generation</label>
                     </Col>
                     <Col md={4}>
+
+
+
                         <RadioGroup attributes={{name: "bootstrap"}} bootstrap={true}>
                             <InputRadioBootstrapEditable
                                 key={'bt1'}
@@ -339,6 +342,10 @@ var ReactPageTest = React.createClass({
                                 Btn 2
                             </ InputRadioBootstrapEditable>
                         </RadioGroup>
+
+
+
+
                     </Col>
                 </Row>
             {/* EXemple de radio inline*/}
