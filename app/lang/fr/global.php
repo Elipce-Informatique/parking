@@ -63,9 +63,7 @@ Voulez-vous vraiment quitter cette page ?',
     'profils' => 'Profils',
     'profil' => 'Profil',
     'droits' => 'Droits',
-    'profilExist' => 'Ce profil existe déjà',
     'utilisateurExist' => 'Cet utilisateur existe déjà',
-    'profilTooMuch' => 'Libelle trop court',
 
     // AUTRES
     'accueil' => 'Accueil',

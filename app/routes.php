@@ -75,7 +75,7 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     Route::get('profils/{profils}/modules', 'ProfilController@getProfilModule');
     Route::resource('profils', 'ProfilController');
     Route::get('module/all', 'ProfilController@getModules');
-    Route::get('profils/libelle/{libelle}', 'ProfilController@getProfilExistLibelle');
+    Route::get('profils/libelle/{libelle}/{id?}', 'ProfilController@getProfilExistLibelle');
     Route::get('profils/use/{profil}', 'ProfilController@getIsProfilUse');
 
     // administration

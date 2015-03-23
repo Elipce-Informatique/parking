@@ -32,7 +32,7 @@ class ProfilController extends \BaseController {
 	public function store()
 	{
         // Valeurs postées
-        $post = Input::except('_token');
+        $post = Input::except(['_token','_method']);
 
         return json_encode(Profil::creerProfil($post));
 	}
@@ -105,8 +105,14 @@ class ProfilController extends \BaseController {
         return Profil::getProfilModule($profils);
     }
 
-    public function getProfilExistLibelle($libelle){
-        return Profil::getProfilExistLibelle($libelle);
+    /**
+     * Calule si le libellé passé en paramètre existe
+     * @param $libelle: libellé à tester
+     * @param $id: ID profil à exclure
+     * @return string: booléen true ou false
+     */
+    public function getProfilExistLibelle($libelle, $id = 0){
+        return json_encode(Profil::isLibelleExists($libelle, $id));
     }
 
 	public function getIsProfilUse($idProfil){

@@ -46,6 +46,8 @@ return array(
         'modif' => 'Modif',
         'aucun' => 'Aucun',
         'module'=> 'Modules',
+        'profil' => 'Profil',
+        'profilExist' => 'Ce profil existe déjà',
         'supprProfilAlert' => 'Au moins un utilisateur est associé à ce profil. Etes-vous sûr de bien vouloir supprimer ce profil ?'
     ]
 );

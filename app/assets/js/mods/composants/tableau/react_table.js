@@ -50,6 +50,7 @@ var Table = React.createClass({
     },
 
     render: function() {
+        // console.log('RENDER TABLE PROPS %o',_.clone(this.props));
             // Variables
             var corps = [];
             var that = this;
@@ -76,8 +77,8 @@ var Table = React.createClass({
              return( 
               <p className="table-responsive">
                 <table className="table display" width="100%" {...id} {...this.props.attributes} >
-                <TableHeader head={this.props.head}/>
-                <tbody>{corps}</tbody>
+                    <TableHeader head={this.props.head}/>
+                    <tbody>{corps}</tbody>
                 </table>
               </p>
             )
@@ -145,6 +146,7 @@ var TableTr = React.createClass({
     },
 
     render: function() {
+        //console.log('RENDER TR PROPS %o',_.clone(this.props));
             // Variables
             var tr        = [];
             var attr      = {};
