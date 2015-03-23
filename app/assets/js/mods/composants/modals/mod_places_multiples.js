@@ -25,11 +25,13 @@ var ModalPlaces = React.createClass({
 
     propTypes: {
         onToggle: React.PropTypes.func.isRequired,
-        onSave: React.PropTypes.func.isRequired
+        calibre: React.PropTypes.number
     },
 
     getDefaultProps: function () {
-        return {module_url: 'configuration_parking'};
+        return {
+            module_url: 'configuration_parking'
+        };
     },
 
     getInitialState: function () {
@@ -37,8 +39,6 @@ var ModalPlaces = React.createClass({
     },
 
     componentDidMount: function () {
-        console.log('Dom node modale : ');
-        console.log(this.getDOMNode());
     },
 
     shouldComponentUpdate: function (nextProps, nextState) {
@@ -67,7 +67,7 @@ var ModalPlaces = React.createClass({
                                 label: Lang.get('administration_parking.carte.nb_places'),
                                 min: '0',
                                 name: "nb_place",
-                                value: this.state.nom,
+                                value: '3',
                                 required: false,
                                 groupClassName: 'row',
                                 wrapperClassName: 'col-md-3',
@@ -83,7 +83,7 @@ var ModalPlaces = React.createClass({
                                 label: Lang.get('administration_parking.carte.intervalle_poteaux'),
                                 min: '0',
                                 name: "nb_poteaux",
-                                value: this.state.nom,
+                                value: '1',
                                 required: false,
                                 groupClassName: 'row',
                                 wrapperClassName: 'col-md-3',
@@ -99,7 +99,7 @@ var ModalPlaces = React.createClass({
                                 label: Lang.get('administration_parking.carte.largeur_poteaux'),
                                 min: '0',
                                 name: "taille_poteaux",
-                                value: this.state.nom,
+                                value: '1',
                                 required: false,
                                 groupClassName: 'row',
                                 wrapperClassName: 'col-md-3',
@@ -117,7 +117,7 @@ var ModalPlaces = React.createClass({
                                     {
                                         label: Lang.get('administration_parking.carte.pref'),
                                         name: "prefixe",
-                                        value: this.state.nom,
+                                        value: 'A',
                                         required: false,
                                         groupClassName: 'row',
                                         wrapperClassName: 'col-md-9',
@@ -135,7 +135,7 @@ var ModalPlaces = React.createClass({
                                         label: Lang.get('administration_parking.carte.incr'),
                                         min: '0',
                                         name: "increment",
-                                        value: this.state.nom,
+                                        value: 1,
                                         required: false,
                                         groupClassName: 'row',
                                         wrapperClassName: 'col-md-9',
@@ -152,7 +152,7 @@ var ModalPlaces = React.createClass({
                                     {
                                         label: Lang.get('administration_parking.carte.suff'),
                                         name: "suffixe",
-                                        value: this.state.nom,
+                                        value: 'S1',
                                         required: false,
                                         groupClassName: 'row',
                                         wrapperClassName: 'col-md-9',

@@ -29,26 +29,28 @@ var parkingMap = React.createClass({
         divId: React.PropTypes.string.isRequired,
         imgUrl: React.PropTypes.string.isRequired,
         mapHeight: React.PropTypes.number,
-        defaultDrawMode: React.PropTypes.number
+        defaultDrawMode: React.PropTypes.number,
+        calibre: React.PropTypes.number
     },
     /**
      * Variables d'instance du composant.
      * Utilisées pour intéragir avec la carte.
      */
     _inst: {
-        map: {},                                // Instance de la carte leaflet
-        currentMode: mapOptions.dessin.place,   // Mode de dessin actuel
-        placesGroup: {},                        // Layer group contenant toutes les places
-        alleesGroup: {},                        // Layer group contenant toutes les allées
-        zonesGroup: {},                         // Layer group contenant toutes les zones
-        afficheursGroup: {},                    // Layer group contenant tous les afficheurs
-        drawControl: {}                         // Barre d'outils de dessin active sur la carte
+        map: {},                              // Instance de la carte leaflet
+        currentMode: mapOptions.dessin.place, // Mode de dessin actuel
+        placesGroup: {},                      // Layer group contenant toutes les places
+        alleesGroup: {},                      // Layer group contenant toutes les allées
+        zonesGroup: {},                       // Layer group contenant toutes les zones
+        afficheursGroup: {},                  // Layer group contenant tous les afficheurs
+        drawControl: {}                       // Barre d'outils de dessin active sur la carte
     },
 
     getDefaultProps: function () {
         return {
             defaultDrawMode: mapOptions.dessin.place,
-            mapHeight: 300
+            mapHeight: 300,
+            calibre: 1
         };
     },
 
@@ -98,7 +100,7 @@ var parkingMap = React.createClass({
 
         // AJOUT DE L'IMAGE DE FOND
         L.imageOverlay(this.props.imgUrl, [origine, haut_droit]).addTo(this._inst.map);
-        Actions.map.map_initialized(this._inst.map);
+        Actions.map.map_initialized(this._inst.map, this.props.calibre);
 
         // INIT des layers
         this._inst.placesGroup = new L.geoJson();
@@ -474,7 +476,6 @@ var parkingMap = React.createClass({
             return (
                 <ModalPlaces
                     onToggle={this.handleToggle}
-                    onSave={Actions.map.pm_creer}
                 />
             );
         }

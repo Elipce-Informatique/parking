@@ -169,6 +169,24 @@ function getLastPointOfParallelogramme(latlngs) {
 }
 
 /**
+ * Crée les places (petits parallélogrammes construits
+ *
+ * @param calibre float : Calibre de la carte, ce nombre représente des cm/deg
+ * @param parallelogramme array : Parallélogramme de base pour créer les places (tableau de points)
+ * @param nbPlaces int : Nombre de places à créer
+ * @param espacePoteaux float : Nombre de places entre chaque poteaux en partant de la première palce
+ * @param largeurPoteaux float : largeur d'un poteau en cm
+ * @param prefix string : préfixe pour le nom des places à créer
+ * @param incr int : entier, incrément pour le nombre de places (1 par défaut)
+ * @param suffix string : suffixe du nom de la place
+ */
+function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, espacePoteaux, largeurPoteaux, prefix, incr, suffix) {
+    console.log('==> createPlacesFromParallelogramme : Parallélogramme %o', parallelogramme);
+    // Parallélogramme et son axe symétrique central
+    var A, B, C, D, J, K;
+}
+
+/**
  * Ce que le module exporte.
  * @type {{getCentroid: getCentroid, isPointInPolygon: isPointInPolygon, isPolygonInPolygonByCenter: isPolygonInPolygonByCenter, getLatLngArrayFromCoordsArray: getLatLngArrayFromCoordsArray, isPolygonInPolygon: isPolygonInPolygon}}
  */
@@ -178,6 +196,7 @@ module.exports = {
     isPolygonInPolygonByCenter: isPolygonInPolygonByCenter,
     getLatLngArrayFromCoordsArray: getLatLngArrayFromCoordsArray,
     isPolygonInPolygon: isPolygonInPolygon,
-    getLastPointOfParallelogramme: getLastPointOfParallelogramme
+    getLastPointOfParallelogramme: getLastPointOfParallelogramme,
+    createPlacesFromParallelogramme: createPlacesFromParallelogramme
 };
 

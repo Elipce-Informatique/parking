@@ -24,6 +24,7 @@ var mapHelper = require('../helpers/map_helper');
  */
 var store = Reflux.createStore({
     _inst: {
+        calibre: 1,
         parkingInfos: {},
         currentMode: mapOptions.dessin.place,
         places: [],
@@ -47,8 +48,15 @@ var store = Reflux.createStore({
     },
 
 
-    onMap_initialized: function (data) {
-        console.log(data);
+    /**
+     * Appellé lors de l'initialisation de la map pour renseigner le calibre initial
+     *
+     * @param map : objet leaflet
+     * @param calibre : calibre initial de la carte (cm/deg)
+     */
+    onMap_initialized: function (map, calibre) {
+        console.log('Calibre au niveau du store : ' + calibre);
+        this._inst.calibre = calibre;
     },
 
     /**
@@ -188,18 +196,21 @@ var store = Reflux.createStore({
         // SÉLECTION DU FORMULAIRE POUR TRAITER L'ACTION
         switch (formId) {
             case "form_mod_places_multiples":
-                this.handlePlacesMultiples(formDom);
+                this.handlePlacesMultiples(formDom, this._inst.lastParallelogramme.e.layer._latlngs);
                 break;
             default:
+                break;
         }
     },
 
     /**
      * Récupère les données de la popup de création de plusieurs places.
      *
+     * @param formDom : dom du formulaire avec les informations de la popup
+     * @param parallelogramme : tableau des points du parallélogramme
      */
-    handlePlacesMultiples: function (formDom) {
-        console.log('Parallélogramme pour créer les places multiples : %o', this._inst.lastParallelogramme.e.layer._latlngs);
+    handlePlacesMultiples: function (formDom, parallelogramme) {
+        console.log('Parallélogramme pour créer les places multiples : %o', parallelogramme);
         var $form = $(formDom);
         var nbPlaces = $form.find('[name=nb_place]').val(),
             spacePoteaux = $form.find('[name=nb_poteaux]').val(),
@@ -217,7 +228,17 @@ var store = Reflux.createStore({
 
         // CONTRÔLE DES NOMBRES ENTRÉS
         if (parseInt(spacePoteaux) < parseInt(nbPlaces)) {
+            // TODO : Appeller une fonction (map helper) pour découper le parallélogramme en places avec les params
             console.log('Nombre de poteaux OK');
+            mapHelper.createPlacesFromParallelogramme(
+                this._inst.calibre,
+                parallelogramme,
+                nbPlaces,
+                spacePoteaux,
+                largPoteaux,
+                pref,
+                inc,
+                suff);
         } else {
             swal(Lang.get('administration_parking.carte.swal_interval_incorrect'));
         }
