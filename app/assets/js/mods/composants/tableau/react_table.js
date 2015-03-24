@@ -50,7 +50,7 @@ var Table = React.createClass({
     },
 
     render: function() {
-        // console.log('RENDER TABLE PROPS %o',_.clone(this.props));
+
             // Variables
             var corps = [];
             var that = this;
@@ -146,7 +146,7 @@ var TableTr = React.createClass({
     },
 
     render: function() {
-        //console.log('RENDER TR PROPS %o',_.clone(this.props));
+
             // Variables
             var tr        = [];
             var attr      = {};
@@ -218,6 +218,7 @@ var TableTr = React.createClass({
                                         {libelle}
                                         </ InputRadioBootstrapEditable>
                                     );
+                                    //console.log('VALUE '+value+' CHECKED '+checked);
                                     // Ajout du radio
                                     radios.push(radioCourant);
                                 }.bind(this));

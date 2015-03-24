@@ -1434,7 +1434,7 @@ var InputRadioEditable = React.createClass({
  * @param bootstrap: Mode d'affichage des radio
  *                  Si true: mettre des InputRadioBootstrapEditable en enfant
  *                  Sinon mettre des InputRadioEditable
-*/
+ */
 var RadioGroup = React.createClass({
 
     propTypes: {
@@ -1451,28 +1451,41 @@ var RadioGroup = React.createClass({
         }
     },
 
-    getInitialState : function (){
+    getInitialState: function () {
 
         var matrice = {};
         // Parcours des chidren
-        _.forEach(this.props.children, function(child, index) {
+        _.forEach(this.props.children, function (child, index) {
             //console.log('CHILD index %o', child);
             // On est sur le radio cliqué
-            matrice[this.props.attributes.name+index] = child.props.attributes.checked !== undefined ? child.props.attributes.checked : false;
+            matrice[this.props.attributes.name + index] = child.props.attributes.checked !== undefined ? child.props.attributes.checked : false;
         }.bind(this));
 
         return matrice;
     },
 
-    handleChange : function(evt){
+    componentWillReceiveProps: function (np, ns) {
+        var matrice = {};
+        // Parcours des chidren
+        _.forEach(np.children, function (child, index) {
+            //console.log('CHILD index %o', child);
+            // On est sur le radio cliqué
+            matrice[np.attributes.name + index] = child.props.attributes.checked !== undefined ? child.props.attributes.checked : false;
+        }.bind(this));
+
+        // Maj State
+        this.setState(matrice);
+    },
+
+    handleChange: function (evt) {
 
         // Attribut index du radio qui a déclenché le change
-        var index = $(evt.currentTarget).prop('tagName') == 'INPUT' ?  $(evt.currentTarget).data('index') : $(evt.currentTarget).find('input').data('index');
+        var index = $(evt.currentTarget).prop('tagName') == 'INPUT' ? $(evt.currentTarget).data('index') : $(evt.currentTarget).find('input').data('index');
 
         // Matrice {n° radio : cheched, ....}
         var matrice = {};
         // Parcours des chidren
-        _.forEach(this.props.children, function(child) {
+        _.forEach(this.props.children, function (child) {
             //console.log('CHILD index %o', child);
             // On est sur le radio cliqué
             matrice[child.props.attributes['data-index']] = (child.props.attributes['data-index'] == index);
@@ -1481,12 +1494,12 @@ var RadioGroup = React.createClass({
         // DÉCLENCHEMENT DE LA VALIDATION MÉTIER
         Actions.validation.form_field_changed({
             name: this.props.attributes.name,
-            value: $(evt.currentTarget).prop('tagName') == 'INPUT' ?  $(evt.currentTarget).val() : $(evt.currentTarget).find('input').val(),
+            value: $(evt.currentTarget).prop('tagName') == 'INPUT' ? $(evt.currentTarget).val() : $(evt.currentTarget).find('input').val(),
             form: this.props.attributes.htmlFor
         });
         Actions.validation.form_field_verif({
             name: this.props.attributes.name,
-            value: $(evt.currentTarget).prop('tagName') == 'INPUT' ?  $(evt.currentTarget).val() : $(evt.currentTarget).find('input').val(),
+            value: $(evt.currentTarget).prop('tagName') == 'INPUT' ? $(evt.currentTarget).val() : $(evt.currentTarget).find('input').val(),
             form: this.props.attributes.htmlFor
         });
 
@@ -1499,24 +1512,24 @@ var RadioGroup = React.createClass({
      *
      * @param enfants
      */
-    display : function(enfants){
+    display: function (enfants) {
         var code = '';
         // Mode bootstrap
-        if(this.props.bootstrap){
+        if (this.props.bootstrap) {
             code = (
                 <ButtonGroup
                     data-toggle="buttons"
                     bsSize="xsmall"
-                    key={'radio_'+this.props.attributes.name}>
+                    key={'radio_' + this.props.attributes.name}>
 
                 {enfants}
                 </ButtonGroup>
             )
         }
         // Mode classique
-        else{
-            code =(
-                <div className="row" key={'radio_'+this.props.attributes.name}>
+        else {
+            code = (
+                <div className="row" key={'radio_' + this.props.attributes.name}>
                     {enfants}
                 </div>);
         }
@@ -1526,14 +1539,14 @@ var RadioGroup = React.createClass({
     render: function () {
 
         // Parcours des chidren
-        var enfants = _.map(this.props.children, function(child, index) {
+        var enfants = _.map(this.props.children, function (child, index) {
             // Props à ajouter
             var newProps = {
-                evts : {},
-                attributes : _.extend(child.props.attributes, {
-                    checked : this.state[this.props.attributes.name+index],
+                evts: {},
+                attributes: _.extend(child.props.attributes, {
+                    checked: this.state[this.props.attributes.name + index],
                     name: this.props.attributes.name,
-                    'data-index' : this.props.attributes.name+index // index unique permettant d'identifier chaque radio
+                    'data-index': this.props.attributes.name + index // index unique permettant d'identifier chaque radio
                 })
             };
             // Evt en fonction de bootsrap ou radio classique
@@ -1583,6 +1596,7 @@ var InputRadioBootstrap = React.createClass({
         classBtn += this.props.attributes.checked ? 'active' : '';
 
         //console.log('ATTRS '+this.props.attributes.value+' %o', this.props.attributes);
+        //console.log('#VALUE ' + this.props.attributes.value + ' #CHECKED ' + this.props.attributes.checked);
 
         return (
             <label
@@ -1594,7 +1608,8 @@ var InputRadioBootstrap = React.createClass({
                     {...gestMod}
                     type="radio"
                     {...this.props.attributes}
-                    onChange = {function(){}}
+                    onChange = {function () {
+                    }}
                 />
 
                 {this.props.children}
@@ -1628,7 +1643,8 @@ var InputRadioBootstrapEditable = React.createClass({
         }
     },
 
-    render: function () {;
+    render: function () {
+        ;
 
         return (
             <InputRadioBootstrap

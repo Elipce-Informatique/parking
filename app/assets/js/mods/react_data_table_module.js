@@ -77,7 +77,7 @@ var DataTableModuleReact = React.createClass({
      * @returns {undefined}
      */
     componentWillMount: function(){
-        console.log('FORM WillMount');
+
         // Ecoute le store profilStore qui se charge de mettre à jour les données
         this.listenTo(moduleStore, this.majState);
 
@@ -86,10 +86,6 @@ var DataTableModuleReact = React.createClass({
     },
 
     componentWillReceiveProps: function(newProps){
-        //console.log('componentWillReceiveProps %o', newProps);
-
-        // Ecoute le store profilStore qui se charge de mettre à jour les données
-        this.listenTo(moduleStore, this.majState);
 
         // Récupère les modules du profil
         Actions.profil.module_update(newProps.idProfil, newProps.nameProfil);
@@ -102,7 +98,6 @@ var DataTableModuleReact = React.createClass({
      */
     majState: function(data) {
         // MAJ data automatique, lifecycle "UPDATE"
-        console.log('SET STATE FORM %o',_.cloneDeep(this.state));
         this.setState(data);
     },
 
@@ -137,7 +132,7 @@ var DataTableModuleReact = React.createClass({
             }
         }
 
-        console.log('RENDER FORM %o', _.cloneDeep(this.state));
+        //console.log('RENDER FORM %o', _.cloneDeep(this.state));
         return(
         <Form
             ref="form_profil"
@@ -192,7 +187,7 @@ var moduleStore = Reflux.createStore({
      * @param idProfil : ID du profil sélectionné
      */
     updateModule: function(idProfil, libelleProfil) {
-        console.log('STORE update module');
+
         // Mise à jour du state local
         this.idProfil = idProfil;
         this.libelleInitial = libelleProfil
@@ -210,16 +205,12 @@ var moduleStore = Reflux.createStore({
                 this.storeLocal.data = dataFromBdd;
                 this.storeLocal.validationLibelle = {};
 
-                console.log('trigger store 1');
                 // Envoi des données au composant react
                 this.trigger(this.storeLocal);
             },
 
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
-                /* Passe "[]" en paramètre au(x) composant(s) qui écoutent le store profilStore */
-                console.log('trigger store 2 ');
-                this.trigger({data:[]});
             }
         });
     },
@@ -279,7 +270,6 @@ var moduleStore = Reflux.createStore({
 
                         // Envoi de data
                         this.trigger(this.storeLocal);
-                        console.log('trigger store 3');
                     },
 
                     error: function (xhr, status, err) {

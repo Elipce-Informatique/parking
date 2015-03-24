@@ -81,12 +81,13 @@ class Profil extends Eloquent
     }
 
     /**
+     * Le profil est-il associé à un utilisateur
      * @param $idProfil
      * @return array
      */
-    public static function getIsProfilUse($idProfil){
+    public static function isProfilUsed($idProfil){
         $profil = DB::table('profil_utilisateur')->where('profil_id', $idProfil)->first(['id']);
-        return array('good' => !empty($profil));
+        return !empty($profil);
     }
 
     /**

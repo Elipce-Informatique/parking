@@ -100,7 +100,6 @@ var ReactPageProfil = React.createClass({
     },
 
     getComponentSwitchState: function () {
-        //console.log('STATE PAGE %o', _.cloneDeep(this.state));
 
         // Variables
         var mode = 1;
@@ -128,7 +127,13 @@ var ReactPageProfil = React.createClass({
             /*    - le tableau des modules NON éditable        */
             case 'visu':
                 return <Col md={12} key="rootPageProfil">
-                    <BandeauGenerique bandeauType={this.state.etatPageProfil} module_url="profils" titre={this.state.titrePageIni} sousTitre={this.state.nameProfil} />
+                    <BandeauGenerique
+                        bandeauType={this.state.etatPageProfil}
+                        module_url="profils"
+                        titre={this.state.titrePageIni}
+                        sousTitre={this.state.nameProfil}
+                        confirmationOnSupprimer={false}
+                    />
                     <Row>
                         <Col md={12}>
                             <DataTableModule
@@ -213,7 +218,7 @@ var ReactPageProfil = React.createClass({
      * @returns {XML}
      */
     render: function () {
-        console.log('RENDER PAGE PROFIL');
+
         return this.getComponentSwitchState();
     }
 });
@@ -302,76 +307,100 @@ var pageProfilStore = Reflux.createStore({
         this.trigger({etatPageProfil: 'edition'});
     },
 
+    /**
+     * Action du bouton 'supprimer'
+     */
     onSupprimer: function () {
-        if (this.idProfilSelect == 0) {
-            this.nameProfil = '';
+
+        // Vérification que le profil n'est pas associé à un utilisateur
+        var suppr = this.isProfilUsed(this.idProfilSelect);
+
+        // Un utilisateur est associé au profil, demande de confirmation de suppression
+        if (suppr) {
+            setTimeout(function () {
+                // Boite de dialogue perso
+                swal({
+                        title: Lang.get('global.attention'),
+                        text: Lang.get('administration.profil.supprProfilAlert'),
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: Lang.get('global.oui'),
+                        cancelButtonText: Lang.get('global.annuler'),
+                        closeOnConfirm: true
+                    },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            this.supprimerProfil();
+                        }
+                    }.bind(this));
+            }.bind(this), 100);
         }
+        // Pas d'utilisateur associé au profil
         else {
-
-            /* Vérification que le profil n'est pas associé à un utilisateur */
-            var suppr = this.getIsProfilUse(this.idProfilSelect);
-
-            /* Un utilisateur est associé au profil, demande de confirmation de suppression */
-            if (suppr == true) {
-                setTimeout(function () {
-                    swal({
-                            title: Lang.get('global.attention'),
-                            text: Lang.get('administration.profil.supprProfilAlert'),
-                            type: "warning",
-                            showCancelButton: true,
-                            confirmButtonText: Lang.get('global.oui'),
-                            cancelButtonText: Lang.get('global.annuler'),
-                            closeOnConfirm: true
-                        },
-                        function (isConfirm) {
-                            if (isConfirm)
-                                this.supprProfilAjax();
-                        }.bind(this));
-                }.bind(this), 100);
-            }
-            /* Pas d'utilisateur associé au profil, on peut supprimer */
-            else {
-                this.supprProfilAjax();
-            }
+            // Boite de dialogue générique
+            swal({
+                title: Lang.get('global.suppression_titre'),
+                text: Lang.get('global.suppression_corps'),
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: Lang.get('global.ok'),
+                cancelButtonText: Lang.get('global.annuler'),
+                closeOnConfirm: true
+            }, function (isConfirm) {
+                // Supression
+                this.supprimerProfil();
+            }.bind(this));
         }
     },
 
-    supprProfilAjax: function () {
-        var that = this;
+    /**
+     * Supression du profil
+     */
+    supprimerProfil: function () {
 
         // AJAX
         $.ajax({
-            url: BASE_URI + 'profils/' + that.idProfilSelect, /* correspond au module url de la BDD */
+            url: BASE_URI + 'profils/' + this.idProfilSelect, /* correspond au module url de la BDD */
             dataType: 'json',
-            context: that,
+            context: this,
             type: 'DELETE',
             data: {'_token': $('#_token').val()},
             success: function (data) {
-                that.idProfilSelect = 0;
-                that.trigger({idProfil: 0, etatPageProfil: 'liste', nameProfil: ''});
-
+                // Mode liste
+                this.idProfilSelect = 0;
+                this.trigger({
+                    idProfil: 0,
+                    etatPageProfil: 'liste',
+                    nameProfil: ''
+                });
+                // Notification OK
                 Actions.notif.success(Lang.get('global.notif_success'));
             },
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
-
                 Actions.notif.error('AJAX : ' + Lang.get('global.notif_erreur'));
             }
-        }, that);
+        }, this);
     },
 
-    getIsProfilUse: function (idProfil) {
-        var that = this;
+    /**
+     * Le profil est-il associé à un utilisateur
+     * @param idProfil
+     * @returns {boolean}
+     */
+    isProfilUsed: function (idProfil) {
+        // Variable
         var retour = false;
 
         // AJAX
         $.ajax({
-            url: BASE_URI + 'profils/use/' + that.idProfilSelect, /* correspond au module url de la BDD */
+            url: BASE_URI + 'profils/use/' + this.idProfilSelect, /* correspond au module url de la BDD */
             dataType: 'json',
-            context: that,
+            context: this,
             async: false,
-            success: function (good) {
-                retour = good.good;
+            success: function (bool) {
+                retour = bool;
             },
 
             error: function (xhr, status, err) {

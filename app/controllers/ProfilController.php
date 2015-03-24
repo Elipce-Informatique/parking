@@ -115,7 +115,12 @@ class ProfilController extends \BaseController {
         return json_encode(Profil::isLibelleExists($libelle, $id));
     }
 
-	public function getIsProfilUse($idProfil){
-		return Profil::getIsProfilUse($idProfil);
+    /**
+     * Le profil est-il associé à un utilisateur
+     * @param $idProfil: profil.id
+     * @return string
+     */
+	public function isProfilUsed($idProfil){
+		return json_encode(Profil::isProfilUsed($idProfil));
 	}
 }

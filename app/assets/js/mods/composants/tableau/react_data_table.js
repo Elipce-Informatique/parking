@@ -102,12 +102,12 @@ var DataTableReact = React.createClass({
     },
 
     shouldComponentUpdate: function (nextProps, nextState) {
-        // console.log('NEW %o OLD %o', nextProps, _.cloneDeep(this.props));
+        //console.log('EGAL TABLE %o', !(_.isEqual(nextProps, this.props)));
         return !(_.isEqual(nextProps, this.props));
     },
 
     render: function () {
-        // console.log('RENDER DATATABLE PROPS %o',_.clone(this.props));
+        //console.log('RENDER DATATABLE PROPS %o',_.clone(this.props));
         return (
             <div className="datatable-root" key="dataTableRoot">
                 <Table
