@@ -56,7 +56,7 @@ var ReactPageProfil = React.createClass({
             titrePageIni: Lang.get('global.profils'),   /* Titre initial : Profils               */
             nameProfil: '',                             /* Pas de profil de sélectionné          */
             idProfil: 0,                                /* Id NULL au début                      */
-            etatPageProfil: 'liste'                     /*  Affichage initial, liste des profils */
+            etatPageProfil: pageState.liste                     /*  Affichage initial, liste des profils */
         };
     },
 
@@ -210,7 +210,7 @@ var ReactPageProfil = React.createClass({
     },
 
     onRetour: function () {
-        this.setState({etatPageProfil: 'liste', titrePage: Lang.get('global.profils'), idProfil: 0, nameProfil: ''});
+        this.setState({etatPageProfil: pageState.liste, titrePage: Lang.get('global.profils'), idProfil: 0, nameProfil: ''});
     },
 
 
@@ -262,7 +262,7 @@ var pageProfilStore = Reflux.createStore({
     },
 
     getInitialState: function () {
-        return {etatPageProfil: 'liste'};
+        return {etatPageProfil: pageState.liste};
     },
 
     /**
@@ -271,7 +271,7 @@ var pageProfilStore = Reflux.createStore({
      */
     profilSelect: function (evt) {
         // ID du profil selectionné
-        this.idProfilSelect = $(evt.currentTarget).data('id');
+        this.idProfilSelect = parseInt($(evt.currentTarget).data('id'));
 
 
         // AJAX
@@ -286,7 +286,7 @@ var pageProfilStore = Reflux.createStore({
                 // Envoi data
                 this.trigger({
                     idProfil: this.idProfilSelect,
-                    etatPageProfil: 'visu',
+                    etatPageProfil: pageState.visu,
                     nameProfil: this.nameProfil
                 });
             },
@@ -299,14 +299,14 @@ var pageProfilStore = Reflux.createStore({
     onCreer: function () {
         this.idProfilSelect = 0;
         this.trigger({
-            etatPageProfil: 'creation',
+            etatPageProfil: pageState.creation,
             nameProfil: '',
             idProfil: 0
         });
     },
 
     onEditer: function () {
-        this.trigger({etatPageProfil: 'edition'});
+        this.trigger({etatPageProfil: pageState.edition});
     },
 
     /**
@@ -373,7 +373,7 @@ var pageProfilStore = Reflux.createStore({
                 this.idProfilSelect = 0;
                 this.trigger({
                     idProfil: 0,
-                    etatPageProfil: 'liste',
+                    etatPageProfil: pageState.liste,
                     nameProfil: ''
                 });
                 // Notification OK
@@ -431,12 +431,12 @@ var pageProfilStore = Reflux.createStore({
             success: function (tab) {
                 // Enregistrement OK
                 if (tab.save) {
-                    this.idProfilSelect = tab.idProfil;
+                    this.idProfilSelect = parseInt(tab.idProfil);
 
                     // Passe variable aux composants qui écoutent l'action actionLoadData
                     this.trigger({
-                        idProfil: tab.idProfil,
-                        etatPageProfil: 'edition',
+                        idProfil: this.idProfilSelect,
+                        etatPageProfil: pageState.edition,
                         nameProfil: tab.nameProfil
                     });
 
