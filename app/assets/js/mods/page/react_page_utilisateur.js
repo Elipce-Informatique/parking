@@ -190,8 +190,8 @@ var pageUserStore = Reflux.createStore({
     },
 
     /**
-     * Indique à la fiche utilisateur de sauvegarder les données
-     */
+    * Indique à la fiche utilisateur de sauvegarder les données
+    */
     sauvegarder: function () {
         // La fiche user enregistre l'utilisateur
         Actions.utilisateur.save_user(this.stateLocal.idUser);

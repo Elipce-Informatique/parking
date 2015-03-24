@@ -16,27 +16,7 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var InputRadioEditable = Field.InputRadioEditable;
 var InputPasswordEditable = Field.InputPasswordEditable;
 var Form = Field.Form;
-
-/* Paramètres du tableau des profils           */
-/* Entête(s) du tableau : "Profils, Accessible */
-/* Champ(s) caché(s)    : "id"                 */
 var DataTable = require('./composants/tableau/react_data_table');
-var headP = [Lang.get('global.profil'), Lang.get('global.droits')];
-var hideP = ['id'];
-
-/* Paramètres pour les radios Boutons                                */
-/* Libelles : "Visu, Modif, Aucun"                                   */
-/* Name     : "btnVisu, btnModif, btnAucun                           */
-/* Sur clic d'un radio bouton, déclenche l'action "handleClickRadio" */
-var aLibelle = [Lang.get('global.oui'), Lang.get('global.non')];
-var aName    = ['oui', 'non'];
-var aReactElements  = {'1':['RadioBts',{'name':aName, 'libelle':aLibelle},{'onClick':handleClickRadio}]};
-
-/* Fonction handleClickRadio */
-function handleClickRadio(evt){
-    var copie = _.clone(evt);
-    Actions.utilisateur.radio_change(copie);
-}
 
 /**
  * Fiche utilisateur
@@ -103,8 +83,9 @@ var FicheUser = React.createClass({
     },
 
     componentWillReceiveProps: function(newProps){
-        if(this.props.idUser != newProps.idUser)
+        if(this.props.idUser != newProps.idUser) {
             Actions.utilisateur.load_user_info(newProps.idUser);
+        }
     },
 
     changePhoto: function (evt){
@@ -112,10 +93,40 @@ var FicheUser = React.createClass({
         Actions.utilisateur.changePhoto(copie);
     },
 
-    render: function () {
-        
+    handleClickRadio : function(evt){
+        Actions.utilisateur.radio_change(_.clone(evt));
+    },
 
-        emailInitial = this.state.email;
+    /**
+     * Mise à jour des données utilisateur
+     * @param {object} data
+     */
+    updateData: function (data) {
+        try {
+            this.setState(data);
+        }
+        catch (e) {
+
+        }
+    },
+
+    render: function () {
+
+        // Radio boutons oui / non dans le tableau de profils
+        var aReactElements =
+        {
+            '1': {
+                type: 'RadioBts',
+                name_prefix: 'profil_',
+                name_dynamic: 'id',
+                libelles: [Lang.get('global.oui'), Lang.get('global.non')],
+                values: ['oui','non'],
+                onClick: this.handleClickRadio,
+                checked: 'access_level'
+            }
+        }
+
+        var emailInitial = this.state.email;
 
         var attrs = {
                 label: Lang.get('administration.utilisateur.tableau.email'),
@@ -135,17 +146,17 @@ var FicheUser = React.createClass({
 
         var SuiteCode = '';
         var titreBis  = '';
-
         var fctHideShow = null;
 
-        if(this.state.tabProfilHide == true) {
+        if(this.state.tabProfilHide) {
             fctHideShow = function(e) { Actions.utilisateur.updateHideShowProfil(false); };
-        }else{
+        }
+        else{
             fctHideShow = function(e) { Actions.utilisateur.updateHideShowProfil(true); };
         }
 
         /* MODE COMPTE */
-        if(this.props.modeCompte == true && this.props.editable == true){
+        if(this.props.modeCompte && this.props.editable){
 
             titreBis = Lang.get('administration.utilisateur.change_password');
 
@@ -228,9 +239,9 @@ var FicheUser = React.createClass({
             var tableau = <DataTable
                             id='dataTableProfils'
                             bUnderline={false}
-                            head={headP}
+                            head={[Lang.get('global.profil'), Lang.get('global.droits')]}
                             data={this.state.dataProfil}
-                            hide={hideP}
+                            hide={['id']}
                             reactElements={aReactElements}
                             key="testkey"
                             editable={this.props.editable}/> ;
@@ -293,19 +304,6 @@ var FicheUser = React.createClass({
                 {SuiteCode}
             </Form>
         );
-    },
-
-    /**
-     * Mise à jour des données utilisateur
-     * @param {object} data
-     */
-    updateData: function (data) {
-        try {
-            this.setState(data);
-        }
-        catch (e) {
-
-        }
     }
 });
 module.exports.Composant = FicheUser;
@@ -327,16 +325,15 @@ var ficheUserStore = Reflux.createStore({
     init: function () {
         // Register statusUpdate action
         this.listenTo(Actions.utilisateur.load_user_info, this.getInfosUser);
-        this.listenTo(Actions.utilisateur.save_user,      this.sauvegarder);
+        this.listenTo(Actions.utilisateur.save_user,      this.sauvegarder);// Envoyé de PageUser sur submit_form
         this.listenTo(Actions.utilisateur.delete_user,    this.supprimer);
-        this.listenTo(Actions.utilisateur.initMatrice,    this.initMatrice);
-        this.listenTo(Actions.utilisateur.radio_change,   this.radioChange);
-        this.listenTo(Actions.validation.form_field_changed,    this.formChange);
-        this.listenTo(Actions.validation.form_field_verif,      this.formVerif);
         this.listenTo(Actions.utilisateur.set_etat_create_edit, this.setEtatCreateEdit);
         this.listenTo(Actions.utilisateur.updateHideShowProfil, this.updateHideShowProfil);
         this.listenTo(Actions.utilisateur.set_etat_compte,      this.set_etat_compte);
         this.listenTo(Actions.utilisateur.set_initial_state,      this.set_initial_state);
+
+        this.listenTo(Actions.validation.form_field_changed,    this.formChange);
+        this.listenTo(Actions.validation.form_field_verif,      this.formVerif);
     },
 
     set_initial_state: function(data){
@@ -347,22 +344,6 @@ var ficheUserStore = Reflux.createStore({
 
     set_etat_compte: function(bool){
         this.modeCompte = bool;
-    },
-
-    initMatrice: function(data){
-        this.matriceBtnRadio = {};
-
-        _.extend(this.formDataState, {dataProfil:{}});
-
-        /* Mise à jour du state des radios boutons */
-        var that   = this;
-        var indice = 0;
-        this.formDataState.dataProfil = [];
-        _.each(data, function(val, key){
-            that.formDataState.dataProfil[indice++] = _.clone(val);
-
-            that.matriceBtnRadio[val.id] = val.etat;
-        }, that);
     },
 
     updateHideShowProfil: function(bool){
@@ -378,20 +359,32 @@ var ficheUserStore = Reflux.createStore({
         var data = {};
 
         // Mise à jour du state
-        if(e.name == 'email')
-            data.email = e.value;
-        else if(e.name == 'nom')
-            data.nom = e.value;
-        else if(e.name == 'prenom')
-            data.prenom = e.value;
-        else if(e.name == 'passNew')
-            data.passNewvalue = e.value;
-        else if(e.name == 'passOld')
-            data.passOldvalue = e.value;
-        else if(e.name == 'passConfirm')
-            data.passConfirmvalue = e.value;
-        else if(e.name == 'photo')
-            data.photo = e.value;
+        switch(e.name) {
+
+            case 'email':
+                data.email = e.value;
+                break;
+            case 'nom':
+                data.nom = e.value;
+                break;
+            case 'prenom':
+                data.prenom = e.value;
+                break;
+            case 'passNew':
+                data.passNewvalue = e.value;
+                break;
+            case 'passOld':
+                data.passOldvalue = e.value;
+                break;
+            case 'passConfirm':
+                data.passConfirmvalue = e.value;
+                break;
+            case 'photo':
+                data.photo = e.value;
+                break;
+            default:
+                break;
+        }
 
         this.formDataState = _.extend(this.formDataState, data);
         this.trigger(this.formDataState);
@@ -411,38 +404,18 @@ var ficheUserStore = Reflux.createStore({
             else
                 data = this.emailEditChange(e.value);
         }
-        else if(e.name == 'passNew')
+        else if(e.name == 'passNew') {
             data = this.verifPassNew(e.value, $('#passConfirm')[0].value);
-        else if(e.name == 'passOld')
+        }
+        else if(e.name == 'passOld') {
             data = this.verifPassOld(e.value);
-        else if(e.name == 'passConfirm')
+        }
+        else if(e.name == 'passConfirm') {
             data = this.verifPassNew(e.value, $('#passNew')[0].value);
+        }
 
         this.formDataState = _.extend(this.formDataState, data);
         this.trigger(this.formDataState);
-    },
-
-    radioChange: function(evt){
-        /* Récupère les données du radio bouton */
-        var Etat     = $(evt.currentTarget).data('etat'); /* 'visu', 'modif' ou 'aucun' */
-        var idProfil = $(evt.currentTarget).data('id');   /* id du module concerné      */
-
-        /* Mise a jour de la matrice */
-        this.matriceBtnRadio[idProfil] = Etat;
-
-        /* Mise à jour du state des radios boutons */
-        var that   = this;
-        var indice = 0;
-        _.each(this.formDataState.dataProfil, function(val, key){
-            if(val != undefined && val['id'] == idProfil)
-                that.formDataState.dataProfil[indice]['etat'] = Etat;
-            indice++;
-        }, that);
-
-        this.trigger(this.formDataState);
-
-        /* Mise à jour du flag pour sauvegarder les modifications sur l'etat des modules */
-        this.isMatriceModuleModif = true;
     },
 
     // Callback
@@ -493,27 +466,18 @@ var ficheUserStore = Reflux.createStore({
         // Variables
         var url = idUser === 0 ? '' : idUser;
 
-        if(this.modeCompte == true)
+        if(this.modeCompte) {
             url = BASE_URI + 'moncompte';
-        else
+        }
+        else {
             url = BASE_URI + 'utilisateur/' + url;
+        }
 
         //console.log('SAVE '+idUser+' URL '+url);
         var method = idUser === 0 ? 'POST' : 'PUT';
 
-        var matrice = [];
-        if(this.isMatriceModuleModif) {
-            var that = this;
-            _.each(this.matriceBtnRadio, function (key, value) {
-                matrice.push([key, value]);
-            }, that);
-        }
-
         // RÉCUPÉRATION DES DONNÉES
-
-        // FormData
         var fData = form_data_helper('form_utilisateur', method);
-        fData.append('matrice', matrice);
         fData.append('photo', $("[name=photo]")[0].files[0]);
 
         // Requête
@@ -526,15 +490,22 @@ var ficheUserStore = Reflux.createStore({
             dataType:'json',
             context: this,
             success: function (tab) {
-                if(tab.save == true) {
+                // Sauvegarde OK
+                if(tab.save) {
+                    // Notifiction verte
                     Actions.notif.success(Lang.get('global.notif_success'));
-                    Actions.utilisateur.saveOK(tab.idUser*1);
-                    Actions.utilisateur.load_user_info(tab.idUser*1);
+
+                    Actions.utilisateur.saveOK(parseInt(tab.idUser));
+                    Actions.utilisateur.load_user_info(parseInt(tab.idUser));
                 }
-                else if(tab.pass !== undefined)
+                // Mots de passes différents
+                else if(tab.pass !== undefined) {
                     Actions.notif.error(Lang.get('administration.utilisateur.oldPassConfirmError'));
-                else
+                }
+                // Erreur SQL
+                else {
                     Actions.notif.error(Lang.get('global.notif_erreur'));
+                }
             },
 
             error: function (xhr, status, err) {
