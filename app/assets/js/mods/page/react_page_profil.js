@@ -22,6 +22,8 @@ var DataTableBandeauProfil = require('../react_data_table_bandeau_profil');
 var DataTableModule = require('../react_data_table_module').composant;
 
 /*******************************/
+// HELPERS
+var pageState = require('../helpers/page_helper').pageState;
 var form_data_helper = require ('../helpers/form_data_helper')
 
 /************************************************************************************************/
@@ -125,7 +127,7 @@ var ReactPageProfil = React.createClass({
             /*    - le bandeau (Retour/Créer/Editer/Supprimer) */
             /*    - le nom du profil NON éditable              */
             /*    - le tableau des modules NON éditable        */
-            case 'visu':
+            case pageState.visu:
                 return <Col md={12} key="rootPageProfil">
                     <BandeauGenerique
                         bandeauType={this.state.etatPageProfil}
@@ -155,9 +157,9 @@ var ReactPageProfil = React.createClass({
             /*    - le bandeau                      */
             /*    - le nom du profil EDITABLE       */
             /*    - le tableau des modules EDITABLE */
-            case 'creation':
+            case pageState.creation:
                 mode = 0;
-            case 'edition':
+            case pageState.edition:
                 return <Col md={12} key="rootPageProfil">
                     <BandeauGenerique
                         bandeauType={this.state.etatPageProfil}
@@ -185,7 +187,7 @@ var ReactPageProfil = React.createClass({
             /* On affiche :                    */
             /*    - le bandeau (Créer)         */
             /*    - le tableau des profils     */
-            case 'liste':
+            case pageState.liste:
             default:
                 return <Col md={12}  key="rootPageProfil">
 

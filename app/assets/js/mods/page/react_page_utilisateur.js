@@ -17,6 +17,9 @@ var MixinGestMod = require('../mixins/gestion_modif');
 // STORE
 var storeFicheUser = require('../react_fiche_utilisateur').store
 
+// HELPERS
+var pageState = require('../helpers/page_helper').pageState;
+
 /**
  * Page utilisateur
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
@@ -56,7 +59,7 @@ var PageUser = React.createClass({
         var react;
 
         switch (this.state.etat) {
-            case 'visu':
+            case pageState.visu:
                 react =
                     <div key="rootPageuser">
                         <BandeauGenerique
@@ -71,7 +74,7 @@ var PageUser = React.createClass({
                             idUser={this.state.idUser}/>
                     </div>;
                 break;
-            case 'edition':
+            case pageState.edition:
                 react =
                     <div key="rootPageuser">
                         <BandeauGenerique
@@ -89,7 +92,7 @@ var PageUser = React.createClass({
                             idUser={this.state.idUser}/>
                     </div>;
                 break;
-            case 'creation':
+            case pageState.creation:
                 react =
                     <div key="rootPageuser">
                         <BandeauGenerique

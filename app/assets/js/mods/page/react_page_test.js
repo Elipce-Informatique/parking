@@ -44,6 +44,7 @@ var MixinGestMod = require('../mixins/gestion_modif');
 /*****************************************************
  /* HELPERS */
 var form_data_helper = require('../helpers/form_data_helper');
+var pageState = require('../helpers/page_helper').pageState;
 
 
 /**************************************************

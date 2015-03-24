@@ -10,6 +10,8 @@ var Col = ReactB.Col;
 // MIXINS
 var MixinGestMod = require('../mixins/gestion_modif');
 
+// HELPERS
+var pageState = require('../helpers/page_helper').pageState;
 /**
  * Created by yann on 13/01/2015.
  *
@@ -56,7 +58,7 @@ var PageCompte = React.createClass({
         var comp;
 
         switch (this.state.etat) {
-            case 'edition':
+            case pageState.edition:
                 comp =
                     <div key="pageCompteRootEdit">
                         <BandeauEdition mode={1} titre={Lang.get('administration.moncompte.titre')} sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}/>

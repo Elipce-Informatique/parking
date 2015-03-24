@@ -14,6 +14,9 @@ var BandeauProfilVisu = require('./react_bandeau_profil_visu');
 var BandeauProfilVisuRetour = require('./react_bandeau_profil_visu_retour');
 
 var AuthentMixins = require('../../mixins/component_access');
+
+// HELPERS
+var pageState = require('../../helpers/page_helper').pageState;
 /**
  * Created by yann on 16/12/2014.
  *
@@ -58,14 +61,14 @@ var BandeauGenerique = React.createClass({
         // MODE DROITS DE MODIFICATION
         if (this.state.canModif) {
             switch (this.props.bandeauType) {
-                case 'edition':
-                case 'creation':
+                case pageState.edition:
+                case pageState.creation:
                     bandeau = <BandeauEdition key="bandeauGenCrea" {...this.props} />;
                     break;
-                case 'visu':
+                case pageState.visu:
                     bandeau = <BandeauVisu key="bandeauGenVisu" {...this.props} />;
                     break;
-                case 'liste':
+                case pageState.liste:
                     bandeau = <BandeauListe key="bandeauGenListe" {...this.props} />;
                     break;
                 default:
@@ -76,7 +79,7 @@ var BandeauGenerique = React.createClass({
         // MODE LECTURE SEULE
         else {
             switch (this.props.bandeauType) {
-                case 'liste':
+                case pageState.liste:
                     bandeau = <BandeauProfilVisu key="bandeauGenListeVisu" {...this.props} />;
                     break;
                 default:
