@@ -36,7 +36,7 @@ var PageUser = React.createClass({
 
     getInitialState: function () {
         return {
-            etat: 'liste',
+            etat: pageState.liste,
             idUser: 0,
             dataUser: {nom: '', prenom: ''}
         };
@@ -214,7 +214,7 @@ var pageUserStore = Reflux.createStore({
         // Boite de confirmation
 
         // Suppr
-        this.stateLocal = {idUser: this.stateLocal.idUser, etat: pageState.suppression};
+        this.stateLocal = {idUser: this.stateLocal.idUser, etat: pageState.suppression}
         Actions.utilisateur.delete_user(this.stateLocal.idUser);
     }
 });

@@ -1626,7 +1626,7 @@ var InputRadioBootstrap = React.createClass({
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
  * @param gestMod: bool: gestion des modifications
  */
-var InputCheckboxEditable = React.createClass({
+var InputRadioBootstrapEditable = React.createClass({
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
@@ -1667,7 +1667,8 @@ var InputCheckboxEditable = React.createClass({
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
  * @param gestMod: bool: gestion des modifications
  */
-var InputRadioBootstrap = React.createClass({
+var InputCheckbox = React.createClass({
+    mixins: [MixinInputChecked],
 
     propTypes: {
         attributes: React.PropTypes.object,
@@ -1687,12 +1688,10 @@ var InputRadioBootstrap = React.createClass({
 
     render: function () {
         var gestMod = this.props.gestMod ? {'data-gest-mod': this.props.gestMod} : {};
-        var classBtn = 'btn btn-default';
-
-        console.log('ATTRS %o', this.props.attributes);
-
         return (
-            <label
+            <Input
+                type="checkbox"
+                {...this.props.attributes}
                 {...this.props.evts}
                 {...gestMod}
                 checked = {this.state.checked}
@@ -1704,13 +1703,12 @@ var InputRadioBootstrap = React.createClass({
 });
 
 /**
- * DEPRECATED: utiliser plutot RadioGroup + InputRadio
- * Champ texte editable => si pas editable INPUT devient READONLY.
+ * Champ checkbox editable => si pas editable INPUT devient READONLY.
  * @param editable: (bool) Si true alors INPUT sinon LABEL
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
  */
-var InputRadioBootstrapEditable = React.createClass({
+var InputCheckboxEditable = React.createClass({
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
@@ -1730,18 +1728,19 @@ var InputRadioBootstrapEditable = React.createClass({
     render: function () {
         var attr = this.props.attributes;
         // Editable
-        attr = _.extend(attr, {disabled: (!this.props.editable)});
+        if (!this.props.editable) {
+            attr = _.extend(attr, {disabled: true});
+        } else {
+            attr = _.extend(attr, {disabled: false});
+        }
 
-        return (
-            <InputRadioBootstrap
-                attributes = {attr}
-                evts = {this.props.evts}
-                ref="Editable"
-                gestMod={this.props.gestMod} >
-
-            {this.props.children}
-            </InputRadioBootstrap>
-        );
+        //console.log(attr);
+        return <InputCheckbox
+            attributes = {attr}
+            evts = {this.props.evts}
+            ref="Editable"
+            gestMod={this.props.gestMod}
+        />
     }
 });
 
