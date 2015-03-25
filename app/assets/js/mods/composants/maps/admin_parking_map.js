@@ -18,7 +18,8 @@ var Button = ReactB.Button;
 /**
  * Created by yann on 27/01/2015.
  * Composant pour créer une carte de parking en mode administration outils de dessins.
- * @param defaultDrawMode :
+ * @param defaultDrawMode : mapOptions.dessin.xxxx
+ * @param calibre : nombre de cm/deg sur cette carte
  */
 var parkingMap = React.createClass({
     mixins: [Reflux.ListenerMixin, ReactB.OverlayMixin],
@@ -50,7 +51,7 @@ var parkingMap = React.createClass({
         return {
             defaultDrawMode: mapOptions.dessin.place,
             mapHeight: 300,
-            calibre: 1
+            calibre: 93
         };
     },
 
@@ -353,6 +354,22 @@ var parkingMap = React.createClass({
     },
 
     /**
+     * Ajoute la forme dessinnée au layer courant
+     * @param data : le couple type-data envoyé par le store
+     */
+    onFormesAdded: function (formes) {
+        console.log('ACTION ADD FORMES, voilà les formes : %o', formes);
+        var liste_data = formes.data;
+        var layerGroup = this._inst[mapOptions.control.groups[this._inst.currentMode]];
+        console.log('LayerGroup trouvé : %o', mapOptions.control.groups[this._inst.currentMode]);
+        console.log('LayerGroup trouvé : %o', layerGroup);
+        _.each(liste_data, function (place) {
+
+            place.marker.addTo(layerGroup);
+        }, this)
+    },
+
+    /**
      * Remet tous les featuresGroups en ordre (zIndex)
      * L'ordre de bas en haut:
      * - Zone
@@ -377,6 +394,9 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.type_messages.add_forme:
                 this.onFormeAdded(data);
+                break;
+            case mapOptions.type_messages.add_formes:
+                this.onFormesAdded(data);
                 break;
             case mapOptions.type_messages.new_place_auto:
                 this._onNewPlaceAuto(data);

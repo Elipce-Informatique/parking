@@ -226,11 +226,10 @@ var store = Reflux.createStore({
             ' Inc : ' + inc +
             ' Suff : ' + suff);
 
+        var places = [];
         // CONTRÔLE DES NOMBRES ENTRÉS
         if (parseInt(spacePoteaux) < parseInt(nbPlaces)) {
-            // TODO : Appeller une fonction (map helper) pour découper le parallélogramme en places avec les params
-            console.log('Nombre de poteaux OK');
-            mapHelper.createPlacesFromParallelogramme(
+            places = mapHelper.createPlacesFromParallelogramme(
                 this._inst.calibre,
                 parallelogramme,
                 nbPlaces,
@@ -239,6 +238,12 @@ var store = Reflux.createStore({
                 pref,
                 inc,
                 suff);
+
+            var retour = {
+                type: mapOptions.type_messages.add_formes,
+                data: places
+            };
+            this.trigger(retour);
         } else {
             swal(Lang.get('administration_parking.carte.swal_interval_incorrect'));
         }
