@@ -2,6 +2,7 @@ var Input = require('./react_input');
 
 module.exports = {
     Form: require('./react_form'),
+    BtnSave: require('./react_btn_save'),
     InputText: Input.InputText,
     InputTextEditable: Input.InputTextEditable,
     InputMail: Input.InputMail,

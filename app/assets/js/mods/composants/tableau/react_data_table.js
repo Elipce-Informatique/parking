@@ -99,20 +99,26 @@ var DataTableReact = React.createClass({
     componentWillUpdate: function (newProps, newState) {
         // Suppression datable
         this.destroyDataTable();
-
     },
 
     shouldComponentUpdate: function (nextProps, nextState) {
-        if(_.isEqual(nextProps, this.props))
-            return false;
-        else
-            return true;
+        //console.log('EGAL TABLE %o', !(_.isEqual(nextProps, this.props)));
+        return !(_.isEqual(nextProps, this.props));
     },
 
     render: function () {
+        //console.log('RENDER DATATABLE PROPS %o',_.clone(this.props));
         return (
             <div className="datatable-root" key="dataTableRoot">
-                <Table id={this.props.id} head={this.props.head} data={this.props.data} hide={this.props.hide} attributes={this.props.attributes} evts={this.myEvts} reactElements={this.props.reactElements} editable={this.props.editable} />
+                <Table
+                    id={this.props.id}
+                    head={this.props.head}
+                    data={this.props.data}
+                    hide={this.props.hide}
+                    attributes={this.props.attributes}
+                    evts={this.myEvts}
+                    reactElements={this.props.reactElements}
+                    editable={this.props.editable} />
             </div>
         )
     },

@@ -124,9 +124,6 @@ var React = require('react/addons');
         "create_user",
         "delete_user",
         "changePhoto",
-        "radio_change",
-        "initMatrice",
-        "set_etat_create_edit",
         "saveOK",
         "supprOK",
         "updateBandeau",
@@ -154,9 +151,6 @@ var React = require('react/addons');
         "module_update", /* Recharge les données du tableau des modules                                          */
         "radio_change", /* Action déclenchée lors du changement d'état d'un radio bouton du tableau des modules */
         "libelle_change", /* Onchange du libelle du profil                                                        */
-        "setIdProfil",
-        "initMatrice",
-        "set_etat_create_edit"
     ]);
 
     /*
@@ -176,7 +170,6 @@ var React = require('react/addons');
  |--------------------------------------------------------------------------
  */
 $(function () {
-
     var Notify = require('../mods/composants/react_notify');
     React.render(<Notify />, document.getElementById('composant_react_notifications'));
 
