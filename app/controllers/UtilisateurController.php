@@ -50,9 +50,9 @@ class UtilisateurController extends \BaseController
         return Utilisateur::getUtilisateurFromId($id);
     }
 
-    public function getUserAndProfil($id)
+    public function getProfilsUsers($id)
     {
-        return Utilisateur::getUserAndProfil($id);
+        return Utilisateur::getProfilsUsers($id);
     }
 
     /**
@@ -101,9 +101,15 @@ class UtilisateurController extends \BaseController
         return Utilisateur::getUtilisateurs();
     }
 
-    public function getUserExist($email)
+    /**
+     * Calcule si le mail de l'utilisateur existe
+     * @param $email: email à tester
+     * @param int $idUser: utilisateur à ne opas prendre en compte dans la recherche
+     * @return
+     */
+    public function isMailExists($email, $idUser=0)
     {
-        return Utilisateur::getUserExist($email);
+        return json_encode(Utilisateur::isMailExists($email, $idUser));
     }
 
     /**
@@ -125,14 +131,22 @@ class UtilisateurController extends \BaseController
         // Champs du formualaire
         $fields = Input::except('_token');
 
-        $res = ['good'=>true];
-        if(isset($fields['passOld']) && isset($fields['passNew']))
-            $res = Utilisateur::getUserPassGood($fields['passOld']);
+        $bool = true;
 
-        if($res['good'] == true)
+        // Mot de passe avant modification et nouveau mdp renseignés
+        if(isset($fields['passOld']) && isset($fields['passNew'])) {
+            // Ancien mot de passe valide ?
+            $bool = Utilisateur::isPasswordOk($fields['passOld']);
+        }
+
+        // Ancien PWD OK
+        if($bool) {
             return json_encode(Utilisateur::updateUser($oUser->id, $fields));
-        else
+        }
+        // Ancien PWD KO
+        else {
             return json_encode(array('save' => false, 'pass' => 'incorrect'));
+        }
     }
 
     /**
@@ -140,7 +154,7 @@ class UtilisateurController extends \BaseController
      * @param $pass : mot de pass à tester
      */
     public function verifMDPcompte($pass){
-        return json_encode(Utilisateur::getUserPassGood($pass));
+        return json_encode(Utilisateur::isPasswordOk($pass));
     }
 
 }

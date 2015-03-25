@@ -32,8 +32,6 @@ var PageCompte = React.createClass({
     },
 
     getInitialState: function () {
-        console.log('Initial state:');
-        console.log(this.props.dataUser);
         return {
             etat: pageState.visu,
             dataUser: this.props.dataUser
@@ -54,7 +52,7 @@ var PageCompte = React.createClass({
     },
 
     display: function () {
-        console.log('Render, state data user: %o', this.state.dataUser);
+        //console.log('Render, state data user: %o', this.state.dataUser);
         var comp;
 
         switch (this.state.etat) {

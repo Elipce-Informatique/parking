@@ -4,24 +4,27 @@ var Field = require('./composants/formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputMailEditable = Field.InputMailEditable;
 var react_photo       = require('./composants/react_photo');
-var form_data_helper  = require('./helpers/form_data_helper');
 var PhotoEditable     = react_photo.PhotoEditable;
 var Row = ReactB.Row;
 var Col = ReactB.Col;
 var Button = ReactB.Button;
 var ButtonToolbar = ReactB.ButtonToolbar;
 var Glyphicon = ReactB.Glyphicon;
-
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var InputRadioEditable = Field.InputRadioEditable;
 var InputPasswordEditable = Field.InputPasswordEditable;
 var Form = Field.Form;
 var DataTable = require('./composants/tableau/react_data_table');
 
+// HELPERS
+var form_data_helper  = require('./helpers/form_data_helper');
+
 /**
  * Fiche utilisateur
  * @param editable: Booléen pour autoriser ou non la modification des données de l'utilisateur
+ * @param userData: données utilisateur {nom: ..., prenom : ..., ...}
  * @param idUser: id de l'utilisateur affiché dans cette fiche.
+ * @param modeCompte: True: compte de l'utilisateur connecté. False: Page utilisateurs
  */
 var FicheUser = React.createClass({
 
@@ -51,10 +54,11 @@ var FicheUser = React.createClass({
             passConfirm: '',
             dataProfil: [],
             retour: {},
-            passNewvalue: '',
-            passConfirmvalue: '',
-            passOldvalue: '',
-            tabProfilHide: true
+            passNewValue: '',
+            passConfirmValue: '',
+            passOldValue: '',
+            tabProfilHide: true,
+            dataEmail : {}// vérifications métier du champ mail
         };
         return retour;
     },
@@ -63,38 +67,44 @@ var FicheUser = React.createClass({
         // Liaison au store
         this.listenTo(ficheUserStore, this.updateData, this.updateData);
 
-        // Appel du chargement
-        Actions.utilisateur.set_etat_create_edit(this.props.idUser==0);
+        // Mode compte ou page user
         Actions.utilisateur.set_etat_compte(this.props.modeCompte);
 
+        // Page utilisateur
         if(!this.props.modeCompte) {
+            // Chargement des infos de l'utilisateur sélectionné
             Actions.utilisateur.load_user_info(this.props.idUser);
         }
+        // Compte utilsateur
         else{
+            // les data sont passées par props
             var state = {
                 nom:    this.props.userData.nom,
                 prenom: this.props.userData.prenom,
                 email:  this.props.userData.email,
                 photo:  this.props.userData.photo
             };
+            // Maj state store
             Actions.utilisateur.set_initial_state(state);
+            // Maj state composant
             this.setState(state);
         }
     },
 
     componentWillReceiveProps: function(newProps){
+        // Nouvel utilisateur
         if(this.props.idUser != newProps.idUser) {
+            // Chargement des infos utilisateur
             Actions.utilisateur.load_user_info(newProps.idUser);
         }
     },
 
+    /**
+     * Changer la photo
+     * @param evt
+     */
     changePhoto: function (evt){
-        var copie = _.clone(evt);
-        Actions.utilisateur.changePhoto(copie);
-    },
-
-    handleClickRadio : function(evt){
-        Actions.utilisateur.radio_change(_.clone(evt));
+        Actions.utilisateur.changePhoto(_.clone(evt));
     },
 
     /**
@@ -111,23 +121,9 @@ var FicheUser = React.createClass({
     },
 
     render: function () {
-
-        // Radio boutons oui / non dans le tableau de profils
-        var aReactElements =
-        {
-            '1': {
-                type: 'RadioBts',
-                name_prefix: 'profil_',
-                name_dynamic: 'id',
-                libelles: [Lang.get('global.oui'), Lang.get('global.non')],
-                values: ['oui','non'],
-                onClick: this.handleClickRadio,
-                checked: 'access_level'
-            }
-        }
-
         var emailInitial = this.state.email;
 
+        // Attributs du mail
         var attrs = {
                 label: Lang.get('administration.utilisateur.tableau.email'),
                 name: "email",
@@ -138,104 +134,139 @@ var FicheUser = React.createClass({
                 groupClassName: 'row'
         };
 
-        // Test si besoin de forcer le style de l'email
-        if(this.state.dataEmail != undefined ){
-            var attrs2  = {bsStyle:this.state.dataEmail.style, 'data-valid':this.state.dataEmail.isValid, help:this.state.dataEmail.tooltip};
-            attrs       = _.extend(attrs, attrs2);
+        // Coloration de l'email en fonction des vérifications syntaxiques et métier
+        if(!_.isEmpty(this.state.dataEmail)){
+            attrs       = _.extend(attrs, {
+                bsStyle:this.state.dataEmail.style,
+                'data-valid':this.state.dataEmail.isValid,
+                help:this.state.dataEmail.tooltip
+            });
         }
 
         var SuiteCode = '';
         var titreBis  = '';
         var fctHideShow = null;
 
-        if(this.state.tabProfilHide) {
-            fctHideShow = function(e) { Actions.utilisateur.updateHideShowProfil(false); };
-        }
-        else{
-            fctHideShow = function(e) { Actions.utilisateur.updateHideShowProfil(true); };
-        }
+        // Montrer ou cacher les profils
+        fctHideShow = function(e) {
+            Actions.utilisateur.updateHideShowProfil(!this.state.tabProfilHide);
+        }.bind(this);
 
-        /* MODE COMPTE */
+
+        // MODE COMPTE
         if(this.props.modeCompte && this.props.editable){
 
             titreBis = Lang.get('administration.utilisateur.change_password');
 
-            /* Attributs des inputs mot de pass */
+            // Attributs des inputs mot de pass
             var attrsPass = {
                 wrapperClassName: 'col-md-4',
                 labelClassName: 'col-md-2 text-right',
                 groupClassName: 'row'
             };
 
+            // Attributs du mot de passe avant modification
             var attrsPassOld = {
                 label: Lang.get('administration.utilisateur.password_old'),
                 name: "passOld",
                 id: "passOld",
-                value: this.state.passOldvalue
+                value: this.state.passOldValue
             };
 
+            // Attributs du nouveau mot de passe
             var attrsPassNew = {
                 label: Lang.get('administration.utilisateur.password_new'),
                 name: "passNew",
                 id: "passNew",
-                value: this.state.passNewvalue
+                value: this.state.passNewValue
             };
 
+            // Attributs du mot de passe de confirmation
             var attrsPassConfirm = {
                 label: Lang.get('administration.utilisateur.password_confirm'),
                 name: "passConfirm",
                 id: "passConfirm",
-                value: this.state.passConfirmvalue
+                value: this.state.passConfirmValue
             };
 
-            // Test si besoin de forcer le style du pass de confirmation
-            if(this.state.passConfirm != undefined ){
-                var attrs3  = {bsStyle:this.state.passConfirm.style, 'data-valid':this.state.passConfirm.isValid, help:this.state.passConfirm.tooltip};
-                _.extend(attrsPassConfirm, attrs3);
+            // Coloration du mot de passe confirmé
+            if(!_.isEmpty(this.state.passConfirm)){
+                _.extend(attrsPassConfirm, {
+                    bsStyle:this.state.passConfirm.style,
+                    'data-valid':this.state.passConfirm.isValid,
+                    help:this.state.passConfirm.tooltip
+                });
             }
 
-            // Test si besoin de forcer le style du pass old
-            if(this.state.passOld != undefined ){
-                var attrs4  = {bsStyle:this.state.passOld.style, 'data-valid':this.state.passOld.isValid, help:this.state.passOld.tooltip};
-                _.extend(attrsPassOld, attrs4);
+            // Coloration du mot de passe avant modification
+            if(!_.isEmpty(this.state.passOld)){
+                _.extend(attrsPassOld, {
+                    bsStyle:this.state.passOld.style,
+                    'data-valid':this.state.passOld.isValid,
+                    help:this.state.passOld.tooltip
+                });
             }
 
             // Si nouveau mot de passe, mot de passe actuel obligatoire
-            if(this.state.passNewvalue != '' || this.state.passConfirmvalue != ''){
+            if(this.state.passNewValue != '' || this.state.passConfirmValue != ''){
                 _.extend(attrsPassOld, {required: true});
             }
 
+            // Attributs par défaut à tous les champs mot de passe
             _.extend(attrsPassOld,     attrsPass);
             _.extend(attrsPassNew,     attrsPass);
             _.extend(attrsPassConfirm, attrsPass);
 
-            /* On affiche la modification du password */
+            // On affiche la modification du password
             var password = (
                 <span>
                     <InputPasswordEditable attributes={attrsPassOld}     editable={this.props.editable} />
                     <InputPasswordEditable attributes={attrsPassNew}     editable={this.props.editable} />
                     <InputPasswordEditable attributes={attrsPassConfirm} editable={this.props.editable} />
                 </span>);
-            //tableau = <p key="uniquekey">test</p>;
+
+            // Mot de passes cachés
             if (this.state.tabProfilHide) {
                 password = {};
             }
-            SuiteCode = <Row>
-                <Col md={2}>
-                    <h3 className="btn btn-default hand-over" onClick={fctHideShow}>
-                        {titreBis}
-                    </h3>
-                </Col>
-                <Col md={10}>
-                    <ReactCSSTransitionGroup transitionName="tabprofil" key="transitionGroupTable">
-                        {password}
-                    </ReactCSSTransitionGroup >
-                </Col>
-            </Row>;
+            // Affichage des mots de passe
+            SuiteCode = (
+                <span>
+                    <Row>
+                        <Col md={2}>
+                            <h3
+                                className="btn btn-default hand-over"
+                                onClick={fctHideShow}>
+                                {titreBis}
+                            </h3>
+                        </Col>
+                    </Row>
+                    <Row className="marge">
+                        <Col md={12}>
+                            <ReactCSSTransitionGroup transitionName="tabprofil" key="transitionGroupTable">
+                                {password}
+                            </ReactCSSTransitionGroup >
+                        </Col>
+                    </Row>
+                </span>
+            );
         }
         // MODE ADMIN
-        else if(this.props.modeCompte == false){
+        else if(!this.props.modeCompte){
             titreBis = Lang.get('administration.utilisateur.profilsAssocie');
+            // Radio boutons oui / non dans le tableau de profils
+            var aReactElements =
+            {
+                '1': {
+                    type: 'RadioBts',
+                    name_prefix: 'profil_',
+                    name_dynamic: 'id',
+                    libelles: [Lang.get('global.oui'), Lang.get('global.non')],
+                    values: ['oui','non'],
+                    onClick: this.handleClickRadio,
+                    checked: 'profil'
+                }
+            }
             var tableau = <DataTable
                             id='dataTableProfils'
                             bUnderline={false}
@@ -245,33 +276,50 @@ var FicheUser = React.createClass({
                             reactElements={aReactElements}
                             key="testkey"
                             editable={this.props.editable}/> ;
-            //tableau = <p key="uniquekey">test</p>;
+
+            // Tableau des profils caché
             if(this.state.tabProfilHide){
                 tableau = {};
             }
 
-            /* On affiche le tableau des profils associés */
-            SuiteCode = <Row>
-                            <Col md={2}>
-                                <h3 className="btn btn-default hand-over" onClick={fctHideShow}>
-                                    {titreBis}
-                                </h3>
-                            </Col>
-                            <Col md={10} key="colTable">
-                                <ReactCSSTransitionGroup transitionName="tabprofil" key="transitionGroupTable">
-                                {tableau}
-                                </ReactCSSTransitionGroup>
-                            </Col>
-                        </Row>;
+            // On affiche le tableau des profils associés
+            SuiteCode = (
+                <span>
+                    <Row>
+                        <Col md={2}>
+                            <h3 className="btn btn-default hand-over" onClick={fctHideShow}>
+                                {titreBis}
+                            </h3>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md={12} key="colTable">
+                            <ReactCSSTransitionGroup
+                                transitionName="tabprofil"
+                                key="transitionGroupTable">
+                            {tableau}
+                            </ReactCSSTransitionGroup>
+                        </Col>
+                    </Row>
+                </span>
+            );
         }
 
+        // Attributs du formulaire
         var fAttrs = {className:"form_utilisateur", id:"form_utilisateur"};
+        // URL de la photo
         var srcPhoto = './app/storage/documents/photo/'+this.state.photo;
         return (
             <Form ref="form" attributes={fAttrs}>
                 <Row>
                     <Col md={2} className="photo">
-                        <PhotoEditable name="photo" cacheable={false} alertOn={true} src={srcPhoto} evts={{onChange:this.changePhoto}} editable={this.props.editable} />
+                        <PhotoEditable
+                            name="photo"
+                            cacheable={false}
+                            alertOn={true}
+                            src={srcPhoto}
+                            evts={{onChange:this.changePhoto}}
+                            editable={this.props.editable} />
                     </Col>
                     <Col md={10}>
                         <InputTextEditable ref="nom"
@@ -313,13 +361,18 @@ module.exports.Composant = FicheUser;
 var ficheUserStore = Reflux.createStore({
 
     // Variables
-    dataUser: {},
-    formDataState: {},
-    matriceBtnRadio: {},
-    isMatriceModuleModif:false,
-    modeCreate:true,
+    storeState: {
+        nom    : '',
+        prenom : '',
+        email : '',
+        photo: 'no.gif',
+        passNewValue : '',
+        passOldValue : '',
+        passConfirmValue : ''
+    },
     modeCompte:false,
     emailInitial:'',
+    idUser : 0,
 
     // Initial setup
     init: function () {
@@ -327,7 +380,6 @@ var ficheUserStore = Reflux.createStore({
         this.listenTo(Actions.utilisateur.load_user_info, this.getInfosUser);
         this.listenTo(Actions.utilisateur.save_user,      this.sauvegarder);// Envoyé de PageUser sur submit_form
         this.listenTo(Actions.utilisateur.delete_user,    this.supprimer);
-        this.listenTo(Actions.utilisateur.set_etat_create_edit, this.setEtatCreateEdit);
         this.listenTo(Actions.utilisateur.updateHideShowProfil, this.updateHideShowProfil);
         this.listenTo(Actions.utilisateur.set_etat_compte,      this.set_etat_compte);
         this.listenTo(Actions.utilisateur.set_initial_state,      this.set_initial_state);
@@ -337,7 +389,7 @@ var ficheUserStore = Reflux.createStore({
     },
 
     set_initial_state: function(data){
-        this.formDataState = data;
+        this.storeState = data;
         this.emailInitial = data['email'];
         //console.log('this.emailInitial : %o', this.emailInitial);
     },
@@ -348,11 +400,6 @@ var ficheUserStore = Reflux.createStore({
 
     updateHideShowProfil: function(bool){
         this.trigger({tabProfilHide:bool});
-    },
-
-    setEtatCreateEdit: function(modeCreate_P){
-        this.isMatriceModuleModif = false;
-        this.modeCreate           = modeCreate_P;
     },
 
     formChange: function(e){
@@ -371,13 +418,13 @@ var ficheUserStore = Reflux.createStore({
                 data.prenom = e.value;
                 break;
             case 'passNew':
-                data.passNewvalue = e.value;
+                data.passNewValue = e.value;
                 break;
             case 'passOld':
-                data.passOldvalue = e.value;
+                data.passOldValue = e.value;
                 break;
             case 'passConfirm':
-                data.passConfirmvalue = e.value;
+                data.passConfirmValue = e.value;
                 break;
             case 'photo':
                 data.photo = e.value;
@@ -386,8 +433,8 @@ var ficheUserStore = Reflux.createStore({
                 break;
         }
 
-        this.formDataState = _.extend(this.formDataState, data);
-        this.trigger(this.formDataState);
+        this.storeState = _.extend(this.storeState, data);
+        this.trigger(this.storeState);
     },
 
     /**
@@ -399,10 +446,7 @@ var ficheUserStore = Reflux.createStore({
 
         // VÉFIR ADRESSE MAIL:
         if(e.name == 'email'){
-            if(this.modeCreate)
-                data = this.emailCreateChange(e.value);
-            else
-                data = this.emailEditChange(e.value);
+           data = this.emailChange(e.value);
         }
         else if(e.name == 'passNew') {
             data = this.verifPassNew(e.value, $('#passConfirm')[0].value);
@@ -414,47 +458,52 @@ var ficheUserStore = Reflux.createStore({
             data = this.verifPassNew(e.value, $('#passNew')[0].value);
         }
 
-        this.formDataState = _.extend(this.formDataState, data);
-        this.trigger(this.formDataState);
+        // Maj state local
+        this.storeState = _.extend(this.storeState, data);
+        // Envoi data au comosant react
+        this.trigger(this.storeState);
     },
 
     // Callback
     getInfosUser: function (idUser) {
 
-        this.formDataState.nom    = '';
-        this.formDataState.prenom = '';
-        this.formDataState.email  = '';
-        this.formDataState.passNewvalue     = '';
-        this.formDataState.passOldvalue     = '';
-        this.formDataState.passConfirmvalue = '';
-        this.formDataState.dataEmail        = undefined;
+        this.idUser = idUser;
+        // Etat par défaut
+        this.storeState = {
+            nom    : '',
+            prenom : '',
+            email : '',
+            photo: 'no.gif',
+            passNewValue : '',
+            passOldValue : '',
+            passConfirmValue : ''
+        };
         this.emailInitial = '';
 
-        var that = this;
         // AJAX
         $.ajax({
-            url: BASE_URI + 'utilisateur/profil/' + idUser,
+            url: BASE_URI + 'utilisateur/profil/' + this.idUser,
             dataType: 'json',
-            context: that,
+            context: this,
             success: function (data) {
-
-                Actions.utilisateur.initMatrice(data.dataProfil);
-                if(data.nom != '' && data.prenom != ''){
-                    that.formDataState.nom       = data.nom;
-                    that.formDataState.prenom    = data.prenom;
-                    that.formDataState.email     = data.email;
-                    that.emailInitial = data.email;
-                    Actions.utilisateur.updateBandeau(data.nom, data.prenom, idUser);
+                // Merge des data et du store local
+                this.storeState = _.extend(this.storeState, data);
+                //console.log('STOR %o',this.storeState);
+                this.emailInitial = data.email;
+                // Nom et prénom renseignés
+                if (data.nom != '' && data.prenom != '') {
+                    // Mise à jour du bandeau de la Page Utilisateur
+                    Actions.utilisateur.updateBandeau(data.nom, data.prenom, this.idUser);
                 }
-                // Passe variable aux composants qui écoutent l'action actionLoadData
-                that.trigger(data);
+                // Data user + profils
+                this.trigger(this.storeState);
             },
 
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
-                that.trigger({id: 0});
+                this.trigger({id: 0});
             }
-        }, that);
+        }, this);
     },
 
     /**
@@ -462,13 +511,14 @@ var ficheUserStore = Reflux.createStore({
      * @param idUser
      */
     sauvegarder: function (idUser) {
-        //console.log('FICHE USER SAVE '+idUser);
         // Variables
         var url = idUser === 0 ? '' : idUser;
 
+        // Page compte
         if(this.modeCompte) {
             url = BASE_URI + 'moncompte';
         }
+        // Page utilisateur
         else {
             url = BASE_URI + 'utilisateur/' + url;
         }
@@ -528,65 +578,67 @@ var ficheUserStore = Reflux.createStore({
             type: method,
             data: {'_token': $('#_token').val()},
             success: function (tab) {
+                // Notifiction verte
+                Actions.notif.success(Lang.get('global.notif_success'));
                 Actions.utilisateur.supprOK();
             },
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
-                this.trigger(this.dataUser);
+                this.trigger({});
             }
         });
     },
 
     /**
      * Vérification de l'unicité de l'e-mail en BDD
-     * @param value
-     * @param edit
+     * @param value: email saisi par le user
      * @returns {{}}
      */
-    emailChange: function(value, edit){
-        /* Varaible de retour */
-        var retour = {};
-        retour.dataEmail = {};
+    emailChange : function(value){
 
-        //console.log('value : %o, emailInitial : %o', value, this.emailInitial);
-        /* Est-ce que l'email est supérieur à 4 caractère (x@x.xx)? */
+        var retour = {dataEmail : {}};
+        // Email supérieur à 6 caractères + pas de modification du mail
         if(value.length>=6 && value != this.emailInitial){
 
-            //console.log('value : %o, emailInitial : %o', value, this.emailInitial);
+            // Mode édition => ne pas prendre en compte le mail du user actuel
+            var url = this.idUser === 0 ? '' : '/'+this.idUser;
+
             // AJAX
             $.ajax({
-                url:      BASE_URI + 'utilisateur/email/'+value, /* correspond au module url de la BDD */
+                url:      BASE_URI + 'utilisateur/email/' + value + url,
                 dataType: 'json',
                 context:  this,
                 async: false,
-                success:  function (good) {
-                    /* En vert */
-                    if(good.good == false){
-                        retour.dataEmail.isValid = false;
-                        retour.dataEmail.style   = 'error';
-                        retour.dataEmail.tooltip = Lang.get('global.utilisateurExist');
+                success:  function (mailExists) {
+                    // Mail unique
+                    if(!mailExists){
+                        // Champ vert
+                        retour.dataEmail = {
+                            isValid: true,
+                            style: 'success',
+                            tooltip: ''
+                        };
+                    }
+                    // Mail existe déjà
+                    else{
+                        // Champ rouge
+                        retour.dataEmail = {
+                            isValid: false,
+                            style: 'error',
+                            tooltip: Lang.get('global.utilisateurExist')
+                        };
                     }
                 },
-
                 error: function (xhr, status, err) {
                     console.error(status, err.toString());
                 }
             });
         }
-        return retour;
-    },
-
-    emailEditChange: function (value){
-        return this.emailChange(value, true);
-    },
-
-    emailCreateChange: function (value){
-        return this.emailChange(value, false);
+        return retour
     },
 
     verifPassOld: function(value){
-        var retour = {};
-        retour.passOld = {};
+        var retour = {passOld : {}};
 
         if(value.length >= 6) {
             // AJAX
@@ -595,12 +647,23 @@ var ficheUserStore = Reflux.createStore({
                 dataType: 'json',
                 context: this,
                 async: false,
-                success: function (good) {
-                    /* En vert */
-                    if (good.good == false) {
-                        retour.passOld.isValid = false;
-                        retour.passOld.style = 'error';
-                        retour.passOld.tooltip = Lang.get('administration.utilisateur.oldPassConfirmError');
+                success: function (bool) {
+                    // Mot de passe erroné
+                    if (!bool) {
+                        retour.passOld = {
+                            isValid : false,
+                            style : 'error',
+                            tooltip : Lang.get('administration.utilisateur.oldPassConfirmError')
+                        };
+                    }
+                    // Mot de passe OK
+                    else{
+                        // Vert
+                        retour.passOld = {
+                            isValid : true,
+                            style : 'success',
+                            tooltip : ''
+                        };
                     }
                 },
 
@@ -613,12 +676,31 @@ var ficheUserStore = Reflux.createStore({
     },
 
     verifPassNew: function(value1, value2){
-        var retour = {};
-        retour.passConfirm = {};
-        if(value1 != value2){
-            retour.passConfirm.isValid = false;
-            retour.passConfirm.style   = 'error';
-            retour.passConfirm.tooltip = Lang.get('administration.utilisateur.newPassConfirmError');
+        var retour = {passConfirm:{}};
+        // Mot de passe vide
+        if(value1 === '' || value2 === ''){
+            retour.passConfirm = {
+                isValid : false,
+                style   : 'default',
+                tooltip : ''
+            }
+        }
+        // Mot de passe de confirmation différent de la confirmation
+        else if(value1 != value2){
+            // Attributs de validation du mot de passe de confirmation
+            retour.passConfirm = {
+                isValid : false,
+                style   : 'error',
+                tooltip : Lang.get('administration.utilisateur.newPassConfirmError')
+            }
+        }
+        // Mot de passe de confirmation identique
+        else{
+            retour.passConfirm = {
+                isValid : true,
+                style   : 'success',
+                tooltip : ''
+            }
         }
         return retour;
     }
