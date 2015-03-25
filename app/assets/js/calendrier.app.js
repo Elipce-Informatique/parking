@@ -2,6 +2,7 @@
  * Created by vivian on 19/02/2015.
  */
 require('./global/global');
+var React = require('react/addons');
 var Block = require('./mods/composants/react_block_accueil');
 
 $(function () {

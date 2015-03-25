@@ -1,3 +1,4 @@
+var React = require('react/addons');
 var Input = ReactB.Input;
 var InputFile = require('./formulaire/react_form_fields').InputFile;
 /**

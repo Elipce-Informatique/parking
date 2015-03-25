@@ -1,3 +1,4 @@
+var React = require('react/addons');
 var PanelGroup = require('../react_bootstrap_accordion').PanelGroup;
 var PanelA = require('../react_bootstrap_accordion').Panel;
 var Glyphicon = ReactB.Glyphicon;

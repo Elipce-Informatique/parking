@@ -1,5 +1,6 @@
 /* Composant react de la page profils */
 require('./global/global');
+var React = require('react/addons');
 var ReactPageEtatsDoccupation = require('./mods/page/react_page_etats_d_occupation');
 
 $(function(){

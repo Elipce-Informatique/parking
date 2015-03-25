@@ -1,7 +1,10 @@
 /**
  * Created by yann on 16/12/2014.
  */
+var React = require('react/addons');
 var Bandeau = require('./react_bandeau');
+var bHelper = require('../../helpers/bandeau_helper').type_btn;
+
 /**
  * Created by yann on 16/12/2014.
  *
@@ -16,6 +19,7 @@ var Bandeau = require('./react_bandeau');
 var BandeauEdition = React.createClass({
 
     propTypes: {
+        form_id: React.PropTypes.string.isRequired,
         titre: React.PropTypes.string.isRequired,
         mode: React.PropTypes.number.isRequired,
         sousTitre: React.PropTypes.string,
@@ -45,7 +49,7 @@ var BandeauEdition = React.createClass({
 
     render: function () {
         var sousTitre = "";
-        switch(this.props.mode){
+        switch (this.props.mode) {
             case 0:
                 sousTitre = this.props.sousTitre + Lang.get('global.creation');
                 break;
@@ -57,13 +61,19 @@ var BandeauEdition = React.createClass({
                 break;
         }
         var btnList = [{
-            libelle: Lang.get('global.save'),
-            style: "success", // VOIR DOC REACT-BOTSTRAP
-            icon: "floppy-disk", // VOIR DOC BOOTSTRAP ET NE PAS METTRE GLYPHICON DEVANT
-            attrs: {},
-            evts: {onClick: this.props.onSauvegarder}
+            type: bHelper.save,
+            //libelle: Lang.get('global.save'),
+            //style: "success", // VOIR DOC REACT-BOTSTRAP
+            //icon: "floppy-disk", // VOIR DOC BOOTSTRAP ET NE PAS METTRE GLYPHICON DEVANT
+            //attrs: {},
+            //evts: {onClick: this.props.onSauvegarder}
         }];
-        return (<Bandeau titre={this.props.titre} btnList={btnList} onRetour={this.props.onRetour} sousTitre={sousTitre} />);
+        return (<Bandeau
+            titre={this.props.titre}
+            form_id={this.props.form_id}
+            btnList={btnList}
+            onRetour={this.props.onRetour}
+            sousTitre={sousTitre} />);
     }
 });
 

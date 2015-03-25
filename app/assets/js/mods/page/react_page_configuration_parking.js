@@ -1,3 +1,4 @@
+var React = require('react/addons');
 var AdminMap = require('../composants/maps/admin_parking_map');
 /* Gestion de la modification et des droits */
 var AuthentMixins = require('../mixins/component_access');

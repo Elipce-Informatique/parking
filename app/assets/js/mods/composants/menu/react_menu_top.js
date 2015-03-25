@@ -1,3 +1,4 @@
+var React = require('react/addons');
 var AccessMixin = require('../../mixins/component_access');
 var menuItemsDataStore = require('../../stores/stores_menus').menu_top_items;
 var menuUserDataStore = require('../../stores/stores_menus').menu_top_user;
@@ -128,7 +129,7 @@ var ListItemsMenu = React.createClass({
             items.push(
                 <li key={item.id} {...props}>
                     <a href={url}>
-                        {icon}{libelle}</a>
+                        {icon} {libelle}</a>
                 </li>
             );
         });
@@ -258,7 +259,7 @@ var MenuTop = React.createClass({
     getDefaultProps: function () {
         return {
             appName: "Mon Application",
-            appUrl: BASE_URI,
+            appUrl: BASE_URI
         };
     },
     getInitialState: function () {

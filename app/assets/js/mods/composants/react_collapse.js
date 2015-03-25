@@ -1,3 +1,4 @@
+var React = require('react/addons');
 var Row = ReactB.Row;
 var Col = ReactB.Col;
 var Glyphicon = ReactB.Glyphicon;

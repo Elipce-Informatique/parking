@@ -1,3 +1,4 @@
+var React = require('react/addons');
 // Options pour paramétrer la carte
 var mapOptions = require('../../helpers/map_options');
 // STORE DE LA CARTE
@@ -5,13 +6,6 @@ var mapOptions = require('../../helpers/map_options');
 
 // UTILITAIRES
 var ListenerMixin = Reflux.ListenerMixin;
-
-/**
- *
- *
- *
- *
- */
 
 /**
  * Created by yann on 27/01/2015.

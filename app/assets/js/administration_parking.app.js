@@ -1,4 +1,5 @@
 require('./global/global');
+var React = require('react/addons');
 var Block = require('./mods/composants/react_block_accueil');
 
 $(function () {
