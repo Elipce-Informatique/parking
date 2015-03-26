@@ -235,11 +235,16 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
     // --------------------------------------------------------------------
     // 3 - CALCUL ESPACE TOTAL POTEAUX ------------------------------------
     // --------------------------------------------------------------------
-    // Longueur en cm
-    var nbPoteaux = Math.floor(nbPlaces / espacePoteaux);
-    lPoteaux = nbPoteaux * largeurPoteaux;
-    // Longueur en degrés
-    lPoteaux = lPoteaux / calibre;
+    // un espacement de 0 veut dire pas de poteaux
+    if (espacePoteaux == 0) {
+        lPoteaux = 0;
+    } else {
+        // Longueur en cm
+        var nbPoteaux = Math.floor(nbPlaces / espacePoteaux);
+        lPoteaux = nbPoteaux * largeurPoteaux;
+        // Longueur en degrés
+        lPoteaux = lPoteaux / calibre;
+    }
 
 
     console.log('Taille totale utilisée par les poteaux = %o', lPoteaux);
@@ -331,14 +336,20 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
         var nom = prefix + ' ' + numPlace + ' ' + suffix;
         var coords = {lat: 0, lng: 0};
 
-
-        if (((n + 1) % espacePoteaux) == 0) {
-            console.log('On doit placer un poteau.');
-            coords.lat = coordsPrec.lat + dyPlace + dyPoteau;
-            coords.lng = coordsPrec.lng + dxPlace + dxPoteau;
+        // Utilisation de place1 si on est sur la première place
+        if (n == 1) {
+            coords.lat = coordsPrec.lat;
+            coords.lng = coordsPrec.lng;
         } else {
-            coords.lat = coordsPrec.lat + dyPlace;
-            coords.lng = coordsPrec.lng + dxPlace;
+            // Ajout des poteaux si besoin (on est sur une place qui succède un poteau)
+            if (((n + 1) % espacePoteaux) == 0) {
+                console.log('On doit placer un poteau.');
+                coords.lat = coordsPrec.lat + dyPlace + dyPoteau;
+                coords.lng = coordsPrec.lng + dxPlace + dxPoteau;
+            } else {
+                coords.lat = coordsPrec.lat + dyPlace;
+                coords.lng = coordsPrec.lng + dxPlace;
+            }
         }
         // Décalage des coordsPrec
         coordsPrec = coords;
@@ -354,7 +365,8 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
             lng: coords.lng
         };
         var marker = new mapOptions.DataMarker([coords.lat, coords.lng], {
-            icon: mapOptions.placeGenerique,
+            icon: new mapOptions.placeGenerique(),
+            title: nom,
             data: extraData
         });
         marker.setIconAngle(angleMarker);
