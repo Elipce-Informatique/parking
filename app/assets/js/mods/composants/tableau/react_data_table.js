@@ -99,6 +99,7 @@ var DataTableReact = React.createClass({
     componentWillUpdate: function (newProps, newState) {
         // Suppression datable
         this.destroyDataTable();
+
     },
 
     shouldComponentUpdate: function (nextProps, nextState) {
@@ -107,7 +108,6 @@ var DataTableReact = React.createClass({
     },
 
     render: function () {
-        //console.log('RENDER DATATABLE PROPS %o',_.clone(this.props));
         return (
             <div className="datatable-root" key="dataTableRoot">
                 <Table
@@ -143,10 +143,10 @@ var DataTableReact = React.createClass({
     componentWillUnmount: function () {
 
         /* Suppresion datatable OBLIGATOIRE
-        Lorsqu'un composant datatable est inclus dans un autre composant et qu'il possède plus de 10 lignes
-        seulement 10 lignes existent dans le DOM, les autres lignes sont supprimées. Lors d'un setState()
-        lorsque REACT compare ses 2 renders, il lui manque des lignes et il affiche une FATAL ERROR
-        Le fait de supprimer le plugin JQuery lors du unMount règle le problème */
+         Lorsqu'un composant datatable est inclus dans un autre composant et qu'il possède plus de 10 lignes
+         seulement 10 lignes existent dans le DOM, les autres lignes sont supprimées. Lors d'un setState()
+         lorsque REACT compare ses 2 renders, il lui manque des lignes et il affiche une FATAL ERROR
+         Le fait de supprimer le plugin JQuery lors du unMount règle le problème */
         this.destroyDataTable();
     },
     /*

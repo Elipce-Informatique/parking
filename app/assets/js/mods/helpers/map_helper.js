@@ -1,7 +1,12 @@
 /**
  * Created by yann on 22/01/2015.
  */
+var _ = require('lodash');
 var classifyPoint = require("robust-point-in-polygon");
+
+var mapOptions = require('./map_options');
+var MathHelper = require('./math_helper');
+
 
 /**
  * Calcul le barycentre géométrique du polygon passé en paramètres
@@ -169,6 +174,221 @@ function getLastPointOfParallelogramme(latlngs) {
 }
 
 /**
+ * Crée les places (Markers placés au milieu des places)
+ *
+ * @param calibre float : Calibre de la carte, ce nombre représente des cm/deg
+ * @param parallelogramme array : Parallélogramme de base pour créer les places (tableau de points)
+ * @param nbPlaces int : Nombre de places à créer
+ * @param espacePoteaux float : Nombre de places entre chaque poteaux en partant de la première palce
+ * @param largeurPoteaux float : largeur d'un poteau en cm
+ * @param prefix string : préfixe pour le nom des places à créer
+ * @param incr int : entier, incrément pour le nombre de places (1 par défaut)
+ * @param suffix string : suffixe du nom de la place
+ */
+function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, espacePoteaux, largeurPoteaux, prefix, incr, suffix) {
+
+    console.group('==> createPlacesFromParallelogramme : Parallélogramme %o', parallelogramme);
+
+    //--------------------------------------------------------------------
+    // Le parallélogramme
+    var A, B, C, D;
+    // Coordonnées axe central
+    var xj, yj, xk, yk;
+    // Longueurs des segments (plates, poteaux etc...
+    var lJK, lPoteaux, LPlacesEffectif, lPlace;
+    // Pas entre les éléments
+    var dxTotal, dyTotal, dxPlace, dyPlace, dxPoteau, dyPoteau, dxAB, dyAB;
+    // Coords premier point
+    var place1 = {};
+    // Angle de rotation des markers
+    var angleMarker;
+    //--------------------------------------------------------------------
+
+    // Affectation des 4 points
+    A = parallelogramme[0];
+    B = parallelogramme[1];
+    C = parallelogramme[2];
+    D = parallelogramme[3];
+
+    // --------------------------------------------------------------------
+    // 1 - CALCUL COEFICIENT DIRECTEUR BC ET DELTAS -----------------------
+    // --------------------------------------------------------------------
+    console.log('B : %o, C : %o', B, C);
+    dxTotal = (C.lng - B.lng);
+    dyTotal = (C.lat - B.lat);
+    console.log('Dx Total = %o Dy Total = %o', dxTotal, dyTotal);
+
+    // --------------------------------------------------------------------
+    // 2 - CALCUL LONGUEUR TOTALE DU SEGMENT ------------------------------
+    // --------------------------------------------------------------------
+    xj = (A.lng + B.lng) / 2;
+    yj = (A.lat + B.lat) / 2;
+    console.log('coords de J : lat = %o lng = %o', yj, xj);
+
+    xk = (D.lng + C.lng) / 2;
+    yk = (D.lat + C.lat) / 2;
+    console.log('coords de K : lat = %o lng = %o', yk, xk);
+
+    // Longueur en degrés
+    lJK = Math.sqrt(Math.pow((xk - xj), 2) + Math.pow((yk - yj), 2));
+    console.log('longueur JK = %o', lJK);
+    // --------------------------------------------------------------------
+    // 3 - CALCUL ESPACE TOTAL POTEAUX ------------------------------------
+    // --------------------------------------------------------------------
+    // un espacement de 0 veut dire pas de poteaux
+    if (espacePoteaux == 0) {
+        lPoteaux = 0;
+    } else {
+        // Longueur en cm
+        var nbPoteaux = Math.floor(nbPlaces / espacePoteaux);
+        lPoteaux = nbPoteaux * largeurPoteaux;
+        // Longueur en degrés
+        lPoteaux = lPoteaux / calibre;
+    }
+
+
+    console.log('Taille totale utilisée par les poteaux = %o', lPoteaux);
+    // --------------------------------------------------------------------
+    // 4 - CALCUL TAILLE 1 PLACE ------------------------------------------
+    // --------------------------------------------------------------------
+    // Taille totale occupée par toutes les places
+    LPlacesEffectif = lJK - lPoteaux;
+    console.log('Espace effectif réservé aux places = %o', LPlacesEffectif);
+    // Taille d'une place
+    lPlace = LPlacesEffectif / nbPlaces;
+    console.log('Taille d`\'une palce = %o', lPlace);
+    // Deltas d'une place
+    dxPlace = (lPlace / lJK) * dxTotal;
+    dyPlace = (lPlace / lJK) * dyTotal;
+    console.log('Dx pour 1 place = %o Dy pour 1 place = %o', dxPlace, dyPlace);
+
+    // --------------------------------------------------------------------
+    // 5 - CALCUL DELTA 1 POTEAU ------------------------------------------
+    // --------------------------------------------------------------------
+    dxPoteau = ((lPoteaux / nbPoteaux) / lJK) * dxTotal;
+    dyPoteau = ((lPoteaux / nbPoteaux) / lJK) * dyTotal;
+    console.log('Dx pour 1 poteau = %o Dy pour 1 poteau = %o', dxPoteau, dyPoteau);
+
+    // --------------------------------------------------------------------
+    // 6 - CALCUL COORDONNÉES 1ER POINT -----------------------------------
+    // --------------------------------------------------------------------
+    var xPlace1 = xj + (dxPlace / 2);
+    var yPlace1 = yj + (dyPlace / 2);
+    place1.lat = yPlace1;
+    place1.lng = xPlace1;
+    console.log('Coordonnées place 1 = %o', place1);
+
+    // --------------------------------------------------------------------
+    // 7 - CALCUL ANGLE DE ROTATION MARKER --------------------------------
+    // --------------------------------------------------------------------
+
+    dxAB = (B.lng - A.lng);
+    dyAB = (B.lat - A.lat);
+    console.log('dxAB = %o, dyAB = %o', dxAB, dyAB);
+
+    // On considère AB comme une verticale
+    if (Math.abs(dxAB * calibre) < 10) {
+        angleMarker = 0;
+    }
+    // On considère AB comme une horizontale
+    else if (Math.abs(dyAB * calibre) < 10) {
+        angleMarker = 90;
+    }
+    // On calcul l'angle
+    else {
+        var S = {lat: B.lat, lng: A.lng};
+        console.log('Poins S (ABS rectangle en S) : %o, ', S);
+
+        // TODO : calculer les angles (utiliser dxAB et dyAB) et la fonction asin
+        var AS = dyAB;
+        var BS = dxAB;
+        var AB = Math.sqrt(Math.pow(AS, 2) + Math.pow(BS, 2));
+
+        // Calcul du sinus
+        var sinA = BS / AB;
+
+        console.log('AVANT CORRECTION : sin A = %o, angle A = %o °', sinA, MathHelper.toDegrees(Math.asin(sinA)));
+        /* On a le sinus, maintenant on va calculer l'angle de rotation:
+         * -> Si dyAB > 0, on ne touche à rien
+         * -> Si dyAB < 0, on a 2 possibilités
+         * ---> dxAB < 0 : -PI/2
+         * ---> dxAB > 0 : +PI/2
+         */
+        var angleRad = Math.asin(sinA);
+        if (dyAB < 0) {
+            angleRad = (dxAB < 0) ? (angleRad - ((Math.PI / 2) - Math.abs(angleRad)) * 2) : (angleRad + ((Math.PI / 2) - Math.abs(angleRad)) * 2);
+        }
+        angleMarker = MathHelper.toDegrees(angleRad);
+        console.log('sin A = %o, angle A = %o °', sinA, angleMarker);
+    }
+
+    console.log('Angle final = %o', angleMarker);
+
+    // --------------------------------------------------------------------
+    // 8 - CRÉATION DES MARKERS AVEC LES INFORMATIONS ---------------------
+    // --------------------------------------------------------------------
+
+    var coordsPrec = place1;
+    // On parcourt un tableau de chiffres de 1 à nbPlace
+    var places = _.map(_.range(1, parseInt(nbPlaces) + 1, 1), function (n) {
+
+        // Création des données nécessaire à la place
+        var numPlace = parseInt(incr) + n;
+        var nom = prefix + ' ' + numPlace + ' ' + suffix;
+        var coords = {lat: 0, lng: 0};
+
+        // Utilisation de place1 si on est sur la première place
+        if (n == 1) {
+            coords.lat = coordsPrec.lat;
+            coords.lng = coordsPrec.lng;
+        } else {
+            // Ajout des poteaux si besoin (on est sur une place qui succède un poteau)
+            if (((n + 1) % espacePoteaux) == 0) {
+                console.log('On doit placer un poteau.');
+                coords.lat = coordsPrec.lat + dyPlace + dyPoteau;
+                coords.lng = coordsPrec.lng + dxPlace + dxPoteau;
+            } else {
+                coords.lat = coordsPrec.lat + dyPlace;
+                coords.lng = coordsPrec.lng + dxPlace;
+            }
+        }
+        // Décalage des coordsPrec
+        coordsPrec = coords;
+
+        console.log('Nom de la place créée = %o', nom);
+
+        // Création du marker leaflet
+        var extraData = {
+            libelle: nom,
+            num: numPlace,
+            angle: angleMarker,
+            lat: coords.lat,
+            lng: coords.lng
+        };
+        var marker = new mapOptions.DataMarker([coords.lat, coords.lng], {
+            icon: new mapOptions.placeGenerique(),
+            title: nom,
+            data: extraData
+        });
+        marker.setIconAngle(angleMarker);
+        // Variable de retour
+        var retour = {
+            data: extraData,
+            marker: marker
+        };
+
+        return retour;
+    });
+
+    console.log('Liste finale des places : %o', places);
+    // Fin du groupe de logs
+    console.groupEnd();
+
+    return places;
+}
+
+
+/**
  * Ce que le module exporte.
  * @type {{getCentroid: getCentroid, isPointInPolygon: isPointInPolygon, isPolygonInPolygonByCenter: isPolygonInPolygonByCenter, getLatLngArrayFromCoordsArray: getLatLngArrayFromCoordsArray, isPolygonInPolygon: isPolygonInPolygon}}
  */
@@ -178,6 +398,7 @@ module.exports = {
     isPolygonInPolygonByCenter: isPolygonInPolygonByCenter,
     getLatLngArrayFromCoordsArray: getLatLngArrayFromCoordsArray,
     isPolygonInPolygon: isPolygonInPolygon,
-    getLastPointOfParallelogramme: getLastPointOfParallelogramme
+    getLastPointOfParallelogramme: getLastPointOfParallelogramme,
+    createPlacesFromParallelogramme: createPlacesFromParallelogramme
 };
 
