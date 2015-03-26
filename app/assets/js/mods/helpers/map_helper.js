@@ -307,6 +307,7 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
         // Calcul du sinus
         var sinA = BS / AB;
 
+        console.log('AVANT CORRECTION : sin A = %o, angle A = %o °', sinA, MathHelper.toDegrees(Math.asin(sinA)));
         /* On a le sinus, maintenant on va calculer l'angle de rotation:
          * -> Si dyAB > 0, on ne touche à rien
          * -> Si dyAB < 0, on a 2 possibilités
@@ -315,7 +316,7 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
          */
         var angleRad = Math.asin(sinA);
         if (dyAB < 0) {
-            angleRad = (dxAB < 0) ? (angleRad - (Math.PI / 2)) : (angleRad + (Math.PI / 2));
+            angleRad = (dxAB < 0) ? (angleRad - ((Math.PI / 2) - Math.abs(angleRad)) * 2) : (angleRad + ((Math.PI / 2) - Math.abs(angleRad)) * 2);
         }
         angleMarker = MathHelper.toDegrees(angleRad);
         console.log('sin A = %o, angle A = %o °', sinA, angleMarker);
