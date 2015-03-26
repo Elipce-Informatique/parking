@@ -8,17 +8,19 @@
 
 return [
     "top" => [
-        "administration" => "Administration portail",
-        "administration_parking" => "Administration parking",
-        "supervision" => "Supervision parking",
-        "calendrier" => "Calendrier"
+        "administration" => "Administration du portail",
+        "administration_parking" => "Administration du parking",
+        "calendrier" => "Calendrier",
+        "supervision" => "Supervision du parking",
+        "configuration_parking" => "Configuration du parking"
     ],
 
     "side" => [
-        'utilisateurs' => 'Utilisateurs',
-        'profils' => 'Profils',
-        "etats_d_occupation" => "Etats d'occupation",
-        "calendrier" => "Calendrier",
+        "utilisateur" => "Gestion des utilisateurs",
+        "profils" => "Gestion des profils",
+        "etats_d_occupation" => "Gestion des états d'occupation",
+        "calendrier_jours" => "Gestion des jours prédéfinis",
+        "calendrier_programmation" => "Programmations horaires",
         "jours_predef" => "Jours prédéfinis",
         "prog_horaire" => "Programmation horaire",
         "configuration_parking" => "Configuration parking"
