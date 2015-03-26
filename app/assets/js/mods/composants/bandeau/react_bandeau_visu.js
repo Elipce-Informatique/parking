@@ -14,6 +14,7 @@ var Bandeau = require('./react_bandeau');
  * @param func onCreer : Fonction de création facultative (Sinon Actions.bandeau.creer)
  * @param func onEditer : Fonction d'édition facultative (Sinon Actions.bandeau.editer)
  * @param func onSupprimer : Fonction de suppression facultative (Sinon Actions.bandeau.supprimer)
+ * @param bool confirmationOnSupprimer : Boite de confirmation si true, sinon appel de Actions.bandeau.supprimer directement
  */
 var BandeauVisu = React.createClass({
 
@@ -23,7 +24,8 @@ var BandeauVisu = React.createClass({
         onRetour: React.PropTypes.func,
         onCreer: React.PropTypes.func,
         onEditer: React.PropTypes.func,
-        onSupprimer: React.PropTypes.func
+        onSupprimer: React.PropTypes.func,
+        confirmationOnSupprimer : React.PropTypes.bool
     },
 
     getDefaultProps: function () {
@@ -32,7 +34,8 @@ var BandeauVisu = React.createClass({
             onRetour: Actions.bandeau.retour,
             onCreer: Actions.bandeau.creer,
             onEditer: Actions.bandeau.editer,
-            onSupprimer: Actions.bandeau.supprimer
+            onSupprimer: Actions.bandeau.supprimer, // Supression métier après boite confirmation
+            confirmationOnSupprimer : true
         };
     },
 
@@ -46,6 +49,24 @@ var BandeauVisu = React.createClass({
 
     shouldComponentUpdate: function (nextProps, nextState) {
         return true;
+    },
+
+    /**
+     * Boite de dialogue de suppression
+     */
+    confirmSuppression: function () {
+        swal({
+            title: Lang.get('global.suppression_titre'),
+            text: Lang.get('global.suppression_corps'),
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: Lang.get('global.ok'),
+            cancelButtonText: Lang.get('global.annuler'),
+            closeOnConfirm: true
+        }, function (isConfirm) {
+            this.props.onSupprimer();
+        }.bind(this));
     },
 
     render: function () {
@@ -69,26 +90,20 @@ var BandeauVisu = React.createClass({
             attrs: {},
             evts: {onClick: this.confirmSuppression}
         }];
-        return (<Bandeau titre={this.props.titre} btnList={btnList} onRetour={this.props.onRetour} sousTitre={this.props.sousTitre} />);
-    },
-    /**
-     * Boite de dialogue de suppression
-     */
-    confirmSuppression: function () {
-        swal({
-            title: Lang.get('global.suppression_titre'),
-            text: Lang.get('global.suppression_corps'),
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: Lang.get('global.ok'),
-            cancelButtonText: Lang.get('global.annuler'),
-            closeOnConfirm: true
-        }, function (isConfirm) {
-            this.props.onSupprimer();
-        }.bind(this));
-    }
 
+        // Pas de boite de confirmation sur suppression
+        if(!this.props.confirmationOnSupprimer){
+            btnList[2]['evts'] = {onClick: this.props.onSupprimer}
+        }
+
+        return (
+            <Bandeau
+                titre={this.props.titre}
+                btnList={btnList}
+                onRetour={this.props.onRetour}
+                sousTitre={this.props.sousTitre}
+            />);
+    }
 });
 
 module.exports = BandeauVisu;

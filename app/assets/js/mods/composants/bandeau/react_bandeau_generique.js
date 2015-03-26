@@ -14,9 +14,9 @@ var BandeauProfilVisu = require('./react_bandeau_profil_visu');
 var BandeauProfilVisuRetour = require('./react_bandeau_profil_visu_retour');
 
 var AuthentMixins = require('../../mixins/component_access');
+
 // HELPERS
 var pageState = require('../../helpers/page_helper').pageState;
-
 /**
  * Created by yann on 16/12/2014.
  *

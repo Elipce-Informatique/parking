@@ -38,21 +38,25 @@ class CalendrierJours extends Eloquent
         return $res;
     }
 
-    /*
+    /**
      * calcule si le libelle passé en param existe déjà
+     * @param $libelle: libellé à vérifier
+     * @param string $id: ID à ne pas prendre en compte lors de la vérif (mode édition)
+     * @return bool
      */
-    public static function isLibelleExists($libelle){
-        $result = CalendrierJours::where('libelle','=',$libelle)->count();
+    public static function isLibelleExists($libelle, $id=''){
+        $and = $id === '' ? '' : "and id <> $id";
+        $result = CalendrierJours::whereRaw("libelle = '$libelle' $and")->count();
 //        dd($result);
         return ($result > 0);
     }
 
     /*
-   * Crée un état d'occupation
+   * Crée un jour prédéfini
    */
     public static function createCalendrierJour($fields){
         // Variable de retour
-        $retour = array('save' => false, 'errorBdd' => false);
+        $retour = array('save' => false, 'errorBdd' => false, 'obj'=>null);
 
         /* Vérifie que le jour n'existe pas */
         $bJourExists = CalendrierJours::isLibelleExists($fields['libelle']);
@@ -65,7 +69,7 @@ class CalendrierJours extends Eloquent
             // Champ à enregistrer
             $aFieldsSave = array('libelle', 'ouverture', 'fermeture', 'couleur');
 
-            // Parcours de tous les champs
+            // Parcours des champs à enregistrer
             foreach($aFieldsSave as $key){
                 // On ne garde que les clés qui nous interessent
                 $filteredFields[$key] = $fields[$key];
@@ -75,11 +79,12 @@ class CalendrierJours extends Eloquent
             try {
                 // Création du jour
                 $newDay = CalendrierJours::create($filteredFields);
-                Log::warning(print_r($newDay,true));
-                $retour = array('save' => true, 'errorBdd' => false, 'id' => $newDay->id);
+//                Log::warning(print_r($newDay,true));
+                $retour['save'] = true;
+                $retour['obj'] = $newDay;
             }
             catch(Exception $e){
-                $retour = array('save' => false, 'errorBdd' => true);
+                $retour['errorBdd'] = true;
             }
         }
         return $retour;
@@ -103,5 +108,45 @@ class CalendrierJours extends Eloquent
             $bSave = false;
         }
         return $bSave;
+    }
+
+    /**
+     * Modifie un jour prédéfini
+     * @param $id: id jour_calendrier à modifier
+     * @param $fields: champs concernés par la modif
+     * @return array
+     */
+    public static function updateCalendrierJour($id, $fields){
+        // Variable de retour
+        $retour = array('save' => false, 'errorBdd' => false, 'obj'=>null);
+
+        /* Vérifie que le jour n'existe pas */
+        $bJourExists = CalendrierJours::isLibelleExists($fields['libelle'], $id);
+
+        // Le jour n'existe pas en BDD
+        if (!$bJourExists) {
+            // Champs filtrés
+            $filteredFields = [];
+
+            // Champ à enregistrer
+            $aFieldsSave = array('libelle', 'ouverture', 'fermeture', 'couleur');
+
+            // Parcours de tous les champs
+            foreach($aFieldsSave as $key){
+                // On ne garde que les clés qui nous interessent
+                $filteredFields[$key] = $fields[$key];
+            }
+
+            // Essai d'enregistrement
+            try {
+                // Création du jour
+                CalendrierJours::where('id','=',$id)->update($filteredFields);
+                $retour['save'] = true;
+            }
+            catch(Exception $e){
+                $retour['errorBdd'] = true;
+            }
+        }
+        return $retour;
     }
 }

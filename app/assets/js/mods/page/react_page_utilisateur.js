@@ -14,11 +14,11 @@ var Col = ReactB.Col;
 var AuthentMixins = require('../mixins/component_access');
 var MixinGestMod = require('../mixins/gestion_modif');
 
-// HELPERS
-var pageState = require('../helpers/page_helper').pageState;
-
 // STORE
 var storeFicheUser = require('../react_fiche_utilisateur').store
+
+// HELPERS
+var pageState = require('../helpers/page_helper').pageState;
 
 /**
  * Page utilisateur
@@ -36,7 +36,7 @@ var PageUser = React.createClass({
 
     getInitialState: function () {
         return {
-            etat: 'liste',
+            etat: pageState.liste,
             idUser: 0,
             dataUser: {nom: '', prenom: ''}
         };
@@ -109,7 +109,6 @@ var PageUser = React.createClass({
                     </div>;
                 break;
             default:
-                // Mode liste par défaut
                 react =
                     <div key="rootPageuser">
                         <BandeauGenerique
@@ -191,8 +190,8 @@ var pageUserStore = Reflux.createStore({
     },
 
     /**
-     * Indique à la fiche utilisateur de sauvegarder les données
-     */
+    * Indique à la fiche utilisateur de sauvegarder les données
+    */
     sauvegarder: function () {
         // La fiche user enregistre l'utilisateur
         Actions.utilisateur.save_user(this.stateLocal.idUser);
@@ -215,7 +214,7 @@ var pageUserStore = Reflux.createStore({
         // Boite de confirmation
 
         // Suppr
-        this.stateLocal = {idUser: this.stateLocal.idUser, etat: pageState.suppression};
+        this.stateLocal = {idUser: this.stateLocal.idUser, etat: pageState.suppression}
         Actions.utilisateur.delete_user(this.stateLocal.idUser);
     }
 });

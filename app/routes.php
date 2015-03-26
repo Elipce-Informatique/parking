@@ -74,9 +74,9 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
      * Gestion des utilisateurs
      */
     Route::get('utilisateur/all', 'UtilisateurController@all');
-    Route::get('utilisateur/profil/{idProfil}', 'UtilisateurController@getUserAndProfil');
+    Route::get('utilisateur/profil/{idUser}', 'UtilisateurController@getProfilsUsers');
     Route::resource('utilisateur', 'UtilisateurController');
-    Route::get('utilisateur/email/{email}', 'UtilisateurController@getUserExist');
+    Route::get('utilisateur/email/{email}/{id?}', 'UtilisateurController@isMailExists');
 
     /*
      * Gestion profils (association profiles module)
@@ -85,8 +85,8 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     Route::get('profils/{profils}/modules', 'ProfilController@getProfilModule');
     Route::resource('profils', 'ProfilController');
     Route::get('module/all', 'ProfilController@getModules');
-    Route::get('profils/libelle/{libelle}', 'ProfilController@getProfilExistLibelle');
-    Route::get('profils/use/{profil}', 'ProfilController@getIsProfilUse');
+    Route::get('profils/libelle/{libelle}/{id?}', 'ProfilController@getProfilExistLibelle');
+    Route::get('profils/use/{profil}', 'ProfilController@isProfilUsed');
 
     /* **************************************************************************
      * Administration parking
@@ -116,7 +116,7 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
      * Jours prédéfinis
      */
     Route::get('calendrier_jours/all', 'CalendrierJoursController@all');
-    Route::get('calendrier_jours/libelle/{libelle}', 'CalendrierJoursController@verifLibelle');
+    Route::get('calendrier_jours/libelle/{libelle}/{id?}', 'CalendrierJoursController@verifLibelle');
     Route::resource('calendrier_jours', 'CalendrierJoursController');
 
 
@@ -127,6 +127,28 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     Route::resource('test', 'TestController');
 });
 
+/*
+ |--------------------------------------------------------------------------
+| GROUPE RIVERSIDE
+|--------------------------------------------------------------------------
+ */
+
+// test
+Route::post('post_dump', function(){
+    dd(Input::all());
+});
+Route::resource('test', 'TestController');
+/*
+ |--------------------------------------------------------------------------
+| GROUPE RIVERSIDE
+|--------------------------------------------------------------------------
+ */
+
+// test
+Route::post('post_dump', function(){
+    dd(Input::all());
+});
+Route::resource('test', 'TestController');
 /*
 |--------------------------------------------------------------------------
 | GROUPE API MENU
