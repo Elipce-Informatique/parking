@@ -8,7 +8,7 @@ return array(
     */
 
     // NOM DE L'APPLI
-    'app_name' => 'Elipce Workflow',
+    'app_name' => 'Parking',
 
     // MENU TOP
     'toggle_menu_left' => 'Menu de gauche',

@@ -94,7 +94,8 @@ class ProfilController extends \BaseController
      */
     public function all()
     {
-        return Profil::all(array('id', 'traduction'));
+        // Récupération de tous les profils
+       return Profil::all(array('id', 'traduction'));
     }
 
     /**

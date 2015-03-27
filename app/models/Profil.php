@@ -62,6 +62,22 @@ class Profil extends Eloquent
             $aTabModule = Module::all(array('id', 'traduction', DB::raw("'no_access' AS access_level")));
         }
 
+        // Parcours des modules
+        foreach ($aTabModule as &$module) {
+            $trad = $module['traduction'];
+            // Item de menu top
+            if (Lang::has('menu.top.' . $trad)) {
+                $trad = Lang::get('menu.top.' . $trad);
+            }
+            // Item de menu side
+            else if (Lang::has('menu.side.' . $trad)) {
+                $trad = Lang::get('menu.side.' . $trad);
+            }
+
+            $module['traduction'] = $trad;
+//            Log::warning($trad);
+        }
+
         return $aTabModule;
     }
 
