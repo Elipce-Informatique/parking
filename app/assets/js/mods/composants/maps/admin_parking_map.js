@@ -13,16 +13,16 @@ var Button = ReactB.Button;
 
 
 // UTILITAIRES
-var ListenerMixin = Reflux.ListenerMixin;
 
 
 /**
  * Created by yann on 27/01/2015.
  * Composant pour créer une carte de parking en mode administration outils de dessins.
- * @param defaultDrawMode :
+ * @param defaultDrawMode : mapOptions.dessin.xxxx
+ * @param calibre : nombre de cm/deg sur cette carte
  */
 var parkingMap = React.createClass({
-    mixins: [ListenerMixin, ReactB.OverlayMixin],
+    mixins: [Reflux.ListenerMixin, ReactB.OverlayMixin],
     /**
      * Définition du type des props du composant.
      */
@@ -30,26 +30,28 @@ var parkingMap = React.createClass({
         divId: React.PropTypes.string.isRequired,
         imgUrl: React.PropTypes.string.isRequired,
         mapHeight: React.PropTypes.number,
-        defaultDrawMode: React.PropTypes.number
+        defaultDrawMode: React.PropTypes.number,
+        calibre: React.PropTypes.number
     },
     /**
      * Variables d'instance du composant.
      * Utilisées pour intéragir avec la carte.
      */
     _inst: {
-        map: {},                                // Instance de la carte leaflet
-        currentMode: mapOptions.dessin.place,   // Mode de dessin actuel
-        placesGroup: {},                        // Layer group contenant toutes les places
-        alleesGroup: {},                        // Layer group contenant toutes les allées
-        zonesGroup: {},                         // Layer group contenant toutes les zones
-        afficheursGroup: {},                    // Layer group contenant tous les afficheurs
-        drawControl: {}                         // Barre d'outils de dessin active sur la carte
+        map: {},                              // Instance de la carte leaflet
+        currentMode: mapOptions.dessin.place, // Mode de dessin actuel
+        placesGroup: {},                      // Layer group contenant toutes les places
+        alleesGroup: {},                      // Layer group contenant toutes les allées
+        zonesGroup: {},                       // Layer group contenant toutes les zones
+        afficheursGroup: {},                  // Layer group contenant tous les afficheurs
+        drawControl: {}                       // Barre d'outils de dessin active sur la carte
     },
 
     getDefaultProps: function () {
         return {
             defaultDrawMode: mapOptions.dessin.place,
-            mapHeight: 300
+            mapHeight: 300,
+            calibre: 93
         };
     },
 
@@ -99,7 +101,7 @@ var parkingMap = React.createClass({
 
         // AJOUT DE L'IMAGE DE FOND
         L.imageOverlay(this.props.imgUrl, [origine, haut_droit]).addTo(this._inst.map);
-        Actions.map.map_initialized(this._inst.map);
+        Actions.map.map_initialized(this._inst.map, this.props.calibre);
 
         // INIT des layers
         this._inst.placesGroup = new L.geoJson();
@@ -352,6 +354,22 @@ var parkingMap = React.createClass({
     },
 
     /**
+     * Ajoute la forme dessinnée au layer courant
+     * @param data : le couple type-data envoyé par le store
+     */
+    onFormesAdded: function (formes) {
+        console.log('ACTION ADD FORMES, voilà les formes : %o', formes);
+        var liste_data = formes.data;
+        var layerGroup = this._inst[mapOptions.control.groups[this._inst.currentMode]];
+        console.log('LayerGroup trouvé : %o', mapOptions.control.groups[this._inst.currentMode]);
+        console.log('LayerGroup trouvé : %o', layerGroup);
+        _.each(liste_data, function (place) {
+
+            place.marker.addTo(layerGroup);
+        }, this)
+    },
+
+    /**
      * Remet tous les featuresGroups en ordre (zIndex)
      * L'ordre de bas en haut:
      * - Zone
@@ -376,6 +394,9 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.type_messages.add_forme:
                 this.onFormeAdded(data);
+                break;
+            case mapOptions.type_messages.add_formes:
+                this.onFormesAdded(data);
                 break;
             case mapOptions.type_messages.new_place_auto:
                 this._onNewPlaceAuto(data);
@@ -475,7 +496,6 @@ var parkingMap = React.createClass({
             return (
                 <ModalPlaces
                     onToggle={this.handleToggle}
-                    onSave={Actions.map.pm_creer}
                 />
             );
         }

@@ -24,4 +24,55 @@ this._createActions(this._activeMode.handler),this._actionsContainer.style.top=i
 | LEAFLET EASY BUTTON PLUGIN
 |--------------------------------------------------------------------------
 */
-L.Control.EasyButtons=L.Control.extend({options:{position:"topleft",title:"",intentedIcon:"fa-circle-o"},onAdd:function(){var e=L.DomUtil.create("div","leaflet-bar leaflet-control");this.link=L.DomUtil.create("a","leaflet-bar-part",e);this._addImage();this.link.href="#";L.DomEvent.on(this.link,"click",this._click,this);this.link.title=this.options.title;return e},intendedFunction:function(){alert("no function selected")},_click:function(e){L.DomEvent.stopPropagation(e);L.DomEvent.preventDefault(e);this.intendedFunction()},_addImage:function(){var e=this.options.intentedIcon.lastIndexOf("fa",0)===0?" fa fa-lg":" glyphicon";L.DomUtil.create("i",this.options.intentedIcon+e,this.link)}});L.easyButton=function(e,t,n,r){var i=new L.Control.EasyButtons;if(e)i.options.intentedIcon=e;if(typeof t==="function"){i.intendedFunction=t}if(n)i.options.title=n;if(r==""){}else if(r){r.addControl(i)}else{map.addControl(i)}return i}
+L.Control.EasyButtons=L.Control.extend({options:{position:"topleft",title:"",intentedIcon:"fa-circle-o"},onAdd:function(){var e=L.DomUtil.create("div","leaflet-bar leaflet-control");this.link=L.DomUtil.create("a","leaflet-bar-part",e);this._addImage();this.link.href="#";L.DomEvent.on(this.link,"click",this._click,this);this.link.title=this.options.title;return e},intendedFunction:function(){alert("no function selected")},_click:function(e){L.DomEvent.stopPropagation(e);L.DomEvent.preventDefault(e);this.intendedFunction()},_addImage:function(){var e=this.options.intentedIcon.lastIndexOf("fa",0)===0?" fa fa-lg":" glyphicon";L.DomUtil.create("i",this.options.intentedIcon+e,this.link)}});L.easyButton=function(e,t,n,r){var i=new L.Control.EasyButtons;if(e)i.options.intentedIcon=e;if(typeof t==="function"){i.intendedFunction=t}if(n)i.options.title=n;if(r==""){}else if(r){r.addControl(i)}else{map.addControl(i)}return i};
+
+
+/**!
+|--------------------------------------------------------------------------
+| LEAFLET ROTATION MARKER
+|--------------------------------------------------------------------------
+*/(function () {
+    var _old__setPos = L.Marker.prototype._setPos;
+    L.Marker.include({
+        _updateImg: function(i, a, s) {
+            a = L.point(s).divideBy(2)._subtract(L.point(a));
+            var transform = '';
+            transform += ' translate(' + -a.x + 'px, ' + -a.y + 'px)';
+            transform += ' rotate(' + this.options.iconAngle + 'deg)';
+            transform += ' translate(' + a.x + 'px, ' + a.y + 'px)';
+            i.style[L.DomUtil.TRANSFORM] += transform;
+        },
+
+        setIconAngle: function (iconAngle) {
+            this.options.iconAngle = iconAngle;
+            if (this._map)
+                this.update();
+        },
+
+        _setPos: function (pos) {
+            if (this._icon)
+                this._icon.style[L.DomUtil.TRANSFORM] = '';
+            if (this._shadow)
+                this._shadow.style[L.DomUtil.TRANSFORM] = '';
+
+            _old__setPos.apply(this,[pos]);
+
+            if (this.options.iconAngle) {
+                var a = this.options.icon.options.iconAnchor;
+                var s = this.options.icon.options.iconSize;
+                var i;
+                if (this._icon) {
+                    i = this._icon;
+                    this._updateImg(i, a, s);
+                }
+                if (this._shadow) {
+                    if (this.options.icon.options.shadowAnchor)
+                        a = this.options.icon.options.shadowAnchor;
+                    s = this.options.icon.options.shadowSize;
+                    i = this._shadow;
+                    this._updateImg(i, a, s);
+                }
+            }
+        }
+    });
+}());

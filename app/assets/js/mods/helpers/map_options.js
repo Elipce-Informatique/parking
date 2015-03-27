@@ -62,11 +62,12 @@ module.exports.type_messages = {
     mode_change: 1,
     add_forme: 2,
     delete_forme: 3,
-    new_place_auto: 4
+    new_place_auto: 4,
+    add_formes: 5
 };
 
 /**
- * PUTIN ça marchait hier !!
+ * Marker
  */
 module.exports.afficheurMarker = L.Icon.extend({
     options: {
@@ -76,6 +77,25 @@ module.exports.afficheurMarker = L.Icon.extend({
     }
 });
 
+/**
+ * TODO : Place SVG générique à colorier en CSS
+ * @type {void|*}
+ */
+module.exports.placeGenerique = L.Icon.extend({
+    options: {
+        iconAnchor: new L.Point(18, 40),
+        iconSize: new L.Point(36, 80),
+        iconUrl: BASE_URI + 'public/images/icone_voiture_noire.svg'
+    }
+});
+
+/**
+ * Ajout de propriétés perso au marker de type place
+ * @type {void|*}
+ */
+module.exports.DataMarker = L.Marker.extend({
+    data: {}
+});
 /**
  *
  * @type {{}}

@@ -5,7 +5,8 @@ var ComponentAccessMixins = require('../../mixins/component_access');
 var MixinGestMod = require('../../mixins/gestion_modif');
 
 var Field = require('../formulaire/react_form_fields');
-var Form = require('../formulaire/react_form_fields');
+var Form = Field.Form;
+var BtnSave = Field.BtnSave;
 var InputTextEditable = Field.InputTextEditable;
 var InputNumberEditable = Field.InputNumberEditable;
 var Modal = ReactB.Modal;
@@ -24,11 +25,13 @@ var ModalPlaces = React.createClass({
 
     propTypes: {
         onToggle: React.PropTypes.func.isRequired,
-        onSave: React.PropTypes.func.isRequired
+        calibre: React.PropTypes.number
     },
 
     getDefaultProps: function () {
-        return {module_url: 'configuration_parking'};
+        return {
+            module_url: 'configuration_parking'
+        };
     },
 
     getInitialState: function () {
@@ -36,8 +39,6 @@ var ModalPlaces = React.createClass({
     },
 
     componentDidMount: function () {
-        console.log('Dom node modale : ');
-        console.log(this.getDOMNode());
     },
 
     shouldComponentUpdate: function (nextProps, nextState) {
@@ -51,125 +52,128 @@ var ModalPlaces = React.createClass({
 
     render: function () {
         return (
-            <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.props.onToggle}>
+            <Modal
+                bsStyle="primary"
+                title={Lang.get('administration_parking.carte.titre_places_multiples')}
+                onRequestHide={this.props.onToggle}>
+
                 <div className="modal-body">
-
-
+                    <Form attributes={{id: "form_mod_places_multiples"}}>
                     {/***********************************************************************/}
                     {/* NB PLACES */}
-                    <InputNumberEditable
-                        attributes={
-                        {
-                            label: Lang.get('administration_parking.carte.nb_places'),
-                            min: '0',
-                            name: "nb_place",
-                            value: this.state.nom,
-                            required: false,
-                            groupClassName: 'row',
-                            wrapperClassName: 'col-md-3',
-                            labelClassName: 'col-md-6 text-right'
-                        }}
-                        editable={true}
-                        evts={{}} />
+                        <InputNumberEditable
+                            attributes={
+                            {
+                                label: Lang.get('administration_parking.carte.nb_places'),
+                                min: '0',
+                                name: "nb_place",
+                                value: '3',
+                                required: false,
+                                groupClassName: 'row',
+                                wrapperClassName: 'col-md-3',
+                                labelClassName: 'col-md-6 text-right'
+                            }}
+                            editable={true}
+                            evts={{}} />
 
-                    {/* NB POTEAUX */}
-                    <InputNumberEditable
-                        attributes={
-                        {
-                            label: Lang.get('administration_parking.carte.nb_poteaux'),
-                            min: '0',
-                            name: "nb_place",
-                            value: this.state.nom,
-                            required: false,
-                            groupClassName: 'row',
-                            wrapperClassName: 'col-md-3',
-                            labelClassName: 'col-md-6 text-right'
-                        }}
-                        editable={true}
-                        evts={{}} />
+                    {/* INTERVALLE POTEAUX */}
+                        <InputNumberEditable
+                            attributes={
+                            {
+                                label: Lang.get('administration_parking.carte.intervalle_poteaux'),
+                                min: '0',
+                                name: "nb_poteaux",
+                                value: '2',
+                                required: false,
+                                groupClassName: 'row',
+                                wrapperClassName: 'col-md-3',
+                                labelClassName: 'col-md-6 text-right'
+                            }}
+                            editable={true}
+                            evts={{}} />
 
                     {/* TAILLE POTEAUX */}
-                    <InputNumberEditable
-                        attributes={
-                        {
-                            label: Lang.get('administration_parking.carte.largeur_poteaux'),
-                            min: '0',
-                            name: "nb_place",
-                            value: this.state.nom,
-                            required: false,
-                            groupClassName: 'row',
-                            wrapperClassName: 'col-md-3',
-                            labelClassName: 'col-md-6 text-right'
-                        }}
-                        editable={true}
-                        evts={{}} />
+                        <InputNumberEditable
+                            attributes={
+                            {
+                                label: Lang.get('administration_parking.carte.largeur_poteaux'),
+                                min: '0',
+                                name: "taille_poteaux",
+                                value: '30',
+                                required: false,
+                                groupClassName: 'row',
+                                wrapperClassName: 'col-md-3',
+                                labelClassName: 'col-md-6 text-right'
+                            }}
+                            editable={true}
+                            evts={{}} />
 
                     {/***********************************************************************/}
-                    <Row>
+                        <Row>
                     {/* PRÉFIXE */}
-                        <Col md={4}>
-                            <Row>
+                            <Col md={4}>
                                 <InputTextEditable
                                     attributes={
                                     {
                                         label: Lang.get('administration_parking.carte.pref'),
-                                        name: "nb_place",
-                                        value: this.state.nom,
+                                        name: "prefixe",
+                                        value: 'A',
                                         required: false,
-                                        groupClassName: '',
+                                        groupClassName: 'row',
                                         wrapperClassName: 'col-md-9',
                                         labelClassName: 'col-md-3 text-right'
                                     }}
                                     editable={true}
                                     evts={{}} />
-                            </Row>
-                        </Col>
+                            </Col>
 
                     {/* INCREMENT */}
-                        <Col md={4}>
-                            <Row>
+                            <Col md={4}>
                                 <InputNumberEditable
                                     attributes={
                                     {
                                         label: Lang.get('administration_parking.carte.incr'),
                                         min: '0',
-                                        name: "nb_place",
-                                        value: this.state.nom,
+                                        name: "increment",
+                                        value: 1,
                                         required: false,
-                                        groupClassName: '',
+                                        groupClassName: 'row',
                                         wrapperClassName: 'col-md-9',
                                         labelClassName: 'col-md-3 text-right'
                                     }}
                                     editable={true}
                                     evts={{}} />
-                            </Row>
-                        </Col>
+                            </Col>
 
                     {/* SUFFIXE */}
-                        <Col md={4}>
-                            <Row>
+                            <Col md={4}>
                                 <InputTextEditable
                                     attributes={
                                     {
                                         label: Lang.get('administration_parking.carte.suff'),
-                                        name: "nb_place",
-                                        value: this.state.nom,
+                                        name: "suffixe",
+                                        value: 'S1',
                                         required: false,
-                                        groupClassName: '',
+                                        groupClassName: 'row',
                                         wrapperClassName: 'col-md-9',
                                         labelClassName: 'col-md-3 text-right'
                                     }}
                                     editable={true}
                                     evts={{}} />
-                            </Row>
-                        </Col>
-                    </Row>
+                            </Col>
+                        </Row>
                 {/***********************************************************************/}
-
+                    </Form>
                 </div>
+
                 <div className="modal-footer">
-                    <Button onClick={this.props.onToggle}>{Lang.get('global.annuler')}</Button>
-                    <Button bsStyle="success" onClick={this.props.onToggle}>{Lang.get('global.sauvegarder')}</Button>
+                    <Button
+                        onClick={this.props.onToggle}>
+                            {Lang.get('global.annuler')}
+                    </Button>
+                    <BtnSave
+                        form_id="form_mod_places_multiples"
+                        libelle={Lang.get('global.create')} />
                 </div>
             </Modal>
         );

@@ -106,7 +106,7 @@ gulp.task('libs_js_statiques',  function () {
     return gulp.src(JS_LIBS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(JS_LIBS_DEST))
-        .pipe(uglify())
+        //.pipe(uglify())
         .on('error', gutil.log)
         .pipe(gulp.dest(JS_LIBS_DEST));
 });
