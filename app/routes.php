@@ -135,8 +135,10 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
 | des droits spécifiques.
 |
 */
-Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix'=>'parking'], function () {
-    Route::resource('', 'ParkingsController'); // url ressource /parking
+Route::group(['before' => 'auth|auth.canaccess|auth.parking'], function () {
+    Route::resource('parking', 'ParkingsController'); // url ressource /parking
+});
+Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parking'], function () {
     Route::resource('niveau', 'NiveauxController');
     Route::resource('afficheur', 'AfficheursController');
     Route::resource('zone', 'ZonesController');
@@ -164,7 +166,7 @@ Route::group(['before' => 'auth', 'prefix' => 'menu'], function () {
 | TESTS EN DUR
 |--------------------------------------------------------------------------
 */
-// test
+// test de parapetres ajax, retourne tout ce qui est passé en paramètres
 Route::post('post_dump', function () {
     dd(Input::all());
 });

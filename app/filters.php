@@ -62,7 +62,6 @@ Route::filter('auth.canaccess', function () {
  * et vérifier les droits (lien utilisateur_parking)
  */
 Route::filter('auth.parking', function () {
-    Log::debug('');
 });
 /*
 |--------------------------------------------------------------------------
@@ -91,7 +90,7 @@ Route::filter('guest', function () {
 */
 
 Route::filter('csrf', function () {
-    if (count(Input::get())) {
+    if (count(Input::all())) {
         if (Session::token() != Input::get('_token')) {
             throw new Illuminate\Session\TokenMismatchException;
         }

@@ -65,7 +65,7 @@ var store = Reflux.createStore({
         // Récupération en BDD des données du parking sélectionné
         $.ajax({
             method: 'GET',
-            url: BASE_URI + 'niveau/' + parkingInfos.niveauId, /* TODO */
+            url: BASE_URI + 'parking/niveau/' + parkingInfos.niveauId, /* TODO */
             dataType: 'json',
             context: this,
             async: true,

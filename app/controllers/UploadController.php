@@ -1,9 +1,11 @@
 <?php
 
-class UploadController extends \BaseController {
+class UploadController extends \BaseController
+{
 
-	public function upload(){
-		// Récupérer le fichier avec dropzone js
-	}
+    public function upload()
+    {
+        // Récupérer le fichier avec dropzone js
+    }
 
 }
