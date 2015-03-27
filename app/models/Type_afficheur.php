@@ -1,6 +1,6 @@
 <?php
 
-class Niveau extends \Eloquent
+class Type_afficheur extends \Eloquent
 {
     public $timestamps = false;
     protected $fillable = [];
@@ -10,30 +10,11 @@ class Niveau extends \Eloquent
      *****************************************************************************/
 
     /**
-     * Les zones du niveau
-     * @return mixed
-     */
-    public function zones()
-    {
-        return $this->hasMany('Zone');
-    }
-
-    /**
-     * Les zones du niveau
+     * Les afficheurs du type d'afficheur
      * @return mixed
      */
     public function afficheurs()
     {
         return $this->hasMany('Afficheur');
-    }
-
-    /**
-     * Le parking du niveau :
-     * Inverse de la relation du parking
-     * @return mixed
-     */
-    public function parking()
-    {
-        return $this->belongsTo('Parking');
     }
 }

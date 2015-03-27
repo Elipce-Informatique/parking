@@ -59,19 +59,16 @@ var store = Reflux.createStore({
     onMap_initialized: function (map, calibre, parkingInfos) {
 
         console.log('Calibre au niveau du store : ' + calibre);
+        console.log('Infos du parking au niveau du store : %o', parkingInfos);
         this._inst.calibre = calibre;
 
         // Récupération en BDD des données du parking sélectionné
         $.ajax({
             method: 'GET',
-            url: BASE_URI + 'configuration_parking/infos_parking/' + parkingInfos.parkingId, /* TODO */
+            url: BASE_URI + 'niveau/' + parkingInfos.niveauId, /* TODO */
             dataType: 'json',
             context: this,
             async: true,
-            data: {
-                parkingId: parkingInfos.parkingId,
-                niveauId: parkingInfos.niveauId
-            },
             success: function (data) {
                 console.log('Retour AJAX init map : %o', data);
             },

@@ -1,6 +1,6 @@
 <?php
 
-class Zone extends \Eloquent
+class Capteur extends \Eloquent
 {
     public $timestamps = false;
     protected $fillable = [];
@@ -10,21 +10,11 @@ class Zone extends \Eloquent
      *****************************************************************************/
 
     /**
-     * Les allées de la zone
+     * La place du capteur
      * @return mixed
      */
-    public function allees()
+    public function places()
     {
-        return $this->hasMany('Allee');
-    }
-
-    /**
-     * Le niveau de la zone :
-     * Inverse de la relation du niveau
-     * @return mixed
-     */
-    public function niveau()
-    {
-        return $this->belongsTo('Niveau');
+        return $this->hasOne('Place');
     }
 }

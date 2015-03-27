@@ -87,7 +87,7 @@ var Page = React.createClass({
     // Affiche la carte
     _carte: function () {
         var url = BASE_URI + 'public/images/test_carte_bis_2.svg';
-        return <AdminMap imgUrl={url} divId="div_carte"/>;
+        return <AdminMap imgUrl={url} divId="div_carte" parkingId={1} niveauId={1}/>;
     },
 
     render: function () {

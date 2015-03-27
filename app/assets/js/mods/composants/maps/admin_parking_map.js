@@ -22,6 +22,8 @@ var Button = ReactB.Button;
  * @param calibre : nombre de cm/deg sur cette carte
  */
 var parkingMap = React.createClass({
+    displayName: 'admin_parking_map',
+
     mixins: [Reflux.ListenerMixin, ReactB.OverlayMixin],
     /**
      * Définition du type des props du composant.

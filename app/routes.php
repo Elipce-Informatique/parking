@@ -18,7 +18,7 @@ Route::when('*', 'csrf', array('post', 'put', 'delete', 'patch'));
 |
 */
 
-Route::get('/', ['as'=>'index', 'uses'=>'SessionsController@create']);
+Route::get('/', ['as' => 'index', 'uses' => 'SessionsController@create']);
 Route::controller('password', 'RemindersController');
 
 /*
@@ -69,7 +69,7 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     /* **************************************************************************
     * Administration
     */
-    Route::get('administration',['as'=>'administration', 'uses'=>'AdministrationController@index'] );
+    Route::get('administration', ['as' => 'administration', 'uses' => 'AdministrationController@index']);
     /*
      * Gestion des utilisateurs
      */
@@ -91,14 +91,14 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     /* **************************************************************************
      * Administration parking
      */
-    Route::get('administration_parking',['as'=>'administration_parking', 'uses'=>'AdministrationParkingController@index'] );
+    Route::get('administration_parking', ['as' => 'administration_parking', 'uses' => 'AdministrationParkingController@index']);
 
     /*
      * Etats d'occupation (d'une place de parking, menu Administration parking)
      */
-    Route::get('etats_d_occupation',['as'=>'etats_d_occupation', 'uses'=>'EtatsDoccupationController@index'] );
-    Route::get('etats_d_occupation/all',               'EtatsDoccupationController@all');
-    Route::get('etats_d_occupation/{id}',              'EtatsDoccupationController@show');
+    Route::get('etats_d_occupation', ['as' => 'etats_d_occupation', 'uses' => 'EtatsDoccupationController@index']);
+    Route::get('etats_d_occupation/all', 'EtatsDoccupationController@all');
+    Route::get('etats_d_occupation/{id}', 'EtatsDoccupationController@show');
     Route::get('etats_d_occupation/libelle/{libelle}', 'EtatsDoccupationController@getLibelleExist');
     Route::resource('etats_d_occupation', 'EtatsDoccupationController');
 
@@ -106,7 +106,6 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
      * Configuration d'un parking
      */
     Route::resource('configuration_parking', 'ConfigurationParkingController');
-    Route::get('configuration_parking/infos_parking/{id}', 'ConfigurationParkingController@parkingInfos');
 
     /* **************************************************************************
      * Calendrier
@@ -121,7 +120,6 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     Route::resource('calendrier_jours', 'CalendrierJoursController');
 
 
-
     /* **************************************************************************
      * Test
      */
@@ -129,27 +127,24 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
 });
 
 /*
- |--------------------------------------------------------------------------
-| GROUPE RIVERSIDE
 |--------------------------------------------------------------------------
- */
-
-// test
-Route::post('post_dump', function(){
-    dd(Input::all());
-});
-Route::resource('test', 'TestController');
-/*
- |--------------------------------------------------------------------------
-| GROUPE RIVERSIDE
+| GROUPE UTILISATEUR AUTHENTIFIE + DROITS ACCESS + DROIT PARKING
 |--------------------------------------------------------------------------
- */
-
-// test
-Route::post('post_dump', function(){
-    dd(Input::all());
+|
+| Gestion des routes qui nécessitent d'être authentifié ET d'avoir
+| des droits spécifiques.
+|
+*/
+Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix'=>'parking'], function () {
+    Route::resource('', 'ParkingsController'); // url ressource /parking
+    Route::resource('niveau', 'NiveauxController');
+    Route::resource('afficheur', 'AfficheursController');
+    Route::resource('zone', 'ZonesController');
+    Route::resource('allee', 'AlleesController');
+    Route::resource('place', 'PlacesController');
+    Route::resource('capteur', 'CapteursController');
 });
-Route::resource('test', 'TestController');
+
 /*
 |--------------------------------------------------------------------------
 | GROUPE API MENU
@@ -169,5 +164,8 @@ Route::group(['before' => 'auth', 'prefix' => 'menu'], function () {
 | TESTS EN DUR
 |--------------------------------------------------------------------------
 */
-Route::get('test', 'TestController@index');
+// test
+Route::post('post_dump', function () {
+    dd(Input::all());
+});
 Route::get('test_carte', 'TestController@indexCarte');

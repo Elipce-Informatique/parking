@@ -46,15 +46,23 @@ Route::filter('auth.basic', function () {
     return Auth::basic();
 });
 
-Route::filter('auth.canaccess', function(){
-    $module_url =  Request::segment(1);
-    if(!Auth::user()->isModuleAccessibleByUrl($module_url)){
+Route::filter('auth.canaccess', function () {
+    $module_url = Request::segment(1);
+    if (!Auth::user()->isModuleAccessibleByUrl($module_url)) {
         if (Request::ajax()) {
             return Response::make('Unauthorized', 401);
         } else {
             return Redirect::back();
         }
     }
+});
+
+/**
+ * TODO : retrouver le parking en fonction du type de requête et des paramètres
+ * et vérifier les droits (lien utilisateur_parking)
+ */
+Route::filter('auth.parking', function () {
+    Log::debug('');
 });
 /*
 |--------------------------------------------------------------------------
@@ -89,3 +97,5 @@ Route::filter('csrf', function () {
         }
     }
 });
+
+

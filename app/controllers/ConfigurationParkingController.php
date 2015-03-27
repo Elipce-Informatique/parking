@@ -89,7 +89,7 @@ class ConfigurationParkingController extends \BaseController
      */
     public function parkingInfos($id)
     {
-        return array('test' => 'Infos parking');
+        return Parking::find($id);
     }
 
 
