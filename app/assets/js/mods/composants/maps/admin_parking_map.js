@@ -29,6 +29,8 @@ var parkingMap = React.createClass({
     propTypes: {
         divId: React.PropTypes.string.isRequired,
         imgUrl: React.PropTypes.string.isRequired,
+        parkingId: React.PropTypes.number.isRequired,
+        niveauId: React.PropTypes.number.isRequired,
         mapHeight: React.PropTypes.number,
         defaultDrawMode: React.PropTypes.number,
         calibre: React.PropTypes.number
@@ -101,7 +103,13 @@ var parkingMap = React.createClass({
 
         // AJOUT DE L'IMAGE DE FOND
         L.imageOverlay(this.props.imgUrl, [origine, haut_droit]).addTo(this._inst.map);
-        Actions.map.map_initialized(this._inst.map, this.props.calibre);
+
+        // Transmission des données du parking au store:
+        var parkingData = {
+            parkingId: this.props.parkingId,
+            niveauId: this.props.niveauId
+        };
+        Actions.map.map_initialized(this._inst.map, this.props.calibre, parkingData);
 
         // INIT des layers
         this._inst.placesGroup = new L.geoJson();

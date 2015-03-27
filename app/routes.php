@@ -106,6 +106,7 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
      * Configuration d'un parking
      */
     Route::resource('configuration_parking', 'ConfigurationParkingController');
+    Route::get('configuration_parking/infos_parking/{id}', 'ConfigurationParkingController@parkingInfos');
 
     /* **************************************************************************
      * Calendrier

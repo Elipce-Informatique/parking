@@ -135,7 +135,7 @@ var ModalPlaces = React.createClass({
                                         label: Lang.get('administration_parking.carte.incr'),
                                         min: '0',
                                         name: "increment",
-                                        value: 1,
+                                        value: 0,
                                         required: false,
                                         groupClassName: 'row',
                                         wrapperClassName: 'col-md-9',

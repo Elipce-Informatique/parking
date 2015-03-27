@@ -43,20 +43,42 @@ var store = Reflux.createStore({
     getInitialState: function () {
         return {};
     },
-    // INITIAL SETUP
     init: function () {
+
     },
 
 
     /**
      * Appellé lors de l'initialisation de la map pour renseigner le calibre initial
+     * et charger les données des zones, places et allées de ce niveau
      *
      * @param map : objet leaflet
      * @param calibre : calibre initial de la carte (cm/deg)
+     * @param parkingInfos : object avec deux clés idParking et niveauId
      */
-    onMap_initialized: function (map, calibre) {
+    onMap_initialized: function (map, calibre, parkingInfos) {
+
         console.log('Calibre au niveau du store : ' + calibre);
         this._inst.calibre = calibre;
+
+        // Récupération en BDD des données du parking sélectionné
+        $.ajax({
+            method: 'GET',
+            url: BASE_URI + 'configuration_parking/infos_parking/' + parkingInfos.parkingId, /* TODO */
+            dataType: 'json',
+            context: this,
+            async: true,
+            data: {
+                parkingId: parkingInfos.parkingId,
+                niveauId: parkingInfos.niveauId
+            },
+            success: function (data) {
+                console.log('Retour AJAX init map : %o', data);
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err);
+            }
+        })
     },
 
     /**
@@ -239,6 +261,12 @@ var store = Reflux.createStore({
                 inc,
                 suff);
 
+            this._inst.places = this._inst.places.concat(places);
+            console.log('Tableau des places dans le store : %o', this._inst.places);
+
+            // Enregistrement des places via le serveur
+
+            // Envoi des infos à afficher sur la carte
             var retour = {
                 type: mapOptions.type_messages.add_formes,
                 data: places
