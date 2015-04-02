@@ -4,7 +4,7 @@
     <div class="row" id="jumbo">
         <div class="jumbotron">
             <div class="container">
-                <h1>{{Lang::get('menu.side.calendrier')}}</h1>
+                <h1>{{Lang::get('menu.top.calendrier')}}</h1>
                 <p>{{Lang::get('calendrier.calendrier.texte')}}</p>
             </div>
         </div>

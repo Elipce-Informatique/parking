@@ -6,12 +6,14 @@ var AuthentMixins = require('./mixins/component_access');
 var DataTableBandeau = require('./composants/tableau/react_data_table_bandeau');
 
 var DataTableBandeauJourReact = React.createClass({
-    
-    mixins: [Reflux.ListenerMixin,AuthentMixins],
 
-    head : [Lang.get('calendrier.jours.tableau.nom'),Lang.get('calendrier.jours.tableau.ouvert'),Lang.get('calendrier.jours.tableau.fermer'), Lang.get('calendrier.jours.tableau.couleur')],
-    hide : ['id'],
-    aReactElements : {'3':['Couleur']},
+    mixins: [Reflux.ListenerMixin, AuthentMixins],
+
+    head: [Lang.get('calendrier.jours.tableau.nom'), Lang.get('calendrier.jours.tableau.ouvert'), Lang.get('calendrier.jours.tableau.fermer'), Lang.get('calendrier.jours.tableau.couleur')],
+    hide: ['id'],
+    aReactElements: {
+        '3': {type: 'Couleur'}
+    },
     // evts ne pas mettre ici car this.displayJours n'est pas encore connu
 
 
@@ -20,9 +22,9 @@ var DataTableBandeauJourReact = React.createClass({
     },
 
     /**
-    * Les props par défaut
-    */
-    getDefaultProps: function() {
+     * Les props par défaut
+     */
+    getDefaultProps: function () {
 
         return {
             module_url: 'calendrier_jours'
@@ -30,39 +32,39 @@ var DataTableBandeauJourReact = React.createClass({
     },
 
 
-    render: function() {
+    render: function () {
 
         return (
-         <DataTableBandeau
-             id="tab_jours"
-             head={this.head}
-             reactElements={this.aReactElements}
-             data={this.props.data}
-             hide={this.hide}
-             attributes={this.attributes}
-             bUnderline={true}
-             evts={{onClick:this.displayJours}}/>
+            <DataTableBandeau
+                id="tab_jours"
+                head={this.head}
+                reactElements={this.aReactElements}
+                data={this.props.data}
+                hide={this.hide}
+                attributes={this.attributes}
+                bUnderline={true}
+                evts={{onClick: this.displayJours}}/>
         )
     },
-    
- /*
- |--------------------------------------------------------------------------
- | FONCTIONS NON REACT
- |--------------------------------------------------------------------------
- */   
+
+    /*
+     |--------------------------------------------------------------------------
+     | FONCTIONS NON REACT
+     |--------------------------------------------------------------------------
+     */
     /**
      * Mise à jour de la TABLE
      * @param {type} data
      * @returns {undefined}
      */
-    updateData: function(data) {
+    updateData: function (data) {
         // MAJ data
         this.setState({
             data: data
         });
     },
 
-    displayJours: function(e){
+    displayJours: function (e) {
         // Ligne du tableau
         var id = $(e.currentTarget).data('id');
         Actions.jours.display_detail_jour(id);

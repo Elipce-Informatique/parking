@@ -52,7 +52,10 @@ var ReactPageEtatsDoccupation = React.createClass({
         Lang.get('administration_parking.etats_d_occupation.tableau.etat_place'),
         Lang.get('administration_parking.etats_d_occupation.tableau.logo')],
     hide: ['id'],
-    aReactElements: {'1': ['Couleur'], '4': ['Image', 'app/storage/documents/logo_type_place/']},
+    aReactElements: {
+        '1': {type: 'Couleur'},
+        '4': {type:'Image', url:'app/storage/documents/logo_type_place/'}
+    },
     /**
      * Les props par défaut
      */
@@ -137,15 +140,15 @@ var ReactPageEtatsDoccupation = React.createClass({
             /*    - le bandeau (Retour/Créer/Editer/Supprimer) */
             /*    - les infos non éditable                     */
             case pageState.visu:
-                return(
-                <div key="rootPageEtatsDoccupation">
-                    <BandeauGenerique {...attrBandeau} />
-                    <Row>
-                        <Col md={12}>
-                            <ReactEtatDoccupation id={this.state.id}/>
-                        </Col>
-                    </Row>
-                </div>);
+                return (
+                    <div key="rootPageEtatsDoccupation">
+                        <BandeauGenerique {...attrBandeau} />
+                        <Row>
+                            <Col md={12}>
+                                <ReactEtatDoccupation id={this.state.id}/>
+                            </Col>
+                        </Row>
+                    </div>);
                 break;
 
             /* On édite/créer un états d'occupation */
@@ -156,15 +159,15 @@ var ReactPageEtatsDoccupation = React.createClass({
                 mode = 0;
                 attrBandeau = _.omit(attrBandeau, 'sousTitre');
             case pageState.edition:
-                return(
-                <div key="rootPageEtatsDoccupation">
-                    <BandeauGenerique {...attrBandeau} mode={mode} />
-                    <Row>
-                        <Col md={12}>
-                            <ReactEtatDoccupation id={this.state.id} editable={true} />
-                        </Col>
-                    </Row>
-                </div>);
+                return (
+                    <div key="rootPageEtatsDoccupation">
+                        <BandeauGenerique {...attrBandeau} mode={mode} />
+                        <Row>
+                            <Col md={12}>
+                                <ReactEtatDoccupation id={this.state.id} editable={true} />
+                            </Col>
+                        </Row>
+                    </div>);
                 break;
 
             /* On arrive sur la page "Etats d'occupation" */
@@ -174,20 +177,20 @@ var ReactPageEtatsDoccupation = React.createClass({
             case pageState.liste:
             default:
                 return (
-                <div  key="rootPageEtatsDoccupation">
-                    <BandeauGenerique {...attrBandeau} />
-                    <Row>
-                        <Col md={12}>
-                            <DataTable id="dataTableEtatsDoccupation"
-                                head={this.head}
-                                data={this.state.data}
-                                hide={this.hide}
-                                bUnderline={true}
-                                evts={{onClick: this.displayEtatDoccupation}}
-                                reactElements={this.aReactElements}/>
-                        </Col>
-                    </Row>
-                </div>);
+                    <div  key="rootPageEtatsDoccupation">
+                        <BandeauGenerique {...attrBandeau} />
+                        <Row>
+                            <Col md={12}>
+                                <DataTable id="dataTableEtatsDoccupation"
+                                    head={this.head}
+                                    data={this.state.data}
+                                    hide={this.hide}
+                                    bUnderline={true}
+                                    evts={{onClick: this.displayEtatDoccupation}}
+                                    reactElements={this.aReactElements}/>
+                            </Col>
+                        </Row>
+                    </div>);
                 break;
         }
     },
@@ -292,7 +295,7 @@ var pageEtatsDoccupationStore = Reflux.createStore({
             data: {'_token': $('#_token').val()},
             success: function (bool) {
                 // suppression OK
-                if(bool) {
+                if (bool) {
                     this.idSelect = 0;
                     this.trigger({etatPage: pageState.liste, id: 0, name: ''});
                     // Maj liste
@@ -300,7 +303,7 @@ var pageEtatsDoccupationStore = Reflux.createStore({
                     Actions.notif.success(Lang.get('global.notif_success'));
                 }
                 // Suppression KO
-                else{
+                else {
                     Actions.notif.error(Lang.get('global.notif_erreur'));
                 }
             },
