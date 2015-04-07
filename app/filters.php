@@ -47,6 +47,7 @@ Route::filter('auth.basic', function () {
 });
 
 Route::filter('auth.canaccess', function () {
+
     $module_url = Request::segment(1);
     if (!Auth::user()->isModuleAccessibleByUrl($module_url)) {
         if (Request::ajax()) {

@@ -106,16 +106,17 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      */
     public function isModuleAccessibleByUrl($url)
     {
-        return (count($this
-                ->join('profil_utilisateur', 'profil_utilisateur.utilisateur_id', '=', 'utilisateurs.id')
-                ->join('profils', 'profils.id', '=', 'profil_utilisateur.profil_id')
-                ->join('profil_module', 'profil_module.profil_id', '=', 'profils.id')
-                ->join('modules', 'modules.id', '=', 'profil_module.module_id')
-                ->join('module_module', 'module_module.fils_id', '=', 'modules.id')
-                ->where('modules.url', $url)
-                ->where('utilisateurs.id', $this->id)
-                ->groupBy('modules.id')
-                ->get(['modules.*'])) != 0);
+        $res = $this
+            ->join('profil_utilisateur', 'profil_utilisateur.utilisateur_id', '=', 'utilisateurs.id')
+            ->join('profils', 'profils.id', '=', 'profil_utilisateur.profil_id')
+            ->join('profil_module', 'profil_module.profil_id', '=', 'profils.id')
+            ->join('modules', 'modules.id', '=', 'profil_module.module_id')
+            ->leftJoin('module_module', 'module_module.fils_id', '=', 'modules.id')
+            ->where('modules.url', $url)
+            ->where('utilisateurs.id', $this->id)
+            ->groupBy('modules.id')
+            ->get(['modules.*']);
+        return (count($res) != 0);
     }
 
     /**
@@ -130,7 +131,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 ->join('profils', 'profils.id', '=', 'profil_utilisateur.profil_id')
                 ->join('profil_module', 'profil_module.profil_id', '=', 'profils.id')
                 ->join('modules', 'modules.id', '=', 'profil_module.module_id')
-                ->join('module_module', 'module_module.fils_id', '=', 'modules.id')
+                ->leftJoin('module_module', 'module_module.fils_id', '=', 'modules.id')
                 ->where('modules.id', $id)
                 ->where('utilisateurs.id', $this->id)
                 ->groupBy('modules.id')
@@ -190,7 +191,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
     /**
      * Récupère tous les profils du user
-     * @param $id: ID utilisateur
+     * @param $id : ID utilisateur
      * @return array
      */
     public static function getProfilsUsers($id)
@@ -208,8 +209,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 ->get(['profils.id', 'profils.traduction', DB::raw("IF(profil_utilisateur.profil_id IS NULL,'non', 'oui')AS profil")]);
 
             $data['dataProfil'] = $dataProfil;
-        }
-        // Récupère uniquement les profils
+        } // Récupère uniquement les profils
         else {
             $data = [
                 'id' => 0,
@@ -252,7 +252,8 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      *
      * @return bool : statu de la suppression (false si l'utilisateur n'a pas de photo autre que no.gif)
      */
-    public function deletePhoto(){
+    public function deletePhoto()
+    {
         $photo = $this->photo;
         $path = storage_path() . '/documents/photo/' . $photo;
         if ($photo != "no.gif" && File::exists($path)) {
@@ -359,8 +360,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                     DB::rollback();
                 }
             }
-        }
-        // Erreur dans la transaction SQL
+        } // Erreur dans la transaction SQL
         catch (Exception $e) {
             $bSave = false;
             DB::rollback();
@@ -385,15 +385,15 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
             // Récupère la donnée de l'utilisateur
             $fieldUser = [
-                'nom'      => strtoupper($fields['nom']),
-                'prenom'   => ucfirst(strtolower($fields['prenom'])),
-                'email'    => $fields['email']
+                'nom' => strtoupper($fields['nom']),
+                'prenom' => ucfirst(strtolower($fields['prenom'])),
+                'email' => $fields['email']
             ];
 
             // Mot de passe généré sur 8 digits
-            $pwd    = Hash::make(time());
-            $pwd    = substr($pwd, 8, 6);// 6 caractères au hasard
-            $pwd    = 'k'.$pwd.'1';// au moins une lettre et un chiffre
+            $pwd = Hash::make(time());
+            $pwd = substr($pwd, 8, 6);// 6 caractères au hasard
+            $pwd = 'k' . $pwd . '1';// au moins une lettre et un chiffre
             $pwdBdd = Hash::make($pwd); // Cryptage avant enregistrement
             $fieldUser['password'] = $pwdBdd;
 
@@ -403,7 +403,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 $extFile = Input::file('photo')->getClientOriginalExtension();
 
                 //  Nom du fichier (email + extension)
-                $fileName = str_replace(array('.','@'), array('',''), $fields['email']); // Suppression des points et @
+                $fileName = str_replace(array('.', '@'), array('', ''), $fields['email']); // Suppression des points et @
                 $fileName .= '.' . $extFile; // Ajout extension
 
                 // Sauvegarde de la photo dans le bon dossier
@@ -412,8 +412,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
                 // Mise à jour du champ en base de donnée
                 $fieldUser['photo'] = $fileName;
-            }
-            // Photo par défaut
+            } // Photo par défaut
             else {
                 $fieldUser['photo'] = 'no.gif';
             }
@@ -443,14 +442,13 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
                 // Création et envoie du mail
                 $titre = Lang::get('mail.creation_utilisateur_titre');
-                $texte = str_replace('[-pwd-]', $pwd,  Lang::get('mail.creation_utilisateur_text'));
+                $texte = str_replace('[-pwd-]', $pwd, Lang::get('mail.creation_utilisateur_text'));
                 $infos = array(
-                    'nom'    => $fieldUser['nom'],
+                    'nom' => $fieldUser['nom'],
                     'prenom' => $fieldUser['prenom'],
-                    'titre'  => $titre,
-                    'texte'  => $texte);
-                Mail::send('emails.creation_utilisateur', $infos, function($message) use ($fields, $titre)
-                {
+                    'titre' => $titre,
+                    'texte' => $texte);
+                Mail::send('emails.creation_utilisateur', $infos, function ($message) use ($fields, $titre) {
                     $message->to($fields['email'])->subject($titre);
                 });
 
@@ -460,14 +458,12 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                     'idUser' => $idUser,
                     'save' => $bSave
                 );
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 // Transaction KO
                 DB::rollback();
                 $retour = array('save' => false);
             }
-        }
-        // Email existe déjà
+        } // Email existe déjà
         else {
             $retour = array('save' => false);
         }
@@ -479,7 +475,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      * @param $email email de l'utilisateur
      * @return bool true/false
      */
-    public static function isMailExists($email, $idUser=0)
+    public static function isMailExists($email, $idUser = 0)
     {
         $and = $idUser === 0 ? '' : " AND id <> $idUser";
         $nb = DB::table('utilisateurs')->whereRaw("email='$email' $and")->count();
@@ -488,7 +484,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
     /**
      * Bon mot de passe ?
-     * @param $pass: mot de passe
+     * @param $pass : mot de passe
      * @return array
      */
     public static function isPasswordOk($pass)

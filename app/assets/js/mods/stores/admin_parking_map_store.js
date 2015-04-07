@@ -25,7 +25,13 @@ var mapHelper = require('../helpers/map_helper');
 var store = Reflux.createStore({
     _inst: {
         calibre: 1,
-        parkingInfos: {},
+        parkingInfos: {
+            id: 0,
+            libelle: '',
+            description: '',
+            init: 0,
+            niveau: {}
+        },
         currentMode: mapOptions.dessin.place,
         places: [],
         allees: [],
@@ -43,6 +49,7 @@ var store = Reflux.createStore({
     getInitialState: function () {
         return {};
     },
+
     init: function () {
 
     },
@@ -68,7 +75,6 @@ var store = Reflux.createStore({
             url: BASE_URI + 'parking/niveau/' + parkingInfos.niveauId, /* TODO */
             dataType: 'json',
             context: this,
-            async: true,
             success: function (data) {
                 console.log('Retour AJAX init map : %o', data);
             },
