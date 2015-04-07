@@ -44,7 +44,7 @@ class ParkingsController extends \BaseController
      */
     public function show($id)
     {
-        //
+        return Parking::find($id);
     }
 
 

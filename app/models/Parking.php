@@ -2,6 +2,7 @@
 
 class Parking extends \Eloquent
 {
+    protected $table = 'parking';
     public $timestamps = false;
     protected $fillable = [];
 

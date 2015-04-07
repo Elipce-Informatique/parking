@@ -121,7 +121,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
     /**
      * Test accessibilité en lecture
-     * @param $url
+     * @param $url : url du module à tester
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function isModuleAccessible($id)

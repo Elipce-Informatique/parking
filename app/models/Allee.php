@@ -2,6 +2,7 @@
 
 class Allee extends \Eloquent
 {
+    protected $table = 'allee';
     public $timestamps = false;
     protected $fillable = [];
 

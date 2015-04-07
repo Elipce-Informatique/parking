@@ -5,7 +5,7 @@ class NiveauxController extends \BaseController
 
     /**
      * Display a listing of the resource.
-     * GET /niveaus
+     * GET /niveaux
      *
      * @return Response
      */
@@ -16,7 +16,7 @@ class NiveauxController extends \BaseController
 
     /**
      * Show the form for creating a new resource.
-     * GET /niveaus/create
+     * GET /niveaux/create
      *
      * @return Response
      */
@@ -27,7 +27,7 @@ class NiveauxController extends \BaseController
 
     /**
      * Store a newly created resource in storage.
-     * POST /niveaus
+     * POST /niveaux
      *
      * @return Response
      */
@@ -38,19 +38,19 @@ class NiveauxController extends \BaseController
 
     /**
      * Display the specified resource.
-     * GET /niveaus/{id}
+     * GET /niveaux/{id}
      *
      * @param  int $id
      * @return Response
      */
     public function show($id)
     {
-        //
+        return Niveau::with('zones.allees')->find($id);
     }
 
     /**
      * Show the form for editing the specified resource.
-     * GET /niveaus/{id}/edit
+     * GET /niveaux/{id}/edit
      *
      * @param  int $id
      * @return Response
@@ -62,7 +62,7 @@ class NiveauxController extends \BaseController
 
     /**
      * Update the specified resource in storage.
-     * PUT /niveaus/{id}
+     * PUT /niveaux/{id}
      *
      * @param  int $id
      * @return Response
@@ -74,7 +74,7 @@ class NiveauxController extends \BaseController
 
     /**
      * Remove the specified resource from storage.
-     * DELETE /niveaus/{id}
+     * DELETE /niveaux/{id}
      *
      * @param  int $id
      * @return Response

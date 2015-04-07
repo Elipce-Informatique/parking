@@ -61,7 +61,7 @@ var store = Reflux.createStore({
      *
      * @param map : objet leaflet
      * @param calibre : calibre initial de la carte (cm/deg)
-     * @param parkingInfos : object avec deux clés idParking et niveauId
+     * @param parkingInfos : object avec deux clés parkingId et niveauId
      */
     onMap_initialized: function (map, calibre, parkingInfos) {
 
@@ -72,16 +72,34 @@ var store = Reflux.createStore({
         // Récupération en BDD des données du parking sélectionné
         $.ajax({
             method: 'GET',
-            url: BASE_URI + 'parking/niveau/' + parkingInfos.niveauId, /* TODO */
+            url: BASE_URI + 'parking/' + parkingInfos.parkingId,
             dataType: 'json',
             context: this,
             success: function (data) {
-                console.log('Retour AJAX init map : %o', data);
+                // Récup des données
+                this._inst.parkingInfos.id = data.id;
+                this._inst.parkingInfos.libelle = data.libelle;
+                this._inst.parkingInfos.description = data.description;
+                this._inst.parkingInfos.init = data.init;
             },
             error: function (xhr, status, err) {
                 console.error(status, err);
             }
-        })
+        });
+
+        // Récupération en BDD des données du niveau sélectionné
+        $.ajax({
+            method: 'GET',
+            url: BASE_URI + 'parking/niveau/' + parkingInfos.niveauId,
+            dataType: 'json',
+            context: this,
+            success: function (data) {
+                console.log('Retour AJAX init map infos niveau : %o', data);
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err);
+            }
+        });
     },
 
     /**

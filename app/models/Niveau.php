@@ -2,6 +2,7 @@
 
 class Niveau extends \Eloquent
 {
+    protected $table = 'niveau';
     public $timestamps = false;
     protected $fillable = [];
 

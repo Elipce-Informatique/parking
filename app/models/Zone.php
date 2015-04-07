@@ -2,6 +2,7 @@
 
 class Zone extends \Eloquent
 {
+    protected $table = 'zone';
     public $timestamps = false;
     protected $fillable = [];
 
