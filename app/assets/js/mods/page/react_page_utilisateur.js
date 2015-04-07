@@ -17,6 +17,9 @@ var MixinGestMod = require('../mixins/gestion_modif');
 // STORE
 var storeFicheUser = require('../react_fiche_utilisateur').store
 
+// HELPERS
+var pageState = require('../helpers/page_helper').pageState;
+
 /**
  * Page utilisateur
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
@@ -33,7 +36,7 @@ var PageUser = React.createClass({
 
     getInitialState: function () {
         return {
-            etat: 'liste',
+            etat: pageState.liste,
             idUser: 0,
             dataUser: {nom: '', prenom: ''}
         };
@@ -56,7 +59,7 @@ var PageUser = React.createClass({
         var react;
 
         switch (this.state.etat) {
-            case 'visu':
+            case pageState.visu:
                 react =
                     <div key="rootPageuser">
                         <BandeauGenerique
@@ -71,7 +74,7 @@ var PageUser = React.createClass({
                             idUser={this.state.idUser}/>
                     </div>;
                 break;
-            case 'edition':
+            case pageState.edition:
                 react =
                     <div key="rootPageuser">
                         <BandeauGenerique
@@ -89,7 +92,7 @@ var PageUser = React.createClass({
                             idUser={this.state.idUser}/>
                     </div>;
                 break;
-            case 'creation':
+            case pageState.creation:
                 react =
                     <div key="rootPageuser">
                         <BandeauGenerique
@@ -132,7 +135,7 @@ var PageUser = React.createClass({
     },
 
     onRetour: function () {
-        this.setState({etat: 'liste', idUser: ''});
+        this.setState({etat: pageState.liste, idUser: ''});
     }
 });
 module.exports.Composant = PageUser;
@@ -142,7 +145,7 @@ module.exports.Composant = PageUser;
 var pageUserStore = Reflux.createStore({
 
     // Variables
-    stateLocal: {idUser: 0, etat: 'liste'},
+    stateLocal: {idUser: 0, etat: pageState.liste},
 
     // Initial setup
     init: function () {
@@ -160,35 +163,35 @@ var pageUserStore = Reflux.createStore({
     },
 
     loadProfil: function (id) {
-        this.trigger({etat: 'edition', idUser: id});
+        this.trigger({etat: pageState.edition, idUser: id});
     },
 
     modeVisu: function (idUser) {
-        this.stateLocal = {idUser: idUser, etat: 'visu', dataUser: {nom: '', prenom: ''}};
+        this.stateLocal = {idUser: idUser, etat: pageState.visu, dataUser: {nom: '', prenom: ''}};
         this.trigger(this.stateLocal);
     },
 
     modeCreation: function () {
         //console.log('Mode création');
-        this.stateLocal = {idUser: 0, etat: 'creation', dataUser: {nom: '', prenom: ''}};
+        this.stateLocal = {idUser: 0, etat: pageState.creation, dataUser: {nom: '', prenom: ''}};
         //console.log('PAGE USER mode création '+this.idUser);
         this.trigger(this.stateLocal);
     },
 
     modeEdition: function () {
         //console.log('Mode édition');
-        this.stateLocal = {idUser: this.stateLocal.idUser, etat: 'edition'}
+        this.stateLocal = {idUser: this.stateLocal.idUser, etat: pageState.edition}
         this.trigger(this.stateLocal);
     },
 
     modeListe: function () {
-        this.stateLocal = {idUser: 0, etat: 'liste'}
+        this.stateLocal = {idUser: 0, etat: pageState.liste}
         this.trigger(this.stateLocal);
     },
 
     /**
-     * Indique à la fiche utilisateur de sauvegarder les données
-     */
+    * Indique à la fiche utilisateur de sauvegarder les données
+    */
     sauvegarder: function () {
         // La fiche user enregistre l'utilisateur
         Actions.utilisateur.save_user(this.stateLocal.idUser);
@@ -211,7 +214,7 @@ var pageUserStore = Reflux.createStore({
         // Boite de confirmation
 
         // Suppr
-        this.stateLocal = {idUser: this.stateLocal.idUser, etat: 'suppression'}
+        this.stateLocal = {idUser: this.stateLocal.idUser, etat: pageState.suppression}
         Actions.utilisateur.delete_user(this.stateLocal.idUser);
     }
 });

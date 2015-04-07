@@ -66,25 +66,34 @@ Route::group(['before' => 'auth'], function () {
 Route::group(['before' => 'auth|auth.canaccess'], function () {
     // GESTION DES UTILISATEURS
     Route::get('utilisateur/all', 'UtilisateurController@all');
-    Route::get('utilisateur/profil/{idProfil}', 'UtilisateurController@getUserAndProfil');
+    Route::get('utilisateur/profil/{idUser}', 'UtilisateurController@getProfilsUsers');
     Route::resource('utilisateur', 'UtilisateurController');
-    Route::get('utilisateur/email/{email}', 'UtilisateurController@getUserExist');
+    Route::get('utilisateur/email/{email}/{id?}', 'UtilisateurController@isMailExists');
 
     // GESTION PROFILS (association profiles module)
     Route::get('profils/all', 'ProfilController@all');
     Route::get('profils/{profils}/modules', 'ProfilController@getProfilModule');
     Route::resource('profils', 'ProfilController');
     Route::get('module/all', 'ProfilController@getModules');
-    Route::get('profils/libelle/{libelle}', 'ProfilController@getProfilExistLibelle');
-    Route::get('profils/use/{profil}', 'ProfilController@getIsProfilUse');
+    Route::get('profils/libelle/{libelle}/{id?}', 'ProfilController@getProfilExistLibelle');
+    Route::get('profils/use/{profil}', 'ProfilController@isProfilUsed');
 
     // administration
     Route::get('administration',['as'=>'administration', 'uses'=>'AdministrationController@index'] );
 
-    // test
-    Route::resource('test', 'TestController');
 });
 
+/*
+ |--------------------------------------------------------------------------
+| GROUPE RIVERSIDE
+|--------------------------------------------------------------------------
+ */
+
+// test
+Route::post('post_dump', function(){
+    dd(Input::all());
+});
+Route::resource('test', 'TestController');
 /*
 |--------------------------------------------------------------------------
 | GROUPE API MENU

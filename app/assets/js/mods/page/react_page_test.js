@@ -44,6 +44,7 @@ var MixinGestMod = require('../mixins/gestion_modif');
 /*****************************************************
  /* HELPERS */
 var form_data_helper = require('../helpers/form_data_helper');
+var pageState = require('../helpers/page_helper').pageState;
 
 
 /**************************************************
@@ -315,29 +316,38 @@ var ReactPageTest = React.createClass({
 
                 <Row id="Champ_radioBoostrap">
                     <Col md={2}>
-                        <label>Radio Boostrap</label>
+                        <label>Radio Boostrap NEW generation</label>
                     </Col>
                     <Col md={4}>
-                        <ButtonGroup
-                            data-toggle="buttons"
-                            bsSize="xsmall">
+                        <RadioGroup attributes={{name: "bootstrap"}} bootstrap={true}>
                             <InputRadioBootstrapEditable
                                 key={'bt1'}
                                 editable={editable}
                                 attributes={{
-                                    className: 'active'
+                                    checked: true,
+                                    value: 'btn1'
                                 }}
-                            >Btn 1</ InputRadioBootstrapEditable>
+                            >
+                                Btn 1
+                            </ InputRadioBootstrapEditable>
                             <InputRadioBootstrapEditable
                                 key={'bt2'}
                                 editable={editable}
-                            >Btn 2</ InputRadioBootstrapEditable>
-                        </ButtonGroup>
+                                attributes={{
+                                    value: 'btn2'
+                                }}
+                            >
+                                Btn 2
+                            </ InputRadioBootstrapEditable>
+                        </RadioGroup>
+                    </Col>
+                    <Col md={4}>
+                        <RadioGroup attributes={{name: "bootstrap"}} bootstrap={true}>
+                        </RadioGroup>
                     </Col>
                 </Row>
-
+            {/* EXemple de radio inline*/}
                 <RadioGroup
-                    editable={editable}
                     attributes={{
                         name: "radio"
                     }}>
@@ -347,37 +357,81 @@ var ReactPageTest = React.createClass({
                             label: 'InputRadioEditable 1',
                             checked: true,
                             name: "a_ecraser",
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-2',
-                            groupClassName: 'row'
+                            value: 'un',
+                            groupClassName: 'col-md-2'
                         }}
+                        key = "zouzou"
                     />
                     <InputRadioEditable
                         editable={editable}
                         attributes={{
                             label: 'InputRadioEditable 2',
+                            checked: false,
                             name: "a_ecraser",
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-2',
-                            groupClassName: 'row'
-                        }} />
+                            value: 'deux',
+                            groupClassName: 'col-md-2'
+                        }}
+                        key = "pitchoune"/>
                 </RadioGroup>
 
-                <InputCheckboxEditable
-                    key={'bty'}
+                 {/* EXemple de radio les uns sous les autres*/}
+                <RadioGroup
+                    editable={editable}
                     attributes={{
-                        label: 'InputCheckboxEditable',
-                        name: "InputCheckboxEditable",
-                        htmlFor: 'form_test',
-                        wrapperClassName: 'col-md-4',
-                        labelClassName: 'col-md-2',
-                        groupClassName: 'row'
-                    }}
-                    editable={editable} />
+                        name: "ab"
+                    }}>
+                    <InputRadioEditable
+                        editable={editable}
+                        attributes={{
+                            label: 'A',
+                            checked: true,
+                            name: "a_ecraser",
+                            value: 'A',
+                            groupClassName: 'col-md-12'
+                        }}
+                        key = "a"
+                    />
+                    <InputRadioEditable
+                        editable={editable}
+                        attributes={{
+                            label: 'B',
+                            checked: false,
+                            name: "a_ecraser",
+                            value: 'B',
+                            groupClassName: 'col-md-12'
+                        }}
+                        key = "b"/>
+                </RadioGroup>
 
+                <Row>
+                    <InputCheckboxEditable
+                        key={'bty'}
+                        attributes={{
+                            label: 'check1',
+                            name: "check[]",
+                            value: 'check1',
+                            checked: true,
+                            htmlFor: 'form_test',
+                            groupClassName: 'col-md-2'
+                        }}
+                        editable={editable} />
+
+                    <InputCheckboxEditable
+                        key={'btz'}
+                        attributes={{
+                            label: 'check2',
+                            name: "check[]",
+                            value: 'check2',
+                            checked: true,
+                            htmlFor: 'form_test',
+                            groupClassName: 'col-md-2'
+                        }}
+                        editable={editable} />
+                </Row>
                 <InputDateEditable
                     attributes={{
                         label: 'Champ date editable',
+                        name: 'date',
                         value: '2015-02-23',
                         htmlFor: 'form_test',
                         required: true,
@@ -471,6 +525,33 @@ var storeTest = Reflux.createStore({
      */
     onForm_field_verif: function (e) {
         console.log('VERIF ' + e.name);
+
+    },
+
+    /**
+     * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
+     */
+    onSubmit_form: function (e) {
+        //console.log('DATA: %o',fData);
+        var f = $('#form_test').serializeArray();
+        f.push({name: '_token', value: $('#_token').val()});
+        console.log('DATA sur validation  %o', f);
+
+
+        $.ajax({
+            url: BASE_URI + 'post_dump',
+            data: f,
+            dataType: 'json',
+            context: this,
+            method: 'POST',
+            async: false,
+            success: function (good) {
+            },
+
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+            }
+        });
 
     }
 });

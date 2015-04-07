@@ -187,11 +187,15 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         return $res;
     }
 
-    public static function getUserAndProfil($id)
+    /**
+     * Récupère tous les profils du user
+     * @param $id: ID utilisateur
+     * @return array
+     */
+    public static function getProfilsUsers($id)
     {
-
-        /* Récupère tout les profils avec les droits associés à l'utilisateur ('oui'/'non') */
-        if ($id != 0) {
+        // Utilisateur existe
+        if ($id !== 0) {
             $data = Utilisateur::find($id);
             $data['dataProfil'] = [];
 
@@ -200,31 +204,21 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 $join->on('profil_utilisateur.utilisateur_id', '=', DB::raw($id));
             })
                 ->groupBy('profils.id')
-                ->get(['profils.id', 'profils.traduction', 'profil_utilisateur.profil_id as etat']);
+                ->get(['profils.id', 'profils.traduction', DB::raw("IF(profil_utilisateur.profil_id IS NULL,'non', 'oui')AS profil")]);
 
-
-            $aDataProfil = [];
-            for ($i = 0; $i < count($dataProfil); $i++) {
-                $idProfil = $dataProfil[$i]->id;
-                $traduction = $dataProfil[$i]->traduction;
-                $etat = $dataProfil[$i]->etat;
-
-                $ligne = array('id' => $idProfil, 'traduction' => $traduction, 'etat' => 'oui');
-
-                if ($etat == '')
-                    $ligne['etat'] = 'non';
-
-                $aDataProfil[$i] = $ligne;
-            }
-
-            $data['dataProfil'] = $aDataProfil;
-        } /* Récupère uniquement les profils */
-        else {
-            $data = ['id' => 0, 'nom' => '', 'prenom' => '', 'email' => '', 'photo' => 'no.gif'];
-            $data['dataProfil'] = [];
-            $data['dataProfil'] = DB::table('profils')->get(array('id', 'traduction', DB::raw('"non" as etat')));
+            $data['dataProfil'] = $dataProfil;
         }
-
+        // Récupère uniquement les profils
+        else {
+            $data = [
+                'id' => 0,
+                'nom' => '',
+                'prenom' => '',
+                'email' => '',
+                'photo' => 'no.gif',
+                'dataProfil' => DB::table('profils')->get(array('id', 'traduction', DB::raw('"non" as profil')))
+            ];
+        }
         return $data;
     }
 
@@ -274,10 +268,6 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      */
     public static function updateUser($id, $fields)
     {
-
-        Log::warning('-----------> updateUser $id : ' . $id . '<-----------');
-        Log::warning('-----------> updateUser $fields : ' . print_r($fields, true) . '<-----------');
-
         // Variables
         $bSave = true;
 
@@ -286,7 +276,6 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
         // Test si photo:
         if (Input::hasFile('photo')) {
-            Log::warning('-----------> save photo <-----------');
             // Suppression de la photo
             $user->deletePhoto();
 
@@ -312,64 +301,69 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         $user->prenom = ucfirst(strtolower($fields['prenom']));
         $user->email = $fields['email'];
 
+        // Mot de passe changé
         if (isset($fields['passNew']) && isset($fields['passOld'])) {
-            Log::warning('-----------> Avec Password <-----------');
             $user->password = Hash::make($fields['passNew']);
         }
 
         // Sauvegarde
         try {
+            // Début transaction SQL
             DB::beginTransaction();
 
+            // Sauvegarde des données utilisateur
             $bSave = $user->save();
-            Log::warning('-----------> save <-----------');
 
-            if ($bSave == true) {
+            // Sauvegarde OK
+            if ($bSave) {
 
-                // Met à jour la relation avec les profils
-                $matrice = explode(',', $fields['matrice']);
-
-                if (count($matrice[0]) >= 1 && $matrice[0] != '') {
-                    for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
-
-                        $idProfil = $matrice[$i + 1];
-                        $etat = $matrice[$i];
-
-                        /* Est-ce que la ligne existe ? */
+                // Parcours des droits de chaque profil
+                foreach ($fields as $key => $value) {
+                    // On coupe le name courant selon '_'
+                    $aEtat = explode('_', $key);
+                    // Radio
+                    if ($aEtat[0] == 'profil') {
+                        // Requete profil_utilisateur
                         $ligne = DB::table('profil_utilisateur')
-                            ->where('profil_id', $idProfil)
+                            ->where('profil_id', $aEtat[1])
                             ->where('utilisateur_id', $id)
                             ->first(['profil_utilisateur.*']);
 
-                        /* La ligne existe et l'utilisateur n'a plus ce profil, on supprime la ligne */
-                        if (count($ligne) > 0 && $etat == 'non') {
-                            $bSave = DB::table('profil_utilisateur')->delete($ligne->id);
-                        } /* La ligne n'existe pas, et l'utilisateur possède le profil, on crééer la ligne */
-                        else if (count($ligne) == 0 && $etat == 'oui') {
-                            Log::warning('-----------> updateUser $accesssLevel : ' . $etat . '<-----------');
-                            $ligne = [];
-                            $ligne['utilisateur_id'] = $id;
-                            $ligne['profil_id'] = $idProfil;
+                        // Utilisateur déjà associé au profil
+                        if (count($ligne) > 0) {
+                            // Plus d'accès
+                            if ($value == 'non') {
+                                $bSave = DB::table('profil_utilisateur')->delete($ligne->id);
+                            }
+                        } // Nouveau droit
+                        else if ($value != 'non') {
+                            $ligne = [
+                                'utilisateur_id' => $id,
+                                'profil_id' => $aEtat[1]
+                            ];
 
                             // Défini les droits associés au profil
                             $bSave = DB::table('profil_utilisateur')->insert($ligne);
                         }
                     }
                 }
-            }
 
-            if ($bSave == true)
-                DB::commit();
-            else
-                DB::rollback();
-        } catch (Exception $e) {
-            Log::warning('-----------> catch : ' . $e->getMessage() . ' <-----------');
+                // Sauvegarde OK
+                if ($bSave) {
+                    // Transaction SQL Ok
+                    DB::commit();
+                } // Sauvegarde KO
+                else {
+                    // Transaction SQL KO
+                    DB::rollback();
+                }
+            }
+        }
+        // Erreur dans la transaction SQL
+        catch (Exception $e) {
             $bSave = false;
             DB::rollback();
         }
-
-        Log::warning('-----------> $bSave : ' . $bSave . ' <-----------');
-
         return array('save' => $bSave, 'idUser' => $id);
     }
 
@@ -380,123 +374,127 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      */
     public static function creerUtilisateur($fields)
     {
-
-        Log::warning('-----------> creerUtilisateur <-----------');
-        Log::warning(print_r($fields, true));
-
         $bSave = true;
 
-        /* Vérifie que l'utilisateur n'existe pas */
-        $res = Utilisateur::getUserExist($fields['email']);
+        // Email existe?
+        $bExists = Utilisateur::isMailExists($fields['email']);
 
-        if ($res['good'] == true) {
+        // Email n'existe pas
+        if (!$bExists) {
 
             // Récupère la donnée de l'utilisateur
-            $fieldUser = [];
-            $fieldUser['nom']      = strtoupper($fields['nom']);
-            $fieldUser['prenom']   = ucfirst(strtolower($fields['prenom']));
-            $fieldUser['email']    = $fields['email'];
+            $fieldUser = [
+                'nom'      => strtoupper($fields['nom']),
+                'prenom'   => ucfirst(strtolower($fields['prenom'])),
+                'email'    => $fields['email']
+            ];
 
-            /* Password */
             // Mot de passe généré sur 8 digits
             $pwd    = Hash::make(time());
-            $pwd    = substr($pwd, 8, 6);
-            $pwd    = 'k'.$pwd.'1';
-            $pwdBdd = Hash::make($pwd);
+            $pwd    = substr($pwd, 8, 6);// 6 caractères au hasard
+            $pwd    = 'k'.$pwd.'1';// au moins une lettre et un chiffre
+            $pwdBdd = Hash::make($pwd); // Cryptage avant enregistrement
             $fieldUser['password'] = $pwdBdd;
-            /* FIN : Password */
 
-            // Test si photo:
+            // Photo renseignée
             if (Input::hasFile('photo')) {
-                /* Extension du fichier */
+                // Extension du fichier
                 $extFile = Input::file('photo')->getClientOriginalExtension();
 
-                /* Nom du fichier (email + extension) */
-                $fileName = $fields['email'];
-                $fileName = str_replace('.', '', $fileName);
-                $fileName = str_replace('@', '', $fileName);
-                $fileName .= '.' . $extFile;
+                //  Nom du fichier (email + extension)
+                $fileName = str_replace(array('.','@'), array('',''), $fields['email']); // Suppression des points et @
+                $fileName .= '.' . $extFile; // Ajout extension
 
-                /* Sauvegarde de la photo dans le bon dossier */
+                // Sauvegarde de la photo dans le bon dossier
                 $destPath = storage_path() . '/documents/photo';
                 Input::file('photo')->move($destPath, $fileName);
 
-                /* Mise à jour du champ en base de donnée */
+                // Mise à jour du champ en base de donnée
                 $fieldUser['photo'] = $fileName;
-            } else
+            }
+            // Photo par défaut
+            else {
                 $fieldUser['photo'] = 'no.gif';
+            }
 
             try {
+                // Début transaction SQL
                 DB::beginTransaction();
 
-                // Nouveau profil
+                // Nouvel utilisateur
                 $idUser = Utilisateur::insertGetId($fieldUser);
 
-                // Récupère les profils de l'utilisateur
-                $matrice = explode(',', $fields['matrice']);
-                Log::warning('-----------> count($matrice): '.count($matrice).' <-----------');
+                // Parcours des profils du user
+                foreach ($fields as $key => $value) {
+                    // On coupe le name courant selon '_'
+                    $aEtat = explode('_', $key);
+                    // Radio
+                    if ($aEtat[0] == 'profil' && $value == 'oui') {
+                        $new = [
+                            'utilisateur_id' => $idUser,
+                            'profil_id' => $aEtat[1]
+                        ];
 
-                if (count($matrice[0]) >= 1 && $matrice[0] != '') {
-                    for ($i = 0; $i < count($matrice) && $bSave == true; $i += 2) {
-                        $ligne = [];
-                        $ligne['utilisateur_id'] = $idUser;
-                        $ligne['profil_id'] = $matrice[$i + 1];
-
-                        // Défini les droits associés au profil
-                        $bSave = DB::table('profil_utilisateur')->insert($ligne);
+                        // Ajoute un profil au user
+                        $bSave = DB::table('profil_utilisateur')->insert($new);
                     }
                 }
 
-                /* Création et envoie du mail */
+                // Création et envoie du mail
                 $titre = Lang::get('mail.creation_utilisateur_titre');
-                $texte = Lang::get('mail.creation_utilisateur_text');
-                $texte = str_replace('[-pwd-]', $pwd, $texte);
-                $infos = array('nom'    => $fieldUser['nom'],
-                               'prenom' => $fieldUser['prenom'],
-                               'titre'  => $titre,
-                               'texte'  => $texte);
+                $texte = str_replace('[-pwd-]', $pwd,  Lang::get('mail.creation_utilisateur_text'));
+                $infos = array(
+                    'nom'    => $fieldUser['nom'],
+                    'prenom' => $fieldUser['prenom'],
+                    'titre'  => $titre,
+                    'texte'  => $texte);
                 Mail::send('emails.creation_utilisateur', $infos, function($message) use ($fields, $titre)
                 {
                     $message->to($fields['email'])->subject($titre);
                 });
-                /* FIN : Création et envoie du mail */
 
+                // Transaction OK
                 DB::commit();
-                Log::warning('-----------> Commit <-----------');
-
-                $retour = array('idUser' => $idUser, 'save' => $bSave);
-            } catch (Exception $e) {
+                $retour = array(
+                    'idUser' => $idUser,
+                    'save' => $bSave
+                );
+            }
+            catch (Exception $e) {
+                // Transaction KO
                 DB::rollback();
-                Log::warning(print_r($e, true));
-                Log::warning('-----------> rollback <-----------');
                 $retour = array('save' => false);
             }
-        } else
+        }
+        // Email existe déjà
+        else {
             $retour = array('save' => false);
-
+        }
         return $retour;
     }
 
     /**
      * Retourne true si l'utilisateur existe, false sinon
      * @param $email email de l'utilisateur
-     * @return array(good => true/false)
+     * @return bool true/false
      */
-    public static function getUserExist($email)
+    public static function isMailExists($email, $idUser=0)
     {
-        $user = DB::table('utilisateurs')->where('email', $email)->first(['id']);
-        return array('good' => empty($user));
+        $and = $idUser === 0 ? '' : " AND id <> $idUser";
+        $nb = DB::table('utilisateurs')->whereRaw("email='$email' $and")->count();
+        return ($nb > 0);
     }
 
-    public static function getUserPassGood($pass)
+    /**
+     * Bon mot de passe ?
+     * @param $pass: mot de passe
+     * @return array
+     */
+    public static function isPasswordOk($pass)
     {
+        // Utilisateur connecté
         $oUser = Auth::user();
-
-        $res = Hash::check($pass, $oUser->password);
-
-        if ($res == 1)
-            return array('good' => true);
-        else
-            return array('good' => false);
+        // Hash du mot de passe
+        return Hash::check($pass, $oUser->password);
     }
 }

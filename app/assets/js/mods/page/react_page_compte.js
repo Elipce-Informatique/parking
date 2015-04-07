@@ -10,6 +10,8 @@ var Col = ReactB.Col;
 // MIXINS
 var MixinGestMod = require('../mixins/gestion_modif');
 
+// HELPERS
+var pageState = require('../helpers/page_helper').pageState;
 /**
  * Created by yann on 13/01/2015.
  *
@@ -30,10 +32,8 @@ var PageCompte = React.createClass({
     },
 
     getInitialState: function () {
-        console.log('Initial state:');
-        console.log(this.props.dataUser);
         return {
-            etat: 'visu',
+            etat: pageState.visu,
             dataUser: this.props.dataUser
         };
     },
@@ -52,11 +52,11 @@ var PageCompte = React.createClass({
     },
 
     display: function () {
-        console.log('Render, state data user: %o', this.state.dataUser);
+        //console.log('Render, state data user: %o', this.state.dataUser);
         var comp;
 
         switch (this.state.etat) {
-            case 'edition':
+            case pageState.edition:
                 comp =
                     <div key="pageCompteRootEdit">
                         <BandeauEdition mode={1} titre={Lang.get('administration.moncompte.titre')} sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}/>
@@ -91,7 +91,7 @@ var PageCompte = React.createClass({
         this.setState(obj);
     },
     modeEdition: function (e) {
-        this.setState({etat: 'edition'});
+        this.setState({etat: pageState.edition});
     },
 
     onRetour: function () {
@@ -105,7 +105,7 @@ module.exports.Composant = PageCompte;
 var pageCompteStore = Reflux.createStore({
 
     // Variables
-    stateLocal: {etat: 'liste'},
+    stateLocal: {etat: pageState.liste},
 
     // Initial setup
     init: function () {
@@ -120,12 +120,12 @@ var pageCompteStore = Reflux.createStore({
 
     },
     modeVisu: function (idUser) {
-        this.stateLocal = {etat: 'visu'};
+        this.stateLocal = {etat: pageState.visu};
         this.trigger(this.stateLocal);
     },
 
     modeEdition: function () {
-        this.stateLocal = {etat: 'edition'}
+        this.stateLocal = {etat: pageState.edition}
         this.trigger(this.stateLocal);
     },
 
@@ -155,7 +155,7 @@ var pageCompteStore = Reflux.createStore({
         // Boite de confirmation
 
         // Suppr
-        this.stateLocal = {idUser: this.stateLocal.idUser, etat: 'suppression'}
+        this.stateLocal = {idUser: this.stateLocal.idUser, etat: pageState.suppression}
         Actions.utilisateur.delete_user(this.stateLocal.idUser);
     },
     loadProfil: function () {
