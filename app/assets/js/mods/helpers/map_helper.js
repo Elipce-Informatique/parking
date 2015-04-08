@@ -185,7 +185,7 @@ function getLastPointOfParallelogramme(latlngs) {
  * @param incr int : entier, incrément pour le nombre de places (1 par défaut)
  * @param suffix string : suffixe du nom de la place
  */
-function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, espacePoteaux, largeurPoteaux, prefix, incr, suffix) {
+function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, espacePoteaux, largeurPoteaux, prefix, incr, suffix, alleeDefaultId) {
 
     console.group('==> createPlacesFromParallelogramme : Parallélogramme %o', parallelogramme);
 
@@ -342,7 +342,7 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
             coords.lng = coordsPrec.lng;
         } else {
             // Ajout des poteaux si besoin (on est sur une place qui succède un poteau)
-            if (((n-1) % espacePoteaux) == 0) {
+            if (((n - 1) % espacePoteaux) == 0) {
                 console.log('On doit placer un poteau.');
                 coords.lat = coordsPrec.lat + dyPlace + dyPoteau;
                 coords.lng = coordsPrec.lng + dxPlace + dxPoteau;
@@ -360,6 +360,7 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
         var extraData = {
             libelle: nom,
             num: numPlace,
+            allee_id: alleeDefaultId,
             angle: angleMarker,
             lat: coords.lat,
             lng: coords.lng
@@ -402,7 +403,6 @@ function createPlaceMarker(coords, nom, angleMarker, extraData) {
     marker.setIconAngle(angleMarker);
     return marker;
 }
-
 
 /**
  * Ce que le module exporte.

@@ -2,6 +2,7 @@ var _ = require('lodash');
 
 var mapOptions = require('../helpers/map_options');
 var mapHelper = require('../helpers/map_helper');
+var formDataHelper = require('../helpers/form_data_helper');
 /**
  * Created by yann on 27/01/2015.
  *
@@ -337,14 +338,41 @@ var store = Reflux.createStore({
                 largPoteaux,
                 pref,
                 inc,
-                suff);
+                suff,
+                this._inst.niveauInfos.defaultAllee.id);
 
             this._inst.places = this._inst.places.concat(places);
             console.log('Tableau des places dans le store : %o', this._inst.places);
 
+            // TODO Création des geoJson des places pour le marker et le parallélogramme
+            var jsonPlaces = _.map(places, function (p) {
+                var json = p.marker.toGeoJSON();
+                json.properties = p.data;
+                return json;
+            }, this);
+            console.log('Tableau de geoJson à enregistrer: %o', jsonPlaces);
+
             // Enregistrement des places via le serveur
+            var fData = formDataHelper('', 'POST');
+            fData.append('places', jsonPlaces);
+
+
+            $.ajax({
+                type: 'POST',
+                url: 'parking/place',
+                data: {},
+                success: function (data) {
+                    console.log('Pass succès ajax places multiples : %o', data);
+                },
+                error: function (xhr, type, exception) {
+                    // if ajax fails display error alert
+                    alert("ajax error response error " + type);
+                    alert("ajax error response body " + xhr.responseText);
+                }
+            });
 
             // Envoi des infos à afficher sur la carte
+            // TODO : le mettre dans le succès ajax
             var retour = {
                 type: mapOptions.type_messages.add_formes,
                 data: places
