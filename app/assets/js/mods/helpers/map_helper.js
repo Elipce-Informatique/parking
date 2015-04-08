@@ -299,7 +299,6 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
         var S = {lat: B.lat, lng: A.lng};
         console.log('Poins S (ABS rectangle en S) : %o, ', S);
 
-        // TODO : calculer les angles (utiliser dxAB et dyAB) et la fonction asin
         var AS = dyAB;
         var BS = dxAB;
         var AB = Math.sqrt(Math.pow(AS, 2) + Math.pow(BS, 2));
@@ -343,7 +342,7 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
             coords.lng = coordsPrec.lng;
         } else {
             // Ajout des poteaux si besoin (on est sur une place qui succède un poteau)
-            if (((n + 1) % espacePoteaux) == 0) {
+            if (((n-1) % espacePoteaux) == 0) {
                 console.log('On doit placer un poteau.');
                 coords.lat = coordsPrec.lat + dyPlace + dyPoteau;
                 coords.lng = coordsPrec.lng + dxPlace + dxPoteau;
@@ -365,12 +364,9 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
             lat: coords.lat,
             lng: coords.lng
         };
-        var marker = new mapOptions.DataMarker([coords.lat, coords.lng], {
-            icon: new mapOptions.placeGenerique(),
-            title: nom,
-            data: extraData
-        });
-        marker.setIconAngle(angleMarker);
+
+        var marker = createPlaceMarker(coords, nom, angleMarker, extraData);
+
         // Variable de retour
         var retour = {
             data: extraData,
@@ -387,6 +383,26 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
     return places;
 }
 
+/**
+ * Crée un marker place en fonction des paramètres
+ *
+ * @param coords : coordonnées de la place
+ * @param nom : nom de la place
+ * @param angleMarker : angle à donner au marker
+ * @param extraData : données supplémentaires à associer au marker
+ *
+ * @returns {exports.DataMarker} : le marker créé
+ */
+function createPlaceMarker(coords, nom, angleMarker, extraData) {
+    var marker = new mapOptions.DataMarker([coords.lat, coords.lng], {
+        icon: new mapOptions.placeGenerique(),
+        title: nom,
+        data: extraData
+    });
+    marker.setIconAngle(angleMarker);
+    return marker;
+}
+
 
 /**
  * Ce que le module exporte.
@@ -399,6 +415,7 @@ module.exports = {
     getLatLngArrayFromCoordsArray: getLatLngArrayFromCoordsArray,
     isPolygonInPolygon: isPolygonInPolygon,
     getLastPointOfParallelogramme: getLastPointOfParallelogramme,
-    createPlacesFromParallelogramme: createPlacesFromParallelogramme
+    createPlacesFromParallelogramme: createPlacesFromParallelogramme,
+    createPlaceMarker: createPlaceMarker
 };
 

@@ -78,7 +78,7 @@ module.exports.afficheurMarker = L.Icon.extend({
 });
 
 /**
- * TODO : Place SVG générique à colorier en CSS
+ * TODO : Place SVG générique à colorier en CSS (Pas forcément possible finnalement)
  * @type {void|*}
  */
 module.exports.placeGenerique = L.Icon.extend({

@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 var mapOptions = require('../helpers/map_options');
 var mapHelper = require('../helpers/map_helper');
 /**
@@ -29,8 +31,17 @@ var store = Reflux.createStore({
             id: 0,
             libelle: '',
             description: '',
-            init: 0,
-            niveau: {}
+            init: 0
+        },
+        niveauInfos: {
+            id: 0,
+            libelle: '',
+            description: '',
+            plan: '',
+            parking_id: 0,
+            etat_general_id: 0,
+            defaultZone: {}, // Zone par defaut du niveau
+            defaultAllee: {} // Allee par défaut du niveau
         },
         currentMode: mapOptions.dessin.place,
         places: [],
@@ -95,6 +106,52 @@ var store = Reflux.createStore({
             context: this,
             success: function (data) {
                 console.log('Retour AJAX init map infos niveau : %o', data);
+
+                // ---------------------------------------------------------------------
+                // Récupération des données du niveau
+                this._inst.niveauInfos.id = data.id;
+                this._inst.niveauInfos.libelle = data.libelle;
+                this._inst.niveauInfos.description = data.description;
+                this._inst.niveauInfos.plan = data.plan;
+                this._inst.niveauInfos.parking_id = data.parking_id;
+                this._inst.niveauInfos.etat_general_id = data.etat_general_id;
+
+                // Extraction des sous éléments du niveau
+                var zones = data.zones;
+                var jsonZones = [];
+                var allees = [];
+                var jsonAllees = [];
+                var places = [];
+                var jsonPlaces = [];
+
+                // Récupération des json zones et des allées
+                _.each(zones, function (z) {
+                    jsonZones.push(z.geojson);
+                    Array.prototype.push.apply(allees, z.allees);
+
+                    // Récupération zone par défaut
+                    z.defaut == "1" ? this._inst.niveauInfos.defaultZone = z : '';
+                }, this);
+                console.log('jsonZones : %o -- allees : %o', jsonZones, allees);
+
+                // Récupération des json allées et des places
+                _.each(allees, function (a) {
+                    jsonAllees.push(a.geojson);
+                    Array.prototype.push.apply(places, a.places);
+
+                    // Récupération allée par défaut
+                    a.defaut == "1" ? this._inst.niveauInfos.defaultAllee = a : '';
+                }, this);
+                console.log('jsonAllees : %o -- places : %o', jsonAllees, places);
+
+                // Récupération des json allées et des places
+                _.each(places, function (p) {
+                    jsonPlaces.push(p.geojson);
+                }, this);
+                console.log('jsonPlaces : %o', jsonPlaces);
+                // ---------------------------------------------------------------------
+
+                console.log('this._inst a la fin des récupérations AJAX : %o', this._inst);
             },
             error: function (xhr, status, err) {
                 console.error(status, err);

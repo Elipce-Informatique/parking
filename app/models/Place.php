@@ -2,6 +2,7 @@
 
 class Place extends \Eloquent
 {
+    protected $table = 'place';
     public $timestamps = false;
     protected $fillable = [];
 
