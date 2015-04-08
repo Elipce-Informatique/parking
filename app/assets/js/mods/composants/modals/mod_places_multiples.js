@@ -127,15 +127,15 @@ var ModalPlaces = React.createClass({
                                     evts={{}} />
                             </Col>
 
-                    {/* INCREMENT */}
+                    {/* NUMERO DE DEPART */}
                             <Col md={4}>
                                 <InputNumberEditable
                                     attributes={
                                     {
-                                        label: Lang.get('administration_parking.carte.incr'),
+                                        label: Lang.get('administration_parking.carte.num_initial'),
                                         min: '0',
-                                        name: "increment",
-                                        value: 1,
+                                        name: "num_initial",
+                                        value: 0,
                                         required: false,
                                         groupClassName: 'row',
                                         wrapperClassName: 'col-md-9',
@@ -153,6 +153,26 @@ var ModalPlaces = React.createClass({
                                         label: Lang.get('administration_parking.carte.suff'),
                                         name: "suffixe",
                                         value: 'S1',
+                                        required: false,
+                                        groupClassName: 'row',
+                                        wrapperClassName: 'col-md-9',
+                                        labelClassName: 'col-md-3 text-right'
+                                    }}
+                                    editable={true}
+                                    evts={{}} />
+                            </Col>
+                        </Row>
+                {/***********************************************************************/}
+                    {/* INCREMENT */}
+                        <Row>
+                            <Col md={4} mdOffset={4}>
+                                <InputNumberEditable
+                                    attributes={
+                                    {
+                                        label: Lang.get('administration_parking.carte.incr'),
+                                        min: '1',
+                                        name: "increment",
+                                        value: 1,
                                         required: false,
                                         groupClassName: 'row',
                                         wrapperClassName: 'col-md-9',

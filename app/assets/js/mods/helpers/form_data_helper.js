@@ -12,8 +12,11 @@ var Validator = require('validator');
  */
 var formDataBuilder = function (formId, method) {
 
-    // REMPLISSAGE DU FORMULAIRE AVEC LES DONNÉES
-    var fData = new FormData($('#' + formId)[0]);
+    // REMPLISSAGE DU FORMULAIRE AVEC LES
+    var fData = new FormData();
+    if (formId != '') {
+        fData = new FormData($('#' + formId)[0]);
+    }
 
     // AJOUT DE LA MÉTHODE
     var methode = 'POST';

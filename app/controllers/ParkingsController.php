@@ -1,6 +1,6 @@
 <?php
 
-class CalendrierController extends \BaseController
+class ParkingsController extends \BaseController
 {
 
     /**
@@ -10,7 +10,7 @@ class CalendrierController extends \BaseController
      */
     public function index()
     {
-        return View::make('pages.calendrier');
+        //
     }
 
 
@@ -44,7 +44,7 @@ class CalendrierController extends \BaseController
      */
     public function show($id)
     {
-        //
+        return Parking::find($id);
     }
 
 

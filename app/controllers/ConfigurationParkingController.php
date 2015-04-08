@@ -83,5 +83,14 @@ class ConfigurationParkingController extends \BaseController
         //
     }
 
+    /**
+     * TODO : retourner toutes les données dont on a besoin
+     * @param $id
+     */
+    public function parkingInfos($id)
+    {
+        return Parking::find($id);
+    }
+
 
 }
