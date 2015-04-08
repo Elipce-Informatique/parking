@@ -317,14 +317,16 @@ var store = Reflux.createStore({
             spacePoteaux = $form.find('[name=nb_poteaux]').val(),
             largPoteaux = $form.find('[name=taille_poteaux]').val(),
             pref = $form.find('[name=prefixe]').val(),
-            inc = $form.find('[name=increment]').val(),
-            suff = $form.find('[name=suffixe]').val();
+            num = $form.find('[name=num_initial]').val(),
+            suff = $form.find('[name=suffixe]').val(),
+            incr = $form.find('[name=increment]').val();
+
         console.log(
             'Places : ' + nbPlaces +
             ' Espace poteaux : ' + spacePoteaux +
             ' Largeur poteaux : ' + largPoteaux +
             ' Préfixe : ' + pref +
-            ' Inc : ' + inc +
+            ' Inc : ' + num +
             ' Suff : ' + suff);
 
         var places = [];
@@ -337,8 +339,9 @@ var store = Reflux.createStore({
                 spacePoteaux,
                 largPoteaux,
                 pref,
-                inc,
+                num,
                 suff,
+                incr,
                 this._inst.niveauInfos.defaultAllee.id);
 
             this._inst.places = this._inst.places.concat(places);

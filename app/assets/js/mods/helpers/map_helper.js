@@ -182,10 +182,11 @@ function getLastPointOfParallelogramme(latlngs) {
  * @param espacePoteaux float : Nombre de places entre chaque poteaux en partant de la première palce
  * @param largeurPoteaux float : largeur d'un poteau en cm
  * @param prefix string : préfixe pour le nom des places à créer
- * @param incr int : entier, incrément pour le nombre de places (1 par défaut)
+ * @param num int : entier, numéro de place initial
+ * @param incr : incrément du numéro de places
  * @param suffix string : suffixe du nom de la place
  */
-function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, espacePoteaux, largeurPoteaux, prefix, incr, suffix, alleeDefaultId) {
+function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, espacePoteaux, largeurPoteaux, prefix, num, suffix, incr, alleeDefaultId) {
 
     console.group('==> createPlacesFromParallelogramme : Parallélogramme %o', parallelogramme);
 
@@ -328,11 +329,12 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
     // --------------------------------------------------------------------
 
     var coordsPrec = place1;
+    var increment = parseInt(incr);
     // On parcourt un tableau de chiffres de 1 à nbPlace
     var places = _.map(_.range(1, parseInt(nbPlaces) + 1, 1), function (n) {
 
         // Création des données nécessaire à la place
-        var numPlace = parseInt(incr) + n;
+        var numPlace = parseInt(num) + (n * increment) - increment;
         var nom = prefix + ' ' + numPlace + ' ' + suffix;
         var coords = {lat: 0, lng: 0};
 
