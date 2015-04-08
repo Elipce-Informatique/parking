@@ -398,7 +398,7 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
  */
 function createPlaceMarker(coords, nom, angleMarker, extraData) {
     var marker = new mapOptions.DataMarker([coords.lat, coords.lng], {
-        icon: new mapOptions.placeGenerique(),
+        icon: new mapOptions.placeRouge(),
         title: nom,
         data: extraData
     });

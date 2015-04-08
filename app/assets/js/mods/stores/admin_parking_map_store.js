@@ -44,6 +44,7 @@ var store = Reflux.createStore({
             defaultZone: {}, // Zone par defaut du niveau
             defaultAllee: {} // Allee par défaut du niveau
         },
+        types_places: [], // Types de places de la BDD
         currentMode: mapOptions.dessin.place,
         places: [],
         allees: [],

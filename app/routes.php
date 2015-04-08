@@ -135,9 +135,6 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
 | des droits spécifiques.
 |
 */
-Route::group(['before' => 'auth|auth.canaccess|auth.parking'], function () {
-    Route::resource('parking', 'ParkingsController'); // url ressource /parking
-});
 Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parking'], function () {
     Route::resource('niveau', 'NiveauxController');
     Route::resource('afficheur', 'AfficheursController');
@@ -145,6 +142,12 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::resource('allee', 'AlleesController');
     Route::resource('place', 'PlacesController');
     Route::resource('capteur', 'CapteursController');
+
+    Route::get('type_place/all', 'TypesPlacesController@showAll');
+    Route::resource('type_place', 'TypesPlacesController');
+});
+Route::group(['before' => 'auth|auth.canaccess|auth.parking'], function () {
+    Route::resource('parking', 'ParkingsController'); // url ressource /parking
 });
 
 /*

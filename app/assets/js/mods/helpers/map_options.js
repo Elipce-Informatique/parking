@@ -83,9 +83,21 @@ module.exports.afficheurMarker = L.Icon.extend({
  */
 module.exports.placeGenerique = L.Icon.extend({
     options: {
-        iconAnchor: new L.Point(18, 40),
-        iconSize: new L.Point(36, 80),
+        iconAnchor: new L.Point(9, 20),
+        iconSize: new L.Point(18, 40),
         iconUrl: BASE_URI + 'public/images/icone_voiture_noire.svg'
+    }
+});
+
+/**
+ * TODO : Place SVG générique à colorier en CSS (Pas forcément possible finnalement)
+ * @type {void|*}
+ */
+module.exports.placeRouge = L.Icon.extend({
+    options: {
+        iconAnchor: new L.Point(9, 20),
+        iconSize: new L.Point(18, 40),
+        iconUrl: BASE_URI + 'public/images/icone_voiture_rouge.svg'
     }
 });
 
