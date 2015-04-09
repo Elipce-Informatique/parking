@@ -28,6 +28,11 @@ var formDataHelper = require('../helpers/form_data_helper');
 var store = Reflux.createStore({
     _inst: {
         calibre: 1,
+        defaults: { // Objets par défauts pour la création des places
+            type_place: {},
+            zone: {},
+            allee: {}
+        },
         parkingInfos: {
             id: 0,
             libelle: '',
@@ -40,9 +45,7 @@ var store = Reflux.createStore({
             description: '',
             plan: '',
             parking_id: 0,
-            etat_general_id: 0,
-            defaultZone: {}, // Zone par defaut du niveau
-            defaultAllee: {} // Allee par défaut du niveau
+            etat_general_id: 0
         },
         types_places: [], // Types de places de la BDD
         currentMode: mapOptions.dessin.place,
@@ -80,85 +83,18 @@ var store = Reflux.createStore({
 
         console.log('Calibre au niveau du store : ' + calibre);
         console.log('Infos du parking au niveau du store : %o', parkingInfos);
+
+        // Récupération du calibre
         this._inst.calibre = calibre;
 
         // Récupération en BDD des données du parking sélectionné
-        $.ajax({
-            method: 'GET',
-            url: BASE_URI + 'parking/' + parkingInfos.parkingId,
-            dataType: 'json',
-            context: this,
-            success: function (data) {
-                // Récup des données
-                this._inst.parkingInfos.id = data.id;
-                this._inst.parkingInfos.libelle = data.libelle;
-                this._inst.parkingInfos.description = data.description;
-                this._inst.parkingInfos.init = data.init;
-            },
-            error: function (xhr, status, err) {
-                console.error(status, err);
-            }
-        });
+        this.recupInfosParking(map, calibre, parkingInfos);
 
         // Récupération en BDD des données du niveau sélectionné
-        $.ajax({
-            method: 'GET',
-            url: BASE_URI + 'parking/niveau/' + parkingInfos.niveauId,
-            dataType: 'json',
-            context: this,
-            success: function (data) {
-                console.log('Retour AJAX init map infos niveau : %o', data);
+        this.recupInfosNiveau(map, calibre, parkingInfos);
 
-                // ---------------------------------------------------------------------
-                // Récupération des données du niveau
-                this._inst.niveauInfos.id = data.id;
-                this._inst.niveauInfos.libelle = data.libelle;
-                this._inst.niveauInfos.description = data.description;
-                this._inst.niveauInfos.plan = data.plan;
-                this._inst.niveauInfos.parking_id = data.parking_id;
-                this._inst.niveauInfos.etat_general_id = data.etat_general_id;
-
-                // Extraction des sous éléments du niveau
-                var zones = data.zones;
-                var jsonZones = [];
-                var allees = [];
-                var jsonAllees = [];
-                var places = [];
-                var jsonPlaces = [];
-
-                // Récupération des json zones et des allées
-                _.each(zones, function (z) {
-                    jsonZones.push(z.geojson);
-                    Array.prototype.push.apply(allees, z.allees);
-
-                    // Récupération zone par défaut
-                    z.defaut == "1" ? this._inst.niveauInfos.defaultZone = z : '';
-                }, this);
-                console.log('jsonZones : %o -- allees : %o', jsonZones, allees);
-
-                // Récupération des json allées et des places
-                _.each(allees, function (a) {
-                    jsonAllees.push(a.geojson);
-                    Array.prototype.push.apply(places, a.places);
-
-                    // Récupération allée par défaut
-                    a.defaut == "1" ? this._inst.niveauInfos.defaultAllee = a : '';
-                }, this);
-                console.log('jsonAllees : %o -- places : %o', jsonAllees, places);
-
-                // Récupération des json allées et des places
-                _.each(places, function (p) {
-                    jsonPlaces.push(p.geojson);
-                }, this);
-                console.log('jsonPlaces : %o', jsonPlaces);
-                // ---------------------------------------------------------------------
-
-                console.log('this._inst a la fin des récupérations AJAX : %o', this._inst);
-            },
-            error: function (xhr, status, err) {
-                console.error(status, err);
-            }
-        });
+        // Récupération en BDD des données de types de places
+        this.recupInfosTypesPlaces();
     },
 
     /**
@@ -343,7 +279,7 @@ var store = Reflux.createStore({
                 num,
                 suff,
                 incr,
-                this._inst.niveauInfos.defaultAllee.id);
+                this._inst.defaults.allee.id);
 
             this._inst.places = this._inst.places.concat(places);
             console.log('Tableau des places dans le store : %o', this._inst.places);
@@ -408,6 +344,129 @@ var store = Reflux.createStore({
             return data;
         }
 
+    },
+
+    /**
+     * Appel AJAX pour récupérer les informations du parking
+     */
+    recupInfosParking: function (map, calibre, parkingInfos) {
+        $.ajax({
+            method: 'GET',
+            url: BASE_URI + 'parking/' + parkingInfos.parkingId,
+            dataType: 'json',
+            context: this,
+            success: function (data) {
+                // Récup des données
+                this._inst.parkingInfos.id = data.id;
+                this._inst.parkingInfos.libelle = data.libelle;
+                this._inst.parkingInfos.description = data.description;
+                this._inst.parkingInfos.init = data.init;
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err);
+            }
+        });
+    },
+
+    /**
+     * Appel AJAX pour récupérer les données du niveau courant en BDD
+     */
+    recupInfosNiveau: function (map, calibre, parkingInfos) {
+        $.ajax({
+            method: 'GET',
+            url: BASE_URI + 'parking/niveau/' + parkingInfos.niveauId,
+            dataType: 'json',
+            context: this,
+            success: function (data) {
+                console.log('Retour AJAX init map infos niveau : %o', data);
+
+                // ---------------------------------------------------------------------
+                // Récupération des données du niveau
+                this._inst.niveauInfos.id = data.id;
+                this._inst.niveauInfos.libelle = data.libelle;
+                this._inst.niveauInfos.description = data.description;
+                this._inst.niveauInfos.plan = data.plan;
+                this._inst.niveauInfos.parking_id = data.parking_id;
+                this._inst.niveauInfos.etat_general_id = data.etat_general_id;
+
+                // Extraction des sous éléments du niveau
+                var zones = data.zones;
+                var jsonZones = [];
+                var allees = [];
+                var jsonAllees = [];
+                var places = [];
+                var jsonPlaces = [];
+
+                // Récupération des json zones et des allées
+                _.each(zones, function (z) {
+                    jsonZones.push(z.geojson);
+                    Array.prototype.push.apply(allees, z.allees);
+
+                    // Récupération zone par défaut
+                    z.defaut == "1" ? this._inst.defaults.zone = z : '';
+                }, this);
+                console.log('jsonZones : %o -- allees : %o', jsonZones, allees);
+
+                // Récupération des json allées et des places
+                _.each(allees, function (a) {
+                    jsonAllees.push(a.geojson);
+                    Array.prototype.push.apply(places, a.places);
+
+                    // Récupération allée par défaut
+                    a.defaut == "1" ? this._inst.defaults.allee = a : '';
+                }, this);
+                console.log('jsonAllees : %o -- places : %o', jsonAllees, places);
+
+                // Récupération des json allées et des places
+                _.each(places, function (p) {
+                    jsonPlaces.push(p.geojson);
+                }, this);
+                console.log('jsonPlaces : %o', jsonPlaces);
+                // ---------------------------------------------------------------------
+
+                console.log('this._inst a la fin des récupérations AJAX : %o', this._inst);
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err);
+            }
+        });
+    },
+
+    /**
+     * Requête AJAX pour récupérer les types de places en BDD
+     */
+    recupInfosTypesPlaces: function () {
+        $.ajax({
+            url: 'parking/type_place/all',
+            context: this,
+            success: function (data) {
+                console.log('Retour des TYPES PLACES : %o', data);
+                if (_.isArray(data)) {
+
+                    // Tous les types de places
+                    this._inst.types_places = data;
+
+                    // Recherche du type par défaut
+                    var defaultType = _.filter(data, function (d) {
+                        if (d.defaut == "1") {
+                            return true;
+                        }
+                        return false;
+                    });
+                    if (_.size(defaultType)) {
+                        this._inst.defaults.type_place = defaultType[0];
+                    }
+                }
+                else {
+                    console.error('Erreur de chargement des types de palaces');
+                }
+            },
+            error: function (xhr, type, exception) {
+                // if ajax fails display error alert
+                alert("ajax error response error " + type);
+                alert("ajax error response body " + xhr.responseText);
+            }
+        });
     }
 });
 

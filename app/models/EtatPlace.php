@@ -1,8 +1,8 @@
 <?php
 
-class TypePlace extends \Eloquent
+class EtatPlace extends \Eloquent
 {
-    protected $table = 'type_place';
+    protected $table = 'etat_place';
     public $timestamps = false;
     protected $fillable = [];
 
@@ -11,17 +11,9 @@ class TypePlace extends \Eloquent
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    /**
-     * Les places associés à ce type_place
-     * @return mixed
-     */
-    public function places()
-    {
-        return $this->hasMany('Place');
-    }
 
     /**
-     * Les places associés à ce type_place
+     * Les états d'occupation associés à cet état de place
      * @return mixed
      */
     public function etats_occupations()
