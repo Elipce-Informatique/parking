@@ -279,7 +279,8 @@ var store = Reflux.createStore({
                 num,
                 suff,
                 incr,
-                this._inst.defaults.allee.id);
+                this._inst.defaults.allee.id,
+                this._inst.defaults.type_place.id);
 
             this._inst.places = this._inst.places.concat(places);
             console.log('Tableau des places dans le store : %o', this._inst.places);
