@@ -248,8 +248,9 @@ var store = Reflux.createStore({
      * @param parallelogramme : tableau des points du parallélogramme
      */
     handlePlacesMultiples: function (formDom, parallelogramme) {
-        console.log('Parallélogramme pour créer les places multiples : %o', parallelogramme);
         var $form = $(formDom);
+
+        // RÉCUPÉRATION DES DONNÉES DE LA MODALE
         var nbPlaces = $form.find('[name=nb_place]').val(),
             spacePoteaux = $form.find('[name=nb_poteaux]').val(),
             largPoteaux = $form.find('[name=taille_poteaux]').val(),
@@ -257,14 +258,6 @@ var store = Reflux.createStore({
             num = $form.find('[name=num_initial]').val(),
             suff = $form.find('[name=suffixe]').val(),
             incr = $form.find('[name=increment]').val();
-
-        console.log(
-            'Places : ' + nbPlaces +
-            ' Espace poteaux : ' + spacePoteaux +
-            ' Largeur poteaux : ' + largPoteaux +
-            ' Préfixe : ' + pref +
-            ' Inc : ' + num +
-            ' Suff : ' + suff);
 
         var places = [];
         // CONTRÔLE DES NOMBRES ENTRÉS
@@ -284,9 +277,7 @@ var store = Reflux.createStore({
                 this._inst.defaults.type_place.couleur
             );
 
-            this._inst.places = this._inst.places.concat(places);
-            console.log('Tableau des places dans le store : %o', this._inst.places);
-
+            // CRÉATION DU TABLEAU DE DONNÉES À ENREGISTRER
             var dataPlaces = _.map(places, function (p) {
                 var json = p.polygon.toGeoJSON();
                 return _.extend(p.data, {
@@ -295,7 +286,9 @@ var store = Reflux.createStore({
             }, this);
             console.log('Tableau de places à enregistrer: %o', dataPlaces);
 
-            // Enregistrement des places via le serveur
+            // --------------------------------------------------------------------------
+
+            // FORMATAGE DES DONNÉES POUR L'ENVOI
             var fData = formDataHelper('', 'POST');
             fData.append('places', JSON.stringify(dataPlaces));
 
@@ -308,12 +301,21 @@ var store = Reflux.createStore({
                 data: fData,
                 context: this,
                 success: function (data) {
-                    // Envoi des infos à afficher sur la carte
-                    var retour = {
-                        type: mapOptions.type_messages.add_places,
-                        data: places
-                    };
-                    this.trigger(retour);
+                    // TEST ÉTAT INSERTION
+                    if (data.retour) {
+                        // SAUVEGARDE DES PLACES EN LOCAL DNAS LE STORE
+                        this._inst.places = this._inst.places.concat(places);
+
+                        // ENVOI DES INFOS À AFFICHER SUR LA CARTE
+                        var retour = {
+                            type: mapOptions.type_messages.add_places,
+                            data: places
+                        };
+                        this.trigger(retour);
+                        Actions.notif.success();
+                    } else {
+                        Actions.notif.error(Lang.get('administration_parking.carte.insert_places_fail'));
+                    }
                 },
                 error: function (xhr, type, exception) {
                     // if ajax fails display error alert
@@ -321,8 +323,9 @@ var store = Reflux.createStore({
                     alert("ajax error response body " + xhr.responseText);
                 }
             });
-
+            // --------------------------------------------------------------------------
         } else {
+            // NOMBRE DE POTEAUX INCORRECT
             swal(Lang.get('administration_parking.carte.swal_interval_incorrect'));
         }
     },
@@ -401,7 +404,7 @@ var store = Reflux.createStore({
                 var places = [];
                 var jsonPlaces = [];
 
-                // Récupération des json zones et des allées
+                // RÉCUPÉRATION DES JSON ZONES ET DES ALLÉES
                 _.each(zones, function (z) {
                     jsonZones.push(z.geojson);
                     Array.prototype.push.apply(allees, z.allees);
@@ -411,7 +414,7 @@ var store = Reflux.createStore({
                 }, this);
                 console.log('jsonZones : %o -- allees : %o', jsonZones, allees);
 
-                // Récupération des json allées et des places
+                // RÉCUPÉRATION DES JSON ALLÉES ET DES PLACES
                 _.each(allees, function (a) {
                     jsonAllees.push(a.geojson);
                     Array.prototype.push.apply(places, a.places);
@@ -421,7 +424,7 @@ var store = Reflux.createStore({
                 }, this);
                 console.log('jsonAllees : %o -- places : %o', jsonAllees, places);
 
-                // Récupération des json allées et des places
+                // RÉCUPÉRATION DES JSON ALLÉES ET DES PLACES
                 _.each(places, function (p) {
                     jsonPlaces.push(p.geojson);
                 }, this);
