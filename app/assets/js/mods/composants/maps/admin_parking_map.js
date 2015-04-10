@@ -374,7 +374,7 @@ var parkingMap = React.createClass({
         console.log('LayerGroup trouvé : %o', mapOptions.control.groups[this._inst.currentMode]);
         console.log('LayerGroup trouvé : %o', layerGroup);
         _.each(liste_data, function (place) {
-
+            place.polygon.addTo(layerGroup);
             place.marker.addTo(layerGroup);
         }, this)
     },

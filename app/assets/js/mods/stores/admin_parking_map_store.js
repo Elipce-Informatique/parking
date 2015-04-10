@@ -280,7 +280,9 @@ var store = Reflux.createStore({
                 suff,
                 incr,
                 this._inst.defaults.allee.id,
-                this._inst.defaults.type_place.id);
+                this._inst.defaults.type_place.id,
+                this._inst.defaults.type_place.couleur
+            );
 
             this._inst.places = this._inst.places.concat(places);
             console.log('Tableau des places dans le store : %o', this._inst.places);
@@ -297,7 +299,7 @@ var store = Reflux.createStore({
             var fData = formDataHelper('', 'POST');
             fData.append('places', jsonPlaces);
 
-
+            // ENREGISTREMENT AJAX DES PLACES
             $.ajax({
                 type: 'POST',
                 url: 'parking/place',

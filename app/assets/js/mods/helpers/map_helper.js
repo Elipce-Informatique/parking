@@ -186,7 +186,7 @@ function getLastPointOfParallelogramme(latlngs) {
  * @param incr : incrément du numéro de places
  * @param suffix string : suffixe du nom de la place
  */
-function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, espacePoteaux, largeurPoteaux, prefix, num, suffix, incr, alleeDefaultId, typePlaceDefaultId) {
+function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, espacePoteaux, largeurPoteaux, prefix, num, suffix, incr, alleeDefaultId, typePlaceDefaultId, color) {
 
     console.group('==> createPlacesFromParallelogramme : Parallélogramme %o', parallelogramme);
 
@@ -214,7 +214,7 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
     // --------------------------------------------------------------------
     // 1 - CALCUL COEFICIENT DIRECTEUR BC ET DELTAS -----------------------
     // --------------------------------------------------------------------
-    console.log('B : %o, C : %o', B, C);
+    console.log('A : %o, B : %o, C : %o, D : %o', A, B, C, D);
     dxTotal = (C.lng - B.lng);
     dyTotal = (C.lat - B.lat);
     console.log('Dx Total = %o Dy Total = %o', dxTotal, dyTotal);
@@ -328,7 +328,8 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
     // 8 - CRÉATION DES MARKERS AVEC LES INFORMATIONS ---------------------
     // --------------------------------------------------------------------
 
-    var coordsPrec = place1;
+    var coordsPrec = place1; // Marker initial
+    var ASuiv = A, BSuiv = B; // Bord gauche parallélogramme initial
     var increment = parseInt(incr);
     // On parcourt un tableau de chiffres de 1 à nbPlace
     var places = _.map(_.range(1, parseInt(nbPlaces) + 1, 1), function (n) {
@@ -338,6 +339,37 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
         var nom = prefix + ' ' + numPlace + ' ' + suffix;
         var coords = {lat: 0, lng: 0};
 
+        // ******************************************************
+        // CALCUL PARALLELOGRAMME PLACE
+        // ******************************************************
+        var APlace, BPlace, CPlace, DPlace;
+        if (n == 1) {
+            APlace = ASuiv;
+            BPlace = BSuiv;
+            CPlace = L.latLng(BPlace.lat + dyPlace, BPlace.lng + dxPlace);
+            DPlace = L.latLng(APlace.lat + dyPlace, APlace.lng + dxPlace);
+        } else {
+            // Ajout des poteaux si besoin (on est sur une place qui succède un poteau)
+            if (((n - 1) % espacePoteaux) == 0) {
+                console.log('On doit placer un poteau.');
+                APlace = L.latLng(ASuiv.lat + dyPoteau, ASuiv.lng + dxPoteau);
+                BPlace = L.latLng(BSuiv.lat + dyPoteau, BSuiv.lng + dxPoteau);
+                CPlace = L.latLng(BPlace.lat + dyPlace, BPlace.lng + dxPlace);
+                DPlace = L.latLng(APlace.lat + dyPlace, APlace.lng + dxPlace);
+            } else {
+                APlace = ASuiv;
+                BPlace = BSuiv;
+                CPlace = L.latLng(BPlace.lat + dyPlace, BPlace.lng + dxPlace);
+                DPlace = L.latLng(APlace.lat + dyPlace, APlace.lng + dxPlace);
+            }
+        }
+        // Décalage de la place pour la suivante
+        ASuiv = DPlace;
+        BSuiv = CPlace;
+
+        // ******************************************************
+        // CALCUL COORDONNEES CENTRE MARKER
+        // ******************************************************
         // Utilisation de place1 si on est sur la première place
         if (n == 1) {
             coords.lat = coordsPrec.lat;
@@ -356,9 +388,6 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
         // Décalage des coordsPrec
         coordsPrec = coords;
 
-        console.log('Nom de la place créée = %o', nom);
-
-        // Création du marker leaflet
         var extraData = {
             libelle: nom,
             num: numPlace,
@@ -369,12 +398,19 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
             lng: coords.lng
         };
 
+        // Création du marker leaflet
         var marker = createPlaceMarker(coords, nom, angleMarker, extraData);
+
+        // Création du parallélogramme
+        var coordsPara = [APlace, BPlace, CPlace, DPlace];
+        var parallelogrammePlace = createPlaceParallelogramme(coordsPara, extraData, nom, color);
+        console.log('Polygon correspondant à la place : %o', parallelogrammePlace);
 
         // Variable de retour
         var retour = {
             data: extraData,
-            marker: marker
+            marker: marker,
+            polygon: parallelogrammePlace
         };
 
         return retour;
@@ -406,6 +442,23 @@ function createPlaceMarker(coords, nom, angleMarker, extraData) {
     marker.setIconAngle(angleMarker);
     return marker;
 }
+
+/**
+ * Crée un marker place en fonction des paramètres
+ *
+ * @returns {exports.DataMarker} : le marker créé
+ */
+function createPlaceParallelogramme(coordsPara, extraData, nom, color) {
+    var parallelogrammePlace = new L.polygon(coordsPara, {
+        data: extraData,
+        color: "#" + color,
+        fillColor: "#00FF00",
+        fillOpacity: 0
+    });
+    parallelogrammePlace.bindLabel(nom);
+    return parallelogrammePlace;
+}
+
 
 /**
  * Ce que le module exporte.
