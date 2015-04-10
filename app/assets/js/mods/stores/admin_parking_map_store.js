@@ -317,7 +317,7 @@ var store = Reflux.createStore({
             // Envoi des infos à afficher sur la carte
             // TODO : le mettre dans le succès ajax
             var retour = {
-                type: mapOptions.type_messages.add_formes,
+                type: mapOptions.type_messages.add_places,
                 data: places
             };
             this.trigger(retour);
