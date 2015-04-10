@@ -287,25 +287,33 @@ var store = Reflux.createStore({
             this._inst.places = this._inst.places.concat(places);
             console.log('Tableau des places dans le store : %o', this._inst.places);
 
-            // TODO Création des geoJson des places pour le marker et le parallélogramme
-            var jsonPlaces = _.map(places, function (p) {
-                var json = p.marker.toGeoJSON();
-                json.properties = p.data;
-                return json;
+            var dataPlaces = _.map(places, function (p) {
+                var json = p.polygon.toGeoJSON();
+                return _.extend(p.data, {
+                    geoJson: JSON.stringify(json)
+                });
             }, this);
-            console.log('Tableau de geoJson à enregistrer: %o', jsonPlaces);
+            console.log('Tableau de places à enregistrer: %o', dataPlaces);
 
             // Enregistrement des places via le serveur
             var fData = formDataHelper('', 'POST');
-            fData.append('places', jsonPlaces);
+            fData.append('places', JSON.stringify(dataPlaces));
 
             // ENREGISTREMENT AJAX DES PLACES
             $.ajax({
                 type: 'POST',
                 url: 'parking/place',
-                data: {},
+                processData: false,
+                contentType: false,
+                data: fData,
+                context: this,
                 success: function (data) {
-                    console.log('Pass succès ajax places multiples : %o', data);
+                    // Envoi des infos à afficher sur la carte
+                    var retour = {
+                        type: mapOptions.type_messages.add_places,
+                        data: places
+                    };
+                    this.trigger(retour);
                 },
                 error: function (xhr, type, exception) {
                     // if ajax fails display error alert
@@ -314,13 +322,6 @@ var store = Reflux.createStore({
                 }
             });
 
-            // Envoi des infos à afficher sur la carte
-            // TODO : le mettre dans le succès ajax
-            var retour = {
-                type: mapOptions.type_messages.add_places,
-                data: places
-            };
-            this.trigger(retour);
         } else {
             swal(Lang.get('administration_parking.carte.swal_interval_incorrect'));
         }

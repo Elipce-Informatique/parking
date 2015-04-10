@@ -32,7 +32,9 @@ class PlacesController extends \BaseController
      */
     public function store()
     {
-        //
+        $places = json_decode(Input::get('places'), true);
+        return ['retour' => Place::createPlaces($places)];
+
     }
 
 
