@@ -119,6 +119,13 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     Route::get('calendrier_jours/libelle/{libelle}/{id?}', 'CalendrierJoursController@verifLibelle');
     Route::resource('calendrier_jours', 'CalendrierJoursController');
 
+    /*
+     * Programmation horaire
+     */
+    Route::get('calendrier_programmation/all', 'CalendrierProgrammationController@all');
+    Route::get('calendrier_programmation/libelle/{libelle}/{id?}', 'CalendrierProgrammationController@verifLibelle');
+    Route::resource('calendrier_programmation', 'CalendrierProgrammationController');
+
 
 
     /* **************************************************************************

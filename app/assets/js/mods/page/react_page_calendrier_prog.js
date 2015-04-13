@@ -1,6 +1,7 @@
 // Composants REACT
-var React = require('react/addons');
-var DataTableBandeauJours = require('../react_data_table_bandeau_calendrier_jours').Composant;
+var React = require('react');
+var {Calendar, Month, Week, Day} = require('../calendar/react-calendar');
+
 var BandeauListe = require('../composants/bandeau/react_bandeau_liste');
 var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');
 var BandeauEdition = require('../composants/bandeau/react_bandeau_edition');
@@ -9,20 +10,24 @@ var Button = ReactB.Button;
 var Row = ReactB.Row;
 var Col = ReactB.Col;
 var FormJours = require('../react_form_calendrier_jours').Composant;
-//console.log(FormJours);console.log(Col);
+
 // MIXINS
 var AuthentMixins = require('../mixins/component_access');
 var MixinGestMod = require('../mixins/gestion_modif');
+
 // HELPERS
 var pageState = require('../helpers/page_helper').pageState;
-var form_data_helper  = require('../helpers/form_data_helper');
+var form_data_helper = require('../helpers/form_data_helper');
+
+// LIBS
+var moment = require('moment');
 
 /**
- * Page calendrier jours
+ * Page calendrier programmation horaire
  * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
  */
-var PageCalendrierJours = React.createClass({
+var PageCalendrierProg = React.createClass({
 
     mixins: [Reflux.ListenerMixin, MixinGestMod, AuthentMixins],
 
@@ -36,9 +41,9 @@ var PageCalendrierJours = React.createClass({
             etat: pageState.liste,
             idJour: 0,
             listeJours: [],// Tableau de jours prédéfinis
-            detailJour : {}, // Objet contenant les infos du jour prédéfini en cours de sélection
-            validationLibelle : {}, // Etat de validation du libelle (vert ou rouge),
-            sousTitre : '' // sous titre du bandeau
+            detailJour: {}, // Objet contenant les infos du jour prédéfini en cours de sélection
+            validationLibelle: {}, // Etat de validation du libelle (vert ou rouge),
+            sousTitre: '' // sous titre du bandeau
         };
     },
     componentDidMount: function () {
@@ -96,10 +101,20 @@ var PageCalendrierJours = React.createClass({
                         <BandeauGenerique key="bandeauListe" bandeauType={this.state.etat} module_url="calendrier_jours" titre={Lang.get('calendrier.jours.titre')}/>
                         <Row>
                             <Col md={12}>
-                                <DataTableBandeauJours data={this.state.listeJours}/>
+                                <Calendar firstMonth={1}
+                                    date={moment("2014-01-01")}
+                                    weekNumbers={true}
+                                    size={12}
+                                    locale = "fr">
+                                    <Month date={moment()}
+                                        modifiers={{current: true}}/>
+                                    <Day date={moment()}
+                                        modifiers={{current: true}} />
+                                </Calendar>
                             </Col>
                         </Row>
-                    </div>;
+                    </div>
+                ;
                 break;
 
         }
@@ -110,16 +125,16 @@ var PageCalendrierJours = React.createClass({
         var dynamic = this.display();
         return (
             <Col md={12}>
-                {dynamic}
+                            {dynamic}
             </Col>
         )
     }
 });
-module.exports.Composant = PageCalendrierJours;
+module.exports.Composant = PageCalendrierProg;
 
 
 // Creates a DataStore
-var storeCalendrierJours = Reflux.createStore({
+var storeCalendrierProg = Reflux.createStore({
 
     // Variables
     stateLocal: {
@@ -127,8 +142,8 @@ var storeCalendrierJours = Reflux.createStore({
         etat: pageState.liste,
         listeJours: [],
         detailJour: {},
-        validationLibelle : {},
-        sousTitre : ''
+        validationLibelle: {},
+        sousTitre: ''
     },
 
     // Initial setup
@@ -252,8 +267,8 @@ var storeCalendrierJours = Reflux.createStore({
      * onChange de n'importe quel élément du FORM
      * @param e: evt
      */
-    onForm_field_changed: function(e){
-        console.log('CHANGED '+e.name);
+    onForm_field_changed: function (e) {
+        console.log('CHANGED ' + e.name);
         var data = {};
         // MAJ du state STORE
         data[e.name] = e.value
@@ -264,10 +279,10 @@ var storeCalendrierJours = Reflux.createStore({
      * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
      * @param data : Object {name: "email", value: "yann.pltv@gmail.com", form: DOMNode}
      */
-    onForm_field_verif: function(data){
+    onForm_field_verif: function (data) {
 
         // Le champ BLUR est le champ libelle
-        if(data.name == 'libelle'){
+        if (data.name == 'libelle') {
             //  Test doublon du libellé
             this.stateLocal.validationLibelle = this.libelleChange(data.value, this.stateLocal.idJour);
             this.trigger(this.stateLocal);
@@ -281,28 +296,28 @@ var storeCalendrierJours = Reflux.createStore({
      * @param id: ID jour_calendrier ou 0 si mode création
      * @returns {{}}
      */
-    libelleChange: function(value, id){
+    libelleChange: function (value, id) {
         /* Variable de retour */
         var retour = {};
 
         /* libelle  non vide et non identique au libellé de départ */
-        if(value.length>0 && value != this.stateLocal.sousTitre){
+        if (value.length > 0 && value != this.stateLocal.sousTitre) {
 
             // URL en fonction du mode création ou edtion
-            var finUrl = id === 0 ? '' : '/'+id;
-            
+            var finUrl = id === 0 ? '' : '/' + id;
+
             // AJAX
             $.ajax({
-                url:      BASE_URI + 'calendrier_jours/libelle/'+value +finUrl,
+                url: BASE_URI + 'calendrier_jours/libelle/' + value + finUrl,
                 dataType: 'json',
-                context:  this,
+                context: this,
                 async: false,
-                success:  function (bExist) {
+                success: function (bExist) {
                     // Le libellé existe déjà
-                    if(bExist){
+                    if (bExist) {
                         // Champ libelle erroné
                         retour['data-valid'] = false;
-                        retour.bsStyle   = 'error';
+                        retour.bsStyle = 'error';
                         retour.help = Lang.get('calendrier.jours.libelleExists');
                     }
                 },
@@ -345,14 +360,14 @@ var storeCalendrierJours = Reflux.createStore({
                     // Mode edition
                     this.stateLocal.etat = pageState.edition;
                     // Mode création Ok
-                    if(tab.obj !== null) {
+                    if (tab.obj !== null) {
                         // Maj State local + nouveau libellé
                         this.stateLocal.idJour = tab.obj.id;
                         this.stateLocal.detailJour = tab.obj;
                         this.stateLocal.sousTitre = tab.obj.libelle;
                     }
                     // Mode édition
-                    else{
+                    else {
                         // Nouveau sous titre
                         this.stateLocal.sousTitre = this.stateLocal.detailJour.libelle;
                     }
@@ -394,14 +409,14 @@ var storeCalendrierJours = Reflux.createStore({
             data: {'_token': $('#_token').val()},
             success: function (bool) {
                 // suppression OK
-                if(bool) {
+                if (bool) {
                     // Mode liste
                     this.modeListe();
                     // Notification green
                     Actions.notif.success(Lang.get('global.notif_success'));
                 }
                 // Suppression KO
-                else{
+                else {
                     // Notifictaion erreur
                     Actions.notif.error(Lang.get('global.notif_erreur'));
                 }
@@ -413,4 +428,4 @@ var storeCalendrierJours = Reflux.createStore({
         });
     }
 });
-module.exports.store = storeCalendrierJours;
+module.exports.store = storeCalendrierProg;
