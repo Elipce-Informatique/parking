@@ -55,7 +55,8 @@ var parkingMap = React.createClass({
         return {
             defaultDrawMode: mapOptions.dessin.place,
             mapHeight: 300,
-            calibre: 93
+            calibre: 93,
+            module_url: 'parking'
         };
     },
 
@@ -114,6 +115,10 @@ var parkingMap = React.createClass({
         Actions.map.map_initialized(this._inst.map, this.props.calibre, parkingData);
 
         // INIT des layers
+        this._inst.placesMarkersGroup = new L.MarkerClusterGroup({
+            maxClusterRadius: 25
+        });
+        this._inst.map.addLayer(this._inst.placesMarkersGroup);
         this._inst.placesGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.placesGroup);
         this._inst.alleesGroup = new L.geoJson();
@@ -364,18 +369,15 @@ var parkingMap = React.createClass({
     },
 
     /**
-     * Ajoute la forme dessinnée au layer courant
+     * Ajoute les PLACES
      * @param data : le couple type-data envoyé par le store
      */
-    onFormesAdded: function (formes) {
+    onPlacesAdded: function (formes) {
         console.log('ACTION ADD FORMES, voilà les formes : %o', formes);
         var liste_data = formes.data;
-        var layerGroup = this._inst[mapOptions.control.groups[this._inst.currentMode]];
-        console.log('LayerGroup trouvé : %o', mapOptions.control.groups[this._inst.currentMode]);
-        console.log('LayerGroup trouvé : %o', layerGroup);
         _.each(liste_data, function (place) {
-
-            place.marker.addTo(layerGroup);
+            this._inst.placesGroup.addLayer(place.polygon);
+            this._inst.placesMarkersGroup.addLayer(place.marker);
         }, this)
     },
 
@@ -405,8 +407,8 @@ var parkingMap = React.createClass({
             case mapOptions.type_messages.add_forme:
                 this.onFormeAdded(data);
                 break;
-            case mapOptions.type_messages.add_formes:
-                this.onFormesAdded(data);
+            case mapOptions.type_messages.add_places:
+                this.onPlacesAdded(data);
                 break;
             case mapOptions.type_messages.new_place_auto:
                 this._onNewPlaceAuto(data);

@@ -28,6 +28,11 @@ var formDataHelper = require('../helpers/form_data_helper');
 var store = Reflux.createStore({
     _inst: {
         calibre: 1,
+        defaults: { // Objets par défauts pour la création des places
+            type_place: {},
+            zone: {},
+            allee: {}
+        },
         parkingInfos: {
             id: 0,
             libelle: '',
@@ -40,9 +45,7 @@ var store = Reflux.createStore({
             description: '',
             plan: '',
             parking_id: 0,
-            etat_general_id: 0,
-            defaultZone: {}, // Zone par defaut du niveau
-            defaultAllee: {} // Allee par défaut du niveau
+            etat_general_id: 0
         },
         types_places: [], // Types de places de la BDD
         currentMode: mapOptions.dessin.place,
@@ -80,86 +83,25 @@ var store = Reflux.createStore({
 
         console.log('Calibre au niveau du store : ' + calibre);
         console.log('Infos du parking au niveau du store : %o', parkingInfos);
+
+        // Récupération du calibre
         this._inst.calibre = calibre;
 
         // Récupération en BDD des données du parking sélectionné
-        $.ajax({
-            method: 'GET',
-            url: BASE_URI + 'parking/' + parkingInfos.parkingId,
-            dataType: 'json',
-            context: this,
-            success: function (data) {
-                // Récup des données
-                this._inst.parkingInfos.id = data.id;
-                this._inst.parkingInfos.libelle = data.libelle;
-                this._inst.parkingInfos.description = data.description;
-                this._inst.parkingInfos.init = data.init;
-            },
-            error: function (xhr, status, err) {
-                console.error(status, err);
-            }
-        });
+        var p1 = this.recupInfosParking(map, calibre, parkingInfos);
 
-        // Récupération en BDD des données du niveau sélectionné
-        $.ajax({
-            method: 'GET',
-            url: BASE_URI + 'parking/niveau/' + parkingInfos.niveauId,
-            dataType: 'json',
-            context: this,
-            success: function (data) {
-                console.log('Retour AJAX init map infos niveau : %o', data);
+        // Récupération en BDD des données du niveau sélectionné (zones, allées, places)
+        var p2 = this.recupInfosNiveau(map, calibre, parkingInfos)
 
-                // ---------------------------------------------------------------------
-                // Récupération des données du niveau
-                this._inst.niveauInfos.id = data.id;
-                this._inst.niveauInfos.libelle = data.libelle;
-                this._inst.niveauInfos.description = data.description;
-                this._inst.niveauInfos.plan = data.plan;
-                this._inst.niveauInfos.parking_id = data.parking_id;
-                this._inst.niveauInfos.etat_general_id = data.etat_general_id;
+        // Récupération en BDD des données de types de places
+        var p3 = this.recupInfosTypesPlaces();
 
-                // Extraction des sous éléments du niveau
-                var zones = data.zones;
-                var jsonZones = [];
-                var allees = [];
-                var jsonAllees = [];
-                var places = [];
-                var jsonPlaces = [];
-
-                // Récupération des json zones et des allées
-                _.each(zones, function (z) {
-                    jsonZones.push(z.geojson);
-                    Array.prototype.push.apply(allees, z.allees);
-
-                    // Récupération zone par défaut
-                    z.defaut == "1" ? this._inst.niveauInfos.defaultZone = z : '';
-                }, this);
-                console.log('jsonZones : %o -- allees : %o', jsonZones, allees);
-
-                // Récupération des json allées et des places
-                _.each(allees, function (a) {
-                    jsonAllees.push(a.geojson);
-                    Array.prototype.push.apply(places, a.places);
-
-                    // Récupération allée par défaut
-                    a.defaut == "1" ? this._inst.niveauInfos.defaultAllee = a : '';
-                }, this);
-                console.log('jsonAllees : %o -- places : %o', jsonAllees, places);
-
-                // Récupération des json allées et des places
-                _.each(places, function (p) {
-                    jsonPlaces.push(p.geojson);
-                }, this);
-                console.log('jsonPlaces : %o', jsonPlaces);
-                // ---------------------------------------------------------------------
-
-                console.log('this._inst a la fin des récupérations AJAX : %o', this._inst);
-            },
-            error: function (xhr, status, err) {
-                console.error(status, err);
-            }
-        });
-    },
+        $.when(p1, p2, p3).done(function () {
+            // Affichage des places du niveau
+            this.affichagePlacesInitial();
+        }.bind(this));
+    }
+    ,
 
     /**
      * ---------------------------------------------------------------------------
@@ -312,8 +254,9 @@ var store = Reflux.createStore({
      * @param parallelogramme : tableau des points du parallélogramme
      */
     handlePlacesMultiples: function (formDom, parallelogramme) {
-        console.log('Parallélogramme pour créer les places multiples : %o', parallelogramme);
         var $form = $(formDom);
+
+        // RÉCUPÉRATION DES DONNÉES DE LA MODALE
         var nbPlaces = $form.find('[name=nb_place]').val(),
             spacePoteaux = $form.find('[name=nb_poteaux]').val(),
             largPoteaux = $form.find('[name=taille_poteaux]').val(),
@@ -321,14 +264,6 @@ var store = Reflux.createStore({
             num = $form.find('[name=num_initial]').val(),
             suff = $form.find('[name=suffixe]').val(),
             incr = $form.find('[name=increment]').val();
-
-        console.log(
-            'Places : ' + nbPlaces +
-            ' Espace poteaux : ' + spacePoteaux +
-            ' Largeur poteaux : ' + largPoteaux +
-            ' Préfixe : ' + pref +
-            ' Inc : ' + num +
-            ' Suff : ' + suff);
 
         var places = [];
         // CONTRÔLE DES NOMBRES ENTRÉS
@@ -343,30 +278,50 @@ var store = Reflux.createStore({
                 num,
                 suff,
                 incr,
-                this._inst.niveauInfos.defaultAllee.id);
+                this._inst.defaults.allee.id,
+                this._inst.defaults.type_place.id,
+                this._inst.defaults.type_place.couleur
+            );
 
-            this._inst.places = this._inst.places.concat(places);
-            console.log('Tableau des places dans le store : %o', this._inst.places);
-
-            // TODO Création des geoJson des places pour le marker et le parallélogramme
-            var jsonPlaces = _.map(places, function (p) {
-                var json = p.marker.toGeoJSON();
-                json.properties = p.data;
-                return json;
+            // CRÉATION DU TABLEAU DE DONNÉES À ENREGISTRER
+            var dataPlaces = _.map(places, function (p) {
+                var json = p.polygon.toGeoJSON();
+                return _.extend(p.data, {
+                    geoJson: JSON.stringify(json)
+                });
             }, this);
-            console.log('Tableau de geoJson à enregistrer: %o', jsonPlaces);
+            console.log('Tableau de places à enregistrer: %o', dataPlaces);
 
-            // Enregistrement des places via le serveur
+            // --------------------------------------------------------------------------
+
+            // FORMATAGE DES DONNÉES POUR L'ENVOI
             var fData = formDataHelper('', 'POST');
-            fData.append('places', jsonPlaces);
+            fData.append('places', JSON.stringify(dataPlaces));
 
-
+            // ENREGISTREMENT AJAX DES PLACES
             $.ajax({
                 type: 'POST',
                 url: 'parking/place',
-                data: {},
+                processData: false,
+                contentType: false,
+                data: fData,
+                context: this,
                 success: function (data) {
-                    console.log('Pass succès ajax places multiples : %o', data);
+                    // TEST ÉTAT INSERTION
+                    if (data.retour) {
+                        // SAUVEGARDE DES PLACES EN LOCAL DNAS LE STORE
+                        this._inst.places = this._inst.places.concat(places);
+
+                        // ENVOI DES INFOS À AFFICHER SUR LA CARTE
+                        var retour = {
+                            type: mapOptions.type_messages.add_places,
+                            data: places
+                        };
+                        this.trigger(retour);
+                        Actions.notif.success();
+                    } else {
+                        Actions.notif.error(Lang.get('administration_parking.carte.insert_places_fail'));
+                    }
                 },
                 error: function (xhr, type, exception) {
                     // if ajax fails display error alert
@@ -374,15 +329,9 @@ var store = Reflux.createStore({
                     alert("ajax error response body " + xhr.responseText);
                 }
             });
-
-            // Envoi des infos à afficher sur la carte
-            // TODO : le mettre dans le succès ajax
-            var retour = {
-                type: mapOptions.type_messages.add_formes,
-                data: places
-            };
-            this.trigger(retour);
+            // --------------------------------------------------------------------------
         } else {
+            // NOMBRE DE POTEAUX INCORRECT
             swal(Lang.get('administration_parking.carte.swal_interval_incorrect'));
         }
     },
@@ -407,6 +356,167 @@ var store = Reflux.createStore({
             data.e.layer._latlngs.push(lastPoint);
             return data;
         }
+
+    },
+
+    /**
+     * Appel AJAX pour récupérer les informations du parking
+     */
+    recupInfosParking: function (map, calibre, parkingInfos) {
+        return $.ajax({
+            method: 'GET',
+            url: BASE_URI + 'parking/' + parkingInfos.parkingId,
+            dataType: 'json',
+            context: this,
+            success: function (data) {
+                // Récup des données
+                this._inst.parkingInfos.id = data.id;
+                this._inst.parkingInfos.libelle = data.libelle;
+                this._inst.parkingInfos.description = data.description;
+                this._inst.parkingInfos.init = data.init;
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err);
+            }
+        });
+    },
+
+    /**
+     * Appel AJAX pour récupérer les données du niveau courant en BDD
+     */
+    recupInfosNiveau: function (map, calibre, parkingInfos) {
+        return $.ajax({
+            method: 'GET',
+            url: BASE_URI + 'parking/niveau/' + parkingInfos.niveauId,
+            dataType: 'json',
+            context: this,
+            success: function (data) {
+                console.log('Retour AJAX init map infos niveau : %o', data);
+
+                // ---------------------------------------------------------------------
+                // Récupération des données du niveau
+                this._inst.niveauInfos.id = data.id;
+                this._inst.niveauInfos.libelle = data.libelle;
+                this._inst.niveauInfos.description = data.description;
+                this._inst.niveauInfos.plan = data.plan;
+                this._inst.niveauInfos.parking_id = data.parking_id;
+                this._inst.niveauInfos.etat_general_id = data.etat_general_id;
+
+                // Extraction des sous éléments du niveau
+                var zones = data.zones;
+                var jsonZones = [];
+                var allees = [];
+                var jsonAllees = [];
+                var places = [];
+                var jsonPlaces = [];
+
+                // RÉCUPÉRATION DES JSON ZONES ET DES ALLÉES
+                _.each(zones, function (z) {
+                    jsonZones.push(z.geojson);
+                    Array.prototype.push.apply(allees, z.allees);
+
+                    // Récupération zone par défaut
+                    z.defaut == "1" ? this._inst.defaults.zone = z : '';
+                }, this);
+
+                // RÉCUPÉRATION DES JSON ALLÉES ET DES PLACES
+                _.each(allees, function (a) {
+                    jsonAllees.push(a.geojson);
+                    Array.prototype.push.apply(places, a.places);
+
+                    // Récupération allée par défaut
+                    a.defaut == "1" ? this._inst.defaults.allee = a : '';
+                }, this);
+
+                // RÉCUPÉRATION DES JSON ALLÉES ET DES PLACES
+                _.each(places, function (p) {
+                    jsonPlaces.push(p.geojson);
+                }, this);
+
+                this._inst.places = places;
+                this._inst.allees = allees;
+                this._inst.zones = zones;
+                this._inst.afficheurs = []; // TODO récupérer les afficheurs
+
+                // ---------------------------------------------------------------------
+
+                console.log('this._inst a la fin des récupérations AJAX : %o', this._inst);
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err);
+            }
+        });
+    },
+
+    /**
+     * Requête AJAX pour récupérer les types de places en BDD
+     */
+    recupInfosTypesPlaces: function () {
+        return $.ajax({
+            url: 'parking/type_place/all',
+            context: this,
+            success: function (data) {
+                console.log('Retour des TYPES PLACES : %o', data);
+                if (_.isArray(data)) {
+
+                    // Tous les types de places
+                    this._inst.types_places = data;
+
+                    // Recherche du type par défaut
+                    var defaultType = _.filter(data, function (d) {
+                        if (d.defaut == "1") {
+                            return true;
+                        }
+                        return false;
+                    });
+                    if (_.size(defaultType)) {
+                        this._inst.defaults.type_place = defaultType[0];
+                    }
+                }
+                else {
+                    console.error('Erreur de chargement des types de palaces');
+                }
+            },
+            error: function (xhr, type, exception) {
+                // if ajax fails display error alert
+                alert("ajax error response error " + type);
+                alert("ajax error response body " + xhr.responseText);
+            }
+        });
+    },
+
+    /**
+     * Fonction appellée lors de l'init, on a déjà toutes les données dans _inst
+     */
+    affichagePlacesInitial: function () {
+        console.log('Pass affichage places init : %o', _.clone(this._inst));
+        var placesMap = _.map(this._inst.places, function (p) {
+            var coords = {lat: p.lat, lng: p.lng};
+            var nom = p.libelle;
+            var angleMarker = p.angle;
+            var extraData = p;
+            var color = _.reduce(this._inst.types_places, function (sum, n) {
+                if (n.id == p.type_place_id) {
+                    return n.couleur;
+                } else {
+                    return sum;
+                }
+            }, "FF0000", this);
+
+            var marker = mapHelper.createPlaceMarker(coords, nom, angleMarker, extraData);
+            var polygon = mapHelper.createPlaceParallelogrammeFromGeoJson(p.geojson, extraData, nom, color);
+
+            return {
+                polygon: polygon,
+                marker: marker
+            };
+        }, this);
+
+        var message = {
+            type: mapOptions.type_messages.add_places,
+            data: placesMap
+        };
+        this.trigger(message);
 
     }
 });
