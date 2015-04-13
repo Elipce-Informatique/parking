@@ -103,11 +103,11 @@ class UtilisateurController extends \BaseController
 
     /**
      * Calcule si le mail de l'utilisateur existe
-     * @param $email: email à tester
-     * @param int $idUser: utilisateur à ne opas prendre en compte dans la recherche
+     * @param $email : email à tester
+     * @param int $idUser : utilisateur à ne opas prendre en compte dans la recherche
      * @return
      */
-    public function isMailExists($email, $idUser=0)
+    public function isMailExists($email, $idUser = 0)
     {
         return json_encode(Utilisateur::isMailExists($email, $idUser));
     }
@@ -134,16 +134,15 @@ class UtilisateurController extends \BaseController
         $bool = true;
 
         // Mot de passe avant modification et nouveau mdp renseignés
-        if(isset($fields['passOld']) && isset($fields['passNew'])) {
+        if (isset($fields['passOld']) && isset($fields['passNew'])) {
             // Ancien mot de passe valide ?
             $bool = Utilisateur::isPasswordOk($fields['passOld']);
         }
 
         // Ancien PWD OK
-        if($bool) {
+        if ($bool) {
             return json_encode(Utilisateur::updateUser($oUser->id, $fields));
-        }
-        // Ancien PWD KO
+        } // Ancien PWD KO
         else {
             return json_encode(array('save' => false, 'pass' => 'incorrect'));
         }
@@ -153,7 +152,8 @@ class UtilisateurController extends \BaseController
      * Vérifie le mot de pass de l'utilisateur actuel
      * @param $pass : mot de pass à tester
      */
-    public function verifMDPcompte($pass){
+    public function verifMDPcompte($pass)
+    {
         return json_encode(Utilisateur::isPasswordOk($pass));
     }
 

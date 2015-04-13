@@ -182,10 +182,11 @@ function getLastPointOfParallelogramme(latlngs) {
  * @param espacePoteaux float : Nombre de places entre chaque poteaux en partant de la première palce
  * @param largeurPoteaux float : largeur d'un poteau en cm
  * @param prefix string : préfixe pour le nom des places à créer
- * @param incr int : entier, incrément pour le nombre de places (1 par défaut)
+ * @param num int : entier, numéro de place initial
+ * @param incr : incrément du numéro de places
  * @param suffix string : suffixe du nom de la place
  */
-function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, espacePoteaux, largeurPoteaux, prefix, incr, suffix) {
+function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, espacePoteaux, largeurPoteaux, prefix, num, suffix, incr, alleeDefaultId) {
 
     console.group('==> createPlacesFromParallelogramme : Parallélogramme %o', parallelogramme);
 
@@ -299,7 +300,6 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
         var S = {lat: B.lat, lng: A.lng};
         console.log('Poins S (ABS rectangle en S) : %o, ', S);
 
-        // TODO : calculer les angles (utiliser dxAB et dyAB) et la fonction asin
         var AS = dyAB;
         var BS = dxAB;
         var AB = Math.sqrt(Math.pow(AS, 2) + Math.pow(BS, 2));
@@ -329,11 +329,12 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
     // --------------------------------------------------------------------
 
     var coordsPrec = place1;
+    var increment = parseInt(incr);
     // On parcourt un tableau de chiffres de 1 à nbPlace
     var places = _.map(_.range(1, parseInt(nbPlaces) + 1, 1), function (n) {
 
         // Création des données nécessaire à la place
-        var numPlace = parseInt(incr) + n;
+        var numPlace = parseInt(num) + (n * increment) - increment;
         var nom = prefix + ' ' + numPlace + ' ' + suffix;
         var coords = {lat: 0, lng: 0};
 
@@ -343,7 +344,7 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
             coords.lng = coordsPrec.lng;
         } else {
             // Ajout des poteaux si besoin (on est sur une place qui succède un poteau)
-            if (((n + 1) % espacePoteaux) == 0) {
+            if (((n - 1) % espacePoteaux) == 0) {
                 console.log('On doit placer un poteau.');
                 coords.lat = coordsPrec.lat + dyPlace + dyPoteau;
                 coords.lng = coordsPrec.lng + dxPlace + dxPoteau;
@@ -361,16 +362,14 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
         var extraData = {
             libelle: nom,
             num: numPlace,
+            allee_id: alleeDefaultId,
             angle: angleMarker,
             lat: coords.lat,
             lng: coords.lng
         };
-        var marker = new mapOptions.DataMarker([coords.lat, coords.lng], {
-            icon: new mapOptions.placeGenerique(),
-            title: nom,
-            data: extraData
-        });
-        marker.setIconAngle(angleMarker);
+
+        var marker = createPlaceMarker(coords, nom, angleMarker, extraData);
+
         // Variable de retour
         var retour = {
             data: extraData,
@@ -387,6 +386,25 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
     return places;
 }
 
+/**
+ * Crée un marker place en fonction des paramètres
+ *
+ * @param coords : coordonnées de la place
+ * @param nom : nom de la place
+ * @param angleMarker : angle à donner au marker
+ * @param extraData : données supplémentaires à associer au marker
+ *
+ * @returns {exports.DataMarker} : le marker créé
+ */
+function createPlaceMarker(coords, nom, angleMarker, extraData) {
+    var marker = new mapOptions.DataMarker([coords.lat, coords.lng], {
+        icon: new mapOptions.placeRouge(),
+        title: nom,
+        data: extraData
+    });
+    marker.setIconAngle(angleMarker);
+    return marker;
+}
 
 /**
  * Ce que le module exporte.
@@ -399,6 +417,7 @@ module.exports = {
     getLatLngArrayFromCoordsArray: getLatLngArrayFromCoordsArray,
     isPolygonInPolygon: isPolygonInPolygon,
     getLastPointOfParallelogramme: getLastPointOfParallelogramme,
-    createPlacesFromParallelogramme: createPlacesFromParallelogramme
+    createPlacesFromParallelogramme: createPlacesFromParallelogramme,
+    createPlaceMarker: createPlaceMarker
 };
 

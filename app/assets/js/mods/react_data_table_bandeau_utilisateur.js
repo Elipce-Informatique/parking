@@ -10,7 +10,7 @@
  * @param boolean bUnderline: TRUE: Evenement par defaut sur click d'une ligne: surlignage
  *                            FALSE: pas d'évènement par défaut.
  */
-var React = require('react/addons');
+var React = require('react/addons'); // test
 var AuthentMixins = require('./mixins/component_access');
 var DataTableBandeau = require('./composants/tableau/react_data_table_bandeau');
 

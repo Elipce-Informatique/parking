@@ -125,6 +125,7 @@ return array(
         // LIBS TIERCE
         'JsLocalization\JsLocalizationServiceProvider',
         'Laracasts\Flash\FlashServiceProvider',
+        'Way\Generators\GeneratorsServiceProvider',
 
 	),
 

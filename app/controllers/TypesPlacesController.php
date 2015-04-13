@@ -1,6 +1,6 @@
 <?php
 
-class CalendrierController extends \BaseController
+class TypesPlacesController extends \BaseController
 {
 
     /**
@@ -10,7 +10,7 @@ class CalendrierController extends \BaseController
      */
     public function index()
     {
-        return View::make('pages.calendrier');
+        //
     }
 
 
@@ -45,6 +45,16 @@ class CalendrierController extends \BaseController
     public function show($id)
     {
         //
+    }
+
+    /**
+     * Display all resource.
+     *
+     * @return Response
+     */
+    public function showAll()
+    {
+        return TypePlace::all();
     }
 
 

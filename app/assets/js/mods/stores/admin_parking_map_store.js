@@ -1,5 +1,8 @@
+var _ = require('lodash');
+
 var mapOptions = require('../helpers/map_options');
 var mapHelper = require('../helpers/map_helper');
+var formDataHelper = require('../helpers/form_data_helper');
 /**
  * Created by yann on 27/01/2015.
  *
@@ -25,7 +28,23 @@ var mapHelper = require('../helpers/map_helper');
 var store = Reflux.createStore({
     _inst: {
         calibre: 1,
-        parkingInfos: {},
+        parkingInfos: {
+            id: 0,
+            libelle: '',
+            description: '',
+            init: 0
+        },
+        niveauInfos: {
+            id: 0,
+            libelle: '',
+            description: '',
+            plan: '',
+            parking_id: 0,
+            etat_general_id: 0,
+            defaultZone: {}, // Zone par defaut du niveau
+            defaultAllee: {} // Allee par défaut du niveau
+        },
+        types_places: [], // Types de places de la BDD
         currentMode: mapOptions.dessin.place,
         places: [],
         allees: [],
@@ -43,20 +62,103 @@ var store = Reflux.createStore({
     getInitialState: function () {
         return {};
     },
-    // INITIAL SETUP
+
     init: function () {
+
     },
 
 
     /**
      * Appellé lors de l'initialisation de la map pour renseigner le calibre initial
+     * et charger les données des zones, places et allées de ce niveau
      *
      * @param map : objet leaflet
      * @param calibre : calibre initial de la carte (cm/deg)
+     * @param parkingInfos : object avec deux clés parkingId et niveauId
      */
-    onMap_initialized: function (map, calibre) {
+    onMap_initialized: function (map, calibre, parkingInfos) {
+
         console.log('Calibre au niveau du store : ' + calibre);
+        console.log('Infos du parking au niveau du store : %o', parkingInfos);
         this._inst.calibre = calibre;
+
+        // Récupération en BDD des données du parking sélectionné
+        $.ajax({
+            method: 'GET',
+            url: BASE_URI + 'parking/' + parkingInfos.parkingId,
+            dataType: 'json',
+            context: this,
+            success: function (data) {
+                // Récup des données
+                this._inst.parkingInfos.id = data.id;
+                this._inst.parkingInfos.libelle = data.libelle;
+                this._inst.parkingInfos.description = data.description;
+                this._inst.parkingInfos.init = data.init;
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err);
+            }
+        });
+
+        // Récupération en BDD des données du niveau sélectionné
+        $.ajax({
+            method: 'GET',
+            url: BASE_URI + 'parking/niveau/' + parkingInfos.niveauId,
+            dataType: 'json',
+            context: this,
+            success: function (data) {
+                console.log('Retour AJAX init map infos niveau : %o', data);
+
+                // ---------------------------------------------------------------------
+                // Récupération des données du niveau
+                this._inst.niveauInfos.id = data.id;
+                this._inst.niveauInfos.libelle = data.libelle;
+                this._inst.niveauInfos.description = data.description;
+                this._inst.niveauInfos.plan = data.plan;
+                this._inst.niveauInfos.parking_id = data.parking_id;
+                this._inst.niveauInfos.etat_general_id = data.etat_general_id;
+
+                // Extraction des sous éléments du niveau
+                var zones = data.zones;
+                var jsonZones = [];
+                var allees = [];
+                var jsonAllees = [];
+                var places = [];
+                var jsonPlaces = [];
+
+                // Récupération des json zones et des allées
+                _.each(zones, function (z) {
+                    jsonZones.push(z.geojson);
+                    Array.prototype.push.apply(allees, z.allees);
+
+                    // Récupération zone par défaut
+                    z.defaut == "1" ? this._inst.niveauInfos.defaultZone = z : '';
+                }, this);
+                console.log('jsonZones : %o -- allees : %o', jsonZones, allees);
+
+                // Récupération des json allées et des places
+                _.each(allees, function (a) {
+                    jsonAllees.push(a.geojson);
+                    Array.prototype.push.apply(places, a.places);
+
+                    // Récupération allée par défaut
+                    a.defaut == "1" ? this._inst.niveauInfos.defaultAllee = a : '';
+                }, this);
+                console.log('jsonAllees : %o -- places : %o', jsonAllees, places);
+
+                // Récupération des json allées et des places
+                _.each(places, function (p) {
+                    jsonPlaces.push(p.geojson);
+                }, this);
+                console.log('jsonPlaces : %o', jsonPlaces);
+                // ---------------------------------------------------------------------
+
+                console.log('this._inst a la fin des récupérations AJAX : %o', this._inst);
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err);
+            }
+        });
     },
 
     /**
@@ -216,14 +318,16 @@ var store = Reflux.createStore({
             spacePoteaux = $form.find('[name=nb_poteaux]').val(),
             largPoteaux = $form.find('[name=taille_poteaux]').val(),
             pref = $form.find('[name=prefixe]').val(),
-            inc = $form.find('[name=increment]').val(),
-            suff = $form.find('[name=suffixe]').val();
+            num = $form.find('[name=num_initial]').val(),
+            suff = $form.find('[name=suffixe]').val(),
+            incr = $form.find('[name=increment]').val();
+
         console.log(
             'Places : ' + nbPlaces +
             ' Espace poteaux : ' + spacePoteaux +
             ' Largeur poteaux : ' + largPoteaux +
             ' Préfixe : ' + pref +
-            ' Inc : ' + inc +
+            ' Inc : ' + num +
             ' Suff : ' + suff);
 
         var places = [];
@@ -236,9 +340,43 @@ var store = Reflux.createStore({
                 spacePoteaux,
                 largPoteaux,
                 pref,
-                inc,
-                suff);
+                num,
+                suff,
+                incr,
+                this._inst.niveauInfos.defaultAllee.id);
 
+            this._inst.places = this._inst.places.concat(places);
+            console.log('Tableau des places dans le store : %o', this._inst.places);
+
+            // TODO Création des geoJson des places pour le marker et le parallélogramme
+            var jsonPlaces = _.map(places, function (p) {
+                var json = p.marker.toGeoJSON();
+                json.properties = p.data;
+                return json;
+            }, this);
+            console.log('Tableau de geoJson à enregistrer: %o', jsonPlaces);
+
+            // Enregistrement des places via le serveur
+            var fData = formDataHelper('', 'POST');
+            fData.append('places', jsonPlaces);
+
+
+            $.ajax({
+                type: 'POST',
+                url: 'parking/place',
+                data: {},
+                success: function (data) {
+                    console.log('Pass succès ajax places multiples : %o', data);
+                },
+                error: function (xhr, type, exception) {
+                    // if ajax fails display error alert
+                    alert("ajax error response error " + type);
+                    alert("ajax error response body " + xhr.responseText);
+                }
+            });
+
+            // Envoi des infos à afficher sur la carte
+            // TODO : le mettre dans le succès ajax
             var retour = {
                 type: mapOptions.type_messages.add_formes,
                 data: places

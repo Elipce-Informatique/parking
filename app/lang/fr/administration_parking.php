@@ -41,8 +41,9 @@ return array(
         'intervalle_poteaux' => 'Espacement poteaux (nb places)',
         'largeur_poteaux' => 'Largeur des poteaux (cm)',
         'pref' => 'Pref.',
-        'incr' => 'Inc.',
+        'num_initial' => 'Num.',
         'suff' => 'Suff.',
+        'incr' => 'Inc.',
         '3_points_seulement' => 'Merci de tracer exactement 3 points !',
         'swal_interval_incorrect' => 'L\'interval entre les poteaux est incorrect, il doit être inférieur au nombre de places saisi.'
     ],
