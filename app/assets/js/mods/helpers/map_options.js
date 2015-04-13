@@ -63,7 +63,7 @@ module.exports.type_messages = {
     add_forme: 2,
     delete_forme: 3,
     new_place_auto: 4,
-    add_formes: 5
+    add_places: 5
 };
 
 /**
