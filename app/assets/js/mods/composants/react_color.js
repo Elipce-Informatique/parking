@@ -39,7 +39,6 @@ var ColorPickerEditable = React.createClass({
         label:      React.PropTypes.string,
         attributes: React.PropTypes.object,
         gestMod:    React.PropTypes.bool,
-        validator:  React.PropTypes.func,
         mdLabel:    React.PropTypes.number,
         mdColor:    React.PropTypes.number,
         evts:       React.PropTypes.object,

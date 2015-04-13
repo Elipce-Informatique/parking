@@ -59,7 +59,7 @@ var Calendar = React.createClass({
       left = -Math.floor(half);
       right = Math.ceil(half);
     }
-    return _.range(left, right).map((offset) => {
+    return _.range(left, right).map(function(offset)  {
       return focus.clone().add(offset, 'months');
     });
   },

@@ -23,6 +23,7 @@ var replace = require('gulp-replace');
 var Q = require('Q');
 var del = require('del');
 var bootlint  = require('gulp-bootlint');
+var es6ify = require('es6ify');
 
 // UTIL REQUIRELMENTS
 var bundleLogger = require('./gulp_utils/bundleLogger');
@@ -200,6 +201,7 @@ gulp.task('browserify',  function (callback) {
             debug: config.debug,
             transform: 'reactify'
         });
+        bundler.transform(es6ify.configure(/.js/));
 
         var bundle = function () {
             // Log when bundling starts
