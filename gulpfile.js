@@ -23,6 +23,7 @@ var replace = require('gulp-replace');
 var Q = require('Q');
 var del = require('del');
 var bootlint  = require('gulp-bootlint');
+var es6ify = require('es6ify');
 
 // UTIL REQUIRELMENTS
 var bundleLogger = require('./gulp_utils/bundleLogger');

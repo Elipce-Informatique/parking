@@ -509,6 +509,28 @@ var storeTest = Reflux.createStore({
                 break;
             default:
 
+                //console.log('DATA: %o',fData);
+                var f = $('#form_test').serializeArray();
+                f.push({name: '_token', value: $('#_token').val()});
+                console.log('DATA sur validation  %o', f);
+
+
+                $.ajax({
+                    url: BASE_URI + 'post_dump',
+                    data: f,
+                    dataType: 'json',
+                    context: this,
+                    method: 'POST',
+                    async: false,
+                    success: function (good) {
+                    },
+
+                    error: function (xhr, status, err) {
+                        console.error(status, err.toString());
+                    }
+                });
+                break;
+
         }
         console.groupEnd();
     },
@@ -525,33 +547,6 @@ var storeTest = Reflux.createStore({
      */
     onForm_field_verif: function (e) {
         console.log('VERIF ' + e.name);
-
-    },
-
-    /**
-     * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
-     */
-    onSubmit_form: function (e) {
-        //console.log('DATA: %o',fData);
-        var f = $('#form_test').serializeArray();
-        f.push({name: '_token', value: $('#_token').val()});
-        console.log('DATA sur validation  %o', f);
-
-
-        $.ajax({
-            url: BASE_URI + 'post_dump',
-            data: f,
-            dataType: 'json',
-            context: this,
-            method: 'POST',
-            async: false,
-            success: function (good) {
-            },
-
-            error: function (xhr, status, err) {
-                console.error(status, err.toString());
-            }
-        });
 
     }
 });
