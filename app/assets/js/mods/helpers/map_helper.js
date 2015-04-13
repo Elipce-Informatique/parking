@@ -452,9 +452,29 @@ function createPlaceParallelogramme(coordsPara, extraData, nom, color) {
     var parallelogrammePlace = new L.polygon(coordsPara, {
         data: extraData,
         color: "#" + color,
-        fillColor: "#00FF00",
-        fillOpacity: 0
+        opacity: 0.9,
+        fillColor: color
     });
+    parallelogrammePlace.bindLabel(nom);
+    return parallelogrammePlace;
+}
+
+/**
+ * Crée le parallélogramme d'une palce en fonction d'un objet geoJSON
+ * @param geoJson
+ * @param extraData
+ * @param nom
+ * @param color
+ * @returns {dataPlaces.geoJson}
+ */
+function createPlaceParallelogrammeFromGeoJson(geoJson, extraData, nom, color) {
+    var style = {
+        data: extraData,
+        color: "#" + color,
+        opacity: 0.9,
+        fillColor: "#"+ color
+    };
+    var parallelogrammePlace = new L.geoJson(JSON.parse(geoJson), {style: style});
     parallelogrammePlace.bindLabel(nom);
     return parallelogrammePlace;
 }
@@ -472,6 +492,8 @@ module.exports = {
     isPolygonInPolygon: isPolygonInPolygon,
     getLastPointOfParallelogramme: getLastPointOfParallelogramme,
     createPlacesFromParallelogramme: createPlacesFromParallelogramme,
-    createPlaceMarker: createPlaceMarker
+    createPlaceMarker: createPlaceMarker,
+    createPlaceParallelogramme: createPlaceParallelogramme,
+    createPlaceParallelogrammeFromGeoJson: createPlaceParallelogrammeFromGeoJson
 };
 

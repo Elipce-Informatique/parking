@@ -55,7 +55,8 @@ var parkingMap = React.createClass({
         return {
             defaultDrawMode: mapOptions.dessin.place,
             mapHeight: 300,
-            calibre: 93
+            calibre: 93,
+            module_url: 'parking'
         };
     },
 
@@ -375,8 +376,8 @@ var parkingMap = React.createClass({
         console.log('ACTION ADD FORMES, voilà les formes : %o', formes);
         var liste_data = formes.data;
         _.each(liste_data, function (place) {
-            place.polygon.addTo(this._inst.placesGroup);
-            place.marker.addTo(this._inst.placesMarkersGroup);
+            this._inst.placesGroup.addLayer(place.polygon);
+            this._inst.placesMarkersGroup.addLayer(place.marker);
         }, this)
     },
 
