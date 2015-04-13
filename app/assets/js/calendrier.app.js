@@ -23,7 +23,7 @@ $(function () {
             titre={Lang.get('menu.side.prog_horaire')}
             texte={Lang.get('calendrier.prog_horaire.texte')}
             bouton={Lang.get('global.gerer')}
-            bouton_url={urlJour}
+            bouton_url={urlProg}
             module_url="calendrier_programmation"/>,
         document.getElementById('block_prog_horaire'));
 });

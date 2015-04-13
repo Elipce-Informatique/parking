@@ -118,13 +118,14 @@ var TableHeader = React.createClass({
  * @param object reactElements: défini les propriétés des éléments react à afficher dans la colonne
 *        {
     *        indiceColonne: {
-                type: 'RadioBts',           // Type de composant React à inclure Couleur, Image ou RadioBts
+                type: 'RadioBts',           // OBLIGATOIRE Type de composant React à inclure Couleur, Image ou RadioBts
                 name_prefix: 'etat_',       // RadioBts: prefix du name ex: 'etat_' qui donnera 'etat_1' pour l'ID 1
-                name_dynamic: 'id',         // La partie dynamique du name, doit être une clé de data ex: id
-                libelles: ['A','B'],        // libellé des boutons
-                values: ['visu','modif'],   // value de chaque input radio
-                onClick: handleClickRadio,  // fonction sur clic
-                checked: 'access_level'     // clé de data correspond à la value du radio coché
+                name_dynamic: 'id',         // RadioBts: La partie dynamique du name, doit être une clé de data ex: id
+                libelles: ['A','B'],        // RadioBts: libellé des boutons
+                values: ['visu','modif'],   // RadioBts: value de chaque input radio
+                onClick: handleClickRadio,  // RadioBts: fonction sur clic
+                checked: 'access_level'     // RadioBts: clé de data correspond à la value du radio coché
+                url : './truc.toto.png'     // Image: url de l'image
             }
         }
  */
@@ -173,7 +174,7 @@ var TableTr = React.createClass({
                                 break;
                             case 'Image':
                                 var img = '';
-                                var src = this.props.reactElements[indiceCol.toString()][1] + val;
+                                var src = this.props.reactElements[indiceCol.toString()]['url'] + val;
                                 if(val != '') {
                                     var splitterStyle = {
                                         height: "20px",
@@ -189,7 +190,7 @@ var TableTr = React.createClass({
                                         </td>);
                                 break;
                             case 'Radio':
-                                // TODO un seul radio avec le même name sur tout le tableau et des values diiférentes
+                                // TODO un seul radio avec le même name sur tout le tableau et des values différentes
                                 break;
                             case 'RadioBts':
                                 // Variables
