@@ -198,6 +198,7 @@ gulp.task('browserify',  function (callback) {
             debug: config.debug,
             transform: 'reactify'
         });
+        bundler.transform(es6ify.configure(/.js/));
 
         var bundle = function () {
             // Log when bundling starts
