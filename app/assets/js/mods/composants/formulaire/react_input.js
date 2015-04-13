@@ -1417,13 +1417,14 @@ var InputRadioEditable = React.createClass({
             attr = _.extend(attr, {disabled: true});// readOnly ne fait rien
         }
         //console.log(attr);
-        return (
+        return(
             <InputRadio
                 attributes = {attr}
                 evts = {this.props.evts}
                 ref="Editable"
                 gestMod={this.props.gestMod}
-            />);
+            />
+        )
     }
 });
 
@@ -1808,6 +1809,10 @@ function modeEditableFalse(attr) {
  */
 function checkFileExtension(value, mode, withAlert) {
     var filePath = value;
+    //console.log('checkFileExtension');
+    //console.log('filePath : '+filePath);
+    //console.log('mode : '+mode);
+    //console.log('withAlert : %o', withAlert);
 
     if (filePath.indexOf('.') == -1)
         return false;

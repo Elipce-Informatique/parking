@@ -116,7 +116,7 @@ var TableHeader = React.createClass({
  *                    ex: l'url AJAX retourne les données suivantes {'id':1, 'nom':'PEREZ', 'prenom':'Vivian'}
  *                        var data = ['id']
  * @param object reactElements: défini les propriétés des éléments react à afficher dans la colonne
-*        {
+ *        {
     *        indiceColonne: {
                 type: 'RadioBts',           // OBLIGATOIRE Type de composant React à inclure Couleur, Image ou RadioBts
                 name_prefix: 'etat_',       // RadioBts: prefix du name ex: 'etat_' qui donnera 'etat_1' pour l'ID 1
