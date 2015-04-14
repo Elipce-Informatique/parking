@@ -1,6 +1,6 @@
 // Composants REACT
 var React = require('react');
-var {Calendar, Month, Week, Day} = require('../calendar/react-calendar');
+var {Calendar, Month, Week, Day} = require('../composants/calendar/react-calendar');
 
 var BandeauListe = require('../composants/bandeau/react_bandeau_liste');
 var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');
@@ -47,11 +47,10 @@ var PageCalendrierProg = React.createClass({
         };
     },
     componentDidMount: function () {
-        this.listenTo(storeCalendrierJours, this.updateData, this.updateData);
+        this.listenTo(storeCalendrierProg, this.updateData, this.updateData);
     },
 
     updateData: function (obj) {
-        //console.log('CALLBACK PAGE JOURS data %o',_.cloneDeep(obj));
         // MAJ data
         this.setState(obj);
     },
@@ -107,7 +106,8 @@ var PageCalendrierProg = React.createClass({
                                     size={12}
                                     locale = "fr">
                                     <Month date={moment()}
-                                        modifiers={{current: true}}/>
+                                        modifiers={{current: true}}
+                                        locale = "fr"/>
                                     <Day date={moment()}
                                         modifiers={{current: true}} />
                                 </Calendar>
