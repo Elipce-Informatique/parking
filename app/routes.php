@@ -67,7 +67,7 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
 
 
     /* **************************************************************************
-    * Administration
+    * ADMINISTRATION PORTAIL
     */
     Route::get('administration', ['as' => 'administration', 'uses' => 'AdministrationController@index']);
     /*
@@ -89,7 +89,7 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     Route::get('profils/use/{profil}', 'ProfilController@isProfilUsed');
 
     /* **************************************************************************
-     * Administration parking
+     * ADMINISTRATION PARKING
      */
     Route::get('administration_parking', ['as' => 'administration_parking', 'uses' => 'AdministrationParkingController@index']);
 
@@ -108,7 +108,14 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     Route::resource('configuration_parking', 'ConfigurationParkingController');
 
     /* **************************************************************************
-     * Calendrier
+     * SUPERVISION PARKING
+     */
+    Route::get('supervision', ['as' => 'supervision_parking', 'uses' => 'SupervisionParkingController@index']);
+    Route::get('visualisation', 'SupervisionParkingController@visualisation');
+    Route::get('commandes_forcees', 'SupervisionParkingController@commandes');
+
+    /* **************************************************************************
+     * CALENDRIER PARKING
      */
     Route::resource('calendrier', 'CalendrierController');
 

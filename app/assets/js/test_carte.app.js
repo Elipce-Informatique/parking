@@ -5,7 +5,7 @@ var ParkingMap = require('./mods/composants/maps/admin_parking_map');
 var Collapse = require('./mods/composants/react_collapse').Collapse;
 var CollapseBody = require('./mods/composants/react_collapse').CollapseBody;
 var CollapseSidebar = require('./mods/composants/react_collapse').CollapseSidebar;
-var ZoneTempsReel = require('./mods/react_supervision_temps_reel');
+var ZoneTempsReel = require('./mods/composants/react_supervision_temps_reel');
 
 // Test D3
 var TestD3 = require('./mods/charts/test_d3');

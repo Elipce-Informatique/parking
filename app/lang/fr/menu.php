@@ -23,7 +23,9 @@ return [
         "calendrier_programmation" => "Programmations horaires",
         "jours_predef" => "Jours prédéfinis",
         "prog_horaire" => "Programmation horaire",
-        "configuration_parking" => "Configuration parking"
+        "configuration_parking" => "Configuration parking",
+        "visualisation"=>"Visualisation parking",
+        "commandes_forcees"=>"Commandes forcées",
 
     ],
 
