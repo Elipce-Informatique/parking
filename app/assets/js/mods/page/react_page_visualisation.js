@@ -8,6 +8,7 @@ var CollapseSidebar = require('../composants/react_collapse').CollapseSidebar;
 var ParkingMap = require('../composants/maps/supervision_parking_map');
 var TestD3 = require('../charts/test_d3');
 var ZoneTempsReel = require('../composants/react_supervision_temps_reel');
+var ZoneReporting = require('../composants/react_supervision_reporting');
 var Col = ReactB.Col;
 var Row = ReactB.Row;
 
@@ -80,8 +81,8 @@ var Page = React.createClass({
         return (
             <Col md={12} className="full-height">
                 <Row id="row_reporting" style={{height: "20%"}}>
-                    <Col id="zone_reporting" md={12}>
-
+                    <Col id="zone_reporting" className="full-height" md={12}>
+                        <ZoneReporting />
                     </Col>
                 </Row>
 
