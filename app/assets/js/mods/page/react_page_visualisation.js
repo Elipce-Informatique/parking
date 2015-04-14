@@ -1,5 +1,16 @@
 /********************************************/
 var React = require('react');
+
+// COMPOSANTS NÉCESSAIRES:
+var Collapse = require('../composants/react_collapse').Collapse;
+var CollapseBody = require('../composants/react_collapse').CollapseBody;
+var CollapseSidebar = require('../composants/react_collapse').CollapseSidebar;
+var ParkingMap = require('../composants/maps/supervision_parking_map');
+var TestD3 = require('../charts/test_d3');
+var ZoneTempsReel = require('../composants/react_supervision_temps_reel');
+var Col = ReactB.Col;
+var Row = ReactB.Row;
+
 /* Gestion de la modification et des droits */
 var AuthentMixins = require('../mixins/component_access');
 /* Pour le listenTo           */
@@ -20,7 +31,9 @@ var Page = React.createClass({
     propTypes: {},
 
     getDefaultProps: function () {
-        return {};
+        return {
+            module_url: 'visualisation'
+        };
     },
 
     /**
@@ -53,13 +66,55 @@ var Page = React.createClass({
         this.setState(data);
     },
 
+    onRetour: function () {
+        // Actions a effectuer sur click bouton retour
+    },
+
+    /**
+     *
+     * @returns {XML}
+     * @private
+     */
+    modeCarte: function () {
+        var url = BASE_URI + 'public/images/beauvais_p3.svg';
+        return (
+            <Col md={12} className="full-height">
+                <Row id="row_reporting" style={{height: "20%"}}>
+                    <Col id="zone_reporting" md={12}>
+
+                    </Col>
+                </Row>
+
+                <Row id="page_test" style={{height: "80%"}}>
+                    <Col md={12} id="visualisation_parking" className="full-height">
+                        <Collapse align="left" sideWidth={2}>
+                            <CollapseBody>
+                                <Collapse align="right" sideWidth={3}>
+                                    <CollapseBody>
+                                        <ParkingMap imgUrl={url} divId="div_carte"/>
+                                    </CollapseBody>
+                                    <CollapseSidebar title="Temps Réel">
+                                        <ZoneTempsReel vertical={true} />
+                                    </CollapseSidebar>
+                                </Collapse>
+                            </CollapseBody>
+                            <CollapseSidebar title="Sélection">
+                                sélection parking
+                            </CollapseSidebar>
+                        </Collapse>
+                    </Col>
+                </Row >
+            </Col>
+        );
+    },
+
     render: function () {
         var retour = {};
 
         // Switch la structure de la page en fonction de l'état courant
         switch (this.state.etatPage) {
             case pageState.liste:
-                retour = <div>Hello liste !</div>;
+                retour = this.modeCarte();
                 break;
             default:
                 retour = <div>Hello World !</div>;

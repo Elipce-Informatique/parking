@@ -6,7 +6,8 @@
 @stop
 
 @section('content')
-    <div id="visualisation_parking" class="full-height"></div>
+
+    <div id="page_visualisation_parking" class="row full-height"></div>
 @stop
 
 @section('scripts')

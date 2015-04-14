@@ -21,6 +21,10 @@ var parkingMap = React.createClass({
     propTypes: {
         divId: React.PropTypes.string.isRequired,
         imgUrl: React.PropTypes.string.isRequired,
+        parkingId: React.PropTypes.number.isRequired,
+        niveauId: React.PropTypes.number.isRequired,
+        mapHeight: React.PropTypes.number,
+        calibre: React.PropTypes.number
     },
     /**
      * Variables d'instance du composant.
@@ -35,7 +39,12 @@ var parkingMap = React.createClass({
     },
 
     getDefaultProps: function () {
-        return {};
+        return {
+            defaultDrawMode: mapOptions.dessin.place,
+            mapHeight: 300,
+            calibre: 93,
+            module_url: 'parking'
+        };
     },
 
     getInitialState: function () {
@@ -57,17 +66,12 @@ var parkingMap = React.createClass({
      * On ne veut pas écraser la map a chaque mise à jour, juste la modifier avec ses méthodes
      */
     shouldComponentUpdate: function (nextProps, nextState) {
-        return false;
-    },
-
-    render: function () {
-        var style = {height: "100%"};
-        return <div id={this.props.divId} style={style}> </div>;
+        return true;
     },
 
     /**
      * ------------------------------------------
-     * INITIALISATION DE LA CARTE ---------------
+     * - INITIALISATION DE LA CARTE -------------
      * ------------------------------------------
      * Avec l'image passée en paramètres et des coordonnées
      * carrées allant de 0 à 100 en lon et en lat
@@ -78,14 +82,25 @@ var parkingMap = React.createClass({
 
         // CRÉATION DE LA MAP
         this._inst.map = new L.Map(this.props.divId, {
-            fullscreenControl: true
-        }).setView([50, 50], 3);
+            crs: L.CRS.Simple,
+            maxZoom: 7
+        }).setView([65, 50], 4);
 
         // AJOUT DE L'IMAGE DE FOND
         L.imageOverlay(this.props.imgUrl, [origine, haut_droit]).addTo(this._inst.map);
-        Actions.map.map_initialized(this._inst.map);
+
+        // Transmission des données du parking au store:
+        var parkingData = {
+            parkingId: this.props.parkingId,
+            niveauId: this.props.niveauId
+        };
+        Actions.map.map_initialized(this._inst.map, this.props.calibre, parkingData);
 
         // INIT des layers
+        this._inst.placesMarkersGroup = new L.MarkerClusterGroup({
+            maxClusterRadius: 25
+        });
+        this._inst.map.addLayer(this._inst.placesMarkersGroup);
         this._inst.placesGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.placesGroup);
         this._inst.alleesGroup = new L.geoJson();
@@ -96,6 +111,28 @@ var parkingMap = React.createClass({
         this._inst.map.addLayer(this._inst.afficheursGroup);
     },
 
+    /**
+     * Ajoute la forme dessinnée au layer courant
+     * @param data : le couple type-data envoyé par le store
+     */
+    onFormeAdded: function (data) {
+        var layer = data.data.e.layer;
+        var layerGroup = this._inst[mapOptions.control.groups[this._inst.currentMode]];
+        layerGroup.addLayer(layer);
+    },
+
+    /**
+     * Ajoute les PLACES
+     * @param formes : tableau de places
+     */
+    onPlacesAdded: function (formes) {
+        console.log('ACTION ADD PLACES, voilà les formes : %o', formes);
+        var liste_data = formes.data;
+        _.each(liste_data, function (place) {
+            this._inst.placesGroup.addLayer(place.polygon);
+            this._inst.placesMarkersGroup.addLayer(place.marker);
+        }, this)
+    },
 
     /**
      * Remet tous les featuresGroups en ordre (zIndex)
@@ -116,11 +153,11 @@ var parkingMap = React.createClass({
      */
     onStoreTrigger: function (data) {
         switch (data.type) {
-            case mapOptions.type_messages.mode_change:
-                this.onModeChange(data);
-                break;
             case mapOptions.type_messages.add_forme:
                 this.onFormeAdded(data);
+                break;
+            case mapOptions.type_messages.add_places:
+                this.onPlacesAdded(data);
                 break;
             case mapOptions.type_messages.delete_forme:
                 break;
@@ -128,6 +165,15 @@ var parkingMap = React.createClass({
                 break;
         }
         this.orderLayerGroups();
+    },
+
+    /**
+     * Affichage du composant
+     * @returns {XML}
+     */
+    render: function () {
+        var style = {height: "100%"};
+        return <div id={this.props.divId} style={style}> </div>;
     }
 });
 

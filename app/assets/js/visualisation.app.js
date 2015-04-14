@@ -7,6 +7,6 @@ var PageVisu = require('./mods/page/react_page_visualisation');
 $(function () {
     var ReactPageVisu = React.render(
         <PageVisu/>,
-        document.getElementById('visualisation_parking')
+        document.getElementById('page_visualisation_parking')
     );
 });
