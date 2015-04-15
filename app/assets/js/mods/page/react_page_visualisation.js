@@ -79,23 +79,27 @@ var Page = React.createClass({
     modeCarte: function () {
         var url = BASE_URI + 'public/images/beauvais_p3.svg';
         return (
-            <Col md={12} className="full-height">
-                <Row id="row_reporting" style={{height: "20%"}}>
+            <Col md={12} className="full-height flex-wrapper">
+                <Row id="row_reporting" className="flex-header">
                     <Col id="zone_reporting" className="full-height" md={12}>
                         <ZoneReporting />
                     </Col>
                 </Row>
 
-                <Row id="page_test" style={{height: "80%"}}>
-                    <Col md={12} id="visualisation_parking" className="full-height">
+                <Row id="page_test" className="flex-body">
+                    <Col md={12} id="visualisation_parking" className="full-height" style={{position: 'absolute'}}>
                         <Collapse align="left" sideWidth={2}>
                             <CollapseBody>
                                 <Collapse align="right" sideWidth={3}>
                                     <CollapseBody>
-                                        <ParkingMap imgUrl={url} divId="div_carte"/>
+
+                                        <ParkingMap parkingId={1} niveauId={1} imgUrl={url} divId="div_carte"/>
+
                                     </CollapseBody>
                                     <CollapseSidebar title="Temps Réel">
+
                                         <ZoneTempsReel vertical={true} />
+
                                     </CollapseSidebar>
                                 </Collapse>
                             </CollapseBody>

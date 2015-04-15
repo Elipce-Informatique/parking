@@ -53,7 +53,7 @@ var ZoneTempsReel = React.createClass({
                     <Col md={md} {...style}>
                         <Panel
                             header={<strong>{Lang.get('administration_parking.treel.alerte')}</strong>}
-                            bsStyle="warning"
+                            bsStyle="default"
                             className="treel-alerte full-height">
                             <AlertMessage bsStyle="danger" label="Zone 1" message="est complète."/>
                             <AlertMessage bsStyle="success" label="Allée 1" message="est vide."/>
@@ -72,7 +72,7 @@ var ZoneTempsReel = React.createClass({
                     <Col md={md} {...style}>
                         <Panel
                             header={<strong>{Lang.get('administration_parking.treel.journal')}</strong>}
-                            bsStyle="warning"
+                            bsStyle="default"
                             className="treel-journal full-height">
                             <AlertMessage bsStyle="success" label="P8" message="se libère."/>
                             <AlertMessage bsStyle="success" label="P32" message="se libère."/>
@@ -87,7 +87,7 @@ var ZoneTempsReel = React.createClass({
                     <Col md={md} {...style}>
                         <Panel
                             header={<strong>{Lang.get('administration_parking.treel.anomalie')}</strong>}
-                            bsStyle="warning"
+                            bsStyle="default"
                             className="treel-anomalie full-height">
                             <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 01-03-128 ne fonctionne plus."/>
                             <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 04-02-136 ne fonctionne plus."/>
@@ -101,7 +101,7 @@ var ZoneTempsReel = React.createClass({
                     <Col md={md} {...style}>
                         <Panel
                             header={<strong>{Lang.get('administration_parking.treel.test')}</strong>}
-                            bsStyle="warning"
+                            bsStyle="default"
                             className="treel-test full-height">
                             Panel content
                         </Panel>

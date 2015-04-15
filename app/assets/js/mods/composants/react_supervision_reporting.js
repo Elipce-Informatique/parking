@@ -12,6 +12,8 @@ var Panel = ReactB.Panel;
 var Label = ReactB.Label;
 var Badge = ReactB.Badge;
 var Glyph = ReactB.Glyphicon;
+var OverlayTrigger = ReactB.OverlayTrigger;
+var Tooltip = ReactB.Tooltip;
 
 /**
  * Created by yann on 20/02/2015.
@@ -41,22 +43,17 @@ var ZoneReporting = React.createClass({
 
     render: function () {
         var md = this.props.vertical ? 12 : 4;
+
         return (
             <Row className="row_reporting full-height">
-                <Col md={md}>
-                    <StatBar libelle="Total places occupées" label='%(now)s - %(percent)s%' bsStyle='danger' max={1000} now={200} />
-                    <StatBar libelle="Total places libres"  max={1000} now={245} />
-                    <StatBar libelle="Pourcentage occupation" bsStyle='warning' label='%(percent)s%' max={1000} now={755} />
+                <Col md={md} className="full-height">
+                    <PanelOccupCourante />
                 </Col>
-                <Col md={md}>
-                    <StatBar libelle="Places occupées Niveau 1" bsStyle='danger'now={40} />
-                    <StatBar libelle="Places libres Niveau 1" now={60} />
-                    <StatBar libelle="Pourcentage occupation Niveau 1" bsStyle='warning' label='%(percent)s%' now={40} />
+                <Col md={md} className="full-height">
+                    <PanelOccupNiveaux />
                 </Col>
-                <Col md={md}>
-                    <StatBar libelle="Places occupées Zone A1" bsStyle='danger' max={30} now={10} />
-                    <StatBar libelle="Places libres Zone A1" max={30} now={20} />
-                    <StatBar libelle="Pourcentage occupation Zone A1" bsStyle='warning' label='%(percent)s%' max={30} now={10} />
+                <Col md={md} className="full-height">
+                    <PanelOccupZones />
                 </Col>
             </Row>
         );
@@ -64,7 +61,271 @@ var ZoneReporting = React.createClass({
 });
 
 /**
+ * Created by yann on 15/04/2015.
+ * TODO tout traduire et lier le state aux données réelles (ajouter total etc...)
+ * @param name : nom a afficher dans le composant
+ */
+var PanelOccupCourante = React.createClass({
+
+    propTypes: {},
+
+    getDefaultProps: function () {
+        return {};
+    },
+
+    getInitialState: function () {
+        return {
+            dataOccupationPark: [
+                {
+                    bsStyle: 'danger',
+                    label: '%(now)s',
+                    now: 683
+                },
+                {
+                    bsStyle: 'success',
+                    label: '%(now)s',
+                    now: 817
+                }
+            ],
+            dataOccupationNiveau: [
+                {
+                    bsStyle: 'danger',
+                    label: '%(now)s',
+                    now: 125
+                },
+                {
+                    bsStyle: 'success',
+                    label: '%(now)s',
+                    now: 375
+                }
+            ]
+        };
+    },
+
+    componentDidMount: function () {
+
+    }
+    ,
+
+    shouldComponentUpdate: function (nextProps, nextState) {
+        return true;
+    }
+    ,
+
+    render: function () {
+        return (
+            <Panel header={<strong>Occupation courante</strong>} style={{height: '115px'}}>
+                <StatBarWrapper libelle="Occupation du parking" tooltip="45.5% de places occupées">
+                    <StackedStatBar data={this.state.dataOccupationPark} max={1500} />
+                </StatBarWrapper>
+                <StatBarWrapper libelle="Occupation du niveau" tooltip="25% de places occupées">
+                    <StackedStatBar data={this.state.dataOccupationNiveau} max={500} />
+                </StatBarWrapper>
+            </Panel>);
+    }
+});
+
+/**
+ * Created by yann on 15/04/2015.
+ *
+ * TODO tout traduire et lier le state aux données réelles
+ * @param name : nom a afficher dans le composant
+ */
+var PanelOccupNiveaux = React.createClass({
+
+    propTypes: {},
+
+    getDefaultProps: function () {
+        return {};
+    },
+
+    getInitialState: function () {
+        return {
+            dataOccupation: [
+                {
+                    libelle: 'Niveau 1',
+                    taux: 75,
+                    max: 500,
+                    data: [
+                        {
+                            bsStyle: 'danger',
+                            label: '%(now)s',
+                            now: 333
+                        },
+                        {
+                            bsStyle: 'success',
+                            label: '%(now)s',
+                            now: 167
+                        }
+                    ]
+                },
+                {
+                    libelle: 'Niveau 2',
+                    taux: 45,
+                    max: 500,
+                    data: [
+                        {
+                            bsStyle: 'danger',
+                            label: '%(now)s',
+                            now: 225
+                        },
+                        {
+                            bsStyle: 'success',
+                            label: '%(now)s',
+                            now: 275
+                        }
+                    ]
+                },
+                {
+                    libelle: 'Niveau 3',
+                    taux: 25,
+                    max: 500,
+                    data: [
+                        {
+                            bsStyle: 'danger',
+                            label: '%(now)s',
+                            now: 125
+                        },
+                        {
+                            bsStyle: 'success',
+                            label: '%(now)s',
+                            now: 375
+                        }
+                    ]
+                }
+            ]
+        };
+        ;
+    },
+
+    componentDidMount: function () {
+
+    }
+    ,
+
+    shouldComponentUpdate: function (nextProps, nextState) {
+        return true;
+    }
+    ,
+
+    render: function () {
+        var bars = [];
+        bars = _.map(this.state.dataOccupation, function (d, i) {
+            return (
+                <StatBarWrapper libelle={d.libelle} tooltip={d.taux + "% de places occupées"}>
+                    <StackedStatBar data={d.data} max={d.max} />
+                </StatBarWrapper>
+            );
+        });
+        return (
+            <Panel header={<strong>Occupation des niveaux</strong>} style={{height: '115px'}}>
+            {bars}
+            </Panel>);
+    }
+});
+
+/**
+ * Created by yann on 15/04/2015.
+ *
+ * TODO : tout traduire et lier le state aux données réelles
+ * @param name : nom a afficher dans le composant
+ */
+var PanelOccupZones = React.createClass({
+
+    propTypes: {},
+
+    getDefaultProps: function () {
+        return {};
+    },
+
+    getInitialState: function () {
+        return {
+            dataOccupation: [
+                {
+                    libelle: 'Zone par défaut 1',
+                    taux: 75,
+                    max: 500,
+                    data: [
+                        {
+                            bsStyle: 'danger',
+                            label: '%(now)s',
+                            now: 333
+                        },
+                        {
+                            bsStyle: 'success',
+                            label: '%(now)s',
+                            now: 167
+                        }
+                    ]
+                },
+                {
+                    libelle: 'Zone par défaut 2',
+                    taux: 45,
+                    max: 500,
+                    data: [
+                        {
+                            bsStyle: 'danger',
+                            label: '%(now)s',
+                            now: 225
+                        },
+                        {
+                            bsStyle: 'success',
+                            label: '%(now)s',
+                            now: 275
+                        }
+                    ]
+                },
+                {
+                    libelle: 'Zone par défaut 3',
+                    taux: 25,
+                    max: 500,
+                    data: [
+                        {
+                            bsStyle: 'danger',
+                            label: '%(now)s',
+                            now: 125
+                        },
+                        {
+                            bsStyle: 'success',
+                            label: '%(now)s',
+                            now: 375
+                        }
+                    ]
+                }
+            ]
+        };
+        ;
+    },
+
+    componentDidMount: function () {
+
+    },
+
+    shouldComponentUpdate: function (nextProps, nextState) {
+        return true;
+    },
+
+    render: function () {
+        var bars = [];
+        bars = _.map(this.state.dataOccupation, function (d, i) {
+            return (
+                <StatBarWrapper libelle={d.libelle} tooltip={d.taux + "% de places occupées"}>
+                    <StackedStatBar data={d.data} max={d.max} />
+                </StatBarWrapper>
+            );
+        });
+        return (
+            <Panel header={<strong>Occupation des zones</strong>} style={{height: '115px'}}>
+                {bars}
+            </Panel>);
+    }
+});
+
+
+/**
  * Created by yann on 14/04/2015.
+ *
+ * Crée une barre de progression pour les stats avec pas mal de props par défaut.
  *
  * @param name : nom a afficher dans le composant
  */
@@ -106,15 +367,121 @@ var StatBar = React.createClass({
     },
 
     render: function () {
+        return (<ProgressBar {...this.props} />);
+    }
+});
+
+/**
+ * Affiche une barre stackée en fonction des data passées.
+ * Les data sont les props à passer à chaque morceau de barre.
+ *
+ * Pas de label affiché devant.
+ *
+ * @param name : nom a afficher dans le composant
+ */
+var StackedStatBar = React.createClass({
+
+    propTypes: {
+        data: React.PropTypes.array.isRequired,
+        min: React.PropTypes.number,
+        max: React.PropTypes.number,
+        striped: React.PropTypes.bool,
+        active: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+        return {
+            min: 0,
+            max: 100,
+            striped: true,
+            active: true
+        };
+    },
+
+    getInitialState: function () {
+        return {};
+    },
+
+    componentDidMount: function () {
+
+    },
+
+    shouldComponentUpdate: function (nextProps, nextState) {
+        return true;
+    },
+
+    render: function () {
+        var bars = _.map(this.props.data, function (d, i) {
+            return (
+                <ProgressBar {...d}
+                    min={this.props.min}
+                    max={this.props.max}
+                    key={'test' + i}
+                />
+            );
+        }, this);
+
+        return (
+            <ProgressBar {... this.props}>
+                {bars}
+            </ProgressBar>
+        );
+    }
+});
+
+/**
+ * Created by yann on 15/04/2015.
+ *
+ * @param name : nom a afficher dans le composant
+ */
+var StatBarWrapper = React.createClass({
+
+    propTypes: {
+        libelle: React.PropTypes.string.isRequired,
+        tooltip: React.PropTypes.string,
+        simpleBarData: React.PropTypes.object
+    },
+
+    getDefaultProps: function () {
+        return {
+            tooltip: ''
+        };
+    },
+
+    getInitialState: function () {
+        return {};
+    },
+
+    componentDidMount: function () {
+
+    },
+
+    shouldComponentUpdate: function (nextProps, nextState) {
+        return true;
+    },
+
+    render: function () {
+        var bars = this.props.simpleBarData ? <StatBar {...this.props.simpleBarData} /> : this.props.children;
+        if (this.props.tooltip != '') {
+            bars = (
+                <OverlayTrigger
+                    placement='bottom'
+                    overlay={<Tooltip>
+                            {this.props.tooltip}</Tooltip>}>
+                    {this.props.children}
+                </OverlayTrigger>);
+        }
+
         return (
             <Row>
                 <Col md={4}>
                     <label className="label-stats">{this.props.libelle}</label>
                 </Col>
                 <Col md={8}>
-                    <ProgressBar {...this.props} />
+                    {bars}
                 </Col>
-            </Row>);
+            </Row>
+        );
     }
 });
 

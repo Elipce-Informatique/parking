@@ -117,7 +117,7 @@ body
   font-size: 75% !important;
 }
 
-.row_temps_reel .panel-heading, .row_temps_reel .panel-body{
+.row_temps_reel .panel-heading, .row_temps_reel .panel-body, .row_reporting .panel-heading, .row_reporting .panel-body{
   padding-top: 3px;
   padding-bottom: 3px;
 }
@@ -192,6 +192,10 @@ input[type=number]:invalid {
 
 .full-height{
   height: 100% !important;
+}
+
+.row_reporting .panel{
+  margin-bottom 5px
 }
 /*
 |--------------------------------------------------------------------------
@@ -321,4 +325,25 @@ fait toute la largeur du bloc de sidebar */
 .tabprofil-leave.tabprofil-leave-active {
   opacity: 0.01;
 
+}
+
+/*
+|--------------------------------------------------------------------------
+| FLEX HEIGHT PAGE
+|--------------------------------------------------------------------------
+*/
+.flex-wrapper {
+  display: flex;  /* use the flex model */
+  min-height: 100%;
+  flex-direction: column;  /* learn more: http://philipwalton.github.io/solved-by-flexbox/demos/sticky-footer/ */
+}
+
+.flex-header {
+}
+
+.flex-body {
+  flex: 1;
+}
+
+.flex-footer{
 }

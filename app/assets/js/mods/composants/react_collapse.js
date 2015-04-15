@@ -240,15 +240,16 @@ module.exports.CollapseBody = CollapseBody;
 var CollapseSidebar = React.createClass({
 
     propTypes: {
-        onToggleClick: React.PropTypes.func.isRequired,
-        isCollapsed: React.PropTypes.bool.isRequired,
         title: React.PropTypes.string.isRequired,
+        onToggleClick: React.PropTypes.func,
+        isCollapsed: React.PropTypes.bool,
         isLeft: React.PropTypes.bool,
         icon: React.PropTypes.string
     },
 
     getDefaultProps: function () {
         return {
+            isCollapsed: true,
             isLeft: false,
             icon: "chevron-up"
         };
