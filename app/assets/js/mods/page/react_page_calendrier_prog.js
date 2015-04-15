@@ -1,6 +1,7 @@
 // Composants REACT
 var React = require('react');
 var {Calendar, Month, Week, Day} = require('../composants/calendar/react-calendar');
+//var {Calendar, Month, Week, Day} = require('react-calendar/react-calendar');
 
 var BandeauListe = require('../composants/bandeau/react_bandeau_liste');
 var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');
@@ -61,6 +62,12 @@ var PageCalendrierProg = React.createClass({
         Actions.jours.display_all_jours();
     },
 
+    handleClick: function (scope, m, e) {
+        console.log("handleClick: " + scope + " " + m.format());
+        if(scope == 'Day'){
+            $(e.currentTarget).addClass('bg-success');
+        }
+    },
     /**
      * Calcul du render en fonction de l'état d'affichage de la page
      * @returns {*}
@@ -101,22 +108,23 @@ var PageCalendrierProg = React.createClass({
                         <Row>
                             <Col md={12}>
                                 <Calendar firstMonth={1}
-                                    date={moment("2014-01-01")}
+                                    date={moment("2015-01-01")}
                                     weekNumbers={true}
                                     size={12}
                                     locale = "fr">
+                                    <Day onClick={this.handleClick} />
                                     <Month date={moment()}
+                                        modifiers={{current: true}}/>
+                                    <Day
+                                        date={moment()}
                                         modifiers={{current: true}}
-                                        locale = "fr"/>
-                                    <Day date={moment()}
-                                        modifiers={{current: true}} />
+                                        onClick={this.handleClick}/>
                                 </Calendar>
                             </Col>
                         </Row>
                     </div>
                 ;
                 break;
-
         }
         return react;
     },

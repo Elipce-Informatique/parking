@@ -9,5 +9,4 @@ $(function(){
         <PageProg/>,
         document.getElementById('content_prog')
     );
-
 });
