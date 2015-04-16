@@ -55,8 +55,7 @@ var Collapse = React.createClass({
                     },
                     bodyWidth: {
                         md: 12,
-                        style: {
-                        }
+                        style: {}
                     }
                 };
             }
@@ -153,7 +152,7 @@ var Collapse = React.createClass({
                 var sideClass = {className: "full-height collapse-sidebar collapse-sidebar-" + this.props.align + " pull-" + this.props.align};
             }
 
-            collapseClass += " md-"+this.props.sideWidth;
+            collapseClass += " md-" + this.props.sideWidth;
 
             // CLONAGE DES DEUX ÉLÉMENTS POUR AJOUTER DES PROPS
             var propsSide = {
@@ -165,7 +164,7 @@ var Collapse = React.createClass({
 
             var content = {};
             if (this.props.align == "left") {
-                content = (<Row className={"collapse-row full-height collapse-left "+collapseClass}>
+                content = (<Row className={"collapse-row full-height collapse-left " + collapseClass}>
                     <Col  {...this.state.sideWidth} {...sideClass}>
                         {sideBar}
                     </Col>
@@ -174,7 +173,7 @@ var Collapse = React.createClass({
                     </Col>
                 </Row>);
             } else {
-                content = (<Row className={"collapse-row full-height collapse-right "+collapseClass}>
+                content = (<Row className={"collapse-row full-height collapse-right " + collapseClass}>
                     <Col {...this.state.bodyWidth} className="collapse-body full-height">
                         {this.props.children[0]}
                     </Col>
@@ -291,10 +290,10 @@ var CollapseSidebar = React.createClass({
                 {toggleContent}
             </div>);
         // PRÉPARATION DU CONTENU
-        var content = !this.props.isCollapsed ? <div className="sidebar-content full-height" key='kctd'>{this.props.children}</div> : {};
+        var content = !this.props.isCollapsed ? <div className="sidebar-content full-height">{this.props.children}</div> : {};
 
         return (<div className="full-height">
-            {[toggle, content]}
+            {React.addons.createFragment({toggle:toggle, content:content})}
 
         </div>);
         /*

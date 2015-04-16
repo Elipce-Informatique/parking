@@ -46,13 +46,13 @@ var ZoneReporting = React.createClass({
 
         return (
             <Row className="row_reporting full-height">
-                <Col md={md} className="full-height">
+                <Col md={md} className="full-height" key={1}>
                     <PanelOccupCourante />
                 </Col>
-                <Col md={md} className="full-height">
+                <Col md={md} className="full-height" key={2}>
                     <PanelOccupNiveaux />
                 </Col>
-                <Col md={md} className="full-height">
+                <Col md={md} className="full-height" key={3}>
                     <PanelOccupZones />
                 </Col>
             </Row>
@@ -115,10 +115,10 @@ var PanelOccupCourante = React.createClass({
     render: function () {
         return (
             <Panel header={<strong>Occupation courante</strong>} style={{height: '115px'}}>
-                <StatBarWrapper libelle="Occupation du parking" tooltip="45.5% de places occupées">
+                <StatBarWrapper libelle="Occupation du parking" tooltip="45.5% de places occupées" key={1}>
                     <StackedStatBar data={this.state.dataOccupationPark} max={1500} />
                 </StatBarWrapper>
-                <StatBarWrapper libelle="Occupation du niveau" tooltip="25% de places occupées">
+                <StatBarWrapper libelle="Occupation du niveau" tooltip="25% de places occupées" key={2}>
                     <StackedStatBar data={this.state.dataOccupationNiveau} max={500} />
                 </StatBarWrapper>
             </Panel>);
@@ -195,7 +195,6 @@ var PanelOccupNiveaux = React.createClass({
                 }
             ]
         };
-        ;
     },
 
     componentDidMount: function () {
@@ -212,7 +211,7 @@ var PanelOccupNiveaux = React.createClass({
         var bars = [];
         bars = _.map(this.state.dataOccupation, function (d, i) {
             return (
-                <StatBarWrapper libelle={d.libelle} tooltip={d.taux + "% de places occupées"}>
+                <StatBarWrapper libelle={d.libelle} tooltip={d.taux + "% de places occupées"} key={i}>
                     <StackedStatBar data={d.data} max={d.max} />
                 </StatBarWrapper>
             );
@@ -309,7 +308,7 @@ var PanelOccupZones = React.createClass({
         var bars = [];
         bars = _.map(this.state.dataOccupation, function (d, i) {
             return (
-                <StatBarWrapper libelle={d.libelle} tooltip={d.taux + "% de places occupées"}>
+                <StatBarWrapper libelle={d.libelle} tooltip={d.taux + "% de places occupées"}  key={i}>
                     <StackedStatBar data={d.data} max={d.max} />
                 </StatBarWrapper>
             );
@@ -416,7 +415,7 @@ var StackedStatBar = React.createClass({
                 <ProgressBar {...d}
                     min={this.props.min}
                     max={this.props.max}
-                    key={'test' + i}
+                    key={i}
                 />
             );
         }, this);
@@ -474,10 +473,10 @@ var StatBarWrapper = React.createClass({
 
         return (
             <Row>
-                <Col md={4}>
+                <Col md={4} key={1}>
                     <label className="label-stats">{this.props.libelle}</label>
                 </Col>
-                <Col md={8}>
+                <Col md={8} key={2}>
                     {bars}
                 </Col>
             </Row>

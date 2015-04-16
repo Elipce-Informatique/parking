@@ -80,13 +80,13 @@ var Page = React.createClass({
         var url = BASE_URI + 'public/images/beauvais_p3.svg';
         return (
             <Col md={12} className="full-height flex-wrapper">
-                <Row id="row_reporting" className="flex-header">
+                <Row id="row_reporting" className="flex-header" key={1}>
                     <Col id="zone_reporting" className="full-height" md={12}>
                         <ZoneReporting />
                     </Col>
                 </Row>
 
-                <Row id="page_test" className="flex-body">
+                <Row id="page_test" className="flex-body" key={2}>
                     <Col md={12} id="visualisation_parking" className="full-height" style={{position: 'absolute'}}>
                         <Collapse align="left" sideWidth={2}>
                             <CollapseBody>

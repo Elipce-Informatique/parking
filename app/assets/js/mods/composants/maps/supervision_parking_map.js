@@ -3,6 +3,7 @@ var React = require('react/addons');
 var mapOptions = require('../../helpers/map_options');
 // STORE DE LA CARTE
 // TODO : store de supervision
+var supervisionStore = require('../../stores/supervision_parking_map_store');
 
 // UTILITAIRES
 var ListenerMixin = Reflux.ListenerMixin;
