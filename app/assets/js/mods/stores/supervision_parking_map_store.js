@@ -266,7 +266,10 @@ var store = Reflux.createStore({
                 }
             }, "FF0000", this);
 
-            var marker = mapHelper.createPlaceMarker(coords, nom, angleMarker, extraData);
+            var marker = {};
+            if (p.etat_occupation.is_occupe == "1") {
+                marker = mapHelper.createPlaceMarker(coords, nom, angleMarker, extraData);
+            }
             var polygon = mapHelper.createPlaceParallelogrammeFromGeoJson(p.geojson, extraData, nom, color);
 
             return {

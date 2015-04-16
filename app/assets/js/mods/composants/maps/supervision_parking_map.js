@@ -130,8 +130,11 @@ var parkingMap = React.createClass({
         var liste_data = formes.data;
         _.each(liste_data, function (place) {
             this._inst.placesGroup.addLayer(place.polygon);
-            this._inst.placesMarkersGroup.addLayer(place.marker);
-        }, this)
+
+            if (!_.isEmpty(place.marker)) {
+                this._inst.placesMarkersGroup.addLayer(place.marker);
+            }
+        }, this);
     },
 
     /**
