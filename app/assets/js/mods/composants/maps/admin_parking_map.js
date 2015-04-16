@@ -514,7 +514,7 @@ var parkingMap = React.createClass({
             return (
                 <ModalPlaces
                     onToggle={this.handleToggle}
-                    numPlace={this._inst.lastNum}
+                    numPlace={this._inst.lastNum+1}
                 />
             );
         }

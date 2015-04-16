@@ -25,25 +25,25 @@ var ModalPlaces = React.createClass({
 
     propTypes: {
         onToggle: React.PropTypes.func.isRequired,
-        nbPlaces: React.PropTypes.number,
-        espacePoteaux: React.PropTypes.number,
-        taillePoteau: React.PropTypes.number,
+        nbPlaces: React.PropTypes.string,
+        espacePoteaux: React.PropTypes.string,
+        taillePoteau: React.PropTypes.string,
         prefix: React.PropTypes.string,
-        numPlace: React.PropTypes.number,
-        suffixe: React.PropTypes.number,
-        increment: React.PropTypes.number
+        numPlace: React.PropTypes.string,
+        suffixe: React.PropTypes.string,
+        increment: React.PropTypes.string
     },
 
     getDefaultProps: function () {
         return {
             module_url: 'configuration_parking',
-            nbPlaces: 12,
-            espacePoteaux: 3,
-            taillePoteau: 15,
+            nbPlaces: '',
+            espacePoteaux: '3',
+            taillePoteau: '15',
             prefix: 'P',
-            numPlace: 0,
+            numPlace: '0',
             suffixe: '',
-            increment: 1
+            increment: '1'
         };
     },
 
@@ -81,10 +81,10 @@ var ModalPlaces = React.createClass({
                                 min: '0',
                                 name: "nb_place",
                                 value: this.props.nbPlaces,
-                                required: false,
+                                required: true,
                                 groupClassName: 'row',
-                                wrapperClassName: 'col-md-3',
-                                labelClassName: 'col-md-6 text-right'
+                                wrapperClassName: 'col-md-4',
+                                labelClassName: 'col-md-5 text-right'
                             }}
                             editable={true}
                             evts={{}} />
@@ -97,10 +97,10 @@ var ModalPlaces = React.createClass({
                                 min: '0',
                                 name: "nb_poteaux",
                                 value: this.props.espacePoteaux,
-                                required: false,
+                                required: true,
                                 groupClassName: 'row',
-                                wrapperClassName: 'col-md-3',
-                                labelClassName: 'col-md-6 text-right'
+                                wrapperClassName: 'col-md-4',
+                                labelClassName: 'col-md-5 text-right'
                             }}
                             editable={true}
                             evts={{}} />
@@ -113,10 +113,10 @@ var ModalPlaces = React.createClass({
                                 min: '0',
                                 name: "taille_poteaux",
                                 value: this.props.taillePoteau,
-                                required: false,
+                                required: true,
                                 groupClassName: 'row',
-                                wrapperClassName: 'col-md-3',
-                                labelClassName: 'col-md-6 text-right'
+                                wrapperClassName: 'col-md-4',
+                                labelClassName: 'col-md-5 text-right'
                             }}
                             editable={true}
                             evts={{}} />
@@ -124,7 +124,7 @@ var ModalPlaces = React.createClass({
                     {/***********************************************************************/}
                         <Row>
                     {/* PRÉFIXE */}
-                            <Col md={4}>
+                            <Col md={3}>
                                 <InputTextEditable
                                     attributes={
                                     {
@@ -141,7 +141,7 @@ var ModalPlaces = React.createClass({
                             </Col>
 
                     {/* NUMERO DE DEPART */}
-                            <Col md={4}>
+                            <Col md={6}>
                                 <InputNumberEditable
                                     attributes={
                                     {
@@ -149,7 +149,7 @@ var ModalPlaces = React.createClass({
                                         min: '0',
                                         name: "num_initial",
                                         value: this.props.numPlace,
-                                        required: false,
+                                        required: true,
                                         groupClassName: 'row',
                                         wrapperClassName: 'col-md-9',
                                         labelClassName: 'col-md-3 text-right'
@@ -159,7 +159,7 @@ var ModalPlaces = React.createClass({
                             </Col>
 
                     {/* SUFFIXE */}
-                            <Col md={4}>
+                            <Col md={3}>
                                 <InputTextEditable
                                     attributes={
                                     {
@@ -186,7 +186,7 @@ var ModalPlaces = React.createClass({
                                         min: '1',
                                         name: "increment",
                                         value: this.props.increment,
-                                        required: false,
+                                        required: true,
                                         groupClassName: 'row',
                                         wrapperClassName: 'col-md-9',
                                         labelClassName: 'col-md-3 text-right'
