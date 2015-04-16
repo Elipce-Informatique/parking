@@ -54,7 +54,7 @@ class TypesPlacesController extends \BaseController
      */
     public function showAll()
     {
-        return TypePlace::with('etats_occupations.etat_place')->get();
+        return TypePlace::with('etats_occupations')->get();
     }
 
 

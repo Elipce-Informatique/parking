@@ -62,7 +62,17 @@ class Place extends \Eloquent
      */
     public function type_place()
     {
-        return $this->belongsTo('Type_place');
+        return $this->belongsTo('TypePlace');
+    }
+
+    /**
+     * L'état d'occupation de la place :
+     * Inverse de la relation de l'état d'occupation
+     * @return mixed
+     */
+    public function etat_occupation()
+    {
+        return $this->belongsTo('EtatsDoccupation');
     }
 
     /**

@@ -186,7 +186,7 @@ function getLastPointOfParallelogramme(latlngs) {
  * @param incr : incrément du numéro de places
  * @param suffix string : suffixe du nom de la place
  */
-function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, espacePoteaux, largeurPoteaux, prefix, num, suffix, incr, alleeDefaultId, typePlaceDefaultId, color) {
+function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, espacePoteaux, largeurPoteaux, prefix, num, suffix, incr, alleeDefaultId, typePlaceDefaultId, color, etat_occupation) {
 
     console.group('==> createPlacesFromParallelogramme : Parallélogramme %o', parallelogramme);
 
@@ -393,6 +393,7 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
             num: numPlace,
             allee_id: alleeDefaultId,
             type_place_id: typePlaceDefaultId,
+            etat_occupation_id: etat_occupation.id,
             angle: angleMarker,
             lat: coords.lat,
             lng: coords.lng

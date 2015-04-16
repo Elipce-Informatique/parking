@@ -31,7 +31,8 @@ var store = Reflux.createStore({
         defaults: { // Objets par défauts pour la création des places
             type_place: {},
             zone: {},
-            allee: {}
+            allee: {},
+            etat_occupation: {}
         },
         parkingInfos: {
             id: 0,
@@ -280,7 +281,8 @@ var store = Reflux.createStore({
                 incr,
                 this._inst.defaults.allee.id,
                 this._inst.defaults.type_place.id,
-                this._inst.defaults.type_place.couleur
+                this._inst.defaults.type_place.couleur,
+                this._inst.defaults.etat_occupation
             );
 
             // CRÉATION DU TABLEAU DE DONNÉES À ENREGISTRER
@@ -465,10 +467,17 @@ var store = Reflux.createStore({
                     // Recherche du type par défaut
                     var defaultType = _.filter(data, function (d) {
                         if (d.defaut == "1") {
+                            this._inst.defaults.etat_occupation = _.reduce(d.etats_occupations, function (sum, e) {
+                                if (e.is_occupe == '0') {
+                                    return e;
+                                } else {
+                                    return sum;
+                                }
+                            });
                             return true;
                         }
                         return false;
-                    });
+                    }, this);
                     if (_.size(defaultType)) {
                         this._inst.defaults.type_place = defaultType[0];
                     }
