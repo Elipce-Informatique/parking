@@ -516,6 +516,7 @@ var store = Reflux.createStore({
             var polygon = mapHelper.createPlaceParallelogrammeFromGeoJson(p.geojson, extraData, nom, color);
 
             return {
+                data: p,
                 polygon: polygon,
                 marker: marker
             };

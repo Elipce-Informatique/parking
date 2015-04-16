@@ -44,6 +44,7 @@ var parkingMap = React.createClass({
     _inst: {
         map: {},                              // Instance de la carte leaflet
         currentMode: mapOptions.dessin.place, // Mode de dessin actuel
+        lastNum: 0,
         placesGroup: {},                      // Layer group contenant toutes les places
         alleesGroup: {},                      // Layer group contenant toutes les allées
         zonesGroup: {},                       // Layer group contenant toutes les zones
@@ -376,6 +377,7 @@ var parkingMap = React.createClass({
         console.log('ACTION ADD FORMES, voilà les formes : %o', formes);
         var liste_data = formes.data;
         _.each(liste_data, function (place) {
+            this._inst.lastNum = Math.max(this._inst.lastNum, place.data.num);
             this._inst.placesGroup.addLayer(place.polygon);
             this._inst.placesMarkersGroup.addLayer(place.marker);
         }, this);
@@ -512,6 +514,7 @@ var parkingMap = React.createClass({
             return (
                 <ModalPlaces
                     onToggle={this.handleToggle}
+                    numPlace={this._inst.lastNum}
                 />
             );
         }
