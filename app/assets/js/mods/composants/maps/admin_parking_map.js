@@ -378,7 +378,11 @@ var parkingMap = React.createClass({
         _.each(liste_data, function (place) {
             this._inst.placesGroup.addLayer(place.polygon);
             this._inst.placesMarkersGroup.addLayer(place.marker);
-        }, this)
+        }, this);
+
+        this.setState({
+            isModalOpen: false
+        });
     },
 
     /**
@@ -433,7 +437,7 @@ var parkingMap = React.createClass({
             modalType: mapOptions.modal_type.place_multiple,
             isModalOpen: true,
             parallelogramme_places: data
-        })
+        });
     },
 
     /*******************************************************************/
