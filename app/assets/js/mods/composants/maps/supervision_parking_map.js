@@ -58,8 +58,7 @@ var parkingMap = React.createClass({
     componentDidMount: function () {
         this.initMap();
 
-        // Todo: raccorder le store supervision au conposant
-        //this.listenTo(mapStore, this.onStoreTrigger);
+        this.listenTo(supervisionStore, this.onStoreTrigger);
     },
 
     /**
