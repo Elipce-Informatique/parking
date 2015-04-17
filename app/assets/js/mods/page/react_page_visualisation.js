@@ -1,5 +1,6 @@
 /********************************************/
 var React = require('react');
+var TreeView = require('react-bootstrap-treeview/dist/js/react-bootstrap-treeview');
 
 // COMPOSANTS NÉCESSAIRES:
 var Collapse = require('../composants/react_collapse').Collapse;
@@ -77,6 +78,42 @@ var Page = React.createClass({
      * @private
      */
     modeCarte: function () {
+        var data = [
+            {
+                text: 'Beauvais',
+                id: '1',
+                nodes: [
+                    {
+                        text: 'Niveau 1',
+                        id: '11'
+                    },
+                    {
+                        text: 'Niveau 2',
+                        id: '12'
+
+                    },
+                    {
+                        text: 'Niveau 3',
+                        id: '12'
+                    }
+                ]
+            },
+            {
+                text: 'Las Vegas',
+                id: '2',
+                nodes: [
+                    {
+                        text: 'Sous sol 1',
+                        id: '11'
+                    },
+                    {
+                        text: 'Sous sol 2',
+                        id: '12'
+
+                    }
+                ]
+            }
+        ];
         var url = BASE_URI + 'public/images/beauvais_p3.svg';
         return (
             <Col md={12} className="full-height flex-wrapper">
@@ -92,19 +129,27 @@ var Page = React.createClass({
                             <CollapseBody>
                                 <Collapse align="right" sideWidth={3}>
                                     <CollapseBody>
-
                                         <ParkingMap parkingId={1} niveauId={1} imgUrl={url} divId="div_carte"/>
-
                                     </CollapseBody>
                                     <CollapseSidebar title="Temps Réel">
-
-                                        <ZoneTempsReel vertical={true} />
-
+                                        <ZoneTempsReel levels={3} vertical={true} />
                                     </CollapseSidebar>
                                 </Collapse>
                             </CollapseBody>
                             <CollapseSidebar title="Sélection">
-                                sélection parking
+
+
+                                <TreeView
+                                    data={data}
+                                    levels={0}
+                                    color="#555555"
+                                    selectedBackColor='#999999'
+                                    onLineClicked={function () {
+                                        console.log('click');
+                                    }}
+                                    treeNodeAttributes={{'data-id': 'id'}}/>
+
+
                             </CollapseSidebar>
                         </Collapse>
                     </Col>
