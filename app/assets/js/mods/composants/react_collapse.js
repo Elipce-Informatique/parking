@@ -43,6 +43,7 @@ var Collapse = React.createClass({
             // Alignement GAUCHE
             if (this.props.align == "left") {
                 state = {
+                    isInitial: initial,
                     isCollapsed: true,
                     sideWidth: {
                         md: 0,
@@ -62,6 +63,7 @@ var Collapse = React.createClass({
             // Alignement DROITE
             else {
                 state = {
+                    isInitial: initial,
                     isCollapsed: true,
                     sideWidth: {
                         md: 0,
@@ -101,6 +103,7 @@ var Collapse = React.createClass({
                     bodyWidth = {md: 12};
                 }
                 state = {
+                    isInitial: initial,
                     isCollapsed: false,
                     sideWidth: sideWidth,
                     bodyWidth: bodyWidth
@@ -125,6 +128,7 @@ var Collapse = React.createClass({
                 }
 
                 state = {
+                    isInitial: initial,
                     isCollapsed: false,
                     sideWidth: sideWidth,
                     bodyWidth: bodyWidth
@@ -144,11 +148,12 @@ var Collapse = React.createClass({
         if (React.Children.count(this.props.children) == 2) {
 
             // PRÉPARATION DES ATTRIBUTS ----------------------
+            var animateClass = this.state.isInitial ? '' : 'animate';
             if (this.state.isCollapsed == true) {
-                var collapseClass = "collapse-collapsed";
+                var collapseClass = animateClass + " collapse-collapsed";
                 var sideClass = {className: "full-height collapse-sidebar collapse-sidebar-" + this.props.align + " pull-" + this.props.align};
             } else {
-                var collapseClass = "collapse-expanded";
+                var collapseClass = animateClass + " collapse-expanded";
                 var sideClass = {className: "full-height collapse-sidebar collapse-sidebar-" + this.props.align + " pull-" + this.props.align};
             }
 
@@ -293,7 +298,7 @@ var CollapseSidebar = React.createClass({
         var content = !this.props.isCollapsed ? <div className="sidebar-content full-height">{this.props.children}</div> : {};
 
         return (<div className="full-height">
-            {React.addons.createFragment({toggle:toggle, content:content})}
+            {React.addons.createFragment({toggle: toggle, content: content})}
 
         </div>);
         /*
