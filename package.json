@@ -39,7 +39,7 @@
     "q": "^1.1.1",
     "react": "^0.13.0",
     "react-bootstrap": "^0.20.2",
-    "react-calendar": "file:..\\..\\..\\..\\..\\Users\\ADMINI~1\\AppData\\Local\\Temp\\npm-9416-071c6c37\\git-cache-c96e6a1ce83d\\29382f05113ccbec41e172c1e1a3f9934c3f53e9",
+    "react-calendar": "git://github.com/Elipce-Informatique/react-bootstrap-treeview.git",
     "react-select": "^0.4.0",
     "reflux": "^0.2.0",
     "robust-point-in-polygon": "^1.0.0",
