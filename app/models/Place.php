@@ -84,4 +84,13 @@ class Place extends \Eloquent
     {
         return $this->belongsTo('Capteur');
     }
+
+    /**
+     * Le journal equipement de la place
+     * @return mixed
+     */
+    public function journal_equipement()
+    {
+        return $this->hasMany('JournalEquipementParking');
+    }
 }

@@ -30,6 +30,15 @@ class EtatsDoccupation extends Eloquent
         return $this->belongsTo('EtatPlace');
     }
 
+    /**
+     * Le journal equipement de l'état d'occupation
+     * @return mixed
+     */
+    public function journal_equipement()
+    {
+        return $this->hasMany('JournalEquipementParking');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | TODO : CODE CI DESSOUS A REVOIR ENTIEREMENT QUAND ON AURA LE TEMPS !!

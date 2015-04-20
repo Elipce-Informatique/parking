@@ -17,4 +17,14 @@ class Parking extends \Eloquent
     {
         return $this->hasMany('Niveau');
     }
+
+
+    /**
+     * Le journal equipement du parking
+     * @return mixed
+     */
+    public function journal_equipement()
+    {
+        return $this->hasMany('JournalEquipementParking');
+    }
 }
