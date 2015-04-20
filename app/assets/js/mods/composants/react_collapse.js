@@ -148,6 +148,7 @@ var Collapse = React.createClass({
         if (React.Children.count(this.props.children) == 2) {
 
             // PRÉPARATION DES ATTRIBUTS ----------------------
+            console.log('Initial ? %o', this.state.isInitial);
             var animateClass = this.state.isInitial ? '' : 'animate';
             if (this.state.isCollapsed == true) {
                 var collapseClass = animateClass + " collapse-collapsed";
