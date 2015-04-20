@@ -96,6 +96,7 @@ var parkingMap = React.createClass({
      * carrées allant de 0 à 100 en lon et en lat
      */
     initMap: function () {
+        // TODO : changer le système de coordonnées pour centrer en 0,0 et avoir des extrémités en -180-180 et 180 180
         var origine = [0, 0];
         var haut_droit = [100, 100];
 
@@ -514,7 +515,7 @@ var parkingMap = React.createClass({
             return (
                 <ModalPlaces
                     onToggle={this.handleToggle}
-                    numPlace={this._inst.lastNum+1}
+                    numPlace={this._inst.lastNum + 1}
                 />
             );
         }
