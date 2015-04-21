@@ -13,9 +13,6 @@ var ZoneReporting = require('../composants/react_supervision_reporting');
 var Col = ReactB.Col;
 var Row = ReactB.Row;
 
-var supervision_helper = require('../helpers/supervision_helper');
-supervision_helper.refreshPlaces.init();
-
 /* Gestion de la modification et des droits */
 var AuthentMixins = require('../mixins/component_access');
 /* Pour le listenTo           */

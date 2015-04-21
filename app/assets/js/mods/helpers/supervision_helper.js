@@ -4,13 +4,12 @@
 
 module.exports.refreshPlaces = {
     _timer: false,
-    _parkingId: 0,
+    _niveauId: 0,
     _journalId: 0,
-    init: function (parkingId, journalId) {
-        console.log('Timer : %o', this._timer);
+    init: function (nievauId, journalId) {
         if (!this._timer) {
-            this._timer = setInterval(this._handleAjax, 5000);
-            this._parkingId = parkingId;
+            this._timer = setInterval(this._handleAjax.bind(this), 5000);
+            this._niveauId = nievauId;
             this._journalId = journalId;
         }
     },
@@ -22,7 +21,7 @@ module.exports.refreshPlaces = {
     _handleAjax: function () {
         $.ajax({
             type: 'GET',
-            url: BASE_URI + 'parking/journal_place/' + this._parkingId + '/' + this._journalId
+            url: BASE_URI + 'parking/journal_place/' + this._niveauId + '/' + this._journalId
         })
             .done(function (data) {
                 console.log('Retour rafraichissement : %o', data);
