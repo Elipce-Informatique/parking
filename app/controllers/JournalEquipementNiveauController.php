@@ -17,34 +17,42 @@ class JournalEquipementNiveauController extends \BaseController
     /**
      * Display the specified resource.
      *
-     * @param  int $parkingId
+     * @param  int $niveauId
      * @return Response
      */
-    public function show($parkingId)
+    public function show($niveauId)
     {
-        return JournalEquipementNiveau::getJournalParking($parkingId);
+        return JournalEquipementNiveau::getJournalNiveau($niveauId);
     }
 
     /**
-     * @param $parkingId : Id du parking
+     * @param $niveauId : Id du niveau
      * @param $journalId : Id journal depuis lequel se baser
      * @return Response
      */
-    public function showFromVersion($parkingId, $journalId)
+    public function showFromVersion($niveauId, $journalId)
     {
-        return JournalEquipementNiveau::getJournalParkingFromVersion($parkingId, $journalId);
+        return JournalEquipementNiveau::getJournalNiveauFromVersion($niveauId, $journalId);
     }
 
     /**
-     * @param $parkingId : Id du parking
+     * @param $niveauId : Id du niveau
      * @param $journalId : Id journal depuis lequel se baser
      * @return Response
      */
-    public function showPlacesFromVersion($parkingId, $journalId)
+    public function showPlacesFromVersion($niveauId, $journalId)
     {
-        return JournalEquipementNiveau::getJournalPlacesFromVersion($parkingId, $journalId);
+        return JournalEquipementNiveau::getJournalPlacesFromVersion($niveauId, $journalId);
     }
 
+    /**
+     * @param $niveauId
+     * @return mixed
+     */
+    public function last($niveauId)
+    {
+        return JournalEquipementNiveau::whereNiveauId($niveauId)->get()->max('id');
+    }
 
 
 }

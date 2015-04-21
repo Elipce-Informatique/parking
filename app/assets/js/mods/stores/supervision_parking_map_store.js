@@ -46,7 +46,8 @@ var store = Reflux.createStore({
             description: '',
             plan: '',
             parking_id: 0,
-            etat_general_id: 0
+            etat_general_id: 0,
+            last_journal: 0
         },
         types_places: [],
         places: [],
@@ -90,7 +91,10 @@ var store = Reflux.createStore({
         // Récupération en BDD des données de types de places
         var p3 = this.recupInfosTypesPlaces();
 
+
         $.when(p1, p2, p3).done(function () {
+            // infos journal
+            this.recupInfosJournal(map, calibre, parkingInfos);
             // Affichage des places du niveau
             this.affichagePlacesInitial();
         }.bind(this));
@@ -133,8 +137,6 @@ var store = Reflux.createStore({
                 this._inst.parkingInfos.libelle = data.libelle;
                 this._inst.parkingInfos.description = data.description;
                 this._inst.parkingInfos.init = data.init;
-                // TODO : initialiser avec les id parking et id journal
-                // TODO supervision_helper.refreshPlaces.init();
             },
             error: function (xhr, status, err) {
                 console.error(status, err);
@@ -198,6 +200,23 @@ var store = Reflux.createStore({
                 this._inst.zones = zones;
                 this._inst.afficheurs = [];
                 // ---------------------------------------------------------------------
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err);
+            }
+        });
+    },
+
+    recupInfosJournal: function (map, calibre, parkingInfos) {
+        return $.ajax({
+            method: 'GET',
+            url: BASE_URI + 'parking/journal_equipement/last/' + parkingInfos.niveauId,
+            dataType: 'json',
+            context: this,
+            success: function (data) {
+                console.log('nombre de places : %o', data);
+                this._inst.niveauInfos.last_journal = data;
+                supervision_helper.refreshPlaces.init(this._inst.niveauInfos.id, this._inst.niveauInfos.last_journal);
             },
             error: function (xhr, status, err) {
                 console.error(status, err);

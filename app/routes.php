@@ -163,15 +163,16 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
 
     // Journaux
     Route::get('journal_equipement', 'JournalEquipementNiveauController@index');
-    Route::get('journal_equipement/{parkingId}', 'JournalEquipementNiveauController@show');
-    Route::get('journal_equipement/{parkingId}/{journalId}', 'JournalEquipementNiveauController@showFromVersion');
-    Route::get('journal_place/{parkingId}/{journalId}', 'JournalEquipementNiveauController@showPlacesFromVersion');
+    Route::get('journal_equipement/last/{niveauId}', 'JournalEquipementNiveauController@last');
+    Route::get('journal_equipement/{niveauId}', 'JournalEquipementNiveauController@show');
+    Route::get('journal_equipement/{niveauId}/{journalId}', 'JournalEquipementNiveauController@showFromVersion');
+    Route::get('journal_place/{niveauId}/{journalId}', 'JournalEquipementNiveauController@showPlacesFromVersion');
 
     Route::resource('simulator', 'SimulatorController');
 });
 
 Route::group(['before' => 'auth|auth.canaccess|auth.parking'], function () {
-    Route::resource('parking', 'ParkingsController'); // url ressource /parking
+    Route::resource('parking', 'ParkingsController');
 });
 
 /*
