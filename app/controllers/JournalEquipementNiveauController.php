@@ -1,6 +1,6 @@
 <?php
 
-class JournalEquipementParkingController extends \BaseController
+class JournalEquipementNiveauController extends \BaseController
 {
 
     /**
@@ -10,7 +10,7 @@ class JournalEquipementParkingController extends \BaseController
      */
     public function index()
     {
-        return JournalEquipementParking::get();
+        return JournalEquipementNiveau::get();
     }
 
 
@@ -22,7 +22,7 @@ class JournalEquipementParkingController extends \BaseController
      */
     public function show($parkingId)
     {
-        return JournalEquipementParking::getJournalParking($parkingId);
+        return JournalEquipementNiveau::getJournalParking($parkingId);
     }
 
     /**
@@ -32,7 +32,7 @@ class JournalEquipementParkingController extends \BaseController
      */
     public function showFromVersion($parkingId, $journalId)
     {
-        return JournalEquipementParking::getJournalParkingFromVersion($parkingId, $journalId);
+        return JournalEquipementNiveau::getJournalParkingFromVersion($parkingId, $journalId);
     }
 
     /**
@@ -42,7 +42,7 @@ class JournalEquipementParkingController extends \BaseController
      */
     public function showPlacesFromVersion($parkingId, $journalId)
     {
-        return JournalEquipementParking::getJournalPlacesFromVersion($parkingId, $journalId);
+        return JournalEquipementNiveau::getJournalPlacesFromVersion($parkingId, $journalId);
     }
 
 

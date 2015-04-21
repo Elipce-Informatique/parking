@@ -162,10 +162,10 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::resource('type_place', 'TypesPlacesController');
 
     // Journaux
-    Route::get('journal_equipement', 'JournalEquipementParkingController@index');
-    Route::get('journal_equipement/{parkingId}', 'JournalEquipementParkingController@show');
-    Route::get('journal_equipement/{parkingId}/{journalId}', 'JournalEquipementParkingController@showFromVersion');
-    Route::get('journal_place/{parkingId}/{journalId}', 'JournalEquipementParkingController@showPlacesFromVersion');
+    Route::get('journal_equipement', 'JournalEquipementNiveauController@index');
+    Route::get('journal_equipement/{parkingId}', 'JournalEquipementNiveauController@show');
+    Route::get('journal_equipement/{parkingId}/{journalId}', 'JournalEquipementNiveauController@showFromVersion');
+    Route::get('journal_place/{parkingId}/{journalId}', 'JournalEquipementNiveauController@showPlacesFromVersion');
 });
 
 Route::group(['before' => 'auth|auth.canaccess|auth.parking'], function () {

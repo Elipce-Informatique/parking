@@ -1,9 +1,9 @@
 <?php
 
-class JournalEquipementParking extends \Eloquent
+class JournalEquipementNiveau extends \Eloquent
 {
     protected $fillable = [];
-    protected $table = "journal_equipement_parking";
+    protected $table = "journal_equipement_niveau";
     public $timestamps = true;
 
 
@@ -12,12 +12,12 @@ class JournalEquipementParking extends \Eloquent
      *****************************************************************************/
 
     /**
-     * Le parking de cette entrée de journal
+     * Le niveau de cette entrée de journal
      * @return mixed
      */
-    public function parking()
+    public function niveau()
     {
-        return $this->belongsTo('Parking');
+        return $this->belongsTo('Niveau');
     }
 
     /**
@@ -52,47 +52,47 @@ class JournalEquipementParking extends \Eloquent
      *****************************************************************************/
 
     /**
-     * Retourne l'historique du parking passé en params
-     * @param $parkingId
+     * Retourne l'historique du niveau passé en params
+     * @param $niveauId
      * @returns données
      */
-    public static function getJournalParking($parkingId)
+    public static function getJournalNiveau($niveauId)
     {
-        return JournalEquipementParking::where('parking_id', '=', $parkingId)->get();
+        return JournalEquipementNiveau::where('niveau_id', '=', $niveauId)->get();
     }
 
     /**
      *
-     * @param $parkingId
+     * @param $niveauId
      * @param $journalId
      * @return données
      */
-    public static function getJournalParkingFromVersion($parkingId, $journalId)
+    public static function getJournalNiveauFromVersion($niveauId, $journalId)
     {
-        return JournalEquipementParking::whereParkingId($parkingId)->where('id', '>', $journalId)->get();
+        return JournalEquipementNiveau::whereNiveauId($niveauId)->where('id', '>', $journalId)->get();
     }
 
     /**
      *
-     * @param $parkingId
+     * @param $niveauId
      * @param $journalId
      * @return données
      */
-    public static function getJournalPlacesFromVersion($parkingId, $journalId)
+    public static function getJournalPlacesFromVersion($niveauId, $journalId)
     {
-        $placeIds = JournalEquipementParking::whereParkingId($parkingId)->where('id', '>', $journalId)->groupBy('place_id')->lists('place_id');
+        $placeIds = JournalEquipementNiveau::whereNiveauId($niveauId)->where('id', '>', $journalId)->groupBy('place_id')->lists('place_id');
         return Place::whereIn('id', $placeIds)->with('etat_occupation')->get();
     }
 
     /**
      *
-     * @param $parkingId
+     * @param $niveauId
      * @param $journalId
      * @return données
      */
-    public static function getJournalAfficheurFromVersion($parkingId, $journalId)
+    public static function getJournalAfficheurFromVersion($niveauId, $journalId)
     {
-        $afficheurId = JournalEquipementParking::whereParkingId($parkingId)->where('id', '>', $journalId)->groupBy('afficheur_id')->lists('afficheur_id');
+        $afficheurId = JournalEquipementNiveau::whereNiveauId($niveauId)->where('id', '>', $journalId)->groupBy('afficheur_id')->lists('afficheur_id');
         return Afficheur::whereIn('id', $afficheurId)->get();
     }
 

@@ -37,4 +37,13 @@ class Niveau extends \Eloquent
     {
         return $this->belongsTo('Parking');
     }
+
+    /**
+     * Le journal equipement du parking
+     * @return mixed
+     */
+    public function journal_equipement()
+    {
+        return $this->hasMany('JournalEquipementNiveau');
+    }
 }
