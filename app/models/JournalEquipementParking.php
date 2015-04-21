@@ -46,4 +46,55 @@ class JournalEquipementParking extends \Eloquent
     {
         return $this->belongsTo('EtatsDoccupation');
     }
+
+    /*****************************************************************************
+     * REQUETES SELECTION ********************************************************
+     *****************************************************************************/
+
+    /**
+     * Retourne l'historique du parking passé en params
+     * @param $parkingId
+     * @returns données
+     */
+    public static function getJournalParking($parkingId)
+    {
+        return JournalEquipementParking::where('parking_id', '=', $parkingId)->get();
+    }
+
+    /**
+     *
+     * @param $parkingId
+     * @param $journalId
+     * @return données
+     */
+    public static function getJournalParkingFromVersion($parkingId, $journalId)
+    {
+        return JournalEquipementParking::whereParkingId($parkingId)->where('id', '>', $journalId)->get();
+    }
+
+    /**
+     *
+     * @param $parkingId
+     * @param $journalId
+     * @return données
+     */
+    public static function getJournalPlacesFromVersion($parkingId, $journalId)
+    {
+        $placeIds = JournalEquipementParking::whereParkingId($parkingId)->where('id', '>', $journalId)->groupBy('place_id')->lists('place_id');
+        return Place::whereIn('id', $placeIds)->with('etat_occupation')->get();
+    }
+
+    /**
+     *
+     * @param $parkingId
+     * @param $journalId
+     * @return données
+     */
+    public static function getJournalAfficheurFromVersion($parkingId, $journalId)
+    {
+        $afficheurId = JournalEquipementParking::whereParkingId($parkingId)->where('id', '>', $journalId)->groupBy('afficheur_id')->lists('afficheur_id');
+        return Afficheur::whereIn('id', $afficheurId)->get();
+    }
+
+
 }

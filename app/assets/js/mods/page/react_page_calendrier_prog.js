@@ -1,7 +1,7 @@
 // Composants REACT
 var React = require('react');
-var {Calendar, Month, Week, Day} = require('../composants/calendar/react-calendar');
-//var {Calendar, Month, Week, Day} = require('react-calendar/react-calendar');
+var {Calendar, Month, Week, Day} = require('react-calendar/react-calendar');
+
 
 var BandeauListe = require('../composants/bandeau/react_bandeau_liste');
 var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');

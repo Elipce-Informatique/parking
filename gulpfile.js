@@ -24,6 +24,7 @@ var Q = require('Q');
 var del = require('del');
 var bootlint  = require('gulp-bootlint');
 var es6ify = require('es6ify');
+var reactify = require('reactify');
 
 // UTIL REQUIRELMENTS
 var bundleLogger = require('./gulp_utils/bundleLogger');
@@ -198,10 +199,9 @@ gulp.task('browserify',  function (callback) {
             // Add file extentions to make optional in your requires
             extensions: config.extensions,
             // Enable source maps!
-            debug: config.debug,
-            transform: 'reactify'
+            debug: config.debug
         });
-        bundler.transform(es6ify.configure(/.js/));
+        bundler.transform({ global: true,"es6": true }, reactify);
 
         var bundle = function () {
             // Log when bundling starts

@@ -138,7 +138,6 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
      * Test
      */
     Route::resource('test', 'TestController');
-
 });
 
 /*
@@ -158,13 +157,21 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::resource('place', 'PlacesController');
     Route::resource('capteur', 'CapteursController');
 
+    // Type place
     Route::get('type_place/all', 'TypesPlacesController@showAll');
     Route::resource('type_place', 'TypesPlacesController');
+
+    // Journaux
+    Route::get('journal_equipement', 'JournalEquipementParkingController@index');
+    Route::get('journal_equipement/{parkingId}', 'JournalEquipementParkingController@show');
+    Route::get('journal_equipement/{parkingId}/{journalId}', 'JournalEquipementParkingController@showFromVersion');
+    Route::get('journal_place/{parkingId}/{journalId}', 'JournalEquipementParkingController@showPlacesFromVersion');
     /* **************************************************************************
      * Simulator
      */
     Route::resource('simulator', 'SimulatorController');
 });
+
 Route::group(['before' => 'auth|auth.canaccess|auth.parking'], function () {
     Route::resource('parking', 'ParkingsController'); // url ressource /parking
 });
