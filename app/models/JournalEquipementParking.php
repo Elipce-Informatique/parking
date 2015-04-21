@@ -3,7 +3,7 @@
 class JournalEquipementParking extends \Eloquent
 {
     protected $fillable = [];
-    protected $talbe = "journal_equipement_parking";
+    protected $table = "journal_equipement_parking";
     public $timestamps = true;
 
 

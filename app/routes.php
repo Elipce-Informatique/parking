@@ -138,6 +138,7 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
      * Test
      */
     Route::resource('test', 'TestController');
+
 });
 
 /*
@@ -159,6 +160,10 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
 
     Route::get('type_place/all', 'TypesPlacesController@showAll');
     Route::resource('type_place', 'TypesPlacesController');
+    /* **************************************************************************
+     * Simulator
+     */
+    Route::resource('simulator', 'SimulatorController');
 });
 Route::group(['before' => 'auth|auth.canaccess|auth.parking'], function () {
     Route::resource('parking', 'ParkingsController'); // url ressource /parking

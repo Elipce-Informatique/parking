@@ -1,11 +1,10 @@
 <?php
 
-class NiveauxController extends \BaseController
+class SimulatorController extends \BaseController
 {
 
     /**
      * Display a listing of the resource.
-     * GET /niveaux
      *
      * @return Response
      */
@@ -14,9 +13,9 @@ class NiveauxController extends \BaseController
         //
     }
 
+
     /**
      * Show the form for creating a new resource.
-     * GET /niveaux/create
      *
      * @return Response
      */
@@ -25,9 +24,9 @@ class NiveauxController extends \BaseController
         //
     }
 
+
     /**
      * Store a newly created resource in storage.
-     * POST /niveaux
      *
      * @return Response
      */
@@ -36,52 +35,58 @@ class NiveauxController extends \BaseController
         //
     }
 
+
     /**
-     * Display the specified resource.
-     * GET /niveaux/{id}
+     * SLibére ou occupe des places de parking
      *
-     * @param  int $id
+     * @param  int $id : ID parking
      * @return Response
      */
     public function show($id)
     {
-        return Place::with('zones.allees.places.etat_occupation')->find($id);
-    }
+        return Place::whereHas('journal_equipement', function ($q) use ($id) {
+            $q->where('parking_id', '=', $id);
+        })->get();
+}
+
 
     /**
      * Show the form for editing the specified resource.
-     * GET /niveaux/{id}/edit
      *
      * @param  int $id
      * @return Response
      */
-    public function edit($id)
+    public
+    function edit($id)
     {
         //
     }
+
 
     /**
      * Update the specified resource in storage.
-     * PUT /niveaux/{id}
      *
      * @param  int $id
      * @return Response
      */
-    public function update($id)
+    public
+    function update($id)
     {
         //
     }
 
+
     /**
      * Remove the specified resource from storage.
-     * DELETE /niveaux/{id}
      *
      * @param  int $id
      * @return Response
      */
-    public function destroy($id)
+    public
+    function destroy($id)
     {
         //
     }
+
 
 }
