@@ -45,7 +45,7 @@ class NiveauxController extends \BaseController
      */
     public function show($id)
     {
-        return Place::with('zones.allees.places.etat_occupation')->find($id);
+        return Niveau::with('zones.allees.places.etat_occupation')->find($id);
     }
 
     /**
