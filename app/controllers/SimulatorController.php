@@ -44,10 +44,11 @@ class SimulatorController extends \BaseController
      */
     public function show($id)
     {
-        return Place::whereHas('journal_equipement', function ($q) use ($id) {
-            $q->where('parking_id', '=', $id);
-        })->get();
-}
+        //
+       $places = Parking::getPlaces($id);
+
+        return $places;
+    }
 
 
     /**
@@ -56,8 +57,7 @@ class SimulatorController extends \BaseController
      * @param  int $id
      * @return Response
      */
-    public
-    function edit($id)
+    public function edit($id)
     {
         //
     }
