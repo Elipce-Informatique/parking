@@ -13,6 +13,7 @@ var autoprefixer = require('gulp-autoprefixer');
 var notify = require('gulp-notify');
 var stylus = require('gulp-stylus');
 var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
 var browserify = require('browserify');
 var transform = require('vinyl-transform');
 var watchify = require('watchify');
@@ -20,10 +21,8 @@ var source = require('vinyl-source-stream');
 var _ = require('lodash');
 var concat = require('gulp-concat');
 var replace = require('gulp-replace');
-var Q = require('Q');
 var del = require('del');
 var bootlint = require('gulp-bootlint');
-var es6ify = require('es6ify');
 var reactify = require('reactify');
 
 // UTIL REQUIRELMENTS
@@ -42,10 +41,21 @@ var CSS_FONTS_DEST = './public/css/fonts';
 var JS_ALL_SRC = './app/assets/js/**/*.js';
 var JS_LIBS_SRC = './app/assets/js/libs/*.js';
 var JS_LIBS_DEST = './public/js/libs';
+var JS_VENDOR_DEST = './public/js/global';
 var IMG_SRC = './app/assets/images/**/*.*';
 var IMG_DEST = './public/images';
 var LANG_SRC = './app/lang/**/*.php';
 var LANG_CONF = './app/config/packages/andywer/js-localization/config.php';
+
+// LIBS CONFIG
+var libs = [
+    'react',
+    'react/addons',
+    'react/lib/ReactCSSTransitionGroup',
+    'jQuery',
+    'lodash',
+    'react-bootstrap'
+];
 
 /*
  |--------------------------------------------------------------------------
@@ -184,6 +194,30 @@ gulp.task('lang_js', function () {
     });
 });
 
+gulp.task('vendor', function (callback) {
+    var stream = gulp.src('./gulp_utils/foo.js', {read: false})
+        .pipe(browserify({
+            debug: false  // Don't provide source maps for vendor libs
+        }))
+        .on('prebundle', function (bundle) {
+            // Require vendor libraries and make them available outside the bundle.
+            libs.forEach(function (lib) {
+                bundle.require(lib);
+            });
+        });
+
+    if (!config.debug) {
+        // If this is a production build, minify it
+        stream.pipe(uglify());
+    }
+
+    // Give the destination file a name
+    stream.pipe(rename('vendor.js'))
+        .pipe(gulp.dest(JS_VENDOR_DEST));
+
+    return stream;
+});
+
 // TACHE BROWSERIFY FONCTIONNELLE MULTI BUNDLE
 gulp.task('browserify', function (callback) {
 
@@ -209,6 +243,12 @@ gulp.task('browserify', function (callback) {
 
             return bundler
                 .bundle()
+                .on('prebundle', function (bundle) {
+                    // The following requirements are loaded from the vendor bundle
+                    libs.forEach(function (lib) {
+                        bundle.external(lib);
+                    });
+                })
                 // Report compile errors
                 .on('error', handleErrors)
                 // Use vinyl-source-stream to make the
@@ -247,6 +287,7 @@ gulp.task('browserify', function (callback) {
     // Start bundling with Browserify for each bundleConfig specified
     config.bundleConfigs().forEach(browserifyThis);
 });
+
 
 // BOOTLINT
 gulp.task('bootlint', function () {
