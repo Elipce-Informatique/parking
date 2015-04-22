@@ -112,22 +112,10 @@ class Place extends \Eloquent
         // Retour
         $bRetour = true;
 
-        // Champs filtrés
-        $filteredFields = [];
-
-        // Champ à enregistrer
-        $aFieldsSave = array('etat_occupation_id');
-
-        // Parcours de tous les champs
-        foreach($aFieldsSave as $key){
-            // On ne garde que les clés qui nous interessent
-            $filteredFields[$key] = $fields[$key];
-        }
-
         // Essai d'enregistrement
         try {
             // Modification de la place
-            Place::where('id','=',$id)->update($filteredFields);
+            Place::where('id','=',$id)->update($fields);
         }
         catch(Exception $e){
             Log::error('Rollback update place !', $e);
@@ -146,8 +134,9 @@ class Place extends \Eloquent
             ->join('zone', 'zone.niveau_id', '=', 'niveau.id')
             ->join('allee', 'allee.zone_id', '=', 'zone.id')
             ->join('place', 'place.allee_id', '=', 'allee.id')
+            ->leftJoin('etat_occupation', 'etat_occupation.id', '=','place.etat_occupation_id')
             ->where('num', '=', $num)
-            ->select('place.*')
+            ->select('place.*', 'etat_occupation.is_occupe')
             ->get()
             ->first();
     }

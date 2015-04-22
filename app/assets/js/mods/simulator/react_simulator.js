@@ -1,16 +1,22 @@
-var simu = function (){
+var form_data_helper  = require('../helpers/form_data_helper');
 
-    var idNiveau = 1;
+var simu = function (idNiveau){
 
     // Répétition
     window.setInterval(function(){
 
-        // AJAX
+        // FormData
+        var fData = form_data_helper('', 'GET');
+
+        // Requête
         $.ajax({
-            url: BASE_URI + 'simulator/' + idNiveau,
+            url: BASE_URI + 'parking/simulator/' + idNiveau,
+            type: 'POST',
+            data: fData,
+            processData: false,
+            contentType: false,
             dataType: 'json',
             context: this,
-            async: true,
             success: function (bool) {
                 console.log('maj bdd %o', bool);
             },
@@ -18,9 +24,10 @@ var simu = function (){
                 console.error(status, err.toString());
             }
         });
+
     }, 7000);
 }
 
 
 
-module.exports.store = simu;
+module.exports = simu;

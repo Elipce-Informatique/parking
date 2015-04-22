@@ -2,7 +2,7 @@
 
 class JournalEquipementNiveau extends \Eloquent
 {
-    protected $fillable = [];
+    protected $guarded = ['id'];
     protected $table = "journal_equipement_niveau";
     public $timestamps = true;
 
@@ -108,29 +108,20 @@ class JournalEquipementNiveau extends \Eloquent
      * @param $fields : champs à insérer {niveau_id:1,....}
      * @return boolean
      */
-    public static function createJournalPlace($fields)
+    public static function createJournalPlace(array $fields)
     {
         // Variable de retour
         $bRetour = true;
 
-        // Champs filtrés
-        $filteredFields = [];
-
-        // Champ à enregistrer
-        $aFieldsSave = array('niveau_id', 'place_id', 'etat_occupation_id');
-
-        // Parcours des champs à enregistrer
-        foreach ($aFieldsSave as $key) {
-            // On ne garde que les clés qui nous interessent
-            $filteredFields[$key] = $fields[$key];
-        }
-
         // Essai d'enregistrement
         try {
+//            Log::debug('fields journal :'.print_r($fields,true));
             // Création du journal
-            $newjournal = JournalEquipementNiveau::create($filteredFields);
-        } catch (Exception $e) {
+            $newjournal = JournalEquipementNiveau::create($fields);
+        }
+        catch (Exception $e) {
             $bRetour = false;
+            Log::error('Rollback create journal :'.$e->getMessage());
         }
 
         return $bRetour;
