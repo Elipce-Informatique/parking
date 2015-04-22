@@ -30,6 +30,15 @@ class EtatsDoccupation extends Eloquent
         return $this->belongsTo('EtatPlace');
     }
 
+    /**
+     * Le journal equipement de l'état d'occupation
+     * @return mixed
+     */
+    public function journal_equipement()
+    {
+        return $this->hasMany('JournalEquipementParking');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | TODO : CODE CI DESSOUS A REVOIR ENTIEREMENT QUAND ON AURA LE TEMPS !!
@@ -228,5 +237,19 @@ class EtatsDoccupation extends Eloquent
             $bSave = false;
         }
         return $bSave;
+    }
+
+    /**
+     * Calcule l'état d'occupation en fonction d'un type de place et de l'occupation
+     * @param $type: ID type_place
+     * @param $isOccupe: boolean
+     * @return mixed
+     */
+    public static function getEtatFromTypeAndOccupation($type, $isOccupe){
+        return EtatsDoccupation::where('is_occupe','=',$isOccupe)
+            ->where('type_place_id','=',$type)
+            ->select('*')
+            ->get()
+            ->first();
     }
 }

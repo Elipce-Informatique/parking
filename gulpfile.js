@@ -22,7 +22,7 @@ var concat = require('gulp-concat');
 var replace = require('gulp-replace');
 var Q = require('Q');
 var del = require('del');
-var bootlint  = require('gulp-bootlint');
+var bootlint = require('gulp-bootlint');
 var es6ify = require('es6ify');
 var reactify = require('reactify');
 
@@ -52,7 +52,7 @@ var LANG_CONF = './app/config/packages/andywer/js-localization/config.php';
  | Tache par défaut, qui lance les taches d'init et de watch
  |--------------------------------------------------------------------------
  */
-gulp.task('default', ['clean'], function(){
+gulp.task('default', ['clean'], function () {
     gulp.start('build');
 });
 gulp.task('build', ['watch', 'css', 'js', 'images']);
@@ -62,7 +62,7 @@ gulp.task('build', ['watch', 'css', 'js', 'images']);
  | SETUP DES WATCHERS
  |--------------------------------------------------------------------------
  */
-gulp.task('watch',  function () {
+gulp.task('watch', function () {
     // Watch des CSS
     gulp.watch(CSS_SRC, ['css_natif']);
     gulp.watch(STYL_SRC, ['stylus']);
@@ -94,17 +94,17 @@ gulp.task('clean', function (cb) {
  */
 
 // MANIPULATION DES CSS
-gulp.task('css', ['stylus', 'css_natif', 'libs_css_statiques', 'css_fonts'], function(){
+gulp.task('css', ['stylus', 'css_natif', 'libs_css_statiques', 'css_fonts'], function () {
     notify({message: 'All CSS tasks completed.'});
 });
 
 // MANIPULATION DES JS
-gulp.task('js', ['libs_js_statiques', 'browserify', 'lang_js'], function(){
+gulp.task('js', ['libs_js_statiques', 'browserify', 'lang_js'], function () {
     notify({message: 'All JS tasks completed.'});
 });
 
 // LIBS JS (/libs/*.js)
-gulp.task('libs_js_statiques',  function () {
+gulp.task('libs_js_statiques', function () {
     return gulp.src(JS_LIBS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(JS_LIBS_DEST))
@@ -114,7 +114,7 @@ gulp.task('libs_js_statiques',  function () {
 });
 
 // STYLUS (*.styl)
-gulp.task('stylus',  function () {
+gulp.task('stylus', function () {
     return gulp.src(STYL_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(CSS_DEST))
@@ -125,7 +125,7 @@ gulp.task('stylus',  function () {
 });
 
 // CSS NATIF (*.css)
-gulp.task('css_natif',  function () {
+gulp.task('css_natif', function () {
     return gulp.src(CSS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(CSS_DEST))
@@ -135,7 +135,7 @@ gulp.task('css_natif',  function () {
 });
 
 // LIBS CSS (/libs/*.css)
-gulp.task('libs_css_statiques',  function () {
+gulp.task('libs_css_statiques', function () {
     return gulp.src(CSS_LIBS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(replace('../images/', '../../images/'))
@@ -145,7 +145,7 @@ gulp.task('libs_css_statiques',  function () {
 });
 
 // FONTS CSS (/css/fonts)
-gulp.task('css_fonts',  function () {
+gulp.task('css_fonts', function () {
     return gulp.src(CSS_FONTS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(CSS_FONTS_DEST))
@@ -153,14 +153,14 @@ gulp.task('css_fonts',  function () {
 });
 
 // IMAGES
-gulp.task('images',  function () {
+gulp.task('images', function () {
     return gulp.src(IMG_SRC)
         .pipe(changed(IMG_DEST))
         .pipe(gulp.dest(IMG_DEST));
 });
 
 // LANGUES
-gulp.task('lang_js',  function () {
+gulp.task('lang_js', function () {
     var child = spawn("php", ["artisan", "js-localization:refresh"], {cwd: process.cwd()}),
         stdout = '',
         stderr = '';
@@ -178,14 +178,14 @@ gulp.task('lang_js',  function () {
         gutil.beep();
     });
 
-    child.on('close', function(code) {
+    child.on('close', function (code) {
         gutil.log("Remise en cache des langues terminée avec le code", code);
         //gutil.log("You access complete stdout and stderr from here"); // stdout, stderr
     });
 });
 
 // TACHE BROWSERIFY FONCTIONNELLE MULTI BUNDLE
-gulp.task('browserify',  function (callback) {
+gulp.task('browserify', function (callback) {
 
     var bundleQueue = config.bundleConfigs().length;
 
@@ -201,7 +201,7 @@ gulp.task('browserify',  function (callback) {
             // Enable source maps!
             debug: config.debug
         });
-        bundler.transform({ global: true,"es6": true }, reactify);
+        bundler.transform({"es6": true}, reactify);
 
         var bundle = function () {
             // Log when bundling starts
@@ -249,7 +249,7 @@ gulp.task('browserify',  function (callback) {
 });
 
 // BOOTLINT
-gulp.task('bootlint', function() {
+gulp.task('bootlint', function () {
     gulp.src('./bootlint_files/*')
         .pipe(bootlint());
 });

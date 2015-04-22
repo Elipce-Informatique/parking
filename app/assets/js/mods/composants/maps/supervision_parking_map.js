@@ -1,6 +1,7 @@
 var React = require('react/addons');
 // Options pour paramétrer la carte
 var mapOptions = require('../../helpers/map_options');
+var mapHelper = require('../../helpers/map_helper');
 // STORE DE LA CARTE
 // TODO : store de supervision
 var supervisionStore = require('../../stores/supervision_parking_map_store');
@@ -33,6 +34,7 @@ var parkingMap = React.createClass({
      */
     _inst: {
         map: {},
+        placesMarkersGroup: {},
         placesGroup: {},
         alleesGroup: {},
         zonesGroup: {},
@@ -126,13 +128,42 @@ var parkingMap = React.createClass({
      * @param formes : tableau de places
      */
     onPlacesAdded: function (formes) {
-        console.log('ACTION ADD PLACES, voilà les formes : %o', formes);
         var liste_data = formes.data;
         _.each(liste_data, function (place) {
             this._inst.placesGroup.addLayer(place.polygon);
 
             if (!_.isEmpty(place.marker)) {
                 this._inst.placesMarkersGroup.addLayer(place.marker);
+            }
+        }, this);
+    },
+
+    /**
+     * @param places
+     */
+    onPlacesOccuped: function (data) {
+        var places = data.data;
+        _.each(places, function (p, i) {
+            var marker = p.marker;
+            var exists = mapHelper.findMarkerByPlaceId(marker.options.data.id, this._inst.placesMarkersGroup);
+            if (exists.length == 0) {
+                this._inst.placesMarkersGroup.addLayer(marker);
+            }
+        }, this);
+    },
+
+    /**
+     * @param places
+     */
+    onPlacesFreed: function (data) {
+        var places = data.data;
+        // Parcourt des place a supprimer
+        _.each(places, function (p, i) {
+            // Récup de la liste des markers a supprimer
+            var exists = mapHelper.findMarkerByPlaceId(p.id, this._inst.placesMarkersGroup);
+            // Suppression du marker
+            if (exists.length == 1) {
+                this._inst.placesMarkersGroup.removeLayer(exists[0]);
             }
         }, this);
     },
@@ -164,6 +195,13 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.type_messages.delete_forme:
                 break;
+            case mapOptions.type_messages.occuper_places:
+                this.onPlacesOccuped(data);
+                break;
+            case mapOptions.type_messages.liberer_places:
+                this.onPlacesFreed(data);
+                break;
+
             default:
                 break;
         }

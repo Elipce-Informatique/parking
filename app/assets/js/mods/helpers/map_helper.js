@@ -461,6 +461,36 @@ function createPlaceParallelogramme(coordsPara, extraData, nom, color) {
 }
 
 /**
+ *
+ * @param p
+ * @returns {{polygon: dataPlaces.geoJson, marker: {}}}
+ */
+function createPlaceFromData(p, types_places){
+    var coords = {lat: p.lat, lng: p.lng};
+    var nom = p.libelle;
+    var angleMarker = p.angle;
+    var extraData = p;
+    var color = _.reduce(types_places, function (sum, n) {
+        if (n.id == p.type_place_id) {
+            return n.couleur;
+        } else {
+            return sum;
+        }
+    }, "FF0000", this);
+
+    var marker = {};
+    if (p.etat_occupation.is_occupe == "1") {
+        marker = createPlaceMarker(coords, nom, angleMarker, extraData);
+    }
+    var polygon = createPlaceParallelogrammeFromGeoJson(p.geojson, extraData, nom, color);
+
+    return {
+        polygon: polygon,
+        marker: marker
+    };
+}
+
+/**
  * Crée le parallélogramme d'une palce en fonction d'un objet geoJSON
  * @param geoJson
  * @param extraData
@@ -480,6 +510,22 @@ function createPlaceParallelogrammeFromGeoJson(geoJson, extraData, nom, color) {
     return parallelogrammePlace;
 }
 
+/**
+ * Retourne un tableau de layers correspondant a l'id passé (options.data.id)
+ * @param id
+ * @param layerGroup
+ * @returns {Array}
+ */
+function findMarkerByPlaceId(id, layerGroup){
+    var layers = [];
+    layerGroup.eachLayer(function (layer) {
+        if(layer.options.data.id == id){
+            layers.push(layer);
+        }
+    });
+    return layers;
+}
+
 
 /**
  * Ce que le module exporte.
@@ -495,6 +541,8 @@ module.exports = {
     createPlacesFromParallelogramme: createPlacesFromParallelogramme,
     createPlaceMarker: createPlaceMarker,
     createPlaceParallelogramme: createPlaceParallelogramme,
-    createPlaceParallelogrammeFromGeoJson: createPlaceParallelogrammeFromGeoJson
+    createPlaceParallelogrammeFromGeoJson: createPlaceParallelogrammeFromGeoJson,
+    createPlaceFromData: createPlaceFromData,
+    findMarkerByPlaceId: findMarkerByPlaceId
 };
 

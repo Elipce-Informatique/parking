@@ -37,4 +37,44 @@ class Niveau extends \Eloquent
     {
         return $this->belongsTo('Parking');
     }
+
+    /**
+     * Le journal equipement du parking
+     * @return mixed
+     */
+    public function journal_equipement()
+    {
+        return $this->hasMany('JournalEquipementNiveau');
+    }
+
+
+    /**
+     * Les places du niveau
+     * @param $id: ID du niveau
+     * @return mixed
+     */
+    public static function getPlaces($id){
+        return  Niveau::find($id)
+            ->join('zone', 'zone.niveau_id', '=', 'niveau.id')
+            ->join('allee', 'allee.zone_id', '=', 'zone.id')
+            ->join('place', 'place.allee_id', '=', 'allee.id')
+            ->join('etat_occupation', 'etat_occupation.id', '=', 'place.etat_occupation_id')
+            ->select('place.id', 'place.num', 'etat_occupation.is_occupe')
+            ->get();
+    }
+
+    /**
+     * La place max du niveau $id
+     * @param $id: ID du niveau
+     * @return int: numéro de place
+     */
+    public static function getMaxPlace($id){
+        return  Niveau::find($id)
+            ->join('zone', 'zone.niveau_id', '=', 'niveau.id')
+            ->join('allee', 'allee.zone_id', '=', 'zone.id')
+            ->join('place', 'place.allee_id', '=', 'allee.id')
+            ->join('etat_occupation', 'etat_occupation.id', '=', 'place.etat_occupation_id')
+            ->select('place.id', 'place.num', 'etat_occupation.is_occupe')
+            ->max('place.num');
+    }
 }

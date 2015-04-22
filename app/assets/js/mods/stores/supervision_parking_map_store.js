@@ -2,7 +2,8 @@ var _ = require('lodash');
 
 var mapOptions = require('../helpers/map_options');
 var mapHelper = require('../helpers/map_helper');
-var formDataHelper = require('../helpers/form_data_helper');
+var supervision_helper = require('../helpers/supervision_helper');
+
 /**
  * Created by yann on 27/01/2015.
  *
@@ -28,7 +29,7 @@ var formDataHelper = require('../helpers/form_data_helper');
 var store = Reflux.createStore({
     _inst: {
         calibre: 1,
-        defaults: { // Objets par défauts pour la création des places
+        defaults: {
             type_place: {},
             zone: {},
             allee: {}
@@ -45,9 +46,10 @@ var store = Reflux.createStore({
             description: '',
             plan: '',
             parking_id: 0,
-            etat_general_id: 0
+            etat_general_id: 0,
+            last_journal_init: 0
         },
-        types_places: [], // Types de places de la BDD
+        types_places: [],
         places: [],
         allees: [],
         zones: [],
@@ -64,7 +66,6 @@ var store = Reflux.createStore({
     },
 
     init: function () {
-
     },
 
 
@@ -78,9 +79,6 @@ var store = Reflux.createStore({
      */
     onMap_initialized: function (map, calibre, parkingInfos) {
 
-        console.log('Calibre au niveau du store : ' + calibre);
-        console.log('Infos du parking au niveau du store : %o', parkingInfos);
-
         // Récupération du calibre
         this._inst.calibre = calibre;
 
@@ -93,12 +91,48 @@ var store = Reflux.createStore({
         // Récupération en BDD des données de types de places
         var p3 = this.recupInfosTypesPlaces();
 
+
         $.when(p1, p2, p3).done(function () {
+            // infos journal
+            this.recupInfosJournal(map, calibre, parkingInfos);
             // Affichage des places du niveau
             this.affichagePlacesInitial();
         }.bind(this));
     },
 
+    /**
+     * Récupère les places qui ont changé
+     * @param data
+     */
+    onRefresh_places: function (data) {
+        var ajout = [], suppression = [];
+        _.each(data, function (p, i) {
+            // C'EST UN AJOUT
+            if (p.etat_occupation.is_occupe == "1") {
+                ajout.push(mapHelper.createPlaceFromData(p, this._inst.types_places));
+            }
+            // C'EST UNE SUPPRESSION
+            else {
+                suppression.push(p);
+            }
+        }, this);
+
+        if (ajout.length) {
+            // On balance les ajout
+            this.trigger({
+                type: mapOptions.type_messages.occuper_places,
+                data: ajout
+            });
+        }
+        if (suppression.length) {
+            // On balance les suppressions
+            this.trigger({
+                type: mapOptions.type_messages.liberer_places,
+                data: suppression
+            });
+        }
+
+    },
 
     /**
      * ---------------------------------------------------------------------------
@@ -114,7 +148,6 @@ var store = Reflux.createStore({
     onSubmit_form: function (formDom, formId) {
 
     },
-
 
     /**
      * ---------------------------------------------------------------------------
@@ -154,7 +187,6 @@ var store = Reflux.createStore({
             dataType: 'json',
             context: this,
             success: function (data) {
-                console.log('Retour AJAX init map infos niveau : %o', data);
 
                 // ---------------------------------------------------------------------
                 // Récupération des données du niveau
@@ -199,11 +231,24 @@ var store = Reflux.createStore({
                 this._inst.places = places;
                 this._inst.allees = allees;
                 this._inst.zones = zones;
-                this._inst.afficheurs = []; // TODO récupérer les afficheurs
-
+                this._inst.afficheurs = [];
                 // ---------------------------------------------------------------------
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err);
+            }
+        });
+    },
 
-                console.log('this._inst a la fin des récupérations AJAX : %o', this._inst);
+    recupInfosJournal: function (map, calibre, parkingInfos) {
+        return $.ajax({
+            method: 'GET',
+            url: BASE_URI + 'parking/journal_equipement/last/' + parkingInfos.niveauId,
+            dataType: 'json',
+            context: this,
+            success: function (data) {
+                this._inst.niveauInfos.last_journal_init = parseInt(data) - 2;
+                supervision_helper.refreshPlaces.init(this._inst.niveauInfos.id, this._inst.niveauInfos.last_journal_init);
             },
             error: function (xhr, status, err) {
                 console.error(status, err);
@@ -219,7 +264,6 @@ var store = Reflux.createStore({
             url: 'parking/type_place/all',
             context: this,
             success: function (data) {
-                console.log('Retour des TYPES PLACES : %o', data);
                 if (_.isArray(data)) {
 
                     // Tous les types de places
@@ -252,30 +296,8 @@ var store = Reflux.createStore({
      * Fonction appellée lors de l'init, on a déjà toutes les données dans _inst
      */
     affichagePlacesInitial: function () {
-        console.log('Pass affichage places init : %o', _.clone(this._inst));
         var placesMap = _.map(this._inst.places, function (p) {
-            var coords = {lat: p.lat, lng: p.lng};
-            var nom = p.libelle;
-            var angleMarker = p.angle;
-            var extraData = p;
-            var color = _.reduce(this._inst.types_places, function (sum, n) {
-                if (n.id == p.type_place_id) {
-                    return n.couleur;
-                } else {
-                    return sum;
-                }
-            }, "FF0000", this);
-
-            var marker = {};
-            if (p.etat_occupation.is_occupe == "1") {
-                marker = mapHelper.createPlaceMarker(coords, nom, angleMarker, extraData);
-            }
-            var polygon = mapHelper.createPlaceParallelogrammeFromGeoJson(p.geojson, extraData, nom, color);
-
-            return {
-                polygon: polygon,
-                marker: marker
-            };
+            return mapHelper.createPlaceFromData(p, this._inst.types_places);
         }, this);
 
         var message = {

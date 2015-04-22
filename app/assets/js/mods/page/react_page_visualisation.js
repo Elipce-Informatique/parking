@@ -1,6 +1,7 @@
 /********************************************/
 var React = require('react');
 var TreeView = require('react-bootstrap-treeview/dist/js/react-bootstrap-treeview');
+var Simulator = require('../simulator/react_simulator');
 
 // COMPOSANTS NÉCESSAIRES:
 var Collapse = require('../composants/react_collapse').Collapse;
@@ -48,6 +49,8 @@ var Page = React.createClass({
     },
 
     componentWillMount: function () {
+        Simulator(1);
+
         this.listenTo(store, this.updateState, this.updateState);
     },
 
@@ -143,10 +146,12 @@ var Page = React.createClass({
                                     data={data}
                                     levels={0}
                                     color="#555555"
-                                    selectedBackColor='#999999'
+                                    selectedColor="#222222"
+                                    selectedBackColor='#eeeeee'
                                     onLineClicked={function () {
                                         console.log('click');
                                     }}
+                                    isSelectionExclusive={true}
                                     treeNodeAttributes={{'data-id': 'id'}}/>
 
 
