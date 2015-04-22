@@ -1,13 +1,13 @@
 var simu = function (){
 
-    var idParking = 1;
+    var idNiveau = 1;
 
     // Répétition
     window.setInterval(function(){
 
         // AJAX
         $.ajax({
-            url: BASE_URI + 'simulator/' + idParking,
+            url: BASE_URI + 'simulator/' + idNiveau,
             dataType: 'json',
             context: this,
             async: true,

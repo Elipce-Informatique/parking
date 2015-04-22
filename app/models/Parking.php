@@ -17,7 +17,12 @@ class Parking extends \Eloquent
     {
         return $this->hasMany('Niveau');
     }
-    
+
+    /**
+     * Les places du parking
+     * @param $id: ID parking
+     * @return json
+     */
     public static function getPlaces($id){
         return  Parking::find($id)
             ->join('niveau', 'parking.id', '=', 'niveau.parking_id')

@@ -41,6 +41,56 @@ class Place extends \Eloquent
         return $retour;
     }
 
+    /**
+     * Maj etat d'occupation de la place
+     * @param $id: ID place
+     * @param $fields: champs à updater
+     * @return bool
+     */
+    public static function updatePlace($id, $fields){
+        // Retour
+        $bRetour = true;
+
+        // Champs filtrés
+        $filteredFields = [];
+
+        // Champ à enregistrer
+        $aFieldsSave = array('etat_occupation_id');
+
+        // Parcours de tous les champs
+        foreach($aFieldsSave as $key){
+            // On ne garde que les clés qui nous interessent
+            $filteredFields[$key] = $fields[$key];
+        }
+
+        // Essai d'enregistrement
+        try {
+            // Modification de la place
+            Place::where('id','=',$id)->update($filteredFields);
+        }
+        catch(Exception $e){
+            Log::error('Rollback update place !', $e);
+            $bRetour = false;
+        }
+        return $bRetour;
+    }
+
+    /**
+     * Récupère la placeà partir de son numéro et de son niveau
+     * @param $num: numéro de place
+     * @param $niveau: niveau.id
+     */
+    public static function getPlaceFromNum($num, $niveau){
+        return Niveau::find($niveau)
+            ->join('zone', 'zone.niveau_id', '=', 'niveau.id')
+            ->join('allee', 'allee.zone_id', '=', 'zone.id')
+            ->join('place', 'place.allee_id', '=', 'allee.id')
+            ->where('num', '=', $num)
+            ->select('place.*')
+            ->get()
+            ->first();
+    }
+
     /*****************************************************************************
      * RELATIONS DU MODELE *******************************************************
      *****************************************************************************/

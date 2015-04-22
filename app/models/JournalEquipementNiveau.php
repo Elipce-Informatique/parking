@@ -96,5 +96,39 @@ class JournalEquipementNiveau extends \Eloquent
         return Afficheur::whereIn('id', $afficheurId)->get();
     }
 
+    /**
+     * Créé une ligne de journal de type place
+     * @param $fields : champs à insérer {niveau_id:1,....}
+     * @return boolean
+     */
+    public static function createJournalPlace($fields)
+    {
+        // Variable de retour
+        $bRetour = true;
+
+        // Champs filtrés
+        $filteredFields = [];
+
+        // Champ à enregistrer
+        $aFieldsSave = array('niveau_id', 'place_id', 'etat_occupation_id');
+
+        // Parcours des champs à enregistrer
+        foreach ($aFieldsSave as $key) {
+            // On ne garde que les clés qui nous interessent
+            $filteredFields[$key] = $fields[$key];
+        }
+
+        // Essai d'enregistrement
+        try {
+            // Création du journal
+            $newjournal = JournalEquipementNiveau::create($filteredFields);
+        }
+        catch (Exception $e) {
+            $bRetour = false;
+        }
+
+        return $bRetour;
+    }
+
 
 }
