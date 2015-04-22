@@ -49,8 +49,7 @@ var Page = React.createClass({
     },
 
     componentWillMount: function () {
-        // Simulateur (id du niveau)
-        Simulator(1);
+        //Simulator(1);
 
         this.listenTo(store, this.updateState, this.updateState);
     },

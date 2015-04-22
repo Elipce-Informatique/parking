@@ -33,6 +33,7 @@ var parkingMap = React.createClass({
      */
     _inst: {
         map: {},
+        placesMarkersGroup: {},
         placesGroup: {},
         alleesGroup: {},
         zonesGroup: {},
@@ -126,7 +127,6 @@ var parkingMap = React.createClass({
      * @param formes : tableau de places
      */
     onPlacesAdded: function (formes) {
-        console.log('ACTION ADD PLACES, voilà les formes : %o', formes);
         var liste_data = formes.data;
         _.each(liste_data, function (place) {
             this._inst.placesGroup.addLayer(place.polygon);
@@ -141,8 +141,14 @@ var parkingMap = React.createClass({
      * TODO : Ajouter les markers UNIQUEMENT au layer
      * @param places
      */
-    onPlacesOccuped: function (places) {
-        console.log('onPlacesOccuped : %o', places);
+    onPlacesOccuped: function (data) {
+        var places = data.data;
+        console.log('onPlacesOccuped : %o', data.data);
+        _.each(places, function (p, i) {
+            console.log('onPlacesOccuped, place a ajouter : %o', p);
+            var marker = p.marker;
+            this._inst.placesMarkersGroup.addLayer(marker);
+        }, this);
     },
 
     /**
