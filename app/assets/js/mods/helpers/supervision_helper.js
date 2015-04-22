@@ -1,6 +1,7 @@
 /**
  * Created by yann on 21/04/2015.
  */
+var _ = require('lodash');
 
 module.exports.refreshPlaces = {
     _timer: false,
@@ -15,7 +16,7 @@ module.exports.refreshPlaces = {
     },
 
     /**
-     *
+     * Récupère les informations sur les places et déclenche l'action
      * @private
      */
     _handleAjax: function () {
@@ -24,7 +25,10 @@ module.exports.refreshPlaces = {
             url: BASE_URI + 'parking/journal_place/' + this._niveauId + '/' + this._journalId
         })
             .done(function (data) {
-                console.log('Retour rafraichissement : %o', data);
+                // ON A DES NOUVELLES DONNÉES
+                if (data.length) {
+                    Actions.map.refresh_places(data);
+                }
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert
