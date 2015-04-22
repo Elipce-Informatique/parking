@@ -7,6 +7,67 @@ class Place extends \Eloquent
     protected $fillable = ['libelle', 'num', 'capteur_id', 'type_place_id', 'allee_id', 'geojson', 'bonne', 'etat_occupation_id', 'lat', 'lng'];
 
     /*****************************************************************************
+     * RELATIONS DU MODELE *******************************************************
+     *****************************************************************************/
+
+    /**
+     * L'allée de la place :
+     * Inverse de la relation de l'allée
+     * @return mixed
+     */
+    public function allee()
+    {
+        return $this->belongsTo('Allee');
+    }
+
+    /**
+     * Le type de la place :
+     * Inverse de la relation du type de la place
+     * @return mixed
+     */
+    public function type_place()
+    {
+        return $this->belongsTo('TypePlace');
+    }
+
+    /**
+     * L'état d'occupation de la place :
+     * Inverse de la relation de l'état d'occupation
+     * @return mixed
+     */
+    public function etat_occupation()
+    {
+        return $this->belongsTo('EtatsDoccupation');
+    }
+
+    /**
+     * Le type de la place :
+     * Inverse de la relation du type de la place
+     * @return mixed
+     */
+    public function capteur()
+    {
+        return $this->belongsTo('Capteur');
+    }
+
+    /**
+     * Les journal equipement de la place
+     * @return mixed
+     */
+    public function journal_equipement()
+    {
+        return $this->hasMany('JournalEquipementNiveau');
+    }
+    /**
+     * Le dernier journal equipement de la place
+     * @return mixed
+     */
+    public function latest_journal_equipement()
+    {
+        return $this->hasOne('JournalEquipementNiveau')->latest();
+    }
+
+    /*****************************************************************************
      * INSERTION DES DONNÉES *****************************************************
      *****************************************************************************/
 
@@ -89,58 +150,5 @@ class Place extends \Eloquent
             ->select('place.*')
             ->get()
             ->first();
-    }
-
-    /*****************************************************************************
-     * RELATIONS DU MODELE *******************************************************
-     *****************************************************************************/
-
-    /**
-     * L'allée de la place :
-     * Inverse de la relation de l'allée
-     * @return mixed
-     */
-    public function allee()
-    {
-        return $this->belongsTo('Allee');
-    }
-
-    /**
-     * Le type de la place :
-     * Inverse de la relation du type de la place
-     * @return mixed
-     */
-    public function type_place()
-    {
-        return $this->belongsTo('TypePlace');
-    }
-
-    /**
-     * L'état d'occupation de la place :
-     * Inverse de la relation de l'état d'occupation
-     * @return mixed
-     */
-    public function etat_occupation()
-    {
-        return $this->belongsTo('EtatsDoccupation');
-    }
-
-    /**
-     * Le type de la place :
-     * Inverse de la relation du type de la place
-     * @return mixed
-     */
-    public function capteur()
-    {
-        return $this->belongsTo('Capteur');
-    }
-
-    /**
-     * Le journal equipement de la place
-     * @return mixed
-     */
-    public function journal_equipement()
-    {
-        return $this->hasMany('JournalEquipementParking');
     }
 }

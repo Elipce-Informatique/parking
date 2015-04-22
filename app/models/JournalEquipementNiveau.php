@@ -80,8 +80,15 @@ class JournalEquipementNiveau extends \Eloquent
      */
     public static function getJournalPlacesFromVersion($niveauId, $journalId)
     {
-        $placeIds = JournalEquipementNiveau::whereNiveauId($niveauId)->where('id', '>', $journalId)->groupBy('place_id')->lists('place_id');
-        return Place::whereIn('id', $placeIds)->with('etat_occupation')->get();
+        $placeIds = JournalEquipementNiveau::whereNiveauId($niveauId)
+            ->where('id', '>', $journalId)
+            ->groupBy('place_id')
+            ->lists('place_id');
+
+        return Place::whereIn('id', $placeIds)
+            ->with('etat_occupation')
+            ->with('latest_journal_equipement')
+            ->get();
     }
 
     /**
@@ -122,8 +129,7 @@ class JournalEquipementNiveau extends \Eloquent
         try {
             // Création du journal
             $newjournal = JournalEquipementNiveau::create($filteredFields);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $bRetour = false;
         }
 

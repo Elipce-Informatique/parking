@@ -138,6 +138,22 @@ var parkingMap = React.createClass({
     },
 
     /**
+     * TODO : Ajouter les markers UNIQUEMENT au layer
+     * @param places
+     */
+    onPlacesOccuped: function (places) {
+        console.log('onPlacesOccuped : %o', places);
+    },
+
+    /**
+     * TODO : Supprimer les markers UNIQUEMENT du layer
+     * @param places
+     */
+    onPlacesFreed: function (places) {
+        console.log('onPlacesFreed : %o', places);
+    },
+
+    /**
      * Remet tous les featuresGroups en ordre (zIndex)
      * L'ordre de bas en haut:
      * - Zone
@@ -164,6 +180,13 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.type_messages.delete_forme:
                 break;
+            case mapOptions.type_messages.occuper_places:
+                this.onPlacesOccuped(data);
+                break;
+            case mapOptions.type_messages.liberer_places:
+                this.onPlacesFreed(data);
+                break;
+
             default:
                 break;
         }

@@ -47,7 +47,7 @@ var store = Reflux.createStore({
             plan: '',
             parking_id: 0,
             etat_general_id: 0,
-            last_journal: 0
+            last_journal_init: 0
         },
         types_places: [],
         places: [],
@@ -101,11 +101,39 @@ var store = Reflux.createStore({
     },
 
     /**
-     *
+     * Récupère les places qui ont changé
      * @param data
      */
     onRefresh_places: function (data) {
         console.log('OnRefreshMap !!! : %o', data);
+        var ajout = [], suppression = [];
+        _.each(data, function (p, i) {
+            // C'EST UN AJOUT
+            if (p.etat_occupation.is_occupe == "1") {
+                ajout.push(mapHelper.createPlaceFromData(p, this._inst.types_places));
+            }
+            // C'EST UNE SUPPRESSION
+            else {
+                suppression.push(p);
+            }
+        }, this);
+
+        console.log('Ajouts : %o Suppressions : %o', ajout, suppression);
+        if (ajout.length) {
+            // On balance les ajout
+            this.trigger({
+                type: mapOptions.type_messages.occuper_places,
+                data: ajout
+            });
+        }
+        if (suppression.length) {
+            // On balance les suppressions
+            this.trigger({
+                type: mapOptions.type_messages.liberer_places,
+                data: suppression
+            });
+        }
+
     },
 
     /**
@@ -221,9 +249,9 @@ var store = Reflux.createStore({
             dataType: 'json',
             context: this,
             success: function (data) {
-                console.log('nombre de places : %o', data);
-                this._inst.niveauInfos.last_journal = parseInt(data) - 2;
-                supervision_helper.refreshPlaces.init(this._inst.niveauInfos.id, this._inst.niveauInfos.last_journal);
+                console.log('Last id journal : %o', data);
+                this._inst.niveauInfos.last_journal_init = parseInt(data) - 2;
+                supervision_helper.refreshPlaces.init(this._inst.niveauInfos.id, this._inst.niveauInfos.last_journal_init);
             },
             error: function (xhr, status, err) {
                 console.error(status, err);
@@ -272,28 +300,7 @@ var store = Reflux.createStore({
      */
     affichagePlacesInitial: function () {
         var placesMap = _.map(this._inst.places, function (p) {
-            var coords = {lat: p.lat, lng: p.lng};
-            var nom = p.libelle;
-            var angleMarker = p.angle;
-            var extraData = p;
-            var color = _.reduce(this._inst.types_places, function (sum, n) {
-                if (n.id == p.type_place_id) {
-                    return n.couleur;
-                } else {
-                    return sum;
-                }
-            }, "FF0000", this);
-
-            var marker = {};
-            if (p.etat_occupation.is_occupe == "1") {
-                marker = mapHelper.createPlaceMarker(coords, nom, angleMarker, extraData);
-            }
-            var polygon = mapHelper.createPlaceParallelogrammeFromGeoJson(p.geojson, extraData, nom, color);
-
-            return {
-                polygon: polygon,
-                marker: marker
-            };
+            return mapHelper.createPlaceFromData(p, this._inst.types_places);
         }, this);
 
         var message = {

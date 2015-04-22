@@ -461,6 +461,36 @@ function createPlaceParallelogramme(coordsPara, extraData, nom, color) {
 }
 
 /**
+ *
+ * @param p
+ * @returns {{polygon: dataPlaces.geoJson, marker: {}}}
+ */
+function createPlaceFromData(p, types_places){
+    var coords = {lat: p.lat, lng: p.lng};
+    var nom = p.libelle;
+    var angleMarker = p.angle;
+    var extraData = p;
+    var color = _.reduce(types_places, function (sum, n) {
+        if (n.id == p.type_place_id) {
+            return n.couleur;
+        } else {
+            return sum;
+        }
+    }, "FF0000", this);
+
+    var marker = {};
+    if (p.etat_occupation.is_occupe == "1") {
+        marker = createPlaceMarker(coords, nom, angleMarker, extraData);
+    }
+    var polygon = createPlaceParallelogrammeFromGeoJson(p.geojson, extraData, nom, color);
+
+    return {
+        polygon: polygon,
+        marker: marker
+    };
+}
+
+/**
  * Crée le parallélogramme d'une palce en fonction d'un objet geoJSON
  * @param geoJson
  * @param extraData
@@ -495,6 +525,7 @@ module.exports = {
     createPlacesFromParallelogramme: createPlacesFromParallelogramme,
     createPlaceMarker: createPlaceMarker,
     createPlaceParallelogramme: createPlaceParallelogramme,
-    createPlaceParallelogrammeFromGeoJson: createPlaceParallelogrammeFromGeoJson
+    createPlaceParallelogrammeFromGeoJson: createPlaceParallelogrammeFromGeoJson,
+    createPlaceFromData: createPlaceFromData
 };
 

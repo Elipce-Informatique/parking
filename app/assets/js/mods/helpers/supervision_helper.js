@@ -20,14 +20,19 @@ module.exports.refreshPlaces = {
      * @private
      */
     _handleAjax: function () {
+        console.log('journal Id : %o', this._journalId);
         $.ajax({
             type: 'GET',
-            url: BASE_URI + 'parking/journal_place/' + this._niveauId + '/' + this._journalId
+            url: BASE_URI + 'parking/journal_place/' + this._niveauId + '/' + this._journalId,
+            context: this
         })
             .done(function (data) {
                 // ON A DES NOUVELLES DONNÉES
                 if (data.length) {
                     Actions.map.refresh_places(data);
+                    _.each(data, function (p, i) {
+                        this._journalId = Math.max(this._journalId, p.latest_journal_equipement.id);
+                    }, this);
                 }
             })
             .fail(function (xhr, type, exception) {
