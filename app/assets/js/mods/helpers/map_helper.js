@@ -510,6 +510,22 @@ function createPlaceParallelogrammeFromGeoJson(geoJson, extraData, nom, color) {
     return parallelogrammePlace;
 }
 
+/**
+ * Retourne un tableau de layers correspondant a l'id passé (options.data.id)
+ * @param id
+ * @param layerGroup
+ * @returns {Array}
+ */
+function findMarkerByPlaceId(id, layerGroup){
+    var layers = [];
+    layerGroup.eachLayer(function (layer) {
+        if(layer.options.data.id == id){
+            layers.push(layer);
+        }
+    });
+    return layers;
+}
+
 
 /**
  * Ce que le module exporte.
@@ -526,6 +542,7 @@ module.exports = {
     createPlaceMarker: createPlaceMarker,
     createPlaceParallelogramme: createPlaceParallelogramme,
     createPlaceParallelogrammeFromGeoJson: createPlaceParallelogrammeFromGeoJson,
-    createPlaceFromData: createPlaceFromData
+    createPlaceFromData: createPlaceFromData,
+    findMarkerByPlaceId: findMarkerByPlaceId
 };
 

@@ -49,7 +49,7 @@ var Page = React.createClass({
     },
 
     componentWillMount: function () {
-        //Simulator(1);
+        Simulator(1);
 
         this.listenTo(store, this.updateState, this.updateState);
     },

@@ -105,7 +105,6 @@ var store = Reflux.createStore({
      * @param data
      */
     onRefresh_places: function (data) {
-        console.log('OnRefreshMap !!! : %o', data);
         var ajout = [], suppression = [];
         _.each(data, function (p, i) {
             // C'EST UN AJOUT
@@ -118,7 +117,6 @@ var store = Reflux.createStore({
             }
         }, this);
 
-        console.log('Ajouts : %o Suppressions : %o', ajout, suppression);
         if (ajout.length) {
             // On balance les ajout
             this.trigger({
@@ -249,7 +247,6 @@ var store = Reflux.createStore({
             dataType: 'json',
             context: this,
             success: function (data) {
-                console.log('Last id journal : %o', data);
                 this._inst.niveauInfos.last_journal_init = parseInt(data) - 2;
                 supervision_helper.refreshPlaces.init(this._inst.niveauInfos.id, this._inst.niveauInfos.last_journal_init);
             },

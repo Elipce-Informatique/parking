@@ -1,6 +1,7 @@
 var React = require('react/addons');
 // Options pour paramétrer la carte
 var mapOptions = require('../../helpers/map_options');
+var mapHelper = require('../../helpers/map_helper');
 // STORE DE LA CARTE
 // TODO : store de supervision
 var supervisionStore = require('../../stores/supervision_parking_map_store');
@@ -138,25 +139,33 @@ var parkingMap = React.createClass({
     },
 
     /**
-     * TODO : Ajouter les markers UNIQUEMENT au layer
      * @param places
      */
     onPlacesOccuped: function (data) {
         var places = data.data;
-        console.log('onPlacesOccuped : %o', data.data);
         _.each(places, function (p, i) {
-            console.log('onPlacesOccuped, place a ajouter : %o', p);
             var marker = p.marker;
-            this._inst.placesMarkersGroup.addLayer(marker);
+            var exists = mapHelper.findMarkerByPlaceId(marker.options.data.id, this._inst.placesMarkersGroup);
+            if (exists.length == 0) {
+                this._inst.placesMarkersGroup.addLayer(marker);
+            }
         }, this);
     },
 
     /**
-     * TODO : Supprimer les markers UNIQUEMENT du layer
      * @param places
      */
-    onPlacesFreed: function (places) {
-        console.log('onPlacesFreed : %o', places);
+    onPlacesFreed: function (data) {
+        var places = data.data;
+        // Parcourt des place a supprimer
+        _.each(places, function (p, i) {
+            // Récup de la liste des markers a supprimer
+            var exists = mapHelper.findMarkerByPlaceId(p.id, this._inst.placesMarkersGroup);
+            // Suppression du marker
+            if (exists.length == 1) {
+                this._inst.placesMarkersGroup.removeLayer(exists[0]);
+            }
+        }, this);
     },
 
     /**
