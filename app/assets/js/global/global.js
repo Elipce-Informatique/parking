@@ -93,7 +93,10 @@ var React = require('react/addons');
         "mode_zone",
         "mode_afficheur",
         // ACTIONS POUR LES MODALES
-        "pm_creer" // places multiples
+        "pm_creer", // places multiples
+        // ACTIONS DE RAFRAICHISSEMENT
+        "refresh_places",
+        "refresh_afficheurs"
     ]);
 
     /*

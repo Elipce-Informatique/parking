@@ -101,6 +101,14 @@ var store = Reflux.createStore({
     },
 
     /**
+     *
+     * @param data
+     */
+    onRefresh_places: function (data) {
+        console.log('OnRefreshMap !!! : %o', data);
+    },
+
+    /**
      * ---------------------------------------------------------------------------
      * VALIDATION DES FORMULAIRES ------------------------------------------------
      * ---------------------------------------------------------------------------
@@ -114,7 +122,6 @@ var store = Reflux.createStore({
     onSubmit_form: function (formDom, formId) {
 
     },
-
 
     /**
      * ---------------------------------------------------------------------------
@@ -215,7 +222,7 @@ var store = Reflux.createStore({
             context: this,
             success: function (data) {
                 console.log('nombre de places : %o', data);
-                this._inst.niveauInfos.last_journal = data;
+                this._inst.niveauInfos.last_journal = parseInt(data) - 2;
                 supervision_helper.refreshPlaces.init(this._inst.niveauInfos.id, this._inst.niveauInfos.last_journal);
             },
             error: function (xhr, status, err) {
