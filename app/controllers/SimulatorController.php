@@ -51,54 +51,64 @@ class SimulatorController extends \BaseController
         // Min et max des places
         $min = 0;
         $max = Niveau::getMaxPlace($id);
+//        Log::debug('random max: '.$max);
 
         // Nb aléatoire de places qui bougent
         $nb = mt_rand(5, 15);
 
-//        return Place::getPlaceFromNum(58, 1);
-
         try {
             DB::beginTransaction();
-            Log::debug('nb places :'.$nb);
+
             // Parcours des places à modifier
             for ($i = 0; $i < $nb; $i++) {
                 // Place aléatoire
                 $numPlace = mt_rand($min, $max);
-                Log::debug('num place'. $numPlace);
+
                 // ID place
-                $idPlace = Place::getPlaceFromNum($numPlace, $id)->id;
-                Log::debug('id place'. $idPlace);
+                $oPlace = Place::getPlaceFromNum($numPlace, $id);
+                $idPlace = $oPlace->id;
+//                Log::debug('num place: '.$numPlace. ' id place: '.$idPlace);
+
+                // Etat d'occupation courrant
+                $etatCourant = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe);
+
+                // Etat d'occupation inverse
+                $etatNew = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, !$oPlace->is_occupe);
+                if(!$etatNew){
+                    $etatNew = $etatCourant;
+                }
+//                Log::debug('OLD: '.$etatCourant->libelle.' NEW: '.$etatNew->libelle);
+
                 // Modification place
-                // TODO calculer l'état d'occupation
-                if (!Place::updatePlace($idPlace, array('etat_occupation_id' => 11))) {
-                    DB::rollBack();
+                if (!Place::updatePlace($idPlace, array('etat_occupation_id' => $etatNew->id))) {
+                    Log::error('Rollback simulator update place: '.$idPlace);
                     $retour = false;
+                    break;
                 }
                 // Journal
-                if (!JournalEquipementNiveau::createJournalPlace(array(
+                if (!JournalEquipementNiveau::createJournalPlace([
                     'niveau_id' => $id,
                     'place_id' => $idPlace,
                     'etat_occupation_id' => null
-                ))
+                ])
                 ) {
-                    DB::rollBack();
+                    Log::error('Rollback simulator insert journal: '.$idPlace);
                     $retour = false;
+                    break;
                 }
             }
             // Pas d'exception si on arrive ici
             DB::commit();
         } catch (Exception $e) {
             // Erreur SQL, on log
-            Log::error('Rollback simulator !'.print_r($e,true));
-            DB::rollBack();
+            Log::error('Rollback simulator !'.$e->getMessage());
             $retour = false;
         }
-        if($retour){
-            dd('OK');
+        // Pas d'insertions
+        if(!$retour){
+            DB::rollBack();
         }
-        else{
-            dd('KO');
-        }
+        return json_encode($retour);
     }
 
 
