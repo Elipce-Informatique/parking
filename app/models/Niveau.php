@@ -55,7 +55,8 @@ class Niveau extends \Eloquent
      */
     public static function getPlaces($id){
         return  Niveau::find($id)
-            ->join('zone', 'zone.niveau_id', '=', 'niveau.id')
+            ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
+            ->join('zone', 'zone.plan_id', '=', 'plan.id')
             ->join('allee', 'allee.zone_id', '=', 'zone.id')
             ->join('place', 'place.allee_id', '=', 'allee.id')
             ->join('etat_occupation', 'etat_occupation.id', '=', 'place.etat_occupation_id')
@@ -70,7 +71,8 @@ class Niveau extends \Eloquent
      */
     public static function getMaxPlace($id){
         return  Niveau::find($id)
-            ->join('zone', 'zone.niveau_id', '=', 'niveau.id')
+            ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
+            ->join('zone', 'zone.plan_id', '=', 'plan.id')
             ->join('allee', 'allee.zone_id', '=', 'zone.id')
             ->join('place', 'place.allee_id', '=', 'allee.id')
             ->join('etat_occupation', 'etat_occupation.id', '=', 'place.etat_occupation_id')
