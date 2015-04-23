@@ -13,6 +13,7 @@ var autoprefixer = require('gulp-autoprefixer');
 var notify = require('gulp-notify');
 var stylus = require('gulp-stylus');
 var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
 var browserify = require('browserify');
 var transform = require('vinyl-transform');
 var watchify = require('watchify');
@@ -20,10 +21,9 @@ var source = require('vinyl-source-stream');
 var _ = require('lodash');
 var concat = require('gulp-concat');
 var replace = require('gulp-replace');
-var Q = require('Q');
 var del = require('del');
-var bootlint  = require('gulp-bootlint');
-var es6ify = require('es6ify');
+var bootlint = require('gulp-bootlint');
+var reactify = require('reactify');
 
 // UTIL REQUIRELMENTS
 var bundleLogger = require('./gulp_utils/bundleLogger');
@@ -41,16 +41,28 @@ var CSS_FONTS_DEST = './public/css/fonts';
 var JS_ALL_SRC = './app/assets/js/**/*.js';
 var JS_LIBS_SRC = './app/assets/js/libs/*.js';
 var JS_LIBS_DEST = './public/js/libs';
+var JS_VENDOR_DEST = './public/js/global';
 var IMG_SRC = './app/assets/images/**/*.*';
 var IMG_DEST = './public/images';
 var LANG_SRC = './app/lang/**/*.php';
+var LANG_CONF = './app/config/packages/andywer/js-localization/config.php';
+
+// LIBS CONFIG
+var libs = [
+    'react',
+    'react/addons',
+    'react/lib/ReactCSSTransitionGroup',
+    'jquery',
+    'lodash',
+    'react-bootstrap',
+];
 
 /*
  |--------------------------------------------------------------------------
  | Tache par défaut, qui lance les taches d'init et de watch
  |--------------------------------------------------------------------------
  */
-gulp.task('default', ['clean'], function(){
+gulp.task('default', ['clean'], function () {
     gulp.start('build');
 });
 gulp.task('build', ['watch', 'css', 'js', 'images']);
@@ -60,7 +72,7 @@ gulp.task('build', ['watch', 'css', 'js', 'images']);
  | SETUP DES WATCHERS
  |--------------------------------------------------------------------------
  */
-gulp.task('watch',  function () {
+gulp.task('watch', function () {
     // Watch des CSS
     gulp.watch(CSS_SRC, ['css_natif']);
     gulp.watch(STYL_SRC, ['stylus']);
@@ -71,6 +83,7 @@ gulp.task('watch',  function () {
     gulp.watch(IMG_SRC, ['images']);
     // Watch des LANG
     gulp.watch(LANG_SRC, ['lang_js']);
+    gulp.watch(LANG_CONF, ['lang_js']);
 
 });
 
@@ -91,58 +104,58 @@ gulp.task('clean', function (cb) {
  */
 
 // MANIPULATION DES CSS
-gulp.task('css', ['stylus', 'css_natif', 'libs_css_statiques', 'css_fonts']);
+gulp.task('css', ['stylus', 'css_natif', 'libs_css_statiques', 'css_fonts'], function () {
+    notify({message: 'All CSS tasks completed.'});
+});
 
 // MANIPULATION DES JS
-gulp.task('js', ['libs_js_statiques', 'browserify', 'lang_js']);
+gulp.task('js', ['libs_js_statiques', 'vendor', 'browserify', 'lang_js'], function () {
+    notify({message: 'All JS tasks completed.'});
+});
 
 // LIBS JS (/libs/*.js)
-gulp.task('libs_js_statiques',  function () {
+gulp.task('libs_js_statiques', function () {
     return gulp.src(JS_LIBS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(JS_LIBS_DEST))
-        .pipe(uglify())
+        //.pipe(uglify())
         .on('error', gutil.log)
-        .pipe(gulp.dest(JS_LIBS_DEST))
-        .pipe(notify({message: 'Static JS task completed.'}));
+        .pipe(gulp.dest(JS_LIBS_DEST));
 });
 
 // STYLUS (*.styl)
-gulp.task('stylus',  function () {
+gulp.task('stylus', function () {
     return gulp.src(STYL_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(CSS_DEST))
         .pipe(stylus())
         .pipe(autoprefixer('> 1%'))
         .pipe(minifycss())
-        .pipe(gulp.dest(CSS_DEST))
-        .pipe(notify({message: 'Stylus task completed.'}));
+        .pipe(gulp.dest(CSS_DEST));
 });
 
 // CSS NATIF (*.css)
-gulp.task('css_natif',  function () {
+gulp.task('css_natif', function () {
     return gulp.src(CSS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(CSS_DEST))
         .pipe(autoprefixer('> 1%'))
         .pipe(minifycss())
-        .pipe(gulp.dest(CSS_DEST))
-        .pipe(notify({message: 'CSS natif task completed.'}));
+        .pipe(gulp.dest(CSS_DEST));
 });
 
 // LIBS CSS (/libs/*.css)
-gulp.task('libs_css_statiques',  function () {
+gulp.task('libs_css_statiques', function () {
     return gulp.src(CSS_LIBS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(replace('../images/', '../../images/'))
         .pipe(minifycss())
         .pipe(concat('all.css'))
-        .pipe(gulp.dest(CSS_LIBS_DEST))
-        .pipe(notify({message: 'Static CSS task completed.'}));
+        .pipe(gulp.dest(CSS_LIBS_DEST));
 });
 
 // FONTS CSS (/css/fonts)
-gulp.task('css_fonts',  function () {
+gulp.task('css_fonts', function () {
     return gulp.src(CSS_FONTS_SRC)
         .pipe(plumber({errorHandler: gutil.log}))
         .pipe(changed(CSS_FONTS_DEST))
@@ -150,14 +163,14 @@ gulp.task('css_fonts',  function () {
 });
 
 // IMAGES
-gulp.task('images',  function () {
+gulp.task('images', function () {
     return gulp.src(IMG_SRC)
         .pipe(changed(IMG_DEST))
         .pipe(gulp.dest(IMG_DEST));
 });
 
 // LANGUES
-gulp.task('lang_js',  function () {
+gulp.task('lang_js', function () {
     var child = spawn("php", ["artisan", "js-localization:refresh"], {cwd: process.cwd()}),
         stdout = '',
         stderr = '';
@@ -175,14 +188,40 @@ gulp.task('lang_js',  function () {
         gutil.beep();
     });
 
-    child.on('close', function(code) {
+    child.on('close', function (code) {
         gutil.log("Remise en cache des langues terminée avec le code", code);
         //gutil.log("You access complete stdout and stderr from here"); // stdout, stderr
     });
-})
+});
+// ---------------------------------------------------------------------------------------------------------
+// --------------------------------- BROWSERIFY ------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------
+
+gulp.task('vendor', function (callback) {
+    var bundler = browserify({
+        // Specify the entry point of your app
+        entries: './gulp_utils/foo.js',
+        debug: false
+    });
+    bundler.transform({es6: true, global: true}, reactify);
+
+    // Optimisation des libs en external
+    libs.forEach(function (lib) {
+        bundler.require(lib);
+    });
+
+    var stream = bundler.bundle()
+        .pipe(source('vendor.js'))
+        //.pipe(uglify())
+        .pipe(gulp.dest(JS_VENDOR_DEST))
+        // Report compile errors
+        .on('error', handleErrors);
+
+    return stream;
+});
 
 // TACHE BROWSERIFY FONCTIONNELLE MULTI BUNDLE
-gulp.task('browserify',  function (callback) {
+gulp.task('browserify', function (callback) {
 
     var bundleQueue = config.bundleConfigs().length;
 
@@ -196,34 +235,37 @@ gulp.task('browserify',  function (callback) {
             // Add file extentions to make optional in your requires
             extensions: config.extensions,
             // Enable source maps!
-            debug: config.debug,
-            transform: 'reactify'
+            debug: config.debug
         });
-        bundler.transform(es6ify.configure(/.js/));
+        bundler.transform({es6: true}, reactify);
+
+        // Optimisation des libs en external
+        libs.forEach(function (lib) {
+            bundler.external(lib);
+        });
 
         var bundle = function () {
             // Log when bundling starts
             bundleLogger.start(bundleConfig.outputName);
 
-            return bundler
+            var stream = bundler
                 .bundle()
                 // Report compile errors
                 .on('error', handleErrors)
                 // Use vinyl-source-stream to make the
                 // stream gulp compatible. Specifiy the
                 // desired output filename here.
-                .pipe(source(bundleConfig.outputName))
-                // Specify the output destination
-                .pipe(gulp.dest(bundleConfig.dest))
+                .pipe(source(bundleConfig.outputName));
+            if (!config.debug) {
+                // If this is a production build, minify it
+                //stream.pipe(uglify()); TODO : voir issues
+            }
+            // Specify the output destination
+            stream.pipe(gulp.dest(bundleConfig.dest))
                 .on('end', reportFinished);
-        };
 
-        //if(global.isWatching) {
-        //    // Wrap with watchify and rebundle on changes
-        bundler = watchify(bundler);
-        // Rebundle on update
-        bundler.on('update', bundle);
-        //}
+            return stream;
+        };
 
         var reportFinished = function () {
             // Log when bundling completes
@@ -239,6 +281,11 @@ gulp.task('browserify',  function (callback) {
             }
         };
 
+        // Wrap with watchify and rebundle on changes
+        bundler = watchify(bundler);
+        // Rebundle on update
+        bundler.on('update', bundle);
+
         return bundle();
     };
 
@@ -246,8 +293,9 @@ gulp.task('browserify',  function (callback) {
     config.bundleConfigs().forEach(browserifyThis);
 });
 
+
 // BOOTLINT
-gulp.task('bootlint', function() {
+gulp.task('bootlint', function () {
     gulp.src('./bootlint_files/*')
         .pipe(bootlint());
 });
