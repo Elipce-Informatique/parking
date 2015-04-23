@@ -10,6 +10,5 @@
      | INCLUSIONS DE MODULES GLOBAUX
      |--------------------------------------------------------------------------
      */
-    global.$ = global.jQuery = require('jquery');
-    
+        global.$ = global.jQuery = require('jquery');
 })(window);

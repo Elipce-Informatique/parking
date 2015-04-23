@@ -85,7 +85,6 @@ gulp.task('watch', function () {
     // Watch des LANG
     gulp.watch(LANG_SRC, ['lang_js']);
     gulp.watch(LANG_CONF, ['lang_js']);
-
 });
 
 /*
