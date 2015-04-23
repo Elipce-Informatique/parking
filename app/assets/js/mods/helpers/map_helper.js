@@ -526,6 +526,18 @@ function findMarkerByPlaceId(id, layerGroup){
     return layers;
 }
 
+var customZoomCRS = L.extend({}, L.CRS.Simple, {
+    scale: function (zoom) {
+        // This method should return the tile grid size
+        // (which is always square) for a specific zoom
+        // We want 0 = 200px = 2 tiles @ 100x100px,
+        // 1 = 300px = 3 tiles @ 100x100px, etc.
+        // Ie.: (200 + zoom*100)/100 => 2 + zoom
+
+        return 2 + zoom;
+    }
+});
+
 
 /**
  * Ce que le module exporte.
@@ -543,6 +555,7 @@ module.exports = {
     createPlaceParallelogramme: createPlaceParallelogramme,
     createPlaceParallelogrammeFromGeoJson: createPlaceParallelogrammeFromGeoJson,
     createPlaceFromData: createPlaceFromData,
-    findMarkerByPlaceId: findMarkerByPlaceId
+    findMarkerByPlaceId: findMarkerByPlaceId,
+    customZoomCRS: customZoomCRS
 };
 
