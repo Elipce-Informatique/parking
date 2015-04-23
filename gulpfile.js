@@ -54,7 +54,8 @@ var libs = [
     'react/lib/ReactCSSTransitionGroup',
     'jQuery',
     'lodash',
-    'react-bootstrap'
+    'react-bootstrap',
+    'react-calendar/react-calendar'
 ];
 
 /*
@@ -109,7 +110,7 @@ gulp.task('css', ['stylus', 'css_natif', 'libs_css_statiques', 'css_fonts'], fun
 });
 
 // MANIPULATION DES JS
-gulp.task('js', ['libs_js_statiques', 'browserify', 'lang_js'], function () {
+gulp.task('js', ['libs_js_statiques', 'vendor', 'browserify', 'lang_js'], function () {
     notify({message: 'All JS tasks completed.'});
 });
 
@@ -193,27 +194,29 @@ gulp.task('lang_js', function () {
         //gutil.log("You access complete stdout and stderr from here"); // stdout, stderr
     });
 });
+// ---------------------------------------------------------------------------------------------------------
+// --------------------------------- BROWSERIFY ------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------
 
 gulp.task('vendor', function (callback) {
-    var stream = gulp.src('./gulp_utils/foo.js', {read: false})
-        .pipe(browserify({
-            debug: false  // Don't provide source maps for vendor libs
-        }))
-        .on('prebundle', function (bundle) {
-            // Require vendor libraries and make them available outside the bundle.
-            libs.forEach(function (lib) {
-                bundle.require(lib);
-            });
-        });
+    var bundler = browserify({
+        // Specify the entry point of your app
+        entries: './gulp_utils/foo.js',
+        debug: false
+    });
+    bundler.transform({es6: true, global: true}, reactify);
 
-    if (!config.debug) {
-        // If this is a production build, minify it
-        stream.pipe(uglify());
-    }
+    // Optimisation des libs en external
+    libs.forEach(function (lib) {
+        bundler.require(lib);
+    });
 
-    // Give the destination file a name
-    stream.pipe(rename('vendor.js'))
-        .pipe(gulp.dest(JS_VENDOR_DEST));
+    var stream = bundler.bundle()
+        .pipe(source('vendor.js'))
+        //.pipe(uglify())
+        .pipe(gulp.dest(JS_VENDOR_DEST))
+        // Report compile errors
+        .on('error', handleErrors);
 
     return stream;
 });
@@ -235,37 +238,35 @@ gulp.task('browserify', function (callback) {
             // Enable source maps!
             debug: config.debug
         });
-        bundler.transform({"es6": true}, reactify);
+        bundler.transform({es6: true}, reactify);
+
+        // Optimisation des libs en external
+        libs.forEach(function (lib) {
+            bundler.external(lib);
+        });
 
         var bundle = function () {
             // Log when bundling starts
             bundleLogger.start(bundleConfig.outputName);
 
-            return bundler
+            var stream = bundler
                 .bundle()
-                .on('prebundle', function (bundle) {
-                    // The following requirements are loaded from the vendor bundle
-                    libs.forEach(function (lib) {
-                        bundle.external(lib);
-                    });
-                })
                 // Report compile errors
                 .on('error', handleErrors)
                 // Use vinyl-source-stream to make the
                 // stream gulp compatible. Specifiy the
                 // desired output filename here.
-                .pipe(source(bundleConfig.outputName))
-                // Specify the output destination
-                .pipe(gulp.dest(bundleConfig.dest))
+                .pipe(source(bundleConfig.outputName));
+            if (!config.debug) {
+                // If this is a production build, minify it
+                //stream.pipe(uglify()); TODO : voir issues
+            }
+            // Specify the output destination
+            stream.pipe(gulp.dest(bundleConfig.dest))
                 .on('end', reportFinished);
-        };
 
-        //if(global.isWatching) {
-        //    // Wrap with watchify and rebundle on changes
-        bundler = watchify(bundler);
-        // Rebundle on update
-        bundler.on('update', bundle);
-        //}
+            return stream;
+        };
 
         var reportFinished = function () {
             // Log when bundling completes
@@ -280,6 +281,11 @@ gulp.task('browserify', function (callback) {
                 }
             }
         };
+
+        // Wrap with watchify and rebundle on changes
+        bundler = watchify(bundler);
+        // Rebundle on update
+        bundler.on('update', bundle);
 
         return bundle();
     };
