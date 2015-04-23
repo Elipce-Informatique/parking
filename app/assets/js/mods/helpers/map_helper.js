@@ -465,7 +465,7 @@ function createPlaceParallelogramme(coordsPara, extraData, nom, color) {
  * @param p
  * @returns {{polygon: dataPlaces.geoJson, marker: {}}}
  */
-function createPlaceFromData(p, types_places){
+function createPlaceFromData(p, types_places) {
     var coords = {lat: p.lat, lng: p.lng};
     var nom = p.libelle;
     var angleMarker = p.angle;
@@ -503,7 +503,7 @@ function createPlaceParallelogrammeFromGeoJson(geoJson, extraData, nom, color) {
         data: extraData,
         color: "#" + color,
         opacity: 0.9,
-        fillColor: "#"+ color
+        fillColor: "#" + color
     };
     var parallelogrammePlace = new L.geoJson(JSON.parse(geoJson), {style: style});
     parallelogrammePlace.bindLabel(nom);
@@ -516,10 +516,10 @@ function createPlaceParallelogrammeFromGeoJson(geoJson, extraData, nom, color) {
  * @param layerGroup
  * @returns {Array}
  */
-function findMarkerByPlaceId(id, layerGroup){
+function findMarkerByPlaceId(id, layerGroup) {
     var layers = [];
     layerGroup.eachLayer(function (layer) {
-        if(layer.options.data.id == id){
+        if (layer.options.data.id == id) {
             layers.push(layer);
         }
     });

@@ -1,27 +1,21 @@
 <?php
 
-class Zone extends \Eloquent
+class Plan extends \Eloquent
 {
-    protected $table = 'zone';
+    protected $table = 'plan';
     public $timestamps = false;
-    protected $fillable = [];
+    protected $fillable = [
+        'libelle',
+        'description',
+        'url',
+        'niveau_id',
+    ];
 
     /*****************************************************************************
      * RELATIONS DU MODELE *******************************************************
      *****************************************************************************/
-
     /**
-     * Les allées de la zone
-     * @return mixed
-     */
-    public function allees()
-    {
-        return $this->hasMany('Allee');
-    }
-
-    /**
-     * Le niveau de la zone :
-     * Inverse de la relation du niveau
+     * Le niveau du plan
      * @return mixed
      */
     public function niveau()
@@ -30,12 +24,11 @@ class Zone extends \Eloquent
     }
 
     /**
-     * La zone du niveau :
-     * Inverse de la relation de la zone
+     * Les zones du plan
      * @return mixed
      */
-    public function zone()
+    public function zones()
     {
-        return $this->belongsTo('Zone');
+        return $this->hasMany('Zone');
     }
 }

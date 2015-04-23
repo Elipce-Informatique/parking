@@ -11,12 +11,12 @@ class Niveau extends \Eloquent
      *****************************************************************************/
 
     /**
-     * Les zones du niveau
+     * Les plans du niveau
      * @return mixed
      */
-    public function zones()
+    public function plans()
     {
-        return $this->hasMany('Zone');
+        return $this->hasMany('Plan');
     }
 
     /**
@@ -48,6 +48,7 @@ class Niveau extends \Eloquent
     }
 
 
+    //--------------------------------------------------------------------------------
     /**
      * Les places du niveau
      * @param $id: ID du niveau
