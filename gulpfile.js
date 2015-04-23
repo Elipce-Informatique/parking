@@ -52,7 +52,7 @@ var libs = [
     'react',
     'react/addons',
     'react/lib/ReactCSSTransitionGroup',
-    'jQuery',
+    'jquery',
     'lodash',
     'react-bootstrap',
     'react-calendar/react-calendar'
