@@ -32,16 +32,18 @@ class Plan extends \Eloquent
         return $this->hasMany('Zone');
     }
 
+    /*****************************************************************************
+     * UTILITAIRES DU MODELE *****************************************************
+     *****************************************************************************/
 
     /**
-     * Les places du niveau
-     * @param $id : ID du niveau
+     * Les places du plan
+     * @param $id : ID du plan
      * @return mixed
      */
     public static function getPlaces($id)
     {
-        return Niveau::find($id)
-            ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
+        return Plan::find($id)
             ->join('zone', 'zone.plan_id', '=', 'plan.id')
             ->join('allee', 'allee.zone_id', '=', 'zone.id')
             ->join('place', 'place.allee_id', '=', 'allee.id')

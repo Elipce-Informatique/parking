@@ -150,8 +150,9 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
 |
 */
 Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parking'], function () {
-    // Données d'un plan en cascade jusqu'aux places
+
     Route::get('plan/{id}/places', 'PlansController@showWithPlaces');
+    Route::get('niveau/{id}/places', 'NiveauxController@showWithPlaces');
 
     Route::resource('niveau', 'NiveauxController');
     Route::resource('plan', 'PlansController');

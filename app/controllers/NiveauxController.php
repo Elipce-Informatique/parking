@@ -49,6 +49,19 @@ class NiveauxController extends \BaseController
     }
 
     /**
+     * Display the specified resource.
+     * GET /niveaux/{id}
+     *
+     * @param  int $id
+     * @return Response
+     */
+    public function showWithPlaces($id)
+    {
+        return Niveau::with('plans.zones.allees.places.etat_occupation')->find($id);
+    }
+
+
+    /**
      * Show the form for editing the specified resource.
      * GET /niveaux/{id}/edit
      *
