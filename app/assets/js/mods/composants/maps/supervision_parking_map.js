@@ -24,7 +24,7 @@ var parkingMap = React.createClass({
         divId: React.PropTypes.string.isRequired,
         imgUrl: React.PropTypes.string.isRequired,
         parkingId: React.PropTypes.number.isRequired,
-        niveauId: React.PropTypes.number.isRequired,
+        planId: React.PropTypes.number.isRequired,
         mapHeight: React.PropTypes.number,
         calibre: React.PropTypes.number
     },
@@ -94,7 +94,7 @@ var parkingMap = React.createClass({
         // Transmission des données du parking au store:
         var parkingData = {
             parkingId: this.props.parkingId,
-            niveauId: this.props.niveauId
+            planId: this.props.planId
         };
         Actions.map.map_initialized(this._inst.map, this.props.calibre, parkingData);
 

@@ -183,7 +183,7 @@ var store = Reflux.createStore({
     recupInfosNiveau: function (map, calibre, parkingInfos) {
         return $.ajax({
             method: 'GET',
-            url: BASE_URI + 'parking/niveau/' + parkingInfos.niveauId,
+            url: BASE_URI + 'parking/niveau/' + parkingInfos.planId,
             dataType: 'json',
             context: this,
             success: function (data) {
@@ -243,7 +243,7 @@ var store = Reflux.createStore({
     recupInfosJournal: function (map, calibre, parkingInfos) {
         return $.ajax({
             method: 'GET',
-            url: BASE_URI + 'parking/journal_equipement/last/' + parkingInfos.niveauId,
+            url: BASE_URI + 'parking/journal_equipement/last/' + parkingInfos.planId,
             dataType: 'json',
             context: this,
             success: function (data) {

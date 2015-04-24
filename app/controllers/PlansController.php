@@ -44,6 +44,17 @@ class PlansController extends \BaseController
      */
     public function show($id)
     {
+        return Plan::find($id);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int $id
+     * @return Response
+     */
+    public function showWithPlaces($id)
+    {
         return Plan::with('zones.allees.places.etat_occupation')->find($id);
     }
 
