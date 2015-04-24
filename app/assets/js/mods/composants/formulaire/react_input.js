@@ -454,7 +454,8 @@ var InputSelect = React.createClass({
         data: React.PropTypes.array.isRequired,
         selectedValue: React.PropTypes.oneOfType([
             React.PropTypes.array,
-            React.PropTypes.string
+            React.PropTypes.string,
+            React.PropTypes.number
         ]),
         placeholder: React.PropTypes.string,
         multi: React.PropTypes.bool,
@@ -544,7 +545,8 @@ var InputSelect = React.createClass({
         }
 
         // Nouvelle value
-        this.setState({attributes: validations, value: val.split(this.props.delimiter)});
+        console.log('val %o', val);
+        this.setState({attributes: validations, value: this.props.multi ? val.split(this.props.delimiter) : val});
 
         // onChange DEV
         if (this.props.evts.onChange !== undefined) {
@@ -643,7 +645,8 @@ var InputSelectEditable = React.createClass({
         data: React.PropTypes.array.isRequired,
         selectedValue: React.PropTypes.oneOfType([
             React.PropTypes.array,
-            React.PropTypes.string
+            React.PropTypes.string,
+            React.PropTypes.number
         ]),
         placeholder: React.PropTypes.string,
         multi: React.PropTypes.bool,

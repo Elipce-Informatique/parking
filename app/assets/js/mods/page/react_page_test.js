@@ -268,7 +268,12 @@ var ReactPageTest = React.createClass({
                 <InputSelectEditable
                     multi={false}
                     evts={{onChange: selectChange}}
-                    attributes={{label: 'Mes fruits', name: "Select", selectCol: 4, labelCol: 2, required: true}}
+                    attributes={{
+                        label: 'Mes fruits',
+                        name: "Select",
+                        selectCol: 4,
+                        labelCol: 2,
+                        required: true}}
                     data={options}
                     editable={editable}
                     placeholder={'PlaceHolder...'}

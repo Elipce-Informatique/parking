@@ -65,24 +65,13 @@ class EtatsDoccupation extends Eloquent
      */
     public static function getInfosEtatById($id)
     {
-        $retour = [];
-
-        // Mpde Array
-        DB::setFetchMode(PDO::FETCH_ASSOC);
-
         /* Récupération des données pour un état */
         if ($id != 0) {
-            $resEtat = DB::table('etat_occupation')
-                ->leftJoin('type_place', function ($join) {
-                    $join->on('etat_occupation.type_place_id', '=', 'type_place.id');
-                })
-                ->leftJoin('etat_place', function ($join) {
-                    $join->on('etat_occupation.etat_place_id', '=', 'etat_place.id');
-                })
+            $resEtat = EtatsDoccupation::where('etat_occupation.id', '=', $id)
+                ->leftJoin('type_place', 'etat_occupation.type_place_id', '=', 'type_place.id')
                 ->groupBy('etat_occupation.id')
-                ->where('etat_occupation.id', $id)
-                ->get(['etat_occupation.libelle', 'etat_occupation.couleur', DB::raw('CAST(type_place.id AS char) as type_place_id'), DB::raw('CAST(etat_place.id AS char)as etat_place_id'), 'type_place.logo']);
-            $resEtat = $resEtat[0];
+                ->get(['etat_occupation.*','type_place.logo'])
+                ->first();
         } /* Récupération des données pour une création d'état */
         else {
             $resEtat = [
@@ -94,68 +83,7 @@ class EtatsDoccupation extends Eloquent
             ];
         }
         // Données etat d'occupation
-        $retour = $resEtat;
-
-        /* Données des combos */
-        $retour['dataTypesPlace'] = EtatsDoccupation::getTypesPlace();
-        $retour['dataEtatsPlace'] = EtatsDoccupation::getEtatsPlace();
-
-        return $retour;
-    }
-
-    /*
-     * Retourne les types de place
-     * ['id', 'libelle', 'logo']
-     */
-    public static function getTypesPlace()
-    {
-        $retour = [];
-
-        $res = DB::table('type_place')->get(['type_place.id as value', 'type_place.libelle as label', 'type_place.logo as logo']);
-        foreach ($res as $key => $value) {
-            $retour[$key] = [];
-            foreach ($value as $key2 => $value2) {
-                $retour[$key][$key2] = $value2 . '';
-            };
-        };
-        return $retour;
-    }
-
-    /*
-     * Retourne les états de place
-     * ['id', 'libelle', 'etat_capteur.id']
-     */
-    public static function getEtatsPlace()
-    {
-//        Log::warning('passe getEtataPlace');
-        $retour = [];
-
-        $res = DB::table('etat_place')->get(['etat_place.id as value', 'etat_place.libelle as label', 'etat_place.etat_capteur_id']);
-        foreach ($res as $key => $value) {
-            $retour[$key] = [];
-            foreach ($value as $key2 => $value2) {
-                $retour[$key][$key2] = $value2 . '';
-            };
-        };
-        return $retour;
-    }
-
-    /*
-     * Retourne les états capteur
-     * ['id', 'libelle']
-     */
-    public static function getEtatsCapteur()
-    {
-        $retour = [];
-
-        $res = DB::table('etat_capteur')->get(['etat_capteur.id', 'etat_capteur.libelle']);
-        foreach ($res as $key => $value) {
-            $retour[$key] = [];
-            foreach ($value as $key2 => $value2) {
-                $retour[$key][$key2] = $value2 . '';
-            };
-        };
-        return $retour;
+        return $resEtat;
     }
 
     /*

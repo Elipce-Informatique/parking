@@ -30,4 +30,6 @@ class TypePlace extends \Eloquent
     }
 
 
+
+
 }

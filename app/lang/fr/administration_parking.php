@@ -20,7 +20,7 @@ return array(
             'logo' => 'Logo'
         ],
         'libelleExist' => 'Cet état d\'occupation existe déjà.',
-        'etat_place' => 'Etat place',
+        'etat_place' => 'Place occupée',
         'type_place' => 'Type place',
         'errorExist' => 'Cet état d\'occupation existe déjà.'
     ],

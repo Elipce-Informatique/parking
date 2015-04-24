@@ -48,7 +48,11 @@ class EtatsDoccupationController extends \BaseController
      */
     public function show($id)
     {
-        return json_encode(EtatsDoccupation::getInfosEtatById($id));
+        // Infos état d'occupataion
+        $infos = EtatsDoccupation::getInfosEtatById($id);
+        // Combo type place
+        $infos['dataTypesPlace'] = TypePlace::all();
+        return $infos;
     }
 
     public function all()
@@ -58,21 +62,6 @@ class EtatsDoccupationController extends \BaseController
             $etat->etat_place = $etat->etat_place == 1 ? Lang::get('global.occupee') : Lang::get('global.libre');
         }
         return json_encode($all);
-    }
-
-    public function getTypesPlace()
-    {
-        return json_encode(EtatsDoccupation::getTypesPlace());
-    }
-
-    public function getEtatsPlace()
-    {
-        return json_encode(EtatsDoccupation::getEtatsPlace());
-    }
-
-    public function getEtatsCapteur()
-    {
-        return json_encode(EtatsDoccupation::getEtatsCapteur());
     }
 
     public function getLibelleExist($libelle)
