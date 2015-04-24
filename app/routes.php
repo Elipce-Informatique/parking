@@ -151,6 +151,7 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
 */
 Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parking'], function () {
     Route::resource('niveau', 'NiveauxController');
+    Route::resource('plan', 'PlansController');
     Route::resource('afficheur', 'AfficheursController');
     Route::resource('zone', 'ZonesController');
     Route::resource('allee', 'AlleesController');
