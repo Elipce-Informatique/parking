@@ -131,7 +131,8 @@ class Place extends \Eloquent
      */
     public static function getPlaceFromNum($num, $niveau){
         return Niveau::find($niveau)
-            ->join('zone', 'zone.niveau_id', '=', 'niveau.id')
+            ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
+            ->join('zone', 'zone.plan_id', '=', 'plan.id')
             ->join('allee', 'allee.zone_id', '=', 'zone.id')
             ->join('place', 'place.allee_id', '=', 'allee.id')
             ->leftJoin('etat_occupation', 'etat_occupation.id', '=','place.etat_occupation_id')

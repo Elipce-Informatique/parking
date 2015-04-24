@@ -53,7 +53,11 @@ class EtatsDoccupationController extends \BaseController
 
     public function all()
     {
-        return json_encode(EtatsDoccupation::getAll());
+        $all = EtatsDoccupation::getAll();
+        foreach($all as &$etat){
+            $etat->etat_place = $etat->etat_place == 1 ? Lang::get('global.occupee') : Lang::get('global.libre');
+        }
+        return json_encode($all);
     }
 
     public function getTypesPlace()

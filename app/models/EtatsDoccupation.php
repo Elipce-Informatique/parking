@@ -54,11 +54,8 @@ class EtatsDoccupation extends Eloquent
             ->leftJoin('type_place', function ($join) {
                 $join->on('etat_occupation.type_place_id', '=', 'type_place.id');
             })
-            ->leftJoin('etat_place', function ($join) {
-                $join->on('etat_occupation.etat_place_id', '=', 'etat_place.id');
-            })
             ->groupBy('etat_occupation.id')
-            ->get(['etat_occupation.id', 'etat_occupation.libelle', 'etat_occupation.couleur', 'type_place.libelle as type_place', 'etat_place.libelle as etat_place', 'type_place.logo']);
+            ->get(['etat_occupation.id', 'etat_occupation.libelle', 'etat_occupation.couleur', 'type_place.libelle as type_place', 'etat_occupation.is_occupe as etat_place', 'type_place.logo']);
         return $res;
     }
 

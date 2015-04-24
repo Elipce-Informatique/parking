@@ -88,6 +88,10 @@ Voulez-vous vraiment quitter cette page ?',
     'inputTelError' => 'Numéro incorrect',
     'erreurFileInput' => 'Seules les extensions suivantes sont prises en compte ici : [extensions] Le fichier n\'a pas été pris en compte.',
 
+    // PARKING
+    'occupee' => 'Occupée',
+    'libre' => 'Libre',
+
     /*
     |--------------------------------------------------------------------------
     | Traduction DataTables
