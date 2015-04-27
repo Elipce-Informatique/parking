@@ -23,7 +23,7 @@ class EtatsDoccupationController extends \BaseController
         // Valeurs postées
         $fields = Input::except('_token');
 
-        return json_encode(EtatsDoccupation::creerEtatOccupation($fields));
+        return json_encode(EtatsDoccupation::createNew($fields));
     }
 
     /**
@@ -35,8 +35,7 @@ class EtatsDoccupationController extends \BaseController
     public function update($id)
     {
         // Champs du formualaire
-        $fields = Input::except('_token');
-        Log::warning('-----------> UPDATE ' . $id . ': ' . print_r($fields, true) . ' <-----------');
+        $fields = Input::except(['_token','_method']);
         return json_encode(EtatsDoccupation::updateEtatDoccupation($id, $fields));
     }
 

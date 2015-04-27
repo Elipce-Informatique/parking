@@ -513,10 +513,11 @@ var storeTest = Reflux.createStore({
                 this.onModal2_save(domNode);
                 break;
             default:
-                //console.log('DATA: %o',fData);
-                var f = $('#form_test').serializeArray();
-                f.push({name: '_token', value: $('#_token').val()});
-                console.log('DATA sur validation  %o', f);
+                var f = form_data_helper('form_test', 'POST');
+                ////console.log('DATA: %o',fData);
+                //var f = $('#form_test').serializeArray();
+                //f.push({name: '_token', value: $('#_token').val()});
+                //console.log('DATA sur validation  %o', f);
 
 
                 $.ajax({
@@ -526,6 +527,8 @@ var storeTest = Reflux.createStore({
                     context: this,
                     method: 'POST',
                     async: false,
+                    processData: false,
+                    contentType: false,
                     success: function (good) {
                     },
 
@@ -534,29 +537,6 @@ var storeTest = Reflux.createStore({
                     }
                 });
                 break;
-
-                //console.log('DATA: %o',fData);
-                var f = $('#form_test').serializeArray();
-                f.push({name: '_token', value: $('#_token').val()});
-                console.log('DATA sur validation  %o', f);
-
-
-                $.ajax({
-                    url: BASE_URI + 'post_dump',
-                    data: f,
-                    dataType: 'json',
-                    context: this,
-                    method: 'POST',
-                    async: false,
-                    success: function (good) {
-                    },
-
-                    error: function (xhr, status, err) {
-                        console.error(status, err.toString());
-                    }
-                });
-                break;
-
         }
         console.groupEnd();
     },

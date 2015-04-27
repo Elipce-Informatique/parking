@@ -4,7 +4,7 @@ class EtatsDoccupation extends Eloquent
 {
     public $timestamps = false;
 
-    protected $fillable = ['libelle'];
+    protected $fillable = ['libelle','couleur','type_place_id','is_occupe'];
     protected $table = 'etat_occupation';
 
     /*
@@ -78,8 +78,7 @@ class EtatsDoccupation extends Eloquent
                 'libelle' => '',
                 'couleur' => 'FFFFFF',
                 'type_place_id' => '',
-                'etat_place_id' => '',
-                'logo' => ''
+                'is_occupe' => '1'
             ];
         }
         // Données etat d'occupation
@@ -92,57 +91,57 @@ class EtatsDoccupation extends Eloquent
     public static function getLibelleExist($libelle)
     {
         $etat = DB::table('etat_occupation')->where('libelle', $libelle)->first(['id']);
-        return array('good' => empty($etat));
+        return empty($etat);
     }
 
-    /*
-     * Crée un état d'occupation
+    /**
+     * Créé un etat d'oocupation
+     * @param $fields: champs à insérer
+     * @return array
      */
-    public static function creerEtatOccupation($fields)
+    public static function createNew($fields)
     {
         $retour = array('save' => false, 'errorBdd' => false);
 
         /* Vérifie que l'utilisateur n'existe pas */
-        $res = EtatsDoccupation::getLibelleExist($fields['libelle']);
+        $libelleExists = EtatsDoccupation::getLibelleExist($fields['libelle']);
 
-        if ($res['good'] == true) {
+        if ($libelleExists) {
 
-            // Récupère la donnée de l'utilisateur
-            $fieldDataOccupation = [];
-            $fieldDataOccupation['libelle'] = $fields['libelle'];
-            $fieldDataOccupation['couleur'] = $fields['couleur'];
-            $fieldDataOccupation['type_place_id'] = $fields['type_place_id'];
-            $fieldDataOccupation['etat_place_id'] = $fields['etat_place_id'];
-
-            // Création
-            $idEtatOccupation = DB::table('etat_occupation')->insertGetId($fieldDataOccupation);
-
-
-            if ($idEtatOccupation > 0)
-                $retour = array('save' => true, 'errorBdd' => false, 'id' => $idEtatOccupation);
-            else
+            try {
+                // Création
+                $newEtat = EtatsDoccupation::create($fields);
+                $retour = array('save' => true, 'errorBdd' => false, 'id' => $newEtat->id);
+            }
+            catch(Exception $e){
                 $retour = array('save' => false, 'errorBdd' => true);
+            }
         }
 
         return $retour;
     }
 
-    /*
-     * Mise à jour d'un état d'occupation
+    /**
+     * Update etat d'occupation
+     * @param $id: ID à updater
+     * @param $fields: champ de l'update
+     * @return array
      */
     public static function updateEtatDoccupation($id, $fields)
     {
-        // Trouver l'état d'occupation
-        $oDataOccupation = EtatsDoccupation::find($id);
-        // Modifier l'état d'occupation
-        $oDataOccupation->libelle = $fields['libelle'];
-        $oDataOccupation->couleur = $fields['couleur'];
-        $oDataOccupation->type_place_id = $fields['type_place_id'];
-        $oDataOccupation->etat_place_id = $fields['etat_place_id'];
-        // Sauvegarder l'état d'occupation
-        $bSave = $oDataOccupation->save();
+        Log::debug(print_r($fields,true));
+        $retour = ['save' => true, 'id' => $id];
+        // Essai d'enregistrement
+        try {
+            // Création du jour
+            EtatsDoccupation::where('id','=',$id)->update($fields);
+        }
+        catch(Exception $e){
+            $retour['save'] = false;
+            Log::error($e->getMessage());
+        }
 
-        return ['save' => $bSave];
+        return $retour;
     }
 
     /*

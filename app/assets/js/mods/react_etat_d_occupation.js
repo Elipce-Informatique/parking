@@ -47,7 +47,7 @@ var reactEtatDoccupation = React.createClass({
             libelle: '',
             validation: {},// Etat de validation du champ libelle: {isValid, style, tooltip}
             couleur: 'FFFFFF',
-            is_occupe: true,
+            is_occupe: '1', // 1 ou 0
             type_place_id: '',
             dataTypesPlace: []  // Données de la liste déroulante data_place_id
         };
@@ -62,6 +62,7 @@ var reactEtatDoccupation = React.createClass({
     },
 
     componentWillReceiveProps: function (np) {
+        //console.log('UUU '+this.props.id+' VS '+np.id);
         // l'ID de l'état d'occupatation à afficher a changé
         if (this.props.id !== np.id) {
             // Données de l'état d'occupation + les 2 combos
@@ -105,7 +106,7 @@ var reactEtatDoccupation = React.createClass({
                 help: this.state.validation.tooltip
             });
         }
-        console.log('type %o', this.state.dataTypesPlace);
+        //console.log('state %o', this.state);
         // RENDER
         return (
             <Form   ref="form"
@@ -160,7 +161,7 @@ var reactEtatDoccupation = React.createClass({
                                 editable={this.props.editable}
                                 attributes={{
                                     checked: parseInt(this.state.is_occupe) === 1,
-                                    value: 'oui'
+                                    value: '1'
                                 }}
                             >
                     {Lang.get('global.oui')}
@@ -170,7 +171,7 @@ var reactEtatDoccupation = React.createClass({
                                 editable={this.props.editable}
                                 attributes={{
                                     checked: parseInt(this.state.is_occupe) === 0,
-                                    value: 'non'
+                                    value: '0'
                                 }}
                             >
                     {Lang.get('global.non')}
@@ -206,6 +207,7 @@ var reactEtatDoccupationStore = Reflux.createStore({
     onShow: function (idEtat) {
         // ID dans le STORE
         this.id = idEtat;
+        //console.log('id: '+idEtat);
 
             // AJAX
         $.ajax({
@@ -215,22 +217,25 @@ var reactEtatDoccupationStore = Reflux.createStore({
             async: false,
             success: function (data) {
 
+                console.log('DATA %o', data);
+                // Combo type place : transformation en {label:'', value:''}
+                data.dataTypesPlace = _.map(data.dataTypesPlace, function(type){
+                    return {
+                        label : type.libelle,
+                        value: type.id.toString() // Chaine de caractères pour le react-select
+                    }
+                });
+                //
+                data.type_place_id = data.type_place_id.toString(); // Chaine de caractères pour le react-select
                 // MAJ state STORE
                 this.state = _.extend(this.state, data);
-                // Changement de clé
-                this.state.dataTypesPlace = _.map(this.state.dataTypesPlace, function(type){
-                   return {
-                       label : type.libelle,
-                       value: type.id
-                   }
-                });
-                console.log('type modif %o', this.state.dataTypesPlace);
-                // Envoi data
-                this.trigger(data);
-                // MAJ libellé bandeau
-                Actions.etats_d_occupation.setLibelle(data.libelle);
+                //console.log('type modif %o', this.state.dataTypesPlace);
                 // Libellé initial
                 this.libelleInitial = data.libelle;
+                // MAJ libellé bandeau
+                //Actions.etats_d_occupation.setLibelle(data.libelle);
+                // Envoi data
+                this.trigger(data);
             },
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
@@ -284,9 +289,9 @@ var reactEtatDoccupationStore = Reflux.createStore({
                 dataType: 'json',
                 context: this,
                 async: false,
-                success: function (ret) {
+                success: function (bool) {
                     // Le libellé existe déjà
-                    if (!ret.good) {
+                    if (!bool) {
                         retour.isValid = false;
                         retour.style = 'error';
                         retour.tooltip = Lang.get('administration_parking.etats_d_occupation.libelleExist');
