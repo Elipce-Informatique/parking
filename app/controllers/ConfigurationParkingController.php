@@ -13,74 +13,40 @@ class ConfigurationParkingController extends \BaseController
         return View::make('pages.configuration_parking');
     }
 
-
     /**
-     * Show the form for creating a new resource.
+     * Génère les données à donner à manger au treeview
+     * [
+     *      {
+     *      text: 'Parking Beauvais',
+     *      id: '1',
+     *      nodes: [
+     *           {
+     *               text: 'Niveau 1',
+     *               id: '11'
+     *           },
+     *           {
+     *               text: 'Niveau 2',
+     *               id: '12'
      *
-     * @return Response
+     *           },
+     *           {
+     *               text: 'Niveau 3',
+     *               id: '12',
+     *                  nodes: [
+     *                          {
+     *                              text: 'Niveau 1',
+     *                              id: '11'
+     *                          }
+     *                      ]
+     *           }
+     *           ]
+     *      },
+     *      {...}
+     * ]
      */
-    public function create()
+    public function menuTreeView()
     {
-        //
-    }
 
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function store()
-    {
-        //
-    }
-
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function update($id)
-    {
-        //
-    }
-
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 
     /**

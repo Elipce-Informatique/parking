@@ -1,4 +1,11 @@
 var React = require('react/addons');
+
+// PANEL GAUCHE
+var TreeView = require('react-bootstrap-treeview/dist/js/react-bootstrap-treeview');
+var Collapse = require('../composants/react_collapse').Collapse;
+var CollapseBody = require('../composants/react_collapse').CollapseBody;
+var CollapseSidebar = require('../composants/react_collapse').CollapseSidebar;
+
 var AdminMap = require('../composants/maps/admin_parking_map');
 /* Gestion de la modification et des droits */
 var AuthentMixins = require('../mixins/component_access');
@@ -87,7 +94,24 @@ var Page = React.createClass({
     // Affiche la carte
     _carte: function () {
         var url = BASE_URI + 'public/images/beauvais_p3.svg';
-        return <AdminMap imgUrl={url} divId="div_carte" parkingId={1} niveauId={1}/>;
+        return <Collapse align="left" sideWidth={3}>
+            <CollapseBody>
+                <AdminMap imgUrl={url} divId="div_carte" parkingId={1} niveauId={1}/>
+            </CollapseBody>
+            <CollapseSidebar title="Sélection">
+                <TreeView
+                    data={data}
+                    levels={0}
+                    color="#555555"
+                    selectedColor="#222222"
+                    selectedBackColor='#eeeeee'
+                    onLineClicked={function () {
+                        console.log('click');
+                    }}
+                    isSelectionExclusive={true}
+                    treeNodeAttributes={{'data-id': 'id'}}/>
+            </CollapseSidebar>
+        </Collapse>;
     },
 
     render: function () {
