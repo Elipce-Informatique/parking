@@ -15,42 +15,14 @@ class ConfigurationParkingController extends \BaseController
 
     /**
      * Génère les données à donner à manger au treeview
-     * [
-     *      {
-     *      text: 'Parking Beauvais',
-     *      id: '1',
-     *      nodes: [
-     *           {
-     *               text: 'Niveau 1',
-     *               id: '11'
-     *           },
-     *           {
-     *               text: 'Niveau 2',
-     *               id: '12'
-     *
-     *           },
-     *           {
-     *               text: 'Niveau 3',
-     *               id: '12',
-     *                  nodes: [
-     *                          {
-     *                              text: 'Niveau 1',
-     *                              id: '11'
-     *                          }
-     *                      ]
-     *           }
-     *           ]
-     *      },
-     *      {...}
-     * ]
+     * Les données brutes sont traitées en AJAX
      */
     public function menuTreeView()
     {
-
+        return Parking::getTreeviewParking();
     }
 
     /**
-     * TODO : retourner toutes les données dont on a besoin
      * @param $id
      */
     public function parkingInfos($id)

@@ -36,6 +36,11 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         return $this->belongsToMany('Profil');
     }
 
+    public function parkings()
+    {
+        return $this->belongsToMany('Parking');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | MÉTHODES MÉTIER DE CLASSE
