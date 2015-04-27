@@ -206,7 +206,8 @@ var reactEtatDoccupationStore = Reflux.createStore({
     onShow: function (idEtat) {
         // ID dans le STORE
         this.id = idEtat;
-        // AJAX
+
+            // AJAX
         $.ajax({
             url: BASE_URI + 'etats_d_occupation/' + idEtat,
             dataType: 'json',
