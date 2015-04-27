@@ -68,7 +68,6 @@ var store = Reflux.createStore({
     },
 
     init: function () {
-
     },
 
 
@@ -82,9 +81,6 @@ var store = Reflux.createStore({
      */
     onMap_initialized: function (map, calibre, parkingInfos) {
 
-        console.log('Calibre au niveau du store : ' + calibre);
-        console.log('Infos du parking au niveau du store : %o', parkingInfos);
-
         // Récupération du calibre
         this._inst.calibre = calibre;
 
@@ -92,7 +88,7 @@ var store = Reflux.createStore({
         var p1 = this.recupInfosParking(map, calibre, parkingInfos);
 
         // Récupération en BDD des données du niveau sélectionné (zones, allées, places)
-        var p2 = this.recupInfosNiveau(map, calibre, parkingInfos)
+        var p2 = this.recupInfosNiveau(map, calibre, parkingInfos);
 
         // Récupération en BDD des données de types de places
         var p3 = this.recupInfosTypesPlaces();
@@ -111,7 +107,6 @@ var store = Reflux.createStore({
      */
     // CRÉATION D'UN DESSIN FINIE (Ajout a la carte)
     onDraw_created: function (data) {
-        console.log('Pass onDraw_created %o', data);
 
         // SI EN MODE PLACE AUTO, ON VA CALCULER LE PARALLÈLOGRAMME
         if (this._inst.currentMode == mapOptions.dessin.place_auto) {
@@ -292,7 +287,6 @@ var store = Reflux.createStore({
                     geoJson: JSON.stringify(json)
                 });
             }, this);
-            console.log('Tableau de places à enregistrer: %o', dataPlaces);
 
             // --------------------------------------------------------------------------
 
@@ -348,7 +342,6 @@ var store = Reflux.createStore({
      * @param data : le Layer créé par le plugin de map
      */
     createParallelogramme: function (data) {
-        console.log('createParallelogramme : %o', data);
 
         if (data.e.layer._latlngs.length != 3) {
             swal(Lang.get('administration_parking.carte.3_points_seulement'));
@@ -389,11 +382,10 @@ var store = Reflux.createStore({
     recupInfosNiveau: function (map, calibre, parkingInfos) {
         return $.ajax({
             method: 'GET',
-            url: BASE_URI + 'parking/niveau/' + parkingInfos.planId,
+            url: BASE_URI + 'parking/niveau/' + parkingInfos.planId + '/places',
             dataType: 'json',
             context: this,
             success: function (data) {
-                console.log('Retour AJAX init map infos niveau : %o', data);
 
                 // ---------------------------------------------------------------------
                 // Récupération des données du niveau
@@ -405,12 +397,18 @@ var store = Reflux.createStore({
                 this._inst.niveauInfos.etat_general_id = data.etat_general_id;
 
                 // Extraction des sous éléments du niveau
-                var zones = data.zones;
+                var plans = data.plans;
+                var zones = [];
                 var jsonZones = [];
                 var allees = [];
                 var jsonAllees = [];
                 var places = [];
                 var jsonPlaces = [];
+
+                // RÉCUPÉRATION DES JSON ET DES ALLÉES
+                _.each(plans, function (p) {
+                    Array.prototype.push.apply(plans, p.zones);
+                }, this);
 
                 // RÉCUPÉRATION DES JSON ZONES ET DES ALLÉES
                 _.each(zones, function (z) {
@@ -442,7 +440,6 @@ var store = Reflux.createStore({
 
                 // ---------------------------------------------------------------------
 
-                console.log('this._inst a la fin des récupérations AJAX : %o', this._inst);
             },
             error: function (xhr, status, err) {
                 console.error(status, err);
@@ -458,7 +455,6 @@ var store = Reflux.createStore({
             url: 'parking/type_place/all',
             context: this,
             success: function (data) {
-                console.log('Retour des TYPES PLACES : %o', data);
                 if (_.isArray(data)) {
 
                     // Tous les types de places
@@ -498,7 +494,6 @@ var store = Reflux.createStore({
      * Fonction appellée lors de l'init, on a déjà toutes les données dans _inst
      */
     affichagePlacesInitial: function () {
-        console.log('Pass affichage places init : %o', _.clone(this._inst));
         var placesMap = _.map(this._inst.places, function (p) {
             var coords = {lat: p.lat, lng: p.lng};
             var nom = p.libelle;

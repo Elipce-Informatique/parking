@@ -19,12 +19,25 @@ class Parking extends \Eloquent
     }
 
     /**
+     * Les utilisateurs du parking
+     * @return mixed
+     */
+    public function utilisateurs()
+    {
+        return $this->belongsToMany('Utilisateur');
+    }
+
+    /*****************************************************************************
+     * UTILITAIRES DU MODELE *****************************************************
+     *****************************************************************************/
+    /**
      * Les places du parking
-     * @param $id: ID parking
+     * @param $id : ID parking
      * @return json
      */
-    public static function getPlaces($id){
-        return  Parking::find($id)
+    public static function getPlaces($id)
+    {
+        return Parking::find($id)
             ->join('niveau', 'parking.id', '=', 'niveau.parking_id')
             ->join('zone', 'zone.niveau_id', '=', 'niveau.id')
             ->join('allee', 'allee.zone_id', '=', 'zone.id')
@@ -32,5 +45,15 @@ class Parking extends \Eloquent
             ->join('etat_occupation', 'etat_occupation.id', '=', 'place.etat_occupation_id')
             ->select('place.id', 'place.num', 'etat_occupation.is_occupe')
             ->get();
+    }
+
+    /**
+     * Génère les données JSON pour le treeview.
+     *
+     * Se base sur Auth::user() pour gérer les droits d'accès aux parking
+     */
+    public static function getTreeviewParking()
+    {
+        return Auth::user()->parkings()->with('niveaux.plans')->get();
     }
 }

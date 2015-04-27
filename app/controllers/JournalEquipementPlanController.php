@@ -51,7 +51,8 @@ class JournalEquipementPlanController extends \BaseController
      */
     public function last($planId)
     {
-        return JournalEquipementPlan::wherePlanId($planId)->get()->max('id');
+        $retour = JournalEquipementPlan::wherePlanId($planId)->get()->max('id');
+        return $retour ? $retour : 0;
     }
 
 

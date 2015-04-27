@@ -105,6 +105,7 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     /*
      * Configuration d'un parking
      */
+    Route::get('configuration_parking/treeview_carte', 'ConfigurationParkingController@menuTreeView');
     Route::resource('configuration_parking', 'ConfigurationParkingController');
 
     /* **************************************************************************
@@ -166,7 +167,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::get('type_place/all', 'TypesPlacesController@showAll');
     Route::resource('type_place', 'TypesPlacesController');
 
-    // Journaux
+    // JOURNAUX
     Route::get('journal_equipement', 'JournalEquipementPlanController@index');
     Route::get('journal_equipement/last/{planId}', 'JournalEquipementPlanController@last');
     Route::get('journal_equipement/{planId}', 'JournalEquipementPlanController@show');

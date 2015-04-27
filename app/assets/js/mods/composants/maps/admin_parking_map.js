@@ -2,6 +2,7 @@ var React = require('react/addons');
 var mapOptions = require('../../helpers/map_options');
 // STORE DE LA CARTE
 var mapStore = require('../../stores/admin_parking_map_store');
+var mapHelper = require('../../helpers/map_helper');
 
 // COMPOSANTS
 var ModalPlaces = require('../modals/mod_places_multiples');
@@ -96,15 +97,14 @@ var parkingMap = React.createClass({
      * carrées allant de 0 à 100 en lon et en lat
      */
     initMap: function () {
-        // TODO : changer le système de coordonnées pour centrer en 0,0 et avoir des extrémités en -180-180 et 180 180
-        var origine = [0, 0];
-        var haut_droit = [100, 100];
+        var origine = [-250, -250];
+        var haut_droit = [250, 250];
 
         // CRÉATION DE LA MAP
         this._inst.map = new L.Map(this.props.divId, {
-            crs: L.CRS.Simple,
-            maxZoom: 7
-        }).setView([65, 50], 4);
+            crs: mapHelper.customZoomCRS,
+            maxZoom: 12
+        }).setView([0, 0], 0);
 
         // AJOUT DE L'IMAGE DE FOND
         L.imageOverlay(this.props.imgUrl, [origine, haut_droit]).addTo(this._inst.map);

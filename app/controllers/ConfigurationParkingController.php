@@ -13,78 +13,16 @@ class ConfigurationParkingController extends \BaseController
         return View::make('pages.configuration_parking');
     }
 
-
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
+     * Génère les données à donner à manger au treeview
+     * Les données brutes sont traitées en AJAX
      */
-    public function create()
+    public function menuTreeView()
     {
-        //
-    }
-
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function store()
-    {
-        //
-    }
-
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function update($id)
-    {
-        //
-    }
-
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return Response
-     */
-    public function destroy($id)
-    {
-        //
+        return Parking::getTreeviewParking();
     }
 
     /**
-     * TODO : retourner toutes les données dont on a besoin
      * @param $id
      */
     public function parkingInfos($id)
