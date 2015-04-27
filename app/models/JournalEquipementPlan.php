@@ -1,9 +1,9 @@
 <?php
 
-class JournalEquipementNiveau extends \Eloquent
+class JournalEquipementPlan extends \Eloquent
 {
     protected $guarded = ['id'];
-    protected $table = "journal_equipement_niveau";
+    protected $table = "journal_equipement_plan";
     public $timestamps = true;
 
 
@@ -12,12 +12,12 @@ class JournalEquipementNiveau extends \Eloquent
      *****************************************************************************/
 
     /**
-     * Le niveau de cette entrée de journal
+     * Le plan de cette entrée de journal
      * @return mixed
      */
-    public function niveau()
+    public function plan()
     {
-        return $this->belongsTo('Niveau');
+        return $this->belongsTo('Plan');
     }
 
     /**
@@ -52,35 +52,35 @@ class JournalEquipementNiveau extends \Eloquent
      *****************************************************************************/
 
     /**
-     * Retourne l'historique du niveau passé en params
-     * @param $niveauId
+     * Retourne l'historique du plan passé en params
+     * @param $planId
      * @returns données
      */
-    public static function getJournalNiveau($niveauId)
+    public static function getJournalPlan($planId)
     {
-        return JournalEquipementNiveau::where('niveau_id', '=', $niveauId)->get();
+        return JournalEquipementPlan::where('plan_id', '=', $planId)->get();
     }
 
     /**
      *
-     * @param $niveauId
+     * @param $planId
      * @param $journalId
      * @return données
      */
-    public static function getJournalNiveauFromVersion($niveauId, $journalId)
+    public static function getJournalPlanFromVersion($planId, $journalId)
     {
-        return JournalEquipementNiveau::whereNiveauId($niveauId)->where('id', '>', $journalId)->get();
+        return JournalEquipementPlan::wherePlanId($planId)->where('id', '>', $journalId)->get();
     }
 
     /**
      *
-     * @param $niveauId
+     * @param $planId
      * @param $journalId
      * @return données
      */
-    public static function getJournalPlacesFromVersion($niveauId, $journalId)
+    public static function getJournalPlacesFromVersion($planId, $journalId)
     {
-        $placeIds = JournalEquipementNiveau::whereNiveauId($niveauId)
+        $placeIds = JournalEquipementPlan::wherePlanId($planId)
             ->where('id', '>', $journalId)
             ->groupBy('place_id')
             ->lists('place_id');
@@ -93,19 +93,19 @@ class JournalEquipementNiveau extends \Eloquent
 
     /**
      *
-     * @param $niveauId
+     * @param $planId
      * @param $journalId
      * @return données
      */
-    public static function getJournalAfficheurFromVersion($niveauId, $journalId)
+    public static function getJournalAfficheurFromVersion($planId, $journalId)
     {
-        $afficheurId = JournalEquipementNiveau::whereNiveauId($niveauId)->where('id', '>', $journalId)->groupBy('afficheur_id')->lists('afficheur_id');
+        $afficheurId = JournalEquipementPlan::wherePlanId($planId)->where('id', '>', $journalId)->groupBy('afficheur_id')->lists('afficheur_id');
         return Afficheur::whereIn('id', $afficheurId)->get();
     }
 
     /**
      * Créé une ligne de journal de type place
-     * @param $fields : champs à insérer {niveau_id:1,....}
+     * @param $fields : champs à insérer {plan_id:1,....}
      * @return boolean
      */
     public static function createJournalPlace(array $fields)
@@ -117,7 +117,7 @@ class JournalEquipementNiveau extends \Eloquent
         try {
 //            Log::debug('fields journal :'.print_r($fields,true));
             // Création du journal
-            $newjournal = JournalEquipementNiveau::create($fields);
+            $newjournal = JournalEquipementPlan::create($fields);
         }
         catch (Exception $e) {
             $bRetour = false;

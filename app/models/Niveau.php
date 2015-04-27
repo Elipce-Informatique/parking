@@ -11,12 +11,12 @@ class Niveau extends \Eloquent
      *****************************************************************************/
 
     /**
-     * Les zones du niveau
+     * Les plans du niveau
      * @return mixed
      */
-    public function zones()
+    public function plans()
     {
-        return $this->hasMany('Zone');
+        return $this->hasMany('Plan');
     }
 
     /**
@@ -48,13 +48,17 @@ class Niveau extends \Eloquent
     }
 
 
+    /*****************************************************************************
+     * UTILITAIRES DU MODELE *****************************************************
+     *****************************************************************************/
     /**
      * Les places du niveau
-     * @param $id: ID du niveau
+     * @param $id : ID du niveau
      * @return mixed
      */
-    public static function getPlaces($id){
-        return  Niveau::find($id)
+    public static function getPlaces($id)
+    {
+        return Niveau::find($id)
             ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
             ->join('zone', 'zone.plan_id', '=', 'plan.id')
             ->join('allee', 'allee.zone_id', '=', 'zone.id')
@@ -66,11 +70,12 @@ class Niveau extends \Eloquent
 
     /**
      * La place max du niveau $id
-     * @param $id: ID du niveau
+     * @param $id : ID du niveau
      * @return int: numéro de place
      */
-    public static function getMaxPlace($id){
-        return  Niveau::find($id)
+    public static function getMaxPlace($id)
+    {
+        return Niveau::find($id)
             ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
             ->join('zone', 'zone.plan_id', '=', 'plan.id')
             ->join('allee', 'allee.zone_id', '=', 'zone.id')

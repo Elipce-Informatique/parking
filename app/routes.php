@@ -150,7 +150,12 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
 |
 */
 Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parking'], function () {
+
+    Route::get('plan/{id}/places', 'PlansController@showWithPlaces');
+    Route::get('niveau/{id}/places', 'NiveauxController@showWithPlaces');
+
     Route::resource('niveau', 'NiveauxController');
+    Route::resource('plan', 'PlansController');
     Route::resource('afficheur', 'AfficheursController');
     Route::resource('zone', 'ZonesController');
     Route::resource('allee', 'AlleesController');
@@ -162,11 +167,11 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::resource('type_place', 'TypesPlacesController');
 
     // Journaux
-    Route::get('journal_equipement', 'JournalEquipementNiveauController@index');
-    Route::get('journal_equipement/last/{niveauId}', 'JournalEquipementNiveauController@last');
-    Route::get('journal_equipement/{niveauId}', 'JournalEquipementNiveauController@show');
-    Route::get('journal_equipement/{niveauId}/{journalId}', 'JournalEquipementNiveauController@showFromVersion');
-    Route::get('journal_place/{niveauId}/{journalId}', 'JournalEquipementNiveauController@showPlacesFromVersion');
+    Route::get('journal_equipement', 'JournalEquipementPlanController@index');
+    Route::get('journal_equipement/last/{planId}', 'JournalEquipementPlanController@last');
+    Route::get('journal_equipement/{planId}', 'JournalEquipementPlanController@show');
+    Route::get('journal_equipement/{planId}/{journalId}', 'JournalEquipementPlanController@showFromVersion');
+    Route::get('journal_place/{planId}/{journalId}', 'JournalEquipementPlanController@showPlacesFromVersion');
 
     Route::resource('simulator', 'SimulatorController');
 });

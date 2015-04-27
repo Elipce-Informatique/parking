@@ -20,12 +20,13 @@ class Zone extends \Eloquent
     }
 
     /**
-     * Le niveau de la zone :
+     * Le plan de la zone :
      * Inverse de la relation du niveau
      * @return mixed
      */
-    public function niveau()
+    public function plan()
     {
-        return $this->belongsTo('Niveau');
+        return $this->belongsTo('Plan');
     }
+
 }

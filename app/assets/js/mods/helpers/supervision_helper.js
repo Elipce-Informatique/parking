@@ -5,12 +5,12 @@ var _ = require('lodash');
 
 module.exports.refreshPlaces = {
     _timer: false,
-    _niveauId: 0,
+    _planId: 0,
     _journalId: 0,
-    init: function (nievauId, journalId) {
+    init: function (planId, journalId) {
         if (!this._timer) {
             this._timer = setInterval(this._handleAjax.bind(this), 5000);
-            this._niveauId = nievauId;
+            this._planId = planId;
             this._journalId = journalId;
         }
     },
@@ -23,7 +23,7 @@ module.exports.refreshPlaces = {
         console.log('journal Id : %o', this._journalId);
         $.ajax({
             type: 'GET',
-            url: BASE_URI + 'parking/journal_place/' + this._niveauId + '/' + this._journalId,
+            url: BASE_URI + 'parking/journal_place/' + this._planId + '/' + this._journalId,
             context: this
         })
             .done(function (data) {

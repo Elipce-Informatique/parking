@@ -37,9 +37,9 @@ class SimulatorController extends \BaseController
 
 
     /**
-     * Libére ou occupe des places de parking sur le niveau $id
+     * Libére ou occupe des places de parking sur le plan $id
      *
-     * @param  int $id : ID niveau
+     * @param  int $id : ID plan
      * @return Response
      */
     public function show($id)
@@ -86,8 +86,8 @@ class SimulatorController extends \BaseController
                     break;
                 }
                 // Journal
-                if (!JournalEquipementNiveau::createJournalPlace([
-                    'niveau_id' => $id,
+                if (!JournalEquipementPlan::createJournalPlace([
+                    'plan_id' => $id,
                     'place_id' => $idPlace,
                     'etat_occupation_id' => null
                 ])

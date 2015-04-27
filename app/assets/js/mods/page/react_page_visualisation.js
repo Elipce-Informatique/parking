@@ -49,7 +49,7 @@ var Page = React.createClass({
     },
 
     componentWillMount: function () {
-        Simulator(1);
+        //Simulator(1);
 
         this.listenTo(store, this.updateState, this.updateState);
     },
@@ -132,7 +132,7 @@ var Page = React.createClass({
                             <CollapseBody>
                                 <Collapse align="right" sideWidth={3}>
                                     <CollapseBody>
-                                        <ParkingMap parkingId={1} niveauId={1} imgUrl={url} divId="div_carte"/>
+                                        <ParkingMap parkingId={1} planId={1} imgUrl={url} divId="div_carte"/>
                                     </CollapseBody>
                                     <CollapseSidebar title="Temps Réel">
                                         <ZoneTempsReel levels={3} vertical={true} />
@@ -187,7 +187,24 @@ module.exports = Page;
 /************************************************************************************************/
 var store = Reflux.createStore({
     getInitialState: function () {
-        return {};
+        var retour = {};
+
+        $.ajax({
+            type: 'GET',
+            url: BASE_URI + 'parking/plan/1',
+            async: false
+        })
+            .done(function (data) {
+                console.log('data : %o', data);
+                retour = {niveau: data};
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                alert("ajax error response error " + type);
+                alert("ajax error response body " + xhr.responseText);
+            });
+
+        return retour;
     },
     // Initial setup
     init: function () {
