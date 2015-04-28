@@ -75,8 +75,9 @@ class EtatsDoccupation extends Eloquent
         } /* Récupération des données pour une création d'état */
         else {
             $resEtat = [
+                'id' => 0,
                 'libelle' => '',
-                'couleur' => 'FFFFFF',
+                'couleur' => '',
                 'type_place_id' => '',
                 'is_occupe' => '1'
             ];

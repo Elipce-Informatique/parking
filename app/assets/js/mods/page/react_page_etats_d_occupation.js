@@ -54,7 +54,7 @@ var ReactPageEtatsDoccupation = React.createClass({
     hide: ['id'],
     aReactElements: {
         '1': {type: 'Couleur'},
-        '4': {type:'Image', url:'app/storage/documents/logo_type_place/'}
+        '4': {type: 'Image', url: 'app/storage/documents/logo_type_place/'}
     },
     /**
      * Les props par défaut
@@ -102,13 +102,17 @@ var ReactPageEtatsDoccupation = React.createClass({
         return true;
     },
 
-    /**
-     * Méthode appellée pour construire le composant.
-     * A chaque fois que son contenu est mis à jour.
-     * @returns {XML}
-     */
-    render: function () {
-        return this.getComponentSwitchState();
+    displayEtatDoccupation: function (e) {
+        // Ligne du tableau
+        var id = $(e.currentTarget).data('id');
+        Actions.etats_d_occupation.select(id);
+    },
+
+    onRetour: function () {
+        // Changement de state
+        this.setState({etatPage: pageState.liste, titrePage: Lang.get('menu.side.etats_d_occupation'), name: ''});
+        // MAJ infos liste
+        Actions.etats_d_occupation.getInfosEtatsDoccupation();
     },
 
     /**
@@ -121,7 +125,6 @@ var ReactPageEtatsDoccupation = React.createClass({
     },
 
     getComponentSwitchState: function () {
-
         var mode = 1;
 
         var attrBandeau = {
@@ -195,17 +198,13 @@ var ReactPageEtatsDoccupation = React.createClass({
         }
     },
 
-    displayEtatDoccupation: function (e) {
-        // Ligne du tableau
-        var id = $(e.currentTarget).data('id');
-        Actions.etats_d_occupation.select(id);
-    },
-
-    onRetour: function () {
-        // Changement de state
-        this.setState({etatPage: pageState.liste, titrePage: Lang.get('menu.side.etats_d_occupation'), name: ''});
-        // MAJ infos liste
-        Actions.etats_d_occupation.getInfosEtatsDoccupation();
+    /**
+     * Méthode appellée pour construire le composant.
+     * A chaque fois que son contenu est mis à jour.
+     * @returns {XML}
+     */
+    render: function () {
+        return this.getComponentSwitchState();
     }
 });
 module.exports = ReactPageEtatsDoccupation;

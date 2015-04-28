@@ -44,6 +44,7 @@ var reactEtatDoccupation = React.createClass({
     getInitialState: function () {
         //console.log('getInitialState');
         return {
+            id: 0,
             libelle: '',
             validation: {},// Etat de validation du champ libelle: {isValid, style, tooltip}
             couleur: 'FFFFFF',
@@ -61,13 +62,25 @@ var reactEtatDoccupation = React.createClass({
         Actions.etats_d_occupation.show(this.props.id);
     },
 
-    componentWillReceiveProps: function (np) {
-        //console.log('UUU '+this.props.id+' VS '+np.id);
-        // l'ID de l'état d'occupatation à afficher a changé
-        if (this.props.id !== np.id) {
+    componentWillReceiveProps: function (np, ns) {
+        if (ns.id !== np.id) {
             // Données de l'état d'occupation + les 2 combos
             Actions.etats_d_occupation.show(np.id);
         }
+        console.log(this.props.id+ ' VS '+np.id);
+    },
+
+    shouldComponentUpdate: function(np, ns){
+        //if(this.props.id === np.id){
+        //    return false;
+        //}
+        if(this.props.id != np.id){
+
+            ns.couleur = 'AAAAAA';
+            // TODO tester une async task ex: ajax et attendre 5 sec dans un timeout
+            Actions.etats_d_occupation.show(20);
+        }
+        return true;
     },
 
     /**
@@ -106,7 +119,7 @@ var reactEtatDoccupation = React.createClass({
                 help: this.state.validation.tooltip
             });
         }
-        //console.log('state %o', this.state);
+        console.log('couleur: '+this.state.couleur);
         // RENDER
         return (
             <Form   ref="form"
@@ -200,6 +213,9 @@ var reactEtatDoccupationStore = Reflux.createStore({
         this.listenToMany(Actions.validation);
     },
 
+    onCreer: function(){
+        this.onShow(0);
+    },
     /**
      * Affichage du détail de l'état d'occupation
      * @param idEtat: ID etat_occupation
@@ -209,38 +225,44 @@ var reactEtatDoccupationStore = Reflux.createStore({
         this.id = idEtat;
         //console.log('id: '+idEtat);
 
+        if(this.id > 0) {
             // AJAX
-        $.ajax({
-            url: BASE_URI + 'etats_d_occupation/' + idEtat,
-            dataType: 'json',
-            context: this,
-            async: false,
-            success: function (data) {
+            $.ajax({
+                url: BASE_URI + 'etats_d_occupation/' + idEtat,
+                dataType: 'json',
+                context: this,
+                async: false,
+                success: function (data) {
 
-                console.log('DATA %o', data);
-                // Combo type place : transformation en {label:'', value:''}
-                data.dataTypesPlace = _.map(data.dataTypesPlace, function(type){
-                    return {
-                        label : type.libelle,
-                        value: type.id.toString() // Chaine de caractères pour le react-select
-                    }
-                });
-                //
-                data.type_place_id = data.type_place_id.toString(); // Chaine de caractères pour le react-select
-                // MAJ state STORE
-                this.state = _.extend(this.state, data);
-                //console.log('type modif %o', this.state.dataTypesPlace);
-                // Libellé initial
-                this.libelleInitial = data.libelle;
-                // MAJ libellé bandeau
-                //Actions.etats_d_occupation.setLibelle(data.libelle);
-                // Envoi data
-                this.trigger(data);
-            },
-            error: function (xhr, status, err) {
-                console.error(status, err.toString());
-            }
-        });
+                    // Combo type place : transformation en {label:'', value:''}
+                    data.dataTypesPlace = _.map(data.dataTypesPlace, function (type) {
+                        return {
+                            label: type.libelle,
+                            value: type.id.toString() // Chaine de caractères pour le react-select
+                        }
+                    });
+                    //
+                    data.type_place_id = data.type_place_id.toString(); // Chaine de caractères pour le react-select
+                    // MAJ state STORE
+                    this.state = _.extend(this.state, data);
+                    //console.log('type modif %o', this.state.dataTypesPlace);
+                    // Libellé initial
+                    this.libelleInitial = data.libelle;
+                    // Envoi data
+                    //setTimeout(function(){
+                    //
+                    //    this.trigger(data);
+                    //}.bind(this), 5000);
+                    // MAJ libellé bandeau
+                    //Actions.etats_d_occupation.setLibelle(data.libelle);// ARTUNG
+                    this.trigger(data);
+                },
+                error: function (xhr, status, err) {
+                    console.error(status, err.toString());
+                }
+            });
+        }
+
     },
 
     /**

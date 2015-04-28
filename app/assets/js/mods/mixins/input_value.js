@@ -108,7 +108,7 @@ var InputValueMixin = {
      * Génère les attributs à passer au render des composant react de type Input.
      * @returns {*}
      */
-    generateAttributes: function(){
+    generateAttributes: function () {
         // RÉCUPÉRATION DES ATTRIBUTES DANS LE STATE
         var propsAttrs = _.cloneDeep(this.props.attributes);
         propsAttrs = _.omit(propsAttrs, ['help', 'data-valid']);

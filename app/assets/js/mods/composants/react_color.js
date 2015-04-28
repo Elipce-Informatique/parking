@@ -81,10 +81,12 @@ var ColorPickerEditable = React.createClass({
         // Init du plugin color
         jscolor.init();
     },
+    componentWillUpdate: function(){
+        console.log('UPDATE color');
+    },
 
     render: function () {
         var retour;
-
        // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
         var attrs = this.generateAttributes();
         //console.log('attrs %o', attrs);
@@ -95,6 +97,8 @@ var ColorPickerEditable = React.createClass({
                                 labelClassName:'col-md-'+this.props.mdLabel+' '+this.props.labelClass,
                                 groupClassName:'row',
                                 label: this.props.label}, attrs);
+
+            console.log('STATE color: '+this.state.value);
 
             retour =
                 <Input
@@ -168,9 +172,9 @@ var ColorPicker = React.createClass({
     },
 
     render: function () {
-
+        var background = this.props.color === '' ? 'FFFFFF' : this.props.color;
         var splitterStyle = {
-            background:'#'+this.props.color,
+            background:'#'+background,
             height:this.props.height,
             width:this.props.width,
             boxShadow: '3px 3px 3px #888888',

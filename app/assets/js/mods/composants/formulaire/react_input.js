@@ -467,7 +467,6 @@ var InputSelect = React.createClass({
 
     getInitialState: function () {
         return {
-            value: this.props.selectedValue,
             attributes: {
                 'data-valid': true,
                 'data-class': 'has-default',
@@ -581,7 +580,7 @@ var InputSelect = React.createClass({
             <Select
                 inputProps={attrs}
                 name={this.props.attributes.name}
-                value={this.state.value}
+                value={this.props.selectedValue}
                 options={this.props.data}
                 placeholder={this.props.placeholder}
                 multi={this.props.multi}
