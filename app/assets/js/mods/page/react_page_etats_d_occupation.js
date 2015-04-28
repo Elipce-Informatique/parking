@@ -264,7 +264,7 @@ var pageEtatsDoccupationStore = Reflux.createStore({
     },
 
     create: function () {
-        this.idEtatDoccupationSelect = 0;
+        this.idSelect = 0;
         this.trigger({etatPage: pageState.creation, name: '', id: 0});
     },
 

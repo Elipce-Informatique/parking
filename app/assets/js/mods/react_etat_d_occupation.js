@@ -9,26 +9,28 @@ var Row = ReactB.Row;
 var Col = ReactB.Col;
 
 // HELPER
-var form_data_helper  = require('./helpers/form_data_helper');
+var form_data_helper = require('./helpers/form_data_helper');
 
 /*************************/
 /* Composants formulaire */
-var Field               = require('./composants/formulaire/react_form_fields');
-var Form                = Field.Form;
-var InputTextEditable   = Field.InputTextEditable;
-var react_color         = require('./composants/react_color');
+var Field = require('./composants/formulaire/react_form_fields');
+var Form = Field.Form;
+var InputTextEditable = Field.InputTextEditable;
+var react_color = require('./composants/react_color');
 var ColorPickerEditable = react_color.ColorPickerEditable;
-var InputSelectEditable         = Field.InputSelectEditable;
+var InputSelectEditable = Field.InputSelectEditable;
+var RadioGroup = Field.RadioGroup;
+var InputRadio = Field.InputRadioBootstrapEditable;
 
 
 var reactEtatDoccupation = React.createClass({
 
     mixins: [Reflux.ListenerMixin],
 
-    libelleIniDefine:false,
+    libelleIniDefine: false,
 
     propTypes: {
-        id:       React.PropTypes.number.isRequired,
+        id: React.PropTypes.number.isRequired,
         editable: React.PropTypes.bool
     },
 
@@ -41,15 +43,14 @@ var reactEtatDoccupation = React.createClass({
 
     getInitialState: function () {
         //console.log('getInitialState');
-        return  {
-            libelle:        '',
+        return {
+            libelle: '',
             validation: {},// Etat de validation du champ libelle: {isValid, style, tooltip}
-            couleur:        'FFFFFF',
-            etat_place_id:  '',
-            type_place_id:  '',
-            dataEtatsPlace: [], // Données de la liste déroulante etat_place_id
+            couleur: 'FFFFFF',
+            is_occupe: '1', // 1 ou 0
+            type_place_id: '',
             dataTypesPlace: []  // Données de la liste déroulante data_place_id
-                };
+        };
     },
 
     componentWillMount: function () {
@@ -61,8 +62,9 @@ var reactEtatDoccupation = React.createClass({
     },
 
     componentWillReceiveProps: function (np) {
+        //console.log('UUU '+this.props.id+' VS '+np.id);
         // l'ID de l'état d'occupatation à afficher a changé
-        if(this.props.id !== np.id) {
+        if (this.props.id !== np.id) {
             // Données de l'état d'occupation + les 2 combos
             Actions.etats_d_occupation.show(np.id);
         }
@@ -85,28 +87,33 @@ var reactEtatDoccupation = React.createClass({
 
         // Attributs de base du libellé
         var attrs = {
-            value:           this.state.libelle,
-            label:           Lang.get('global.libelle'),
-            name:            'libelle',
-            wrapperClassName:'col-md-4',
-            labelClassName:  'col-md-1 text-right',
-            groupClassName:  'row',
-            required:true};
+            value: this.state.libelle,
+            label: Lang.get('global.libelle'),
+            name: 'libelle',
+            wrapperClassName: 'col-md-4',
+            labelClassName: 'col-md-1 text-right',
+            groupClassName: 'row',
+            required: true
+        };
 
 
         // Etat de validation du champ libelle (rouge ou vert)
-        if(_.keys(this.state.validation).length > 0){
+        if (_.keys(this.state.validation).length > 0) {
             // Attributs validator
-            attrs       = _.merge(attrs, {  bsStyle:this.state.validation.style,
-                                            'data-valid':this.state.validation.isValid,
-                                            help:this.state.validation.tooltip});
+            attrs = _.merge(attrs, {
+                bsStyle: this.state.validation.style,
+                'data-valid': this.state.validation.isValid,
+                help: this.state.validation.tooltip
+            });
         }
-
+        //console.log('state %o', this.state);
         // RENDER
         return (
             <Form   ref="form"
-                    attributes={{  className:"form_etat_d_occupation",
-                                    id:"form_etat_d_occupation"}}
+                attributes={{
+                    className: "form_etat_d_occupation",
+                    id: "form_etat_d_occupation"
+                }}
             >
                 <InputTextEditable
                     attributes={attrs}
@@ -124,29 +131,55 @@ var reactEtatDoccupation = React.createClass({
                     mdColor={2}
                     labelClass="text-right"
                 />
+
                 <InputSelectEditable
-                    attributes={{label:    Lang.get('administration_parking.etats_d_occupation.etat_place'),
-                                  name:     "etat_place_id",
-                                  selectCol:4,
-                                  labelCol: 1,
-                                  required:true}}
-                    data         ={this.state.dataEtatsPlace}
+                    attributes={{
+                        label: Lang.get('administration_parking.etats_d_occupation.type_place'),
+                        name: "type_place_id",
+                        selectCol: 4,
+                        labelCol: 1,
+                        required: true
+                    }}
+                    data         ={this.state.dataTypesPlace}
                     editable     ={this.props.editable}
-                    selectedValue={this.state.etat_place_id}
-                    placeholder  ={Lang.get('global.selection')}
-                    multi={false}
-                />
-                <InputSelectEditable
-                     attributes={{label:    Lang.get('administration_parking.etats_d_occupation.type_place'),
-                                  name:     "type_place_id",
-                                  selectCol:4,
-                                  labelCol: 1,
-                                  required:true}}
-                     data         ={this.state.dataTypesPlace}
-                     editable     ={this.props.editable}
                     selectedValue={this.state.type_place_id}
-                     placeholder  ={Lang.get('global.selection')}
+                    placeholder  ={Lang.get('global.selection')}
+                    labelClass = "text-right"
                 />
+
+                <Row>
+                    <Col md={1}>
+                        <label
+                            className="text-right">
+                                {Lang.get('administration_parking.etats_d_occupation.etat_place')}
+                        </label>
+                    </Col>
+                    <Col md={4}>
+                        <RadioGroup attributes={{name: "is_occupe"}} bootstrap={true}>
+                            <InputRadio
+                                key={'bt1'}
+                                editable={this.props.editable}
+                                attributes={{
+                                    checked: parseInt(this.state.is_occupe) === 1,
+                                    value: '1'
+                                }}
+                            >
+                    {Lang.get('global.oui')}
+                            </ InputRadio>
+                            <InputRadio
+                                key={'bt2'}
+                                editable={this.props.editable}
+                                attributes={{
+                                    checked: parseInt(this.state.is_occupe) === 0,
+                                    value: '0'
+                                }}
+                            >
+                    {Lang.get('global.non')}
+                            </ InputRadio>
+                        </RadioGroup>
+                    </Col>
+                </Row>
+
             </Form>
         );
     }
@@ -156,9 +189,9 @@ module.exports = reactEtatDoccupation;
 // Creates a DataStore
 var reactEtatDoccupationStore = Reflux.createStore({
 
-    state:{},
-    libelleInitial:'',// En mode édition, libellé en BDD
-    id:0,
+    state: {},
+    libelleInitial: '',// En mode édition, libellé en BDD
+    id: 0,
 
     // Initial setup
     init: function () {
@@ -171,10 +204,12 @@ var reactEtatDoccupationStore = Reflux.createStore({
      * Affichage du détail de l'état d'occupation
      * @param idEtat: ID etat_occupation
      */
-    onShow: function(idEtat){
+    onShow: function (idEtat) {
         // ID dans le STORE
         this.id = idEtat;
-        // AJAX
+        //console.log('id: '+idEtat);
+
+            // AJAX
         $.ajax({
             url: BASE_URI + 'etats_d_occupation/' + idEtat,
             dataType: 'json',
@@ -182,14 +217,25 @@ var reactEtatDoccupationStore = Reflux.createStore({
             async: false,
             success: function (data) {
 
+                console.log('DATA %o', data);
+                // Combo type place : transformation en {label:'', value:''}
+                data.dataTypesPlace = _.map(data.dataTypesPlace, function(type){
+                    return {
+                        label : type.libelle,
+                        value: type.id.toString() // Chaine de caractères pour le react-select
+                    }
+                });
+                //
+                data.type_place_id = data.type_place_id.toString(); // Chaine de caractères pour le react-select
                 // MAJ state STORE
                 this.state = _.extend(this.state, data);
-                // Envoi data
-                this.trigger(data);
-                // MAJ libellé bandeau
-                Actions.etats_d_occupation.setLibelle(data.libelle);
+                //console.log('type modif %o', this.state.dataTypesPlace);
                 // Libellé initial
                 this.libelleInitial = data.libelle;
+                // MAJ libellé bandeau
+                //Actions.etats_d_occupation.setLibelle(data.libelle);
+                // Envoi data
+                this.trigger(data);
             },
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
@@ -201,7 +247,7 @@ var reactEtatDoccupationStore = Reflux.createStore({
      * onChange de n'importe quel élément du FORM
      * @param e: evt
      */
-    onForm_field_changed: function(e){
+    onForm_field_changed: function (e) {
         var data = {};
         // MAJ du state STORE
         data[e.name] = e.value
@@ -212,11 +258,11 @@ var reactEtatDoccupationStore = Reflux.createStore({
      * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
      * @param data : Object {name: "email", value: "yann.pltv@gmail.com", form: DOMNode}
      */
-    onForm_field_verif: function(e){
+    onForm_field_verif: function (e) {
         var data = {};
 
         // Vérif champ libellé:
-        if(e.name == 'libelle'){
+        if (e.name == 'libelle') {
             //  booléen en fonction du mode créatioon ou édition
             this.state.validation = this.libelleChange(e.value, (this.id !== 0));
             this.trigger(this.state);
@@ -230,24 +276,24 @@ var reactEtatDoccupationStore = Reflux.createStore({
      * @param edit: booléen true:mode édition; false: mode création
      * @returns {{}}
      */
-    libelleChange: function(value, edit){
+    libelleChange: function (value, edit) {
         /* Variable de retour */
         var retour = {};
 
         /* libelle  non vide et non identique au libellé de départ */
-        if(value.length>0 && value != this.libelleInitial){
+        if (value.length > 0 && value != this.libelleInitial) {
 
             // AJAX
             $.ajax({
-                url:      BASE_URI + 'etats_d_occupation/libelle/'+value, /* correspond au module url de la BDD */
+                url: BASE_URI + 'etats_d_occupation/libelle/' + value, /* correspond au module url de la BDD */
                 dataType: 'json',
-                context:  this,
+                context: this,
                 async: false,
-                success:  function (ret) {
+                success: function (bool) {
                     // Le libellé existe déjà
-                    if(!ret.good){
+                    if (!bool) {
                         retour.isValid = false;
-                        retour.style   = 'error';
+                        retour.style = 'error';
                         retour.tooltip = Lang.get('administration_parking.etats_d_occupation.libelleExist');
                     }
                 },
@@ -280,11 +326,11 @@ var reactEtatDoccupationStore = Reflux.createStore({
             data: fData,
             processData: false,
             contentType: false,
-            dataType:'json',
+            dataType: 'json',
             context: this,
             success: function (tab) {
                 // Sauvegarde OK
-                if(tab.save == true) {
+                if (tab.save == true) {
                     Actions.notif.success(Lang.get('global.notif_success'));
                     //console.log('ID: '+tab.id+ ' '+this.state.libelle);
                     // On indique à la page qu'on passe en mode edition
@@ -293,7 +339,7 @@ var reactEtatDoccupationStore = Reflux.createStore({
                     this.id = tab.id
                 }
                 // Etat d'occupation existe déjà
-                else if(tab.save == false && tab.errorBdd == false){
+                else if (tab.save == false && tab.errorBdd == false) {
                     Actions.notif.error(Lang.get('administration_parking.etats_d_occupation.errorExist'));
                 }
                 // Erreur SQL
@@ -304,7 +350,7 @@ var reactEtatDoccupationStore = Reflux.createStore({
 
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
-                Actions.notif.error('AJAX : '+Lang.get('global.notif_erreur'));
+                Actions.notif.error('AJAX : ' + Lang.get('global.notif_erreur'));
             }
         });
     }
