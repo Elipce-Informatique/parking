@@ -42,15 +42,18 @@ var parkingMap = React.createClass({
      * Variables d'instance du composant.
      * Utilisées pour intéragir avec la carte.
      */
-    _inst: {
-        map: {},                              // Instance de la carte leaflet
-        currentMode: mapOptions.dessin.place, // Mode de dessin actuel
-        lastNum: 0,
-        placesGroup: {},                      // Layer group contenant toutes les places
-        alleesGroup: {},                      // Layer group contenant toutes les allées
-        zonesGroup: {},                       // Layer group contenant toutes les zones
-        afficheursGroup: {},                  // Layer group contenant tous les afficheurs
-        drawControl: {}                       // Barre d'outils de dessin active sur la carte
+    _inst: {},
+    initInst: function () {
+        this._inst = {
+            map: {},                              // Instance de la carte leaflet
+            currentMode: mapOptions.dessin.place, // Mode de dessin actuel
+            lastNum: 0,
+            placesGroup: {},                      // Layer group contenant toutes les places
+            alleesGroup: {},                      // Layer group contenant toutes les allées
+            zonesGroup: {},                       // Layer group contenant toutes les zones
+            afficheursGroup: {},                  // Layer group contenant tous les afficheurs
+            drawControl: {}                       // Barre d'outils de dessin active sur la carte
+        };
     },
 
     getDefaultProps: function () {
@@ -73,6 +76,7 @@ var parkingMap = React.createClass({
      * Application de la carte sur le div avec les paramètres
      */
     componentDidMount: function () {
+        this.initInst();
         this.initMap();
         this.initDrawPlugin();
         this.initCustomButtons();
@@ -86,6 +90,15 @@ var parkingMap = React.createClass({
      */
     shouldComponentUpdate: function (nextProps, nextState) {
         return true;
+    },
+
+    /**
+     * Clear la map avant de supprimer le node
+     */
+    componentWillUnmount: function () {
+        console.log('Pass UNMOUBNT');
+        this._inst.map.remove();
+        this.initInst();
     },
 
 

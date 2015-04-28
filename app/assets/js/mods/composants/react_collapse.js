@@ -6,17 +6,18 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 /************************************************************************
  * Created by yann on 05/02/2015.
  *
- * @param align : Alignement de la sidebar:  "Right ou
+ * @param align : Alignement de la sidebar
  ***********************************************************************/
 var Collapse = React.createClass({
 
     propTypes: {
         align: React.PropTypes.string.isRequired,
-        sideWidth: React.PropTypes.number
+        sideWidth: React.PropTypes.number,
+        isCollapsed: React.PropTypes.bool
     },
 
     getDefaultProps: function () {
-        return {};
+        return {isCollapsed: false};
     },
 
     getInitialState: function () {
@@ -35,11 +36,17 @@ var Collapse = React.createClass({
         var state = this._generateState(false);
         this.setState(state);
     },
-
+    /**
+     *
+     * @param initial : True ou false selon si on est sur le premier render
+     * @returns {{}}
+     * @private
+     */
     _generateState: function (initial) {
         var state = {};
+        var isPlie = (initial) ? !this.props.isCollapsed : this.state.isCollapsed;
         // PAS PLIÉ donc on plie
-        if (initial || !this.state.isCollapsed) {
+        if ((initial && this.props.isCollapsed) || !isPlie) {
             // Alignement GAUCHE
             if (this.props.align == "left") {
                 state = {
@@ -84,7 +91,7 @@ var Collapse = React.createClass({
             }
         }
         // PLIÉ donc on déplie
-        else {
+        else if ((initial && !this.props.isCollapsed) || isPlie) {
             // Alignement GAUCHE
             if (this.props.align == "left") {
                 // CALIBRATION DE LA LARGEUR
@@ -299,13 +306,7 @@ var CollapseSidebar = React.createClass({
 
         return (<div className="full-height">
             {React.addons.createFragment({toggle: toggle, content: content})}
-
         </div>);
-        /*
-         <ReactCSSTransitionGroup transitionName="collapse-body">
-         {[toggle, content]}
-         </ReactCSSTransitionGroup>
-         */
     }
 });
 

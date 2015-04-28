@@ -96,7 +96,9 @@ var React = require('react/addons');
         "pm_creer", // places multiples
         // ACTIONS DE RAFRAICHISSEMENT
         "refresh_places",
-        "refresh_afficheurs"
+        "refresh_afficheurs",
+        // CHANGEMENT DE PLAN
+        "plan_selected"
     ]);
 
     /*

@@ -46,7 +46,8 @@ return array(
         'incr' => 'Inc.',
         '3_points_seulement' => 'Merci de tracer exactement 3 points !',
         'swal_interval_incorrect' => 'L\'interval entre les poteaux est incorrect, il doit être inférieur au nombre de places saisi.',
-        'insert_places_fail' => 'Une erreur s\'est produite, aucune place n\'a été enregistrée.'
+        'insert_places_fail' => 'Une erreur s\'est produite, aucune place n\'a été enregistrée.',
+        'selection_plan' => 'Veuillez sélectionner un plan à configurer dans le menu de gauche.'
     ],
 
     // MODULE TEMPS REEL
