@@ -276,6 +276,16 @@ var ReactPageTest = React.createClass({
                     selectedValue={["5fraise", "3pomme"]}
                 />
 
+                <InputSelectEditable
+                    multi={false}
+                    attributes={{name: "SelectSansLabel", selectCol: 4, required: true}}
+                    data={options}
+                    editable={editable}
+                    placeholder={'PlaceHolder...'}
+                    labelClass='text-right'
+                    selectedValue={"3pomme"}
+                />
+
                 <Button
                     bsStyle="success"
                     onClick={function () {
