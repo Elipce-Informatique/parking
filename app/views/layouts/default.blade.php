@@ -28,4 +28,5 @@
 @section('struct_scripts')
     @yield('scripts')
     <script type="text/javascript" src="{{URL::asset('/public/js/global/menu.app.js')}}"></script>
+    <script src="{{URL::asset('public/js/libs/extensions.jquery.dataTables.min.js')}}"></script>
 @stop

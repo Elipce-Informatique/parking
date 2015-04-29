@@ -55,6 +55,7 @@ var libs = [
     'jquery',
     'lodash',
     'react-bootstrap',
+    'datatables'
 ];
 
 /*
