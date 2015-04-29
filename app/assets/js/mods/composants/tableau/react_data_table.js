@@ -15,6 +15,9 @@
  */
 var React = require('react/addons');
 var Table = require('./react_table');
+var dataTable = require('datatables');
+$.DataTable = dataTable;
+
 var DataTableReact = React.createClass({
 
     oDataTable: {},

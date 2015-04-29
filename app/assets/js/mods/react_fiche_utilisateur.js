@@ -3,8 +3,8 @@ var React = require('react/addons');
 var Field = require('./composants/formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputMailEditable = Field.InputMailEditable;
-var react_photo       = require('./composants/react_photo');
-var PhotoEditable     = react_photo.PhotoEditable;
+var react_photo = require('./composants/react_photo');
+var PhotoEditable = react_photo.PhotoEditable;
 var Row = ReactB.Row;
 var Col = ReactB.Col;
 var Button = ReactB.Button;
@@ -17,7 +17,7 @@ var Form = Field.Form;
 var DataTable = require('./composants/tableau/react_data_table');
 
 // HELPERS
-var form_data_helper  = require('./helpers/form_data_helper');
+var form_data_helper = require('./helpers/form_data_helper');
 
 /**
  * Fiche utilisateur
@@ -32,7 +32,7 @@ var FicheUser = React.createClass({
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
-        userData : React.PropTypes.object,
+        userData: React.PropTypes.object,
         idUser: React.PropTypes.number,
         modeCompte: React.PropTypes.bool
     },
@@ -58,7 +58,7 @@ var FicheUser = React.createClass({
             passConfirmValue: '',
             passOldValue: '',
             tabProfilHide: true,
-            dataEmail : {}// vérifications métier du champ mail
+            dataEmail: {}// vérifications métier du champ mail
         };
         return retour;
     },
@@ -71,18 +71,18 @@ var FicheUser = React.createClass({
         Actions.utilisateur.set_etat_compte(this.props.modeCompte);
 
         // Page utilisateur
-        if(!this.props.modeCompte) {
+        if (!this.props.modeCompte) {
             // Chargement des infos de l'utilisateur sélectionné
             Actions.utilisateur.load_user_info(this.props.idUser);
         }
         // Compte utilsateur
-        else{
+        else {
             // les data sont passées par props
             var state = {
-                nom:    this.props.userData.nom,
+                nom: this.props.userData.nom,
                 prenom: this.props.userData.prenom,
-                email:  this.props.userData.email,
-                photo:  this.props.userData.photo
+                email: this.props.userData.email,
+                photo: this.props.userData.photo
             };
             // Maj state store
             Actions.utilisateur.set_initial_state(state);
@@ -91,9 +91,9 @@ var FicheUser = React.createClass({
         }
     },
 
-    componentWillReceiveProps: function(newProps){
+    componentWillReceiveProps: function (newProps) {
         // Nouvel utilisateur
-        if(this.props.idUser != newProps.idUser) {
+        if (this.props.idUser != newProps.idUser) {
             // Chargement des infos utilisateur
             Actions.utilisateur.load_user_info(newProps.idUser);
         }
@@ -103,7 +103,7 @@ var FicheUser = React.createClass({
      * Changer la photo
      * @param evt
      */
-    changePhoto: function (evt){
+    changePhoto: function (evt) {
         Actions.utilisateur.changePhoto(_.clone(evt));
     },
 
@@ -112,12 +112,8 @@ var FicheUser = React.createClass({
      * @param {object} data
      */
     updateData: function (data) {
-        try {
-            this.setState(data);
-        }
-        catch (e) {
+        this.setState(data);
 
-        }
     },
 
     render: function () {
@@ -125,36 +121,36 @@ var FicheUser = React.createClass({
 
         // Attributs du mail
         var attrs = {
-                label: Lang.get('administration.utilisateur.tableau.email'),
-                name: "email",
-                value: this.state.email,
-                required: true,
-                wrapperClassName: 'col-md-4',
-                labelClassName: 'col-md-1 text-right',
-                groupClassName: 'row'
+            label: Lang.get('administration.utilisateur.tableau.email'),
+            name: "email",
+            value: this.state.email,
+            required: true,
+            wrapperClassName: 'col-md-4',
+            labelClassName: 'col-md-1 text-right',
+            groupClassName: 'row'
         };
 
         // Coloration de l'email en fonction des vérifications syntaxiques et métier
-        if(!_.isEmpty(this.state.dataEmail)){
-            attrs       = _.extend(attrs, {
-                bsStyle:this.state.dataEmail.style,
-                'data-valid':this.state.dataEmail.isValid,
-                help:this.state.dataEmail.tooltip
+        if (!_.isEmpty(this.state.dataEmail)) {
+            attrs = _.extend(attrs, {
+                bsStyle: this.state.dataEmail.style,
+                'data-valid': this.state.dataEmail.isValid,
+                help: this.state.dataEmail.tooltip
             });
         }
 
         var SuiteCode = '';
-        var titreBis  = '';
+        var titreBis = '';
         var fctHideShow = null;
 
         // Montrer ou cacher les profils
-        fctHideShow = function(e) {
+        fctHideShow = function (e) {
             Actions.utilisateur.updateHideShowProfil(!this.state.tabProfilHide);
         }.bind(this);
 
 
         // MODE COMPTE
-        if(this.props.modeCompte && this.props.editable){
+        if (this.props.modeCompte && this.props.editable) {
 
             titreBis = Lang.get('administration.utilisateur.change_password');
 
@@ -190,31 +186,31 @@ var FicheUser = React.createClass({
             };
 
             // Coloration du mot de passe confirmé
-            if(!_.isEmpty(this.state.passConfirm)){
+            if (!_.isEmpty(this.state.passConfirm)) {
                 _.extend(attrsPassConfirm, {
-                    bsStyle:this.state.passConfirm.style,
-                    'data-valid':this.state.passConfirm.isValid,
-                    help:this.state.passConfirm.tooltip
+                    bsStyle: this.state.passConfirm.style,
+                    'data-valid': this.state.passConfirm.isValid,
+                    help: this.state.passConfirm.tooltip
                 });
             }
 
             // Coloration du mot de passe avant modification
-            if(!_.isEmpty(this.state.passOld)){
+            if (!_.isEmpty(this.state.passOld)) {
                 _.extend(attrsPassOld, {
-                    bsStyle:this.state.passOld.style,
-                    'data-valid':this.state.passOld.isValid,
-                    help:this.state.passOld.tooltip
+                    bsStyle: this.state.passOld.style,
+                    'data-valid': this.state.passOld.isValid,
+                    help: this.state.passOld.tooltip
                 });
             }
 
             // Si nouveau mot de passe, mot de passe actuel obligatoire
-            if(this.state.passNewValue != '' || this.state.passConfirmValue != ''){
+            if (this.state.passNewValue != '' || this.state.passConfirmValue != '') {
                 _.extend(attrsPassOld, {required: true});
             }
 
             // Attributs par défaut à tous les champs mot de passe
-            _.extend(attrsPassOld,     attrsPass);
-            _.extend(attrsPassNew,     attrsPass);
+            _.extend(attrsPassOld, attrsPass);
+            _.extend(attrsPassNew, attrsPass);
             _.extend(attrsPassConfirm, attrsPass);
 
             // On affiche la modification du password
@@ -252,7 +248,7 @@ var FicheUser = React.createClass({
             );
         }
         // MODE ADMIN
-        else if(!this.props.modeCompte){
+        else if (!this.props.modeCompte) {
             titreBis = Lang.get('administration.utilisateur.profilsAssocie');
             // Radio boutons oui / non dans le tableau de profils
             var aReactElements =
@@ -262,23 +258,23 @@ var FicheUser = React.createClass({
                     name_prefix: 'profil_',
                     name_dynamic: 'id',
                     libelles: [Lang.get('global.oui'), Lang.get('global.non')],
-                    values: ['oui','non'],
+                    values: ['oui', 'non'],
                     onClick: this.handleClickRadio,
                     checked: 'profil'
                 }
             }
             var tableau = <DataTable
-                            id='dataTableProfils'
-                            bUnderline={false}
-                            head={[Lang.get('global.profil'), Lang.get('global.droits')]}
-                            data={this.state.dataProfil}
-                            hide={['id']}
-                            reactElements={aReactElements}
-                            key="testkey"
-                            editable={this.props.editable}/> ;
+                id='dataTableProfils'
+                bUnderline={false}
+                head={[Lang.get('global.profil'), Lang.get('global.droits')]}
+                data={this.state.dataProfil}
+                hide={['id']}
+                reactElements={aReactElements}
+                key="testkey"
+                editable={this.props.editable}/>;
 
             // Tableau des profils caché
-            if(this.state.tabProfilHide){
+            if (this.state.tabProfilHide) {
                 tableau = {};
             }
 
@@ -306,9 +302,9 @@ var FicheUser = React.createClass({
         }
 
         // Attributs du formulaire
-        var fAttrs = {className:"form_utilisateur", id:"form_utilisateur"};
+        var fAttrs = {className: "form_utilisateur", id: "form_utilisateur"};
         // URL de la photo
-        var srcPhoto = './app/storage/documents/photo/'+this.state.photo;
+        var srcPhoto = './app/storage/documents/photo/' + this.state.photo;
         return (
             <Form ref="form" attributes={fAttrs}>
                 <Row>
@@ -318,7 +314,7 @@ var FicheUser = React.createClass({
                             cacheable={false}
                             alertOn={true}
                             src={srcPhoto}
-                            evts={{onChange:this.changePhoto}}
+                            evts={{onChange: this.changePhoto}}
                             editable={this.props.editable} />
                     </Col>
                     <Col md={10}>
@@ -362,51 +358,51 @@ var ficheUserStore = Reflux.createStore({
 
     // Variables
     storeState: {
-        nom    : '',
-        prenom : '',
-        email : '',
+        nom: '',
+        prenom: '',
+        email: '',
         photo: 'no.gif',
-        passNewValue : '',
-        passOldValue : '',
-        passConfirmValue : ''
+        passNewValue: '',
+        passOldValue: '',
+        passConfirmValue: ''
     },
-    modeCompte:false,
-    emailInitial:'',
-    idUser : 0,
+    modeCompte: false,
+    emailInitial: '',
+    idUser: 0,
 
     // Initial setup
     init: function () {
         // Register statusUpdate action
         this.listenTo(Actions.utilisateur.load_user_info, this.getInfosUser);
-        this.listenTo(Actions.utilisateur.save_user,      this.sauvegarder);// Envoyé de PageUser sur submit_form
-        this.listenTo(Actions.utilisateur.delete_user,    this.supprimer);
+        this.listenTo(Actions.utilisateur.save_user, this.sauvegarder);// Envoyé de PageUser sur submit_form
+        this.listenTo(Actions.utilisateur.delete_user, this.supprimer);
         this.listenTo(Actions.utilisateur.updateHideShowProfil, this.updateHideShowProfil);
-        this.listenTo(Actions.utilisateur.set_etat_compte,      this.set_etat_compte);
-        this.listenTo(Actions.utilisateur.set_initial_state,      this.set_initial_state);
+        this.listenTo(Actions.utilisateur.set_etat_compte, this.set_etat_compte);
+        this.listenTo(Actions.utilisateur.set_initial_state, this.set_initial_state);
 
-        this.listenTo(Actions.validation.form_field_changed,    this.formChange);
-        this.listenTo(Actions.validation.form_field_verif,      this.formVerif);
+        this.listenTo(Actions.validation.form_field_changed, this.formChange);
+        this.listenTo(Actions.validation.form_field_verif, this.formVerif);
     },
 
-    set_initial_state: function(data){
+    set_initial_state: function (data) {
         this.storeState = data;
         this.emailInitial = data['email'];
         //console.log('this.emailInitial : %o', this.emailInitial);
     },
 
-    set_etat_compte: function(bool){
+    set_etat_compte: function (bool) {
         this.modeCompte = bool;
     },
 
-    updateHideShowProfil: function(bool){
-        this.trigger({tabProfilHide:bool});
+    updateHideShowProfil: function (bool) {
+        this.trigger({tabProfilHide: bool});
     },
 
-    formChange: function(e){
+    formChange: function (e) {
         var data = {};
 
         // Mise à jour du state
-        switch(e.name) {
+        switch (e.name) {
 
             case 'email':
                 data.email = e.value;
@@ -441,20 +437,20 @@ var ficheUserStore = Reflux.createStore({
      * Vérifications "Métiers" du formulaire
      * @param data : Object {name: "email", value: "yann.pltv@gmail.com", form: DOMNode}
      */
-    formVerif: function(e){
+    formVerif: function (e) {
         var data = {};
 
         // VÉFIR ADRESSE MAIL:
-        if(e.name == 'email'){
-           data = this.emailChange(e.value);
+        if (e.name == 'email') {
+            data = this.emailChange(e.value);
         }
-        else if(e.name == 'passNew') {
+        else if (e.name == 'passNew') {
             data = this.verifPassNew(e.value, $('#passConfirm')[0].value);
         }
-        else if(e.name == 'passOld') {
+        else if (e.name == 'passOld') {
             data = this.verifPassOld(e.value);
         }
-        else if(e.name == 'passConfirm') {
+        else if (e.name == 'passConfirm') {
             data = this.verifPassNew(e.value, $('#passNew')[0].value);
         }
 
@@ -470,13 +466,13 @@ var ficheUserStore = Reflux.createStore({
         this.idUser = idUser;
         // Etat par défaut
         this.storeState = {
-            nom    : '',
-            prenom : '',
-            email : '',
+            nom: '',
+            prenom: '',
+            email: '',
             photo: 'no.gif',
-            passNewValue : '',
-            passOldValue : '',
-            passConfirmValue : ''
+            passNewValue: '',
+            passOldValue: '',
+            passConfirmValue: ''
         };
         this.emailInitial = '';
 
@@ -515,7 +511,7 @@ var ficheUserStore = Reflux.createStore({
         var url = idUser === 0 ? '' : idUser;
 
         // Page compte
-        if(this.modeCompte) {
+        if (this.modeCompte) {
             url = BASE_URI + 'moncompte';
         }
         // Page utilisateur
@@ -537,11 +533,11 @@ var ficheUserStore = Reflux.createStore({
             data: fData,
             processData: false,
             contentType: false,
-            dataType:'json',
+            dataType: 'json',
             context: this,
             success: function (tab) {
                 // Sauvegarde OK
-                if(tab.save) {
+                if (tab.save) {
                     // Notifiction verte
                     Actions.notif.success(Lang.get('global.notif_success'));
 
@@ -549,7 +545,7 @@ var ficheUserStore = Reflux.createStore({
                     Actions.utilisateur.load_user_info(parseInt(tab.idUser));
                 }
                 // Mots de passes différents
-                else if(tab.pass !== undefined) {
+                else if (tab.pass !== undefined) {
                     Actions.notif.error(Lang.get('administration.utilisateur.oldPassConfirmError'));
                 }
                 // Erreur SQL
@@ -560,7 +556,7 @@ var ficheUserStore = Reflux.createStore({
 
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
-                Actions.notif.error('AJAX : '+Lang.get('global.notif_erreur'));
+                Actions.notif.error('AJAX : ' + Lang.get('global.notif_erreur'));
             }
         });
     },
@@ -594,24 +590,24 @@ var ficheUserStore = Reflux.createStore({
      * @param value: email saisi par le user
      * @returns {{}}
      */
-    emailChange : function(value){
+    emailChange: function (value) {
 
-        var retour = {dataEmail : {}};
+        var retour = {dataEmail: {}};
         // Email supérieur à 6 caractères + pas de modification du mail
-        if(value.length>=6 && value != this.emailInitial){
+        if (value.length >= 6 && value != this.emailInitial) {
 
             // Mode édition => ne pas prendre en compte le mail du user actuel
-            var url = this.idUser === 0 ? '' : '/'+this.idUser;
+            var url = this.idUser === 0 ? '' : '/' + this.idUser;
 
             // AJAX
             $.ajax({
-                url:      BASE_URI + 'utilisateur/email/' + value + url,
+                url: BASE_URI + 'utilisateur/email/' + value + url,
                 dataType: 'json',
-                context:  this,
+                context: this,
                 async: false,
-                success:  function (mailExists) {
+                success: function (mailExists) {
                     // Mail unique
-                    if(!mailExists){
+                    if (!mailExists) {
                         // Champ vert
                         retour.dataEmail = {
                             isValid: true,
@@ -620,7 +616,7 @@ var ficheUserStore = Reflux.createStore({
                         };
                     }
                     // Mail existe déjà
-                    else{
+                    else {
                         // Champ rouge
                         retour.dataEmail = {
                             isValid: false,
@@ -637,10 +633,10 @@ var ficheUserStore = Reflux.createStore({
         return retour
     },
 
-    verifPassOld: function(value){
-        var retour = {passOld : {}};
+    verifPassOld: function (value) {
+        var retour = {passOld: {}};
 
-        if(value.length >= 6) {
+        if (value.length >= 6) {
             // AJAX
             $.ajax({
                 url: BASE_URI + 'moncompte/verifMPD/' + value, /* correspond au module url de la BDD */
@@ -651,18 +647,18 @@ var ficheUserStore = Reflux.createStore({
                     // Mot de passe erroné
                     if (!bool) {
                         retour.passOld = {
-                            isValid : false,
-                            style : 'error',
-                            tooltip : Lang.get('administration.utilisateur.oldPassConfirmError')
+                            isValid: false,
+                            style: 'error',
+                            tooltip: Lang.get('administration.utilisateur.oldPassConfirmError')
                         };
                     }
                     // Mot de passe OK
-                    else{
+                    else {
                         // Vert
                         retour.passOld = {
-                            isValid : true,
-                            style : 'success',
-                            tooltip : ''
+                            isValid: true,
+                            style: 'success',
+                            tooltip: ''
                         };
                     }
                 },
@@ -675,31 +671,31 @@ var ficheUserStore = Reflux.createStore({
         return retour;
     },
 
-    verifPassNew: function(value1, value2){
-        var retour = {passConfirm:{}};
+    verifPassNew: function (value1, value2) {
+        var retour = {passConfirm: {}};
         // Mot de passe vide
-        if(value1 === '' || value2 === ''){
+        if (value1 === '' || value2 === '') {
             retour.passConfirm = {
-                isValid : false,
-                style   : 'default',
-                tooltip : ''
+                isValid: false,
+                style: 'default',
+                tooltip: ''
             }
         }
         // Mot de passe de confirmation différent de la confirmation
-        else if(value1 != value2){
+        else if (value1 != value2) {
             // Attributs de validation du mot de passe de confirmation
             retour.passConfirm = {
-                isValid : false,
-                style   : 'error',
-                tooltip : Lang.get('administration.utilisateur.newPassConfirmError')
+                isValid: false,
+                style: 'error',
+                tooltip: Lang.get('administration.utilisateur.newPassConfirmError')
             }
         }
         // Mot de passe de confirmation identique
-        else{
+        else {
             retour.passConfirm = {
-                isValid : true,
-                style   : 'success',
-                tooltip : ''
+                isValid: true,
+                style: 'success',
+                tooltip: ''
             }
         }
         return retour;

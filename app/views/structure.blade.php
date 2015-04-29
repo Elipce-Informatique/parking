@@ -19,17 +19,17 @@
 
 @yield('struct_content')
 
-<!-- Inclusion des differents scripts globaux -->
-<div id="scripts">
-    @yield('js-localization.head')
-    @include('auth_js')
-    <script type="text/javascript">window.BASE_URI = "{{URL::asset('/')}}"</script>
-    <script type="text/javascript" src="{{URL::asset('/public/js/global/vendor.js')}}"></script>
-    <script type="text/javascript" src="{{URL::asset('/public/js/global/app.js')}}"></script>
-    <script type="text/javascript" src="{{URL::asset('/public/js/libs/bundled_libs.js')}}"></script>
-    @yield('struct_scripts')
-</div>
-@include('notifications')
-<input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
-</body>
+        <!-- Inclusion des differents scripts globaux -->
+        <div id="scripts">
+            @yield('js-localization.head')
+            @include('auth_js')
+            <script type="text/javascript">window.BASE_URI="{{URL::asset('/')}}"</script>
+            <script type="text/javascript" src="{{URL::asset('/public/js/global/vendor.js')}}"></script>
+            <script type="text/javascript" src="{{URL::asset('/public/js/global/app.js')}}"></script>
+            <script type="text/javascript" src="{{URL::asset('/public/js/libs/bundled_libs.js')}}"></script>
+            @yield('struct_scripts')
+        </div>
+        @include('notifications')
+        <input type="hidden" id="_token" name="_token" value="{{csrf_token()}}">
+    </body>
 </html>

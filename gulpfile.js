@@ -55,7 +55,7 @@ var libs = [
     'jquery',
     'lodash',
     'react-bootstrap',
-    'react-calendar/react-calendar'
+    'datatables'
 ];
 
 /*
@@ -85,6 +85,7 @@ gulp.task('watch', function () {
     // Watch des LANG
     gulp.watch(LANG_SRC, ['lang_js']);
     gulp.watch(LANG_CONF, ['lang_js']);
+
 });
 
 /*

@@ -602,11 +602,23 @@ var InputSelect = React.createClass({
                 </div>;
         }
 
+        var label;
+        // Avec label
+        if (this.props.attributes.label !== undefined) {
+            label = (
+                <Col
+                    md={this.props.attributes.labelCol}
+                    className={attrs['data-class'] + ' ' + this.props.labelClass}>
+                    <label className="control-label">
+                        {this.props.attributes.label}
+                    </label>
+                </Col>
+            );
+        }
+
         return (
             <Row className="form-group">
-                <Col md={this.props.attributes.labelCol} className={attrs['data-class'] + ' ' + this.props.labelClass}>
-                    <label className="control-label">{this.props.attributes.label}</label>
-                </Col>
+                {label}
                 <Col md={this.props.attributes.selectCol}>
                     {ctnSelect}
                 </Col>
@@ -1416,7 +1428,7 @@ var InputRadioEditable = React.createClass({
             attr = _.extend(attr, {disabled: true});// readOnly ne fait rien
         }
         //console.log(attr);
-        return(
+        return (
             <InputRadio
                 attributes = {attr}
                 evts = {this.props.evts}
