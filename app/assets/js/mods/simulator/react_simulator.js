@@ -18,7 +18,6 @@ var simu = function (idNiveau){
             dataType: 'json',
             context: this,
             success: function (bool) {
-                console.log('maj bdd %o', bool);
             },
             error: function (xhr, status, err) {
                 console.error(status, err.toString());

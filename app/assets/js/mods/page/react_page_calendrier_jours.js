@@ -253,7 +253,6 @@ var storeCalendrierJours = Reflux.createStore({
      * @param e: evt
      */
     onForm_field_changed: function(e){
-        console.log('CHANGED '+e.name);
         var data = {};
         // MAJ du state STORE
         data[e.name] = e.value

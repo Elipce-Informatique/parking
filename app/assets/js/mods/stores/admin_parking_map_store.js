@@ -123,6 +123,10 @@ var store = Reflux.createStore({
                 this.trigger(retour);
             }
         }
+        // CALCUL DU CALIBRE ET SUPPRESSION DE LA FORME
+        else if (this._inst.currentMode == mapOptions.dessin.calibre) {
+            console.log('Data calibre : %o', data);
+        }
         // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
         else {
             var retour = {
@@ -215,6 +219,18 @@ var store = Reflux.createStore({
         };
         this.trigger(retour);
     },
+    onMode_calibre: function(d){
+        this._inst.currentMode = mapOptions.dessin.calibre;
+
+        var retour = {
+            type: mapOptions.type_messages.mode_change,
+            data: {
+                mode: mapOptions.dessin.calibre
+            }
+        };
+
+        this.trigger(retour);
+    },
 
     /**
      * ---------------------------------------------------------------------------
@@ -228,10 +244,6 @@ var store = Reflux.createStore({
      * @param formId : id du formulaire
      */
     onSubmit_form: function (formDom, formId) {
-        console.group('- - - - - Pass onSubmitForm');
-        console.log('DOM du form : %o', formDom);
-        console.log('ID du form : ' + formId);
-        console.groupEnd();
 
         // SÉLECTION DU FORMULAIRE POUR TRAITER L'ACTION
         switch (formId) {

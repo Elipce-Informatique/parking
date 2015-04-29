@@ -92,6 +92,7 @@ var React = require('react/addons');
         "mode_allee",
         "mode_zone",
         "mode_afficheur",
+        "mode_calibre",
         // ACTIONS POUR LES MODALES
         "pm_creer", // places multiples
         // ACTIONS DE RAFRAICHISSEMENT

@@ -188,7 +188,6 @@ var store = Reflux.createStore({
             context: this,
             success: function (data) {
 
-                console.log('data : %o', data);
                 // ---------------------------------------------------------------------
                 // Récupération des données du niveau
                 this._inst.niveauInfos.id = data.id;

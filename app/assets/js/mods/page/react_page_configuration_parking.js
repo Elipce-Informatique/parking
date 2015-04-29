@@ -68,7 +68,6 @@ var Page = React.createClass({
      * @param data : les nouvelles données venant du store
      */
     _updateState: function (data) {
-        console.log('Update data : %o', data);
         // MAJ data automatique, lifecycle "UPDATE"
         this.setState(data);
     },
@@ -123,7 +122,6 @@ var Page = React.createClass({
                     'data-parking-id': 'parking-id',
                     'data-url': 'url'
                 }}/>);
-            console.log('Data treeview : %o', data);
         }
 
         // Création Map
@@ -262,7 +260,6 @@ var store = Reflux.createStore({
         // ON EST SUR UN ELT DE TYPE PLAN !
         if ($elt.data('is-plan')) {
             var data = $elt.data();
-            console.log('Data de lélément : %o', data);
 
             var state = {
                 planId: data.id,

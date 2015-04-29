@@ -63,7 +63,6 @@ var PageCalendrierProg = React.createClass({
     },
 
     handleClick: function (scope, m, e) {
-        console.log("handleClick: " + scope + " " + m.format());
         if(scope == 'Day'){
             $(e.currentTarget).addClass('bg-success');
         }
@@ -276,7 +275,6 @@ var storeCalendrierProg = Reflux.createStore({
      * @param e: evt
      */
     onForm_field_changed: function (e) {
-        console.log('CHANGED ' + e.name);
         var data = {};
         // MAJ du state STORE
         data[e.name] = e.value

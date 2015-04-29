@@ -149,7 +149,6 @@ var Page = React.createClass({
                                     selectedColor="#222222"
                                     selectedBackColor='#eeeeee'
                                     onLineClicked={function () {
-                                        console.log('click');
                                     }}
                                     isSelectionExclusive={true}
                                     treeNodeAttributes={{'data-id': 'id'}}/>
@@ -195,7 +194,6 @@ var store = Reflux.createStore({
             async: false
         })
             .done(function (data) {
-                console.log('data : %o', data);
                 retour = {niveau: data};
             })
             .fail(function (xhr, type, exception) {

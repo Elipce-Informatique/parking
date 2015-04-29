@@ -52,6 +52,7 @@ var parkingMap = React.createClass({
             alleesGroup: {},                      // Layer group contenant toutes les allées
             zonesGroup: {},                       // Layer group contenant toutes les zones
             afficheursGroup: {},                  // Layer group contenant tous les afficheurs
+            calibreGroup: {},                     // Calibre
             drawControl: {}                       // Barre d'outils de dessin active sur la carte
         };
     },
@@ -96,7 +97,6 @@ var parkingMap = React.createClass({
      * Clear la map avant de supprimer le node
      */
     componentWillUnmount: function () {
-        console.log('Pass UNMOUBNT');
         this._inst.map.remove();
         this.initInst();
     },
@@ -142,6 +142,8 @@ var parkingMap = React.createClass({
         this._inst.map.addLayer(this._inst.zonesGroup);
         this._inst.afficheursGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.afficheursGroup);
+        this._inst.calibreGroup = new L.geoJson();
+        this._inst.map.addLayer(this._inst.calibreGroup);
     },
     /**
      * Paramètre le plugin de dessin sur la carte lors de l'INIT de la map
@@ -258,6 +260,16 @@ var parkingMap = React.createClass({
             this._inst.map
         );
 
+        // CALIBRE
+        L.easyButton(
+            mapOptions.icon.calibre,
+            function () {
+                Actions.map.mode_calibre();
+            },
+            Lang.get('administration_parking.carte.calibrer'),
+            this._inst.map
+        );
+
         // Lancement de l'action pour sélectionner le bouton "place":
         Actions.map.mode_place();
 
@@ -275,7 +287,11 @@ var parkingMap = React.createClass({
 
         // 2 CONSTRUCTION DES OPTIONS
         // ------- LES POLYLINES ----------
-        var polyline = false;
+        var polyline = this._inst.currentMode == mapOptions.dessin.calibre ? {
+            shapeOptions: {
+                color: mapOptions.control.draw.colors[this._inst.currentMode]
+            }
+        } : false;
         // ------- LES POLYGONS ----------
         var polygon = (this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone || this._inst.currentMode == mapOptions.dessin.place_auto) ? {
             allowIntersection: false, // Restricts shapes to simple polygons
@@ -365,6 +381,10 @@ var parkingMap = React.createClass({
                 this.changeDrawToolbar(data.data.mode);
                 selectButton(mapOptions.icon.afficheur);
                 break;
+            case mapOptions.dessin.calibre:
+                this.changeDrawToolbar(data.data.mode);
+                selectButton(mapOptions.icon.calibre);
+                break;
             default:
                 this.changeDrawToolbar(mapOptions.dessin.place);
                 // Par défaut, on sélectionne le mode place au cas ou
@@ -388,7 +408,6 @@ var parkingMap = React.createClass({
      * @param data : le couple type-data envoyé par le store
      */
     onPlacesAdded: function (formes) {
-        console.log('ACTION ADD FORMES, voilà les formes : %o', formes);
         var liste_data = formes.data;
         _.each(liste_data, function (place) {
             this._inst.lastNum = Math.max(this._inst.lastNum, place.data.num);
@@ -597,7 +616,6 @@ var parkingMap = React.createClass({
      * @returns {XML}
      */
     renderOverlay: function () {
-        console.log('Pass renderOverlay');
         var retour = {};
         switch (this.state.modalType) {
             case mapOptions.modal_type.zone:

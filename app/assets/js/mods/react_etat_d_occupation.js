@@ -217,7 +217,6 @@ var reactEtatDoccupationStore = Reflux.createStore({
             async: false,
             success: function (data) {
 
-                console.log('DATA %o', data);
                 // Combo type place : transformation en {label:'', value:''}
                 data.dataTypesPlace = _.map(data.dataTypesPlace, function(type){
                     return {
