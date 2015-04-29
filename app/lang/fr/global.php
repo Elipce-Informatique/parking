@@ -80,7 +80,7 @@ Voulez-vous vraiment quitter cette page ?',
     'modifier' => 'Modifier',
     'attention' => 'Attention',
     'libelle' => 'Libelle',
-    'selection' => 'Sélection...',
+    'selection' => 'Sélection',
 
     // FORMULAIRE
     'select' => 'Sélection...',

@@ -58,4 +58,4 @@ var FormValidationMixin = {
     }
 };
 
-module.exports = FormValidationMixin
+module.exports = FormValidationMixin;
