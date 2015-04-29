@@ -60,7 +60,8 @@ var ReactPageTest = React.createClass({
     getInitialState: function () {
         return {
             isModalOpen: false,
-            modalType: 1
+            modalType: 1,
+            options: []
         };
     },
 
@@ -69,6 +70,18 @@ var ReactPageTest = React.createClass({
      */
     componentWillMount: function () {
         this.listenTo(storeTest, this.update);
+    },
+
+    componentDidMount: function () {
+        this.setState({
+            options: [
+                {value: '1abricot', label: 'Abricot'},
+                {value: '2fambroise', label: 'Framboise'},
+                {value: '3pomme', label: 'Pomme'},
+                {value: '4poire', label: 'Poire'},
+                {value: '5fraise', label: 'Fraise'}
+            ]
+        })
     },
 
     /**
@@ -168,13 +181,7 @@ var ReactPageTest = React.createClass({
 
         /*********************/
         /* Paramètres Select */
-        var options = [
-            {value: '1abricot', label: 'Abricot'},
-            {value: '2fambroise', label: 'Framboise'},
-            {value: '3pomme', label: 'Pomme'},
-            {value: '4poire', label: 'Poire'},
-            {value: '5fraise', label: 'Fraise'}
-        ];
+
 
         function selectChange(value, aData) {
 
@@ -273,8 +280,9 @@ var ReactPageTest = React.createClass({
                         name: "Select",
                         selectCol: 4,
                         labelCol: 2,
-                        required: true}}
-                    data={options}
+                        required: true
+                    }}
+                    data={this.state.options}
                     editable={editable}
                     placeholder={'PlaceHolder...'}
                     labelClass='text-right'

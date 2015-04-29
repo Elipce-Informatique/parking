@@ -8,6 +8,7 @@ var BandeauGenerique = require('../composants/bandeau/react_bandeau_generique');
 var Button = ReactB.Button;
 var Row = ReactB.Row;
 var Col = ReactB.Col;
+var async = require('async');
 var FormJours = require('../react_form_calendrier_jours').Composant;
 //console.log(FormJours);console.log(Col);
 // MIXINS

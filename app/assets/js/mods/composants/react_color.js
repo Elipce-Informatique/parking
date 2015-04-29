@@ -1,8 +1,8 @@
 /***********************/
 /* Composants Boostrap */
 var React = require('react/addons');
-var Row   = ReactB.Row;
-var Col   = ReactB.Col;
+var Row = ReactB.Row;
+var Col = ReactB.Col;
 var Input = ReactB.Input;
 
 /*********/
@@ -32,104 +32,119 @@ var MixinInputValue = require('../mixins/input_value').InputValueMixin;
  */
 var ColorPickerEditable = React.createClass({
 
-    mixins: [MixinInputValue], // Gère la MAJ de la value contenue initialement dans this.props.attributes.value
+        mixins: [MixinInputValue], // Gère la MAJ de la value contenue initialement dans this.props.attributes.value
 
-    propTypes: {
-        editable:   React.PropTypes.bool.isRequired,
-        label:      React.PropTypes.string,
-        attributes: React.PropTypes.object,
-        gestMod:    React.PropTypes.bool,
-        mdLabel:    React.PropTypes.number,
-        mdColor:    React.PropTypes.number,
-        evts:       React.PropTypes.object,
-        validator:  React.PropTypes.func,
-        labelClass: React.PropTypes.string,
-        colorClass: React.PropTypes.string
-    },
+        propTypes: {
+            editable: React.PropTypes.bool.isRequired,
+            label: React.PropTypes.string,
+            attributes: React.PropTypes.object,
+            gestMod: React.PropTypes.bool,
+            mdLabel: React.PropTypes.number,
+            mdColor: React.PropTypes.number,
+            evts: React.PropTypes.object,
+            validator: React.PropTypes.func,
+            labelClass: React.PropTypes.string,
+            colorClass: React.PropTypes.string
+        },
 
-    getDefaultProps: function () {
-        return {
-            attributes: {value:'FFFFFF'},
-            gestMod: true,
-            mdLabel: 1,
-            mdColor: 1,
-            label: '',
-            evts: {},
-            labelClass : '',
-            colorClass : '',
-            validator: function (val, props, state) {
-                var retour = {};
-                // Value vide
-                if (val.length == 0) {
-                    retour =  {isValid: !props.attributes.required, style: (props.attributes.required?'error':'default'), tooltip: ''};
+        getDefaultProps: function () {
+            return {
+                attributes: {value: 'FFFFFF'},
+                gestMod: true,
+                mdLabel: 1,
+                mdColor: 1,
+                label: '',
+                evts: {},
+                labelClass: '',
+                colorClass: '',
+                validator: function (val, props, state) {
+                    var retour = {};
+                    // Value vide
+                    if (val.length == 0) {
+                        retour = {
+                            isValid: !props.attributes.required,
+                            style: (props.attributes.required ? 'error' : 'default'),
+                            tooltip: ''
+                        };
+                    }
+                    // Couleur OK
+                    else {
+                        retour = {isValid: true, style: 'success', tooltip: ''};
+                    }
+                    return retour;
                 }
-                // Couleur OK
-                else {
-                    retour = {isValid: true, style: 'success', tooltip: ''};
-                }
-                return retour;
             }
-        }
-    },
+        },
 
-    componentDidMount: function(){
-        // Init du plugin color
-        jscolor.init();
-    },
+        componentDidMount: function () {
+            // Init du plugin color
+            jscolor.init();
+        },
 
-    componentDidUpdate: function(){
-        // Init du plugin color
-        jscolor.init();
-    },
-    componentWillUpdate: function(){
-        console.log('UPDATE color');
-    },
+        componentDidUpdate: function () {
+            // Init du plugin color
+            jscolor.init();
+        },
 
-    render: function () {
-        var retour;
-       // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
-        var attrs = this.generateAttributes();
-        //console.log('attrs %o', attrs);
-        // EDITABLE
-        if (this.props.editable) {
-            // Construction des classes pour Input
-            attrs = _.extend({  wrapperClassName:'col-md-'+this.props.mdColor+' '+this.props.colorClass,
-                                labelClassName:'col-md-'+this.props.mdLabel+' '+this.props.labelClass,
-                                groupClassName:'row',
-                                label: this.props.label}, attrs);
+        componentWillReceiveProps: function (np, ns) {
+            // Input color
+            var node = $(React.findDOMNode(this)).find('input');
 
-            console.log('STATE color: '+this.state.value);
+            // Input color existe
+            if (node.length > 0) {
+                // MIXIN non terminé, le state n'exoste pas
+                var val = ns.value !== undefined ? ns.value : np.attributes.value;
+                // Maj background color
+                node[0].color.fromString(val);
+            }
+        },
 
-            retour =
-                <Input
-                    type="text"
-                    maxLength="6"
-                    addonBefore="#"
+        render: function () {
+            var retour;
+            // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
+            var attrs = this.generateAttributes();
+            //console.log('attrs %o', attrs);
+            // EDITABLE
+            if (this.props.editable) {
+                // Construction des classes pour Input
+                attrs = _.extend({
+                    wrapperClassName: 'col-md-' + this.props.mdColor + ' ' + this.props.colorClass,
+                    labelClassName: 'col-md-' + this.props.mdLabel + ' ' + this.props.labelClass,
+                    groupClassName: 'row',
+                    label: this.props.label
+                }, attrs);
+
+                retour =
+                    <Input
+                        type="text"
+                        maxLength="6"
+                        addonBefore="#"
                     {...attrs}
-                    value={this.state.value}
-                    className="color {pickerFaceColor:'transparent',pickerFace:3,pickerBorder:0,pickerInsetColor:'black'}"
+                        value={this.state.value}
+                        className="color {pickerFaceColor:'transparent',pickerFace:3,pickerBorder:0,pickerInsetColor:'black'}"
                     {...this.props.evts}
-                    onChange = {this.handleChange}
-                    onBlur = {this.handleBlur}
-                    ref="InputField"
-                    hasFeedback
-                />
-        }
-        // NON EDITABLE
-        else{
-            retour = <ColorPicker
-                        color={this.props.attributes.value}
-                        label={this.props.label}
-                        mdLabel={this.props.mdLabel}
-                        mdColor={this.props.mdColor}
-                        labelClass={this.props.labelClass}
-                        colorClass={this.props.colorClass}
-            />;
-        }
+                        onChange = {this.handleChange}
+                        onBlur = {this.handleBlur}
+                        ref="InputField"
+                        hasFeedback
+                    />
+            }
+            // NON EDITABLE
+            else {
+                retour = <ColorPicker
+                    color={this.props.attributes.value}
+                    label={this.props.label}
+                    mdLabel={this.props.mdLabel}
+                    mdColor={this.props.mdColor}
+                    labelClass={this.props.labelClass}
+                    colorClass={this.props.colorClass}
+                />;
+            }
 
-        return retour;
-    }
-});
+            return retour;
+        }
+    })
+    ;
 module.exports.ColorPickerEditable = ColorPickerEditable;
 
 /**
@@ -163,20 +178,20 @@ var ColorPicker = React.createClass({
             evts: {},
             height: 20,
             width: 50,
-            label:'',
+            label: '',
             mdLabel: 1,
             mdColor: 1,
-            labelClass : '',
-            colorClass : ''
+            labelClass: '',
+            colorClass: ''
         }
     },
 
     render: function () {
         var background = this.props.color === '' ? 'FFFFFF' : this.props.color;
         var splitterStyle = {
-            background:'#'+background,
-            height:this.props.height,
-            width:this.props.width,
+            background: '#' + background,
+            height: this.props.height,
+            width: this.props.width,
             boxShadow: '3px 3px 3px #888888',
             borderRadius: "5px"
         };

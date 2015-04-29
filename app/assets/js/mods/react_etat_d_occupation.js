@@ -3,6 +3,7 @@
  * Modified bu Vivian on 06/03/2015
  */
 var React = require('react/addons');
+var async = require('async');
 /***********************/
 /* Composants Boostrap */
 var Row = ReactB.Row;
@@ -63,24 +64,8 @@ var reactEtatDoccupation = React.createClass({
     },
 
     componentWillReceiveProps: function (np, ns) {
-        if (ns.id !== np.id) {
-            // Données de l'état d'occupation + les 2 combos
-            Actions.etats_d_occupation.show(np.id);
-        }
-        console.log(this.props.id+ ' VS '+np.id);
-    },
-
-    shouldComponentUpdate: function(np, ns){
-        //if(this.props.id === np.id){
-        //    return false;
-        //}
-        if(this.props.id != np.id){
-
-            ns.couleur = 'AAAAAA';
-            // TODO tester une async task ex: ajax et attendre 5 sec dans un timeout
-            Actions.etats_d_occupation.show(20);
-        }
-        return true;
+        // Données de l'état d'occupation + les 2 combos
+        Actions.etats_d_occupation.show(np.id);
     },
 
     /**
@@ -88,12 +73,8 @@ var reactEtatDoccupation = React.createClass({
      * @param {object} data
      */
     updateData: function (data) {
-        try {
-            this.setState(data);
-        }
-        catch (e) {
+        this.setState(data);
 
-        }
     },
 
     render: function () {
@@ -119,7 +100,7 @@ var reactEtatDoccupation = React.createClass({
                 help: this.state.validation.tooltip
             });
         }
-        console.log('couleur: '+this.state.couleur);
+
         // RENDER
         return (
             <Form   ref="form"
@@ -132,19 +113,6 @@ var reactEtatDoccupation = React.createClass({
                     attributes={attrs}
                     editable={this.props.editable}
                 />
-                <ColorPickerEditable
-                    label = {Lang.get('administration_parking.etats_d_occupation.tableau.couleur')}
-                    attributes={{
-                        name: "couleur",
-                        required: true,
-                        value: this.state.couleur
-                    }}
-                    editable={this.props.editable}
-                    mdLabel={1}
-                    mdColor={2}
-                    labelClass="text-right"
-                />
-
                 <InputSelectEditable
                     attributes={{
                         label: Lang.get('administration_parking.etats_d_occupation.type_place'),
@@ -158,8 +126,20 @@ var reactEtatDoccupation = React.createClass({
                     selectedValue={this.state.type_place_id}
                     placeholder  ={Lang.get('global.selection')}
                     labelClass = "text-right"
+                    key={Date.now()}
                 />
-
+                <ColorPickerEditable
+                    label = {Lang.get('administration_parking.etats_d_occupation.tableau.couleur')}
+                    attributes={{
+                        name: "couleur",
+                        required: true,
+                        value: this.state.couleur
+                    }}
+                    editable={this.props.editable}
+                    mdLabel={1}
+                    mdColor={2}
+                    labelClass="text-right"
+                />
                 <Row>
                     <Col md={1}>
                         <label
@@ -213,7 +193,7 @@ var reactEtatDoccupationStore = Reflux.createStore({
         this.listenToMany(Actions.validation);
     },
 
-    onCreer: function(){
+    onCreer: function () {
         this.onShow(0);
     },
     /**
@@ -225,43 +205,37 @@ var reactEtatDoccupationStore = Reflux.createStore({
         this.id = idEtat;
         //console.log('id: '+idEtat);
 
-        if(this.id > 0) {
-            // AJAX
-            $.ajax({
-                url: BASE_URI + 'etats_d_occupation/' + idEtat,
-                dataType: 'json',
-                context: this,
-                async: false,
-                success: function (data) {
+        // AJAX
+        $.ajax({
+            url: BASE_URI + 'etats_d_occupation/' + idEtat,
+            dataType: 'json',
+            context: this,
+            async: false,
+            success: function (data) {
 
-                    // Combo type place : transformation en {label:'', value:''}
-                    data.dataTypesPlace = _.map(data.dataTypesPlace, function (type) {
-                        return {
-                            label: type.libelle,
-                            value: type.id.toString() // Chaine de caractères pour le react-select
-                        }
-                    });
-                    //
-                    data.type_place_id = data.type_place_id.toString(); // Chaine de caractères pour le react-select
-                    // MAJ state STORE
-                    this.state = _.extend(this.state, data);
-                    //console.log('type modif %o', this.state.dataTypesPlace);
-                    // Libellé initial
-                    this.libelleInitial = data.libelle;
-                    // Envoi data
-                    //setTimeout(function(){
-                    //
-                    //    this.trigger(data);
-                    //}.bind(this), 5000);
-                    // MAJ libellé bandeau
-                    //Actions.etats_d_occupation.setLibelle(data.libelle);// ARTUNG
-                    this.trigger(data);
-                },
-                error: function (xhr, status, err) {
-                    console.error(status, err.toString());
-                }
-            });
-        }
+                // Combo type place : transformation en {label:'', value:''}
+                data.dataTypesPlace = _.map(data.dataTypesPlace, function (type) {
+                    return {
+                        label: type.libelle,
+                        value: type.id.toString() // Chaine de caractères pour le react-select
+                    }
+                });
+                //
+                data.type_place_id = data.type_place_id.toString(); // Chaine de caractères pour le react-select
+                // MAJ state STORE
+                this.state = _.extend(this.state, data);
+                //console.log('type modif %o', this.state.dataTypesPlace);
+                // Libellé initial
+                this.libelleInitial = data.libelle;
+                // MAJ libellé bandeau
+                //Actions.etats_d_occupation.setLibelle(data.libelle);// ARTUNG
+                // Envoi data
+                this.trigger(data);
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+            }
+        });
 
     },
 
