@@ -214,25 +214,21 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
     // --------------------------------------------------------------------
     // 1 - CALCUL COEFICIENT DIRECTEUR BC ET DELTAS -----------------------
     // --------------------------------------------------------------------
-    console.log('A : %o, B : %o, C : %o, D : %o', A, B, C, D);
     dxTotal = (C.lng - B.lng);
     dyTotal = (C.lat - B.lat);
-    console.log('Dx Total = %o Dy Total = %o', dxTotal, dyTotal);
 
     // --------------------------------------------------------------------
     // 2 - CALCUL LONGUEUR TOTALE DU SEGMENT ------------------------------
     // --------------------------------------------------------------------
     xj = (A.lng + B.lng) / 2;
     yj = (A.lat + B.lat) / 2;
-    console.log('coords de J : lat = %o lng = %o', yj, xj);
+
 
     xk = (D.lng + C.lng) / 2;
     yk = (D.lat + C.lat) / 2;
-    console.log('coords de K : lat = %o lng = %o', yk, xk);
 
     // Longueur en degrés
     lJK = Math.sqrt(Math.pow((xk - xj), 2) + Math.pow((yk - yj), 2));
-    console.log('longueur JK = %o', lJK);
     // --------------------------------------------------------------------
     // 3 - CALCUL ESPACE TOTAL POTEAUX ------------------------------------
     // --------------------------------------------------------------------
@@ -248,27 +244,22 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
     }
 
 
-    console.log('Taille totale utilisée par les poteaux = %o', lPoteaux);
     // --------------------------------------------------------------------
     // 4 - CALCUL TAILLE 1 PLACE ------------------------------------------
     // --------------------------------------------------------------------
     // Taille totale occupée par toutes les places
     LPlacesEffectif = lJK - lPoteaux;
-    console.log('Espace effectif réservé aux places = %o', LPlacesEffectif);
     // Taille d'une place
     lPlace = LPlacesEffectif / nbPlaces;
-    console.log('Taille d`\'une palce = %o', lPlace);
     // Deltas d'une place
     dxPlace = (lPlace / lJK) * dxTotal;
     dyPlace = (lPlace / lJK) * dyTotal;
-    console.log('Dx pour 1 place = %o Dy pour 1 place = %o', dxPlace, dyPlace);
 
     // --------------------------------------------------------------------
     // 5 - CALCUL DELTA 1 POTEAU ------------------------------------------
     // --------------------------------------------------------------------
     dxPoteau = ((lPoteaux / nbPoteaux) / lJK) * dxTotal;
     dyPoteau = ((lPoteaux / nbPoteaux) / lJK) * dyTotal;
-    console.log('Dx pour 1 poteau = %o Dy pour 1 poteau = %o', dxPoteau, dyPoteau);
 
     // --------------------------------------------------------------------
     // 6 - CALCUL COORDONNÉES 1ER POINT -----------------------------------
@@ -277,7 +268,6 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
     var yPlace1 = yj + (dyPlace / 2);
     place1.lat = yPlace1;
     place1.lng = xPlace1;
-    console.log('Coordonnées place 1 = %o', place1);
 
     // --------------------------------------------------------------------
     // 7 - CALCUL ANGLE DE ROTATION MARKER --------------------------------
@@ -285,7 +275,6 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
 
     dxAB = (B.lng - A.lng);
     dyAB = (B.lat - A.lat);
-    console.log('dxAB = %o, dyAB = %o', dxAB, dyAB);
 
     // On considère AB comme une verticale
     if (Math.abs(dxAB * calibre) < 10) {
@@ -298,7 +287,6 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
     // On calcul l'angle
     else {
         var S = {lat: B.lat, lng: A.lng};
-        console.log('Poins S (ABS rectangle en S) : %o, ', S);
 
         var AS = dyAB;
         var BS = dxAB;
@@ -307,7 +295,6 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
         // Calcul du sinus
         var sinA = BS / AB;
 
-        console.log('AVANT CORRECTION : sin A = %o, angle A = %o °', sinA, MathHelper.toDegrees(Math.asin(sinA)));
         /* On a le sinus, maintenant on va calculer l'angle de rotation:
          * -> Si dyAB > 0, on ne touche à rien
          * -> Si dyAB < 0, on a 2 possibilités
@@ -319,10 +306,8 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
             angleRad = (dxAB < 0) ? (angleRad - ((Math.PI / 2) - Math.abs(angleRad)) * 2) : (angleRad + ((Math.PI / 2) - Math.abs(angleRad)) * 2);
         }
         angleMarker = MathHelper.toDegrees(angleRad);
-        console.log('sin A = %o, angle A = %o °', sinA, angleMarker);
     }
 
-    console.log('Angle final = %o', angleMarker);
 
     // --------------------------------------------------------------------
     // 8 - CRÉATION DES MARKERS AVEC LES INFORMATIONS ---------------------
@@ -351,7 +336,6 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
         } else {
             // Ajout des poteaux si besoin (on est sur une place qui succède un poteau)
             if (((n - 1) % espacePoteaux) == 0) {
-                console.log('On doit placer un poteau.');
                 APlace = L.latLng(ASuiv.lat + dyPoteau, ASuiv.lng + dxPoteau);
                 BPlace = L.latLng(BSuiv.lat + dyPoteau, BSuiv.lng + dxPoteau);
                 CPlace = L.latLng(BPlace.lat + dyPlace, BPlace.lng + dxPlace);
@@ -377,7 +361,6 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
         } else {
             // Ajout des poteaux si besoin (on est sur une place qui succède un poteau)
             if (((n - 1) % espacePoteaux) == 0) {
-                console.log('On doit placer un poteau.');
                 coords.lat = coordsPrec.lat + dyPlace + dyPoteau;
                 coords.lng = coordsPrec.lng + dxPlace + dxPoteau;
             } else {
@@ -405,7 +388,6 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
         // Création du parallélogramme
         var coordsPara = [APlace, BPlace, CPlace, DPlace];
         var parallelogrammePlace = createPlaceParallelogramme(coordsPara, extraData, nom, color);
-        console.log('Polygon correspondant à la place : %o', parallelogrammePlace);
 
         // Variable de retour
         var retour = {
@@ -417,7 +399,6 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
         return retour;
     });
 
-    console.log('Liste finale des places : %o', places);
     // Fin du groupe de logs
     console.groupEnd();
 

@@ -11,7 +11,8 @@ module.exports.dessin = {
     allee: 2,
     zone: 3,
     afficheur: 4,
-    place_auto: 5
+    place_auto: 5,
+    calibre: 6
 };
 
 /**
@@ -23,7 +24,8 @@ module.exports.icon = {
     allee: "fa-exchange",
     zone: "fa-circle-o",
     afficheur: "fa-desktop",
-    place_auto: "fa-magic"
+    place_auto: "fa-magic",
+    calibre: "fa-arrows"
 };
 
 // PRÉPARATION DE L'OBJET COLOR :
@@ -32,6 +34,7 @@ colors[module.exports.dessin.place] = '#bada55';
 colors[module.exports.dessin.place_auto] = '#bada55';
 colors[module.exports.dessin.allee] = '#5478da';
 colors[module.exports.dessin.zone] = '#da5454';
+colors[module.exports.dessin.calibre] = '#2C75FF';
 
 // PRÉPARATION DE L'OBJET GROUPS:
 var groups = {};
@@ -40,6 +43,7 @@ groups[module.exports.dessin.place_auto] = 'placesGroup';
 groups[module.exports.dessin.allee] = 'alleesGroup';
 groups[module.exports.dessin.zone] = 'zonesGroup';
 groups[module.exports.dessin.afficheur] = 'afficheursGroup';
+groups[module.exports.dessin.calibre] = 'calibreGroup';
 
 /**
  * Paramètres du controle de dessin

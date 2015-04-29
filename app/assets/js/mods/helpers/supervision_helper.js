@@ -20,7 +20,6 @@ module.exports.refreshPlaces = {
      * @private
      */
     _handleAjax: function () {
-        console.log('journal Id : %o', this._journalId);
         $.ajax({
             type: 'GET',
             url: BASE_URI + 'parking/journal_place/' + this._planId + '/' + this._journalId,

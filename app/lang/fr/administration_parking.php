@@ -37,6 +37,7 @@ return array(
         'ajouter_allee' => 'Ajouter une allée',
         'ajouter_zone' => 'Ajouter une zone',
         'ajouter_afficheur' => 'Ajouter un afficheur',
+        'calibrer' => 'Calibrer le plan',
         'nb_places' => 'Nombre de places',
         'intervalle_poteaux' => 'Espacement poteaux (nb places)',
         'largeur_poteaux' => 'Largeur des poteaux (cm)',
@@ -47,7 +48,7 @@ return array(
         '3_points_seulement' => 'Merci de tracer exactement 3 points !',
         'swal_interval_incorrect' => 'L\'interval entre les poteaux est incorrect, il doit être inférieur au nombre de places saisi.',
         'insert_places_fail' => 'Une erreur s\'est produite, aucune place n\'a été enregistrée.',
-        'selection_plan' => 'Veuillez sélectionner un plan à configurer dans le menu de gauche.'
+        'selection_plan' => 'Veuillez sélectionner un plan à configurer dans le menu de gauche.',
     ],
 
     // MODULE TEMPS REEL
