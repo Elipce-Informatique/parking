@@ -88,7 +88,7 @@ var store = Reflux.createStore({
         var p1 = this.recupInfosParking(map, calibre, parkingInfos);
 
         // Récupération en BDD des données du niveau sélectionné (zones, allées, places)
-        var p2 = this.recupInfosNiveau(map, calibre, parkingInfos);
+        var p2 = this.recupInfosPlan(map, calibre, parkingInfos);
 
         // Récupération en BDD des données de types de places
         var p3 = this.recupInfosTypesPlaces();
@@ -379,10 +379,10 @@ var store = Reflux.createStore({
     /**
      * Appel AJAX pour récupérer les données du niveau courant en BDD
      */
-    recupInfosNiveau: function (map, calibre, parkingInfos) {
+    recupInfosPlan: function (map, calibre, parkingInfos) {
         return $.ajax({
             method: 'GET',
-            url: BASE_URI + 'parking/niveau/' + parkingInfos.planId + '/places',
+            url: BASE_URI + 'parking/plan/' + parkingInfos.planId + '/places',
             dataType: 'json',
             context: this,
             success: function (data) {
