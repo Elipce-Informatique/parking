@@ -55,7 +55,8 @@ var libs = [
     'jquery',
     'lodash',
     'react-bootstrap',
-    'datatables'
+    'datatables',
+    'react-calendar/react-calendar'
 ];
 
 /*

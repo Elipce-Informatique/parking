@@ -55,7 +55,8 @@ var store = Reflux.createStore({
         zones: [],
         afficheurs: [],
         lastDraw: {},
-        lastParallelogramme: {}
+        lastParallelogramme: {},
+        lastCalibre: {}
     },
 
     /**
@@ -108,6 +109,7 @@ var store = Reflux.createStore({
     // CRÉATION D'UN DESSIN FINIE (Ajout a la carte)
     onDraw_created: function (data) {
 
+        // -------------------------------------------------------------
         // SI EN MODE PLACE AUTO, ON VA CALCULER LE PARALLÈLOGRAMME
         if (this._inst.currentMode == mapOptions.dessin.place_auto) {
             data = this.createParallelogramme(data);
@@ -126,6 +128,17 @@ var store = Reflux.createStore({
         // CALCUL DU CALIBRE ET SUPPRESSION DE LA FORME
         else if (this._inst.currentMode == mapOptions.dessin.calibre) {
             console.log('Data calibre : %o', data);
+            var coords = this.checkCalibre(data);
+
+            // LE SEGMENT N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
+            if (!_.isEmpty(coords)) {
+                this._inst.lastCalibre = data;
+                var retour = {
+                    type: mapOptions.type_messages.new_calibre,
+                    data: coords
+                };
+                this.trigger(retour);
+            }
         }
         // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
         else {
@@ -219,7 +232,7 @@ var store = Reflux.createStore({
         };
         this.trigger(retour);
     },
-    onMode_calibre: function(d){
+    onMode_calibre: function (d) {
         this._inst.currentMode = mapOptions.dessin.calibre;
 
         var retour = {
@@ -249,6 +262,9 @@ var store = Reflux.createStore({
         switch (formId) {
             case "form_mod_places_multiples":
                 this.handlePlacesMultiples(formDom, this._inst.lastParallelogramme.e.layer._latlngs);
+                break;
+            case "form_mod_calibre":
+                this.handleCalibre(formDom, this._inst.lastCalibre.e.layer._latlngs);
                 break;
             default:
                 break;
@@ -344,6 +360,16 @@ var store = Reflux.createStore({
         }
     },
 
+    handleCalibre: function (formDom, coords) {
+        console.log('HandleCalibre !! form : %o coords : %o', formDom, coords);
+
+        var $form = $(formDom);
+        var longueur = $form.find('[name=nb_place]').val();
+        var calibre = mapHelper.generateCalibreValue(parseFloat(longueur), coords);
+
+        console.log('Calibre: %o ', calibre);
+    },
+
     /**
      * ---------------------------------------------------------------------------
      * UTILITAIRES DIVERSES ------------------------------------------------------
@@ -364,7 +390,25 @@ var store = Reflux.createStore({
             return data;
         }
 
-    },
+    }
+
+    ,
+
+    /**
+     * Vérifie le dessin pour le calibre
+     * @param data
+     * @returns {L.Polyline._latlngs|*|L.Polygon._latlngs}
+     */
+    checkCalibre: function (data) {
+        var coords = data.e.layer._latlngs;
+
+        if (coords.length != 2) {
+            swal(Lang.get('administration_parking.carte.swal_calibre_points_ko'));
+            coords = {};
+        }
+        return coords;
+    }
+    ,
 
     /**
      * Appel AJAX pour récupérer les informations du parking
@@ -386,7 +430,8 @@ var store = Reflux.createStore({
                 console.error(status, err);
             }
         });
-    },
+    }
+    ,
 
     /**
      * Appel AJAX pour récupérer les données du niveau courant en BDD
@@ -457,7 +502,8 @@ var store = Reflux.createStore({
                 console.error(status, err);
             }
         });
-    },
+    }
+    ,
 
     /**
      * Requête AJAX pour récupérer les types de places en BDD
@@ -500,7 +546,8 @@ var store = Reflux.createStore({
                 alert("ajax error response body " + xhr.responseText);
             }
         });
-    },
+    }
+    ,
 
     /**
      * Fonction appellée lors de l'init, on a déjà toutes les données dans _inst

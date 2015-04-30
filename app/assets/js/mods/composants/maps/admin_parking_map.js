@@ -6,6 +6,7 @@ var mapHelper = require('../../helpers/map_helper');
 
 // COMPOSANTS
 var ModalPlaces = require('../modals/mod_places_multiples');
+var ModalCalibre = require('../modals/mod_calibre');
 var Field = require('../formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputNumberEditable = Field.InputNumberEditable;
@@ -452,6 +453,9 @@ var parkingMap = React.createClass({
             case mapOptions.type_messages.new_place_auto:
                 this._onNewPlaceAuto(data);
                 break;
+            case mapOptions.type_messages.new_calibre:
+                this._onNewCalibre(data);
+                break;
             case mapOptions.type_messages.delete_forme:
                 break;
             default:
@@ -472,6 +476,21 @@ var parkingMap = React.createClass({
             modalType: mapOptions.modal_type.place_multiple,
             isModalOpen: true,
             parallelogramme_places: data
+        });
+    },
+
+    /**
+     * Appellée par la méthode onStoreTrigger quand l'utilisateur a tracé un segment de calibre.
+     *
+     * Renseigne les informations nécessaires dans le state pour l'affichage de la modale de saisie des infos
+     * @param data
+     * @private
+     */
+    _onNewCalibre: function (data) {
+        this.setState({
+            modalType: mapOptions.modal_type.calibre,
+            isModalOpen: true,
+            segment: data
         });
     },
 
@@ -611,6 +630,23 @@ var parkingMap = React.createClass({
     },
 
     /**
+     * TODO : Modal de saisie des informations pour régler le calibre
+     * @returns {XML}
+     * @private
+     */
+    _modalCalibre: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        } else {
+            return (
+                <ModalCalibre
+                    onToggle={this.handleToggle}
+                />
+            );
+        }
+    },
+
+    /**
      * Méthode appellée par le "OverlayMixin", au moment du montage initial et de chaque update.
      * La valeur retournée est ajoutée au body de la page.
      * @returns {XML}
@@ -638,6 +674,9 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.modal_type.luminosite:
                 retour = this._modalLuminosite();
+                break;
+            case mapOptions.modal_type.calibre:
+                retour = this._modalCalibre();
                 break;
             default:
                 retour = <span/>;

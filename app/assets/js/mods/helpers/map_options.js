@@ -69,7 +69,8 @@ module.exports.type_messages = {
     new_place_auto: 4,
     add_places: 5,
     occuper_places: 6,
-    liberer_places: 7
+    liberer_places: 7,
+    new_calibre: 8
 };
 
 /**
@@ -125,5 +126,6 @@ module.exports.modal_type = {
     place_multiple: 4,
     place_simple: 5,
     capteur: 6,
-    luminosite: 7
+    luminosite: 7,
+    calibre: 8
 };

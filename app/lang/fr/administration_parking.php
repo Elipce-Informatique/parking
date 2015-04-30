@@ -32,6 +32,7 @@ return array(
     'carte' => [
         'erreur_polygon' => 'Les lignes d\'un polygon ne peuvent pas se croiser',
         'titre_places_multiples' => 'Configuration de la série de places',
+        'titre_calibre' => 'Configuration deu calibre',
         'ajouter_place' => 'Ajouter une place',
         'ajouter_place_auto' => 'Ajouter une série de places',
         'ajouter_allee' => 'Ajouter une allée',
@@ -45,8 +46,10 @@ return array(
         'num_initial' => 'Num.',
         'suff' => 'Suff.',
         'incr' => 'Inc.',
+        'field_calibre' => 'Longueur (cm)',
         '3_points_seulement' => 'Merci de tracer exactement 3 points !',
         'swal_interval_incorrect' => 'L\'interval entre les poteaux est incorrect, il doit être inférieur au nombre de places saisi.',
+        'swal_calibre_points_ko' => 'Merci de tracer deux points uniquement.',
         'insert_places_fail' => 'Une erreur s\'est produite, aucune place n\'a été enregistrée.',
         'selection_plan' => 'Veuillez sélectionner un plan à configurer dans le menu de gauche.',
     ],

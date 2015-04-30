@@ -507,6 +507,16 @@ function findMarkerByPlaceId(id, layerGroup) {
     return layers;
 }
 
+/**
+ * Calcule le calibre de la map en fonction de la longueur saisie et du segment
+ * @param longueur : longueur saisie par l'utilisateur
+ * @param coords : coordonnées du segment
+ * @returns {number} : nombre à mettre en BDD
+ */
+function generateCalibreValue(longueur, coords) {
+    return 0.96645;
+}
+
 var customZoomCRS = L.extend({}, L.CRS.Simple, {
     scale: function (zoom) {
         // This method should return the tile grid size
@@ -537,6 +547,7 @@ module.exports = {
     createPlaceParallelogrammeFromGeoJson: createPlaceParallelogrammeFromGeoJson,
     createPlaceFromData: createPlaceFromData,
     findMarkerByPlaceId: findMarkerByPlaceId,
+    generateCalibreValue: generateCalibreValue,
     customZoomCRS: customZoomCRS
 };
 
