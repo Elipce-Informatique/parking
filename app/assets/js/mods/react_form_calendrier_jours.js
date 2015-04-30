@@ -35,7 +35,6 @@ var FormJours = React.createClass({
 
     render: function () {
 
-        console.log('couleur café: '+this.props.detailJour.couleur);
         return (
             <Form attributes={{id:"form_jours"}}>
                 <Row />
