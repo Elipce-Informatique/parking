@@ -1,3 +1,4 @@
+var React = require('react/addons');
 var Validator = require('validator');
 // HELPER
 var addRequiredAddon = require('../helpers/field_helper').addRequiredAddon;
@@ -11,7 +12,7 @@ var InputValueMixin = {
         // 1. RÉCUPÉRATION DE LA VALUE
         var val = this.refs.InputField.getValue();
         // CRÉATION DES ATTRIBUTS POUR LE STATE
-        var attrs = this.getStateAttributes(val, this.refs.InputField.getDOMNode());
+        var attrs = this.getStateAttributes(val, React.findDOMNode(this.refs.InputField));
         // MISE À JOUR DE L'ÉTAT DU COMPOSANT
         this.setState({attributes: attrs, value: val});
         // ONCHANGE DEV EXISTE

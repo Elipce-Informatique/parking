@@ -10,5 +10,4 @@
 
 @section('scripts')
     <script src="{{URL::asset('public/js/etats_d_occupation.app.js')}}"></script>
-    <script src="{{URL::asset('public/js/libs/jquery.dataTables.min.js')}}"></script>
 @stop
