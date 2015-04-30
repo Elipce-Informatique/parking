@@ -40,7 +40,7 @@ var store = Reflux.createStore({
             description: '',
             init: 0
         },
-        niveauInfos: {
+        planInfos: {
             id: 0,
             libelle: '',
             description: '',
@@ -190,12 +190,12 @@ var store = Reflux.createStore({
 
                 // ---------------------------------------------------------------------
                 // Récupération des données du niveau
-                this._inst.niveauInfos.id = data.id;
-                this._inst.niveauInfos.libelle = data.libelle;
-                this._inst.niveauInfos.description = data.description;
-                this._inst.niveauInfos.plan = data.plan;
-                this._inst.niveauInfos.parking_id = data.parking_id;
-                this._inst.niveauInfos.etat_general_id = data.etat_general_id;
+                this._inst.planInfos.id = data.id;
+                this._inst.planInfos.libelle = data.libelle;
+                this._inst.planInfos.description = data.description;
+                this._inst.planInfos.plan = data.plan;
+                this._inst.planInfos.parking_id = data.parking_id;
+                this._inst.planInfos.etat_general_id = data.etat_general_id;
 
                 // Extraction des sous éléments du niveau
                 var zones = data.zones;
@@ -247,8 +247,8 @@ var store = Reflux.createStore({
             dataType: 'json',
             context: this,
             success: function (data) {
-                this._inst.niveauInfos.last_journal_init = parseInt(data);
-                supervision_helper.refreshPlaces.init(this._inst.niveauInfos.id, this._inst.niveauInfos.last_journal_init);
+                this._inst.planInfos.last_journal_init = parseInt(data);
+                supervision_helper.refreshPlaces.init(this._inst.planInfos.id, this._inst.planInfos.last_journal_init);
             },
             error: function (xhr, status, err) {
                 console.error(status, err);

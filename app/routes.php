@@ -153,6 +153,7 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
 Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parking'], function () {
 
     Route::get('plan/{id}/places', 'PlansController@showWithPlaces');
+    Route::post('plan/{id}/calibre', 'PlansController@updateCalibre');
     Route::get('niveau/{id}/places', 'NiveauxController@showWithPlaces');
 
     Route::resource('niveau', 'NiveauxController');

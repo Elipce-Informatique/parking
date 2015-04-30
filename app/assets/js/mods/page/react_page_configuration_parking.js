@@ -232,6 +232,7 @@ var store = Reflux.createStore({
                     elt['url'] = d.plans[0].url;
                     elt['is-plan'] = true;
                     elt.icon = 'glyphicon glyphicon-cog';
+                    elt.id = d.plans[0].id;
                 } else {
                     elt['nodes'] = this._recursiveTreeView(d.plans, parkingId);
                 }

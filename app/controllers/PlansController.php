@@ -58,6 +58,19 @@ class PlansController extends \BaseController
         return Plan::with('zones.allees.places.etat_occupation')->find($id);
     }
 
+    /**
+     * @param $id
+     * @return array
+     */
+    public function updateCalibre($id)
+    {
+        $plan = Plan::find($id);
+        $plan->calibre = Input::get('calibre');
+        $retour = $plan->save();
+        return ['retour' => $retour];
+
+    }
+
 
     /**
      * Show the form for editing the specified resource.

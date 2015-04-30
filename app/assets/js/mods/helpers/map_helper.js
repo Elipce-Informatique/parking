@@ -514,7 +514,10 @@ function findMarkerByPlaceId(id, layerGroup) {
  * @returns {number} : nombre à mettre en BDD
  */
 function generateCalibreValue(longueur, coords) {
-    return 0.96645;
+    var dx = parseFloat(parseFloat(coords[0].lat) - parseFloat(coords[1].lat)),
+        dy = parseFloat(parseFloat(coords[0].lng) - parseFloat(coords[1].lng));
+    var calibre = longueur / Math.sqrt((dx * dx) + (dy * dy));
+    return calibre;
 }
 
 var customZoomCRS = L.extend({}, L.CRS.Simple, {

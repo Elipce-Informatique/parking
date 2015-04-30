@@ -40,7 +40,7 @@ var store = Reflux.createStore({
             description: '',
             init: 0
         },
-        niveauInfos: {
+        planInfos: {
             id: 0,
             libelle: '',
             description: '',
@@ -78,12 +78,13 @@ var store = Reflux.createStore({
      *
      * @param map : objet leaflet
      * @param calibre : calibre initial de la carte (cm/deg)
-     * @param parkingInfos : object avec deux clés parkingId et niveauId
+     * @param parkingInfos : object avec deux clés parkingId et planId
      */
     onMap_initialized: function (map, calibre, parkingInfos) {
 
         // Récupération du calibre
         this._inst.calibre = calibre;
+
 
         // Récupération en BDD des données du parking sélectionné
         var p1 = this.recupInfosParking(map, calibre, parkingInfos);
@@ -325,7 +326,7 @@ var store = Reflux.createStore({
             // ENREGISTREMENT AJAX DES PLACES
             $.ajax({
                 type: 'POST',
-                url: 'parking/place',
+                url: BASE_URI + 'parking/place',
                 processData: false,
                 contentType: false,
                 data: fData,
@@ -361,11 +362,35 @@ var store = Reflux.createStore({
     },
 
     handleCalibre: function (formDom, coords) {
-        console.log('HandleCalibre !! form : %o coords : %o', formDom, coords);
-
         var $form = $(formDom);
-        var longueur = $form.find('[name=nb_place]').val();
+        var longueur = $form.find('[name=calibre]').val();
         var calibre = mapHelper.generateCalibreValue(parseFloat(longueur), coords);
+
+        var fData = formDataHelper('', 'POST');
+        fData.append('calibre', calibre);
+
+        $.ajax({
+            type: 'POST',
+            url: BASE_URI + 'parking/plan/' + this._inst.planInfos.id + '/calibre',
+            processData: false,
+            contentType: false,
+            data: fData
+        })
+            .done(function (data) {
+                console.log('Retour AJAX : %o', data);
+
+                // TEST ÉTAT INSERTION
+                if (data.retour) {
+                    Actions.notif.success();
+                } else {
+                    Actions.notif.error(Lang.get('administration_parking.carte.insert_places_fail'));
+                }
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                alert("ajax error response error " + type);
+                alert("ajax error response body " + xhr.responseText);
+            });
 
         console.log('Calibre: %o ', calibre);
     },
@@ -446,12 +471,12 @@ var store = Reflux.createStore({
 
                 // ---------------------------------------------------------------------
                 // Récupération des données du niveau
-                this._inst.niveauInfos.id = data.id;
-                this._inst.niveauInfos.libelle = data.libelle;
-                this._inst.niveauInfos.description = data.description;
-                this._inst.niveauInfos.plan = data.plan;
-                this._inst.niveauInfos.parking_id = data.parking_id;
-                this._inst.niveauInfos.etat_general_id = data.etat_general_id;
+                this._inst.planInfos.id = data.id;
+                this._inst.planInfos.libelle = data.libelle;
+                this._inst.planInfos.description = data.description;
+                this._inst.planInfos.plan = data.plan;
+                this._inst.planInfos.parking_id = data.parking_id;
+                this._inst.planInfos.etat_general_id = data.etat_general_id;
 
                 // Extraction des sous éléments du niveau
                 var plans = data.plans;
