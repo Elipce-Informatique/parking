@@ -1,12 +1,10 @@
 // Composants REACT
 var React = require('react');
-var {Calendar, Month, Week, Day} = require('react-calendar/react-calendar');
+var Calendrier = require('../react_calendrier').Composant;
 
 
-var BandeauListe = require('../composants/bandeau/react_bandeau_liste');
-var BandeauVisu = require('../composants/bandeau/react_bandeau_visu');
-var BandeauEdition = require('../composants/bandeau/react_bandeau_edition');
-var BandeauGenerique = require('../composants/bandeau/react_bandeau_generique');
+var BandeauCalendrier = require('../composants/bandeau/react_bandeau_calendrier');
+var BandeauVide = require('../composants/bandeau/react_bandeau_vide');
 var Button = ReactB.Button;
 var Row = ReactB.Row;
 var Col = ReactB.Col;
@@ -34,7 +32,7 @@ var PageCalendrierProg = React.createClass({
 
 
     getDefaultProps: function () {
-        return {module_url: 'calendrier_jours'}
+        return {module_url: 'calendrier_programmation'}
     },
 
     getInitialState: function () {
@@ -61,12 +59,6 @@ var PageCalendrierProg = React.createClass({
         // Maj liste des jours prédéfinis
         Actions.jours.display_all_jours();
     },
-
-    handleClick: function (scope, m, e) {
-        if(scope == 'Day'){
-            $(e.currentTarget).addClass('bg-success');
-        }
-    },
     /**
      * Calcul du render en fonction de l'état d'affichage de la page
      * @returns {*}
@@ -78,51 +70,29 @@ var PageCalendrierProg = React.createClass({
 
         // Affichage en fonction de l'état de la page
         switch (this.state.etat) {
-            case pageState.visu:
-                react =
-                    <div key="root">
-                        <BandeauGenerique key="bandeauVisu" bandeauType={this.state.etat} module_url="calendrier_jours" titre={Lang.get('calendrier.jours.titre')} sousTitre={this.state.sousTitre}/>
-                        <FormJours editable={false} detailJour={this.state.detailJour} idJour={this.state.idJour} />
-                    </div>;
-                break;
-            case pageState.creation:
-                mode = 0;
-                react =
-                    <div key="root">
-                        <BandeauGenerique key="bandeauCreation" bandeauType={this.state.etat} module_url="calendrier_jours" mode={mode} titre={Lang.get('calendrier.jours.titre')}/>
-                        <FormJours editable={true} detailJour={this.state.detailJour} idJour={this.state.idJour} validationLibelle={this.state.validationLibelle} />
-                    </div>;
-                break;
             case pageState.edition:
                 react =
                     <div key="root">
-                        <BandeauGenerique key="bandeauCreation" bandeauType={this.state.etat} module_url="calendrier_jours" mode={mode} titre={Lang.get('calendrier.jours.titre')} sousTitre={this.state.sousTitre}/>
-                        <FormJours editable={true} detailJour={this.state.detailJour} idJour={this.state.idJour} validationLibelle={this.state.validationLibelle} />
-                    </div>;
+                        <BandeauVide
+                            key="bv"
+                            module_url="calendrier_programmation"
+                            mode={mode}
+                            titre={Lang.get('calendrier.prog_horaire.titre')}
+                            sousTitre={Lang.get('global.edit')}/>
+                        <Calendrier
+                            editable={true}/>
+                    </div>
                 break;
             default:
                 react =
                     <div key="root">
-                        <BandeauGenerique key="bandeauListe" bandeauType={this.state.etat} module_url="calendrier_jours" titre={Lang.get('calendrier.jours.titre')}/>
-                        <Row>
-                            <Col md={12}>
-                                <Calendar firstMonth={1}
-                                    date={moment("2015-01-01")}
-                                    weekNumbers={true}
-                                    size={12}
-                                    locale = "fr">
-                                    <Day onClick={this.handleClick} />
-                                    <Month date={moment()}
-                                        modifiers={{current: true}}/>
-                                    <Day
-                                        date={moment()}
-                                        modifiers={{current: true}}
-                                        onClick={this.handleClick}/>
-                                </Calendar>
-                            </Col>
-                        </Row>
+                        <BandeauCalendrier
+                            key="bc"
+                            module_url="calendrier_programmation"
+                            titre={Lang.get('calendrier.prog_horaire.titre')}/>
+                        <Calendrier
+                            editable={false}/>
                     </div>
-                ;
                 break;
         }
         return react;
