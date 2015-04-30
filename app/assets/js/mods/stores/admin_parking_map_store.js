@@ -361,6 +361,11 @@ var store = Reflux.createStore({
         }
     },
 
+    /**
+     *
+     * @param formDom
+     * @param coords
+     */
     handleCalibre: function (formDom, coords) {
         var $form = $(formDom);
         var longueur = $form.find('[name=calibre]').val();
@@ -374,7 +379,8 @@ var store = Reflux.createStore({
             url: BASE_URI + 'parking/plan/' + this._inst.planInfos.id + '/calibre',
             processData: false,
             contentType: false,
-            data: fData
+            data: fData,
+            context: this
         })
             .done(function (data) {
                 console.log('Retour AJAX : %o', data);
@@ -382,8 +388,13 @@ var store = Reflux.createStore({
                 // TEST ÉTAT INSERTION
                 if (data.retour) {
                     Actions.notif.success();
+                    var retour = {
+                        type: mapOptions.type_messages.hide_modal,
+                        data: {}
+                    };
+                    this.trigger(retour);
                 } else {
-                    Actions.notif.error(Lang.get('administration_parking.carte.insert_places_fail'));
+                    Actions.notif.error(Lang.get('administration_parking.carte.calibre_update_fail'));
                 }
             })
             .fail(function (xhr, type, exception) {

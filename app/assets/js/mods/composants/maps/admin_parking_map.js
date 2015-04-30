@@ -458,6 +458,11 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.type_messages.delete_forme:
                 break;
+            case mapOptions.type_messages.hide_modal:
+                this.setState({
+                    isModalOpen: false
+                });
+                break;
             default:
                 break;
         }

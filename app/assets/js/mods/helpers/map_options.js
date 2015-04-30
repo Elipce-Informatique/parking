@@ -70,7 +70,8 @@ module.exports.type_messages = {
     add_places: 5,
     occuper_places: 6,
     liberer_places: 7,
-    new_calibre: 8
+    new_calibre: 8,
+    hide_modal: 5
 };
 
 /**

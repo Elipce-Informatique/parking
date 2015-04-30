@@ -51,6 +51,7 @@ return array(
         'swal_interval_incorrect' => 'L\'interval entre les poteaux est incorrect, il doit être inférieur au nombre de places saisi.',
         'swal_calibre_points_ko' => 'Merci de tracer deux points uniquement.',
         'insert_places_fail' => 'Une erreur s\'est produite, aucune place n\'a été enregistrée.',
+        'calibre_update_fail' => 'Une erreur s\'est produite, le calibre n\'a pas été mis à jour.',
         'selection_plan' => 'Veuillez sélectionner un plan à configurer dans le menu de gauche.',
     ],
 
