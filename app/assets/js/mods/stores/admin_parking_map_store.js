@@ -293,6 +293,7 @@ var store = Reflux.createStore({
         var places = [];
         // CONTRÔLE DES NOMBRES ENTRÉS
         if (parseInt(spacePoteaux) < parseInt(nbPlaces)) {
+            console.log('Calibre : ' + this._inst.calibre);
             places = mapHelper.createPlacesFromParallelogramme(
                 this._inst.calibre,
                 parallelogramme,
@@ -488,27 +489,24 @@ var store = Reflux.createStore({
                 this._inst.planInfos.plan = data.plan;
                 this._inst.planInfos.parking_id = data.parking_id;
                 this._inst.planInfos.etat_general_id = data.etat_general_id;
+                this._inst.calibre = data.calibre;
 
                 // Extraction des sous éléments du niveau
-                var plans = data.plans;
+                var plan = data;
                 var zones = [];
                 var jsonZones = [];
                 var allees = [];
                 var jsonAllees = [];
                 var places = [];
                 var jsonPlaces = [];
-
-                // RÉCUPÉRATION DES JSON ET DES ALLÉES
-                _.each(plans, function (p) {
-                    Array.prototype.push.apply(plans, p.zones);
-                }, this);
+                // RÉCUPÉRATION DES ZONES
+                Array.prototype.push.apply(zones, plan.zones);
 
                 // RÉCUPÉRATION DES JSON ZONES ET DES ALLÉES
                 _.each(zones, function (z) {
                     jsonZones.push(z.geojson);
                     Array.prototype.push.apply(allees, z.allees);
-
-                    // Récupération zone par défaut
+                    // RÉCUPÉRATION ZONE PAR DÉFAUT
                     z.defaut == "1" ? this._inst.defaults.zone = z : '';
                 }, this);
 
@@ -517,7 +515,7 @@ var store = Reflux.createStore({
                     jsonAllees.push(a.geojson);
                     Array.prototype.push.apply(places, a.places);
 
-                    // Récupération allée par défaut
+                    // RÉCUPÉRATION ALLÉE PAR DÉFAUT
                     a.defaut == "1" ? this._inst.defaults.allee = a : '';
                 }, this);
 

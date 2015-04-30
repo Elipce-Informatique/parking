@@ -39,7 +39,7 @@ var ModalPlaces = React.createClass({
             module_url: 'configuration_parking',
             nbPlaces: '',
             espacePoteaux: '3',
-            taillePoteau: '15',
+            taillePoteau: '45',
             prefix: 'P',
             numPlace: '0',
             suffixe: '',
