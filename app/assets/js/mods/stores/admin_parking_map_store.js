@@ -3,6 +3,9 @@ require('sweetalert');
 
 var mapOptions = require('../helpers/map_options');
 var mapHelper = require('../helpers/map_helper');
+var zoneHelper = require('../helpers/zone_helper');
+var alleeHelper = require('../helpers/allee_helper');
+var placeHelper = require('../helpers/place_helper');
 var formDataHelper = require('../helpers/form_data_helper');
 /**
  * Created by yann on 27/01/2015.
@@ -51,9 +54,9 @@ var store = Reflux.createStore({
         },
         types_places: [], // Types de places de la BDD
         currentMode: mapOptions.dessin.place,
-        places: [],
-        allees: [],
-        zones: [],
+        places: [], // Places avec data base de données
+        allees: [], // Allées avec data base de donées
+        zones: [],  // Zones avec data base de données
         afficheurs: [],
         lastDraw: {},
         lastParallelogramme: {},
@@ -110,43 +113,53 @@ var store = Reflux.createStore({
     // CRÉATION D'UN DESSIN FINIE (Ajout a la carte)
     onDraw_created: function (data) {
 
-        // -------------------------------------------------------------
-        // SI EN MODE PLACE AUTO, ON VA CALCULER LE PARALLÈLOGRAMME
-        if (this._inst.currentMode == mapOptions.dessin.place_auto) {
-            data = this.createParallelogramme(data);
 
-            // LE PARALLÉLOGRAMME N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
-            if (!_.isEmpty(data)) {
-                // on garde le parallélogramme dans le store pour le retour de la popup
-                this._inst.lastParallelogramme = data;
+        switch (this._inst.currentMode) {
+            // -------------------------------------------------------------
+            // SI EN MODE PLACE AUTO, ON VA CALCULER LE PARALLELLOGRAMME
+            case mapOptions.dessin.place_auto:
+                data = this.createParallelogramme(data);
+
+                // LE PARALLÉLOGRAMME N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
+                if (!_.isEmpty(data)) {
+                    // on garde le parallélogramme dans le store pour le retour de la popup
+                    this._inst.lastParallelogramme = data;
+                    var retour = {
+                        type: mapOptions.type_messages.new_place_auto,
+                        data: data
+                    };
+                    this.trigger(retour);
+                }
+                break;
+            // -------------------------------------------------------------
+            // CALCUL DU CALIBRE ET SUPPRESSION DE LA FORME
+            case mapOptions.dessin.calibre:
+                var coords = this.checkCalibre(data);
+
+                // LE SEGMENT N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
+                if (!_.isEmpty(coords)) {
+                    this._inst.lastCalibre = data;
+                    var retour = {
+                        type: mapOptions.type_messages.new_calibre,
+                        data: coords
+                    };
+                    this.trigger(retour);
+                }
+                break;
+            // -------------------------------------------------------------
+            // PROCÉDURE DE CRÉATION DE ZONE
+            case mapOptions.dessin.zone:
+
+                break;
+            // -------------------------------------------------------------
+            // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
+            default:
                 var retour = {
-                    type: mapOptions.type_messages.new_place_auto,
+                    type: mapOptions.type_messages.add_forme,
                     data: data
                 };
                 this.trigger(retour);
-            }
-        }
-        // CALCUL DU CALIBRE ET SUPPRESSION DE LA FORME
-        else if (this._inst.currentMode == mapOptions.dessin.calibre) {
-            var coords = this.checkCalibre(data);
-
-            // LE SEGMENT N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
-            if (!_.isEmpty(coords)) {
-                this._inst.lastCalibre = data;
-                var retour = {
-                    type: mapOptions.type_messages.new_calibre,
-                    data: coords
-                };
-                this.trigger(retour);
-            }
-        }
-        // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
-        else {
-            var retour = {
-                type: mapOptions.type_messages.add_forme,
-                data: data
-            };
-            this.trigger(retour);
+                break;
         }
     },
     onDraw_deleted: function (data) {
@@ -292,7 +305,7 @@ var store = Reflux.createStore({
         var places = [];
         // CONTRÔLE DES NOMBRES ENTRÉS
         if (parseInt(spacePoteaux) < parseInt(nbPlaces)) {
-            places = mapHelper.createPlacesFromParallelogramme(
+            places = placeHelper.createPlacesFromParallelogramme(
                 this._inst.calibre,
                 parallelogramme,
                 nbPlaces,
@@ -409,7 +422,8 @@ var store = Reflux.createStore({
      * ---------------------------------------------------------------------------
      */
     /**
-     * Les data correspondent au layer créé par le plugin. Le premier test consiste à vérifier qu'on ait 3 points
+     * Les data correspondent au layer créé par le plugin.
+     * Le premier test consiste à vérifier qu'on ait 3 points.
      * @param data : le Layer créé par le plugin de map
      */
     createParallelogramme: function (data) {
@@ -428,7 +442,8 @@ var store = Reflux.createStore({
     ,
 
     /**
-     * Vérifie le dessin pour le calibre
+     * Vérifie le dessin pour le calibre:
+     * Deux points exactement
      * @param data
      * @returns {L.Polyline._latlngs|*|L.Polygon._latlngs}
      */
@@ -600,8 +615,8 @@ var store = Reflux.createStore({
                 }
             }, "FF0000", this);
 
-            var marker = mapHelper.createPlaceMarker(coords, nom, angleMarker, extraData);
-            var polygon = mapHelper.createPlaceParallelogrammeFromGeoJson(p.geojson, extraData, nom, color);
+            var marker = placeHelper.createPlaceMarker(coords, nom, angleMarker, extraData);
+            var polygon = placeHelper.createPlaceParallelogrammeFromGeoJson(p.geojson, extraData, nom, color);
 
             return {
                 data: p,
