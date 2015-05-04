@@ -2,6 +2,7 @@
  * Created by yann on 16/12/2014.
  */
 var React = require('react/addons');
+require('sweetalert');
 var Bandeau = require('./react_bandeau');
 /**
  * Created by yann on 16/12/2014.

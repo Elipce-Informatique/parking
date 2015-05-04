@@ -56,7 +56,8 @@ var libs = [
     'lodash',
     'react-bootstrap',
     'datatables',
-    'react-calendar/react-calendar'
+    'react-calendar/react-calendar',
+    'sweetalert'
 ];
 
 /*

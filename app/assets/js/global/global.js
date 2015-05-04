@@ -1,4 +1,5 @@
 var React = require('react/addons');
+require('sweetalert');
 /**
  * Created by Yann on 15/11/2014.
  * Inclusion des libs globales (ex: React, jQuery) installées via NPM
@@ -182,7 +183,7 @@ $(function () {
     $(document).bind('keydown', function (e) {
         if (e.ctrlKey && (e.which == 83)) {
             e.preventDefault();
-            swal('Perdu ! Si tu veux vraiment sauvegarder la page, utilise le menu de ton navigateur.');
+            swal('Raté ! Si tu veux vraiment sauvegarder la page, utilise le menu de ton navigateur.');
         }
     });
 });

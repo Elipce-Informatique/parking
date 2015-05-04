@@ -50,6 +50,8 @@ return array(
         '3_points_seulement' => 'Merci de tracer exactement 3 points !',
         'swal_interval_incorrect' => 'L\'interval entre les poteaux est incorrect, il doit être inférieur au nombre de places saisi.',
         'swal_calibre_points_ko' => 'Merci de tracer deux points uniquement.',
+        'swal_calibre_non_init_titre' => 'Plan non calibré',
+        'swal_calibre_non_init' => 'Ce plan n\'a pas encore été calibré. Pour le calibrer, veuillez utiliser l\'outil suivant : <br /><i class="fa fa-arrows"></i>',
         'insert_places_fail' => 'Une erreur s\'est produite, aucune place n\'a été enregistrée.',
         'calibre_update_fail' => 'Une erreur s\'est produite, le calibre n\'a pas été mis à jour.',
         'selection_plan' => 'Veuillez sélectionner un plan à configurer dans le menu de gauche.',

@@ -1,4 +1,5 @@
 var React = require('react/addons');
+require('sweetalert');
 var Input = ReactB.Input;
 var OverlayTrigger = ReactB.OverlayTrigger;
 var Tooltip = ReactB.Tooltip;
@@ -1820,10 +1821,6 @@ function modeEditableFalse(attr) {
  */
 function checkFileExtension(value, mode, withAlert) {
     var filePath = value;
-    //console.log('checkFileExtension');
-    //console.log('filePath : '+filePath);
-    //console.log('mode : '+mode);
-    //console.log('withAlert : %o', withAlert);
 
     if (filePath.indexOf('.') == -1)
         return false;
@@ -1875,8 +1872,9 @@ function checkFileExtension(value, mode, withAlert) {
     }
 
     for (var i = 0; i < validExtensions.length; i++) {
-        if (ext == validExtensions[i])
+        if (ext == validExtensions[i]) {
             return true;
+        }
     }
     var temp = '';
     for (var i = 0; i < validExtensions.length; i++) {
@@ -1886,8 +1884,9 @@ function checkFileExtension(value, mode, withAlert) {
     var str = Lang.get('global.erreurFileInput');
     str = str.replace('[extensions]', temp);
 
-    if (withAlert)
+    if (withAlert) {
         swal(str);
+    }
 
     return false;
 }

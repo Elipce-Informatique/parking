@@ -3,6 +3,7 @@
  * Modified by Vivian on 20/03/2015
  */
 var React = require('react/addons');
+require('sweetalert');
 /***********************/
 /* Composants Boostrap */
 var Row = ReactB.Row;

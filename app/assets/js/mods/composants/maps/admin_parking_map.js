@@ -62,7 +62,7 @@ var parkingMap = React.createClass({
         return {
             defaultDrawMode: mapOptions.dessin.place,
             mapHeight: 300,
-            calibre: 93,
+            calibre: 0,
             module_url: 'parking'
         };
     },

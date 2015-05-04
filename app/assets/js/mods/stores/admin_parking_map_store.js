@@ -1,4 +1,5 @@
 var _ = require('lodash');
+require('sweetalert');
 
 var mapOptions = require('../helpers/map_options');
 var mapHelper = require('../helpers/map_helper');
@@ -85,7 +86,6 @@ var store = Reflux.createStore({
         // Récupération du calibre
         this._inst.calibre = calibre;
 
-
         // Récupération en BDD des données du parking sélectionné
         var p1 = this.recupInfosParking(map, calibre, parkingInfos);
 
@@ -128,7 +128,6 @@ var store = Reflux.createStore({
         }
         // CALCUL DU CALIBRE ET SUPPRESSION DE LA FORME
         else if (this._inst.currentMode == mapOptions.dessin.calibre) {
-            console.log('Data calibre : %o', data);
             var coords = this.checkCalibre(data);
 
             // LE SEGMENT N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
@@ -293,7 +292,6 @@ var store = Reflux.createStore({
         var places = [];
         // CONTRÔLE DES NOMBRES ENTRÉS
         if (parseInt(spacePoteaux) < parseInt(nbPlaces)) {
-            console.log('Calibre : ' + this._inst.calibre);
             places = mapHelper.createPlacesFromParallelogramme(
                 this._inst.calibre,
                 parallelogramme,
@@ -384,7 +382,6 @@ var store = Reflux.createStore({
             context: this
         })
             .done(function (data) {
-                console.log('Retour AJAX : %o', data);
 
                 // TEST ÉTAT INSERTION
                 if (data.retour) {
@@ -404,7 +401,6 @@ var store = Reflux.createStore({
                 alert("ajax error response body " + xhr.responseText);
             });
 
-        console.log('Calibre: %o ', calibre);
     },
 
     /**
@@ -490,6 +486,10 @@ var store = Reflux.createStore({
                 this._inst.planInfos.parking_id = data.parking_id;
                 this._inst.planInfos.etat_general_id = data.etat_general_id;
                 this._inst.calibre = data.calibre;
+
+                if (parseFloat(data.calibre) == 0) {
+                    this.swalCalibre();
+                }
 
                 // Extraction des sous éléments du niveau
                 var plan = data;
@@ -616,6 +616,14 @@ var store = Reflux.createStore({
         };
         this.trigger(message);
 
+    },
+
+    swalCalibre: function () {
+        swal({
+            title: Lang.get('administration_parking.carte.swal_calibre_non_init_titre'),
+            text: Lang.get('administration_parking.carte.swal_calibre_non_init'),
+            html: true
+        });
     }
 });
 

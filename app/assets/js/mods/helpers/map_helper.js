@@ -236,8 +236,9 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
     if (espacePoteaux == 0) {
         lPoteaux = 0;
     } else {
+        // Nombre
+        var nbPoteaux = Math.floor((nbPlaces - 1) / espacePoteaux);
         // Longueur en cm
-        var nbPoteaux = Math.floor(nbPlaces / espacePoteaux);
         lPoteaux = nbPoteaux * largeurPoteaux;
         // Longueur en degrés
         lPoteaux = lPoteaux / calibre;
