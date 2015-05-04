@@ -19,6 +19,28 @@ class CalendrierJours extends Eloquent
     protected $fillable = ['libelle', 'ouverture', 'fermeture','couleur'];
     protected $table='jour_calendrier';
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATIONS
+    |--------------------------------------------------------------------------
+    */
+    public function parkings()
+    {
+        return $this->hasMany('Parking');
+    }
+
+    public function calendriers()
+    {
+        return $this->hasMany('Calendrier');
+    }
+
+
+    /*
+     |--------------------------------------------------------------------------
+     | FONCTIONS
+     |--------------------------------------------------------------------------
+     */
     /**
      * Calcule tous les jours prédéfinis existants
      */

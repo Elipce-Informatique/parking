@@ -11,7 +11,7 @@ var AuthentMixins = require('../../mixins/component_access');
  * @param string sousTitre : sous titre du bandeau (En gris en petit à coté du titre)
  * @param func onCreer : Action à exécuter
  */
-var BandeauListe = React.createClass({
+var BandeauCalendrierVisu = React.createClass({
     mixins: [AuthentMixins],
 
     propTypes: {
@@ -62,4 +62,4 @@ var BandeauListe = React.createClass({
     }
 });
 
-module.exports = BandeauListe;
+module.exports = BandeauCalendrierVisu;

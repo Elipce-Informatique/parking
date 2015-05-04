@@ -130,8 +130,7 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     /*
      * Programmation horaire
      */
-    Route::get('calendrier_programmation/all', 'CalendrierProgrammationController@all');
-    Route::get('calendrier_programmation/libelle/{libelle}/{id?}', 'CalendrierProgrammationController@verifLibelle');
+    Route::get('calendrier_programmation/init', 'CalendrierProgrammationController@init');
     Route::resource('calendrier_programmation', 'CalendrierProgrammationController');
 
 

@@ -3,7 +3,8 @@ var React = require('react');
 var Calendrier = require('../react_calendrier').Composant;
 
 
-var BandeauCalendrier = require('../composants/bandeau/react_bandeau_calendrier');
+var BandeauCalendrierVisu = require('../composants/bandeau/react_bandeau_calendrier_visu');
+var BandeauCalendrierEdit = require('../composants/bandeau/react_bandeau_calendrier_edit');
 var BandeauVide = require('../composants/bandeau/react_bandeau_vide');
 var Button = ReactB.Button;
 var Row = ReactB.Row;
@@ -38,10 +39,9 @@ var PageCalendrierProg = React.createClass({
     getInitialState: function () {
         return {
             etat: pageState.liste,
-            idJour: 0,
-            listeJours: [],// Tableau de jours prédéfinis
-            detailJour: {}, // Objet contenant les infos du jour prédéfini en cours de sélection
-            validationLibelle: {}, // Etat de validation du libelle (vert ou rouge),
+            idParking: 0,
+            jours: [],// Tableau de jours prédéfinis
+            parkings: [], // Tableau de parkingsd
             sousTitre: '' // sous titre du bandeau
         };
     },
@@ -55,9 +55,7 @@ var PageCalendrierProg = React.createClass({
     },
 
     onRetour: function () {
-        this.setState({etat: pageState.liste, idJour: 0});
-        // Maj liste des jours prédéfinis
-        Actions.jours.display_all_jours();
+        this.setState({etat: pageState.liste, idParking: 0});
     },
     /**
      * Calcul du render en fonction de l'état d'affichage de la page
@@ -70,31 +68,68 @@ var PageCalendrierProg = React.createClass({
 
         // Affichage en fonction de l'état de la page
         switch (this.state.etat) {
-            case pageState.edition:
+
+            case pageState.visu:
                 react =
                     <div key="root">
-                        <BandeauVide
+                        <BandeauCalendrierVisu
+                            key="bandeauVisu"
+                            module_url="calendrier_programmation"
+                            titre={Lang.get('calendrier.prog_horaire.titre')}
+                            sousTitre={this.state.sousTitre}/>
+                        <Calendrier
+                            editable={true}
+                            jours={this.state.jours}/>
+                    </div>;
+                break;
+            case pageState.edition:
+
+                // Jours prédéfinis
+                var btnRight = {};
+                if (this.state.jours.length > 0) {
+                    btnRight = _.map(this.state.jours, function (jour) {
+                        return (
+                            <Button>
+                        {jour.libelle}
+                            </Button>
+                        );
+                    });
+                }
+                var groupRight = (
+                    <ButtonGroup>
+                        {btnRight}
+                    </ButtonGroup>);
+
+                react =
+                    <div key="root">
+                        <BandeauCalendrierEdit
                             key="bv"
                             module_url="calendrier_programmation"
                             mode={mode}
                             titre={Lang.get('calendrier.prog_horaire.titre')}
-                            sousTitre={Lang.get('global.edit')}/>
+                            sousTitre={Lang.get('global.edit')}
+                            jours = {groupRight}/>
                         <Calendrier
-                            editable={true}/>
+                            editable={true}
+                            jours={this.state.jours}
+                            treeView={this.state.parkings}/>
                     </div>
                 break;
             default:
                 react =
                     <div key="root">
-                        <BandeauCalendrier
+                        <BandeauVide
                             key="bc"
                             module_url="calendrier_programmation"
                             titre={Lang.get('calendrier.prog_horaire.titre')}/>
                         <Calendrier
-                            editable={false}/>
+                            editable={false}
+                            jours={this.state.jours}
+                            treeView={this.state.parkings}/>
                     </div>
                 break;
         }
+
         return react;
     },
 
@@ -102,7 +137,7 @@ var PageCalendrierProg = React.createClass({
         var dynamic = this.display();
         return (
             <Col md={12}>
-                            {dynamic}
+                {dynamic}
             </Col>
         )
     }
@@ -115,19 +150,15 @@ var storeCalendrierProg = Reflux.createStore({
 
     // Variables
     stateLocal: {
-        idJour: 0,
         etat: pageState.liste,
-        listeJours: [],
-        detailJour: {},
-        validationLibelle: {},
+        idParking: 0,
+        jours: [],
+        parkings: [],
         sousTitre: ''
     },
 
     // Initial setup
     init: function () {
-        // Register statusUpdate action
-        this.listenTo(Actions.jours.display_all_jours, this.modeListe);
-        this.listenTo(Actions.jours.display_detail_jour, this.modeVisu);
         // Toutes les actions de bandeau et validation
         this.listenToMany(Actions.bandeau);
         this.listenToMany(Actions.validation);
@@ -140,92 +171,19 @@ var storeCalendrierProg = Reflux.createStore({
     getInitialState: function () {
         // AJAX
         $.ajax({
-            url: BASE_URI + 'calendrier_jours/all',
+            url: BASE_URI + 'calendrier_programmation/init',
             dataType: 'json',
             context: this,
             async: false,
             success: function (data) {
-                this.stateLocal.listeJours = data;
+                this.stateLocal = _.extend(this.stateLocal, data);
                 //console.log(data);
             },
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
-                this.stateLocal.listeJours = [];
             }
         });
         return this.stateLocal;
-    },
-
-    /**
-     * Accueil de la page, tableau de jours prédéfinis
-     */
-    modeListe: function () {
-        this.stateLocal = {
-            idJour: 0,
-            etat: pageState.liste
-        };
-
-        // AJAX
-        $.ajax({
-            url: BASE_URI + 'calendrier_jours/all',
-            dataType: 'json',
-            context: this,
-            async: true,
-            success: function (data) {
-                // Tous les jours prédéfinis en BDD
-                this.stateLocal.listeJours = data;
-                this.trigger(this.stateLocal);
-            },
-            error: function (xhr, status, err) {
-                console.error(status, err.toString());
-                this.stateLocal.listeJours = [];
-            }
-        });
-    },
-
-    /**
-     * Chargement des données d'un jour prédéfini
-     * @param idJour: jour_calendrier.id
-     */
-    modeVisu: function (idJour) {
-        // Infos
-        this.stateLocal.idJour = idJour;
-        this.stateLocal.etat = pageState.visu;
-        // AJAX
-        $.ajax({
-            url: BASE_URI + 'calendrier_jours/' + idJour,
-            dataType: 'json',
-            context: this,
-            async: true,
-            success: function (data) {
-                // Détail du jour + id
-                this.stateLocal.detailJour = data;
-                // Maj libelle + id
-                this.stateLocal.sousTitre = data.libelle;
-                // Maj page
-                this.trigger(this.stateLocal);
-            },
-            error: function (xhr, status, err) {
-                console.error(status, err.toString());
-            }
-        });
-    },
-
-    /**
-     * Bouton créer du bandeau: affichage du formulaire vide
-     */
-    onCreer: function () {
-        this.stateLocal = {
-            idJour: 0,
-            etat: pageState.creation,
-            detailJour: {
-                libelle: '',
-                ouverture: '',
-                fermeture: '',
-                couleur: ''
-            }
-        };
-        this.trigger(this.stateLocal);
     },
 
     /**
@@ -240,71 +198,6 @@ var storeCalendrierProg = Reflux.createStore({
         this.trigger(this.stateLocal);
     },
 
-    /**
-     * onChange de n'importe quel élément du FORM
-     * @param e: evt
-     */
-    onForm_field_changed: function (e) {
-        var data = {};
-        // MAJ du state STORE
-        data[e.name] = e.value
-        this.stateLocal.detailJour = _.extend(this.stateLocal.detailJour, data);
-    },
-
-    /**
-     * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
-     * @param data : Object {name: "email", value: "yann.pltv@gmail.com", form: DOMNode}
-     */
-    onForm_field_verif: function (data) {
-
-        // Le champ BLUR est le champ libelle
-        if (data.name == 'libelle') {
-            //  Test doublon du libellé
-            this.stateLocal.validationLibelle = this.libelleChange(data.value, this.stateLocal.idJour);
-            this.trigger(this.stateLocal);
-        }
-
-    },
-
-    /**
-     * Vérification de l'unicité du libelle en BDD
-     * @param value: valeur du champ libelle
-     * @param id: ID jour_calendrier ou 0 si mode création
-     * @returns {{}}
-     */
-    libelleChange: function (value, id) {
-        /* Variable de retour */
-        var retour = {};
-
-        /* libelle  non vide et non identique au libellé de départ */
-        if (value.length > 0 && value != this.stateLocal.sousTitre) {
-
-            // URL en fonction du mode création ou edtion
-            var finUrl = id === 0 ? '' : '/' + id;
-
-            // AJAX
-            $.ajax({
-                url: BASE_URI + 'calendrier_jours/libelle/' + value + finUrl,
-                dataType: 'json',
-                context: this,
-                async: false,
-                success: function (bExist) {
-                    // Le libellé existe déjà
-                    if (bExist) {
-                        // Champ libelle erroné
-                        retour['data-valid'] = false;
-                        retour.bsStyle = 'error';
-                        retour.help = Lang.get('calendrier.jours.libelleExists');
-                    }
-                },
-
-                error: function (xhr, status, err) {
-                    console.error(status, err.toString());
-                }
-            });
-        }
-        return retour;
-    },
 
     /**
      * Sauvegarder les données
@@ -364,42 +257,6 @@ var storeCalendrierProg = Reflux.createStore({
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
                 Actions.notif.error('AJAX : ' + Lang.get('global.notif_erreur'));
-            }
-        });
-    },
-
-    /**
-     * Suppression d'un jour prédéfini
-     */
-    onSupprimer: function () {
-        // Variables
-        var url = BASE_URI + 'calendrier_jours/' + this.stateLocal.idJour;
-        var method = 'DELETE';
-
-        // Requête
-        $.ajax({
-            url: url,
-            dataType: 'json',
-            context: this,
-            type: method,
-            data: {'_token': $('#_token').val()},
-            success: function (bool) {
-                // suppression OK
-                if (bool) {
-                    // Mode liste
-                    this.modeListe();
-                    // Notification green
-                    Actions.notif.success(Lang.get('global.notif_success'));
-                }
-                // Suppression KO
-                else {
-                    // Notifictaion erreur
-                    Actions.notif.error(Lang.get('global.notif_erreur'));
-                }
-            },
-            error: function (xhr, status, err) {
-                console.error(status, err.toString());
-                Actions.notif.error(Lang.get('global.notif_erreur'));
             }
         });
     }
