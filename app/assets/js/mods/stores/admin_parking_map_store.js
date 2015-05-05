@@ -437,9 +437,7 @@ var store = Reflux.createStore({
             return data;
         }
 
-    }
-
-    ,
+    },
 
     /**
      * Vérifie le dessin pour le calibre:
@@ -455,8 +453,7 @@ var store = Reflux.createStore({
             coords = {};
         }
         return coords;
-    }
-    ,
+    },
 
     /**
      * Appel AJAX pour récupérer les informations du parking
@@ -478,8 +475,7 @@ var store = Reflux.createStore({
                 console.error(status, err);
             }
         });
-    }
-    ,
+    },
 
     /**
      * Appel AJAX pour récupérer les données du niveau courant en BDD
@@ -551,8 +547,7 @@ var store = Reflux.createStore({
                 console.error(status, err);
             }
         });
-    }
-    ,
+    },
 
     /**
      * Requête AJAX pour récupérer les types de places en BDD
@@ -595,8 +590,7 @@ var store = Reflux.createStore({
                 alert("ajax error response body " + xhr.responseText);
             }
         });
-    }
-    ,
+    },
 
     /**
      * Fonction appellée lors de l'init, on a déjà toutes les données dans _inst
@@ -630,9 +624,11 @@ var store = Reflux.createStore({
             data: placesMap
         };
         this.trigger(message);
-
     },
 
+    /**
+     * Prévient l'utilisateur que le plan qu'il visualise n'est pas calibré.
+     */
     swalCalibre: function () {
         swal({
             title: Lang.get('administration_parking.carte.swal_calibre_non_init_titre'),
