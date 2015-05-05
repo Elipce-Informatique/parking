@@ -91,6 +91,8 @@ Voulez-vous vraiment quitter cette page ?',
     // PARKING
     'occupee' => 'Occupée',
     'libre' => 'Libre',
+    'parking' => 'Parking',
+    'description' => 'Description',
 
     /*
     |--------------------------------------------------------------------------

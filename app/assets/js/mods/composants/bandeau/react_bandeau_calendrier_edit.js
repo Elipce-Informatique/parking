@@ -17,14 +17,13 @@ var BandeauCalendrierEdit = React.createClass({
     propTypes: {
         titre: React.PropTypes.string.isRequired,
         sousTitre: React.PropTypes.string,
-        onEditer: React.PropTypes.func,
-        jours: React.PropTypes.element
+        jours: React.PropTypes.element,
+        onRetour: React.PropTypes.func
     },
 
     getDefaultProps: function () {
         return {
-            sousTitre: "",
-            onEditer: Actions.bandeau.editer
+            sousTitre: ""
         };
     },
 
@@ -42,24 +41,12 @@ var BandeauCalendrierEdit = React.createClass({
 
     render: function () {
 
-        var btnList = [];
-        // MODE DROITS DE MODIFICATION
-        if (this.state.canModif) {
-            btnList = [{
-                libelle: Lang.get('global.edit'),
-                style: "default", // VOIR DOC REACT-BOTSTRAP
-                icon: "edit",  // VOIR DOC BOOTSTRAP ET NE PAS METTRE GLYPHICON DEVANT
-                attrs: {},
-                evts: {onClick: this.props.onEditer}
-            }];
-        }
-
         return (
             <Bandeau
                 titre={this.props.titre}
-                btnList={btnList}
                 sousTitre={this.props.sousTitre}
-                rightElements={this.props.jours}/>
+                rightElements={this.props.jours}
+                onRetour={this.props.onRetour} />
         );
     }
 });

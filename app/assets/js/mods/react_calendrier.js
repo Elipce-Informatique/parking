@@ -25,74 +25,55 @@ var Calendrier = React.createClass({
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
-        treeView: React.PropTypes.array.isRequired,
-        jours: React.PropTypes.array.isRequired
+        data: React.PropTypes.array.isRequired
     },
 
 
-    handleClick: function (scope, m, e) {
+    /**
+     * Click sur un element de calendrier
+     * @param scope: Week, Moth, Day
+     * @param momentDate: date au format moment
+     * @param e: event
+     */
+    handleClick: function (scope, momentDate, e) {
+        //Actions.calendrier.add_days()
+        console.log('scope %o , moment %o', scope, momentDate);
         if (scope == 'Day') {
             $(e.currentTarget).addClass('bg-success');
+            e.stopPropagation();
+        }
+        else
+        if (scope == 'Week') {
+            $(e.currentTarget).addClass('bg-error');
+            e.stopPropagation();
+        }
+        else
+        if (scope == 'Month') {
+            console.log($(e.currentTarget).attr('class'));
+            // Attention au week day
+            if($(e.currentTarget).hasClass('rc-Month-header'))
+            {
+                console.log('UUU');
+                $(e.currentTarget).addClass('bg-warning');
+            }
         }
     },
 
     render: function () {
-        // Création Treeview
-        var treeView = {};
-        if (this.props.treeView.length) {
-            treeView = (
-                <TreeView
-                    key="tree"
-                    data={this.props.treeView}
-                    levels={1}
-                    color="#555555"
-                    selectedColor="#222222"
-                    selectedBackColor='#eeeeee'
-                    onLineClicked={Actions.calendrier.parking_selected}
-                    isSelectionExclusive={true}
-                    treeNodeAttributes={{
-                        'data-id': 'parking-id'
-                    }}/>);
-        }
-
 
         return (
-            <Collapse isCollapsed={false} align="left" sideWidth={2}>
-                <CollapseBody>
-                    <Col md={12}>
-                        <Row >
-                            <Col md={12}>
-                                <Row>
-                                    <Col md={12}>
-                                    </Col>
-                                </Row>
 
-                                <Row>
-                                    <Col md={12}>
-                                        <Calendar
-                                            firstMonth={1}
-                                            date={moment("2015-01-01")}
-                                            weekNumbers={true}
-                                            size={12}
-                                            locale = "fr">
-                                            <Day onClick={this.handleClick} />
-                                            <Month date={moment()}
-                                                modifiers={{current: true}}/>
-                                            <Day
-                                                date={moment()}
-                                                modifiers={{current: true}}
-                                                onClick={this.handleClick}/>
-                                        </Calendar>
-                                    </Col>
-                                </Row>
-                            </Col>
-                        </Row>
-                    </Col>
-                </CollapseBody>
-                <CollapseSidebar title="Toto la gouutee">
-                {treeView}
-                </CollapseSidebar>
-            </Collapse>
+            <Calendar
+                firstMonth={1}
+                date={moment()}
+                weekNumbers={true}
+                size={12}
+                locale = {Lang.locale()}>
+                <Month onClick={this.handleClick} />
+                <Week onClick={this.handleClick} />
+                <Day onClick={this.handleClick} />
+            </Calendar>
+
         );
     }
 

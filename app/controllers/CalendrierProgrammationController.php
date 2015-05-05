@@ -44,7 +44,8 @@ class CalendrierProgrammationController extends \BaseController
      */
     public function show($id)
     {
-        //
+        // Calcul des données calendaires du parking
+        return json_encode(Parking::getCalendrier($id));
     }
 
 

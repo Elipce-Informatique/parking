@@ -17,7 +17,8 @@ var BandeauCalendrierVisu = React.createClass({
     propTypes: {
         titre: React.PropTypes.string.isRequired,
         sousTitre: React.PropTypes.string,
-        onEditer: React.PropTypes.func
+        onEditer: React.PropTypes.func,
+        onRetour: React.PropTypes.func
     },
 
     getDefaultProps: function () {
@@ -57,7 +58,8 @@ var BandeauCalendrierVisu = React.createClass({
             <Bandeau
                 titre={this.props.titre}
                 btnList={btnList}
-                sousTitre={this.props.sousTitre} />
+                sousTitre={this.props.sousTitre}
+                onRetour={this.props.onRetour} />
         );
     }
 });

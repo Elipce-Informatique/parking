@@ -26,6 +26,14 @@ class Parking extends \Eloquent
     {
         return $this->belongsToMany('Utilisateur');
     }
+    /**
+     * Les calendriers du parking
+     * @return mixed
+     */
+    public function calendriers()
+    {
+        return $this->hasMany('Calendrier');
+    }
 
     /*****************************************************************************
      * UTILITAIRES DU MODELE *****************************************************
@@ -55,5 +63,11 @@ class Parking extends \Eloquent
     public static function getTreeviewParking()
     {
         return Auth::user()->parkings()->with('niveaux.plans')->get();
+    }
+
+    public static function getCalendrier($id){
+        return Parking::find($id)
+            ->with('calendriers.calendrierJour')
+            ->first();
     }
 }

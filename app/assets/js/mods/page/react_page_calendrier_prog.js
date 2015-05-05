@@ -6,10 +6,12 @@ var Calendrier = require('../react_calendrier').Composant;
 var BandeauCalendrierVisu = require('../composants/bandeau/react_bandeau_calendrier_visu');
 var BandeauCalendrierEdit = require('../composants/bandeau/react_bandeau_calendrier_edit');
 var BandeauVide = require('../composants/bandeau/react_bandeau_vide');
+var ButtonToolbar = ReactB.ButtonToolbar;
+var ButtonGroup = ReactB.ButtonGroup;
 var Button = ReactB.Button;
 var Row = ReactB.Row;
 var Col = ReactB.Col;
-var FormJours = require('../react_form_calendrier_jours').Composant;
+var DataTableBandeau = require('../composants/tableau/react_data_table_bandeau');
 
 // MIXINS
 var AuthentMixins = require('../mixins/component_access');
@@ -33,7 +35,16 @@ var PageCalendrierProg = React.createClass({
 
 
     getDefaultProps: function () {
-        return {module_url: 'calendrier_programmation'}
+        return {
+            module_url: 'calendrier_programmation',
+            datatable: {
+                head: [
+                    Lang.get('global.parking'),
+                    Lang.get('global.description')
+                ],
+                hide: ['id']
+            }
+        }
     },
 
     getInitialState: function () {
@@ -41,12 +52,42 @@ var PageCalendrierProg = React.createClass({
             etat: pageState.liste,
             idParking: 0,
             jours: [],// Tableau de jours prédéfinis
-            parkings: [], // Tableau de parkingsd
-            sousTitre: '' // sous titre du bandeau
+            parkings: [], // Tableau de parkings
+            calendrier: {}, // Données du calendrier affiché
+            sousTitre: '', // sous titre du bandeau
+            currentJour: {} // Jour prédéfini choisi (objet contyenant les infos de la BDD)
         };
     },
     componentDidMount: function () {
         this.listenTo(storeCalendrierProg, this.updateData, this.updateData);
+    },
+
+    /**
+     * Affiche le calendrier en mode visu lors du clic sur le tableau de parkings²
+     * @param e: event
+     */
+    displayCalendar: function (e) {
+        // Ligne du tableau
+        var id = $(e.currentTarget).data('id');
+        Actions.calendrier.display_calendar(id);
+    },
+
+    /**
+     * Click sur un bouton jour prédéfini
+     * @param e: event
+     */
+    handleClickJour: function (e) {
+        // ID jour
+        var id = $(e.currentTarget).data('id');
+        // Recherche de l'objet jour
+        var day = _.reduce(this.state.jours, function (result, jour, index) {
+            if (jour.id == id) {
+                return jour;
+            }
+            return result;
+        }, {}, this);
+
+        this.setState({currentJour: day});
     },
 
     updateData: function (obj) {
@@ -55,7 +96,11 @@ var PageCalendrierProg = React.createClass({
     },
 
     onRetour: function () {
-        this.setState({etat: pageState.liste, idParking: 0});
+        this.setState({
+            etat: pageState.liste,
+            idParking: 0,
+            sousTitre: ''
+        });
     },
     /**
      * Calcul du render en fonction de l'état d'affichage de la page
@@ -64,8 +109,8 @@ var PageCalendrierProg = React.createClass({
     display: function () {
         // Variables
         var react;
-        var mode = 1;
 
+        //console.log('render %o', _.cloneDeep(this.state));
         // Affichage en fonction de l'état de la page
         switch (this.state.etat) {
 
@@ -76,10 +121,12 @@ var PageCalendrierProg = React.createClass({
                             key="bandeauVisu"
                             module_url="calendrier_programmation"
                             titre={Lang.get('calendrier.prog_horaire.titre')}
-                            sousTitre={this.state.sousTitre}/>
+                            sousTitre={this.state.sousTitre}
+                            onRetour = {this.onRetour}/>
                         <Calendrier
-                            editable={true}
-                            jours={this.state.jours}/>
+                            editable={false}
+                            jours={this.state.jours}
+                            data={this.state.calendrier}/>
                     </div>;
                 break;
             case pageState.edition:
@@ -87,32 +134,44 @@ var PageCalendrierProg = React.createClass({
                 // Jours prédéfinis
                 var btnRight = {};
                 if (this.state.jours.length > 0) {
-                    btnRight = _.map(this.state.jours, function (jour) {
+                    btnRight = _.map(this.state.jours, function (jour, index) {
+                        var active = {};
+                        if (index == 1) {
+                            active = {active: true};
+                        }
                         return (
-                            <Button>
-                        {jour.libelle}
+                            <Button
+                                style={{color: '#' + jour.couleur}}
+                                key={index}
+                                data-id={jour.id}
+                                onClick = {this.handleClickJour}
+                                {...active}>
+                                    {jour.libelle}
                             </Button>
                         );
-                    });
+                    }, this);
                 }
                 var groupRight = (
-                    <ButtonGroup>
-                        {btnRight}
-                    </ButtonGroup>);
+                    <ButtonToolbar>
+                        < ButtonGroup >
+                             {btnRight}
+                        </ButtonGroup>
+                    </ButtonToolbar>
+                );
 
                 react =
                     <div key="root">
                         <BandeauCalendrierEdit
                             key="bv"
                             module_url="calendrier_programmation"
-                            mode={mode}
                             titre={Lang.get('calendrier.prog_horaire.titre')}
-                            sousTitre={Lang.get('global.edit')}
-                            jours = {groupRight}/>
+                            sousTitre={this.state.sousTitre}
+                            jours = {groupRight}
+                            onRetour = {this.onRetour}/>
                         <Calendrier
                             editable={true}
                             jours={this.state.jours}
-                            treeView={this.state.parkings}/>
+                            data={this.state.calendrier}/>
                     </div>
                 break;
             default:
@@ -121,11 +180,15 @@ var PageCalendrierProg = React.createClass({
                         <BandeauVide
                             key="bc"
                             module_url="calendrier_programmation"
-                            titre={Lang.get('calendrier.prog_horaire.titre')}/>
-                        <Calendrier
-                            editable={false}
-                            jours={this.state.jours}
-                            treeView={this.state.parkings}/>
+                            titre={Lang.get('calendrier.prog_horaire.titre')}
+                            form_id="calendar"/>
+                        <DataTableBandeau
+                            id="tab_park"
+                            head={this.props.datatable.head}
+                            data={this.state.parkings}
+                            hide={this.props.datatable.hide}
+                            bUnderline={true}
+                            evts={{onClick: this.displayCalendar}}/>
                     </div>
                 break;
         }
@@ -137,7 +200,7 @@ var PageCalendrierProg = React.createClass({
         var dynamic = this.display();
         return (
             <Col md={12}>
-                {dynamic}
+                        {dynamic}
             </Col>
         )
     }
@@ -154,11 +217,14 @@ var storeCalendrierProg = Reflux.createStore({
         idParking: 0,
         jours: [],
         parkings: [],
+        calendrier: {},
         sousTitre: ''
     },
 
     // Initial setup
     init: function () {
+        // Actions spécifiques
+        this.listenToMany(Actions.calendrier);
         // Toutes les actions de bandeau et validation
         this.listenToMany(Actions.bandeau);
         this.listenToMany(Actions.validation);
@@ -176,6 +242,15 @@ var storeCalendrierProg = Reflux.createStore({
             context: this,
             async: false,
             success: function (data) {
+                // Tri des data parking
+                data.parkings = _.map(data.parkings, function (park) {
+                    return {
+                        id: park.id,
+                        libelle: park.libelle,
+                        description: park.description
+                    }
+                });
+                // MAJ du state local
                 this.stateLocal = _.extend(this.stateLocal, data);
                 //console.log(data);
             },
@@ -184,6 +259,38 @@ var storeCalendrierProg = Reflux.createStore({
             }
         });
         return this.stateLocal;
+    },
+
+    /**
+     * Affiche le calendrier du parking en mode visu
+     * @param idParking: ID parking
+     */
+    onDisplay_calendar: function (idParking) {
+
+        // Data parking
+        $.ajax({
+            url: BASE_URI + 'calendrier_programmation/' + idParking,
+            dataType: 'json',
+            context: this,
+            async: true,
+            success: function (data) {
+
+                // MAJ du state local
+                var temp = {
+                    calendrier: data.calendriers,
+                    etat: pageState.visu,
+                    idParking: idParking,
+                    sousTitre: data.libelle
+                };
+
+                this.stateLocal = _.extend(this.stateLocal, temp);
+                // Envoi state
+                this.trigger(this.stateLocal);
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+            }
+        });
     },
 
     /**
