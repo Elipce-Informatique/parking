@@ -3,6 +3,7 @@
  */
 var _ = require('lodash');
 var classifyPoint = require("robust-point-in-polygon");
+var poly = require('polygon');
 
 var mapOptions = require('./map_options');
 var MathHelper = require('./math_helper');
@@ -22,7 +23,7 @@ var MathHelper = require('./math_helper');
  * @returns {*}
  */
 function getCentroid(polygon) {
-    var arr = getLatLngArrayFromCoordsArray(polygon);
+    var arr = getCoordsArrayFromLatLngArray(polygon);
 
     // Calcul du barycentre géométrique
     return arr.reduce(function (x, y, i, coords) {
@@ -48,7 +49,7 @@ function getCentroid(polygon) {
  */
 function isPointInPolygon(polygon, latlng) {
     var point = [latlng.lat, latlng.lng];
-    var verticesPoly = getLatLngArrayFromCoordsArray(polygon);
+    var verticesPoly = getCoordsArrayFromLatLngArray(polygon);
     var resultTest = classifyPoint(verticesPoly, point);
     return resultTest == -1;
 }
@@ -75,7 +76,7 @@ function isPolygonInPolygonByCenter(polygon, surface) {
 }
 
 /**
- * Test si tous les points de "polygon" appartient à "surface"
+ * Test si tous les points de "polygon" appartiennent à "surface"
  * Les deux paramètres sont un tableau de lat lng comme suit:
  * [
  *  {lat: xx,yyy, lng: xx,yyy},
@@ -89,11 +90,40 @@ function isPolygonInPolygonByCenter(polygon, surface) {
  *
  * @return: true ou false
  */
-function isPolygonInPolygon(polygon, surface) {
+function arePointsInPolygon(polygon, surface) {
     var retour = true;
     _.each(polygon, function (coord) {
         if (!isPointInPolygon(surface, coord)) {
             retour = false;
+            return false;
+        }
+    });
+
+    return retour;
+}
+
+/**
+ * TODO : à tester
+ * Test si au moins un point de "polygon" appartient à "surface"
+ * Les deux paramètres sont un tableau de lat lng comme suit:
+ * [
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy}
+ * ]
+ * @param polygon : Le polygon dont on va tester l'appartenance à surface
+ * @param surface : Le polygon servant de surface de test.
+ * C'est lui qui contient ou non des points de polygon
+ *
+ * @return: true ou false
+ */
+function arePointsPartiallyInPolygon(polygon, surface) {
+    var retour = false;
+    _.each(polygon, function (coord) {
+        if (isPointInPolygon(surface, coord)) {
+            retour = true;
             return false;
         }
     });
@@ -119,7 +149,7 @@ function isPolygonInPolygon(polygon, surface) {
  *  [xx,yyy, xx,yyy]
  * ]
  */
-function getLatLngArrayFromCoordsArray(aLatLng) {
+function getCoordsArrayFromLatLngArray(aLatLng) {
     return _.map(aLatLng, function (latln) {
         return [latln.lat, latln.lng];
     });
@@ -143,7 +173,7 @@ function getLatLngArrayFromCoordsArray(aLatLng) {
  *  {lat: xx,yyy, lng: xx,yyy}
  * ]
  */
-function getCoordsArrayFromLatLngArray(aCoords) {
+function getLatLngArrayFromCoordsArray(aCoords) {
     return _.map(aCoords, function (latln) {
         return {lat: latln[0], lng: latln[1]};
     });
@@ -221,15 +251,71 @@ var customZoomCRS = L.extend({}, L.CRS.Simple, {
 
 
 /**
+ * TODO : à tester
+ * Test si container contient totalement contained (pas d'intersection de leurs côtés)
+ * Les deux paramètres sont un tableau de lat lng comme suit:
+ * [
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy}
+ * ]
+ * @param container : polygon le plus grand (ex: zone)
+ * @param contained : polygon le plus petit (ex : allée)
+ *
+ * @returns boolean
+ */
+function polygonContainsPolygon(container, contained) {
+
+    var polyContainer = new Polygon(getCoordsArrayFromLatLngArray(container));
+    var polyContained = new Polygon(getCoordsArrayFromLatLngArray(contained));
+
+    return polyContainer.containsPolygon(polyContained);
+}
+
+/**
+ * TODO : à tester
+ * Test si container contient totalement contained (pas d'intersection de leurs côtés)
+ * Les deux paramètres sont un tableau de lat lng comme suit:
+ * [
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy}
+ * ]
+ * @param poly1
+ * @param poly2
+ * @returns {boolean}
+ */
+function polygonIntersection(poly1, poly2) {
+    var oPoly1 = new Polygon(getCoordsArrayFromLatLngArray(poly1));
+    var oPoly2 = new Polygon(getCoordsArrayFromLatLngArray(poly2));
+
+    // Les polygons ne se contiennent pas totalement l'un l'autre, intersection potentielle
+    if (!polygonContainsPolygon(poly1, poly2) || !polygonContainsPolygon(poly2, poly1)) {
+        // Si on a une union entre les deux, c'est qu'il y a intersection
+        return !(oPoly1.union(oPoly2).toArray().length == 0);
+    } else {
+        return false;
+    }
+}
+
+
+/**
  * Ce que le module exporte.
- * @type {{getCentroid: getCentroid, isPointInPolygon: isPointInPolygon, isPolygonInPolygonByCenter: isPolygonInPolygonByCenter, getLatLngArrayFromCoordsArray: getLatLngArrayFromCoordsArray, isPolygonInPolygon: isPolygonInPolygon}}
+ * @type {{getCentroid: getCentroid, isPointInPolygon: isPointInPolygon, isPolygonInPolygonByCenter: isPolygonInPolygonByCenter, getLatLngArrayFromCoordsArray: getCoordsArrayFromLatLngArray, isPolygonInPolygon: arePointsInPolygon}}
  */
 module.exports = {
     getCentroid: getCentroid,
     isPointInPolygon: isPointInPolygon,
+    arePointsInPolygon: arePointsInPolygon,
+    arePointsPartiallyInPolygon: arePointsPartiallyInPolygon,
     isPolygonInPolygonByCenter: isPolygonInPolygonByCenter,
-    getLatLngArrayFromCoordsArray: getLatLngArrayFromCoordsArray,
-    isPolygonInPolygon: isPolygonInPolygon,
+    polygonContainsPolygon: polygonContainsPolygon,
+    polygonIntersection: polygonIntersection,
+    getCoordsArrayFromLatLngArray: getCoordsArrayFromLatLngArray,
     getLastPointOfParallelogramme: getLastPointOfParallelogramme,
     findMarkerByPlaceId: findMarkerByPlaceId,
     generateCalibreValue: generateCalibreValue,
