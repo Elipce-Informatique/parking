@@ -128,12 +128,11 @@ var parkingMap = React.createClass({
             parkingId: this.props.parkingId,
             planId: this.props.planId
         };
-        Actions.map.map_initialized(this._inst.map, this.props.calibre, parkingData);
-
         // INIT des layers
         this._inst.placesMarkersGroup = new L.MarkerClusterGroup({
             maxClusterRadius: 25
         });
+
         this._inst.map.addLayer(this._inst.placesMarkersGroup);
         this._inst.placesGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.placesGroup);
@@ -145,6 +144,8 @@ var parkingMap = React.createClass({
         this._inst.map.addLayer(this._inst.afficheursGroup);
         this._inst.calibreGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.calibreGroup);
+
+        Actions.map.map_initialized(this._inst.map, this.props.calibre, parkingData, this._inst);
     },
     /**
      * Paramètre le plugin de dessin sur la carte lors de l'INIT de la map

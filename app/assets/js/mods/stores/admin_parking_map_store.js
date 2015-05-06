@@ -60,7 +60,8 @@ var store = Reflux.createStore({
         afficheurs: [],
         lastDraw: {},
         lastParallelogramme: {},
-        lastCalibre: {}
+        lastCalibre: {},
+        mapInst: {}
     },
 
     /**
@@ -84,10 +85,11 @@ var store = Reflux.createStore({
      * @param calibre : calibre initial de la carte (cm/deg)
      * @param parkingInfos : object avec deux clés parkingId et planId
      */
-    onMap_initialized: function (map, calibre, parkingInfos) {
+    onMap_initialized: function (map, calibre, parkingInfos, mapInst) {
 
         // Récupération du calibre
         this._inst.calibre = calibre;
+        this._inst.mapInst = mapInst;
 
         // Récupération en BDD des données du parking sélectionné
         var p1 = this.recupInfosParking(map, calibre, parkingInfos);
@@ -113,20 +115,19 @@ var store = Reflux.createStore({
     // CRÉATION D'UN DESSIN FINIE (Ajout a la carte)
     onDraw_created: function (data) {
 
-
         switch (this._inst.currentMode) {
             // -------------------------------------------------------------
             // SI EN MODE PLACE AUTO, ON VA CALCULER LE PARALLELLOGRAMME
             case mapOptions.dessin.place_auto:
-                data = this.createParallelogramme(data);
+                var donnee = this.createParallelogramme(data);
 
                 // LE PARALLÉLOGRAMME N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
-                if (!_.isEmpty(data)) {
+                if (!_.isEmpty(donnee)) {
                     // on garde le parallélogramme dans le store pour le retour de la popup
-                    this._inst.lastParallelogramme = data;
+                    this._inst.lastParallelogramme = donnee;
                     var retour = {
                         type: mapOptions.type_messages.new_place_auto,
-                        data: data
+                        data: donnee
                     };
                     this.trigger(retour);
                 }
@@ -149,7 +150,21 @@ var store = Reflux.createStore({
             // -------------------------------------------------------------
             // PROCÉDURE DE CRÉATION DE ZONE
             case mapOptions.dessin.zone:
+                var zones, allees;
+                zones = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.zonesGroup);
+                allees = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.alleesGroup);
 
+                var geometryOk = zoneHelper.geometryCheck(data.e.layer._latlngs, zones, allees);
+                console.log('Géométrie ok = %o', geometryOk);
+
+                // TODO : On ajoute à la carte juste pour test
+                if (geometryOk) {
+                    var retour = {
+                        type: mapOptions.type_messages.add_forme,
+                        data: data
+                    };
+                    this.trigger(retour);
+                }
                 break;
             // -------------------------------------------------------------
             // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
