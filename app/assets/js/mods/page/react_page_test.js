@@ -36,6 +36,7 @@ var Form = Field.Form;
 var ModalUn = require('../composants/modals/test_modal_1');
 var Modal2 = require('../composants/modals/test_modal_2');
 var Modal = ReactB.Modal;
+var Select = require('react-select');
 
 /*****************************************************
  /* MIXINS */
@@ -272,31 +273,36 @@ var ReactPageTest = React.createClass({
                     attributes={{name: "color", required: false, value: 'E2156B'}}
                     editable={editable} />
 
-                <InputSelectEditable
-                    multi={false}
-                    evts={{onChange: selectChange}}
-                    attributes={{
-                        label: 'Mes fruits',
-                        name: "Select",
-                        selectCol: 4,
-                        labelCol: 2,
-                        required: true
-                    }}
-                    data={this.state.options}
-                    editable={editable}
-                    placeholder={'PlaceHolder...'}
-                    labelClass='text-right'
-                    selectedValue={["5fraise", "3pomme"]}
-                />
+            {{
+                /*
+                 <InputSelectEditable
+                 multi={false}
+                 evts={{onChange: selectChange}}
+                 attributes={{
+                 label: 'Mes fruits',
+                 name: "Select",
+                 selectCol: 4,
+                 labelCol: 2,
+                 required: true
+                 }}
+                 data={this.state.options}
+                 editable={editable}
+                 placeholder={'PlaceHolder...'}
+                 labelClass='text-right'
+                 />
+                 */
+            }}
 
                 <InputSelectEditable
                     multi={false}
-                    attributes={{name: "SelectSansLabel", selectCol: 4, required: true}}
-                    data={options}
+                    data={this.state.options}
                     editable={editable}
                     placeholder={'PlaceHolder...'}
-                    labelClass='text-right'
-                    selectedValue={"3pomme"}
+                />
+                <Select
+                    multi={false}
+                    placeholder="Select your favourite(s)"
+                    options={this.state.options}
                 />
 
                 <Button

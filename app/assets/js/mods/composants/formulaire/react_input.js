@@ -1657,7 +1657,6 @@ var InputRadioBootstrapEditable = React.createClass({
     },
 
     render: function () {
-        ;
 
         return (
             <InputRadioBootstrap

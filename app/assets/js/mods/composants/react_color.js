@@ -168,7 +168,9 @@ var ColorPicker = React.createClass({
         mdLabel: React.PropTypes.number,
         mdColor: React.PropTypes.number,
         labelClass: React.PropTypes.string,
-        colorClass: React.PropTypes.string
+        colorClass: React.PropTypes.string,
+        boxShadow: React.PropTypes.string,
+        borderRadius: React.PropTypes.string
     },
 
     getDefaultProps: function () {
@@ -182,7 +184,9 @@ var ColorPicker = React.createClass({
             mdLabel: 1,
             mdColor: 1,
             labelClass: '',
-            colorClass: ''
+            colorClass: '',
+            boxShadow: '3px 3px 3px #888888',
+            borderRadius: "5px"
         }
     },
 
@@ -192,8 +196,8 @@ var ColorPicker = React.createClass({
             background: '#' + background,
             height: this.props.height,
             width: this.props.width,
-            boxShadow: '3px 3px 3px #888888',
-            borderRadius: "5px"
+            boxShadow: this.props.boxShadow,
+            borderRadius: this.props.borderRadius
         };
         //console.log('COLOR PICKER splitterStyle %o',splitterStyle);
         return (<Row>
