@@ -293,13 +293,46 @@ function polygonIntersection(poly1, poly2) {
     var oPoly1 = new Polygon(getCoordsArrayFromLatLngArray(poly1));
     var oPoly2 = new Polygon(getCoordsArrayFromLatLngArray(poly2));
 
-    // Les polygons ne se contiennent pas totalement l'un l'autre, intersection potentielle
+    // Les polygons ne se contiennent pas totalement l'un l'autre, intersection possible
     if (!polygonContainsPolygon(poly1, poly2) || !polygonContainsPolygon(poly2, poly1)) {
+        var intersect = oPoly1.union(oPoly2);
+        console.log('Intersection : %o', intersect);
         // Si on a une union entre les deux, c'est qu'il y a intersection
-        return !(oPoly1.union(oPoly2).toArray().length == 0);
+        return !(intersect.length == 0);
     } else {
         return false;
     }
+}
+
+/**
+ * Retourne un tableau de tableaux d'objets
+ * [
+ *  [
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  ],
+ *  [
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  ],
+ *  ...
+ * ]
+ *
+ * @param layerGroup le layer group à transformer
+ */
+function getPolygonsArrayFromLeafletLayerGroup(layerGroup) {
+    var retour = [];
+
+    var polygons = layerGroup._layers;
+
+    if (!_.isEmpty(polygons)) {
+        _.forIn(polygons, function (val, key) {
+            var forme = _.values(val._layers)[0]._latlngs;
+            retour.push(forme);
+        });
+    }
+
+    return retour;
 }
 
 
@@ -319,6 +352,7 @@ module.exports = {
     getLastPointOfParallelogramme: getLastPointOfParallelogramme,
     findMarkerByPlaceId: findMarkerByPlaceId,
     generateCalibreValue: generateCalibreValue,
+    getPolygonsArrayFromLeafletLayerGroup: getPolygonsArrayFromLeafletLayerGroup,
     customZoomCRS: customZoomCRS
 };
 

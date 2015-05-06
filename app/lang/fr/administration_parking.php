@@ -55,6 +55,10 @@ return array(
         'insert_places_fail' => 'Une erreur s\'est produite, aucune place n\'a été enregistrée.',
         'calibre_update_fail' => 'Une erreur s\'est produite, le calibre n\'a pas été mis à jour.',
         'selection_plan' => 'Veuillez sélectionner un plan à configurer dans le menu de gauche.',
+        'err_zone_contenue' => 'Erreur : La zone dessinée ne doit ni contenir ni être contenue dans une autre zone.',
+        'err_zone_chevauche' => 'Erreur : La zone dessinée coupe une autre zone.',
+        'err_allee_chevauche' => 'Erreur : La zone dessinée coupe une allée.',
+        'err_zone_contenue_allee' =>'Erreur : La zone dessinée ne doit pas être contenue dans une allée.',
     ],
 
     // MODULE TEMPS REEL
