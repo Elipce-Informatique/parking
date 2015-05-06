@@ -576,12 +576,16 @@ var InputSelect = React.createClass({
         // Suppression de name, label, labelCol, selectCol
         attrs = _.omit(attrs, ['name', 'label', 'labelCol', 'selectCol']);
 
+        var val = {};
+        if (this.props.selectedValue !== '') {
+            val = {value: this.props.selectedValue};
+        }
         //console.log('ATTRIBUTES %o',attrs);
         var select =
             <Select
                 inputProps={attrs}
                 name={this.props.attributes.name}
-                value={this.props.selectedValue}
+                {...val}
                 options={this.props.data}
                 placeholder={this.props.placeholder}
                 multi={this.props.multi}
@@ -1442,7 +1446,8 @@ var InputRadioEditable = React.createClass({
 
 /**
  * Champ radio groupe. Permet de gérer un ensemble de radio
- * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param radioGroupAttributes: props du RadioGroup
+ * @param attributes: props des children
  * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  * @param bootstrap: Mode d'affichage des radio
  *                  Si true: mettre des InputRadioBootstrapEditable en enfant
@@ -1451,6 +1456,7 @@ var InputRadioEditable = React.createClass({
 var RadioGroup = React.createClass({
 
     propTypes: {
+        radioGroupAttributes: React.PropTypes.object,
         attributes: React.PropTypes.object,
         gestMod: React.PropTypes.bool,
         bootstrap: React.PropTypes.bool // mode d'affichage bootstrap (boutons)
@@ -1458,6 +1464,7 @@ var RadioGroup = React.createClass({
 
     getDefaultProps: function () {
         return {
+            radioGroupAttributes: {bsSize: 'xsmall'},
             attributes: {},
             gestMod: true,
             bootstrap: false
@@ -1532,7 +1539,7 @@ var RadioGroup = React.createClass({
             code = (
                 <ButtonGroup
                     data-toggle="buttons"
-                    bsSize="xsmall"
+                    {...this.props.radioGroupAttributes}
                     key={'radio_' + this.props.attributes.name}>
 
                 {enfants}
