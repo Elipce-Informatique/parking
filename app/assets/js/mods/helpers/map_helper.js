@@ -324,11 +324,14 @@ function getPolygonsArrayFromLeafletLayerGroup(layerGroup) {
     var retour = [];
 
     var polygons = layerGroup._layers;
-
     if (!_.isEmpty(polygons)) {
         _.forIn(polygons, function (val, key) {
-            var forme = _.values(val._layers)[0]._latlngs;
-            retour.push(forme);
+            if (val._latlngs == undefined) {
+                var forme = _.values(val._layers)[0]._latlngs;
+                retour.push(forme);
+            } else {
+                retour.push(val._latlngs);
+            }
         });
     }
 

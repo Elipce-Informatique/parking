@@ -150,19 +150,21 @@ var store = Reflux.createStore({
             // -------------------------------------------------------------
             // PROCÉDURE DE CRÉATION DE ZONE
             case mapOptions.dessin.zone:
-                console.log('Zone dessinée : %o', data);
-                console.log('Instances : %o', this._inst);
                 var zones, allees;
                 zones = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.zonesGroup);
                 allees = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.alleesGroup);
 
-                // TEST :
-                zones = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.placesGroup);
-                console.log('Places test = %o', allees);
-                // TODO : faire le test
                 var geometryOk = zoneHelper.geometryCheck(data.e.layer._latlngs, zones, allees);
                 console.log('Géométrie ok = %o', geometryOk);
 
+                // TODO : On ajoute à la carte juste pour test
+                if (geometryOk) {
+                    var retour = {
+                        type: mapOptions.type_messages.add_forme,
+                        data: data
+                    };
+                    this.trigger(retour);
+                }
                 break;
             // -------------------------------------------------------------
             // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
