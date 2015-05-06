@@ -575,12 +575,16 @@ var InputSelect = React.createClass({
         // Suppression de name, label, labelCol, selectCol
         attrs = _.omit(attrs, ['name', 'label', 'labelCol', 'selectCol']);
 
+        var val = {};
+        if (this.props.selectedValue !== '') {
+            val = {value: this.props.selectedValue};
+        }
         //console.log('ATTRIBUTES %o',attrs);
         var select =
             <Select
                 inputProps={attrs}
                 name={this.props.attributes.name}
-                value={this.props.selectedValue}
+                {...val}
                 options={this.props.data}
                 placeholder={this.props.placeholder}
                 multi={this.props.multi}

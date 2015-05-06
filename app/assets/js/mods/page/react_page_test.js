@@ -36,6 +36,7 @@ var Form = Field.Form;
 var ModalUn = require('../composants/modals/test_modal_1');
 var Modal2 = require('../composants/modals/test_modal_2');
 var Modal = ReactB.Modal;
+var Select = require('react-select');
 
 /*****************************************************
  /* MIXINS */
@@ -60,7 +61,9 @@ var ReactPageTest = React.createClass({
     getInitialState: function () {
         return {
             isModalOpen: false,
-            modalType: 1
+            modalType: 1,
+            options: [],
+            select : ''
         };
     },
 
@@ -69,6 +72,18 @@ var ReactPageTest = React.createClass({
      */
     componentWillMount: function () {
         this.listenTo(storeTest, this.update);
+    },
+
+    componentDidMount: function () {
+        this.setState({
+            options: [
+                {value: '1abricot', label: 'Abricot'},
+                {value: '2fambroise', label: 'Framboise'},
+                {value: '3pomme', label: 'Pomme'},
+                {value: '4poire', label: 'Poire'},
+                {value: '5fraise', label: 'Fraise'}
+            ]
+        })
     },
 
     /**
@@ -168,13 +183,7 @@ var ReactPageTest = React.createClass({
 
         /*********************/
         /* Paramètres Select */
-        var options = [
-            {value: '1abricot', label: 'Abricot'},
-            {value: '2fambroise', label: 'Framboise'},
-            {value: '3pomme', label: 'Pomme'},
-            {value: '4poire', label: 'Poire'},
-            {value: '5fraise', label: 'Fraise'}
-        ];
+
 
         function selectChange(value, aData) {
 
@@ -265,25 +274,38 @@ var ReactPageTest = React.createClass({
                     attributes={{name: "color", required: false, value: 'E2156B'}}
                     editable={editable} />
 
-                <InputSelectEditable
-                    multi={false}
-                    evts={{onChange: selectChange}}
-                    attributes={{label: 'Mes fruits', name: "Select", selectCol: 4, labelCol: 2, required: true}}
-                    data={options}
-                    editable={editable}
-                    placeholder={'PlaceHolder...'}
-                    labelClass='text-right'
-                    selectedValue={["5fraise", "3pomme"]}
-                />
+            {{
+                /*
+                 <InputSelectEditable
+                 multi={true}
+                 evts={{onChange: selectChange}}
+                 attributes={{
+                 label: 'Mes fruits',
+                 name: "Select",
+                 selectCol: 4,
+                 labelCol: 2,
+                 required: true
+                 }}
+                 data={this.state.options}
+                 editable={editable}
+                 placeholder={'PlaceHolder...'}
+                 labelClass='text-right'
+                 />
+                 */
+            }}
 
                 <InputSelectEditable
                     multi={false}
-                    attributes={{name: "SelectSansLabel", selectCol: 4, required: true}}
-                    data={options}
+                    data={this.state.options}
                     editable={editable}
                     placeholder={'PlaceHolder...'}
-                    labelClass='text-right'
-                    selectedValue={"3pomme"}
+                    attributes={{name : 'select'}}
+                    selectedValue={this.state.select}
+                />
+                <Select
+                    multi={false}
+                    placeholder="Select your favourite(s)"
+                    options={this.state.options}
                 />
 
                 <Button
@@ -518,11 +540,11 @@ var storeTest = Reflux.createStore({
                 this.onModal2_save(domNode);
                 break;
             default:
-
-                //console.log('DATA: %o',fData);
-                var f = $('#form_test').serializeArray();
-                f.push({name: '_token', value: $('#_token').val()});
-                console.log('DATA sur validation  %o', f);
+                var f = form_data_helper('form_test', 'POST');
+                ////console.log('DATA: %o',fData);
+                //var f = $('#form_test').serializeArray();
+                //f.push({name: '_token', value: $('#_token').val()});
+                //console.log('DATA sur validation  %o', f);
 
 
                 $.ajax({
@@ -532,6 +554,8 @@ var storeTest = Reflux.createStore({
                     context: this,
                     method: 'POST',
                     async: false,
+                    processData: false,
+                    contentType: false,
                     success: function (good) {
                     },
 
@@ -540,23 +564,25 @@ var storeTest = Reflux.createStore({
                     }
                 });
                 break;
-
         }
         console.groupEnd();
     },
     /**
      * onChange de n'importe quel élément du FORM
-     * @param e: {name, value, form}
+     * @param obj: {name, value, form}
      */
-    onForm_field_changed: function (e) {
-        console.log('CHANGED ' + e.name + ' %o', e);
+    onForm_field_changed: function (obj) {
+        console.log('CHANGED ' + obj.name +': '+obj.value);
+        if(obj.name == 'select'){
+            this.trigger({select : obj.value});
+        }
     },
 
     /**
      * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
      */
-    onForm_field_verif: function (e) {
-        console.log('VERIF ' + e.name);
+    onForm_field_verif: function (obj) {
+        console.log('VERIF ' + obj.name +': '+obj.value);
 
     }
 });
