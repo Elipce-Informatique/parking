@@ -30,7 +30,8 @@ var ReactBandeau = React.createClass({
         tailleTitre: React.PropTypes.number,
         onRetour: React.PropTypes.func,
         btnList: React.PropTypes.array,
-        form_id: React.PropTypes.string
+        form_id: React.PropTypes.string,
+        rightElements: React.PropTypes.element
     },
 
     /**
@@ -162,6 +163,7 @@ var ReactBandeau = React.createClass({
                         </Col>
                         <Col xs={12} md={4}>
                             <Row className="bandeau-toolbar-right">
+                            {this.props.rightElements}
                             </Row>
                         </Col>
                     </Row>

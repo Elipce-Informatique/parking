@@ -15,7 +15,7 @@ class Calendrier extends Eloquent
     |--------------------------------------------------------------------------
     */
     public $timestamps = false;
-
+    protected $table = 'calendrier';
     protected $fillable = ['jour'];
 
 
@@ -24,9 +24,31 @@ class Calendrier extends Eloquent
     | RELATIONS
     |--------------------------------------------------------------------------
     */
-    public function modules()
+    public function parking()
     {
-        return $this->belongsToMany('Module', 'profil_module')->withPivot(['access_level']);
+        return $this->belongsTo('Parking');
+    }
+    public function calendrierJour()
+    {
+        return $this->belongsTo('CalendrierJours','jour_calendrier_id');
+    }
+    public function typeEclairage()
+    {
+        return $this->belongsTo('TypeEclairage');
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | FONCTIONS
+    |--------------------------------------------------------------------------
+    */
+    public static function GetInfosFromParking($idPark){
+        return Calendrier::with('calendrierJour')
+            ->with('parking')
+            ->where('calendrier.parking_id','=',$idPark)
+            ->get()
+            ;
     }
 
 }

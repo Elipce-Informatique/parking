@@ -169,6 +169,17 @@ require('sweetalert');
         "display_detail_jour", /* Sélection d'une ligne sur le tableau profil                                          */
         "display_all_jours" /* Affiche tous les jours prédéfinis */
     ]);
+
+    /*
+     |--------------------------------------------------------------------------
+     | ACTIONS CALENDRIER PROGRAMMATION
+     |--------------------------------------------------------------------------
+     */
+    global.Actions.calendrier = Reflux.createActions([
+        "display_calendar", /* Sélection d'une ligne sur le tableau parking */
+        "add_days" // Ajoute un ou plusieurs jours au celndrier
+    ]);
+
 })(window);
 
 /*

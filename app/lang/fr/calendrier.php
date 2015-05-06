@@ -28,7 +28,7 @@ return array(
     // MODULE PROGRAMMATION HORAIRE
     'prog_horaire' => [
         'texte' => 'Administration des ouverture, fermeture, veille économique du parking',
-        'titre' => 'Programmation horaire'
+        'titre' => 'Programmation horaire',
     ],
 
 );
