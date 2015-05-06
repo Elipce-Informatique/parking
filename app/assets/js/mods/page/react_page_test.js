@@ -274,6 +274,16 @@ var ReactPageTest = React.createClass({
                     attributes={{name: "color", required: false, value: 'E2156B'}}
                     editable={editable} />
 
+                <ColorPicker
+                    color="FF2800"
+                    label="Mon label"
+                    mdLabel={3}
+                    mdColor={2}
+                    height={10}
+                    width={20}
+                    labelClass="text-right"
+                />
+
             {{
                 /*
                  <InputSelectEditable
