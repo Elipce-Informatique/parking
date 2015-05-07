@@ -177,7 +177,7 @@ var PageCalendrierProg = React.createClass({
                     </RadioGroup>
                 );
 
-                console.log('currentJour %o', this.state.currentJour);
+                //console.log('currentJour %o', this.state.currentJour);
                 react =
                     <div key="root">
                         <BandeauCalendrierEdit
@@ -328,16 +328,22 @@ var storeCalendrierProg = Reflux.createStore({
 
     /**
      * Sauvegarder les données
-     * @param e: evt click du bouton
+     * @param obj: {
+     *  insert: [],
+     *  update: [],
+     *  delete: []
+     *  }
      */
-    onSubmit_form: function (e) {
-        // Variables
-        var url = this.stateLocal.idJour === 0 ? '' : this.stateLocal.idJour;
-        url = BASE_URI + 'calendrier_jours/' + url;
-        var method = this.stateLocal.idJour === 0 ? 'POST' : 'PUT';
+    onAdd_days: function (obj) {
+        console.log('add day');
+        url = BASE_URI + 'calendrier_programmation';
+        var method = 'POST';
 
         // FormData
-        var fData = form_data_helper('form_jours', method);
+        var fData = form_data_helper('', method);
+        // Ajout des données reçues par le calendrier
+        fData.append('data', JSON.stringify(obj));
+        fData.append('parking', this.stateLocal.idParking);
 
         // Requête
         $.ajax({
@@ -348,32 +354,11 @@ var storeCalendrierProg = Reflux.createStore({
             contentType: false,
             dataType: 'json',
             context: this,
-            success: function (tab) {
+            success: function (bool) {
                 // Sauvegarde OK
-                if (tab.save) {
+                if (bool) {
                     // Notification
                     Actions.notif.success(Lang.get('global.notif_success'));
-                    // Mode edition
-                    this.stateLocal.etat = pageState.edition;
-                    // Mode création Ok
-                    if (tab.obj !== null) {
-                        // Maj State local + nouveau libellé
-                        this.stateLocal.idJour = tab.obj.id;
-                        this.stateLocal.detailJour = tab.obj;
-                        this.stateLocal.sousTitre = tab.obj.libelle;
-                    }
-                    // Mode édition
-                    else {
-                        // Nouveau sous titre
-                        this.stateLocal.sousTitre = this.stateLocal.detailJour.libelle;
-                    }
-                    // Maj state
-                    this.trigger(this.stateLocal);
-                }
-                // Le jour existe déjà
-                else if (tab.save == false && tab.errorBdd == false) {
-                    // Notification
-                    Actions.notif.error(Lang.get('calendrier.jours.libelleExists'));
                 }
                 // Erreur SQL
                 else {

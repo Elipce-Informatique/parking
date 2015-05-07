@@ -32,7 +32,63 @@ class CalendrierProgrammationController extends \BaseController
      */
     public function store()
     {
-        //
+        $data = Input::all();
+        $data['data'] = json_decode($data['data'], true);
+        $retour = true;
+
+        try {
+            DB::beginTransaction();
+
+            Log::debug('data '.print_r($data, true));
+
+            // Insert
+            if (count($data['data']['insert']) > 0) {
+
+                // Parcours des insertions
+                foreach ($data['data']['insert'] as $insert) {
+                    $insert['parking_id'] = $data['parking'];
+//                    Log::debug('INSERT '.print_r($insert, true));
+                    if(!Calendrier::createCalendrier($insert)){
+                        $retour = false;
+                        DB::rollBack();
+                        break;
+                    };
+                }
+            }
+
+            // Update
+            if (count($data['data']['update']) > 0) {
+
+                // Parcours des insertions
+                foreach ($data['data']['update'] as $update) {
+                    if(!Calendrier::updateCalendrier($update, $data['parking'])){
+                        $retour = false;
+                        DB::rollBack();
+                        break;
+                    };
+                }
+            }
+
+            // Delete
+            if (count($data['data']['delete']) > 0) {
+
+                // Parcours des insertions
+                foreach ($data['data']['delete'] as $del) {
+                    if(!Calendrier::deleteCalendrier($del, $data['parking'])){
+                        $retour = false;
+                        DB::rollBack();
+                        break;
+                    };
+                }
+            }
+
+            DB::commit();
+        }catch (Exception $e) {
+            // Erreur SQL
+            DB::rollBack();
+            $retour = false;
+        }
+        return json_encode($retour);
     }
 
 
