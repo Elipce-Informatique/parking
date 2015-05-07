@@ -160,7 +160,7 @@ var store = Reflux.createStore({
                 // TODO : On ajoute à la carte juste pour test
                 if (geometryOk) {
                     var retour = {
-                        type: mapOptions.type_messages.add_forme,
+                        type: mapOptions.type_messages.new_zone,
                         data: data
                     };
                     this.trigger(retour);

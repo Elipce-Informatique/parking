@@ -81,6 +81,8 @@ Voulez-vous vraiment quitter cette page ?',
     'attention' => 'Attention',
     'libelle' => 'Libelle',
     'selection' => 'Sélection',
+    'nom' => 'Nom',
+    'description' => 'Description',
 
     // FORMULAIRE
     'select' => 'Sélection...',
@@ -92,7 +94,6 @@ Voulez-vous vraiment quitter cette page ?',
     'occupee' => 'Occupée',
     'libre' => 'Libre',
     'parking' => 'Parking',
-    'description' => 'Description',
 
     /*
     |--------------------------------------------------------------------------
@@ -121,6 +122,4 @@ Voulez-vous vraiment quitter cette page ?',
             'sSortDescending' => '=> activer pour trier la colonne par ordre d&eacute;croissant'
         ]
     ]
-
-
 );

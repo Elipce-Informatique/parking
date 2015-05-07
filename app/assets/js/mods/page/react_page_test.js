@@ -292,7 +292,7 @@ var ReactPageTest = React.createClass({
                 <InputSelectEditable
                     multi={false}
                     attributes={{name: "SelectSansLabel", selectCol: 4, required: true}}
-                    data={options}
+                    data={this.state.options}
                     editable={editable}
                     placeholder={'PlaceHolder...'}
                     labelClass='text-right'

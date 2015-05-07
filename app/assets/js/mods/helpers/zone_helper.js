@@ -15,8 +15,6 @@ function geometryCheck(newZone, zones, allees) {
     var isValid = true;
     var message = "";
 
-    console.log('geometryCheck : %o / %o / %o', newZone, zones, allees);
-
     // VAGUE DE TEST SUR LES ZONES
     _.each(zones, function (z) {
         // I - CONTENU DANS UNE AUTRE ZONE ?
@@ -56,7 +54,6 @@ function geometryCheck(newZone, zones, allees) {
         swal(message);
     }
     return isValid;
-
 }
 
 /**

@@ -58,12 +58,16 @@ var InputText = React.createClass({
             gestMod: true,
             area: false,
             validator: function (val, props, state) {
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                // Champ obligatoire vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     return {isValid: false, style: 'default', tooltip: ''};
                 }
+                // Champ facultatif vide
                 else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
-                } else {
+                }
+                // Champ non vide
+                else {
                     return {isValid: true, style: 'success', tooltip: ''};
                 }
             }
