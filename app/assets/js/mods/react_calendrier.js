@@ -44,22 +44,41 @@ var Calendrier = React.createClass({
      * @param e: event
      */
     handleClick: function (scope, momentDate, e) {
-        console.log('scope %o , moment %o , couleur '+'#'+this.props.jour.couleur, scope, momentDate);
-        console.log('%o',this.props);
+        //console.log('scope %o , moment '+momentDate.format()+' , couleur '+'#'+this.props.jour.couleur, scope, momentDate);
         // Droit d'écrire dans le calendrier
         if(this.props.editable && !_.isEmpty(this.props.jour)) {
-            //Actions.calendrier.add_days()
-            if (scope == 'Day') {
+            // Variable
+            var dayBdd = [];
 
-                $(e.currentTarget).css({'background-color': '#'+this.props.jour.couleur});
+            if (scope == 'Day') {
+                // Jour hors mois non pris en compte
+                if(!$(e.currentTarget).hasClass('rc-Day--outside')){
+                    dayBdd.push(momentDate.format());
+                    $(e.currentTarget).css({'background-color': '#'+this.props.jour.couleur});
+                }
                 e.stopPropagation();
             }
-            else if (scope == 'Week') {
-                $(e.currentTarget).css('background-color', '#'+this.props.jour.couleur);
+            else if (scope == 'Week' || scope == 'Month') {
+                var temp = momentDate.format();
+                // Parcours des jours de la semaine
+                //console.log('rrr %o',  $(e.currentTarget).find('.rc-Day:not(.rc-Day--outside)'));
+                $(e.currentTarget).find('.rc-Day:not(.rc-Day--outside)').each(function(index, day){
+                    // coloration
+                    $(day).css('background-color', '#'+this.props.jour.couleur);
+                    // Construction date
+                    temp = momentDate.get('year')+'-'
+                            +_.padLeft(momentDate.get('month')+1, 2, '0')+'-'
+                            +_.padLeft($(day).find('span').text(), 2, '0');
+                    // BDD
+                    dayBdd.push(temp);
+                }.bind(this));
                 e.stopPropagation();
             }
-            else if (scope == 'Month') {
-                $(e.currentTarget).css('background-color', '#'+this.props.jour.couleur);
+
+            if(dayBdd.length > 0){
+                console.log('Action %o', dayBdd);
+                // Envoi des infos à la page
+                Actions.calendrier.add_days(dayBdd);
             }
         }
     },
