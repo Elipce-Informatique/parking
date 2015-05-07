@@ -36,6 +36,7 @@ var Form = Field.Form;
 var ModalUn = require('../composants/modals/test_modal_1');
 var Modal2 = require('../composants/modals/test_modal_2');
 var Modal = ReactB.Modal;
+var Select = require('react-select');
 
 /*****************************************************
  /* MIXINS */
@@ -289,14 +290,39 @@ var ReactPageTest = React.createClass({
                     selectedValue={["5fraise", "3pomme"]}
                 />
 
+            {{
+                /*
+                 <InputSelectEditable
+                 multi={true}
+                 evts={{onChange: selectChange}}
+                 attributes={{
+                 label: 'Mes fruits',
+                 name: "Select",
+                 selectCol: 4,
+                 labelCol: 2,
+                 required: true
+                 }}
+                 data={this.state.options}
+                 editable={editable}
+                 placeholder={'PlaceHolder...'}
+                 labelClass='text-right'
+                 />
+                 */
+            }}
+
                 <InputSelectEditable
                     multi={false}
                     attributes={{name: "SelectSansLabel", selectCol: 4, required: true}}
                     data={this.state.options}
                     editable={editable}
                     placeholder={'PlaceHolder...'}
-                    labelClass='text-right'
-                    selectedValue={"3pomme"}
+                    attributes={{name : 'select'}}
+                    selectedValue={this.state.select}
+                />
+                <Select
+                    multi={false}
+                    placeholder="Select your favourite(s)"
+                    options={this.state.options}
                 />
 
                 <Button
@@ -560,17 +586,20 @@ var storeTest = Reflux.createStore({
     },
     /**
      * onChange de n'importe quel élément du FORM
-     * @param e: {name, value, form}
+     * @param obj: {name, value, form}
      */
-    onForm_field_changed: function (e) {
-        console.log('CHANGED ' + e.name + ' %o', e);
+    onForm_field_changed: function (obj) {
+        console.log('CHANGED ' + obj.name +': '+obj.value);
+        if(obj.name == 'select'){
+            this.trigger({select : obj.value});
+        }
     },
 
     /**
      * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
      */
-    onForm_field_verif: function (e) {
-        console.log('VERIF ' + e.name);
+    onForm_field_verif: function (obj) {
+        console.log('VERIF ' + obj.name +': '+obj.value);
 
     }
 });

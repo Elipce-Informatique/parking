@@ -200,14 +200,19 @@ var InputMail = React.createClass({
             evts: {},
             gestMod: true,
             validator: function (val, props, state) {
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                // Champ obligatoire vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     return {isValid: false, style: 'default', tooltip: ''};
-                } else if (val.length == 0) {
+                }
+                // Champ facultatif vide
+                else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
+                // Champ non vide mail valide
                 else if (Validator.isEmail(val)) {
                     return {isValid: true, style: 'success', tooltip: ''};
                 }
+                // Champ non vide mail invalide
                 else {
                     return {isValid: false, style: 'error', tooltip: Lang.get('global.validation_erreur_mail')};
                 }
@@ -330,16 +335,19 @@ var InputPassword = React.createClass({
             gestMod: true,
             validator: function (val, props, state) {
                 var retour = {};
-                // CHAMP OK
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                // Champ obligatoire vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     return {isValid: false, style: 'default', tooltip: ''};
-                } else if (val.length == 0) {
+                }
+                // Champ facultatif vide
+                else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
+                // Champ non vide valide
                 else if (val.length >= 6 && (!Validator.isAlpha(val) && !Validator.isNumeric(val))) {
                     retour = {isValid: true, style: 'success', tooltip: ''};
                 }
-                // CHAMP KO
+                // Champ non vide invalide
                 else {
                     retour = {isValid: false, style: 'error', tooltip: Lang.get('global.validation_erreur_pass')};
                 }
@@ -580,12 +588,16 @@ var InputSelect = React.createClass({
         // Suppression de name, label, labelCol, selectCol
         attrs = _.omit(attrs, ['name', 'label', 'labelCol', 'selectCol']);
 
+        var val = {};
+        if (this.props.selectedValue !== '') {
+            val = {value: this.props.selectedValue};
+        }
         //console.log('ATTRIBUTES %o',attrs);
         var select =
             <Select
                 inputProps={attrs}
                 name={this.props.attributes.name}
-                value={this.props.selectedValue}
+                {...val}
                 options={this.props.data}
                 placeholder={this.props.placeholder}
                 multi={this.props.multi}
@@ -795,14 +807,15 @@ var InputNumber = React.createClass({
                 var test = resModulo + '';
                 var aTest = test.split('.');
 
-                /* Champ vide obligatoire ? */
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                // Champ obligatoire vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     return {isValid: false, style: 'default', tooltip: ''};
                 }
+                // Champ obligatoire vide
                 else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
-                /* Valeur non correct */
+                // Champ non vide valeur incorrecte
                 else if (val < props.min || val > props.max || aTest[1] != 0) {
                     var tooltip = Lang.get('global.saisieNumber');
                     tooltip = tooltip.replace('[min]', props.min);
@@ -812,7 +825,7 @@ var InputNumber = React.createClass({
                     tooltip = tooltip.replace('[pas]', step);
                     return {isValid: false, style: 'error', tooltip: tooltip};
                 }
-                /* Valeur correct */
+                // Champ non vide valeur correcte
                 else {
                     return {isValid: true, style: 'success', tooltip: ''};
                 }
@@ -935,18 +948,19 @@ var InputTel = React.createClass({
                 var telNumber = telSansEspace * 1;
                 var bool = !isNaN(telNumber);
 
-                /* Champ vide */
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                // Champ obligatoire vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     return {isValid: false, style: 'default', tooltip: ''};
                 }
+                // Champ facultatif vide
                 else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
-                /* Valeur non correct */
+                // Valeur incorrecte
                 else if (!bool) {
                     return {isValid: false, style: 'error', tooltip: Lang.get('global.inputTelError')};
                 }
-                /* Valeur correct */
+                // Valeur correcte
                 else {
                     return {isValid: true, style: 'success', tooltip: ''};
                 }
@@ -1056,12 +1070,15 @@ var InputFile = React.createClass({
             alertOn: false,
             validator: function (val, props, state) {
 
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                // Champ obligatoire vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     return {isValid: false, style: 'default', tooltip: ''};
                 }
+                // Champ facultatif vide OU valide
                 else if (val.length == 0 || checkFileExtension(val, props.typeOfFile, props.alertOn)) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
+                // Champ invalide
                 else {
                     return {isValid: false, style: 'default', tooltip: ''};
                 }
@@ -1122,15 +1139,15 @@ var InputDate = React.createClass({
             evts: {},
             gestMod: true,
             validator: function (val, props, state) {
-                // Champ obligatoire + vide
-                //console.log('length:'+val.length+' required: '+typeof(props.attributes.required));
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                // Champ obligatoire vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     return {isValid: false, style: 'default', tooltip: ''};
-                    // Champ optionnel + vide
-                } else if (val.length == 0) {
+                }
+                // Champ facultatif vide
+                else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
-                // Champ rempli + valide
+                // Champ rempli valide
                 else if (moment().isValid(val)) {
                     return {isValid: true, style: 'success', tooltip: ''};
                 }
@@ -1251,10 +1268,9 @@ var InputTime = React.createClass({
             evts: {},
             gestMod: true,
             validator: function (val, props, state, inputNode) {
-                //console.log('length:'+val.length+' required: '+typeof(props.attributes.required));
 
                 // Champ obligatoire + vide
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     var tooltip = '';
                     // Champ invalidé par HTML + vidé automatiquement => Le test est effectué dans le mixin pour ce qui est de la coloration rouge
                     if (inputNode !== undefined && $(inputNode).find(':invalid').length > 0) {
@@ -1262,7 +1278,7 @@ var InputTime = React.createClass({
                     }
                     return {isValid: false, style: 'default', tooltip: tooltip};
                 }
-                // Champ optionnel + vide
+                // Champ facultatif vide
                 else if (val.length == 0) {
                     var tooltip = '';
                     // Champ invalidé par HTML + vidé automatiquement
@@ -1446,7 +1462,8 @@ var InputRadioEditable = React.createClass({
 
 /**
  * Champ radio groupe. Permet de gérer un ensemble de radio
- * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ * @param radioGroupAttributes: props du RadioGroup
+ * @param attributes: props des children
  * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  * @param bootstrap: Mode d'affichage des radio
  *                  Si true: mettre des InputRadioBootstrapEditable en enfant
@@ -1454,137 +1471,168 @@ var InputRadioEditable = React.createClass({
  */
 var RadioGroup = React.createClass({
 
-    propTypes: {
-        attributes: React.PropTypes.object,
-        gestMod: React.PropTypes.bool,
-        bootstrap: React.PropTypes.bool // mode d'affichage bootstrap (boutons)
-    },
+        propTypes: {
+            radioGroupAttributes: React.PropTypes.object,
+            attributes: React.PropTypes.object,
+            gestMod: React.PropTypes.bool,
+            bootstrap: React.PropTypes.bool // mode d'affichage bootstrap (boutons)
+        },
 
-    getDefaultProps: function () {
-        return {
-            attributes: {},
-            gestMod: true,
-            bootstrap: false
-        }
-    },
+        getDefaultProps: function () {
+            return {
+                radioGroupAttributes: {bsSize: 'xsmall'},
+                attributes: {},
+                gestMod: true,
+                bootstrap: false
+            }
+        },
 
-    getInitialState: function () {
+        getInitialState: function () {
 
-        var matrice = {};
-        // Parcours des chidren
-        _.forEach(this.props.children, function (child, index) {
-            //console.log('CHILD index %o', child);
-            // On est sur le radio cliqué
-            matrice[this.props.attributes.name + index] = child.props.attributes.checked !== undefined ? child.props.attributes.checked : false;
-        }.bind(this));
+            var matrice = {};
+            // Parcours des chidren
+            _.forEach(this.props.children, function (child, index) {
+                //console.log('CHILD index %o', child);
+                // On est sur le radio cliqué
+                matrice[this.props.attributes.name + index] = child.props.attributes.checked !== undefined ? child.props.attributes.checked : false;
+            }.bind(this));
 
-        return matrice;
-    },
+            return matrice;
+        },
 
-    componentWillReceiveProps: function (np, ns) {
-        var matrice = {};
-        // Parcours des chidren
-        _.forEach(np.children, function (child, index) {
-            //console.log('CHILD index %o', child);
-            // On est sur le radio cliqué
-            matrice[np.attributes.name + index] = child.props.attributes.checked !== undefined ? child.props.attributes.checked : false;
-        }.bind(this));
+        componentWillReceiveProps: function (np, ns) {
+            var matrice = {};
+            // Parcours des chidren
+            _.forEach(np.children, function (child, index) {
+                //console.log('CHILD index %o', child);
+                // On est sur le radio cliqué
+                matrice[np.attributes.name + index] = child.props.attributes.checked !== undefined ? child.props.attributes.checked : false;
+            }.bind(this));
 
-        // Maj State
-        this.setState(matrice);
-    },
+            // Maj State
+            this.setState(matrice);
+        },
 
-    handleChange: function (evt) {
+        handleClickOrChange: function (evt) {
 
-        // Attribut index du radio qui a déclenché le change
-        var index = $(evt.currentTarget).prop('tagName') == 'INPUT' ? $(evt.currentTarget).data('index') : $(evt.currentTarget).find('input').data('index');
+            // Attribut index du radio qui a déclenché le change
+            var index = $(evt.currentTarget).prop('tagName') == 'INPUT' ? $(evt.currentTarget).data('index') : $(evt.currentTarget).find('input').data('index');
 
-        // Matrice {n° radio : cheched, ....}
-        var matrice = {};
-        // Parcours des chidren
-        _.forEach(this.props.children, function (child) {
-            //console.log('CHILD index %o', child);
-            // On est sur le radio cliqué
-            matrice[child.props.attributes['data-index']] = (child.props.attributes['data-index'] == index);
-        });
+            // Matrice {n° radio : cheched, ....}
+            var matrice = {};
+            var clickedChild = null;
+            // Parcours des chidren
+            _.forEach(this.props.children, function (child) {
+                //console.log('CHILD index %o', child);
+                // On est sur le radio cliqué
+                matrice[child.props.attributes['data-index']] = (child.props.attributes['data-index'] == index);
+                if (child.props.attributes['data-index'] == index) {
+                    clickedChild = child;
+                }
 
-        // DÉCLENCHEMENT DE LA VALIDATION MÉTIER
-        Actions.validation.form_field_changed({
-            name: this.props.attributes.name,
-            value: $(evt.currentTarget).prop('tagName') == 'INPUT' ? $(evt.currentTarget).val() : $(evt.currentTarget).find('input').val(),
-            form: this.props.attributes.htmlFor
-        });
-        Actions.validation.form_field_verif({
-            name: this.props.attributes.name,
-            value: $(evt.currentTarget).prop('tagName') == 'INPUT' ? $(evt.currentTarget).val() : $(evt.currentTarget).find('input').val(),
-            form: this.props.attributes.htmlFor
-        });
+            });
 
-        //console.log('INDEX '+ index +' MATRICE  %o',matrice);
-        // Maj render
-        this.setState(matrice);
-    },
+            // DÉCLENCHEMENT DE LA VALIDATION MÉTIER
+            Actions.validation.form_field_changed({
+                name: this.props.attributes.name,
+                value: $(evt.currentTarget).prop('tagName') == 'INPUT' ? $(evt.currentTarget).val() : $(evt.currentTarget).find('input').val(),
+                form: this.props.attributes.htmlFor
+            });
+            Actions.validation.form_field_verif({
+                name: this.props.attributes.name,
+                value: $(evt.currentTarget).prop('tagName') == 'INPUT' ? $(evt.currentTarget).val() : $(evt.currentTarget).find('input').val(),
+                form: this.props.attributes.htmlFor
+            });
 
-    /**
-     *
-     * @param enfants
-     */
-    display: function (enfants) {
-        var code = '';
-        // Mode bootstrap
-        if (this.props.bootstrap) {
-            code = (
-                <ButtonGroup
-                    data-toggle="buttons"
-                    bsSize="xsmall"
-                    key={'radio_' + this.props.attributes.name}>
+            if (clickedChild !== null) {
+                // Mode bootstrap
+                if (this.props.bootstrap) {
+                    // Click défini par le DEV
+                    if (clickedChild.props.evts.onClick !== undefined) {
+                        clickedChild.props.evts.onClick(_.cloneDeep(evt));
+                    }
+                }
+                // Mode classique
+                else {
+                    // Change défini par le DEV
+                    if (clickedChild.props.evts.onChange !== undefined) {
+                        clickedChild.props.evts.onChange(_.cloneDeep(evt));
+                    }
+                }
+            }
+            //console.log('INDEX '+ index +' MATRICE  %o',matrice);
+            // Maj render
+            this.setState(matrice);
+        },
+
+        /**
+         *
+         * @param enfants
+         */
+        display: function (enfants) {
+            var code = '';
+            // Mode bootstrap
+            if (this.props.bootstrap) {
+                code = (
+                    <ButtonGroup
+                        data-toggle="buttons"
+                    {...this.props.radioGroupAttributes}
+                        key={'radio_' + this.props.attributes.name}>
 
                 {enfants}
-                </ButtonGroup>
-            )
-        }
-        // Mode classique
-        else {
-            code = (
-                <div className="row" key={'radio_' + this.props.attributes.name}>
+                    </ButtonGroup>
+                )
+            }
+            // Mode classique
+            else {
+                code = (
+                    <div className="row" key={'radio_' + this.props.attributes.name}>
                     {enfants}
-                </div>);
+                    </div>);
+            }
+            return code;
         }
-        return code;
-    },
+        ,
 
-    render: function () {
+        render: function () {
 
-        // Parcours des chidren
-        var enfants = _.map(this.props.children, function (child, index) {
-            // Props à ajouter
-            var newProps = {
-                evts: {},
-                attributes: _.extend(child.props.attributes, {
-                    checked: this.state[this.props.attributes.name + index],
-                    name: this.props.attributes.name,
-                    'data-index': this.props.attributes.name + index // index unique permettant d'identifier chaque radio
-                })
-            };
-            // Evt en fonction de bootsrap ou radio classique
-            var keyEvt = this.props.bootstrap ? 'onClick' : 'onChange';
-            newProps.evts[keyEvt] = this.handleChange;
+            // Parcours des chidren
+            var enfants = _.map(this.props.children, function (child, index) {
+                // Props à ajouter
+                var newProps = {
+                    evts: {},
+                    attributes: _.extend(child.props.attributes, {
+                        checked: this.state[this.props.attributes.name + index],
+                        name: this.props.attributes.name,
+                        'data-index': this.props.attributes.name + index // index unique permettant d'identifier chaque radio
+                    })
+                };
 
-            // Clone du radio
-            return React.cloneElement(child, newProps);
+                // Radio bootstrap
+                if (this.props.bootstrap) {
+                    newProps.evts.onClick = this.handleClickOrChange;
+                }
+                // Radio classique
+                else {
+                    newProps.evts.onChange = this.handleClickOrChange;
+                }
 
-        }.bind(this));
+                // Clone du radio
+                return React.cloneElement(child, newProps);
 
-        // Affichage du groupe de radio
-        return this.display(enfants);
+            }.bind(this));
 
-    }
-});
+            // Affichage du groupe de radio
+            return this.display(enfants);
+
+        }
+    })
+    ;
 
 /**
  * Champ radio bootstrap (visuel bouton)
  * @param attributes: props du radio
- * @param evts: evenements du btn
+ * @param evts: evenements du btn (utiliser le onClick)
  * @param gestMod: bool: gestion des modifications
  * @param attributesLabel: props du label
  */
@@ -1661,7 +1709,6 @@ var InputRadioBootstrapEditable = React.createClass({
     },
 
     render: function () {
-        ;
 
         return (
             <InputRadioBootstrap
