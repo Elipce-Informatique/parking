@@ -6,12 +6,14 @@ var Calendrier = require('../react_calendrier').Composant;
 var BandeauCalendrierVisu = require('../composants/bandeau/react_bandeau_calendrier_visu');
 var BandeauCalendrierEdit = require('../composants/bandeau/react_bandeau_calendrier_edit');
 var BandeauVide = require('../composants/bandeau/react_bandeau_vide');
-var ButtonToolbar = ReactB.ButtonToolbar;
-var ButtonGroup = ReactB.ButtonGroup;
+var Fields = require('../composants/formulaire/react_form_fields');
+var RadioGroup = Fields.RadioGroup;
+var Radio = Fields.InputRadioBootstrapEditable;
 var Button = ReactB.Button;
 var Row = ReactB.Row;
 var Col = ReactB.Col;
 var DataTableBandeau = require('../composants/tableau/react_data_table_bandeau');
+var ColorPicker = require('../composants/react_color').ColorPicker;
 
 // MIXINS
 var AuthentMixins = require('../mixins/component_access');
@@ -135,28 +137,54 @@ var PageCalendrierProg = React.createClass({
                 var btnRight = {};
                 if (this.state.jours.length > 0) {
                     btnRight = _.map(this.state.jours, function (jour, index) {
-                        var active = {};
-                        if (index == 1) {
-                            active = {active: true};
-                        }
+
                         return (
-                            <Button
-                                style={{color: '#' + jour.couleur}}
-                                key={index}
-                                data-id={jour.id}
-                                onClick = {this.handleClickJour}
-                                {...active}>
-                                    {jour.libelle}
-                            </Button>
+                            <Radio
+                                editable={true}
+                                attributes={{
+                                    key: index,
+                                    'data-id': jour.id,
+                                    onClick: this.handleClickJour
+                                }}>
+
+                                <div
+                                    style={{
+                                        backgroundColor: '#'+jour.couleur,
+                                        height: '15px',
+                                        width: '20px',
+                                        borderRadius: '5px',
+                                        float: 'left',
+                                        marginRight: '5px'
+                                    }}
+                                />
+                            {jour.libelle}
+                            </Radio>
+
                         );
+                        //return (
+                        //    <Button
+                        //        style={{color: '#' + jour.couleur}}
+                        //        key={index}
+                        //        data-id={jour.id}
+                        //        onClick = {this.handleClickJour}
+                        //        data-toggle="button"
+                        //        >
+                        //            {jour.libelle}
+                        //    </Button>
+                        //);
                     }, this);
                 }
                 var groupRight = (
-                    <ButtonToolbar>
-                        < ButtonGroup >
+                    <RadioGroup
+                        key="rg"
+                        gestMod={false}
+                        bootstrap={true}
+                        attributes={{
+                            name: "joursPredef"
+                        }}
+                    >
                              {btnRight}
-                        </ButtonGroup>
-                    </ButtonToolbar>
+                    </RadioGroup>
                 );
 
                 react =

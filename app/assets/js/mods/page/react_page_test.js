@@ -62,7 +62,8 @@ var ReactPageTest = React.createClass({
         return {
             isModalOpen: false,
             modalType: 1,
-            options: []
+            options: [],
+            select : ''
         };
     },
 
@@ -288,6 +289,14 @@ var ReactPageTest = React.createClass({
                     placeholder={'PlaceHolder...'}
                     labelClass='text-right'
                     selectedValue={["5fraise", "3pomme"]}
+                <ColorPicker
+                    color="FF2800"
+                    label="Mon label"
+                    mdLabel={3}
+                    mdColor={2}
+                    height={10}
+                    width={20}
+                    labelClass="text-right"
                 />
 
             {{
@@ -316,8 +325,8 @@ var ReactPageTest = React.createClass({
                     data={this.state.options}
                     editable={editable}
                     placeholder={'PlaceHolder...'}
-                    attributes={{name : 'select'}}
-                    selectedValue={this.state.select}
+                    labelClass='text-right'
+                    selectedValue={"3pomme"}
                 />
                 <Select
                     multi={false}
