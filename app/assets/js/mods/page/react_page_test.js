@@ -307,7 +307,7 @@ var ReactPageTest = React.createClass({
                 <InputSelectEditable
                     multi={false}
                     attributes={{name: "SelectSansLabel", selectCol: 4, required: true}}
-                    data={options}
+                    data={this.state.options}
                     editable={editable}
                     placeholder={'PlaceHolder...'}
                     labelClass='text-right'
@@ -370,6 +370,9 @@ var ReactPageTest = React.createClass({
                                     checked: true,
                                     value: 'btn1'
                                 }}
+                                evts={{onClick:function(){
+                                    console.log('CLICK');
+                                }}}
                             >
                                 Btn 1
                             </ InputRadioBootstrapEditable>
@@ -379,6 +382,9 @@ var ReactPageTest = React.createClass({
                                 attributes={{
                                     value: 'btn2'
                                 }}
+                                evts={{onClick:function(){
+                                    console.log('CLICK');
+                                }}}
                             >
                                 Btn 2
                             </ InputRadioBootstrapEditable>
@@ -403,6 +409,9 @@ var ReactPageTest = React.createClass({
                             value: 'un',
                             groupClassName: 'col-md-2'
                         }}
+                        evts={{onChange:function(){
+                            console.log('Change');
+                        }}}
                         key = "zouzou"
                     />
                     <InputRadioEditable
@@ -414,6 +423,9 @@ var ReactPageTest = React.createClass({
                             value: 'deux',
                             groupClassName: 'col-md-2'
                         }}
+                        evts={{onChange:function(){
+                            console.log('Change');
+                        }}}
                         key = "pitchoune"/>
                 </RadioGroup>
 
@@ -583,7 +595,7 @@ var storeTest = Reflux.createStore({
      * @param obj: {name, value, form}
      */
     onForm_field_changed: function (obj) {
-        console.log('CHANGED ' + obj.name +': '+obj.value);
+        //console.log('CHANGED ' + obj.name +': '+obj.value);
         if(obj.name == 'select'){
             this.trigger({select : obj.value});
         }
@@ -593,7 +605,7 @@ var storeTest = Reflux.createStore({
      * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
      */
     onForm_field_verif: function (obj) {
-        console.log('VERIF ' + obj.name +': '+obj.value);
+        //console.log('VERIF ' + obj.name +': '+obj.value);
 
     }
 });

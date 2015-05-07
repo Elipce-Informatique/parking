@@ -1455,139 +1455,168 @@ var InputRadioEditable = React.createClass({
  */
 var RadioGroup = React.createClass({
 
-    propTypes: {
-        radioGroupAttributes: React.PropTypes.object,
-        attributes: React.PropTypes.object,
-        gestMod: React.PropTypes.bool,
-        bootstrap: React.PropTypes.bool // mode d'affichage bootstrap (boutons)
-    },
+        propTypes: {
+            radioGroupAttributes: React.PropTypes.object,
+            attributes: React.PropTypes.object,
+            gestMod: React.PropTypes.bool,
+            bootstrap: React.PropTypes.bool // mode d'affichage bootstrap (boutons)
+        },
 
-    getDefaultProps: function () {
-        return {
-            radioGroupAttributes: {bsSize: 'xsmall'},
-            attributes: {},
-            gestMod: true,
-            bootstrap: false
-        }
-    },
+        getDefaultProps: function () {
+            return {
+                radioGroupAttributes: {bsSize: 'xsmall'},
+                attributes: {},
+                gestMod: true,
+                bootstrap: false
+            }
+        },
 
-    getInitialState: function () {
+        getInitialState: function () {
 
-        var matrice = {};
-        // Parcours des chidren
-        _.forEach(this.props.children, function (child, index) {
-            //console.log('CHILD index %o', child);
-            // On est sur le radio cliqué
-            matrice[this.props.attributes.name + index] = child.props.attributes.checked !== undefined ? child.props.attributes.checked : false;
-        }.bind(this));
+            var matrice = {};
+            // Parcours des chidren
+            _.forEach(this.props.children, function (child, index) {
+                //console.log('CHILD index %o', child);
+                // On est sur le radio cliqué
+                matrice[this.props.attributes.name + index] = child.props.attributes.checked !== undefined ? child.props.attributes.checked : false;
+            }.bind(this));
 
-        return matrice;
-    },
+            return matrice;
+        },
 
-    componentWillReceiveProps: function (np, ns) {
-        var matrice = {};
-        // Parcours des chidren
-        _.forEach(np.children, function (child, index) {
-            //console.log('CHILD index %o', child);
-            // On est sur le radio cliqué
-            matrice[np.attributes.name + index] = child.props.attributes.checked !== undefined ? child.props.attributes.checked : false;
-        }.bind(this));
+        componentWillReceiveProps: function (np, ns) {
+            var matrice = {};
+            // Parcours des chidren
+            _.forEach(np.children, function (child, index) {
+                //console.log('CHILD index %o', child);
+                // On est sur le radio cliqué
+                matrice[np.attributes.name + index] = child.props.attributes.checked !== undefined ? child.props.attributes.checked : false;
+            }.bind(this));
 
-        // Maj State
-        this.setState(matrice);
-    },
+            // Maj State
+            this.setState(matrice);
+        },
 
-    handleChange: function (evt) {
+        handleClickOrChange: function (evt) {
 
-        // Attribut index du radio qui a déclenché le change
-        var index = $(evt.currentTarget).prop('tagName') == 'INPUT' ? $(evt.currentTarget).data('index') : $(evt.currentTarget).find('input').data('index');
+            // Attribut index du radio qui a déclenché le change
+            var index = $(evt.currentTarget).prop('tagName') == 'INPUT' ? $(evt.currentTarget).data('index') : $(evt.currentTarget).find('input').data('index');
 
-        // Matrice {n° radio : cheched, ....}
-        var matrice = {};
-        // Parcours des chidren
-        _.forEach(this.props.children, function (child) {
-            //console.log('CHILD index %o', child);
-            // On est sur le radio cliqué
-            matrice[child.props.attributes['data-index']] = (child.props.attributes['data-index'] == index);
-        });
+            // Matrice {n° radio : cheched, ....}
+            var matrice = {};
+            var clickedChild = null;
+            // Parcours des chidren
+            _.forEach(this.props.children, function (child) {
+                //console.log('CHILD index %o', child);
+                // On est sur le radio cliqué
+                matrice[child.props.attributes['data-index']] = (child.props.attributes['data-index'] == index);
+                if (child.props.attributes['data-index'] == index) {
+                    clickedChild = child;
+                }
 
-        // DÉCLENCHEMENT DE LA VALIDATION MÉTIER
-        Actions.validation.form_field_changed({
-            name: this.props.attributes.name,
-            value: $(evt.currentTarget).prop('tagName') == 'INPUT' ? $(evt.currentTarget).val() : $(evt.currentTarget).find('input').val(),
-            form: this.props.attributes.htmlFor
-        });
-        Actions.validation.form_field_verif({
-            name: this.props.attributes.name,
-            value: $(evt.currentTarget).prop('tagName') == 'INPUT' ? $(evt.currentTarget).val() : $(evt.currentTarget).find('input').val(),
-            form: this.props.attributes.htmlFor
-        });
+            });
 
-        //console.log('INDEX '+ index +' MATRICE  %o',matrice);
-        // Maj render
-        this.setState(matrice);
-    },
+            // DÉCLENCHEMENT DE LA VALIDATION MÉTIER
+            Actions.validation.form_field_changed({
+                name: this.props.attributes.name,
+                value: $(evt.currentTarget).prop('tagName') == 'INPUT' ? $(evt.currentTarget).val() : $(evt.currentTarget).find('input').val(),
+                form: this.props.attributes.htmlFor
+            });
+            Actions.validation.form_field_verif({
+                name: this.props.attributes.name,
+                value: $(evt.currentTarget).prop('tagName') == 'INPUT' ? $(evt.currentTarget).val() : $(evt.currentTarget).find('input').val(),
+                form: this.props.attributes.htmlFor
+            });
 
-    /**
-     *
-     * @param enfants
-     */
-    display: function (enfants) {
-        var code = '';
-        // Mode bootstrap
-        if (this.props.bootstrap) {
-            code = (
-                <ButtonGroup
-                    data-toggle="buttons"
+            if (clickedChild !== null) {
+                // Mode bootstrap
+                if (this.props.bootstrap) {
+                    // Click défini par le DEV
+                    if (clickedChild.props.evts.onClick !== undefined) {
+                        clickedChild.props.evts.onClick(_.cloneDeep(evt));
+                    }
+                }
+                // Mode classique
+                else {
+                    // Change défini par le DEV
+                    if (clickedChild.props.evts.onChange !== undefined) {
+                        clickedChild.props.evts.onChange(_.cloneDeep(evt));
+                    }
+                }
+            }
+            //console.log('INDEX '+ index +' MATRICE  %o',matrice);
+            // Maj render
+            this.setState(matrice);
+        },
+
+        /**
+         *
+         * @param enfants
+         */
+        display: function (enfants) {
+            var code = '';
+            // Mode bootstrap
+            if (this.props.bootstrap) {
+                code = (
+                    <ButtonGroup
+                        data-toggle="buttons"
                     {...this.props.radioGroupAttributes}
-                    key={'radio_' + this.props.attributes.name}>
+                        key={'radio_' + this.props.attributes.name}>
 
                 {enfants}
-                </ButtonGroup>
-            )
-        }
-        // Mode classique
-        else {
-            code = (
-                <div className="row" key={'radio_' + this.props.attributes.name}>
+                    </ButtonGroup>
+                )
+            }
+            // Mode classique
+            else {
+                code = (
+                    <div className="row" key={'radio_' + this.props.attributes.name}>
                     {enfants}
-                </div>);
+                    </div>);
+            }
+            return code;
         }
-        return code;
-    },
+        ,
 
-    render: function () {
+        render: function () {
 
-        // Parcours des chidren
-        var enfants = _.map(this.props.children, function (child, index) {
-            // Props à ajouter
-            var newProps = {
-                evts: {},
-                attributes: _.extend(child.props.attributes, {
-                    checked: this.state[this.props.attributes.name + index],
-                    name: this.props.attributes.name,
-                    'data-index': this.props.attributes.name + index // index unique permettant d'identifier chaque radio
-                })
-            };
-            // Evt en fonction de bootsrap ou radio classique
-            var keyEvt = this.props.bootstrap ? 'onClick' : 'onChange';
-            newProps.evts[keyEvt] = this.handleChange;
+            // Parcours des chidren
+            var enfants = _.map(this.props.children, function (child, index) {
+                // Props à ajouter
+                var newProps = {
+                    evts: {},
+                    attributes: _.extend(child.props.attributes, {
+                        checked: this.state[this.props.attributes.name + index],
+                        name: this.props.attributes.name,
+                        'data-index': this.props.attributes.name + index // index unique permettant d'identifier chaque radio
+                    })
+                };
 
-            // Clone du radio
-            return React.cloneElement(child, newProps);
+                // Radio bootstrap
+                if (this.props.bootstrap) {
+                    newProps.evts.onClick = this.handleClickOrChange;
+                }
+                // Radio classique
+                else {
+                    newProps.evts.onChange = this.handleClickOrChange;
+                }
 
-        }.bind(this));
+                // Clone du radio
+                return React.cloneElement(child, newProps);
 
-        // Affichage du groupe de radio
-        return this.display(enfants);
+            }.bind(this));
 
-    }
-});
+            // Affichage du groupe de radio
+            return this.display(enfants);
+
+        }
+    })
+    ;
 
 /**
  * Champ radio bootstrap (visuel bouton)
  * @param attributes: props du radio
- * @param evts: evenements du btn
+ * @param evts: evenements du btn (utiliser le onClick)
  * @param gestMod: bool: gestion des modifications
  * @param attributesLabel: props du label
  */

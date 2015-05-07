@@ -80,7 +80,7 @@ var PageCalendrierProg = React.createClass({
      */
     handleClickJour: function (e) {
         // ID jour
-        var id = $(e.currentTarget).data('id');
+        var id = $(e.currentTarget).find('input').data('id');
         // Recherche de l'objet jour
         var day = _.reduce(this.state.jours, function (result, jour, index) {
             if (jour.id == id) {
@@ -88,7 +88,6 @@ var PageCalendrierProg = React.createClass({
             }
             return result;
         }, {}, this);
-
         this.setState({currentJour: day});
     },
 
@@ -127,7 +126,6 @@ var PageCalendrierProg = React.createClass({
                             onRetour = {this.onRetour}/>
                         <Calendrier
                             editable={false}
-                            jours={this.state.jours}
                             data={this.state.calendrier}/>
                     </div>;
                 break;
@@ -142,36 +140,28 @@ var PageCalendrierProg = React.createClass({
                             <Radio
                                 editable={true}
                                 attributes={{
-                                    key: index,
-                                    'data-id': jour.id,
+                                    'data-id': jour.id
+                                }}
+                                evts={{
                                     onClick: this.handleClickJour
-                                }}>
-
-                                <div
-                                    style={{
-                                        backgroundColor: '#'+jour.couleur,
-                                        height: '15px',
-                                        width: '20px',
-                                        borderRadius: '5px',
-                                        float: 'left',
-                                        marginRight: '5px'
-                                    }}
-                                />
-                            {jour.libelle}
+                                }}
+                                key={index}>
+                                <div>
+                                    <div
+                                        style={{
+                                            backgroundColor: '#' + jour.couleur,
+                                            height: '20px',
+                                            width: '20px',
+                                            borderRadius: '5px',
+                                            float: 'left',
+                                            marginRight: '5px'
+                                        }}
+                                    />
+                                {jour.libelle}
+                                </div>
                             </Radio>
 
                         );
-                        //return (
-                        //    <Button
-                        //        style={{color: '#' + jour.couleur}}
-                        //        key={index}
-                        //        data-id={jour.id}
-                        //        onClick = {this.handleClickJour}
-                        //        data-toggle="button"
-                        //        >
-                        //            {jour.libelle}
-                        //    </Button>
-                        //);
                     }, this);
                 }
                 var groupRight = (
@@ -182,11 +172,12 @@ var PageCalendrierProg = React.createClass({
                         attributes={{
                             name: "joursPredef"
                         }}
-                    >
-                             {btnRight}
+                        radioGroupAttributes={{}}>
+                     {btnRight}
                     </RadioGroup>
                 );
 
+                console.log('currentJour %o', this.state.currentJour);
                 react =
                     <div key="root">
                         <BandeauCalendrierEdit
@@ -198,8 +189,9 @@ var PageCalendrierProg = React.createClass({
                             onRetour = {this.onRetour}/>
                         <Calendrier
                             editable={true}
-                            jours={this.state.jours}
-                            data={this.state.calendrier}/>
+                            data={this.state.calendrier}
+                            jour={this.state.currentJour}
+                        />
                     </div>
                 break;
             default:

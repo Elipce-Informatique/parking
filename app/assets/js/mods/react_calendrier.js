@@ -25,9 +25,17 @@ var Calendrier = React.createClass({
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
-        data: React.PropTypes.array.isRequired
+        data: React.PropTypes.array.isRequired,
+        jour: React.PropTypes.object // Jour prédéfini sélectionné
     },
 
+    getDefaultProps: function(){
+        return{
+            editable: false,
+            data: [],
+            jour: {}
+        }
+    },
 
     /**
      * Click sur un element de calendrier
@@ -36,25 +44,22 @@ var Calendrier = React.createClass({
      * @param e: event
      */
     handleClick: function (scope, momentDate, e) {
-        //Actions.calendrier.add_days()
-        console.log('scope %o , moment %o', scope, momentDate);
-        if (scope == 'Day') {
-            $(e.currentTarget).addClass('bg-success');
-            e.stopPropagation();
-        }
-        else
-        if (scope == 'Week') {
-            $(e.currentTarget).addClass('bg-error');
-            e.stopPropagation();
-        }
-        else
-        if (scope == 'Month') {
-            console.log($(e.currentTarget).attr('class'));
-            // Attention au week day
-            if($(e.currentTarget).hasClass('rc-Month-header'))
-            {
-                console.log('UUU');
-                $(e.currentTarget).addClass('bg-warning');
+        console.log('scope %o , moment %o , couleur '+'#'+this.props.jour.couleur, scope, momentDate);
+        console.log('%o',this.props);
+        // Droit d'écrire dans le calendrier
+        if(this.props.editable && !_.isEmpty(this.props.jour)) {
+            //Actions.calendrier.add_days()
+            if (scope == 'Day') {
+
+                $(e.currentTarget).css({'background-color': '#'+this.props.jour.couleur});
+                e.stopPropagation();
+            }
+            else if (scope == 'Week') {
+                $(e.currentTarget).css('background-color', '#'+this.props.jour.couleur);
+                e.stopPropagation();
+            }
+            else if (scope == 'Month') {
+                $(e.currentTarget).css('background-color', '#'+this.props.jour.couleur);
             }
         }
     },
