@@ -63,7 +63,7 @@ var ReactPageTest = React.createClass({
             isModalOpen: false,
             modalType: 1,
             options: [],
-            select : ''
+            select: ''
         };
     },
 
@@ -274,6 +274,22 @@ var ReactPageTest = React.createClass({
                     attributes={{name: "color", required: false, value: 'E2156B'}}
                     editable={editable} />
 
+                <InputSelectEditable
+                    multi={false}
+                    evts={{onChange: selectChange}}
+                    attributes={{
+                        label: 'Mes fruits',
+                        name: "Select",
+                        selectCol: 4,
+                        labelCol: 2,
+                        required: true
+                    }}
+                    data={this.state.options}
+                    editable={editable}
+                    placeholder={'PlaceHolder...'}
+                    labelClass='text-right'
+                    selectedValue={["5fraise", "3pomme"]}
+                />
                 <ColorPicker
                     color="FF2800"
                     label="Mon label"
@@ -511,10 +527,9 @@ var ReactPageTest = React.createClass({
                 <Button bsStyle="primary" onClick={this.toggleModal1}>Modal 1</Button>
 
                 <Button bsStyle="success" onClick={this.toggleModal2}>Modal 2</Button>
-            </Form>)
+            </Form>
+        )
     }
-
-
 });
 module.exports = ReactPageTest;
 
@@ -595,9 +610,9 @@ var storeTest = Reflux.createStore({
      * @param obj: {name, value, form}
      */
     onForm_field_changed: function (obj) {
-        //console.log('CHANGED ' + obj.name +': '+obj.value);
-        if(obj.name == 'select'){
-            this.trigger({select : obj.value});
+        console.log('CHANGED ' + obj.name + ': ' + obj.value);
+        if (obj.name == 'select') {
+            this.trigger({select: obj.value});
         }
     },
 
@@ -605,7 +620,7 @@ var storeTest = Reflux.createStore({
      * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
      */
     onForm_field_verif: function (obj) {
-        //console.log('VERIF ' + obj.name +': '+obj.value);
+        console.log('VERIF ' + obj.name + ': ' + obj.value);
 
     }
 });

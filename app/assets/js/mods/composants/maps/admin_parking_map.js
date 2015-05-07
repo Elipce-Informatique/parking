@@ -7,6 +7,7 @@ var mapHelper = require('../../helpers/map_helper');
 // COMPOSANTS
 var ModalPlaces = require('../modals/mod_places_multiples');
 var ModalCalibre = require('../modals/mod_calibre');
+var ModalZone = require('../modals/mod_zone');
 var Field = require('../formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputNumberEditable = Field.InputNumberEditable;
@@ -459,6 +460,11 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.type_messages.delete_forme:
                 break;
+
+            case mapOptions.type_messages.new_zone:
+                this._onNewZone(data);
+                break;
+
             case mapOptions.type_messages.hide_modal:
                 this.setState({
                     isModalOpen: false
@@ -499,6 +505,18 @@ var parkingMap = React.createClass({
             segment: data
         });
     },
+    /**
+     *
+     * @param data
+     * @private
+     */
+    _onNewZone: function (data) {
+        this.setState({
+            modalType: mapOptions.modal_type.zone,
+            isModalOpen: true,
+            parallelogramme_places: data
+        });
+    },
 
     /*******************************************************************/
     /*******************************************************************/
@@ -512,14 +530,9 @@ var parkingMap = React.createClass({
         if (!this.state.isModalOpen) {
             return <span/>;
         } else {
-            return (<Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
-                <div className="modal-body">
-                    This modal is controlled by our custom trigger component.
-                </div>
-                <div className="modal-footer">
-                    <Button onClick={this.handleToggle}>Close</Button>
-                </div>
-            </Modal>);
+            return (<ModalZone
+                onToggle={this.handleToggle}
+            />);
         }
     },
     /**

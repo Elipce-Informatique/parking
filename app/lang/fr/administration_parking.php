@@ -32,7 +32,8 @@ return array(
     'carte' => [
         'erreur_polygon' => 'Les lignes d\'un polygon ne peuvent pas se croiser',
         'titre_places_multiples' => 'Configuration de la série de places',
-        'titre_calibre' => 'Configuration deu calibre',
+        'titre_calibre' => 'Configuration du calibre',
+        'titre_zone' => 'Création d\'une zone',
         'ajouter_place' => 'Ajouter une place',
         'ajouter_place_auto' => 'Ajouter une série de places',
         'ajouter_allee' => 'Ajouter une allée',

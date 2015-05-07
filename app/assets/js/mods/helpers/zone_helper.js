@@ -3,6 +3,7 @@
  */
 var _ = require('lodash');
 var mapHelper = require('./map_helper');
+var formDataHelper = require('./form_data_helper');
 
 /**
  *
@@ -14,8 +15,6 @@ function geometryCheck(newZone, zones, allees) {
 
     var isValid = true;
     var message = "";
-
-    console.log('geometryCheck : %o / %o / %o', newZone, zones, allees);
 
     // VAGUE DE TEST SUR LES ZONES
     _.each(zones, function (z) {
@@ -56,6 +55,55 @@ function geometryCheck(newZone, zones, allees) {
         swal(message);
     }
     return isValid;
+}
+
+/**
+ * Crée une zone en BDD en fonction des inormations de la popup.
+ *
+ * @param formDom : DOM du formulaire
+ * @param zone : Zone à enregistrer
+ * @param _inst : données d'instance du store
+ *
+ * @returns {boolean} état de l'insertion
+ */
+function createZone(formDom, zone, _inst) {
+    console.log('Pass handleZone, zone : %o', zone);
+
+    var alleesInZone = getAlleesInZone(formDom, zone, _inst);
+
+    var geoJson = zone.e.layer.toGeoJSON();
+    var fData = formDataHelper('form_mod_zone', 'POST');
+    fData.append('geojson', json.stringify(geoJson));
+
+    return true;
+}
+
+/**
+ * Retourne le tableau des allées contenues dans la zone
+ * @param formDom : DOM du formulaire
+ * @param zone : zone dessinnée par l'utilisateur
+ * @param _inst : données d'instance du store
+ */
+function getAlleesInZone(formDom, zone, _inst){
+    var allZones = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.zonesGroup);
+    var allAllees = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.alleesGroup);
+
+    var allees = mapHelper.getPolygonsContainedInPolygon(zone.e.layer, allAllees);
+    console.log('Allées dans la zone : %o', allees);
+    return allees;
+}
+
+/**
+ * TODO : tableau des places contenues dans la zone par leur centre (Marker)
+ */
+function getPlacesInZone(formDom, zone, _inst){
+
+}
+
+/**
+ * TODO : Tableau des places qui sont contenues dans les allées de la zone par leur centre (Marker)
+ */
+function getPlacesInAllees(formDom, zone, _inst){
 
 }
 
@@ -63,5 +111,6 @@ function geometryCheck(newZone, zones, allees) {
  * Interface publique du module
  */
 module.exports = {
-    geometryCheck: geometryCheck
+    geometryCheck: geometryCheck,
+    createZone: createZone
 };

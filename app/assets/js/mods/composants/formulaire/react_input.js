@@ -58,12 +58,16 @@ var InputText = React.createClass({
             gestMod: true,
             area: false,
             validator: function (val, props, state) {
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                // Champ obligatoire vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     return {isValid: false, style: 'default', tooltip: ''};
                 }
+                // Champ facultatif vide
                 else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
-                } else {
+                }
+                // Champ non vide
+                else {
                     return {isValid: true, style: 'success', tooltip: ''};
                 }
             }
@@ -196,14 +200,19 @@ var InputMail = React.createClass({
             evts: {},
             gestMod: true,
             validator: function (val, props, state) {
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                // Champ obligatoire vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     return {isValid: false, style: 'default', tooltip: ''};
-                } else if (val.length == 0) {
+                }
+                // Champ facultatif vide
+                else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
+                // Champ non vide mail valide
                 else if (Validator.isEmail(val)) {
                     return {isValid: true, style: 'success', tooltip: ''};
                 }
+                // Champ non vide mail invalide
                 else {
                     return {isValid: false, style: 'error', tooltip: Lang.get('global.validation_erreur_mail')};
                 }
@@ -326,16 +335,19 @@ var InputPassword = React.createClass({
             gestMod: true,
             validator: function (val, props, state) {
                 var retour = {};
-                // CHAMP OK
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                // Champ obligatoire vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     return {isValid: false, style: 'default', tooltip: ''};
-                } else if (val.length == 0) {
+                }
+                // Champ facultatif vide
+                else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
+                // Champ non vide valide
                 else if (val.length >= 6 && (!Validator.isAlpha(val) && !Validator.isNumeric(val))) {
                     retour = {isValid: true, style: 'success', tooltip: ''};
                 }
-                // CHAMP KO
+                // Champ non vide invalide
                 else {
                     retour = {isValid: false, style: 'error', tooltip: Lang.get('global.validation_erreur_pass')};
                 }
@@ -795,14 +807,15 @@ var InputNumber = React.createClass({
                 var test = resModulo + '';
                 var aTest = test.split('.');
 
-                /* Champ vide obligatoire ? */
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                // Champ obligatoire vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     return {isValid: false, style: 'default', tooltip: ''};
                 }
+                // Champ obligatoire vide
                 else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
-                /* Valeur non correct */
+                // Champ non vide valeur incorrecte
                 else if (val < props.min || val > props.max || aTest[1] != 0) {
                     var tooltip = Lang.get('global.saisieNumber');
                     tooltip = tooltip.replace('[min]', props.min);
@@ -812,7 +825,7 @@ var InputNumber = React.createClass({
                     tooltip = tooltip.replace('[pas]', step);
                     return {isValid: false, style: 'error', tooltip: tooltip};
                 }
-                /* Valeur correct */
+                // Champ non vide valeur correcte
                 else {
                     return {isValid: true, style: 'success', tooltip: ''};
                 }
@@ -935,18 +948,19 @@ var InputTel = React.createClass({
                 var telNumber = telSansEspace * 1;
                 var bool = !isNaN(telNumber);
 
-                /* Champ vide */
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                // Champ obligatoire vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     return {isValid: false, style: 'default', tooltip: ''};
                 }
+                // Champ facultatif vide
                 else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
-                /* Valeur non correct */
+                // Valeur incorrecte
                 else if (!bool) {
                     return {isValid: false, style: 'error', tooltip: Lang.get('global.inputTelError')};
                 }
-                /* Valeur correct */
+                // Valeur correcte
                 else {
                     return {isValid: true, style: 'success', tooltip: ''};
                 }
@@ -1056,12 +1070,15 @@ var InputFile = React.createClass({
             alertOn: false,
             validator: function (val, props, state) {
 
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                // Champ obligatoire vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     return {isValid: false, style: 'default', tooltip: ''};
                 }
+                // Champ facultatif vide OU valide
                 else if (val.length == 0 || checkFileExtension(val, props.typeOfFile, props.alertOn)) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
+                // Champ invalide
                 else {
                     return {isValid: false, style: 'default', tooltip: ''};
                 }
@@ -1122,15 +1139,15 @@ var InputDate = React.createClass({
             evts: {},
             gestMod: true,
             validator: function (val, props, state) {
-                // Champ obligatoire + vide
-                //console.log('length:'+val.length+' required: '+typeof(props.attributes.required));
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                // Champ obligatoire vide
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     return {isValid: false, style: 'default', tooltip: ''};
-                    // Champ optionnel + vide
-                } else if (val.length == 0) {
+                }
+                // Champ facultatif vide
+                else if (val.length == 0) {
                     return {isValid: true, style: 'default', tooltip: ''};
                 }
-                // Champ rempli + valide
+                // Champ rempli valide
                 else if (moment().isValid(val)) {
                     return {isValid: true, style: 'success', tooltip: ''};
                 }
@@ -1251,10 +1268,9 @@ var InputTime = React.createClass({
             evts: {},
             gestMod: true,
             validator: function (val, props, state, inputNode) {
-                //console.log('length:'+val.length+' required: '+typeof(props.attributes.required));
 
                 // Champ obligatoire + vide
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined') {
+                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
                     var tooltip = '';
                     // Champ invalidé par HTML + vidé automatiquement => Le test est effectué dans le mixin pour ce qui est de la coloration rouge
                     if (inputNode !== undefined && $(inputNode).find(':invalid').length > 0) {
@@ -1262,7 +1278,7 @@ var InputTime = React.createClass({
                     }
                     return {isValid: false, style: 'default', tooltip: tooltip};
                 }
-                // Champ optionnel + vide
+                // Champ facultatif vide
                 else if (val.length == 0) {
                     var tooltip = '';
                     // Champ invalidé par HTML + vidé automatiquement

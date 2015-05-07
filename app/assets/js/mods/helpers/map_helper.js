@@ -251,7 +251,6 @@ var customZoomCRS = L.extend({}, L.CRS.Simple, {
 
 
 /**
- * TODO : à tester
  * Test si container contient totalement contained (pas d'intersection de leurs côtés)
  * Les deux paramètres sont un tableau de lat lng comme suit:
  * [
@@ -275,7 +274,6 @@ function polygonContainsPolygon(container, contained) {
 }
 
 /**
- * TODO : à tester
  * Test si container contient totalement contained (pas d'intersection de leurs côtés)
  * Les deux paramètres sont un tableau de lat lng comme suit:
  * [
@@ -302,6 +300,28 @@ function polygonIntersection(poly1, poly2) {
     } else {
         return false;
     }
+}
+
+/**
+ * TODO : à tester
+ * Retourne le tableau des polygons contenus dans le polyfon container.
+ * Les polygons doivent être au format suivant :
+ * [
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy},
+ *  {lat: xx,yyy, lng: xx,yyy}
+ * ]
+ * @param container : polygon le plus grand (ex: zone)
+ * @param polygons : Tableau des polygons
+ *
+ * @returns array
+ */
+function getPolygonsContainedInPolygon(container, polygons) {
+    return _.filter(polygons, function (poly) {
+        polygonContainsPolygon(container, poly);
+    });
 }
 
 /**
@@ -356,6 +376,7 @@ module.exports = {
     findMarkerByPlaceId: findMarkerByPlaceId,
     generateCalibreValue: generateCalibreValue,
     getPolygonsArrayFromLeafletLayerGroup: getPolygonsArrayFromLeafletLayerGroup,
+    getPolygonsContainedInPolygon: getPolygonsContainedInPolygon,
     customZoomCRS: customZoomCRS
 };
 

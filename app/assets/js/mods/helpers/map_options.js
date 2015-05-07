@@ -71,7 +71,8 @@ module.exports.type_messages = {
     occuper_places: 6,
     liberer_places: 7,
     new_calibre: 8,
-    hide_modal: 5
+    hide_modal: 9,
+    new_zone: 10
 };
 
 /**
