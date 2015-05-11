@@ -35,6 +35,7 @@ var PageCalendrierProg = React.createClass({
 
     mixins: [Reflux.ListenerMixin, MixinGestMod, AuthentMixins],
 
+    prefixColorClass : '.rc-Day--color-',
 
     getDefaultProps: function () {
         return {
@@ -61,11 +62,11 @@ var PageCalendrierProg = React.createClass({
         };
     },
     componentDidMount: function () {
-        this.listenTo(storeCalendrierProg, this.updateData, this.updateData);
+        this.listenTo(storeCalendrierProg, this.updateData, this.updateDataInit);
     },
 
     /**
-     * Affiche le calendrier en mode visu lors du clic sur le tableau de parkings²
+     * Affiche le calendrier en mode visu lors du clic sur le tableau de parkings
      * @param e: event
      */
     displayCalendar: function (e) {
@@ -92,6 +93,23 @@ var PageCalendrierProg = React.createClass({
     },
 
     updateData: function (obj) {
+        // MAJ data
+        this.setState(obj);
+    },
+
+    updateDataInit: function(obj){
+
+        var customClasses = '';
+        // Parcours des couleurs
+        obj.jours.forEach(function(jour, index){
+            customClasses += this.prefixColorClass+jour.couleur+'{' +
+                'background-color: #'+jour.couleur+
+            '}' +
+            '';
+        },this);
+        //console.log('CSS '+customClasses);
+        // Ajout à la balise style
+        $('style').append(customClasses);
         // MAJ data
         this.setState(obj);
     },
@@ -335,7 +353,6 @@ var storeCalendrierProg = Reflux.createStore({
      *  }
      */
     onAdd_days: function (obj) {
-        console.log('add day');
         url = BASE_URI + 'calendrier_programmation';
         var method = 'POST';
 
@@ -355,13 +372,8 @@ var storeCalendrierProg = Reflux.createStore({
             dataType: 'json',
             context: this,
             success: function (bool) {
-                // Sauvegarde OK
-                if (bool) {
-                    // Notification
-                    Actions.notif.success(Lang.get('global.notif_success'));
-                }
-                // Erreur SQL
-                else {
+                // Sauvegarde KO
+                if (!bool) {
                     Actions.notif.error(Lang.get('global.notif_erreur'));
                 }
             },

@@ -105,8 +105,8 @@ class Calendrier extends Eloquent
         // Chercher la ligne de calendrier
         $cal = Calendrier::where('jour','=',$fields['jour'])
             ->where('parking_id', '=', $park)
-        ->toSql();
-Log::debug($cal);
+            ->first();
+//Log::debug(print_r(DB::getQueryLog(),true));
         // Supprimer l'état d'occupataion
         try {
             $cal->delete();
