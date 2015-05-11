@@ -51,6 +51,7 @@ var parkingMap = React.createClass({
             currentMode: mapOptions.dessin.place, // Mode de dessin actuel
             lastNum: 0,
             placesGroup: {},                      // Layer group contenant toutes les places
+            placesMarkersGroup: {},               // Layer group contenant tout les markers des places
             alleesGroup: {},                      // Layer group contenant toutes les allées
             zonesGroup: {},                       // Layer group contenant toutes les zones
             afficheursGroup: {},                  // Layer group contenant tous les afficheurs
@@ -130,9 +131,7 @@ var parkingMap = React.createClass({
             planId: this.props.planId
         };
         // INIT des layers
-        this._inst.placesMarkersGroup = new L.MarkerClusterGroup({
-            maxClusterRadius: 25
-        });
+        this._inst.placesMarkersGroup = new L.geoJson();
 
         this._inst.map.addLayer(this._inst.placesMarkersGroup);
         this._inst.placesGroup = new L.geoJson();
