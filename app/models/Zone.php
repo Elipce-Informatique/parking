@@ -4,7 +4,7 @@ class Zone extends \Eloquent
 {
     protected $table = 'zone';
     public $timestamps = false;
-    protected $fillable = [];
+    protected $guarded = ['id'];
 
     /*****************************************************************************
      * RELATIONS DU MODELE *******************************************************

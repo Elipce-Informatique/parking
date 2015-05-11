@@ -4,7 +4,7 @@ class Allee extends \Eloquent
 {
     protected $table = 'allee';
     public $timestamps = false;
-    protected $fillable = [];
+    protected $guarded = ['id'];
 
     /*****************************************************************************
      * RELATIONS DU MODELE *******************************************************
