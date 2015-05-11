@@ -386,6 +386,9 @@ var ReactPageTest = React.createClass({
                                     checked: true,
                                     value: 'btn1'
                                 }}
+                                evts={{onClick:function(){
+                                    console.log('CLICK');
+                                }}}
                             >
                                 Btn 1
                             </ InputRadioBootstrapEditable>
@@ -395,6 +398,9 @@ var ReactPageTest = React.createClass({
                                 attributes={{
                                     value: 'btn2'
                                 }}
+                                evts={{onClick:function(){
+                                    console.log('CLICK');
+                                }}}
                             >
                                 Btn 2
                             </ InputRadioBootstrapEditable>
@@ -419,6 +425,9 @@ var ReactPageTest = React.createClass({
                             value: 'un',
                             groupClassName: 'col-md-2'
                         }}
+                        evts={{onChange:function(){
+                            console.log('Change');
+                        }}}
                         key = "zouzou"
                     />
                     <InputRadioEditable
@@ -430,6 +439,9 @@ var ReactPageTest = React.createClass({
                             value: 'deux',
                             groupClassName: 'col-md-2'
                         }}
+                        evts={{onChange:function(){
+                            console.log('Change');
+                        }}}
                         key = "pitchoune"/>
                 </RadioGroup>
 

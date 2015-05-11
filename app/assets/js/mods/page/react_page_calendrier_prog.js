@@ -80,7 +80,7 @@ var PageCalendrierProg = React.createClass({
      */
     handleClickJour: function (e) {
         // ID jour
-        var id = $(e.currentTarget).data('id');
+        var id = $(e.currentTarget).find('input').data('id');
         // Recherche de l'objet jour
         var day = _.reduce(this.state.jours, function (result, jour, index) {
             if (jour.id == id) {
@@ -88,7 +88,6 @@ var PageCalendrierProg = React.createClass({
             }
             return result;
         }, {}, this);
-
         this.setState({currentJour: day});
     },
 
@@ -127,7 +126,6 @@ var PageCalendrierProg = React.createClass({
                             onRetour = {this.onRetour}/>
                         <Calendrier
                             editable={false}
-                            jours={this.state.jours}
                             data={this.state.calendrier}/>
                     </div>;
                 break;
@@ -142,36 +140,28 @@ var PageCalendrierProg = React.createClass({
                             <Radio
                                 editable={true}
                                 attributes={{
-                                    key: index,
-                                    'data-id': jour.id,
+                                    'data-id': jour.id
+                                }}
+                                evts={{
                                     onClick: this.handleClickJour
-                                }}>
-
-                                <div
-                                    style={{
-                                        backgroundColor: '#'+jour.couleur,
-                                        height: '15px',
-                                        width: '20px',
-                                        borderRadius: '5px',
-                                        float: 'left',
-                                        marginRight: '5px'
-                                    }}
-                                />
-                            {jour.libelle}
+                                }}
+                                key={index}>
+                                <div>
+                                    <div
+                                        style={{
+                                            backgroundColor: '#' + jour.couleur,
+                                            height: '20px',
+                                            width: '20px',
+                                            borderRadius: '5px',
+                                            float: 'left',
+                                            marginRight: '5px'
+                                        }}
+                                    />
+                                {jour.libelle}
+                                </div>
                             </Radio>
 
                         );
-                        //return (
-                        //    <Button
-                        //        style={{color: '#' + jour.couleur}}
-                        //        key={index}
-                        //        data-id={jour.id}
-                        //        onClick = {this.handleClickJour}
-                        //        data-toggle="button"
-                        //        >
-                        //            {jour.libelle}
-                        //    </Button>
-                        //);
                     }, this);
                 }
                 var groupRight = (
@@ -182,11 +172,12 @@ var PageCalendrierProg = React.createClass({
                         attributes={{
                             name: "joursPredef"
                         }}
-                    >
-                             {btnRight}
+                        radioGroupAttributes={{}}>
+                     {btnRight}
                     </RadioGroup>
                 );
 
+                //console.log('currentJour %o', this.state.currentJour);
                 react =
                     <div key="root">
                         <BandeauCalendrierEdit
@@ -198,8 +189,9 @@ var PageCalendrierProg = React.createClass({
                             onRetour = {this.onRetour}/>
                         <Calendrier
                             editable={true}
-                            jours={this.state.jours}
-                            data={this.state.calendrier}/>
+                            data={this.state.calendrier}
+                            jour={this.state.currentJour}
+                        />
                     </div>
                 break;
             default:
@@ -336,16 +328,22 @@ var storeCalendrierProg = Reflux.createStore({
 
     /**
      * Sauvegarder les données
-     * @param e: evt click du bouton
+     * @param obj: {
+     *  insert: [],
+     *  update: [],
+     *  delete: []
+     *  }
      */
-    onSubmit_form: function (e) {
-        // Variables
-        var url = this.stateLocal.idJour === 0 ? '' : this.stateLocal.idJour;
-        url = BASE_URI + 'calendrier_jours/' + url;
-        var method = this.stateLocal.idJour === 0 ? 'POST' : 'PUT';
+    onAdd_days: function (obj) {
+        console.log('add day');
+        url = BASE_URI + 'calendrier_programmation';
+        var method = 'POST';
 
         // FormData
-        var fData = form_data_helper('form_jours', method);
+        var fData = form_data_helper('', method);
+        // Ajout des données reçues par le calendrier
+        fData.append('data', JSON.stringify(obj));
+        fData.append('parking', this.stateLocal.idParking);
 
         // Requête
         $.ajax({
@@ -356,32 +354,11 @@ var storeCalendrierProg = Reflux.createStore({
             contentType: false,
             dataType: 'json',
             context: this,
-            success: function (tab) {
+            success: function (bool) {
                 // Sauvegarde OK
-                if (tab.save) {
+                if (bool) {
                     // Notification
                     Actions.notif.success(Lang.get('global.notif_success'));
-                    // Mode edition
-                    this.stateLocal.etat = pageState.edition;
-                    // Mode création Ok
-                    if (tab.obj !== null) {
-                        // Maj State local + nouveau libellé
-                        this.stateLocal.idJour = tab.obj.id;
-                        this.stateLocal.detailJour = tab.obj;
-                        this.stateLocal.sousTitre = tab.obj.libelle;
-                    }
-                    // Mode édition
-                    else {
-                        // Nouveau sous titre
-                        this.stateLocal.sousTitre = this.stateLocal.detailJour.libelle;
-                    }
-                    // Maj state
-                    this.trigger(this.stateLocal);
-                }
-                // Le jour existe déjà
-                else if (tab.save == false && tab.errorBdd == false) {
-                    // Notification
-                    Actions.notif.error(Lang.get('calendrier.jours.libelleExists'));
                 }
                 // Erreur SQL
                 else {
