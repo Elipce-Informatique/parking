@@ -124,6 +124,7 @@ class Profil extends Eloquent
         try {
             $profil->delete();
         } catch (Exception $e) {
+            Log::error("Erreur delete Profil ".$e->getMessage());
             $bSave = false;
         }
         return array('save' => $bSave);
@@ -184,11 +185,14 @@ class Profil extends Eloquent
             catch (Exception $e) {
                 // Transaction annulée
                 DB::rollback();
+                Log::error("Erreur Création Profil ".$e->getMessage());
+
                 $retour = array('save' => false);
             }
         }
         // Le profil existe déjà
         else {
+            Log::error("Erreur Création Profil (le profil existe déja) ");
             $retour = array('save' => false);
         }
 
@@ -210,13 +214,14 @@ class Profil extends Eloquent
         // Mise à jour de la traduction
         $profil->traduction = $fields['libelle'];
 
+
         // Sauvegarde
         try {
             // Début transaction SQL
             DB::beginTransaction();
 
             // Table profil sauvegardée
-            if($profil->save()){
+            if($bSave = $profil->save()){
 
                 // Parcours de l'état de chaque module
                 foreach ($fields as $key => $value) {
@@ -270,10 +275,11 @@ class Profil extends Eloquent
             else {
                 // Annulation transaction
                 DB::rollback();
+                Log::error("Erreur modification Profil ".print_r(DB::getQueryLog(), true));
             }
         }
         catch (Exception $e) {
-            Log::warning('-----------> catch : ' . $e->getMessage() . ' <-----------');
+            Log::error("Erreur modification Profil (catch) ".$e->getMessage());
             $bSave = false;
             DB::rollback();
         }

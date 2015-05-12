@@ -165,7 +165,6 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             ->join('modules', 'modules.id', '=', 'profil_module.module_id')
             ->join('module_module', 'module_module.fils_id', '=', 'modules.id')
             ->where('utilisateurs.id', $this->id)
-            ->groupBy('modules.id')
             ->get(['modules.*', 'profil_module.access_level']);
     }
 
