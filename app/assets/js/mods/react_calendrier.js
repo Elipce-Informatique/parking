@@ -29,6 +29,12 @@ var Calendrier = React.createClass({
             jour: React.PropTypes.object // Jour prédéfini sélectionné
         },
 
+        prefix: {
+            dynamic : 'rc-Day--color-',
+            static : 'rc-Day--bg',
+            out : 'rc-Day--outside'
+        },
+
         getDefaultProps: function () {
             return {
                 editable: false,
@@ -63,7 +69,7 @@ var Calendrier = React.createClass({
                     var temp = momentDate.format();
                     // Parcours des jours de la semaine
                     //console.log('rrr %o',  $(e.currentTarget).find('.rc-Day:not(.rc-Day--outside)'));
-                    $(e.currentTarget).find('.rc-Day:not(.rc-Day--outside)').each(function (index, day) {
+                    $(e.currentTarget).find('.rc-Day:not(.'+this.prefix.out+')').each(function (index, day) {
                         // traite le jour
                         this.processDay($(day), momentDate, retour);
                     }.bind(this));
@@ -83,12 +89,21 @@ var Calendrier = React.createClass({
          * @param retour
          * @returns {*}
          */
-        processDay : function(caseCalendrier, momentDate, retour){
+        processDay: function (caseCalendrier, momentDate, retour) {
             // Jour hors mois non pris en compte
-            if (!caseCalendrier.hasClass('rc-Day--outside')) {
+            if (!caseCalendrier.hasClass(this.prefix.out)) {
 
-                //console.log('data-id: ' + caseCalendrier.data('id')+' VS jour choisi '+this.props.jour.id);
-                var dataId = caseCalendrier.data('id')
+                var couleurCase = '';
+                // Un jour prédéfini associé à la case
+                if (caseCalendrier.hasClass(this.prefix.static)) {
+                    caseCalendrier.attr('class', function (index, val) {
+                        var tabTemp = val.split(this.prefix.dynamic)
+                        if (tabTemp.length === 2) {
+                            couleurCase = tabTemp[1];
+                            return undefined;
+                        }
+                    }.bind(this));
+                }
 
                 // Construction date
                 var temp = {
@@ -99,32 +114,31 @@ var Calendrier = React.createClass({
                 }
 
                 // Déjà un jour prédéfini associé
-                if (dataId !== undefined) {
+                if (couleurCase !== '') {
                     // Même jour prédéfini
-                    if (this.props.jour.id == parseInt(dataId)) {
-                        // Suppression du background
-                        caseCalendrier.css({'background-color': ''});
-                        // Suppression data
-                        caseCalendrier.removeData('id');
+                    if (this.props.jour.couleur == couleurCase) {
+                        // Suppression du background + classe static
+                        var dynRm = this.prefix.dynamic + couleurCase;
+                        caseCalendrier.removeClass(dynRm);
+                        caseCalendrier.removeClass(this.prefix.static);
                         // Ajout au retour
                         retour.delete.push(temp);
                     }
                     // Jour différent
                     else {
                         // Modification du background
-                        caseCalendrier.css({'background-color': '#' + this.props.jour.couleur});
-                        // Modification data
-                        caseCalendrier.data('id', this.props.jour.id);
+                        var dynRm = this.prefix.dynamic + couleurCase
+                        caseCalendrier.removeClass(dynRm);
+                        caseCalendrier.addClass(this.prefix.dynamic + this.props.jour.couleur);
                         // Ajout au retour
                         retour.update.push(temp);
                     }
                 }
                 // Insert
                 else {
-                    // Ajout background
-                    caseCalendrier.css({'background-color': '#' + this.props.jour.couleur});
-                    // Ajout data
-                    caseCalendrier.data('id', this.props.jour.id);
+                    // Ajout background + classe static IMPORTANT d'abord static puis dynamic
+                    caseCalendrier.addClass(this.prefix.static);
+                    caseCalendrier.addClass(this.prefix.dynamic+this.props.jour.couleur);
                     // Ajout au retour
                     retour.insert.push(temp);
                 }
@@ -133,6 +147,19 @@ var Calendrier = React.createClass({
         },
 
         render: function () {
+
+            // Chargement des jours du calendrier
+            var days = _.map(this.props.data, function (jour, index) {
+                var modif = {bg: true};
+                modif['color-' + jour.calendrier_jour.couleur] = true;
+                return (
+                    <Day
+                        date={moment(jour.jour)}
+                        modifiers={modif}
+                        key={index}/>
+                );
+            }, this);
+
 
             return (
 
@@ -144,7 +171,10 @@ var Calendrier = React.createClass({
                     locale = {Lang.locale()}>
                     <Month onClick={this.handleClick} />
                     <Week onClick={this.handleClick} />
-                    <Day onClick={this.handleClick} />
+                    <Day
+                        onClick={this.handleClick}
+                        key="jour_click" />
+                {days}
                 </Calendar>
 
             );
