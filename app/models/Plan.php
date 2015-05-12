@@ -3,7 +3,6 @@
 class Plan extends \Eloquent
 {
     protected $table = 'plan';
-    public $timestamps = false;
     protected $fillable = [
         'libelle',
         'description',

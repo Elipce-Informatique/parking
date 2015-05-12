@@ -141,8 +141,8 @@ function insertZone(formDom, data) {
         data: fData
     })
         .done(function (data) {
-            console.log('Retour requête AJAX = %o', data);
-            // TODO : Notifier l'utilisateur selon retour
+            var isValide = JSON.parse(data);
+            isValide ? Actions.notif.success() : Actions.notif.error();
         })
         .fail(function (xhr, type, exception) {
             // if ajax fails display error alert
@@ -206,7 +206,7 @@ function getPlacesInZone(formDom, zone, _inst) {
 }
 
 /**
- * TODO : Tableau des places qui sont contenues dans une allée de la carte par leur centre (Marker)
+ * TODO : tester
  *
  * @param formDom : DOM du formulaire
  * @param allee : allee à tester (format layer Leaflet)

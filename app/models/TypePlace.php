@@ -3,7 +3,6 @@
 class TypePlace extends \Eloquent
 {
     protected $table = 'type_place';
-    public $timestamps = false;
     protected $fillable = [];
 
     /*

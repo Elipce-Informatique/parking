@@ -80,13 +80,16 @@ class ZonesController extends \BaseController
             // ------------------------------------------------------------------
             // CAS 2 : DES ALLÉES
             else {
-
+                Log::debug('Allées à attacher à la zone : ' . print_r($allees, true));
                 // CAS 2.1 ASSOCIATION DES ALLÉES SEULEMENT
                 if (count($placesDefault) == 0) {
-
-                } // Cas 2.2
+                    foreach($allees AS $allee){
+                        // TODO : tester
+                        Allee::find($allee['id'])->update(['zone_id' => $newZone->id]);
+                    }
+                } // CAS 2.2 ASSOCIATION ALLÉES ET PLACES
                 else {
-
+                    // TODO
                 }
 
             }
@@ -96,10 +99,11 @@ class ZonesController extends \BaseController
             // Fin du try, tout s'est bien passé
             // DB::commit();
             DB::rollBack();
+            return json_encode(true);
         } catch (Exception $e) {
             DB::rollBack();
+            return json_encode(false);
         }
-
     }
 
 
