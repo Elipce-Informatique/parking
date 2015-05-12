@@ -14,7 +14,6 @@ class Calendrier extends Eloquent
     | ATTRIBUTS
     |--------------------------------------------------------------------------
     */
-    public $timestamps = false;
     protected $table = 'calendrier';
     protected $fillable = ['jour', 'jour_calendrier_id', 'parking_id'];
 

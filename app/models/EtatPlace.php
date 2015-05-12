@@ -3,7 +3,6 @@
 class EtatPlace extends \Eloquent
 {
     protected $table = 'etat_place';
-    public $timestamps = false;
     protected $fillable = [];
 
     /*

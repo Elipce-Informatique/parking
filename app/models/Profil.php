@@ -14,7 +14,6 @@ class Profil extends Eloquent
     | ATTRIBUTS
     |--------------------------------------------------------------------------
     */
-    public $timestamp = false;
     protected $table='profils';
     protected $fillable = ['traduction'];
 

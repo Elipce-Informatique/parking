@@ -2,7 +2,6 @@
 
 class Afficheur extends \Eloquent
 {
-    public $timestamps = false;
     protected $fillable = [];
 
     /*****************************************************************************

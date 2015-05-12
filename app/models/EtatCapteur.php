@@ -2,7 +2,6 @@
 
 class EtatCapteur extends \Eloquent
 {
-    public $timestamps = false;
     protected $fillable = [];
     protected $table = 'etat_capteur';
 

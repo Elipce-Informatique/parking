@@ -3,7 +3,6 @@
 class Place extends \Eloquent
 {
     protected $table = 'place';
-    public $timestamps = false;
     protected $fillable = ['libelle', 'num', 'capteur_id', 'type_place_id', 'allee_id', 'geojson', 'bonne', 'etat_occupation_id', 'lat', 'lng'];
 
     /*****************************************************************************

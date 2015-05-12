@@ -2,8 +2,6 @@
 
 class EtatsDoccupation extends Eloquent
 {
-    public $timestamps = false;
-
     protected $fillable = ['libelle','couleur','type_place_id','is_occupe'];
     protected $table = 'etat_occupation';
 

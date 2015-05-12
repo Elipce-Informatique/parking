@@ -34,20 +34,22 @@ class ZonesController extends \BaseController
     {
         DB::beginTransaction();
 
-        $data = json_decode(Input::get('data'), true);
+        try {
+            $data = json_decode(Input::get('data'), true);
 
-        // DONNÉES DE LA ZONE
-        $nom = Input::get('nom_zone');
-        $description = Input::get('description_zone');
-        $geojsonZone = json_encode($data['zone_geojson']);
-        $plan_id = $data['plan_id'];
+            // DONNÉES DE LA ZONE
+            $nom = Input::get('nom_zone');
+            $description = Input::get('description_zone');
+            $geojsonZone = json_encode($data['zone_geojson']);
+            $plan_id = $data['plan_id'];
 
-        // DONNÉES DES LIAISONS
-        $allees = $data['allees'];
-        $placesDefault = $data['places_default'];
+            // DONNÉES DES LIAISONS
+            $allees = $data['allees'];
+            $placesDefault = $data['places_default'];
 
-        // CAS 1 : PAS D'ALLEES
-        if (count($allees) == 0) {
+            // ------------------------------------------------------------------
+            // DANS TOUS LES CAS :
+
             // CRÉATION DE LA ZONE EN BDD
             $newZone = Zone::create([
                 'libelle' => $nom,
@@ -66,14 +68,42 @@ class ZonesController extends \BaseController
                 'geojson' => ''
             ]);
             Log::debug('Allée créée ::::::: ' . print_r($alleeDefault->id, true));
+            // ------------------------------------------------------------------
+            // ------------------------------------------------------------------
+            // CAS 1 : PAS D'ALLEES
+            if (count($allees) == 0) {
+                // ASSOCIATION DES PLACES DEFAUT À L'ALLÉE PAR DÉFAUT
+                foreach ($placesDefault as $place) {
+                    Place::find($place['id'])->update(['allee_id' => $alleeDefault->id]);
+                }
+            }
+            // ------------------------------------------------------------------
+            // CAS 2 : DES ALLÉES
+            else {
+                Log::debug('Allées à attacher à la zone : ' . print_r($allees, true));
+                // CAS 2.1 ASSOCIATION DES ALLÉES SEULEMENT
+                if (count($placesDefault) == 0) {
+                    foreach($allees AS $allee){
+                        // TODO : tester
+                        Allee::find($allee['id'])->update(['zone_id' => $newZone->id]);
+                    }
+                } // CAS 2.2 ASSOCIATION ALLÉES ET PLACES
+                else {
+                    // TODO
+                }
 
-            // ASSOCIATION DES PLACES À L'ALLÉE PAR DÉFAUT
+            }
+            // ------------------------------------------------------------------
 
-            // TODO boucle pour parcourir toutes les places
+
+            // Fin du try, tout s'est bien passé
+            // DB::commit();
+            DB::rollBack();
+            return json_encode(true);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return json_encode(false);
         }
-
-
-        DB::rollBack();
     }
 
 

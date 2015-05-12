@@ -4,7 +4,6 @@ class JournalEquipementPlan extends \Eloquent
 {
     protected $guarded = ['id'];
     protected $table = "journal_equipement_plan";
-    public $timestamps = true;
 
 
     /*****************************************************************************

@@ -3,7 +3,6 @@
 class TypeAfficheur extends \Eloquent
 {
     protected $table = 'type_afficheur';
-    public $timestamps = false;
     protected $fillable = [];
 
     /*****************************************************************************
