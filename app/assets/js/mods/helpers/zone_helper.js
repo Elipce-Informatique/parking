@@ -6,6 +6,15 @@ var mapHelper = require('./map_helper');
 var formDataHelper = require('./form_data_helper');
 
 /**
+ * Tests initiaux à la création d'une zone :
+ * Chevauche une autre zone ?
+ * - KO avec message
+ * Chevauche une allée ?
+ * - KO avec message
+ * Contenue dans une autre zone ?
+ * - KO avec message
+ * Contenue dans une allée ?
+ * - KO avec message
  *
  * @param newZone : La nouvelle zone à tester
  * @param zones : Tableau des zones. Chaque zone est un tablau de latlng
@@ -42,7 +51,7 @@ function geometryCheck(newZone, zones, allees) {
                 message = Lang.get('administration_parking.carte.err_allee_chevauche');
                 return false; // Break the each
             }
-            // IV - CONTENU DANS UNE AUTRE ZONE ?
+            // IV - CONTENU DANS UNE AUTRE ALLEE ?
             if (mapHelper.polygonContainsPolygon(a, newZone)) {
                 isValid = false;
                 message = Lang.get('administration_parking.carte.err_zone_contenue_allee');
@@ -68,7 +77,6 @@ function geometryCheck(newZone, zones, allees) {
  * @returns {boolean} état de l'insertion
  */
 function createZone(formDom, zone, _inst) {
-    console.log('Pass handleZone, zone : %o', zone);
 
     var alleesInZone = getAlleesInZone(formDom, zone, _inst);
     var geoJson = zone.e.layer.toGeoJSON();
@@ -118,7 +126,6 @@ function createZone(formDom, zone, _inst) {
         else {
             // TODO : trouver les places à mettre dans l'allée par défaut.
         }
-        console.log('Places dans l\'allée: %o', placesInAllees);
     }
     return true;
 }
@@ -192,7 +199,6 @@ function getPlacesInZone(formDom, zone, _inst) {
 
     // LISTE DES PLACES CONTENUES DANS LA ZONE
     var placesInZone = _.filter(allPlaces, function (place) {
-        console.log('Place => %o', place);
         var isIn = mapHelper.isPointInPolygon(zone.e.layer._latlngs, place._latlng);
         return isIn;
     });

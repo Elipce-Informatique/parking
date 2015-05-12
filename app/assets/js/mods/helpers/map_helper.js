@@ -341,7 +341,6 @@ function getPolygonsContainedInPolygon(container, polygons) {
 function getPointsContainedInPolygon(container, points) {
     return _.filter(points, function (point) {
         var isIn = isPointInPolygon(container, point);
-        console.log('Pass avec container = %o, point = %o, isIn = %o', container, point, isIn);
         return isIn;
     });
 }
@@ -395,7 +394,6 @@ function getPolygonsArrayFromLeafletLayerGroup(layerGroup) {
 function getMarkersArrayFromLeafletLayerGroup(layerGroup) {
     var retour = [];
 
-    console.log('Marker group : %o', layerGroup);
     var polygons = layerGroup._layers;
     if (!_.isEmpty(polygons)) {
         _.forIn(polygons, function (val, key) {

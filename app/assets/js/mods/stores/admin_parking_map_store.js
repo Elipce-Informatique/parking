@@ -156,12 +156,31 @@ var store = Reflux.createStore({
                 allees = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.alleesGroup);
 
                 var geometryOk = zoneHelper.geometryCheck(data.e.layer._latlngs, zones, allees);
-                console.log('Géométrie ok = %o', geometryOk);
+                console.log('Géométrie Zone ok = %o', geometryOk);
 
-                // TODO : On ajoute à la carte juste pour test
+                // Géométrie OK ouverture de la POPUP
                 if (geometryOk) {
                     var retour = {
                         type: mapOptions.type_messages.new_zone,
+                        data: data
+                    };
+                    this.trigger(retour);
+                }
+                break;
+            // -------------------------------------------------------------
+            // PROCÉDURE DE CRÉATION D'ALLÉE
+            case mapOptions.dessin.allee:
+                var zones, allees;
+                zones = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.zonesGroup);
+                allees = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.alleesGroup);
+
+                var geometryOk = alleeHelper.geometryCheck(data.e.layer._latlngs, zones, allees);
+                console.log('Géométrie Allée ok = %o', geometryOk);
+
+                // Géométrie OK ouverture de la POPUP
+                if (geometryOk) {
+                    var retour = {
+                        type: mapOptions.type_messages.new_allee,
                         data: data
                     };
                     this.trigger(retour);

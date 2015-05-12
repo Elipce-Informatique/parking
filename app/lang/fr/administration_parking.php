@@ -60,6 +60,7 @@ return array(
         'err_zone_chevauche' => 'Erreur : La zone dessinée coupe une autre zone.',
         'err_allee_chevauche' => 'Erreur : La zone dessinée coupe une allée.',
         'err_zone_contenue_allee' =>'Erreur : La zone dessinée ne doit pas être contenue dans une allée.',
+        'err_allee_contenue_allee' =>'Erreur : La zone dessinée ne doit pas être contenue dans une autre allée.',
     ],
 
     // MODULE TEMPS REEL
