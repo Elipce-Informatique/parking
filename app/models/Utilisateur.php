@@ -16,7 +16,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
     |--------------------------------------------------------------------------
     */
 
-    protected $fillable = ['nom', 'prenom', 'email', 'password'];
+    protected $fillable = ['nom', 'prenom', 'email', 'password', 'photo'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -32,7 +32,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
     */
     public function profils()
     {
-        return $this->belongsToMany('Profil');
+        return $this->belongsToMany('Profil')->withTimestamps();
     }
 
     public function parkings()
@@ -317,38 +317,22 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             DB::beginTransaction();
 
             // Sauvegarde des données utilisateur
-            $bSave = $user->save();
-
-            // Sauvegarde OK
-            if ($bSave) {
-
+            if($bSave = $user->save()){
                 // Parcours des droits de chaque profil
                 foreach ($fields as $key => $value) {
                     // On coupe le name courant selon '_'
                     $aEtat = explode('_', $key);
                     // Radio
                     if ($aEtat[0] == 'profil') {
-                        // Requete profil_utilisateur
-                        $ligne = DB::table('profil_utilisateur')
-                            ->where('profil_id', $aEtat[1])
-                            ->where('utilisateur_id', $id)
-                            ->first(['profil_utilisateur.*']);
-
-                        // Utilisateur déjà associé au profil
-                        if (count($ligne) > 0) {
-                            // Plus d'accès
-                            if ($value == 'non') {
-                                $bSave = DB::table('profil_utilisateur')->delete($ligne->id);
-                            }
+                        // Profil concerné
+                        $profilId = $aEtat[1];
+                        // Plus d'accès
+                        if ($value == 'non') {
+                            // Supprime un profil au user
+                            $user->profils()->detach($profilId);
                         } // Nouveau droit
-                        else if ($value != 'non') {
-                            $ligne = [
-                                'utilisateur_id' => $id,
-                                'profil_id' => $aEtat[1]
-                            ];
-
-                            // Défini les droits associés au profil
-                            $bSave = DB::table('profil_utilisateur')->insert($ligne);
+                        else {
+                            $user->profils()->attach($profilId);
                         }
                     }
                 }
@@ -361,13 +345,16 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 else {
                     // Transaction SQL KO
                     DB::rollback();
+                    Log::debug('Erreur update utilisateur (false) '.DB::getQueryLog());
                 }
             }
         } // Erreur dans la transaction SQL
         catch (Exception $e) {
+            Log::debug('Erreur update utilisateur (catch) '.$e->getMessage());
             $bSave = false;
             DB::rollback();
         }
+
         return array('save' => $bSave, 'idUser' => $id);
     }
 
@@ -425,7 +412,8 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 DB::beginTransaction();
 
                 // Nouvel utilisateur
-                $idUser = Utilisateur::insertGetId($fieldUser);
+                $oUser = Utilisateur::create($fieldUser);
+                $idUser = $oUser->id;
 
                 // Parcours des profils du user
                 foreach ($fields as $key => $value) {
@@ -433,13 +421,10 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                     $aEtat = explode('_', $key);
                     // Radio
                     if ($aEtat[0] == 'profil' && $value == 'oui') {
-                        $new = [
-                            'utilisateur_id' => $idUser,
-                            'profil_id' => $aEtat[1]
-                        ];
 
+                        $profilId = $aEtat[1];
                         // Ajoute un profil au user
-                        $bSave = DB::table('profil_utilisateur')->insert($new);
+                        $oUser->profils()->attach($profilId);
                     }
                 }
 
@@ -462,6 +447,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                     'save' => $bSave
                 );
             } catch (Exception $e) {
+                Log::debug('Erreur insert utilisateur (catch) '.$e->getMessage());
                 // Transaction KO
                 DB::rollback();
                 $retour = array('save' => false);
