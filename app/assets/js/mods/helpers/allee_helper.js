@@ -68,14 +68,87 @@ function geometryCheck(newAllee, zones, allees) {
  * @returns {boolean} état de l'insertion
  */
 function createAllee(formDom, allee, _inst) {
+    console.log('CreateAllee avec %o', arguments);
 
-    var alleesInZone = getAlleesInZone(formDom, allee, _inst);
+    // Une allée contient la zone ?
+    var zoneWrapper = getZoneWrapper(formDom, allee, _inst);
     var geoJson = allee.e.layer.toGeoJSON();
+
+    var data = {};
+
+    // ALLÉE HORS ZONE : Zone par défaut
+    if (zoneWrapper.length != 1) {
+        var defaultZoneId = _inst.defaults.zone.id;
+        data = {
+            allee_geojson: geoJson,
+            zone_id: defaultZoneId
+        };
+
+    }
+    // ALLÉE DANS UNE ZONE : Attachée à ladite zone
+    else {
+        data = {
+            allee_geojson: geoJson,
+            zone_id: zoneWrapper[0].id
+        };
+    }
+    // TODO : DANS TOUS LES CAS attahcer les places
 
 
     return true;
 }
 
+
+/**
+ * Effectue l'appel AJAX pour insérer la zone en BDD en fonction des params
+ * @param formDom
+ * @param data
+ */
+function insertAllee(formDom, data) {
+    // CONSTRUCTION DE l'AJAX DE CRÉATION
+    var fData = formDataHelper('form_mod_allee', 'POST');
+    fData.append('data', JSON.stringify(data));
+
+    $.ajax({
+        type: 'POST',
+        url: BASE_URI + 'parking/allee',
+        processData: false,
+        contentType: false,
+        data: fData
+    })
+        .done(function (data) {
+            var isValide = JSON.parse(data);
+            isValide ? Actions.notif.success() : Actions.notif.error();
+        })
+        .fail(function (xhr, type, exception) {
+            // if ajax fails display error alert
+            alert("ajax error response error " + type);
+            alert("ajax error response body " + xhr.responseText);
+        });
+}
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//******************************************************************************************************
+
+function getZoneWrapper(formDom, allee, _inst) {
+    var allZones = mapHelper.getPolygonsArrayFromLeafletLayerGroup(_inst.mapInst.zonesGroup);
+
+    // ZONE QUI CONTIENT L'ALLÉE
+    var zoneContainAllee = _.filter(allZones, function (zone) {
+        return mapHelper.polygonContainsPolygon(zone, allee.e.layer);
+    });
+
+    // EXTRACTION DE LA PROPRIÉTÉ DATA POUR ÉVITER LA REDONDANCE LIÉE À LA MAP.
+    zoneContainAllee = _.map(zoneContainAllee, function (zone) {
+        return zone.options.data;
+    });
+
+    console.log('Sone entourant l\'allée: %o', zoneContainAllee);
+    return zoneContainAllee;
+}
+
+/**
+ * Interface publique du module
+ */
 module.exports = {
     geometryCheck: geometryCheck,
     createAllee: createAllee
