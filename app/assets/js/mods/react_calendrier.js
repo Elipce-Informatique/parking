@@ -51,6 +51,8 @@ var Calendrier = React.createClass({
          */
         handleClick: function (scope, momentDate, e) {
             //console.log('scope %o , moment '+momentDate.format()+' , couleur '+'#'+this.props.jour.couleur, scope, momentDate);
+            // Copie de la date
+            var currentDate = moment(momentDate);
             // Droit d'écrire dans le calendrier
             if (this.props.editable && !_.isEmpty(this.props.jour)) {
                 // Variable
@@ -62,16 +64,23 @@ var Calendrier = React.createClass({
 
                 if (scope == 'Day') {
                     // Traite le jour
-                    this.processDay($(e.currentTarget), momentDate, retour);
+                    this.processDay($(e.currentTarget), currentDate, retour);
                     e.stopPropagation();
                 }
                 else if (scope == 'Week' || scope == 'Month') {
                     var temp = momentDate.format();
-                    // Parcours des jours de la semaine
-                    //console.log('rrr %o',  $(e.currentTarget).find('.rc-Day:not(.rc-Day--outside)'));
-                    $(e.currentTarget).find('.rc-Day:not(.'+this.prefix.out+')').each(function (index, day) {
-                        // traite le jour
-                        this.processDay($(day), momentDate, retour);
+                    // Parcours des jours de la semaine ou du mois
+                    $(e.currentTarget).find('.rc-Day').each(function (index, day) {
+                        // La semaine chevauche deux mois
+                        if(scope == 'Week' && index === 0 && $(day).hasClass(this.prefix.out)){
+                            // Mois +1
+                            currentDate = currentDate.add(1, 'M');
+                        }
+                        // Jour dans le mois sélectionné
+                        if(!$(day).hasClass(this.prefix.out)) {
+                            // traite le jour
+                            this.processDay($(day), currentDate, retour);
+                        }
                     }.bind(this));
                     e.stopPropagation();
                 }
@@ -112,6 +121,7 @@ var Calendrier = React.createClass({
                     + _.padLeft(caseCalendrier.find('span').text(), 2, '0'),
                     jour_calendrier_id: this.props.jour.id
                 }
+                //console.log('jour: '+temp.jour);
 
                 // Déjà un jour prédéfini associé
                 if (couleurCase !== '') {

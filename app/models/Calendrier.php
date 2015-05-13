@@ -112,7 +112,7 @@ class Calendrier extends Eloquent
         }
         catch (Exception $e) {
             $bSave = false;
-            Log::error('erreur delete calendrier: '.$e->getMessage());
+            Log::error('erreur delete calendrier: '.$e->getMessage().' jour '.$fields['jour'].' parking_id '.$park);
         }
         return $bSave;
     }

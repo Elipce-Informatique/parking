@@ -39,7 +39,7 @@ class CalendrierProgrammationController extends \BaseController
         try {
             DB::beginTransaction();
 
-            Log::debug('data '.print_r($data, true));
+//            Log::debug('data '.print_r($data, true));
 
             // Insert
             if (count($data['data']['insert']) > 0) {
