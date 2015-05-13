@@ -424,6 +424,21 @@ var parkingMap = React.createClass({
     },
 
     /**
+     * Ajoute les ZONES
+     * @param data : le couple type-data envoyé par le store
+     */
+    onZonesAdded: function (formes) {
+        var liste_data = formes.data;
+        _.each(liste_data, function (place) {
+            this._inst.zonesGroup.addLayer(place.polygon);
+        }, this);
+
+        this.setState({
+            isModalOpen: false
+        });
+    },
+
+    /**
      * Remet tous les featuresGroups en ordre (zIndex)
      * L'ordre de bas en haut:
      * - Zone
@@ -452,6 +467,9 @@ var parkingMap = React.createClass({
             case mapOptions.type_messages.add_places:
                 this.onPlacesAdded(data);
                 break;
+            case mapOptions.type_messages.add_zones:
+                this.onZonesAdded(data);
+                break;
             case mapOptions.type_messages.new_place_auto:
                 this._onNewPlaceAuto(data);
                 break;
@@ -460,7 +478,6 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.type_messages.delete_forme:
                 break;
-
             case mapOptions.type_messages.new_zone:
                 this._onNewZone(data);
                 break;

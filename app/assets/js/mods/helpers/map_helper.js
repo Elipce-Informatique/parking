@@ -408,6 +408,18 @@ function getMarkersArrayFromLeafletLayerGroup(layerGroup) {
     return retour;
 }
 
+/**
+ * Crée et retourne une forme leaflet à partir d'un geoJson
+ * @param geoJson
+ * @returns {dataPlaces.geoJson}
+ */
+function createFeatureFromJSON(geoJson, extraData) {
+     var style = {
+         data: extraData
+     };
+    return new L.geoJson(JSON.parse(geoJson), {style: style});
+}
+
 
 /**
  * Ce que le module exporte.
@@ -429,6 +441,7 @@ module.exports = {
     getMarkersArrayFromLeafletLayerGroup: getMarkersArrayFromLeafletLayerGroup,
     getPolygonsContainedInPolygon: getPolygonsContainedInPolygon,
     getPointsContainedInPolygon: getPointsContainedInPolygon,
+    createFeatureFromJSON: createFeatureFromJSON,
     customZoomCRS: customZoomCRS
 };
 

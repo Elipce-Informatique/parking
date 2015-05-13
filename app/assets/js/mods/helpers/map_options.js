@@ -73,7 +73,8 @@ module.exports.type_messages = {
     new_calibre: 8,
     hide_modal: 9,
     new_zone: 10,
-    new_allee: 11
+    new_allee: 11,
+    add_zones: 12
 };
 
 /**

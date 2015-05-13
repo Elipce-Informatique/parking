@@ -96,7 +96,7 @@ var store = Reflux.createStore({
             // infos journal
             this.recupInfosJournal(map, calibre, parkingInfos);
             // Affichage des places du niveau
-            this.affichagePlacesInitial();
+            this.affichageDataInitial();
         }.bind(this));
     },
 
@@ -295,7 +295,7 @@ var store = Reflux.createStore({
     /**
      * Fonction appellée lors de l'init, on a déjà toutes les données dans _inst
      */
-    affichagePlacesInitial: function () {
+    affichageDataInitial: function () {
         var placesMap = _.map(this._inst.places, function (p) {
             return mapHelper.createPlaceFromData(p, this._inst.types_places);
         }, this);

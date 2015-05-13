@@ -102,7 +102,7 @@ var store = Reflux.createStore({
 
         $.when(p1, p2, p3).done(function () {
             // Affichage des places du niveau
-            this.affichagePlacesInitial();
+            this.affichageDataInitial();
         }.bind(this));
     }
     ,
@@ -655,7 +655,8 @@ var store = Reflux.createStore({
     /**
      * Fonction appellée lors de l'init, on a déjà toutes les données dans _inst
      */
-    affichagePlacesInitial: function () {
+    affichageDataInitial: function () {
+        // LES PLACES À AFFICHER SUR LA MAP ----------------------------------------------------
         var placesMap = _.map(this._inst.places, function (p) {
             var coords = {lat: p.lat, lng: p.lng};
             var nom = p.libelle;
@@ -684,6 +685,23 @@ var store = Reflux.createStore({
             data: placesMap
         };
         this.trigger(message);
+
+        //TODO  LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
+        //var zonesMap = _.map(this._inst.zones, function (z) {
+        //    var extraData = z;
+        //    var polygon = mapHelper.createFeatureFromJSON(z.geojson, extraData);
+        //
+        //    return {
+        //        data: z,
+        //        polygon: polygon
+        //    };
+        //}, this);
+
+        //message = {
+        //    type: mapOptions.type_messages.add_zones,
+        //    data: zonesMap
+        //};
+        //this.trigger(message);
     },
 
     /**
