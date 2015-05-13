@@ -13,55 +13,55 @@ class UserHistory extends Migration {
 	public function up()
 	{
         Schema::table('modules', function ($t) {
-            $t->integer('create_by')->nullable()->index();
+            $t->integer('created_by')->nullable()->index();
             $t->integer('updated_by')->nullable()->index();
-            $t->foreign('create_by')->references('id')->on('utilisateurs');
+            $t->foreign('created_by')->references('id')->on('utilisateurs');
             $t->foreign('updated_by')->references('id')->on('utilisateurs');
         });
 
         Schema::table('module_module', function ($t) {
-            $t->integer('create_by')->nullable()->index();
+            $t->integer('created_by')->nullable()->index();
             $t->integer('updated_by')->nullable()->index();
-            $t->foreign('create_by')->references('id')->on('utilisateurs');
+            $t->foreign('created_by')->references('id')->on('utilisateurs');
             $t->foreign('updated_by')->references('id')->on('utilisateurs');
         });
 
 
 
         Schema::table('password_reminders', function ($t) {
-            $t->integer('create_by')->nullable()->index();
+            $t->integer('created_by')->nullable()->index();
             $t->integer('updated_by')->nullable()->index();
-            $t->foreign('create_by')->references('id')->on('utilisateurs');
+            $t->foreign('created_by')->references('id')->on('utilisateurs');
             $t->foreign('updated_by')->references('id')->on('utilisateurs');
         });
 
 
         Schema::table('profils', function ($t) {
-            $t->integer('create_by')->nullable()->index();
+            $t->integer('created_by')->nullable()->index();
             $t->integer('updated_by')->nullable()->index();
-            $t->foreign('create_by')->references('id')->on('utilisateurs');
+            $t->foreign('created_by')->references('id')->on('utilisateurs');
             $t->foreign('updated_by')->references('id')->on('utilisateurs');
         });
 
         Schema::table('profil_module', function ($t) {
-            $t->integer('create_by')->nullable()->index();
+            $t->integer('created_by')->nullable()->index();
             $t->integer('updated_by')->nullable()->index();
-            $t->foreign('create_by')->references('id')->on('utilisateurs');
+            $t->foreign('created_by')->references('id')->on('utilisateurs');
             $t->foreign('updated_by')->references('id')->on('utilisateurs');
         });
 
         Schema::table('profil_utilisateur', function ($t) {
-            $t->integer('create_by')->nullable()->index();
+            $t->integer('created_by')->nullable()->index();
             $t->integer('updated_by')->nullable()->index();
-            $t->foreign('create_by')->references('id')->on('utilisateurs');
+            $t->foreign('created_by')->references('id')->on('utilisateurs');
             $t->foreign('updated_by')->references('id')->on('utilisateurs');
         });
 
 
         Schema::table('utilisateurs', function ($t) {
-            $t->integer('create_by')->nullable()->index();
+            $t->integer('created_by')->nullable()->index();
             $t->integer('updated_by')->nullable()->index();
-            $t->foreign('create_by')->references('id')->on('utilisateurs');
+            $t->foreign('created_by')->references('id')->on('utilisateurs');
             $t->foreign('updated_by')->references('id')->on('utilisateurs');
         });
 
@@ -74,59 +74,24 @@ class UserHistory extends Migration {
 	 */
 	public function down()
 	{
-        Schema::table('modules', function ($t) {
-            $t->dropForeign('create_by');
-            $t->dropForeign('updated_by');
+        $tables = [
+            'modules',
+            'module_module',
+            'password_reminders',
+            'profils',
+            'profil_module',
+            'profil_utilisateur',
+            'utilisateurs'
+        ];
+
+        foreach($tables as $table) {
+            Schema::table($table, function ($t) {
+                $t->dropForeign($t.'_created_by_foreign');
+                $t->dropColumn('created_by');
+            });
+        }
 
 
-        });
-
-        Schema::table('module_module', function ($t) {
-            $t->dropForeign('create_by');
-            $t->dropForeign('updated_by');
-
-
-        });
-
-
-
-        Schema::table('password_reminders', function ($t) {
-            $t->dropForeign('create_by');
-            $t->dropForeign('updated_by');
-
-
-        });
-
-
-
-        Schema::table('profils', function ($t) {
-            $t->dropForeign('create_by');
-            $t->dropForeign('updated_by');
-
-
-        });
-
-        Schema::table('profil_module', function ($t) {
-            $t->dropForeign('create_by');
-            $t->dropForeign('updated_by');
-
-
-        });
-
-        Schema::table('profil_utilisateur', function ($t) {
-            $t->dropForeign('create_by');
-            $t->dropForeign('updated_by');
-
-
-        });
-
-
-        Schema::table('utilisateurs', function ($t) {
-            $t->dropForeign('create_by');
-            $t->dropForeign('updated_by');
-
-
-        });
 	}
 
 }

@@ -31,7 +31,7 @@ ClassLoader::addDirectories(array(
 |
 */
 
-Log::useFiles(storage_path().'/logs/laravel.log');
+Log::useDailyFiles(storage_path().'/logs/laravel.log');
 
 /*
 |--------------------------------------------------------------------------
@@ -79,3 +79,15 @@ App::down(function()
 */
 
 require app_path().'/filters.php';
+
+
+Utilisateur::creating(function($post)
+{
+    $post->created_by = Auth::user()->id;
+    $post->updated_by = Auth::user()->id;
+});
+
+Utilisateur::updating(function($post)
+{
+    $post->updated_by = Auth::user()->id;
+});
