@@ -34,6 +34,7 @@ return array(
         'titre_places_multiples' => 'Configuration de la série de places',
         'titre_calibre' => 'Configuration du calibre',
         'titre_zone' => 'Création d\'une zone',
+        'titre_allee' => 'Création d\'une allée',
         'ajouter_place' => 'Ajouter une place',
         'ajouter_place_auto' => 'Ajouter une série de places',
         'ajouter_allee' => 'Ajouter une allée',
@@ -60,6 +61,7 @@ return array(
         'err_zone_chevauche' => 'Erreur : La zone dessinée coupe une autre zone.',
         'err_allee_chevauche' => 'Erreur : La zone dessinée coupe une allée.',
         'err_zone_contenue_allee' =>'Erreur : La zone dessinée ne doit pas être contenue dans une allée.',
+        'err_allee_contenue_allee' =>'Erreur : La zone dessinée ne doit pas être contenue dans une autre allée.',
     ],
 
     // MODULE TEMPS REEL

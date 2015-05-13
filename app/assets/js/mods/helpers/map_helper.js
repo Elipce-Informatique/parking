@@ -341,7 +341,6 @@ function getPolygonsContainedInPolygon(container, polygons) {
 function getPointsContainedInPolygon(container, points) {
     return _.filter(points, function (point) {
         var isIn = isPointInPolygon(container, point);
-        console.log('Pass avec container = %o, point = %o, isIn = %o', container, point, isIn);
         return isIn;
     });
 }
@@ -395,7 +394,6 @@ function getPolygonsArrayFromLeafletLayerGroup(layerGroup) {
 function getMarkersArrayFromLeafletLayerGroup(layerGroup) {
     var retour = [];
 
-    console.log('Marker group : %o', layerGroup);
     var polygons = layerGroup._layers;
     if (!_.isEmpty(polygons)) {
         _.forIn(polygons, function (val, key) {
@@ -408,6 +406,18 @@ function getMarkersArrayFromLeafletLayerGroup(layerGroup) {
     }
 
     return retour;
+}
+
+/**
+ * Crée et retourne une forme leaflet à partir d'un geoJson
+ * @param geoJson
+ * @returns {dataPlaces.geoJson}
+ */
+function createFeatureFromJSON(geoJson, extraData) {
+     var style = {
+         data: extraData
+     };
+    return new L.geoJson(JSON.parse(geoJson), {style: style});
 }
 
 
@@ -431,6 +441,7 @@ module.exports = {
     getMarkersArrayFromLeafletLayerGroup: getMarkersArrayFromLeafletLayerGroup,
     getPolygonsContainedInPolygon: getPolygonsContainedInPolygon,
     getPointsContainedInPolygon: getPointsContainedInPolygon,
+    createFeatureFromJSON: createFeatureFromJSON,
     customZoomCRS: customZoomCRS
 };
 

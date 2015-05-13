@@ -102,7 +102,7 @@ var store = Reflux.createStore({
 
         $.when(p1, p2, p3).done(function () {
             // Affichage des places du niveau
-            this.affichagePlacesInitial();
+            this.affichageDataInitial();
         }.bind(this));
     }
     ,
@@ -156,12 +156,31 @@ var store = Reflux.createStore({
                 allees = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.alleesGroup);
 
                 var geometryOk = zoneHelper.geometryCheck(data.e.layer._latlngs, zones, allees);
-                console.log('Géométrie ok = %o', geometryOk);
+                console.log('Géométrie Zone ok = %o', geometryOk);
 
-                // TODO : On ajoute à la carte juste pour test
+                // Géométrie OK ouverture de la POPUP
                 if (geometryOk) {
                     var retour = {
                         type: mapOptions.type_messages.new_zone,
+                        data: data
+                    };
+                    this.trigger(retour);
+                }
+                break;
+            // -------------------------------------------------------------
+            // PROCÉDURE DE CRÉATION D'ALLÉE
+            case mapOptions.dessin.allee:
+                var zones, allees;
+                zones = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.zonesGroup);
+                allees = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.alleesGroup);
+
+                var geometryOk = alleeHelper.geometryCheck(data.e.layer._latlngs, zones, allees);
+                console.log('Géométrie Allée ok = %o', geometryOk);
+
+                // Géométrie OK ouverture de la POPUP
+                if (geometryOk) {
+                    var retour = {
+                        type: mapOptions.type_messages.new_allee,
                         data: data
                     };
                     this.trigger(retour);
@@ -298,6 +317,10 @@ var store = Reflux.createStore({
             case "form_mod_zone":
                 this.handleZone(formDom, this._inst.lastDraw);
                 break;
+            case "form_mod_allee":
+                this.handleAllee(formDom, this._inst.lastDraw);
+                break;
+
             default:
                 break;
         }
@@ -442,6 +465,15 @@ var store = Reflux.createStore({
      */
     handleZone: function (formDom, zone) {
         zoneHelper.createZone(formDom, zone, this._inst);
+    },
+
+    /**
+     * Gère l'insertion en BDD de l'allée avec le formulaire de la modale et la forme dessinée
+     * @param formDom
+     * @param zone
+     */
+    handleAllee: function (formDom, zone) {
+        alleeHelper.createAllee(formDom, zone, this._inst);
     },
 
     /**
@@ -623,7 +655,8 @@ var store = Reflux.createStore({
     /**
      * Fonction appellée lors de l'init, on a déjà toutes les données dans _inst
      */
-    affichagePlacesInitial: function () {
+    affichageDataInitial: function () {
+        // LES PLACES À AFFICHER SUR LA MAP ----------------------------------------------------
         var placesMap = _.map(this._inst.places, function (p) {
             var coords = {lat: p.lat, lng: p.lng};
             var nom = p.libelle;
@@ -652,6 +685,23 @@ var store = Reflux.createStore({
             data: placesMap
         };
         this.trigger(message);
+
+        //TODO  LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
+        //var zonesMap = _.map(this._inst.zones, function (z) {
+        //    var extraData = z;
+        //    var polygon = mapHelper.createFeatureFromJSON(z.geojson, extraData);
+        //
+        //    return {
+        //        data: z,
+        //        polygon: polygon
+        //    };
+        //}, this);
+
+        //message = {
+        //    type: mapOptions.type_messages.add_zones,
+        //    data: zonesMap
+        //};
+        //this.trigger(message);
     },
 
     /**
