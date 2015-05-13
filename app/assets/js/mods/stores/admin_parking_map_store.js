@@ -317,6 +317,10 @@ var store = Reflux.createStore({
             case "form_mod_zone":
                 this.handleZone(formDom, this._inst.lastDraw);
                 break;
+            case "form_mod_allee":
+                this.handleAllee(formDom, this._inst.lastDraw);
+                break;
+
             default:
                 break;
         }
@@ -461,6 +465,15 @@ var store = Reflux.createStore({
      */
     handleZone: function (formDom, zone) {
         zoneHelper.createZone(formDom, zone, this._inst);
+    },
+
+    /**
+     * Gère l'insertion en BDD de l'allée avec le formulaire de la modale et la forme dessinée
+     * @param formDom
+     * @param zone
+     */
+    handleAllee: function (formDom, zone) {
+        alleeHelper.createAllee(formDom, zone, this._inst);
     },
 
     /**

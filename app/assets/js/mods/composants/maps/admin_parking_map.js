@@ -8,6 +8,7 @@ var mapHelper = require('../../helpers/map_helper');
 var ModalPlaces = require('../modals/mod_places_multiples');
 var ModalCalibre = require('../modals/mod_calibre');
 var ModalZone = require('../modals/mod_zone');
+var ModalAllee = require('../modals/mod_allee');
 var Field = require('../formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputNumberEditable = Field.InputNumberEditable;
@@ -463,6 +464,9 @@ var parkingMap = React.createClass({
             case mapOptions.type_messages.new_zone:
                 this._onNewZone(data);
                 break;
+            case mapOptions.type_messages.new_allee:
+                this._onNewAllee(data);
+                break;
 
             case mapOptions.type_messages.hide_modal:
                 this.setState({
@@ -504,14 +508,28 @@ var parkingMap = React.createClass({
             segment: data
         });
     },
+
     /**
-     *
+     * Affiche la modale de création de zone
      * @param data
      * @private
      */
     _onNewZone: function (data) {
         this.setState({
             modalType: mapOptions.modal_type.zone,
+            isModalOpen: true,
+            parallelogramme_places: data
+        });
+    },
+
+    /**
+     * Affiche la modale de création d'allée
+     * @param data
+     * @private
+     */
+    _onNewAllee: function (data) {
+        this.setState({
+            modalType: mapOptions.modal_type.allee,
             isModalOpen: true,
             parallelogramme_places: data
         });
@@ -543,16 +561,12 @@ var parkingMap = React.createClass({
         if (!this.state.isModalOpen) {
             return <span/>;
         } else {
-            return (<Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
-                <div className="modal-body">
-                    This modal is controlled by our custom trigger component.
-                </div>
-                <div className="modal-footer">
-                    <Button onClick={this.handleToggle}>Close</Button>
-                </div>
-            </Modal>);
+            return (<ModalAllee
+                onToggle={this.handleToggle}
+            />);
         }
     },
+
     /**
      * TODO : Modal de saisie des informations pour créer un afficheur
      * @returns {XML}

@@ -57,6 +57,26 @@ function geometryCheck(newAllee, zones, allees) {
     return isValid;
 }
 
+/*****************************************************************************************************
+ * VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+ * CRÉE UNE ALLEE EN BDD EN FONCTION DES INORMATIONS DE LA POPUP.
+ *
+ * @param formDom : DOM du formulaire
+ * @param allee : Allée à enregistrer (format layer Leaflet)
+ * @param _inst : données d'instance du store
+ *
+ * @returns {boolean} état de l'insertion
+ */
+function createAllee(formDom, allee, _inst) {
+
+    var alleesInZone = getAlleesInZone(formDom, allee, _inst);
+    var geoJson = allee.e.layer.toGeoJSON();
+
+
+    return true;
+}
+
 module.exports = {
-    geometryCheck: geometryCheck
+    geometryCheck: geometryCheck,
+    createAllee: createAllee
 };

@@ -34,6 +34,7 @@ return array(
         'titre_places_multiples' => 'Configuration de la série de places',
         'titre_calibre' => 'Configuration du calibre',
         'titre_zone' => 'Création d\'une zone',
+        'titre_allee' => 'Création d\'une allée',
         'ajouter_place' => 'Ajouter une place',
         'ajouter_place_auto' => 'Ajouter une série de places',
         'ajouter_allee' => 'Ajouter une allée',
