@@ -263,7 +263,7 @@ var customZoomCRS = L.extend({}, L.CRS.Simple, {
  * @param container : polygon le plus grand (ex: zone)
  * @param contained : polygon le plus petit (ex : allée)
  *
- * @returns boolean
+ * @returns boolean true ou false
  */
 function polygonContainsPolygon(container, contained) {
 
@@ -379,6 +379,24 @@ function getPolygonsArrayFromLeafletLayerGroup(layerGroup) {
     return retour;
 }
 
+function getFeaturesArrayFromLeafletLayerGroup(layerGroup) {
+    var retour = [];
+
+    var polygons = layerGroup._layers;
+    if (!_.isEmpty(polygons)) {
+        _.forIn(polygons, function (val, key) {
+            if (val._latlngs == undefined) {
+                var forme = _.values(val._layers)[0];
+                retour.push(forme);
+            } else {
+                retour.push(val);
+            }
+        });
+    }
+
+    return retour;
+}
+
 /**
  * Retourne un tableau d'objets
  * [
@@ -414,10 +432,77 @@ function getMarkersArrayFromLeafletLayerGroup(layerGroup) {
  * @returns {dataPlaces.geoJson}
  */
 function createFeatureFromJSON(geoJson, extraData) {
-     var style = {
-         data: extraData
-     };
-    return new L.geoJson(JSON.parse(geoJson), {style: style});
+    var poly = new L.geoJson(JSON.parse(geoJson), {data: extraData});
+    console.log('Polygon créé depuis JSON = %o', poly);
+    return poly;
+}
+
+/**
+ * Retourne un tableau de marker de toutes les places présentes sur la carte
+ * @param _inst
+ * @returns {Array|*}
+ */
+function getAllPlaces(_inst) {
+    // PLACES DE LA CARTE
+    return _.map(_inst.mapInst.placesMarkersGroup._layers, function (p) {
+        if (p._latlng == undefined) {
+            console.error('Marker sans coordonnées ??? %o', p);
+        } else {
+            return p;
+        }
+    });
+}
+
+/**
+ * retourne le tableau des places contenues dans l'allée par leur centre (Marker)
+ * Le tableau de retour contient la propriété options.data du marker pour éviter
+ * la redondance circulaire lié à la map quand on le transforme en JSON.
+ * @param formDom : DOM du formulaire
+ * @param allee : allee à tester (format layer Leaflet)
+ * @param _inst : données d'instance du store
+ */
+function getPlacesInAllee(allee, _inst) {
+    // TOUTES LES PLACES DE LA CARTE
+    var allPlaces = getAllPlaces(_inst);
+
+    // LISTE DES PLACES CONTENUES DANS L'ALLÉE
+    var placesInAllee = _.filter(allPlaces, function (place) {
+        var isIn = isPointInPolygon(allee.e.layer._latlngs, place._latlng);
+        return isIn;
+    });
+
+    // EXTRACTION DE LA PROPRIÉTÉ DATA POUR ÉVITER LA REDONDANCE LIÉE À LA MAP.
+    placesInAllee = _.map(placesInAllee, function (place) {
+        return place.options.data;
+    });
+
+    return placesInAllee;
+}
+
+/**
+ * retourne le tableau des places contenues dans la zone par leur centre (Marker)
+ * Le tableau de retour contient la propriété options.data du marker pour éviter
+ * la redondance circulaire lié à la map quand on le transforme en JSON.
+ *
+ * @param zone : zone dessinnée par l'utilisateur (format layer Leaflet)
+ * @param _inst : données d'instance du store
+ */
+function getPlacesInZone(zone, _inst) {
+    // PLACES DE LA CARTE
+    var allPlaces = getAllPlaces(_inst);
+
+    // LISTE DES PLACES CONTENUES DANS LA ZONE
+    var placesInZone = _.filter(allPlaces, function (place) {
+        var isIn = isPointInPolygon(zone.e.layer._latlngs, place._latlng);
+        return isIn;
+    });
+
+    // EXTRACTION DE LA PROPRIÉTÉ DATA POUR ÉVITER LA REDONDANCE LIÉE À LA MAP.
+    placesInZone = _.map(placesInZone, function (place) {
+        return place.options.data;
+    });
+
+    return placesInZone;
 }
 
 
@@ -442,6 +527,9 @@ module.exports = {
     getPolygonsContainedInPolygon: getPolygonsContainedInPolygon,
     getPointsContainedInPolygon: getPointsContainedInPolygon,
     createFeatureFromJSON: createFeatureFromJSON,
+    getFeaturesArrayFromLeafletLayerGroup: getFeaturesArrayFromLeafletLayerGroup,
+    getAllPlaces: getAllPlaces,
+    getPlacesInAllee: getPlacesInAllee,
+    getPlacesInZone: getPlacesInZone,
     customZoomCRS: customZoomCRS
 };
-

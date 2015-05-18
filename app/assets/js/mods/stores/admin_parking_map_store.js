@@ -686,22 +686,26 @@ var store = Reflux.createStore({
         };
         this.trigger(message);
 
-        //TODO  LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
-        //var zonesMap = _.map(this._inst.zones, function (z) {
-        //    var extraData = z;
-        //    var polygon = mapHelper.createFeatureFromJSON(z.geojson, extraData);
-        //
-        //    return {
-        //        data: z,
-        //        polygon: polygon
-        //    };
-        //}, this);
+        // LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
+        var zonesMap = _.map(this._inst.zones, function (z) {
+            if (z.geojson != "") {
+                var extraData = z;
+                var polygon = mapHelper.createFeatureFromJSON(z.geojson, extraData);
 
-        //message = {
-        //    type: mapOptions.type_messages.add_zones,
-        //    data: zonesMap
-        //};
-        //this.trigger(message);
+                return {
+                    data: z,
+                    polygon: polygon
+                };
+            } else {
+                return null;
+            }
+        }, this);
+
+        message = {
+            type: mapOptions.type_messages.add_zones,
+            data: zonesMap
+        };
+        this.trigger(message);
     },
 
     /**
