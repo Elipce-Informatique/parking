@@ -1,6 +1,6 @@
 <?php
 
-class Zone extends \Eloquent
+class Zone extends BaseModel
 {
     protected $table = 'zone';
     protected $guarded = ['id'];

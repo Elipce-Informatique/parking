@@ -64,8 +64,6 @@ function geometryCheck(newAllee, zones, allees) {
  * @param formDom : DOM du formulaire
  * @param allee : Allée à enregistrer (format layer Leaflet)
  * @param _inst : données d'instance du store
- *
- * @returns {boolean} état de l'insertion
  */
 function createAllee(formDom, allee, _inst) {
     console.log('CreateAllee avec %o', arguments);
@@ -78,6 +76,7 @@ function createAllee(formDom, allee, _inst) {
 
     // ALLÉE HORS ZONE : Zone par défaut
     if (zoneWrapper.length != 1) {
+        console.log('Pass zone défaut');
         var defaultZoneId = _inst.defaults.zone.id;
         data = {
             allee_geojson: geoJson,
@@ -92,10 +91,12 @@ function createAllee(formDom, allee, _inst) {
             zone_id: zoneWrapper[0].id
         };
     }
-    // TODO : DANS TOUS LES CAS attahcer les places
+    // DANS TOUS LES CAS attacher les places contenues dans l'allée
+    var places = mapHelper.getPlacesInAllee(allee, _inst);
+    data['places'] = places;
 
-
-    return true;
+    console.log('Data allée = %o', data);
+    insertAllee(formDom, data);
 }
 
 
@@ -130,19 +131,21 @@ function insertAllee(formDom, data) {
 //******************************************************************************************************
 
 function getZoneWrapper(formDom, allee, _inst) {
-    var allZones = mapHelper.getPolygonsArrayFromLeafletLayerGroup(_inst.mapInst.zonesGroup);
+    var allZones = mapHelper.getFeaturesArrayFromLeafletLayerGroup(_inst.mapInst.zonesGroup);
 
     // ZONE QUI CONTIENT L'ALLÉE
     var zoneContainAllee = _.filter(allZones, function (zone) {
-        return mapHelper.polygonContainsPolygon(zone, allee.e.layer);
+        console.log('Layer = %o', allee.e.layer);
+        return mapHelper.polygonContainsPolygon(zone._latlngs, allee.e.layer._latlngs);
     });
+
+    console.log('Zone Contenant l\'allée : %o', zoneContainAllee);
 
     // EXTRACTION DE LA PROPRIÉTÉ DATA POUR ÉVITER LA REDONDANCE LIÉE À LA MAP.
     zoneContainAllee = _.map(zoneContainAllee, function (zone) {
         return zone.options.data;
     });
 
-    console.log('Sone entourant l\'allée: %o', zoneContainAllee);
     return zoneContainAllee;
 }
 

@@ -430,7 +430,9 @@ var parkingMap = React.createClass({
     onZonesAdded: function (formes) {
         var liste_data = formes.data;
         _.each(liste_data, function (place) {
-            this._inst.zonesGroup.addLayer(place.polygon);
+            if (place != null) {
+                this._inst.zonesGroup.addLayer(place.polygon);
+            }
         }, this);
 
         this.setState({

@@ -1,6 +1,6 @@
 <?php
 
-class Capteur extends \Eloquent
+class Capteur extends BaseModel
 {
     protected $fillable = [];
 

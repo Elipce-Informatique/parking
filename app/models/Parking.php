@@ -1,6 +1,6 @@
 <?php
 
-class Parking extends \Eloquent
+class Parking extends BaseModel
 {
     protected $table = 'parking';
     protected $fillable = [];

@@ -1,6 +1,6 @@
 <?php
 
-class Place extends \Eloquent
+class Place extends BaseModel
 {
     protected $table = 'place';
     protected $fillable = ['libelle', 'num', 'capteur_id', 'type_place_id', 'allee_id', 'geojson', 'bonne', 'etat_occupation_id', 'lat', 'lng'];

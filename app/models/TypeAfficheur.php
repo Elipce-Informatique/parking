@@ -1,6 +1,6 @@
 <?php
 
-class TypeAfficheur extends \Eloquent
+class TypeAfficheur extends BaseModel
 {
     protected $table = 'type_afficheur';
     protected $fillable = [];

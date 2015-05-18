@@ -1,6 +1,6 @@
 <?php
 
-class Plan extends \Eloquent
+class Plan extends BaseModel
 {
     protected $table = 'plan';
     protected $fillable = [

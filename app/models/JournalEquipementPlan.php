@@ -1,6 +1,6 @@
 <?php
 
-class JournalEquipementPlan extends \Eloquent
+class JournalEquipementPlan extends BaseModel
 {
     protected $guarded = ['id'];
     protected $table = "journal_equipement_plan";

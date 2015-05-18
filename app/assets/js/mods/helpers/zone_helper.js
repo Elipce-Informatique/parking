@@ -73,8 +73,6 @@ function geometryCheck(newZone, zones, allees) {
  * @param formDom : DOM du formulaire
  * @param zone : Zone à enregistrer (format layer Leaflet)
  * @param _inst : données d'instance du store
- *
- * @returns {boolean} état de l'insertion
  */
 function createZone(formDom, zone, _inst) {
 
@@ -84,7 +82,7 @@ function createZone(formDom, zone, _inst) {
     // YA PAS D'ALLÉES --------------------------------------------------------------
     if (alleesInZone.length == 0) {
         // Récup des places dans la zone
-        var placesInZone = getPlacesInZone(formDom, zone, _inst);
+        var placesInZone = mapHelper.getPlacesInZone(zone, _inst);
 
         var data = {
             places_default: placesInZone,
@@ -104,12 +102,12 @@ function createZone(formDom, zone, _inst) {
         // PARCOURT DES ALLÉES POUR SORTIR LES PLACES
         var placesInAllees = [];
         _.each(alleesInZone, function (allee) {
-            var placesInAllee = getPlacesInAllee(formDom, allee, _inst);
+            var placesInAllee = mapHelper.getPlacesInAllee(allee, _inst);
             placesInAllees = _.union(placesInAllees, placesInAllee);
         });
 
         // PLACES DANS LA ZONE
-        var placesInZone = getPlacesInZone(formDom, zone, _inst);
+        var placesInZone = mapHelper.getPlacesInZone(zone, _inst);
 
         // TOUTES LES PLACES SONT DANS UNE ZONE PAS DE DEFAUT .....................
         if (placesInAllees.length == placesInZone.length) {
@@ -127,7 +125,6 @@ function createZone(formDom, zone, _inst) {
             // TODO : trouver les places à mettre dans l'allée par défaut.
         }
     }
-    return true;
 }
 
 /**
@@ -168,11 +165,11 @@ function insertZone(formDom, data) {
  * @param _inst : données d'instance du store
  */
 function getAlleesInZone(formDom, zone, _inst) {
-    var allAllees = mapHelper.getPolygonsArrayFromLeafletLayerGroup(_inst.mapInst.alleesGroup);
+    var allAllees = mapHelper.getFeaturesArrayFromLeafletLayerGroup(_inst.mapInst.alleesGroup);
 
     // Les allées de la zone (objets leaflet)
     var alleesInZone = _.filter(allAllees, function (allee) {
-        return mapHelper.polygonContainsPolygon(zone, allee.e.layer);
+        return mapHelper.polygonContainsPolygon(zone.e.layer._latlngs, allee._latlngs);
     });
 
     // EXTRACTION DE LA PROPRIÉTÉ DATA POUR ÉVITER LA REDONDANCE LIÉE À LA MAP.
@@ -182,74 +179,6 @@ function getAlleesInZone(formDom, zone, _inst) {
 
     console.log('Allées dans la zone : %o', alleesInZone);
     return alleesInZone;
-}
-
-/**
- * retourne le tableau des places contenues dans la zone par leur centre (Marker)
- * Le tableau de retour contient la propriété options.data du marker pour éviter
- * la redondance circulaire lié à la map quand on le transforme en JSON.
- *
- * @param formDom : DOM du formulaire
- * @param zone : zone dessinnée par l'utilisateur (format layer Leaflet)
- * @param _inst : données d'instance du store
- */
-function getPlacesInZone(formDom, zone, _inst) {
-    // PLACES DE LA CARTE
-    var allPlaces = getAllPlaces(_inst);
-
-    // LISTE DES PLACES CONTENUES DANS LA ZONE
-    var placesInZone = _.filter(allPlaces, function (place) {
-        var isIn = mapHelper.isPointInPolygon(zone.e.layer._latlngs, place._latlng);
-        return isIn;
-    });
-
-    // EXTRACTION DE LA PROPRIÉTÉ DATA POUR ÉVITER LA REDONDANCE LIÉE À LA MAP.
-    placesInZone = _.map(placesInZone, function (place) {
-        return place.options.data;
-    });
-
-    return placesInZone;
-}
-
-/**
- * TODO : tester
- *
- * @param formDom : DOM du formulaire
- * @param allee : allee à tester (format layer Leaflet)
- * @param _inst : données d'instance du store
- */
-function getPlacesInAllee(formDom, allee, _inst) {
-    // TOUTES LES PLACES DE LA CARTE
-    var allPlaces = getAllPlaces(_inst);
-
-    // LISTE DES PLACES CONTENUES DANS L'ALLÉE
-    var placesInAllee = _.filter(allPlaces, function (place) {
-        var isIn = mapHelper.isPointInPolygon(allee.e.layer._latlngs, place._latlng);
-        return isIn;
-    });
-
-    // EXTRACTION DE LA PROPRIÉTÉ DATA POUR ÉVITER LA REDONDANCE LIÉE À LA MAP.
-    placesInAllee = _.map(placesInAllee, function (place) {
-        return place.options.data;
-    });
-
-    return placesInAllee;
-}
-
-/**
- * Retourne un tableau de marker de toutes les places présentes sur la carte
- * @param _inst
- * @returns {Array|*}
- */
-function getAllPlaces(_inst) {
-    // PLACES DE LA CARTE
-    return _.map(_inst.mapInst.placesMarkersGroup._layers, function (p) {
-        if (p._latlng == undefined) {
-            console.error('Marker sans coordonnées ??? %o', p);
-        } else {
-            return p;
-        }
-    });
 }
 
 /**
