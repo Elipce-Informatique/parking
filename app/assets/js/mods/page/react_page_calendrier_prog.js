@@ -58,7 +58,8 @@ var PageCalendrierProg = React.createClass({
             parkings: [], // Tableau de parkings
             calendrier: {}, // Données du calendrier affiché
             sousTitre: '', // sous titre du bandeau
-            currentJour: {} // Jour prédéfini choisi (objet contyenant les infos de la BDD)
+            currentJour: {}, // Jour prédéfini choisi (objet contyenant les infos de la BDD)
+            date: moment()
         };
     },
     componentDidMount: function () {
@@ -144,7 +145,8 @@ var PageCalendrierProg = React.createClass({
                             onRetour = {this.onRetour}/>
                         <Calendrier
                             editable={false}
-                            data={this.state.calendrier}/>
+                            data={this.state.calendrier}
+                            date={this.state.date}/>
                     </div>;
                 break;
             case pageState.edition:
@@ -209,6 +211,7 @@ var PageCalendrierProg = React.createClass({
                             editable={true}
                             data={this.state.calendrier}
                             jour={this.state.currentJour}
+                            date={this.state.date}
                         />
                     </div>
                 break;
@@ -256,7 +259,8 @@ var storeCalendrierProg = Reflux.createStore({
         jours: [],
         parkings: [],
         calendrier: {},
-        sousTitre: ''
+        sousTitre: '',
+        date: moment()
     },
 
     // Initial setup
@@ -307,16 +311,19 @@ var storeCalendrierProg = Reflux.createStore({
 
         // Data parking
         $.ajax({
-            url: BASE_URI + 'calendrier_programmation/' + idParking,
+            url: BASE_URI + 'calendrier_programmation/visu/' + idParking + '/' + this.stateLocal.date.get('year'),
             dataType: 'json',
             context: this,
             async: true,
             success: function (data) {
 
+                // Etat
+                var mode = this.stateLocal.etat == pageState.edition ? pageState.edition : pageState.visu;
+
                 // MAJ du state local
                 var temp = {
                     calendrier: data.calendriers,
-                    etat: pageState.visu,
+                    etat: mode,
                     idParking: idParking,
                     sousTitre: data.libelle
                 };
@@ -383,6 +390,20 @@ var storeCalendrierProg = Reflux.createStore({
                 Actions.notif.error('AJAX : ' + Lang.get('global.notif_erreur'));
             }
         });
+    },
+
+    onPrev_year: function(){
+        // -1 an
+        this.stateLocal.date =  this.stateLocal.date.clone().subtract(1, 'year');
+        // Data de parking + année with trigger
+        this.onDisplay_calendar(this.stateLocal.idParking);
+    },
+
+    onNext_year: function(){
+        // +1 an
+        this.stateLocal.date =  this.stateLocal.date.clone().add(1, 'year');
+        // Data de parking + année with trigger
+        this.onDisplay_calendar(this.stateLocal.idParking);
     }
 });
 module.exports.store = storeCalendrierProg;

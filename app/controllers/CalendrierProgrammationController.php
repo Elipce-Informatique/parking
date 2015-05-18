@@ -95,13 +95,14 @@ class CalendrierProgrammationController extends \BaseController
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param  int $id: ID parking
+     * @param  int $year: année
      * @return Response
      */
-    public function show($id)
+    public function visu($id, $year)
     {
         // Calcul des données calendaires du parking
-        return json_encode(Parking::getCalendrier($id));
+        return json_encode(Parking::getCalendrier($id, $year));
     }
 
 

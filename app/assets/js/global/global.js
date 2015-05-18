@@ -177,7 +177,9 @@ require('sweetalert');
      */
     global.Actions.calendrier = Reflux.createActions([
         "display_calendar", /* Sélection d'une ligne sur le tableau parking */
-        "add_days" // Ajoute un ou plusieurs jours au celndrier
+        "add_days", // Ajoute un ou plusieurs jours au celndrier
+        "prev_year", // Année précédente
+        "next_year" // Année suivante
     ]);
 
 })(window);

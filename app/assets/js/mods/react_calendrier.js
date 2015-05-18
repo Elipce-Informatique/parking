@@ -26,20 +26,22 @@ var Calendrier = React.createClass({
         propTypes: {
             editable: React.PropTypes.bool.isRequired,
             data: React.PropTypes.array.isRequired,
-            jour: React.PropTypes.object // Jour prédéfini sélectionné
+            jour: React.PropTypes.object, // Jour prédéfini sélectionné
+            date: React.PropTypes.object // date au format moment
         },
 
         prefix: {
-            dynamic : 'rc-Day--color-',
-            static : 'rc-Day--bg',
-            out : 'rc-Day--outside'
+            dynamic: 'rc-Day--color-',
+            static: 'rc-Day--bg',
+            out: 'rc-Day--outside'
         },
 
         getDefaultProps: function () {
             return {
                 editable: false,
                 data: [],
-                jour: {}
+                jour: {},
+                date: moment()
             }
         },
 
@@ -72,12 +74,12 @@ var Calendrier = React.createClass({
                     // Parcours des jours de la semaine ou du mois
                     $(e.currentTarget).find('.rc-Day').each(function (index, day) {
                         // La semaine chevauche deux mois
-                        if(scope == 'Week' && index === 0 && $(day).hasClass(this.prefix.out)){
+                        if (scope == 'Week' && index === 0 && $(day).hasClass(this.prefix.out)) {
                             // Mois +1
                             currentDate = currentDate.add(1, 'M');
                         }
                         // Jour dans le mois sélectionné
-                        if(!$(day).hasClass(this.prefix.out)) {
+                        if (!$(day).hasClass(this.prefix.out)) {
                             // traite le jour
                             this.processDay($(day), currentDate, retour);
                         }
@@ -148,7 +150,7 @@ var Calendrier = React.createClass({
                 else {
                     // Ajout background + classe static IMPORTANT d'abord static puis dynamic
                     caseCalendrier.addClass(this.prefix.static);
-                    caseCalendrier.addClass(this.prefix.dynamic+this.props.jour.couleur);
+                    caseCalendrier.addClass(this.prefix.dynamic + this.props.jour.couleur);
                     // Ajout au retour
                     retour.insert.push(temp);
                 }
@@ -156,7 +158,26 @@ var Calendrier = React.createClass({
             return retour;
         },
 
+        /**
+         * Click sur année précédente
+         * @param e: event
+         */
+        handlePrevYear: function (e) {
+            e.preventDefault();
+            Actions.calendrier.prev_year();
+        },
+
+        /**
+         * Click sur année suivante
+         * @param e: event
+         */
+        handleNextYear: function (e) {
+            e.preventDefault();
+            Actions.calendrier.next_year();
+        },
+
         render: function () {
+            console.log('DATA calendrier %o', this.props.data);
 
             // Chargement des jours du calendrier
             var days = _.map(this.props.data, function (jour, index) {
@@ -172,20 +193,36 @@ var Calendrier = React.createClass({
 
 
             return (
+                <div key="divcalendrier">
+                    <Button
+                        onClick={this.handlePrevYear}
+                        bsSize="xsmall"
+                        bsStyle="info">
+                        {Lang.get('calendrier.prog_horaire.annee_prec')}
+                    </Button>
+                    <Button
+                        className="pull-right"
+                        onClick={this.handleNextYear}
+                        bsSize="xsmall"
+                        bsStyle="info">
+                        {Lang.get('calendrier.prog_horaire.annee_suiv')}
+                    </Button>
 
-                <Calendar
-                    firstMonth={1}
-                    date={moment()}
-                    weekNumbers={true}
-                    size={12}
-                    locale = {Lang.locale()}>
-                    <Month onClick={this.handleClick} />
-                    <Week onClick={this.handleClick} />
-                    <Day
-                        onClick={this.handleClick}
-                        key="jour_click" />
+                    <Calendar
+                        key={"calendrier"+this.props.date.get('year')}
+                        firstMonth={1}
+                        date={this.props.date}
+                        weekNumbers={true}
+                        size={12}
+                        locale = {Lang.locale()}>
+                        <Month onClick={this.handleClick} />
+                        <Week onClick={this.handleClick} />
+                        <Day
+                            onClick={this.handleClick}
+                            key="jour_click" />
                 {days}
-                </Calendar>
+                    </Calendar>
+                </div>
 
             );
         }
