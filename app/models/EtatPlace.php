@@ -1,6 +1,6 @@
 <?php
 
-class EtatPlace extends \Eloquent
+class EtatPlace extends BaseModel
 {
     protected $table = 'etat_place';
     protected $fillable = [];

@@ -1,6 +1,6 @@
 <?php
 
-class EtatsDoccupation extends Eloquent
+class EtatsDoccupation extends BaseModel
 {
     protected $fillable = ['libelle','couleur','type_place_id','is_occupe'];
     protected $table = 'etat_occupation';

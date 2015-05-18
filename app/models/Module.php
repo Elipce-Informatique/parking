@@ -6,7 +6,7 @@
  * Date: 24/11/2014
  * Time: 10:16
  */
-class Module extends Eloquent
+class Module extends BaseModel
 {
 
     /*

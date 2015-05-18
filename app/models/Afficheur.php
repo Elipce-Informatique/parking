@@ -1,6 +1,6 @@
 <?php
 
-class Afficheur extends \Eloquent
+class Afficheur extends BaseModel
 {
     protected $fillable = [];
 

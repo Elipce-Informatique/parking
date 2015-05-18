@@ -57,11 +57,15 @@ class AlleesController extends \BaseController
                 'zone_id' => $zone_id,
                 'geojson' => $allee_geojson
             ]);
-            // Parcourt des places pour les ajouter à l'allée
-            if(count($places) > 0){
-
+            // PARCOURT DES PLACES POUR LES AJOUTER À L'ALLÉE
+            if (count($places) > 0) {
+                foreach ($places AS $p) {
+                    Place::find($p['id'])->update(['allee_id' => $newAllee->id]);
+                }
             }
-            DB::rollBack();
+            // Fin du try, tout s'est bien passé
+            DB::commit();
+//            DB::rollBack();
             return json_encode(true);
         } catch (Exception $e) {
             DB::rollBack();

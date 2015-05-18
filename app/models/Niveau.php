@@ -1,6 +1,6 @@
 <?php
 
-class Niveau extends \Eloquent
+class Niveau extends BaseModel
 {
     protected $table = 'niveau';
     protected $fillable = [];

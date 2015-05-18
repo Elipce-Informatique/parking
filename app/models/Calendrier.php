@@ -6,7 +6,7 @@
  * Time: 10:16
  */
 
-class Calendrier extends Eloquent
+class Calendrier extends BaseModel
 {
 
     /*

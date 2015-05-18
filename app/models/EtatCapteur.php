@@ -1,6 +1,6 @@
 <?php
 
-class EtatCapteur extends \Eloquent
+class EtatCapteur extends BaseModel
 {
     protected $fillable = [];
     protected $table = 'etat_capteur';
