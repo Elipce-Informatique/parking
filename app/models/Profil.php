@@ -6,7 +6,7 @@
  * Time: 10:16
  */
 
-class Profil extends Eloquent
+class Profil extends BaseModel
 {
 
     /*
@@ -25,12 +25,12 @@ class Profil extends Eloquent
     */
     public function modules()
     {
-        return $this->belongsToMany('Module', 'profil_module')->withPivot(['access_level']);
+        return $this->belongsToMany('Module', 'profil_module')->withPivot(['access_level'])->withTimestamps();
     }
 
     public function utilisateurs()
     {
-        return $this->belongsToMany('Utilisateur');
+        return $this->belongsToMany('Utilisateur')->withTimestamps();
     }
     /*
     |--------------------------------------------------------------------------
@@ -150,7 +150,8 @@ class Profil extends Eloquent
                 DB::beginTransaction();
 
                 // Créer profil
-                $idProfil = Profil::insertGetId($fieldProfil);
+                $oProfil = Profil::create($fieldProfil);
+                $idProfil = $oProfil->id;
 
                 // Parcours de l'état de chaque module
                 foreach ($inputs as $key => $value) {
@@ -160,15 +161,10 @@ class Profil extends Eloquent
                     if($aEtat[0] == 'etat') {
                         // Un accès au module est défini
                         if ($value !== 'no_access') {
-                            // Préparation requête
-                            $ligne = [
-                                'module_id' => $aEtat[1],
-                                'profil_id' => $idProfil,
-                                'access_level' => $value
-                            ];
-
-                            // Insertion accès au module et niveau d'accès
-                            $bSave = DB::table('profil_module')->insert($ligne);
+                            $moduleId = $aEtat[1];
+                            $access = $value;
+                            // Profil_module
+                            $oProfil->modules()->attach([$moduleId => ['access_level' => $value]]);
                         }
                     }
                 }
@@ -185,7 +181,6 @@ class Profil extends Eloquent
                 // Transaction annulée
                 DB::rollback();
                 Log::error("Erreur Création Profil ".$e->getMessage());
-
                 $retour = array('save' => false);
             }
         }
@@ -228,6 +223,10 @@ class Profil extends Eloquent
                     $aEtat = explode('_',  $key);
                     // Radio
                     if($aEtat[0] == 'etat') {
+                        // Variables
+                        $moduleId = $aEtat[1];
+                        $accessLevel = $value;
+
                         // Requete profil_module
                         $ligne = DB::table('profil_module')
                             ->where('module_id', $aEtat[1])
@@ -238,28 +237,20 @@ class Profil extends Eloquent
                         if(count($ligne)>0) {
                             // Plus d'accès
                             if($value == 'no_access') {
-                                $bSave = DB::table('profil_module')->delete($ligne->id);
+                                // Delete
+                                $profil->modules()->detach($moduleId);
                             }
                             // Droit modifié
                             else if ($ligne->access_level != $value) {
-                                $update = [
-                                    'module_id' => $aEtat[1],
-                                    'profil_id' => $id,
-                                    'access_level' => $value
-                                    ];
-                                $bSave = DB::table('profil_module')->where('id', $ligne->id)->update($update);
+                                // Update
+                                $profil->modules()->updateExistingPivot($moduleId, ['access_level' => $accessLevel]);
                             }
                         }
                         // Nouveau droit
                         else if( $value != 'no_access'){
-                            $ligne = [
-                                'module_id' => $aEtat[1],
-                                'profil_id' => $id,
-                                'access_level' => $value
-                                ];
 
                             // Défini les droits associés au profil
-                            $bSave = DB::table('profil_module')->insert($ligne);
+                            $profil->modules()->attach([$moduleId => ['access_level' => $accessLevel]]);
                         }
                     }
                 }
