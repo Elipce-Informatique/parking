@@ -82,8 +82,8 @@ function createAllee(formDom, allee, _inst) {
             allee_geojson: geoJson,
             zone_id: defaultZoneId
         };
-
     }
+
     // ALLÉE DANS UNE ZONE : Attachée à ladite zone
     else {
         data = {
@@ -91,7 +91,8 @@ function createAllee(formDom, allee, _inst) {
             zone_id: zoneWrapper[0].id
         };
     }
-    // DANS TOUS LES CAS attacher les places contenues dans l'allée
+
+    // DANS TOUS LES CAS ATTACHER LES PLACES CONTENUES DANS L'ALLÉE
     var places = mapHelper.getPlacesInAllee(allee, _inst);
     data['places'] = places;
 

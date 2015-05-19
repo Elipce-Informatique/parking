@@ -60,14 +60,18 @@ class AlleesController extends \BaseController
             // PARCOURT DES PLACES POUR LES AJOUTER À L'ALLÉE
             if (count($places) > 0) {
                 foreach ($places AS $p) {
+                    // Ne marche pas quand on a créé des places puis l'allée sans
                     Place::find($p['id'])->update(['allee_id' => $newAllee->id]);
                 }
             }
             // Fin du try, tout s'est bien passé
             DB::commit();
-//            DB::rollBack();
+            // DB::rollBack();
+            Log::debug('PASS');
             return json_encode(true);
         } catch (Exception $e) {
+            Log::error('ERREUR D INSERTION ALLEE :');
+            Log::error($e);
             DB::rollBack();
             return json_encode(false);
         }

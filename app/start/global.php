@@ -30,8 +30,43 @@ ClassLoader::addDirectories(array(
 | build a basic log file setup which creates a single file for logs.
 |
 */
-Log::useDailyFiles(storage_path() . '/logs/laravel.log');
+use Monolog\Logger;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Formatter\LineFormatter;
 
+$formatter = new LineFormatter(null, null, true, false);
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/100-debug.log', 0, Logger::DEBUG);
+$handler->setFormatter($formatter);
+Log::getMonolog()->pushHandler($handler);
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/200-info.log', 0, Logger::INFO);
+$handler->setFormatter($formatter);
+Log::getMonolog()->pushHandler($handler);
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/250-notice.log', 0, Logger::NOTICE);
+$handler->setFormatter($formatter);
+Log::getMonolog()->pushHandler($handler);
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/300-warning.log', 0, Logger::WARNING);
+$handler->setFormatter($formatter);
+Log::getMonolog()->pushHandler($handler);
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/400-error.log', 0, Logger::ERROR);
+$handler->setFormatter($formatter);
+Log::getMonolog()->pushHandler($handler);
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/500-critical.log', 0, Logger::CRITICAL);
+$handler->setFormatter($formatter);
+Log::getMonolog()->pushHandler($handler);
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/550-alert.log', 0, Logger::ALERT);
+$handler->setFormatter($formatter);
+Log::getMonolog()->pushHandler($handler);
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/600-emergency.log', 0, Logger::EMERGENCY);
+$handler->setFormatter($formatter);
+Log::getMonolog()->pushHandler($handler);
 
 /*
 |--------------------------------------------------------------------------
@@ -76,16 +111,14 @@ App::down(function () {
 |
 */
 
-require app_path().'/filters.php';
+require app_path() . '/filters.php';
 
 
-Utilisateur::creating(function($post)
-{
+Utilisateur::creating(function ($post) {
     $post->created_by = Auth::user()->id;
     $post->updated_by = Auth::user()->id;
 });
 
-Utilisateur::updating(function($post)
-{
+Utilisateur::updating(function ($post) {
     $post->updated_by = Auth::user()->id;
 });
