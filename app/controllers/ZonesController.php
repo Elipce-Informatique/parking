@@ -101,6 +101,8 @@ class ZonesController extends \BaseController
             DB::rollBack();
             return json_encode(true);
         } catch (Exception $e) {
+            Log::error('ERREUR D INSERTION ZONE :');
+            Log::error($e);
             DB::rollBack();
             return json_encode(false);
         }
