@@ -30,25 +30,42 @@ ClassLoader::addDirectories(array(
 | build a basic log file setup which creates a single file for logs.
 |
 */
-
 use Monolog\Logger;
 use Monolog\Handler\RotatingFileHandler;
+use Monolog\Formatter\LineFormatter;
 
-$handler = new RotatingFileHandler(storage_path().'/logs/100-debug.log',0,Logger::DEBUG);
+$formatter = new LineFormatter(null, null, true, false);
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/100-debug.log', 0, Logger::DEBUG);
+$handler->setFormatter($formatter);
 Log::getMonolog()->pushHandler($handler);
-$handler = new RotatingFileHandler(storage_path().'/logs/200-info.log',0,Logger::INFO);
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/200-info.log', 0, Logger::INFO);
+$handler->setFormatter($formatter);
 Log::getMonolog()->pushHandler($handler);
-$handler = new RotatingFileHandler(storage_path().'/logs/250-notice.log',0,Logger::NOTICE );
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/250-notice.log', 0, Logger::NOTICE);
+$handler->setFormatter($formatter);
 Log::getMonolog()->pushHandler($handler);
-$handler = new RotatingFileHandler(storage_path().'/logs/300-warning.log',0,Logger::WARNING  );
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/300-warning.log', 0, Logger::WARNING);
+$handler->setFormatter($formatter);
 Log::getMonolog()->pushHandler($handler);
-$handler = new RotatingFileHandler(storage_path().'/logs/400-error.log',0,Logger::ERROR  );
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/400-error.log', 0, Logger::ERROR);
+$handler->setFormatter($formatter);
 Log::getMonolog()->pushHandler($handler);
-$handler = new RotatingFileHandler(storage_path().'/logs/500-critical.log',0,Logger::CRITICAL  );
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/500-critical.log', 0, Logger::CRITICAL);
+$handler->setFormatter($formatter);
 Log::getMonolog()->pushHandler($handler);
-$handler = new RotatingFileHandler(storage_path().'/logs/550-alert.log',0,Logger::ALERT  );
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/550-alert.log', 0, Logger::ALERT);
+$handler->setFormatter($formatter);
 Log::getMonolog()->pushHandler($handler);
-$handler = new RotatingFileHandler(storage_path().'/logs/600-emergency.log',0,Logger::EMERGENCY  );
+
+$handler = new RotatingFileHandler(storage_path() . '/logs/600-emergency.log', 0, Logger::EMERGENCY);
+$handler->setFormatter($formatter);
 Log::getMonolog()->pushHandler($handler);
 
 /*
