@@ -29,6 +29,8 @@ return array(
     'prog_horaire' => [
         'texte' => 'Administration des ouverture, fermeture, veille économique du parking',
         'titre' => 'Programmation horaire',
+        'annee_prec' => 'Année précédente',
+        'annee_suiv' => 'Année suivante'
     ],
 
 );

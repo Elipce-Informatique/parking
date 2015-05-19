@@ -131,6 +131,7 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
      * Programmation horaire
      */
     Route::get('calendrier_programmation/init', 'CalendrierProgrammationController@init');
+    Route::get('calendrier_programmation/visu/{parking}/{annee}', 'CalendrierProgrammationController@visu');
     Route::resource('calendrier_programmation', 'CalendrierProgrammationController');
 
 

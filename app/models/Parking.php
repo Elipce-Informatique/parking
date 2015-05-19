@@ -25,6 +25,7 @@ class Parking extends BaseModel
     {
         return $this->belongsToMany('Utilisateur');
     }
+
     /**
      * Les calendriers du parking
      * @return mixed
@@ -64,9 +65,19 @@ class Parking extends BaseModel
         return Auth::user()->parkings()->with('niveaux.plans')->get();
     }
 
-    public static function getCalendrier($id){
+    /**
+     * Calcule le calendrier annuel du parking
+     * @param $id : ID parking
+     * @param $annee : année concernée
+     * @return mixed
+     */
+    public static function getCalendrier($id, $annee)
+    {
         return Parking::find($id)
-            ->with('calendriers.calendrierJour')
+            ->with(['calendriers' => function ($query) use ($annee) {
+                $query->where(DB::raw('YEAR(calendrier.jour)'), '=', $annee)
+                ->with('calendrierJour');
+            }])
             ->first();
     }
 }
