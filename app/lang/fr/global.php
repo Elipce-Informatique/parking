@@ -94,6 +94,7 @@ Voulez-vous vraiment quitter cette page ?',
     'occupee' => 'Occupée',
     'libre' => 'Libre',
     'parking' => 'Parking',
+    'niveau' => 'Niveau',
 
 
     /*

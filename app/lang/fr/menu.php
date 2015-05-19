@@ -26,6 +26,7 @@ return [
         "configuration_parking" => "Configuration parking",
         "visualisation"=>"Visualisation parking",
         "commandes_forcees"=>"Commandes forcées",
+        "niveau"=>"Gestion des niveaux",
 
     ],
 

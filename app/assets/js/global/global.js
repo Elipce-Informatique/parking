@@ -182,6 +182,15 @@ require('sweetalert');
         "next_year" // Année suivante
     ]);
 
+    /*
+     |--------------------------------------------------------------------------
+     | ACTIONS NIVEAU
+     |--------------------------------------------------------------------------
+     */
+    global.Actions.niveau = Reflux.createActions([
+        "display_all_niveaux", // affiche tous les niveaux
+    ]);
+
 })(window);
 
 /*

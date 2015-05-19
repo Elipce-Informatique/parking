@@ -12,8 +12,9 @@
     </div>
 
     <div class="row" id="blocks_admin">
-        <div class="col-md-4 col-md-offset-2" id="block_etats_d_occupation"></div>
-        <div class="col-md-4" id="block_configuration_parking"></div>
+        <div class="col-md-4" id="1"></div>
+        <div class="col-md-4" id="2"></div>
+        <div class="col-md-4" id="3"></div>
     </div>
 @stop
 
