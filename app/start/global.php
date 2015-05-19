@@ -31,7 +31,25 @@ ClassLoader::addDirectories(array(
 |
 */
 
-Log::useDailyFiles(storage_path().'/logs/laravel.log');
+use Monolog\Logger;
+use Monolog\Handler\RotatingFileHandler;
+
+$handler = new RotatingFileHandler(storage_path().'/logs/100-debug.log',0,Logger::DEBUG);
+Log::getMonolog()->pushHandler($handler);
+$handler = new RotatingFileHandler(storage_path().'/logs/200-info.log',0,Logger::INFO);
+Log::getMonolog()->pushHandler($handler);
+$handler = new RotatingFileHandler(storage_path().'/logs/250-notice.log',0,Logger::NOTICE );
+Log::getMonolog()->pushHandler($handler);
+$handler = new RotatingFileHandler(storage_path().'/logs/300-warning.log',0,Logger::WARNING  );
+Log::getMonolog()->pushHandler($handler);
+$handler = new RotatingFileHandler(storage_path().'/logs/400-error.log',0,Logger::ERROR  );
+Log::getMonolog()->pushHandler($handler);
+$handler = new RotatingFileHandler(storage_path().'/logs/500-critical.log',0,Logger::CRITICAL  );
+Log::getMonolog()->pushHandler($handler);
+$handler = new RotatingFileHandler(storage_path().'/logs/550-alert.log',0,Logger::ALERT  );
+Log::getMonolog()->pushHandler($handler);
+$handler = new RotatingFileHandler(storage_path().'/logs/600-emergency.log',0,Logger::EMERGENCY  );
+Log::getMonolog()->pushHandler($handler);
 
 /*
 |--------------------------------------------------------------------------
