@@ -93,7 +93,7 @@ function createAllee(formDom, allee, _inst) {
     }
 
     // DANS TOUS LES CAS ATTACHER LES PLACES CONTENUES DANS L'ALLÉE
-    var places = mapHelper.getPlacesInAllee(allee, _inst);
+    var places = mapHelper.getPlacesInAllee(allee.e.layer, _inst);
     data['places'] = places;
 
     console.log('Data allée = %o', data);

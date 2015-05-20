@@ -429,9 +429,9 @@ var parkingMap = React.createClass({
      */
     onZonesAdded: function (formes) {
         var liste_data = formes.data;
-        _.each(liste_data, function (place) {
-            if (place != null) {
-                this._inst.zonesGroup.addLayer(place.polygon);
+        _.each(liste_data, function (zone) {
+            if (zone != null) {
+                this._inst.zonesGroup.addLayer(zone.polygon);
             }
         }, this);
 
@@ -439,6 +439,24 @@ var parkingMap = React.createClass({
             isModalOpen: false
         });
     },
+
+    /**
+     * Ajoute les ALLEES
+     * @param data : le couple type-data envoyé par le store
+     */
+    onAlleesAdded: function (formes) {
+        var liste_data = formes.data;
+        _.each(liste_data, function (allee) {
+            if (allee != null) {
+                this._inst.alleesGroup.addLayer(allee.polygon);
+            }
+        }, this);
+
+        this.setState({
+            isModalOpen: false
+        });
+    },
+
 
     /**
      * Remet tous les featuresGroups en ordre (zIndex)
@@ -471,6 +489,9 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.type_messages.add_zones:
                 this.onZonesAdded(data);
+                break;
+            case mapOptions.type_messages.add_allees:
+                this.onAlleesAdded(data);
                 break;
             case mapOptions.type_messages.new_place_auto:
                 this._onNewPlaceAuto(data);

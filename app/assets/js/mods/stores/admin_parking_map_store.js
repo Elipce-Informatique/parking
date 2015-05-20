@@ -386,15 +386,18 @@ var store = Reflux.createStore({
                 data: fData,
                 context: this,
                 success: function (data) {
+                    console.log('Data retour places : %o', data);
                     // TEST ÉTAT INSERTION
-                    if (data.retour) {
-                        // SAUVEGARDE DES PLACES EN LOCAL DNAS LE STORE
-                        this._inst.places = this._inst.places.concat(places);
+                    if (data.retour.length > 0) {
+                        // 1 - TRANSFORMATION DES DATA DE LA BDD EN PLACES
+                        var placesCreated = this.createPlacesMapFromPlacesBDD(data.retour);
+                        // 2 - SAUVEGARDE DES PLACES EN LOCAL DNAS LE STORE
+                        this._inst.places = this._inst.places.concat(placesCreated);
 
-                        // ENVOI DES INFOS À AFFICHER SUR LA CARTE
+                        // 3 - ENVOI DES INFOS À AFFICHER SUR LA CARTE
                         var retour = {
                             type: mapOptions.type_messages.add_places,
-                            data: places
+                            data: placesCreated
                         };
                         this.trigger(retour);
                         Actions.notif.success();
@@ -598,7 +601,7 @@ var store = Reflux.createStore({
                 this._inst.places = places;
                 this._inst.allees = allees;
                 this._inst.zones = zones;
-                this._inst.afficheurs = []; // TODO récupérer les afficheurs
+                this._inst.afficheurs = [];
 
                 // ---------------------------------------------------------------------
 
@@ -657,7 +660,82 @@ var store = Reflux.createStore({
      */
     affichageDataInitial: function () {
         // LES PLACES À AFFICHER SUR LA MAP ----------------------------------------------------
-        var placesMap = _.map(this._inst.places, function (p) {
+        var placesMap = this.createPlacesMapFromPlacesBDD(this._inst.places);
+
+        var message = {
+            type: mapOptions.type_messages.add_places,
+            data: placesMap
+        };
+        this.trigger(message);
+
+        // LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
+        var zoneStyle = {
+            color: '#daa520',
+            weight: 2,
+            opacity: 0.65,
+            fillOpacity: 0.05,
+            fillColor: '#daa520'
+        };
+        var zonesMap = _.map(this._inst.zones, function (z) {
+            if (z.geojson != "") {
+                var extraData = z;
+                var polygon = mapHelper.createFeatureFromJSON(z.geojson, extraData, zoneStyle);
+
+                return {
+                    data: z,
+                    polygon: polygon
+                };
+            } else {
+                return null;
+            }
+        }, this);
+
+        message = {
+            type: mapOptions.type_messages.add_zones,
+            data: zonesMap
+        };
+        this.trigger(message);
+        // LES ALLEES À AFFICHER SUR LA MAP ----------------------------------------------------
+        var alleeStyle = {
+            color: '#1e90ff',
+            weight: 2,
+            opacity: 0.65,
+            fillOpacity: 0.15,
+            fillColor: '#1e90ff'
+        };
+        var alleesMap = _.map(this._inst.allees, function (a) {
+            if (a.geojson != "") {
+                var extraData = a;
+                var polygon = mapHelper.createFeatureFromJSON(a.geojson, extraData, alleeStyle);
+
+                return {
+                    data: a,
+                    polygon: polygon
+                };
+            } else {
+                return null;
+            }
+        }, this);
+
+        message = {
+            type: mapOptions.type_messages.add_allees,
+            data: alleesMap
+        };
+        this.trigger(message);
+
+    },
+
+    /**
+     * Crée les places à afficher sur la map en fonction d'un tableau de places venant directement de la BDD
+     *
+     * @param placesBDD : objet de type place sorti d'Eloquent.
+     * @returns : tableau de places prêt pour le trigger vers la map
+     */
+    createPlacesMapFromPlacesBDD: function (placesBDD) {
+
+        console.log('PlacesBDD : %o', placesBDD);
+
+        return _.map(placesBDD, function (p) {
             var coords = {lat: p.lat, lng: p.lng};
             var nom = p.libelle;
             var angleMarker = p.angle;
@@ -679,35 +757,7 @@ var store = Reflux.createStore({
                 marker: marker
             };
         }, this);
-
-        var message = {
-            type: mapOptions.type_messages.add_places,
-            data: placesMap
-        };
-        this.trigger(message);
-
-        // LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
-        var zonesMap = _.map(this._inst.zones, function (z) {
-            if (z.geojson != "") {
-                var extraData = z;
-                var polygon = mapHelper.createFeatureFromJSON(z.geojson, extraData);
-
-                return {
-                    data: z,
-                    polygon: polygon
-                };
-            } else {
-                return null;
-            }
-        }, this);
-
-        message = {
-            type: mapOptions.type_messages.add_zones,
-            data: zonesMap
-        };
-        this.trigger(message);
     },
-
     /**
      * Prévient l'utilisateur que le plan qu'il visualise n'est pas calibré.
      */

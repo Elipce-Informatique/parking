@@ -36,7 +36,6 @@ class AlleesController extends \BaseController
 
         try {
             $data = json_decode(Input::get('data'), true);
-            Log::debug('Données AJAX des allées : ' . print_r($data, true));
 
             // DONNÉES DE L'ALLÉE
             $nom = Input::get('nom_allee');
@@ -64,10 +63,9 @@ class AlleesController extends \BaseController
                     Place::find($p['id'])->update(['allee_id' => $newAllee->id]);
                 }
             }
+
             // Fin du try, tout s'est bien passé
             DB::commit();
-            // DB::rollBack();
-            Log::debug('PASS');
             return json_encode(true);
         } catch (Exception $e) {
             Log::error('ERREUR D INSERTION ALLEE :');

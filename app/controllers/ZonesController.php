@@ -50,6 +50,7 @@ class ZonesController extends \BaseController
             // ------------------------------------------------------------------
             // DANS TOUS LES CAS :
 
+
             // CRÉATION DE LA ZONE EN BDD
             $newZone = Zone::create([
                 'libelle' => $nom,
@@ -59,6 +60,7 @@ class ZonesController extends \BaseController
                 'plan_id' => $plan_id
             ]);
 
+
             // CRÉATION ALLÉE PAR DÉFAUT
             $alleeDefault = Allee::create([
                 'libelle' => $newZone->libelle . '.allee_defaut',
@@ -67,7 +69,6 @@ class ZonesController extends \BaseController
                 'zone_id' => $newZone->id,
                 'geojson' => ''
             ]);
-            Log::debug('Allée créée ::::::: ' . print_r($alleeDefault->id, true));
             // ------------------------------------------------------------------
             // ------------------------------------------------------------------
             // CAS 1 : PAS D'ALLEES
@@ -80,25 +81,24 @@ class ZonesController extends \BaseController
             // ------------------------------------------------------------------
             // CAS 2 : DES ALLÉES
             else {
-                Log::debug('Allées à attacher à la zone : ' . print_r($allees, true));
-                // CAS 2.1 ASSOCIATION DES ALLÉES SEULEMENT
-                if (count($placesDefault) == 0) {
-                    foreach ($allees AS $allee) {
-                        // TODO : tester
-                        Allee::find($allee['id'])->update(['zone_id' => $newZone->id]);
-                    }
-                } // CAS 2.2 ASSOCIATION ALLÉES ET PLACES
-                else {
-                    // TODO
+
+                // ASSOCIATION DES ALLÉES SEULEMENT
+                foreach ($allees AS $allee) {
+                    Allee::find($allee['id'])->update(['zone_id' => $newZone->id]);
                 }
-                DB::rollBack();
+
+                // CAS 2.2 ASSOCIATION PLACES
+                if (count($placesDefault) > 0) {
+                    // ASSOCIATION DES PLACES DEFAUT À L'ALLÉE PAR DÉFAUT
+                    foreach ($placesDefault as $place) {
+                        Place::find($place['id'])->update(['allee_id' => $alleeDefault->id]);
+                    }
+                }
             }
             // ------------------------------------------------------------------
 
-
             // Fin du try, tout s'est bien passé
-//             DB::commit();
-            DB::rollBack();
+            DB::commit();
             return json_encode(true);
         } catch (Exception $e) {
             Log::error('ERREUR D INSERTION ZONE :');

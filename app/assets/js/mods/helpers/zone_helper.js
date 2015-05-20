@@ -3,6 +3,7 @@
  */
 var _ = require('lodash');
 var mapHelper = require('./map_helper');
+var jh = require('./json_helper');
 var formDataHelper = require('./form_data_helper');
 
 /**
@@ -76,11 +77,13 @@ function geometryCheck(newZone, zones, allees) {
  */
 function createZone(formDom, zone, _inst) {
 
-    var alleesInZone = getAlleesInZone(formDom, zone, _inst);
+    console.log('PASS DANS LA CREATION ZONE');
+    var alleesInZone = getAlleesInZone(formDom, zone.e.layer, _inst);
+    console.log('PASS APRES GET ALLEES %o ', alleesInZone);
     var geoJson = zone.e.layer.toGeoJSON();
 
     // YA PAS D'ALLÉES --------------------------------------------------------------
-    if (alleesInZone.length == 0) {
+    if (alleesInZone.alleesData.length == 0) {
         // Récup des places dans la zone
         var placesInZone = mapHelper.getPlacesInZone(zone, _inst);
 
@@ -97,11 +100,11 @@ function createZone(formDom, zone, _inst) {
     // YA DES ALLÉES --------------------------------------------------------------
     else {
         // RÉCUP DE TOUTES LES ALLÉES
-        var alleesInZone = getAlleesInZone(formDom, zone, _inst);
+        var alleesGeo = alleesInZone.alleesGeometrie;
 
         // PARCOURT DES ALLÉES POUR SORTIR LES PLACES
         var placesInAllees = [];
-        _.each(alleesInZone, function (allee) {
+        _.each(alleesGeo, function (allee) {
             var placesInAllee = mapHelper.getPlacesInAllee(allee, _inst);
             placesInAllees = _.union(placesInAllees, placesInAllee);
         });
@@ -114,7 +117,7 @@ function createZone(formDom, zone, _inst) {
 
             var data = {
                 places_default: [],
-                allees: alleesInZone,
+                allees: alleesInZone.alleesData,
                 zone_geojson: geoJson,
                 plan_id: _inst.planInfos.id
             };
@@ -122,7 +125,26 @@ function createZone(formDom, zone, _inst) {
         }
         // TOUTES LES PLACES NE SONT PAS DANS UNE ZONE .....................
         else {
-            // TODO : trouver les places à mettre dans l'allée par défaut.
+            // PARCOURT DE TOUTES LES PLACES DE LA ZONE
+            var placesDefault = _.filter(placesInZone, function (pz) {
+                // Comparaison de la place avec les places dans les allées.
+                // RETOURNE FALSE SI DANS L'ALLÉE
+                return _.reduce(placesInAllees, function (isDefault, pa) {
+                    var retour = isDefault ? !(pz.id == pa.id) : false;
+                    return retour;
+                }, true);
+            });
+
+            // CONSTRUCTION DES DONNÉES
+            var data = {
+                places_default: placesDefault,
+                allees: alleesInZone.alleesData,
+                zone_geojson: geoJson,
+                plan_id: _inst.planInfos.id
+            };
+
+            // INSERTION DE LA ZONE
+            insertZone(formDom, data);
         }
     }
 }
@@ -135,6 +157,7 @@ function createZone(formDom, zone, _inst) {
 function insertZone(formDom, data) {
     // CONSTRUCTION DE l'AJAX DE CRÉATION
     var fData = formDataHelper('form_mod_zone', 'POST');
+    console.log('Data insert : %o', data);
     fData.append('data', JSON.stringify(data));
 
     $.ajax({
@@ -161,24 +184,24 @@ function insertZone(formDom, data) {
  * TODO : tester
  * Retourne le tableau des allées présentes sur la map contenues dans la zone
  * @param formDom : DOM du formulaire
- * @param zone : zone dessinnée par l'utilisateur (format layer Leaflet)
+ * @param zone : zone dessinnée par l'utilisateur (format tableau de lat lng)
  * @param _inst : données d'instance du store
  */
 function getAlleesInZone(formDom, zone, _inst) {
     var allAllees = mapHelper.getFeaturesArrayFromLeafletLayerGroup(_inst.mapInst.alleesGroup);
 
-    // Les allées de la zone (objets leaflet)
+    // LES ALLÉES DE LA ZONE (OBJETS LEAFLET)
     var alleesInZone = _.filter(allAllees, function (allee) {
-        return mapHelper.polygonContainsPolygon(zone.e.layer._latlngs, allee._latlngs);
+        return mapHelper.polygonContainsPolygon(zone._latlngs, allee._latlngs);
     });
 
     // EXTRACTION DE LA PROPRIÉTÉ DATA POUR ÉVITER LA REDONDANCE LIÉE À LA MAP.
-    alleesInZone = _.map(alleesInZone, function (allee) {
+    var alleesInZoneData = _.map(alleesInZone, function (allee) {
         return allee.options.data;
     });
 
     console.log('Allées dans la zone : %o', alleesInZone);
-    return alleesInZone;
+    return {alleesData: alleesInZoneData, alleesGeometrie: alleesInZone};
 }
 
 /**
