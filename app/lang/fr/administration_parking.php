@@ -60,8 +60,8 @@ return array(
         'err_zone_contenue' => 'Erreur : La zone dessinée ne doit ni contenir ni être contenue dans une autre zone.',
         'err_zone_chevauche' => 'Erreur : La zone dessinée coupe une autre zone.',
         'err_allee_chevauche' => 'Erreur : La zone dessinée coupe une allée.',
-        'err_zone_contenue_allee' =>'Erreur : La zone dessinée ne doit pas être contenue dans une allée.',
-        'err_allee_contenue_allee' =>'Erreur : La zone dessinée ne doit pas être contenue dans une autre allée.',
+        'err_zone_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une allée.',
+        'err_allee_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une autre allée.',
     ],
 
     // MODULE TEMPS REEL
@@ -70,6 +70,13 @@ return array(
         'journal' => "Journal",
         'anomalie' => 'Anomalies matériel',
         'test' => "Tests"
+    ],
+
+    // PAGE NIVEAU
+    'niveau' => [
+        'titre' => 'Niveau',
+        'texte' => 'Permet de créer, modifier, supprimer les différents niveaux des parkings. Un niveau peut être composé de plusieurs plans.',
+        'nb_plan' => 'Nb plans'
     ]
 );
 

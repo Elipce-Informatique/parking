@@ -11,7 +11,7 @@ class NiveauxController extends \BaseController
      */
     public function index()
     {
-        //
+        return View::make('pages.niveau');
     }
 
     /**
@@ -95,6 +95,14 @@ class NiveauxController extends \BaseController
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * Retourne tous les nvieaux accessibles au user connecté
+     * @return string
+     */
+    public function all(){
+        return json_encode(Parking::getTreeviewParking());
     }
 
 }

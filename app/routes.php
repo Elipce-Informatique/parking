@@ -102,11 +102,13 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     Route::get('etats_d_occupation/libelle/{libelle}', 'EtatsDoccupationController@getLibelleExist');
     Route::resource('etats_d_occupation', 'EtatsDoccupationController');
 
+
     /*
      * Configuration d'un parking
      */
     Route::get('configuration_parking/treeview_carte', 'ConfigurationParkingController@menuTreeView');
     Route::resource('configuration_parking', 'ConfigurationParkingController');
+
 
     /* **************************************************************************
      * SUPERVISION PARKING
@@ -134,6 +136,12 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     Route::get('calendrier_programmation/visu/{parking}/{annee}', 'CalendrierProgrammationController@visu');
     Route::resource('calendrier_programmation', 'CalendrierProgrammationController');
 
+    /*
+     * Niveaux
+     */
+    Route::get('niveau', 'NiveauxController@index');
+    Route::get('niveau/all', 'NiveauxController@all');
+    Route::get('niveau/libelle/{libelle}/{id?}', 'NiveauxController@verifLibelle');
 
     /* **************************************************************************
      * Test
@@ -156,6 +164,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::post('plan/{id}/calibre', 'PlansController@updateCalibre');
     Route::get('niveau/{id}/places', 'NiveauxController@showWithPlaces');
 
+    // Seulement des data, jamais du HTML (créer d'autres routes pour les pages d'adiministration des niveaux, zones, allées)
     Route::resource('niveau', 'NiveauxController');
     Route::resource('plan', 'PlansController');
     Route::resource('afficheur', 'AfficheursController');

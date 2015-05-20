@@ -11,5 +11,4 @@
 
 @section('scripts')
     <script src="{{URL::asset('public/js/utilisateur_courant.app.js')}}"></script>
-    {{--<script src="{{URL::asset('public/js/libs/extensions.jquery.dataTables.min.js')}}"></script>--}}
 @stop
