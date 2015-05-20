@@ -189,6 +189,7 @@ require('sweetalert');
      */
     global.Actions.niveau = Reflux.createActions([
         "display_all_niveaux", // affiche tous les niveaux
+        "display_detail_niveau", // affiche le détail du niveau
     ]);
 
 })(window);

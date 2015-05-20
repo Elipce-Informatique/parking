@@ -140,7 +140,6 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
      * Niveaux
      */
     Route::get('niveau', 'NiveauxController@index');
-    Route::get('niveau/all', 'NiveauxController@all');
     Route::get('niveau/libelle/{libelle}/{id?}', 'NiveauxController@verifLibelle');
 
     /* **************************************************************************
@@ -165,6 +164,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::get('niveau/{id}/places', 'NiveauxController@showWithPlaces');
 
     // Seulement des data, jamais du HTML (créer d'autres routes pour les pages d'adiministration des niveaux, zones, allées)
+    Route::get('niveau/all', 'NiveauxController@all');
     Route::resource('niveau', 'NiveauxController');
     Route::resource('plan', 'PlansController');
     Route::resource('afficheur', 'AfficheursController');

@@ -16,7 +16,7 @@ var MixinGestMod = require('../mixins/gestion_modif');
 
 // HELPERS
 var pageState = require('../helpers/page_helper').pageState;
-var form_data_helper  = require('../helpers/form_data_helper');
+var form_data_helper = require('../helpers/form_data_helper');
 
 /**
  * Page calendrier jours
@@ -37,9 +37,10 @@ var PageNiveau = React.createClass({
             etat: pageState.liste,
             idNiveau: 0,
             listeNiveaux: [],// Tableau de niveaux
-            detailNiveau : {}, // Objet contenant les infos du niveau en cours de sélection
-            validationLibelle : {}, // Etat de validation du libelle (vert ou rouge),
-            sousTitre : '' // sous titre du bandeau
+            detailNiveau: {}, // Objet contenant les infos du niveau en cours de sélection
+            validationLibelle: {}, // Etat de validation du libelle (vert ou rouge),
+            sousTitre: '', // sous titre du bandeau
+            parkings: [] // parkings liés au user connecté
         };
     },
     componentDidMount: function () {
@@ -55,13 +56,13 @@ var PageNiveau = React.createClass({
     onRetour: function () {
         this.setState({etat: pageState.liste, idNiveau: 0});
         // Maj liste des jours prédéfinis
-        Actions.jours.display_all_niveaux();
+        Actions.niveau.display_all_niveaux();
     },
 
     displayNiveau: function (e) {
         // Ligne du tableau
         var id = $(e.currentTarget).data('id');
-        Actions.jours.display_detail_niveau(id);
+        Actions.niveau.display_detail_niveau(id);
     },
 
     /**
@@ -121,12 +122,18 @@ var PageNiveau = React.createClass({
                             editable={true}
                             detailNiveau={this.state.detailNiveau}
                             idNiveau={this.state.idNiveau}
-                            validationLibelle={this.state.validationLibelle} />
+                            validationLibelle={this.state.validationLibelle}
+                            parkings={this.state.parkings}/>
                     </div>;
                 break;
             default:
                 var props = {
-                    head: [Lang.get('global.parking'), Lang.get('global.niveau'), Lang.get('global.description'), Lang.get('administration_parking.niveau.nb_plan')],
+                    head: [
+                        Lang.get('global.parking'),
+                        Lang.get('global.niveau'),
+                        Lang.get('global.description'),
+                        Lang.get('administration_parking.niveau.nb_plan')
+                    ],
                     hide: ['id']
                 };
 
@@ -175,8 +182,9 @@ var storeNiveau = Reflux.createStore({
         etat: pageState.liste,
         listeNiveaux: [],
         detailNiveau: {},
-        validationLibelle : {},
-        sousTitre : ''
+        validationLibelle: {},
+        sousTitre: '',
+        parkings: []
     },
 
     // Initial setup
@@ -200,8 +208,19 @@ var storeNiveau = Reflux.createStore({
             context: this,
             async: false,
             success: function (data) {
-                this.stateLocal.listeNiveaux = data;
+                // Calcul des niveaux à afficher
+                var niveaux = this.processNiveauxList(data);
+                // MAJ du state local
+                this.stateLocal.listeNiveaux = niveaux;
                 //console.log(data);
+                // Calcul des parkings du user
+                var parkings = _.map(data, function (park) {
+                    // Données du niveau qui nous intéressent
+                    return _.pick(park, ['id', 'libelle']);
+                }.bind(this));
+                // MAJ du state local
+                this.stateLocal.parkings = parkings;
+
             },
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
@@ -212,43 +231,48 @@ var storeNiveau = Reflux.createStore({
     },
 
     /**
-     * Accueil de la page, tableau de jours prédéfinis
+     * A partir des données des niveaux de parkings, contruit des data "niveau"
+     * @param data: données de la BDD (Parking::getTreeviewParking())
      */
-    modeListe: function () {
-        this.stateLocal = {
-            idNiveau: 0,
-            etat: pageState.liste
-        };
+    processNiveauxList: function (data) {
+        var niveaux = [];
+        // Des parkings sont associés au user
+        if (data.length > 0) {
+            // Parcours des parkings
+            data.forEach(function (park, index) {
+                // Des niveaux dans le parking
+                if (park.niveaux.length > 0) {
+                    // Parcours des niveaux
+                    var niveauParkCourant = _.map(park.niveaux, function (niveau) {
+                        // Données du niveau qui nous intéressent
+                        var temp = _.pick(niveau, ['id', 'libelle', 'description']);
+                        // ajout du nb plans
+                        temp.nb = niveau.plans.length;
+                        // Ajout du nom de parking
+                        temp = _.extend({parking: park.libelle}, temp);
+                        return temp;
+                    }.bind(this));
 
-        // AJAX
-        $.ajax({
-            url: BASE_URI + 'calendrier_jours/all',
-            dataType: 'json',
-            context: this,
-            async: true,
-            success: function (data) {
-                // Tous les jours prédéfinis en BDD
-                this.stateLocal.listeNiveaux = data;
-                this.trigger(this.stateLocal);
-            },
-            error: function (xhr, status, err) {
-                console.error(status, err.toString());
-                this.stateLocal.listeNiveaux = [];
-            }
-        });
+                    // Ajout au tableau de niveaux
+                    niveaux = _.extend(niveaux, niveauParkCourant);
+                }
+
+            }, this);
+        }
+        return niveaux
     },
 
     /**
-     * Chargement des données d'un jour prédéfini
-     * @param idNiveau: jour_calendrier.id
+     * Affichage du détail du niveau
+     * @param id: ID niveau
      */
-    modeVisu: function (idNiveau) {
+    onDisplay_detail_niveau: function (id) {
         // Infos
-        this.stateLocal.idNiveau = idNiveau;
+        this.stateLocal.idNiveau = id;
         this.stateLocal.etat = pageState.visu;
         // AJAX
         $.ajax({
-            url: BASE_URI + 'calendrier_jours/' + idNiveau,
+            url: BASE_URI + 'parking/niveau/' + id,
             dataType: 'json',
             context: this,
             async: true,
@@ -265,6 +289,37 @@ var storeNiveau = Reflux.createStore({
             }
         });
     },
+
+    /**
+     * Accueil de la page, tableau de niveaux
+     */
+    onDisplay_all_niveaux: function () {
+        this.stateLocal = {
+            idNiveau: 0,
+            etat: pageState.liste
+        };
+
+        // AJAX
+        $.ajax({
+            url: BASE_URI + 'parking/niveau/all',
+            dataType: 'json',
+            context: this,
+            async: true,
+            success: function (data) {
+                // Calcul des niveaux à afficher
+                var niveaux = this.processNiveauxList(data);
+                // MAJ du state local
+                this.stateLocal.listeNiveaux = niveaux;
+                // Envoi du state
+                this.trigger(this.stateLocal);
+            },
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+                this.stateLocal.listeNiveaux = [];
+            }
+        });
+    },
+
 
     /**
      * Bouton créer du bandeau: affichage du formulaire vide
@@ -299,7 +354,7 @@ var storeNiveau = Reflux.createStore({
      * onChange de n'importe quel élément du FORM
      * @param e: evt
      */
-    onForm_field_changed: function(e){
+    onForm_field_changed: function (e) {
         var data = {};
         // MAJ du state STORE
         data[e.name] = e.value
@@ -310,10 +365,10 @@ var storeNiveau = Reflux.createStore({
      * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
      * @param data : Object {name: "email", value: "yann.pltv@gmail.com", form: DOMNode}
      */
-    onForm_field_verif: function(data){
+    onForm_field_verif: function (data) {
 
         // Le champ BLUR est le champ libelle
-        if(data.name == 'libelle'){
+        if (data.name == 'libelle') {
             //  Test doublon du libellé
             this.stateLocal.validationLibelle = this.libelleChange(data.value, this.stateLocal.idNiveau);
             this.trigger(this.stateLocal);
@@ -327,28 +382,28 @@ var storeNiveau = Reflux.createStore({
      * @param id: ID jour_calendrier ou 0 si mode création
      * @returns {{}}
      */
-    libelleChange: function(value, id){
+    libelleChange: function (value, id) {
         /* Variable de retour */
         var retour = {};
 
         /* libelle  non vide et non identique au libellé de départ */
-        if(value.length>0 && value != this.stateLocal.sousTitre){
+        if (value.length > 0 && value != this.stateLocal.sousTitre) {
 
             // URL en fonction du mode création ou edtion
-            var finUrl = id === 0 ? '' : '/'+id;
-            
+            var finUrl = id === 0 ? '' : '/' + id;
+
             // AJAX
             $.ajax({
-                url:      BASE_URI + 'calendrier_jours/libelle/'+value +finUrl,
+                url: BASE_URI + 'calendrier_jours/libelle/' + value + finUrl,
                 dataType: 'json',
-                context:  this,
+                context: this,
                 async: false,
-                success:  function (bExist) {
+                success: function (bExist) {
                     // Le libellé existe déjà
-                    if(bExist){
+                    if (bExist) {
                         // Champ libelle erroné
                         retour['data-valid'] = false;
-                        retour.bsStyle   = 'error';
+                        retour.bsStyle = 'error';
                         retour.help = Lang.get('calendrier.jours.libelleExists');
                     }
                 },
@@ -391,14 +446,14 @@ var storeNiveau = Reflux.createStore({
                     // Mode edition
                     this.stateLocal.etat = pageState.edition;
                     // Mode création Ok
-                    if(tab.obj !== null) {
+                    if (tab.obj !== null) {
                         // Maj State local + nouveau libellé
                         this.stateLocal.idNiveau = tab.obj.id;
                         this.stateLocal.detailNiveau = tab.obj;
                         this.stateLocal.sousTitre = tab.obj.libelle;
                     }
                     // Mode édition
-                    else{
+                    else {
                         // Nouveau sous titre
                         this.stateLocal.sousTitre = this.stateLocal.detailNiveau.libelle;
                     }
@@ -440,14 +495,14 @@ var storeNiveau = Reflux.createStore({
             data: {'_token': $('#_token').val()},
             success: function (bool) {
                 // suppression OK
-                if(bool) {
+                if (bool) {
                     // Mode liste
                     this.modeListe();
                     // Notification green
                     Actions.notif.success(Lang.get('global.notif_success'));
                 }
                 // Suppression KO
-                else{
+                else {
                     // Notifictaion erreur
                     Actions.notif.error(Lang.get('global.notif_erreur'));
                 }
