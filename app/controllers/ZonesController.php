@@ -50,7 +50,6 @@ class ZonesController extends \BaseController
             // ------------------------------------------------------------------
             // DANS TOUS LES CAS :
 
-            Log::debug('Pass avant insert zone');
 
             // CRÉATION DE LA ZONE EN BDD
             $newZone = Zone::create([
@@ -61,7 +60,6 @@ class ZonesController extends \BaseController
                 'plan_id' => $plan_id
             ]);
 
-            Log::debug('Pass après insert zone');
 
             // CRÉATION ALLÉE PAR DÉFAUT
             $alleeDefault = Allee::create([
@@ -71,7 +69,6 @@ class ZonesController extends \BaseController
                 'zone_id' => $newZone->id,
                 'geojson' => ''
             ]);
-            Log::debug('Allée créée ::::::: ' . print_r($alleeDefault->id, true));
             // ------------------------------------------------------------------
             // ------------------------------------------------------------------
             // CAS 1 : PAS D'ALLEES
@@ -84,7 +81,6 @@ class ZonesController extends \BaseController
             // ------------------------------------------------------------------
             // CAS 2 : DES ALLÉES
             else {
-                Log::debug('Allées à attacher à la zone : ' . print_r($allees, true));
 
                 // ASSOCIATION DES ALLÉES SEULEMENT
                 foreach ($allees AS $allee) {
@@ -93,21 +89,16 @@ class ZonesController extends \BaseController
 
                 // CAS 2.2 ASSOCIATION PLACES
                 if (count($placesDefault) > 0) {
-                    // TODO tester le code avant d'enlever le rollback
-                    Log::debug('Places par défaut !!');
                     // ASSOCIATION DES PLACES DEFAUT À L'ALLÉE PAR DÉFAUT
                     foreach ($placesDefault as $place) {
                         Place::find($place['id'])->update(['allee_id' => $alleeDefault->id]);
                     }
                 }
-
             }
             // ------------------------------------------------------------------
 
-
             // Fin du try, tout s'est bien passé
             DB::commit();
-//            DB::rollBack();
             return json_encode(true);
         } catch (Exception $e) {
             Log::error('ERREUR D INSERTION ZONE :');

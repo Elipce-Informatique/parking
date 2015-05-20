@@ -433,7 +433,6 @@ function getMarkersArrayFromLeafletLayerGroup(layerGroup) {
  */
 function createFeatureFromJSON(geoJson, extraData, style) {
     var poly = new L.geoJson(JSON.parse(geoJson), {style: style, data: extraData});
-    console.log('Polygon créé depuis JSON = %o', poly);
     return poly;
 }
 
