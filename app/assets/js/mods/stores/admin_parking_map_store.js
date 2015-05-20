@@ -687,10 +687,17 @@ var store = Reflux.createStore({
         this.trigger(message);
 
         // LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
+        var zoneStyle = {
+            color: '#daa520',
+            weight: 2,
+            opacity: 0.65,
+            fillOpacity: 0.05,
+            fillColor: '#daa520'
+        };
         var zonesMap = _.map(this._inst.zones, function (z) {
             if (z.geojson != "") {
                 var extraData = z;
-                var polygon = mapHelper.createFeatureFromJSON(z.geojson, extraData);
+                var polygon = mapHelper.createFeatureFromJSON(z.geojson, extraData, zoneStyle);
 
                 return {
                     data: z,
@@ -706,6 +713,34 @@ var store = Reflux.createStore({
             data: zonesMap
         };
         this.trigger(message);
+        // LES ALLEES À AFFICHER SUR LA MAP ----------------------------------------------------
+        var alleeStyle = {
+            color: '#1e90ff',
+            weight: 2,
+            opacity: 0.65,
+            fillOpacity: 0.15,
+            fillColor: '#1e90ff'
+        };
+        var alleesMap = _.map(this._inst.allees, function (a) {
+            if (a.geojson != "") {
+                var extraData = a;
+                var polygon = mapHelper.createFeatureFromJSON(a.geojson, extraData, alleeStyle);
+
+                return {
+                    data: a,
+                    polygon: polygon
+                };
+            } else {
+                return null;
+            }
+        }, this);
+
+        message = {
+            type: mapOptions.type_messages.add_allees,
+            data: alleesMap
+        };
+        this.trigger(message);
+
     },
 
     /**

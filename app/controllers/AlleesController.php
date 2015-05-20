@@ -67,7 +67,6 @@ class AlleesController extends \BaseController
             // Fin du try, tout s'est bien passé
             DB::commit();
             // DB::rollBack();
-            Log::debug('PASS');
             return json_encode(true);
         } catch (Exception $e) {
             Log::error('ERREUR D INSERTION ALLEE :');

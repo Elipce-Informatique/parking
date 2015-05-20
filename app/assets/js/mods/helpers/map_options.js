@@ -74,7 +74,8 @@ module.exports.type_messages = {
     hide_modal: 9,
     new_zone: 10,
     new_allee: 11,
-    add_zones: 12
+    add_zones: 12,
+    add_allees: 13
 };
 
 /**

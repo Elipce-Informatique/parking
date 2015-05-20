@@ -431,8 +431,8 @@ function getMarkersArrayFromLeafletLayerGroup(layerGroup) {
  * @param geoJson
  * @returns {dataPlaces.geoJson}
  */
-function createFeatureFromJSON(geoJson, extraData) {
-    var poly = new L.geoJson(JSON.parse(geoJson), {data: extraData});
+function createFeatureFromJSON(geoJson, extraData, style) {
+    var poly = new L.geoJson(JSON.parse(geoJson), {style: style, data: extraData});
     console.log('Polygon créé depuis JSON = %o', poly);
     return poly;
 }
@@ -467,7 +467,7 @@ function getPlacesInAllee(allee, _inst) {
 
     // LISTE DES PLACES CONTENUES DANS L'ALLÉE
     var placesInAllee = _.filter(allPlaces, function (place) {
-        var isIn = isPointInPolygon(allee.e.layer._latlngs, place._latlng);
+        var isIn = isPointInPolygon(allee._latlngs, place._latlng);
         return isIn;
     });
 
