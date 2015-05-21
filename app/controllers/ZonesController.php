@@ -99,7 +99,9 @@ class ZonesController extends \BaseController
 
             // Fin du try, tout s'est bien passé
             DB::commit();
-            return json_encode(true);
+            return json_encode([
+                    'retour' => Zone::find($newZone->id)]
+            );
         } catch (Exception $e) {
             Log::error('ERREUR D INSERTION ZONE :');
             Log::error($e);
