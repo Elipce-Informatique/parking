@@ -115,7 +115,11 @@ var InputValueMixin = {
 
         // Ajout de l'addon required si besoin
         if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
-            attrs = addRequiredAddon(attrs, this.state.value);
+
+            // Pas d'addon sur InputFile
+            if (this.props.typeOfFile === undefined) {
+                attrs = addRequiredAddon(attrs, this.state.value);
+            }
         }
         return attrs;
     }

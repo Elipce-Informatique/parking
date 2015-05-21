@@ -81,7 +81,7 @@ Voulez-vous vraiment quitter cette page ?',
     'select' => 'Sélection...',
     'saisieNumber' => 'La saisie doit être entre [min] et [max], et par pas de [pas]',
     'inputTelError' => 'Numéro incorrect',
-    'erreurFileInput' => 'Seules les extensions suivantes sont prises en compte ici : [extensions] Le fichier n\'a pas été pris en compte.',
+    'erreurFileInput' => "Seules les extensions suivantes sont prises en compte :\n [extensions]",
 
     /*
     |--------------------------------------------------------------------------
