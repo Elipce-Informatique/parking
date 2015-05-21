@@ -22,6 +22,7 @@ Puis jQuery et Bootstrap comme utilitaires.
 - les langues sont définies dans des fichiers par thèmes (app/lang/fr)
     - Pour les utiliser en JS il faut les déclarer dans la config package/andywer/js-localization
     - Pour les appeller en JS on fait ```Lang.get('fichier.constante')```;
+- Les logs sont enregistrés dans le dossier ```app/storage/logs``` les fichiers sont générés en fonction du jour et du niveau de log (```DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY```). Les logs sont remontés en bulle: Le fichier DEBUG contient tout, le fichier INFO contient tout sauf DEBUG, le fichier NOTICE contient tout sauf INFO et DEBUG etc...
     
 ### Environnement de dev Front End
 - Installation de **node js** : http://nodejs.org/

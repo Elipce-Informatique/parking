@@ -1038,7 +1038,7 @@ var InputTelEditable = React.createClass({
 
 
 /**
- * Created by yann on 12/01/2015.
+ * Modified by vivian on 21/05/2015.
  *
  * Champ upload stylé
  * @param name : nom a afficher dans le composant
