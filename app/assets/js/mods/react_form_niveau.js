@@ -19,23 +19,23 @@ var FormNiveau = React.createClass({
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
-        parkings : React.PropTypes.array.isRequired, // Données de la combo parkings
-        detailNiveau : React.PropTypes.object,
+        parkings: React.PropTypes.array.isRequired, // Données de la combo parkings
+        detailNiveau: React.PropTypes.object,
         idNiveau: React.PropTypes.number,
-        validationLibelle :  React.PropTypes.object // Permet de colorer le champ en fonction des vérifications métiers effectuées dans la page
+        validationLibelle: React.PropTypes.object // Permet de colorer le champ en fonction des vérifications métiers effectuées dans la page
     },
     getDefaultProps: function () {
         return {
             detailNiveau: {},
             idNiveau: 0,
-            validationLibelle : {}
+            validationLibelle: {}
         }
     },
 
     render: function () {
 
         return (
-            <Form attributes={{id:"form_niveau"}}>
+            <Form attributes={{id: "form_niveau"}}>
                 <Row />
                 <Select
                     attributes={{
@@ -76,14 +76,19 @@ var FormNiveau = React.createClass({
                     area = {true}
                     editable={this.props.editable}/>
 
-                <Upload
-                    name="url"
-                    typeOfFile="img"
-                    alertOn={true}
-                    libelle={Lang.get('administration_parking.niveau.download_plan')}
-                    attributes={{required:true}}
-                />
-
+                <Row>
+                    <Col md={2}>
+                        <Upload
+                            name="url"
+                            typeOfFile="img"
+                            alertOn={true}
+                            libelle={Lang.get('administration_parking.niveau.download_plan')}
+                            attributes={{
+                                required: false
+                            }}
+                        />
+                    </Col>
+                </Row>
             </Form>
         );
     }

@@ -1850,7 +1850,7 @@ module.exports.InputTimeEditable = InputTimeEditable;
  * @param attr: this.props.attributes
  * @returns {XML}
  */
-var modeEditableFalse = function(attr) {
+var modeEditableFalse = function (attr) {
     // Label
     var label = (attr.label !== undefined ? attr.label : '');
     // Texte
@@ -1879,7 +1879,7 @@ var modeEditableFalse = function(attr) {
  * @param withAlert: booléen si on affiche ou non une alert si l'extension n'est pas bonne
  * @return booléen
  */
-var checkFileExtension = function(value, mode, withAlert) {
+var checkFileExtension = function (value, mode, withAlert) {
     var filePath = value;
 
     if (filePath.indexOf('.') == -1)

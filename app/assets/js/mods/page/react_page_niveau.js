@@ -88,7 +88,8 @@ var PageNiveau = React.createClass({
                         <FormNiveau
                             editable={false}
                             detailNiveau={this.state.detailNiveau}
-                            idNiveau={this.state.idNiveau} />
+                            idNiveau={this.state.idNiveau}
+                            parkings={this.state.parkings}/>
                     </div>;
                 break;
             case pageState.creation:
@@ -105,7 +106,8 @@ var PageNiveau = React.createClass({
                             editable={true}
                             detailNiveau={this.state.detailNiveau}
                             idNiveau={this.state.idNiveau}
-                            validationLibelle={this.state.validationLibelle} />
+                            validationLibelle={this.state.validationLibelle}
+                            parkings={this.state.parkings}/>
                     </div>;
                 break;
             case pageState.edition:
