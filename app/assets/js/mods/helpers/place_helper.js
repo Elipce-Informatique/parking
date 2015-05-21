@@ -304,31 +304,6 @@ function createPlaceFromData(p, types_places) {
 }
 
 /**
- * Crée le parallélogramme d'une palce en fonction d'un objet geoJSON
- * @param geoJson
- * @param extraData
- * @param nom
- * @param color
- * @returns {place}
- */
-function createPlaceParallelogrammeFromGeoJson(geoJson, extraData, nom, color) {
-    //CETTE FONCTION EST USELESS
-    var style = {
-        data: extraData,
-        color: "#" + color,
-        opacity: 0.9,
-        fillColor: "#" + color
-    };
-    //CETTE FONCTION EST USELESS
-    var parallelogrammePlace = new L.geoJson(JSON.parse(geoJson), {style: style});
-    //CETTE FONCTION EST USELESS
-    parallelogrammePlace.bindLabel(nom);
-    //CETTE FONCTION EST USELESS
-    return parallelogrammePlace;
-    //CETTE FONCTION EST USELESS
-}
-
-/**
  * Crée le parallélogramme d'une palce en fonction d'une liste de coordonnées
  * @param coords
  * @param extraData
