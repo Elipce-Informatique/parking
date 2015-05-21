@@ -84,7 +84,7 @@ var FormNiveau = React.createClass({
                             alertOn={true}
                             libelle={Lang.get('administration_parking.niveau.download_plan')}
                             attributes={{
-                                required: false
+                                required: true
                             }}
                         />
                     </Col>

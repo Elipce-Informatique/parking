@@ -1068,6 +1068,7 @@ var InputFile = React.createClass({
     },
 
     getDefaultProps: function () {
+
         return {
             attributes: {},
             evts: {},
@@ -1949,7 +1950,7 @@ var checkFileExtension = function (value, mode, withAlert) {
         // Avec alerte
         if (withAlert) {
             // Construction message
-            var str = Lang.get('global.erreurFileInput').replace('[extensions]', validExtensions.join('\n'));
+            var str = Lang.get('global.erreurFileInput').replace('[extensions]', validExtensions.join(', '));
             // Popup
             swal(str);
         }
