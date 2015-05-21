@@ -137,7 +137,7 @@ var parkingMap = React.createClass({
         this._inst.map.addLayer(this._inst.placesMarkersGroup);
         this._inst.placesGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.placesGroup);
-        this._inst.alleesGroup = new L.geoJson();
+        this._inst.alleesGroup = new L.geoJson();// TODO
         this._inst.map.addLayer(this._inst.alleesGroup);
         this._inst.zonesGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.zonesGroup);

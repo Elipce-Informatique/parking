@@ -294,7 +294,6 @@ function polygonIntersection(poly1, poly2) {
     // Les polygons ne se contiennent pas totalement l'un l'autre, intersection possible
     if (!polygonContainsPolygon(poly1, poly2) || !polygonContainsPolygon(poly2, poly1)) {
         var intersect = oPoly1.union(oPoly2);
-        console.log('Intersection : %o', intersect);
         // Si on a une union entre les deux, c'est qu'il y a intersection
         return !(intersect.length == 0);
     } else {
