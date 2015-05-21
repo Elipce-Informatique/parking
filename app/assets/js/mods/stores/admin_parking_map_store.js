@@ -491,10 +491,11 @@ var store = Reflux.createStore({
     /**
      * Gère l'insertion en BDD de l'allée avec le formulaire de la modale et la forme dessinée
      * @param formDom
-     * @param zone
+     * @param allee
      */
-    handleAllee: function (formDom, zone) {
-        alleeHelper.createAllee(formDom, zone, this._inst, function (data) {
+    handleAllee: function (formDom, allee) {
+        console.log('Allée : %o', allee);
+        alleeHelper.createAllee(formDom, allee, this._inst, function (data) {
             data = JSON.parse(data);
             // TEST ÉTAT INSERTION
             if (typeof(data.retour) !== 'undefined') {
@@ -743,6 +744,8 @@ var store = Reflux.createStore({
             }, "FF0000", this);
 
             var marker = placeHelper.createPlaceMarker(coords, nom, angleMarker, extraData);
+
+            // PARALLÉLOGRAMME
             var polygon = placeHelper.createPlaceParallelogrammeFromGeoJson(p.geojson, extraData, nom, color);
 
             return {

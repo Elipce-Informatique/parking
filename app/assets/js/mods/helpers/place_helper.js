@@ -308,7 +308,7 @@ function createPlaceFromData(p, types_places) {
  * @param extraData
  * @param nom
  * @param color
- * @returns {dataPlaces.geoJson}
+ * @returns {place}
  */
 function createPlaceParallelogrammeFromGeoJson(geoJson, extraData, nom, color) {
     var style = {
@@ -322,11 +322,37 @@ function createPlaceParallelogrammeFromGeoJson(geoJson, extraData, nom, color) {
     return parallelogrammePlace;
 }
 
+/**
+ * Crée le parallélogramme d'une palce en fonction d'une liste de coordonnées
+ * @param coords
+ * @param extraData
+ * @param nom
+ * @param color
+ * @returns {place}
+ */
+function createPlaceParallelogrammeFromCoordinates(coords, extraData, nom, color) {
+    console.log('PASS createPlaceParallelogrammeFromCoordinates : %o', coords);
+    var style = {
+        data: extraData,
+        color: "#" + color,
+        opacity: 0.9,
+        fillColor: "#" + color
+    };
+
+    // Récup des coordonnées TODO : style
+    var parallelogrammePlace = L.polygon(
+        coords
+    );
+    parallelogrammePlace.bindLabel(nom);
+    return parallelogrammePlace;
+}
+
 
 module.exports = {
     createPlacesFromParallelogramme: createPlacesFromParallelogramme,
     createPlaceMarker: createPlaceMarker,
     createPlaceParallelogramme: createPlaceParallelogramme,
     createPlaceParallelogrammeFromGeoJson: createPlaceParallelogrammeFromGeoJson,
+    createPlaceParallelogrammeFromCoordinates: createPlaceParallelogrammeFromCoordinates,
     createPlaceFromData: createPlaceFromData
 };
