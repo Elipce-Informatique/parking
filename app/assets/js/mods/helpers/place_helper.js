@@ -294,7 +294,7 @@ function createPlaceFromData(p, types_places) {
     if (p.etat_occupation.is_occupe == "1") {
         marker = createPlaceMarker(coords, nom, angleMarker, extraData);
     }
-    var polygon = createPlaceParallelogrammeFromGeoJson(p.geojson, extraData, nom, color);
+    var polygon = createPlaceParallelogrammeFromCoordinates(JSON.parse(p.geojson), extraData, nom, color);
 
     return {
         polygon: polygon,
@@ -331,7 +331,6 @@ function createPlaceParallelogrammeFromGeoJson(geoJson, extraData, nom, color) {
  * @returns {place}
  */
 function createPlaceParallelogrammeFromCoordinates(coords, extraData, nom, color) {
-    console.log('PASS createPlaceParallelogrammeFromCoordinates : %o', coords);
     var style = {
         data: extraData,
         color: "#" + color,
@@ -341,7 +340,8 @@ function createPlaceParallelogrammeFromCoordinates(coords, extraData, nom, color
 
     // Récup des coordonnées TODO : style
     var parallelogrammePlace = L.polygon(
-        coords
+        coords,
+        style
     );
     parallelogrammePlace.bindLabel(nom);
     return parallelogrammePlace;
@@ -352,7 +352,6 @@ module.exports = {
     createPlacesFromParallelogramme: createPlacesFromParallelogramme,
     createPlaceMarker: createPlaceMarker,
     createPlaceParallelogramme: createPlaceParallelogramme,
-    createPlaceParallelogrammeFromGeoJson: createPlaceParallelogrammeFromGeoJson,
     createPlaceParallelogrammeFromCoordinates: createPlaceParallelogrammeFromCoordinates,
     createPlaceFromData: createPlaceFromData
 };

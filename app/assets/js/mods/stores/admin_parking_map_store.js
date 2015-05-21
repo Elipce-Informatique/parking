@@ -116,6 +116,8 @@ var store = Reflux.createStore({
     onDraw_created: function (data) {
         this._inst.lastDraw = data;
 
+        console.log('Dessin utilisateur : %o', JSON.stringify(data.e.layer._latlngs));
+
         switch (this._inst.currentMode) {
             // -------------------------------------------------------------
             // SI EN MODE PLACE AUTO, ON VA CALCULER LE PARALLELLOGRAMME
@@ -365,9 +367,9 @@ var store = Reflux.createStore({
 
             // CRÉATION DU TABLEAU DE DONNÉES À ENREGISTRER
             var dataPlaces = _.map(places, function (p) {
-                var json = p.polygon.toGeoJSON();
+                var json = JSON.stringify(p.polygon._latlngs);
                 return _.extend(p.data, {
-                    geoJson: JSON.stringify(json)
+                    geoJson: json
                 });
             }, this);
 
@@ -746,7 +748,7 @@ var store = Reflux.createStore({
             var marker = placeHelper.createPlaceMarker(coords, nom, angleMarker, extraData);
 
             // PARALLÉLOGRAMME
-            var polygon = placeHelper.createPlaceParallelogrammeFromGeoJson(p.geojson, extraData, nom, color);
+            var polygon = placeHelper.createPlaceParallelogrammeFromCoordinates(JSON.parse(p.geojson), extraData, nom, color);
 
             return {
                 data: p,
