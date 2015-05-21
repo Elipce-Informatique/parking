@@ -3,6 +3,7 @@
  */
 var mapOptions = require('./map_options');
 var MathHelper = require('./math_helper');
+var mapHelper = require('./map_helper');
 /**
  * Crée les places (Markers placés au milieu des places)
  *
@@ -311,15 +312,20 @@ function createPlaceFromData(p, types_places) {
  * @returns {place}
  */
 function createPlaceParallelogrammeFromGeoJson(geoJson, extraData, nom, color) {
+    //CETTE FONCTION EST USELESS
     var style = {
         data: extraData,
         color: "#" + color,
         opacity: 0.9,
         fillColor: "#" + color
     };
+    //CETTE FONCTION EST USELESS
     var parallelogrammePlace = new L.geoJson(JSON.parse(geoJson), {style: style});
+    //CETTE FONCTION EST USELESS
     parallelogrammePlace.bindLabel(nom);
+    //CETTE FONCTION EST USELESS
     return parallelogrammePlace;
+    //CETTE FONCTION EST USELESS
 }
 
 /**
@@ -332,17 +338,14 @@ function createPlaceParallelogrammeFromGeoJson(geoJson, extraData, nom, color) {
  */
 function createPlaceParallelogrammeFromCoordinates(coords, extraData, nom, color) {
     var style = {
-        data: extraData,
         color: "#" + color,
         opacity: 0.9,
         fillColor: "#" + color
     };
 
-    // Récup des coordonnées TODO : style
-    var parallelogrammePlace = L.polygon(
-        coords,
-        style
-    );
+    // Récup des coordonnées
+    var parallelogrammePlace = mapHelper.createFeatureFromCoordinates(coords, extraData, style);
+
     parallelogrammePlace.bindLabel(nom);
     return parallelogrammePlace;
 }

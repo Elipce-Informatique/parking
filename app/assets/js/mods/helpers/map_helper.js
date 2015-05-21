@@ -436,6 +436,18 @@ function createFeatureFromJSON(geoJson, extraData, style) {
 }
 
 /**
+ * Crée et retourne une forme leaflet à partir d'un geoJson
+ * @param geoJson
+ * @returns {polygon}
+ */
+function createFeatureFromCoordinates(coordinates, extraData, style) {
+    var poly = new L.polygon(coordinates, style);
+    poly.options.data = extraData;
+    console.log('Polygon créé %o', poly);
+    return poly;
+}
+
+/**
  * Retourne un tableau de marker de toutes les places présentes sur la carte
  * @param _inst
  * @returns {Array|*}
@@ -529,5 +541,6 @@ module.exports = {
     getAllPlaces: getAllPlaces,
     getPlacesInAllee: getPlacesInAllee,
     getPlacesInZone: getPlacesInZone,
+    createFeatureFromCoordinates: createFeatureFromCoordinates,
     customZoomCRS: customZoomCRS
 };

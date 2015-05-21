@@ -79,10 +79,8 @@ function geometryCheck(newZone, zones, allees) {
  */
 function createZone(formDom, zone, _inst, callback) {
 
-    console.log('PASS DANS LA CREATION ZONE');
     var alleesInZone = getAlleesInZone(formDom, zone.e.layer, _inst);
-    console.log('PASS APRES GET ALLEES %o ', alleesInZone);
-    var geoJson = zone.e.layer.toGeoJSON();
+    var geoJson = JSON.stringify(zone.e.layer._latlngs);
 
     // YA PAS D'ALLÉES --------------------------------------------------------------
     if (alleesInZone.alleesData.length == 0) {

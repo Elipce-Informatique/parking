@@ -707,14 +707,6 @@ var store = Reflux.createStore({
         };
         this.trigger(message);
 
-        // LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
-        var zonesMap = this.createZonesMapFromZonesBDD(this._inst.zones, zoneHelper.style);
-
-        message = {
-            type: mapOptions.type_messages.add_zones,
-            data: zonesMap
-        };
-        this.trigger(message);
         // LES ALLEES À AFFICHER SUR LA MAP ----------------------------------------------------
         var alleesMap = this.createAlleesMapFromAlleesBDD(this._inst.allees, alleeHelper.style);
 
@@ -723,6 +715,16 @@ var store = Reflux.createStore({
             data: alleesMap
         };
         this.trigger(message);
+
+        // LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
+        var zonesMap = this.createZonesMapFromZonesBDD(this._inst.zones, zoneHelper.style);
+
+        message = {
+            type: mapOptions.type_messages.add_zones,
+            data: zonesMap
+        };
+        this.trigger(message);
+
     },
 
     /**
@@ -769,7 +771,9 @@ var store = Reflux.createStore({
         return _.map(zonesBDD, function (z) {
             if (z.geojson != "") {
                 var extraData = z;
-                var polygon = mapHelper.createFeatureFromJSON(z.geojson, extraData, zoneStyle);
+                console.log('Zone à afficher : %o', z);
+                var polygon = mapHelper.createFeatureFromCoordinates(JSON.parse(z.geojson), extraData, zoneStyle);
+
                 return {
                     data: z,
                     polygon: polygon
@@ -791,7 +795,7 @@ var store = Reflux.createStore({
         return _.map(alleesBDD, function (a) {
             if (a.geojson != "") {
                 var extraData = a;
-                var polygon = mapHelper.createFeatureFromJSON(a.geojson, extraData, alleeStyle);
+                var polygon = mapHelper.createFeatureFromCoordinates(JSON.parse(a.geojson), extraData, alleeStyle);
 
                 return {
                     data: a,

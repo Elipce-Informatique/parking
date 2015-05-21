@@ -40,7 +40,7 @@ class ZonesController extends \BaseController
             // DONNÉES DE LA ZONE
             $nom = Input::get('nom_zone');
             $description = Input::get('description_zone');
-            $geojsonZone = json_encode($data['zone_geojson']);
+            $geojsonZone = $data['zone_geojson'];
             $plan_id = $data['plan_id'];
 
             // DONNÉES DES LIAISONS

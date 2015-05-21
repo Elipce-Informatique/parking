@@ -71,7 +71,7 @@ function createAllee(formDom, allee, _inst, callback) {
 
     // Une allée contient la zone ?
     var zoneWrapper = getZoneWrapper(formDom, allee, _inst);
-    var geoJson = allee.e.layer.toGeoJSON();
+    var geoJson = JSON.stringify(allee.e.layer._latlngs);
 
     var data = {};
 

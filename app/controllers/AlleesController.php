@@ -41,7 +41,7 @@ class AlleesController extends \BaseController
             $nom = Input::get('nom_allee');
             $description = Input::get('description_allee');
 
-            $allee_geojson = json_encode($data['allee_geojson']);
+            $allee_geojson = $data['allee_geojson'];
             $zone_id = $data['zone_id'];
             $places = $data['places'];
 
