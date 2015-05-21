@@ -3,6 +3,7 @@
  */
 var mapOptions = require('./map_options');
 var MathHelper = require('./math_helper');
+var mapHelper = require('./map_helper');
 /**
  * Crée les places (Markers placés au milieu des places)
  *
@@ -294,7 +295,7 @@ function createPlaceFromData(p, types_places) {
     if (p.etat_occupation.is_occupe == "1") {
         marker = createPlaceMarker(coords, nom, angleMarker, extraData);
     }
-    var polygon = createPlaceParallelogrammeFromGeoJson(p.geojson, extraData, nom, color);
+    var polygon = createPlaceParallelogrammeFromCoordinates(JSON.parse(p.geojson), extraData, nom, color);
 
     return {
         polygon: polygon,
@@ -303,21 +304,23 @@ function createPlaceFromData(p, types_places) {
 }
 
 /**
- * Crée le parallélogramme d'une palce en fonction d'un objet geoJSON
- * @param geoJson
+ * Crée le parallélogramme d'une palce en fonction d'une liste de coordonnées
+ * @param coords
  * @param extraData
  * @param nom
  * @param color
- * @returns {dataPlaces.geoJson}
+ * @returns {place}
  */
-function createPlaceParallelogrammeFromGeoJson(geoJson, extraData, nom, color) {
+function createPlaceParallelogrammeFromCoordinates(coords, extraData, nom, color) {
     var style = {
-        data: extraData,
         color: "#" + color,
         opacity: 0.9,
         fillColor: "#" + color
     };
-    var parallelogrammePlace = new L.geoJson(JSON.parse(geoJson), {style: style});
+
+    // Récup des coordonnées
+    var parallelogrammePlace = mapHelper.createFeatureFromCoordinates(coords, extraData, style);
+
     parallelogrammePlace.bindLabel(nom);
     return parallelogrammePlace;
 }
@@ -327,6 +330,6 @@ module.exports = {
     createPlacesFromParallelogramme: createPlacesFromParallelogramme,
     createPlaceMarker: createPlaceMarker,
     createPlaceParallelogramme: createPlaceParallelogramme,
-    createPlaceParallelogrammeFromGeoJson: createPlaceParallelogrammeFromGeoJson,
+    createPlaceParallelogrammeFromCoordinates: createPlaceParallelogrammeFromCoordinates,
     createPlaceFromData: createPlaceFromData
 };

@@ -294,7 +294,6 @@ function polygonIntersection(poly1, poly2) {
     // Les polygons ne se contiennent pas totalement l'un l'autre, intersection possible
     if (!polygonContainsPolygon(poly1, poly2) || !polygonContainsPolygon(poly2, poly1)) {
         var intersect = oPoly1.union(oPoly2);
-        console.log('Intersection : %o', intersect);
         // Si on a une union entre les deux, c'est qu'il y a intersection
         return !(intersect.length == 0);
     } else {
@@ -429,10 +428,12 @@ function getMarkersArrayFromLeafletLayerGroup(layerGroup) {
 /**
  * Crée et retourne une forme leaflet à partir d'un geoJson
  * @param geoJson
- * @returns {dataPlaces.geoJson}
+ * @returns {polygon}
  */
-function createFeatureFromJSON(geoJson, extraData, style) {
-    var poly = new L.geoJson(JSON.parse(geoJson), {style: style, data: extraData});
+function createFeatureFromCoordinates(coordinates, extraData, style) {
+    var poly = new L.polygon(coordinates, style);
+    poly.options.data = extraData;
+    console.log('Polygon créé %o', poly);
     return poly;
 }
 
@@ -525,10 +526,10 @@ module.exports = {
     getMarkersArrayFromLeafletLayerGroup: getMarkersArrayFromLeafletLayerGroup,
     getPolygonsContainedInPolygon: getPolygonsContainedInPolygon,
     getPointsContainedInPolygon: getPointsContainedInPolygon,
-    createFeatureFromJSON: createFeatureFromJSON,
     getFeaturesArrayFromLeafletLayerGroup: getFeaturesArrayFromLeafletLayerGroup,
     getAllPlaces: getAllPlaces,
     getPlacesInAllee: getPlacesInAllee,
     getPlacesInZone: getPlacesInZone,
+    createFeatureFromCoordinates: createFeatureFromCoordinates,
     customZoomCRS: customZoomCRS
 };

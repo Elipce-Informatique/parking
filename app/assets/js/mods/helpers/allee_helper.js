@@ -64,13 +64,14 @@ function geometryCheck(newAllee, zones, allees) {
  * @param formDom : DOM du formulaire
  * @param allee : Allée à enregistrer (format layer Leaflet)
  * @param _inst : données d'instance du store
+ * @param callback : function appellée lors du retour AJAX de l'insertion
  */
-function createAllee(formDom, allee, _inst) {
+function createAllee(formDom, allee, _inst, callback) {
     console.log('CreateAllee avec %o', arguments);
 
     // Une allée contient la zone ?
     var zoneWrapper = getZoneWrapper(formDom, allee, _inst);
-    var geoJson = allee.e.layer.toGeoJSON();
+    var geoJson = JSON.stringify(allee.e.layer._latlngs);
 
     var data = {};
 
@@ -97,7 +98,7 @@ function createAllee(formDom, allee, _inst) {
     data['places'] = places;
 
     console.log('Data allée = %o', data);
-    insertAllee(formDom, data);
+    insertAllee(formDom, data, callback);
 }
 
 
@@ -105,8 +106,9 @@ function createAllee(formDom, allee, _inst) {
  * Effectue l'appel AJAX pour insérer la zone en BDD en fonction des params
  * @param formDom
  * @param data
+ * @param callback : function appellée lors du retour AJAX de l'insertion
  */
-function insertAllee(formDom, data) {
+function insertAllee(formDom, data, callback) {
     // CONSTRUCTION DE l'AJAX DE CRÉATION
     var fData = formDataHelper('form_mod_allee', 'POST');
     fData.append('data', JSON.stringify(data));
@@ -119,8 +121,7 @@ function insertAllee(formDom, data) {
         data: fData
     })
         .done(function (data) {
-            var isValide = JSON.parse(data);
-            isValide ? Actions.notif.success() : Actions.notif.error();
+            callback(data);
         })
         .fail(function (xhr, type, exception) {
             // if ajax fails display error alert
@@ -155,5 +156,12 @@ function getZoneWrapper(formDom, allee, _inst) {
  */
 module.exports = {
     geometryCheck: geometryCheck,
-    createAllee: createAllee
+    createAllee: createAllee,
+    style: {
+        color: '#1e90ff',
+        weight: 2,
+        opacity: 0.65,
+        fillOpacity: 0.15,
+        fillColor: '#1e90ff'
+    }
 };

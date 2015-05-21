@@ -74,13 +74,13 @@ function geometryCheck(newZone, zones, allees) {
  * @param formDom : DOM du formulaire
  * @param zone : Zone à enregistrer (format layer Leaflet)
  * @param _inst : données d'instance du store
+ * @param callback : function appellée lors du retour AJAX de l'insertion
+ *
  */
-function createZone(formDom, zone, _inst) {
+function createZone(formDom, zone, _inst, callback) {
 
-    console.log('PASS DANS LA CREATION ZONE');
     var alleesInZone = getAlleesInZone(formDom, zone.e.layer, _inst);
-    console.log('PASS APRES GET ALLEES %o ', alleesInZone);
-    var geoJson = zone.e.layer.toGeoJSON();
+    var geoJson = JSON.stringify(zone.e.layer._latlngs);
 
     // YA PAS D'ALLÉES --------------------------------------------------------------
     if (alleesInZone.alleesData.length == 0) {
@@ -95,7 +95,7 @@ function createZone(formDom, zone, _inst) {
         };
 
         // INSERTION DE LA ZONE
-        insertZone(formDom, data);
+        insertZone(formDom, data, callback);
     }
     // YA DES ALLÉES --------------------------------------------------------------
     else {
@@ -121,7 +121,7 @@ function createZone(formDom, zone, _inst) {
                 zone_geojson: geoJson,
                 plan_id: _inst.planInfos.id
             };
-            insertZone(formDom, data);
+            insertZone(formDom, data, callback);
         }
         // TOUTES LES PLACES NE SONT PAS DANS UNE ZONE .....................
         else {
@@ -144,7 +144,7 @@ function createZone(formDom, zone, _inst) {
             };
 
             // INSERTION DE LA ZONE
-            insertZone(formDom, data);
+            insertZone(formDom, data, callback);
         }
     }
 }
@@ -153,8 +153,9 @@ function createZone(formDom, zone, _inst) {
  * Effectue l'appel AJAX pour insérer la zone en BDD en fonction des params
  * @param formDom
  * @param data
+ * @param callback : function appellée lors du retour AJAX de l'insertion
  */
-function insertZone(formDom, data) {
+function insertZone(formDom, data, callback) {
     // CONSTRUCTION DE l'AJAX DE CRÉATION
     var fData = formDataHelper('form_mod_zone', 'POST');
     console.log('Data insert : %o', data);
@@ -168,8 +169,7 @@ function insertZone(formDom, data) {
         data: fData
     })
         .done(function (data) {
-            var isValide = JSON.parse(data);
-            isValide ? Actions.notif.success() : Actions.notif.error();
+            callback(data);
         })
         .fail(function (xhr, type, exception) {
             // if ajax fails display error alert
@@ -181,7 +181,6 @@ function insertZone(formDom, data) {
 //******************************************************************************************************
 
 /**
- * TODO : tester
  * Retourne le tableau des allées présentes sur la map contenues dans la zone
  * @param formDom : DOM du formulaire
  * @param zone : zone dessinnée par l'utilisateur (format tableau de lat lng)
@@ -209,5 +208,12 @@ function getAlleesInZone(formDom, zone, _inst) {
  */
 module.exports = {
     geometryCheck: geometryCheck,
-    createZone: createZone
+    createZone: createZone,
+    style: {
+        color: '#daa520',
+        weight: 2,
+        opacity: 0.65,
+        fillOpacity: 0.05,
+        fillColor: '#daa520'
+    }
 };

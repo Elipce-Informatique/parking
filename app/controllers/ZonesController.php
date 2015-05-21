@@ -40,7 +40,7 @@ class ZonesController extends \BaseController
             // DONNÉES DE LA ZONE
             $nom = Input::get('nom_zone');
             $description = Input::get('description_zone');
-            $geojsonZone = json_encode($data['zone_geojson']);
+            $geojsonZone = $data['zone_geojson'];
             $plan_id = $data['plan_id'];
 
             // DONNÉES DES LIAISONS
@@ -99,7 +99,9 @@ class ZonesController extends \BaseController
 
             // Fin du try, tout s'est bien passé
             DB::commit();
-            return json_encode(true);
+            return json_encode([
+                    'retour' => Zone::find($newZone->id)]
+            );
         } catch (Exception $e) {
             Log::error('ERREUR D INSERTION ZONE :');
             Log::error($e);

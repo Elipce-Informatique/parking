@@ -41,7 +41,7 @@ class AlleesController extends \BaseController
             $nom = Input::get('nom_allee');
             $description = Input::get('description_allee');
 
-            $allee_geojson = json_encode($data['allee_geojson']);
+            $allee_geojson = $data['allee_geojson'];
             $zone_id = $data['zone_id'];
             $places = $data['places'];
 
@@ -59,14 +59,15 @@ class AlleesController extends \BaseController
             // PARCOURT DES PLACES POUR LES AJOUTER À L'ALLÉE
             if (count($places) > 0) {
                 foreach ($places AS $p) {
-                    // Ne marche pas quand on a créé des places puis l'allée sans
                     Place::find($p['id'])->update(['allee_id' => $newAllee->id]);
                 }
             }
 
             // Fin du try, tout s'est bien passé
             DB::commit();
-            return json_encode(true);
+            return json_encode([
+                    'retour' => Allee::find($newAllee->id)]
+            );
         } catch (Exception $e) {
             Log::error('ERREUR D INSERTION ALLEE :');
             Log::error($e);
