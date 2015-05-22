@@ -4,6 +4,7 @@
 var mapOptions = require('./map_options');
 var MathHelper = require('./math_helper');
 var mapHelper = require('./map_helper');
+
 /**
  * Crée les places (Markers placés au milieu des places)
  *
@@ -16,11 +17,16 @@ var mapHelper = require('./map_helper');
  * @param num int : entier, numéro de place initial
  * @param incr : incrément du numéro de places
  * @param suffix string : suffixe du nom de la place
+ * @param alleeDefaultId
+ * @param typePlaceDefaultId
+ * @param color
+ * @param etat_occupation
+ * @param allees : toutes les allées de la map
+ * @param zones : toutes les zones de la map
  */
-function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, espacePoteaux, largeurPoteaux, prefix, num, suffix, incr, alleeDefaultId, typePlaceDefaultId, color, etat_occupation) {
+function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, espacePoteaux, largeurPoteaux, prefix, num, suffix, incr, alleeDefaultId, typePlaceDefaultId, color, etat_occupation, allees, zones) {
 
     console.group('==> createPlacesFromParallelogramme : Parallélogramme %o', parallelogramme);
-
     //--------------------------------------------------------------------
     // Le parallélogramme
     var A, B, C, D;
@@ -203,10 +209,19 @@ function createPlacesFromParallelogramme(calibre, parallelogramme, nbPlaces, esp
         // Décalage des coordsPrec
         coordsPrec = coords;
 
+        // Détermination de l'id de l'allée en fonction des coordonnées
+        var alleeId = mapHelper.getAlleeIdFromPoint(coords, allees);
+        if (alleeId == null) {
+            alleeId = mapHelper.getDefaultAlleeIdInZoneFromPoint(coords, zones);
+
+            alleeId = (alleeId == null) ? alleeDefaultId : alleeId;
+        }
+
+
         var extraData = {
             libelle: nom,
             num: numPlace,
-            allee_id: alleeDefaultId,
+            allee_id: alleeId,
             type_place_id: typePlaceDefaultId,
             etat_occupation_id: etat_occupation.id,
             angle: angleMarker,
@@ -309,7 +324,7 @@ function createPlaceFromData(p, types_places) {
  * @param extraData
  * @param nom
  * @param color
- * @returns {place}
+ * @returns place
  */
 function createPlaceParallelogrammeFromCoordinates(coords, extraData, nom, color) {
     var style = {

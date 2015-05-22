@@ -362,7 +362,9 @@ var store = Reflux.createStore({
                 this._inst.defaults.allee.id,
                 this._inst.defaults.type_place.id,
                 this._inst.defaults.type_place.couleur,
-                this._inst.defaults.etat_occupation
+                this._inst.defaults.etat_occupation,
+                this._inst.allees,
+                this._inst.zones
             );
 
             // CRÉATION DU TABLEAU DE DONNÉES À ENREGISTRER
@@ -607,41 +609,41 @@ var store = Reflux.createStore({
                 // Extraction des sous éléments du niveau
                 var plan = data;
                 var zones = [];
-                var jsonZones = [];
                 var allees = [];
-                var jsonAllees = [];
                 var places = [];
-                var jsonPlaces = [];
                 // RÉCUPÉRATION DES ZONES
                 Array.prototype.push.apply(zones, plan.zones);
 
                 // RÉCUPÉRATION DES JSON ZONES ET DES ALLÉES
-                _.each(zones, function (z) {
-                    jsonZones.push(z.geojson);
+                zones = _.map(zones, function (z) {
+
                     Array.prototype.push.apply(allees, z.allees);
                     // RÉCUPÉRATION ZONE PAR DÉFAUT
-                    z.defaut == "1" ? this._inst.defaults.zone = z : '';
+                    if (z.defaut == "1") {
+                        this._inst.defaults.zone = z;
+                        // RÉCUPÉRATION ALLÉE PAR DÉFAUT
+                        _.map(z.allees, function (a) {
+                            a.defaut == "1" ? this._inst.defaults.allee = a : '';
+                        }, this);
+                    }
+                    // RÉCUPÉRATION ALLEE PAR DÉFAUT DE CETTE ZONE
+                    _.map(z.allees, function (a) {
+                        return a.defaut == "1" ? z.alleeDefault = a : '';
+                    }, this);
+
+                    return z;
                 }, this);
 
                 // RÉCUPÉRATION DES JSON ALLÉES ET DES PLACES
                 _.each(allees, function (a) {
-                    jsonAllees.push(a.geojson);
                     Array.prototype.push.apply(places, a.places);
-
-                    // RÉCUPÉRATION ALLÉE PAR DÉFAUT
-                    a.defaut == "1" ? this._inst.defaults.allee = a : '';
-                }, this);
-
-                // RÉCUPÉRATION DES JSON ALLÉES ET DES PLACES
-                _.each(places, function (p) {
-                    jsonPlaces.push(p.geojson);
                 }, this);
 
                 this._inst.places = places;
                 this._inst.allees = allees;
                 this._inst.zones = zones;
                 this._inst.afficheurs = [];
-
+                console.log('Zones : %o', zones);
                 // ---------------------------------------------------------------------
 
             },
@@ -773,7 +775,6 @@ var store = Reflux.createStore({
                 var extraData = z;
                 console.log('Zone à afficher : %o', z);
                 var polygon = mapHelper.createFeatureFromCoordinates(JSON.parse(z.geojson), extraData, zoneStyle);
-
                 return {
                     data: z,
                     polygon: polygon

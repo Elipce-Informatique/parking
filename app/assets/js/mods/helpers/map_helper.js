@@ -103,7 +103,6 @@ function arePointsInPolygon(polygon, surface) {
 }
 
 /**
- * TODO : à tester
  * Test si au moins un point de "polygon" appartient à "surface"
  * Les deux paramètres sont un tableau de lat lng comme suit:
  * [
@@ -244,7 +243,6 @@ var customZoomCRS = L.extend({}, L.CRS.Simple, {
         // We want 0 = 200px = 2 tiles @ 100x100px,
         // 1 = 300px = 3 tiles @ 100x100px, etc.
         // Ie.: (200 + zoom*100)/100 => 2 + zoom
-
         return 2 + zoom;
     }
 });
@@ -433,7 +431,6 @@ function getMarkersArrayFromLeafletLayerGroup(layerGroup) {
 function createFeatureFromCoordinates(coordinates, extraData, style) {
     var poly = new L.polygon(coordinates, style);
     poly.options.data = extraData;
-    console.log('Polygon créé %o', poly);
     return poly;
 }
 
@@ -505,6 +502,45 @@ function getPlacesInZone(zone, _inst) {
     return placesInZone;
 }
 
+/**
+ * Retourne l'id de l'allée dans lequel se trouve le point ou null.
+ * @param point -> le point à tester {lat: xx, lng: xx}
+ * @param allees -> La liste des allées présentes dans le store (_inst.allees) (Format objet BDD)
+ */
+function getAlleeIdFromPoint(point, allees) {
+    return _.reduce(allees, function (result, a) {
+        if (a.geojson != "") {
+            var poly = JSON.parse(a.geojson);
+            if ((result == null) && this.isPointInPolygon(poly, point)) {
+                return a.id;
+            } else {
+                return result;
+            }
+        } else {
+            return result;
+        }
+    }, null, this);
+}
+
+/**
+ * Retourne l'id de l'allée par défaut de la zone dans lequel se trouve le point ou null
+ * @param point -> le point à tester {lat: xx, lng: xx}
+ * @param zones -> La liste des zones présentes dans le store (_inst.allees) (Format objet BDD)
+ */
+function getDefaultAlleeIdInZoneFromPoint(point, zones) {
+    return _.reduce(zones, function (result, z) {
+        if (z.geojson != "") {
+            var poly = JSON.parse(z.geojson);
+            if ((result == null) && this.isPointInPolygon(poly, point)) {
+                return z.alleeDefault.id;
+            } else {
+                return result;
+            }
+        } else {
+            return result;
+        }
+    }, null, this);
+}
 
 /**
  * Ce que le module exporte.
@@ -531,5 +567,7 @@ module.exports = {
     getPlacesInAllee: getPlacesInAllee,
     getPlacesInZone: getPlacesInZone,
     createFeatureFromCoordinates: createFeatureFromCoordinates,
+    getAlleeIdFromPoint: getAlleeIdFromPoint,
+    getDefaultAlleeIdInZoneFromPoint: getDefaultAlleeIdInZoneFromPoint,
     customZoomCRS: customZoomCRS
 };
