@@ -6,8 +6,10 @@ var Select = Field.InputSelectEditable;
 var Row = ReactB.Row;
 var Col = ReactB.Col;
 var Button = ReactB.Button;
+var Glyph = ReactB.Glyphicon;
 var Form = Field.Form;
 var Upload = Field.InputFile;
+var Photo = require('./composants/react_photo').PhotoEditable;
 
 
 /**
@@ -32,7 +34,111 @@ var FormNiveau = React.createClass({
         }
     },
 
+    getInitialState: function () {
+        return {
+            nbUpload: 1
+        }
+    },
+
+    /**
+     * Ajoute un plan au render
+     */
+    addPlan: function () {
+        //this.setState({nbUpload : (this.state.nbUpload + 1) });
+        Actions.niveau.add_upload();
+    },
+
+    /**
+     * Génère les composants plan à afficher
+     * @returns {Array}
+     */
+    getPlans: function () {
+
+        var retour = [];
+
+        // Mode edition
+        if (this.props.idNiveau !== 0) {
+            // Parcours des plans du niveau
+            plans = _.map(this.props.detailNiveau.plans, function (plan) {
+                return (
+                    <Row>
+                        <InputTextEditable
+                            attributes={{
+                                label: Lang.get('global.plan'),
+                                name: "plan",
+                                value: this.props.detailNiveau.plans.libelle,
+                                required: true,
+                                wrapperClassName: 'col-md-4',
+                                labelClassName: 'col-md-1 text-right',
+                                groupClassName: 'col-md-5'
+                            }}
+                            editable={this.props.editable}/>
+                        <Col md={2}>
+                            <Upload
+                                name="url"
+                                typeOfFile="img"
+                                alertOn={true}
+                                libelle={Lang.get('administration_parking.niveau.modif_plan')}
+                                attributes={{
+                                    required: true
+                                }}
+                            />
+                        </Col>
+                        <Col md={2}>
+                            <Photo
+                                src = {this.props.detailNiveau.plans.url}/>
+                        </Col>
+                    </Row>
+                );
+            })
+        }
+        // Mode création
+        else {
+            // Nb bouton upload
+            for (var i = 0; i < this.state.nbUpload; i++) {
+                retour.push(
+                    <Row key={i}>
+                        <Col
+                            md={1}
+                            className="text-right">
+                            <label>{Lang.get('global.plan')}</label>
+                        </Col>
+                        <Col md={4}>
+                            <InputTextEditable
+                                attributes={{
+                                    name: "plan[]",
+                                    required: true
+                                }}
+                                editable={this.props.editable}/>
+                        </Col>
+                        <Col md={2}>
+                            <Upload
+                                name="url"
+                                typeOfFile="img"
+                                alertOn={true}
+                                libelle={Lang.get('administration_parking.niveau.download_plan')}
+                                attributes={{
+                                    required: true
+                                }}
+                            />
+                        </Col>
+                        <Col md={2}>
+                            <Button>
+                                <Glyph
+                                    glyph='plus'
+                                    onClick={this.addPlan}/>
+                            </Button>
+                        </Col>
+                    </Row>
+                );
+            }
+        }
+        return retour;
+    },
+
     render: function () {
+
+        var plans = this.getPlans();
 
         return (
             <Form attributes={{id: "form_niveau"}}>
@@ -49,7 +155,8 @@ var FormNiveau = React.createClass({
                     editable     ={this.props.editable}
                     selectedValue={this.props.detailNiveau.parking_id}
                     placeholder  ={Lang.get('global.selection')}
-                    labelClass = "text-right"/>
+                    labelClass = "text-right"
+                    key={Date.now()}/>
 
                 <InputTextEditable
                     attributes={_.extend({
@@ -76,19 +183,7 @@ var FormNiveau = React.createClass({
                     area = {true}
                     editable={this.props.editable}/>
 
-                <Row>
-                    <Col md={2}>
-                        <Upload
-                            name="url"
-                            typeOfFile="img"
-                            alertOn={true}
-                            libelle={Lang.get('administration_parking.niveau.download_plan')}
-                            attributes={{
-                                required: true
-                            }}
-                        />
-                    </Col>
-                </Row>
+            {plans}
             </Form>
         );
     }

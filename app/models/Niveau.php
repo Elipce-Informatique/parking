@@ -3,7 +3,7 @@
 class Niveau extends BaseModel
 {
     protected $table = 'niveau';
-    protected $fillable = [];
+    protected $fillable = ['libelle','description','parking_id'];
 
     /*****************************************************************************
      * RELATIONS DU MODELE *******************************************************
@@ -83,4 +83,20 @@ class Niveau extends BaseModel
             ->select('place.id', 'place.num', 'etat_occupation.is_occupe')
             ->max('place.num');
     }
+
+    /**
+     * calcule si le libelle passé en param existe déjà
+     * @param $parkingId: ID parking
+     * @param $libelle: libellé à vérifier
+     * @param string $id: ID à ne pas prendre en compte lors de la vérif (mode édition)
+     * @return bool
+     */
+    public static function isLibelleExists($parkingId, $libelle, $id=''){
+        $and = $id === '' ? '' : "AND id <> $id";
+        $result = Niveau::whereRaw("libelle = '$libelle' AND parking_id = '$parkingId' $and")
+            ->count();
+//        dd($result);
+        return ($result > 0);
+    }
+
 }

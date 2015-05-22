@@ -33,7 +33,37 @@ class NiveauxController extends \BaseController
      */
     public function store()
     {
-        //
+
+        // Variable de retour
+        $retour = [
+            'save' => true,
+            'errorBdd' => false,
+            'model' => null
+        ];
+
+        // Les données passées en POST
+        $fields = Input::all();
+        Log::debug(print_r($fields,true));
+
+        // Le niveau n'existe pas en BDD
+        if (!Niveau::isLibelleExists($fields['parking_id'], $fields['libelle'])) {
+
+            // Essai d'enregistrement
+            try {
+                // Création du jour
+                $retour['model'] = Niveau::create($fields);
+            }
+            catch(Exception $e){
+                Log::error('Erreur de création niveau : '.$e->getMessage());
+                $retour['errorBdd'] = true;
+                $retour['save'] = false;
+            }
+        }
+        // Le niveau existe
+        else{
+            $retour['save'] = false;
+        }
+        return json_encode($retour);
     }
 
     /**
@@ -101,8 +131,20 @@ class NiveauxController extends \BaseController
      * Retourne tous les nvieaux accessibles au user connecté
      * @return string
      */
-    public function all(){
+    public function all()
+    {
         return json_encode(Parking::getTreeviewParking());
     }
+
+    /**
+     * Vérifie l'unicité du libellé
+     * @param $libelle
+     * @param string $id
+     */
+    public function verifLibelle($libelle, $id = '')
+    {
+        return json_encode(Niveau::isLibelleExists($libelle, $id));
+    }
+
 
 }
