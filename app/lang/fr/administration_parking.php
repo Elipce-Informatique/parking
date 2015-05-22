@@ -77,7 +77,9 @@ return array(
         'titre' => 'Niveau',
         'texte' => 'Permet de créer, modifier, supprimer les différents niveaux des parkings. Un niveau peut être composé de plusieurs plans.',
         'nb_plan' => 'Nb plans',
-        'download_plan' => "Télécharger plan"
+        'download_plan' => "Télécharger plan",
+        'modif_plan' => "Modifier plan",
+        'libelleExists' => "Le nom de niveau existe déjà"
     ]
 );
 

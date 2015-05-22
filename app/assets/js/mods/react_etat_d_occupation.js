@@ -248,6 +248,11 @@ var reactEtatDoccupationStore = Reflux.createStore({
         // MAJ du state STORE
         data[e.name] = e.value
         this.state = _.extend(this.state, data);
+
+        // Si on est sur une combo on trigger pour la value
+        if(e.name = 'type_place_id'){
+            this.trigger(this.state);
+        }
     },
 
     /**

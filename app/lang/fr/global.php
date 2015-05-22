@@ -95,6 +95,7 @@ Voulez-vous vraiment quitter cette page ?',
     'libre' => 'Libre',
     'parking' => 'Parking',
     'niveau' => 'Niveau',
+    'plan' => 'Plan',
 
 
     /*
