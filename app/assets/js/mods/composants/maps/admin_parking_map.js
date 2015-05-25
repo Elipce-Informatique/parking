@@ -337,7 +337,7 @@ var parkingMap = React.createClass({
             },
             edit: {
                 featureGroup: group,
-                remove: false
+                remove: true
             }
         };
 

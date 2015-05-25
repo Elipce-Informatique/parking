@@ -201,22 +201,24 @@ var store = Reflux.createStore({
     },
     onDraw_deleted: function (data) {
         console.log('Pass onDraw_deleted %o', data);
+        var deletedEntities = _.values(data.e.layers._layers);
+        console.log('Entités supprimées %o', deletedEntities);
         switch (this._inst.currentMode) {
             // -------------------------------------------------------------
             // SUPPRESSION D'UNE OU PLUSIEURS PLACES
             case mapOptions.dessin.place:
             case mapOptions.dessin.place_auto:
-                //
+                swal('Suppression de '+deletedEntities.length+' places !');
                 break;
             // -------------------------------------------------------------
             // SUPPRESSION D'UNE OU PLUSIEURS ZONES
             case mapOptions.dessin.zone:
-                //
+                swal('ATTENTION supprimer une zone va supprimmer toutes les allées et les places contenues dedans.');
                 break;
             // -------------------------------------------------------------
             // SUPPRESSION D'UNE OU PLUSIEURS ALLÉES
             case mapOptions.dessin.allee:
-                //
+                swal('ATTENTION supprimer une allée va supprimmer toutes places contenues dedans.');
                 break;
             // -------------------------------------------------------------
             // SUPPRESSION D'UN OU PLISIEURS AFFICHEURS

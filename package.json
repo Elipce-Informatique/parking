@@ -20,6 +20,7 @@
     "gulp-util": "^3.0.1",
     "pretty-hrtime": "^0.2.2",
     "reactify": "1.1.0",
+    "uglifyify": "^3.0.1",
     "vinyl-source-stream": "^1.0.0",
     "vinyl-transform": "0.0.1",
     "watchify": "^2.1.1"

@@ -213,9 +213,13 @@ gulp.task('vendor', function (callback) {
         bundler.require(lib);
     });
 
+    // Optimisation de la taille du bundle
+    bundler.transform({
+        global: true
+    }, 'uglifyify');
+
     var stream = bundler.bundle()
         .pipe(source('vendor.js'))
-        //.pipe(uglify())
         .pipe(gulp.dest(JS_VENDOR_DEST))
         // Report compile errors
         .on('error', handleErrors);
