@@ -35,6 +35,9 @@ Voulez-vous vraiment quitter cette page ?',
     'notif_erreur' => 'Une erreur s\'est produite, veuillez contacter un responsable informatique',
     'notif_default' => 'Message d\'information générique',
 
+    // CHARGEMENT
+    'block_ui' => 'Chargement....',
+
     // VALIDATIONS
     'validation_success_generique' => '',
     'validation_warning_generique' => 'Attention à la valeur de ce champ',
