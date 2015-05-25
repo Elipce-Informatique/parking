@@ -200,26 +200,54 @@ var store = Reflux.createStore({
         }
     },
     onDraw_deleted: function (data) {
-        //console.log('Pass onDraw_created %o', data);
+        console.log('Pass onDraw_deleted %o', data);
+        switch (this._inst.currentMode) {
+            // -------------------------------------------------------------
+            // SUPPRESSION D'UNE OU PLUSIEURS PLACES
+            case mapOptions.dessin.place:
+            case mapOptions.dessin.place_auto:
+                //
+                break;
+            // -------------------------------------------------------------
+            // SUPPRESSION D'UNE OU PLUSIEURS ZONES
+            case mapOptions.dessin.zone:
+                //
+                break;
+            // -------------------------------------------------------------
+            // SUPPRESSION D'UNE OU PLUSIEURS ALLÉES
+            case mapOptions.dessin.allee:
+                //
+                break;
+            // -------------------------------------------------------------
+            // SUPPRESSION D'UN OU PLISIEURS AFFICHEURS
+            case mapOptions.dessin.afficheur:
+                //
+                break;
+            // -------------------------------------------------------------
+            // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
+            default:
+                //
+                break;
+        }
     },
     onDraw_drawstart: function (data) {
-        //console.log('Pass onDraw_drawstart %o', data);
+        console.log('Pass onDraw_drawstart %o', data);
     },
     onDraw_drawstop: function (data) {
-        //console.log('Pass onDraw_drawstop %o', data);
+        console.log('Pass onDraw_drawstop %o', data);
     },
     // A VOIR COMMENT RECUP LES DESSINS
     onDraw_editstart: function (data) {
-        //console.log('Pass onDraw_editstart %o', data);
+        console.log('Pass onDraw_editstart %o', data);
     },
     onDraw_editstop: function (data) {
-        //console.log('Pass onDraw_editstop %o', data);
+        console.log('Pass onDraw_editstop %o', data);
     },
     onDraw_deletestart: function (data) {
-        //console.log('Pass onDraw_deletestart %o', data);
+        console.log('Pass onDraw_deletestart %o', data);
     },
     onDraw_deletestop: function (data) {
-        //console.log('Pass onDraw_deletestop %o', data);
+        console.log('Pass onDraw_deletestop %o', data);
     },
 
     /**
