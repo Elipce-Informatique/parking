@@ -657,7 +657,7 @@ var InputSelect = React.createClass({
  *                  - label: label devant le select
  *                  - labelCol: nombre de colonnes bootstrap du label
  *                  - selectCol: nombre de colonnes bootstrap du select
- *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          SPECIFICITE: {htmlFor: id_du_form} permet de lier le champ au formulaire souhaité.
  *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
  *          Permet de distinguer 2 champs au name identique de deux formulaires différents
  * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}

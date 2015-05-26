@@ -23,7 +23,7 @@ require('sweetalert');
      */
     // URL de base du projet. Définie en PHP dans structure.blade.php, ici juste pour référence IDE.
     global.BASE_URI;
-    global.BLOCK_UI = true;
+    global.ALLOW_BLOCK_UI = true;
 
     /*
      |--------------------------------------------------------------------------
@@ -102,7 +102,9 @@ require('sweetalert');
         "refresh_places",
         "refresh_afficheurs",
         // CHANGEMENT DE PLAN
-        "plan_selected"
+        "plan_selected",
+        // MODALE CAPTEURS DE PLACE
+        "liste_concentrateurs"
     ]);
 
     /*
@@ -214,14 +216,13 @@ $(function () {
         }
     });
 
-    // Partie Block UI
     /*
      |--------------------------------------------------------------------------
      | GESTION DU BLOCKAGE UI SUR REQUÊTE AJAX
      |--------------------------------------------------------------------------
      */
     $(document).ajaxStart(function () {
-        if (BLOCK_UI) {
+        if (ALLOW_BLOCK_UI) {
             $.blockUI({
                 message: '<div class="alert alert-warning" role="alert" style="margin:0"><h1 style="margin:0"><div id="facebookG"><div id="blockG_1" class="facebook_blockG"></div><div id="blockG_2" class="facebook_blockG"></div><div id="blockG_3" class="facebook_blockG"></div></div>' + Lang.get('global.block_ui') + '</h1></div>',
                 baseZ: 9999, // POUR PASSER PAR DESSUS LES MODALES BOOTSTRAP

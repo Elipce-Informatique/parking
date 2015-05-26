@@ -208,12 +208,12 @@ gulp.task('vendor', function (callback) {
     });
     bundler.transform({es6: true, global: true}, reactify);
 
-    // Optimisation des libs en external
+    // OPTIMISATION DES LIBS EN EXTERNAL
     libs.forEach(function (lib) {
         bundler.require(lib);
     });
 
-    // Optimisation de la taille du bundle
+    // OPTIMISATION DE LA TAILLE DU BUNDLE
     bundler.transform({
         global: true
     }, 'uglifyify');

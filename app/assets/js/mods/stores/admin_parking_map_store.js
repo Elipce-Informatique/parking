@@ -323,6 +323,10 @@ var store = Reflux.createStore({
         };
 
         this.trigger(retour);
+
+        if (parseFloat(data.calibre) != 0){
+            swal(Lang.get)
+        }
     },
     onMode_capteur: function (data) {
         this._inst.currentMode = mapOptions.dessin.capteur;
@@ -685,7 +689,6 @@ var store = Reflux.createStore({
                 this._inst.allees = allees;
                 this._inst.zones = zones;
                 this._inst.afficheurs = [];
-                console.log('Zones : %o', zones);
                 // ---------------------------------------------------------------------
 
             },
