@@ -127,7 +127,8 @@ var PageNiveau = React.createClass({
                             detailNiveau={this.state.detailNiveau}
                             idNiveau={this.state.idNiveau}
                             validationLibelle={this.state.validationLibelle}
-                            parkings={this.state.parkings}/>
+                            parkings={this.state.parkings}
+                            nbUpload={this.state.nbUpload}/>
                     </div>;
                 break;
             default:
@@ -333,7 +334,7 @@ var storeNiveau = Reflux.createStore({
      * Ajoute une ligne d'upload
      */
     onAdd_upload: function(){
-        this.stateLocal.nbUpload++;
+        this.stateLocal.nbUpload += 1;
         this.trigger(this.stateLocal);
     },
 
@@ -342,17 +343,19 @@ var storeNiveau = Reflux.createStore({
      * Bouton créer du bandeau: affichage du formulaire vide
      */
     onCreer: function () {
-        this.stateLocal = {
+        var state = {
             idNiveau: 0,
             etat: pageState.creation,
             detailNiveau: {
                 libelle: '',
-                ouverture: '',
-                fermeture: '',
-                couleur: ''
+                description: '',
+                parking_id: 0,
+                nbUpload: 1,
+                plan0: '',
+                url0: ''
             }
         };
-        this.trigger(this.stateLocal);
+        this.trigger(_.extend(this.stateLocal, state));
     },
 
     /**
@@ -375,15 +378,13 @@ var storeNiveau = Reflux.createStore({
         //console.log('FIELD CHANGE %o',e);
         var data = {};
         // MAJ du state STORE
-        data[e.name] = e.value
+        data[e.name] = e.value;
         this.stateLocal.detailNiveau = _.extend(this.stateLocal.detailNiveau, data);
 
         // Si on est sur une combo on trigger pour la selectedValue
         if(e.name = 'parking_id'){
             this.trigger(this.stateLocal);
         }
-
-        console.log('DETAIL %o', this.stateLocal.detailNiveau);
     },
 
     /**
@@ -453,6 +454,18 @@ var storeNiveau = Reflux.createStore({
 
         // FormData
         var fData = form_data_helper('form_niveau', method);
+        // Ajout des url upload
+        var files = [];
+        //var objTemp;
+        for(var i=0; i<this.stateLocal.nbUpload; i++){
+            //objTemp = {};
+            //objTemp['url'+i] = $('[name=url'+i+']')[0].files[0];
+            //files.push(objTemp);
+
+            files['url'+i] = $('[name=url'+i+']')[0].files[0];
+        }
+        fData.append('files', files);
+
 
         // Requête
         $.ajax({

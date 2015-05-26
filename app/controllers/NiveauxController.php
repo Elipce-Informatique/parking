@@ -45,6 +45,50 @@ class NiveauxController extends \BaseController
         $fields = Input::all();
         Log::debug(print_r($fields,true));
 
+
+        // Plans
+        $plans = array_filter($fields, function($value, $key){
+            return count(explode('plan', $key)) > 1;
+        }, ARRAY_FILTER_USE_BOTH);
+
+        // Début transaction
+        DB::beginTransaction();
+        try {
+
+            // Parcours des plans
+            foreach ($plans as $key => $plan) {
+
+                // Save plan
+                $newPlan = '';
+                // Save file
+                try {
+                    // Fichier plan
+                    $fileCourant = Input::file('file' . $key);
+
+                    // Extension
+                    $extFile = $fileCourant->getClientOriginalExtension();
+
+                    //  Nom du fichier (ID + extension)
+                    $fileName = $newPlan->id . '.' . $extFile;
+
+                    // Sauvegarde dans "documents/plans"
+                    $fileCourant->move(storage_path() . '/documents/plans', $fileName);
+
+                    // Mise à jour du champ en base de donnée
+                    $newPlan->url = $fileName;
+                    $newPlan->save();
+                } catch (Exception $e) {
+                    Log::error('Erreur enregistrement fichier plan. ' . $e->getMessage());
+                    DB::rollBack();
+                }
+            }
+        }
+        catch(Exception $e){
+            Log::error("Erreur de création d'un plan. ".$e->getMessage() );
+            DB::rollBack();
+        }
+
+
         // Le niveau n'existe pas en BDD
         if (!Niveau::isLibelleExists($fields['parking_id'], $fields['libelle'])) {
 
