@@ -208,7 +208,7 @@ var store = Reflux.createStore({
             // SUPPRESSION D'UNE OU PLUSIEURS PLACES
             case mapOptions.dessin.place:
             case mapOptions.dessin.place_auto:
-                swal('Suppression de '+deletedEntities.length+' places !');
+                swal('Suppression de ' + deletedEntities.length + ' places !');
                 break;
             // -------------------------------------------------------------
             // SUPPRESSION D'UNE OU PLUSIEURS ZONES
@@ -312,13 +312,25 @@ var store = Reflux.createStore({
         };
         this.trigger(retour);
     },
-    onMode_calibre: function (d) {
+    onMode_calibre: function (data) {
         this._inst.currentMode = mapOptions.dessin.calibre;
 
         var retour = {
             type: mapOptions.type_messages.mode_change,
             data: {
                 mode: mapOptions.dessin.calibre
+            }
+        };
+
+        this.trigger(retour);
+    },
+    onMode_capteur: function (data) {
+        this._inst.currentMode = mapOptions.dessin.capteur;
+
+        var retour = {
+            type: mapOptions.type_messages.mode_change,
+            data: {
+                mode: mapOptions.dessin.capteur
             }
         };
 

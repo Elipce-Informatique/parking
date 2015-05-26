@@ -41,6 +41,7 @@ return array(
         'ajouter_zone' => 'Ajouter une zone',
         'ajouter_afficheur' => 'Ajouter un afficheur',
         'calibrer' => 'Calibrer le plan',
+        'capteur_place' => 'Capteur de place',
         'nb_places' => 'Nombre de places',
         'intervalle_poteaux' => 'Espacement poteaux (nb places)',
         'largeur_poteaux' => 'Largeur des poteaux (cm)',

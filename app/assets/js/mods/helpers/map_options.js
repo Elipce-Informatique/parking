@@ -12,7 +12,8 @@ module.exports.dessin = {
     zone: 3,
     afficheur: 4,
     place_auto: 5,
-    calibre: 6
+    calibre: 6,
+    capteur: 7
 };
 
 /**
@@ -25,7 +26,8 @@ module.exports.icon = {
     zone: "fa-circle-o",
     afficheur: "fa-desktop",
     place_auto: "fa-magic",
-    calibre: "fa-arrows"
+    calibre: "fa-arrows",
+    capteur: "fa-wifi"
 };
 
 // PRÉPARATION DE L'OBJET COLOR :

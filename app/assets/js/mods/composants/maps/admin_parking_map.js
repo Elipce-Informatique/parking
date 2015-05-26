@@ -272,7 +272,18 @@ var parkingMap = React.createClass({
             this._inst.map
         );
 
-        // Lancement de l'action pour sélectionner le bouton "place":
+        // CAPTEUR
+        L.easyButton(
+            mapOptions.icon.capteur,
+            function () {
+                Actions.map.mode_capteur();
+            },
+            Lang.get('administration_parking.carte.capteur_place'),
+            this._inst.map
+        );
+
+        // ---------------------------------------------------------
+        // LANCEMENT DE L'ACTION POUR SÉLECTIONNER LE BOUTON "PLACE":
         Actions.map.mode_place();
 
     },
@@ -387,9 +398,13 @@ var parkingMap = React.createClass({
                 this.changeDrawToolbar(data.data.mode);
                 selectButton(mapOptions.icon.calibre);
                 break;
+            case mapOptions.dessin.capteur:
+                this.changeDrawToolbar(data.data.mode);
+                selectButton(mapOptions.icon.capteur);
+                break;
             default:
                 this.changeDrawToolbar(mapOptions.dessin.place);
-                // Par défaut, on sélectionne le mode place au cas ou
+                // PAR DÉFAUT, ON SÉLECTIONNE LE MODE PLACE AU CAS OÙ
                 selectButton(mapOptions.icon.place);
                 break;
         }

@@ -11,11 +11,11 @@ $(function () {
     // BLOCK MÉTIER ADMIN PORTAIL
     var url_administration = BASE_URI + 'administration';
     React.render(<BlockAccueil
-        titre={Lang.get('menu.top.administration')}
-        texte={Lang.get('accueil.block_admin_text')}
-        bouton={Lang.get('global.acceder')}
-        bouton_url={url_administration}
-        module_url="administration"/>,
+            titre={Lang.get('menu.top.administration')}
+            texte={Lang.get('accueil.block_admin_text')}
+            bouton={Lang.get('global.acceder')}
+            bouton_url={url_administration}
+            module_url="administration"/>,
         document.getElementById('block_administration'));
 
     // BLOCK MÉTIER ADMIN PARKING

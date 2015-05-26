@@ -23,6 +23,7 @@ require('sweetalert');
      */
     // URL de base du projet. Définie en PHP dans structure.blade.php, ici juste pour référence IDE.
     global.BASE_URI;
+    global.BLOCK_UI = true;
 
     /*
      |--------------------------------------------------------------------------
@@ -94,6 +95,7 @@ require('sweetalert');
         "mode_zone",
         "mode_afficheur",
         "mode_calibre",
+        "mode_capteur",
         // ACTIONS POUR LES MODALES
         "pm_creer", // places multiples
         // ACTIONS DE RAFRAICHISSEMENT
@@ -195,12 +197,13 @@ require('sweetalert');
 
 })(window);
 
-/*
- |--------------------------------------------------------------------------
- | GESTION DES NOTIFICATIONS
- |--------------------------------------------------------------------------
- */
+
 $(function () {
+    /*
+     |--------------------------------------------------------------------------
+     | GESTION DES NOTIFICATIONS
+     |--------------------------------------------------------------------------
+     */
     var Notify = require('../mods/composants/react_notify');
     React.render(<Notify />, document.getElementById('composant_react_notifications'));
 
@@ -209,6 +212,27 @@ $(function () {
             e.preventDefault();
             swal('Raté ! Si tu veux vraiment sauvegarder la page, utilise le menu de ton navigateur.');
         }
+    });
+
+    // Partie Block UI
+    /*
+     |--------------------------------------------------------------------------
+     | GESTION DU BLOCKAGE UI SUR REQUÊTE AJAX
+     |--------------------------------------------------------------------------
+     */
+    $(document).ajaxStart(function () {
+        if (BLOCK_UI) {
+            $.blockUI({
+                message: '<div class="alert alert-warning" role="alert" style="margin:0"><h1 style="margin:0"><div id="facebookG"><div id="blockG_1" class="facebook_blockG"></div><div id="blockG_2" class="facebook_blockG"></div><div id="blockG_3" class="facebook_blockG"></div></div>' + Lang.get('global.block_ui') + '</h1></div>',
+                baseZ: 9999, // POUR PASSER PAR DESSUS LES MODALES BOOTSTRAP
+                css: {
+                    'border-radius': '5px',
+                    'border-color': '#E7CC9D'
+                }
+            });
+        }
+    }).ajaxStop(function () {
+        $.unblockUI();
     });
 });
 
