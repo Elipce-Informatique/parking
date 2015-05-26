@@ -44,23 +44,8 @@ module.exports = {
             });
 
             var bundles = _.union(globFiles, appFiles);
-//        console.log(bundles);
 
             return bundles;
         }
     }
 };
-
-// MODÈLE POUR LES BUNDLECONFIGS
-/*
- var temp = [{
- entries: src + '/javascript/app.coffee',
- dest: dest,
- outputName: 'app.js'
- }, {
- entries: src + '/javascript/head.coffee',
- dest: dest,
- outputName: 'head.js'
- }]
-
- */

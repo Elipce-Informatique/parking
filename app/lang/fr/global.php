@@ -99,6 +99,10 @@ Voulez-vous vraiment quitter cette page ?',
     'parking' => 'Parking',
     'niveau' => 'Niveau',
     'plan' => 'Plan',
+    'place' => 'Place',
+    'concentrateur' => 'Concentrateur',
+    'bus' => 'Bus',
+    'capteur' => 'Capteur',
 
 
     /*

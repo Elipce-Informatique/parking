@@ -9,6 +9,7 @@ var ModalPlaces = require('../modals/mod_places_multiples');
 var ModalCalibre = require('../modals/mod_calibre');
 var ModalZone = require('../modals/mod_zone');
 var ModalAllee = require('../modals/mod_allee');
+var ModalCapteur = require('../modals/mod_capteur');
 var Field = require('../formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputNumberEditable = Field.InputNumberEditable;
@@ -56,7 +57,7 @@ var parkingMap = React.createClass({
             alleesGroup: {},                      // Layer group contenant toutes les allées
             zonesGroup: {},                       // Layer group contenant toutes les zones
             afficheursGroup: {},                  // Layer group contenant tous les afficheurs
-            calibreGroup: {},                     // Calibre
+            calibreGroup: {},                     // Juste pour l'init du calibre
             drawControl: {}                       // Barre d'outils de dessin active sur la carte
         };
     },
@@ -262,16 +263,6 @@ var parkingMap = React.createClass({
             this._inst.map
         );
 
-        // CALIBRE
-        L.easyButton(
-            mapOptions.icon.calibre,
-            function () {
-                Actions.map.mode_calibre();
-            },
-            Lang.get('administration_parking.carte.calibrer'),
-            this._inst.map
-        );
-
         // CAPTEUR
         L.easyButton(
             mapOptions.icon.capteur,
@@ -282,6 +273,16 @@ var parkingMap = React.createClass({
             this._inst.map
         );
 
+        // CALIBRE
+        L.easyButton(
+            mapOptions.icon.calibre,
+            function () {
+                Actions.map.mode_calibre();
+            },
+            Lang.get('administration_parking.carte.calibrer'),
+            this._inst.map
+        );
+
         // ---------------------------------------------------------
         // LANCEMENT DE L'ACTION POUR SÉLECTIONNER LE BOUTON "PLACE":
         Actions.map.mode_place();
@@ -289,72 +290,125 @@ var parkingMap = React.createClass({
     },
     /**
      * Supprime et remet le drawControl pour utiliser le bon layer
-     * @param mode_dessin
+     * @param mode_dessin mode de dessin ou null
      */
     changeDrawToolbar: function (mode_dessin) {
         // 1 : SUPPRIMER L'ANCIENNE TOOLBAR :
         jQuery.isEmptyObject(this._inst.drawControl) ? '' : this._inst.map.removeControl(this._inst.drawControl);
 
-        // 2 : MISE EN PLACE DU NOUVEAU MODE
-        this._inst.currentMode = mode_dessin;
+        // AUCUN DESSIN NÉCESSAIRE
+        if (mode_dessin == null) {
+            this._inst.drawControl = {};
+        }
+        // MISE EN PLACE DE LA BARRE DE DESSIN
+        else {
+            // 2 : MISE EN PLACE DU NOUVEAU MODE
+            this._inst.currentMode = mode_dessin;
 
-        // 2 CONSTRUCTION DES OPTIONS
-        // ------- LES POLYLINES ----------
-        var polyline = this._inst.currentMode == mapOptions.dessin.calibre ? {
-            shapeOptions: {
-                color: mapOptions.control.draw.colors[this._inst.currentMode]
-            }
-        } : false;
-        // ------- LES POLYGONS ----------
-        var polygon = (this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone || this._inst.currentMode == mapOptions.dessin.place_auto) ? {
-            allowIntersection: false, // Restricts shapes to simple polygons
-            drawError: {
-                color: '#e1e100', // Color the shape will turn when intersects
-                message: Lang.get('administration_parking.carte.erreur_polygon') // Message that will show when intersect
-            },
-            shapeOptions: {
-                color: mapOptions.control.draw.colors[this._inst.currentMode]
-            },
-            repeatMode: true
-        } : false;
-        // ------- LES CERCLES ----------
-        var circle = false;
-        // ------- LES RECTANGLES ----------
-        var rectangle = (this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone) ? {
-            shapeOptions: {
-                color: mapOptions.control.draw.colors[this._inst.currentMode]
-            },
-            repeatMode: true
-        } : false;
-        // ------- LES MARKERS ----------
-        var marker = (this._inst.currentMode == mapOptions.dessin.place || this._inst.currentMode == mapOptions.dessin.afficheur) ? {
-            icon: new mapOptions.afficheurMarker(),
-            repeatMode: true
-        } : false;
+            // 2 CONSTRUCTION DES OPTIONS
+            // ------- LES POLYLINES ----------
+            var polyline = this._inst.currentMode == mapOptions.dessin.calibre ? {
+                shapeOptions: {
+                    color: mapOptions.control.draw.colors[this._inst.currentMode]
+                }
+            } : false;
+            // ------- LES POLYGONS ----------
+            var polygon = (this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone || this._inst.currentMode == mapOptions.dessin.place_auto || this._inst.currentMode == mapOptions.dessin.place) ? {
+                allowIntersection: false, // Restricts shapes to simple polygons
+                drawError: {
+                    color: '#e1e100', // Color the shape will turn when intersects
+                    message: Lang.get('administration_parking.carte.erreur_polygon') // Message that will show when intersect
+                },
+                shapeOptions: {
+                    color: mapOptions.control.draw.colors[this._inst.currentMode]
+                },
+                repeatMode: true
+            } : false;
+            // ------- LES CERCLES ----------
+            var circle = false;
+            // ------- LES RECTANGLES ----------
+            var rectangle = (this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone || this._inst.currentMode == mapOptions.dessin.place) ? {
+                shapeOptions: {
+                    color: mapOptions.control.draw.colors[this._inst.currentMode]
+                },
+                repeatMode: true
+            } : false;
+            // ------- LES MARKERS ----------
+            var marker = (this._inst.currentMode == mapOptions.dessin.place || this._inst.currentMode == mapOptions.dessin.afficheur) ? {
+                icon: new mapOptions.afficheurMarker(),
+                repeatMode: true
+            } : false;
 
-        // 3 : Init du layerGroup pour la modif
-        var group = this._inst[mapOptions.control.groups[this._inst.currentMode]];
-
-
-        // 3 CRÉATION DU NOUVEAU CONTRÔLE
-        var options = {
-            position: 'topright',
-            draw: {
-                polyline: polyline,
-                polygon: polygon,
-                circle: circle,
-                rectangle: rectangle,
-                marker: marker
-            },
-            edit: {
-                featureGroup: group,
-                remove: true
-            }
-        };
+            // 3 : Init du layerGroup pour la modif
+            var group = this._inst[mapOptions.control.groups[this._inst.currentMode]];
 
 
-        this._inst.drawControl = new L.Control.Draw(options);
-        this._inst.map.addControl(this._inst.drawControl);
+            // 3 CRÉATION DU NOUVEAU CONTRÔLE
+            var options = {
+                position: 'topright',
+                draw: {
+                    polyline: polyline,
+                    polygon: polygon,
+                    circle: circle,
+                    rectangle: rectangle,
+                    marker: marker
+                },
+                edit: {
+                    featureGroup: group,
+                    remove: true
+                }
+            };
+
+
+            this._inst.drawControl = new L.Control.Draw(options);
+            this._inst.map.addControl(this._inst.drawControl);
+        }
+    },
+
+    /**
+     * Déclenché par la mise à jour des données du store
+     */
+    onStoreTrigger: function (data) {
+        switch (data.type) {
+            case mapOptions.type_messages.mode_change:
+                this.onModeChange(data);
+                break;
+            case mapOptions.type_messages.add_forme:
+                this.onFormeAdded(data);
+                break;
+            case mapOptions.type_messages.add_places:
+                this.onPlacesAdded(data);
+                break;
+            case mapOptions.type_messages.add_zones:
+                this.onZonesAdded(data);
+                break;
+            case mapOptions.type_messages.add_allees:
+                this.onAlleesAdded(data);
+                break;
+            case mapOptions.type_messages.new_place_auto:
+                this._onNewPlaceAuto(data);
+                break;
+            case mapOptions.type_messages.new_calibre:
+                this._onNewCalibre(data);
+                break;
+            case mapOptions.type_messages.delete_forme:
+                break;
+            case mapOptions.type_messages.new_zone:
+                this._onNewZone(data);
+                break;
+            case mapOptions.type_messages.new_allee:
+                this._onNewAllee(data);
+                break;
+
+            case mapOptions.type_messages.hide_modal:
+                this.setState({
+                    isModalOpen: false
+                });
+                break;
+            default:
+                break;
+        }
+        this.orderLayerGroups();
     },
 
     /**
@@ -394,14 +448,21 @@ var parkingMap = React.createClass({
                 this.changeDrawToolbar(data.data.mode);
                 selectButton(mapOptions.icon.afficheur);
                 break;
+            case mapOptions.dessin.capteur:
+                this.changeDrawToolbar(null);
+                selectButton(mapOptions.icon.capteur);
+                // TRAITEMENT CHANGEMENT MODE À LA MAIN ICI
+                this._inst.currentMode = mapOptions.dessin.capteur;
+                this.setState({
+                    modalType: mapOptions.modal_type.capteur,
+                    isModalOpen: true
+                });
+                break;
             case mapOptions.dessin.calibre:
                 this.changeDrawToolbar(data.data.mode);
                 selectButton(mapOptions.icon.calibre);
                 break;
-            case mapOptions.dessin.capteur:
-                this.changeDrawToolbar(data.data.mode);
-                selectButton(mapOptions.icon.capteur);
-                break;
+
             default:
                 this.changeDrawToolbar(mapOptions.dessin.place);
                 // PAR DÉFAUT, ON SÉLECTIONNE LE MODE PLACE AU CAS OÙ
@@ -429,7 +490,8 @@ var parkingMap = React.createClass({
         _.each(liste_data, function (place) {
             this._inst.lastNum = Math.max(this._inst.lastNum, place.data.num);
             this._inst.placesGroup.addLayer(place.polygon);
-            this._inst.placesMarkersGroup.addLayer(place.marker);
+            // Pas de marker en mode admin ?
+            //this._inst.placesMarkersGroup.addLayer(place.marker);
         }, this);
 
         this.setState({
@@ -487,51 +549,6 @@ var parkingMap = React.createClass({
         this._inst.afficheursGroup.bringToFront()
     },
 
-    /**
-     * Déclenché par la mise à jour des données du store
-     */
-    onStoreTrigger: function (data) {
-        switch (data.type) {
-            case mapOptions.type_messages.mode_change:
-                this.onModeChange(data);
-                break;
-            case mapOptions.type_messages.add_forme:
-                this.onFormeAdded(data);
-                break;
-            case mapOptions.type_messages.add_places:
-                this.onPlacesAdded(data);
-                break;
-            case mapOptions.type_messages.add_zones:
-                this.onZonesAdded(data);
-                break;
-            case mapOptions.type_messages.add_allees:
-                this.onAlleesAdded(data);
-                break;
-            case mapOptions.type_messages.new_place_auto:
-                this._onNewPlaceAuto(data);
-                break;
-            case mapOptions.type_messages.new_calibre:
-                this._onNewCalibre(data);
-                break;
-            case mapOptions.type_messages.delete_forme:
-                break;
-            case mapOptions.type_messages.new_zone:
-                this._onNewZone(data);
-                break;
-            case mapOptions.type_messages.new_allee:
-                this._onNewAllee(data);
-                break;
-
-            case mapOptions.type_messages.hide_modal:
-                this.setState({
-                    isModalOpen: false
-                });
-                break;
-            default:
-                break;
-        }
-        this.orderLayerGroups();
-    },
 
     /**
      * Appellée par la méthode onStoreTrigger quand l'utilisateur a tracé un triangle de place auto.
@@ -685,14 +702,10 @@ var parkingMap = React.createClass({
         if (!this.state.isModalOpen) {
             return <span/>;
         } else {
-            return (<Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
-                <div className="modal-body">
-                    This modal is controlled by our custom trigger component.
-                </div>
-                <div className="modal-footer">
-                    <Button onClick={this.handleToggle}>Close</Button>
-                </div>
-            </Modal>);
+            return (<ModalCapteur
+                onToggle={this.handleToggle}
+                parkingId={this.props.parkingId}
+            />);
         }
     },
     /**
@@ -725,7 +738,7 @@ var parkingMap = React.createClass({
             return <span/>;
         } else {
             return (
-                <ModalCalibre
+                <ModalCapteur
                     onToggle={this.handleToggle}
                 />
             );

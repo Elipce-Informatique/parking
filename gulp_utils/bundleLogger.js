@@ -1,6 +1,6 @@
 /* bundleLogger
    ------------
-   Provides gulp style logs to the bundle method in browserify.js
+   Provides gulp style logs to the bundle method in gulpfile.js
 */
 
 var gutil        = require('gulp-util');

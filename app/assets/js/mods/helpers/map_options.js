@@ -13,7 +13,7 @@ module.exports.dessin = {
     afficheur: 4,
     place_auto: 5,
     calibre: 6,
-    capteur: 7
+    capteur: 7 // Pas vraiment un mode de dessin, c'est pour savoir qu'on est en mode capteur
 };
 
 /**
@@ -134,5 +134,6 @@ module.exports.modal_type = {
     place_simple: 5,
     capteur: 6,
     luminosite: 7,
-    calibre: 8
+    calibre: 8,
+    capteur: 9
 };
