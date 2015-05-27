@@ -83,5 +83,17 @@ class ParkingsController extends \BaseController
         //
     }
 
+    /**
+     * Récupère la liste des concentrateurs du parking avec toutes les données sous-jacentes (bus et capteurs)
+     * @param $id : id du parking
+     * @return reponse
+     */
+    public function getConcentrateurs($id)
+    {
+        return Concentrateur::with('buses.capteurs.place')
+            ->where('parking_id', '=', $id)
+            ->get();
+    }
+
 
 }

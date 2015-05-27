@@ -10,12 +10,12 @@ class EtatCapteur extends BaseModel
      *****************************************************************************/
 
     /**
-     * La place du capteur
+     * Les capteurs liés à cet état
      * @return mixed
      */
-    public function places()
+    public function capteurs()
     {
-        return $this->belongsTo('Capteur');
+        return $this->hasMany('Capteur');
     }
 
 

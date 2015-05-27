@@ -35,6 +35,15 @@ class Parking extends BaseModel
         return $this->hasMany('Calendrier');
     }
 
+    /**
+     * Les concentrateurs du parking
+     * @return mixed
+     */
+    public function concentrateurs()
+    {
+        return $this->hasMany('Concentrateur');
+    }
+
     /*****************************************************************************
      * UTILITAIRES DU MODELE *****************************************************
      *****************************************************************************/
@@ -76,7 +85,7 @@ class Parking extends BaseModel
         return Parking::find($id)
             ->with(['calendriers' => function ($query) use ($annee) {
                 $query->where(DB::raw('YEAR(calendrier.jour)'), '=', $annee)
-                ->with('calendrierJour');
+                    ->with('calendrierJour');
             }])
             ->first();
     }

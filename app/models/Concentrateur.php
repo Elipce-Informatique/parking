@@ -1,10 +1,8 @@
 <?php
 
-class Capteur extends BaseModel
-{
-    protected $table = 'capteur';
+class Concentrateur extends \Eloquent {
+    protected $table = 'concentrateur';
     protected $guarded = ['id'];
-
 
     /*****************************************************************************
      * RELATIONS DU MODELE *******************************************************
@@ -14,26 +12,28 @@ class Capteur extends BaseModel
      * La bus dans lequel se trouve le capteur
      * @return mixed
      */
-    public function bus()
+    public function parking()
     {
-        return $this->belongsTo('Buses');
+        return $this->belongsTo('Parking');
     }
 
     /**
-     * La place du capteur
+     * Les buses du concentrateur
      * @return mixed
      */
-    public function place()
+    public function buses()
     {
-        return $this->hasOne('Place');
+        return $this->hasMany('Buses');
     }
 
+
     /**
-     * L'état courant du capteur
+     * Les afficheurs du concentrateur
      * @return mixed
      */
-    public function etat_capteur()
+    public function afficheurs()
     {
-        return $this->belongsTo('EtatCapteur');
+        return $this->hasMany('Afficheur');
     }
+
 }
