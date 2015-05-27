@@ -188,6 +188,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
 });
 
 Route::group(['before' => 'auth|auth.canaccess|auth.parking'], function () {
+    Route::get('parking/{id}/concentrateurs', 'ParkingsController@getConcentrateurs');
     Route::resource('parking', 'ParkingsController');
 });
 

@@ -40,8 +40,7 @@ class Place extends BaseModel
     }
 
     /**
-     * Le type de la place :
-     * Inverse de la relation du type de la place
+     * Le capteurde la place
      * @return mixed
      */
     public function capteur()
@@ -86,7 +85,6 @@ class Place extends BaseModel
                 // Parcours des places à insérer
                 foreach ($places AS $p) {
                     Log::debug('Data place à insérer : ' . print_r($p, true));
-//                    DB::table('place')->insert($p);
                     $pBdd = Place::create($p);
                     $retour [] = Place::find($pBdd->id);
                 }

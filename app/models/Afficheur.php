@@ -26,6 +26,15 @@ class Afficheur extends BaseModel
         return $this->belongsTo('Type_afficheur');
     }
 
+    /**
+     * Le concentrateur de l'afficheur
+     * @return mixed
+     */
+    public function concentrateur()
+    {
+        return $this->belongsTo('Concentrateur');
+    }
+
 
     /**
      * Le journal equipement de l'afficheur

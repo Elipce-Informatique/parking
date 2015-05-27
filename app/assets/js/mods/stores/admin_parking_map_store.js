@@ -324,21 +324,26 @@ var store = Reflux.createStore({
 
         this.trigger(retour);
 
-        if (parseFloat(data.calibre) != 0){
+        if (parseFloat(data.calibre) != 0) {
             swal(Lang.get)
         }
     },
     onMode_capteur: function (data) {
-        this._inst.currentMode = mapOptions.dessin.capteur;
+        if (this._inst.parkingInfos.init != 0) {
+            this._inst.currentMode = mapOptions.dessin.capteur;
 
-        var retour = {
-            type: mapOptions.type_messages.mode_change,
-            data: {
-                mode: mapOptions.dessin.capteur
-            }
-        };
+            var retour = {
+                type: mapOptions.type_messages.mode_change,
+                data: {
+                    mode: mapOptions.dessin.capteur
+                }
+            };
 
-        this.trigger(retour);
+            this.trigger(retour);
+        } else {
+            swal(Lang.get('administration_parking.carte.err_parking_non_init'));
+
+        }
     },
 
     /**

@@ -33,6 +33,7 @@ return array(
         'erreur_polygon' => 'Les lignes d\'un polygon ne peuvent pas se croiser',
         'titre_places_multiples' => 'Configuration de la série de places',
         'titre_calibre' => 'Configuration du calibre',
+        'titre_capteur' => 'Capteurs de place',
         'titre_zone' => 'Création d\'une zone',
         'titre_allee' => 'Création d\'une allée',
         'ajouter_place' => 'Ajouter une place',
@@ -63,6 +64,7 @@ return array(
         'err_allee_chevauche' => 'Erreur : La zone dessinée coupe une allée.',
         'err_zone_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une allée.',
         'err_allee_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une autre allée.',
+        'err_parking_non_init' => 'Erreur : Le parking n\'a pas encore été initialisé.',
     ],
 
     // MODULE TEMPS REEL

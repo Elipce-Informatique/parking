@@ -103,6 +103,7 @@ Voulez-vous vraiment quitter cette page ?',
     'concentrateur' => 'Concentrateur',
     'bus' => 'Bus',
     'capteur' => 'Capteur',
+    'adresse' => 'Adresse',
 
 
     /*
