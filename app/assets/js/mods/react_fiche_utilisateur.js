@@ -524,7 +524,7 @@ var ficheUserStore = Reflux.createStore({
 
         // RÉCUPÉRATION DES DONNÉES
         var fData = form_data_helper('form_utilisateur', method);
-        fData.append('photo', $("[name=photo]")[0].files[0]);
+        fData.append('photo',$("[name=photo]")[0].files[0]);
 
         // Requête
         $.ajax({

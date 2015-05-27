@@ -24,18 +24,14 @@ var FormNiveau = React.createClass({
         parkings: React.PropTypes.array.isRequired, // Données de la combo parkings
         detailNiveau: React.PropTypes.object,
         idNiveau: React.PropTypes.number,
-        validationLibelle: React.PropTypes.object // Permet de colorer le champ en fonction des vérifications métiers effectuées dans la page
+        validationLibelle: React.PropTypes.object, // Permet de colorer le champ en fonction des vérifications métiers effectuées dans la page
+        nbUpload: React.PropTypes.number
     },
     getDefaultProps: function () {
         return {
             detailNiveau: {},
             idNiveau: 0,
-            validationLibelle: {}
-        }
-    },
-
-    getInitialState: function () {
-        return {
+            validationLibelle: {},
             nbUpload: 1
         }
     },
@@ -44,7 +40,7 @@ var FormNiveau = React.createClass({
      * Ajoute un plan au render
      */
     addPlan: function () {
-        //this.setState({nbUpload : (this.state.nbUpload + 1) });
+        //this.setState({nbUpload : (this.props.nbUpload + 1) });
         Actions.niveau.add_upload();
     },
 
@@ -94,8 +90,27 @@ var FormNiveau = React.createClass({
         }
         // Mode création
         else {
+            console.log('NB upload : ' + this.props.nbUpload);
+            // Bouton "plus" seulement sur la dernière ligne
+            var plus = '';
+
             // Nb bouton upload
-            for (var i = 0; i < this.state.nbUpload; i++) {
+            for (var i = 0; i < this.props.nbUpload; i++) {
+
+                // Dernière ligne
+                if (i === (this.props.nbUpload - 1)) {
+                    plus = (
+                        <Col md={2}>
+                            <Button
+                                onClick={this.addPlan}>
+                                <Glyph
+                                    glyph='plus'/>
+                            </Button>
+                        </Col>
+                    );
+                }
+
+                // Ligne complète
                 retour.push(
                     <Row key={i}>
                         <Col
@@ -106,14 +121,15 @@ var FormNiveau = React.createClass({
                         <Col md={4}>
                             <InputTextEditable
                                 attributes={{
-                                    name: "plan[]",
-                                    required: true
+                                    name: "plan" + i,
+                                    required: true,
+                                    value: this.props.detailNiveau['plan' + i]
                                 }}
                                 editable={this.props.editable}/>
                         </Col>
                         <Col md={2}>
                             <Upload
-                                name="url"
+                                name={"url" + i}
                                 typeOfFile="img"
                                 alertOn={true}
                                 libelle={Lang.get('administration_parking.niveau.download_plan')}
@@ -122,13 +138,7 @@ var FormNiveau = React.createClass({
                                 }}
                             />
                         </Col>
-                        <Col md={2}>
-                            <Button>
-                                <Glyph
-                                    glyph='plus'
-                                    onClick={this.addPlan}/>
-                            </Button>
-                        </Col>
+                    {plus}
                     </Row>
                 );
             }
