@@ -455,17 +455,9 @@ var storeNiveau = Reflux.createStore({
         // FormData
         var fData = form_data_helper('form_niveau', method);
         // Ajout des url upload
-        var files = [];
-        //var objTemp;
         for(var i=0; i<this.stateLocal.nbUpload; i++){
-            //objTemp = {};
-            //objTemp['url'+i] = $('[name=url'+i+']')[0].files[0];
-            //files.push(objTemp);
-
-            files['url'+i] = $('[name=url'+i+']')[0].files[0];
+            fData.append('url'+i, $('[name=url'+i+']')[0].files[0]);
         }
-        fData.append('files', files);
-
 
         // Requête
         $.ajax({

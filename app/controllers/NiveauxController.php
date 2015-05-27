@@ -43,27 +43,32 @@ class NiveauxController extends \BaseController
 
         // Les données passées en POST
         $fields = Input::all();
-        Log::debug(print_r($fields,true));
+        Log::debug(print_r($fields, true));
 
 
         // Plans
-        $plans = array_filter($fields, function($value, $key){
-            return count(explode('plan', $key)) > 1;
+        $plans = array_filter($fields, function ($value, $key) {
+            return (count(explode('plan', $key)) > 1);
         }, ARRAY_FILTER_USE_BOTH);
+
+//        Log::debug('plans: '.print_r($plans, true));
 
         // Début transaction
         DB::beginTransaction();
         try {
 
+            $modelsPlan = [];
             // Parcours des plans
             foreach ($plans as $key => $plan) {
 
                 // Save plan
-                $newPlan = '';
+                $newPlan = Plan::create(['libelle' => $plan]);
+
                 // Save file
-                try {
+                $filePostName = 'url' . explode('plan', $key)[1];
+                if (Input::hasFile($filePostName)) {
                     // Fichier plan
-                    $fileCourant = Input::file('file' . $key);
+                    $fileCourant = Input::file($filePostName);
 
                     // Extension
                     $extFile = $fileCourant->getClientOriginalExtension();
@@ -77,36 +82,44 @@ class NiveauxController extends \BaseController
                     // Mise à jour du champ en base de donnée
                     $newPlan->url = $fileName;
                     $newPlan->save();
-                } catch (Exception $e) {
-                    Log::error('Erreur enregistrement fichier plan. ' . $e->getMessage());
+                    // Ajout du plan à insérer dans le niveau
+                    $modelsPlan[] = $newPlan;
+
+                } // Le fichier n'existe pas
+                else {
+                    Log::error('Erreur enregistrement fichier plan. ' . $filePostName);
                     DB::rollBack();
+                    $retour['errorBdd'] = true;
+                    $retour['save'] = false;
                 }
             }
-        }
-        catch(Exception $e){
-            Log::error("Erreur de création d'un plan. ".$e->getMessage() );
-            DB::rollBack();
-        }
 
+            // Le niveau n'existe pas en BDD
+            if (!Niveau::isLibelleExists($fields['parking_id'], $fields['libelle'])) {
 
-        // Le niveau n'existe pas en BDD
-        if (!Niveau::isLibelleExists($fields['parking_id'], $fields['libelle'])) {
-
-            // Essai d'enregistrement
-            try {
-                // Création du jour
-                $retour['model'] = Niveau::create($fields);
-            }
-            catch(Exception $e){
-                Log::error('Erreur de création niveau : '.$e->getMessage());
-                $retour['errorBdd'] = true;
+                // Essai d'enregistrement
+                try {
+                    // Création du niveau
+                    $newNiveau = Niveau::create($fields);
+                    $newNiveau->plans()->saveMany($modelsPlan);
+                    $retour['model'] = $newNiveau;
+                } catch (Exception $e) {
+                    Log::error('Erreur de création niveau : ' . $e->getMessage());
+                    $retour['errorBdd'] = true;
+                    $retour['save'] = false;
+                }
+            } // Le niveau existe
+            else {
                 $retour['save'] = false;
+                Log::error("Le niveau " . $fields['libelle'] . " existe déjà. ");
             }
-        }
-        // Le niveau existe
-        else{
+        } catch (Exception $e) {
+            Log::error("Erreur de création d'un plan. " . $e->getMessage());
+            DB::rollBack();
+            $retour['errorBdd'] = true;
             $retour['save'] = false;
         }
+
         return json_encode($retour);
     }
 
