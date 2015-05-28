@@ -37,13 +37,16 @@ var ModalCapteur = React.createClass({
     getInitialState: function () {
         return {
             listConcentrateurs: [],
-            listBus: [],
-            listAdress: []
+            listBuses: [],
+            listAdress: [],
+            concentrateur_id: '',
+            bus_id: '',
+            capteur_id: ''
         };
     },
     componentWillMount: function () {
         this.listenTo(store, this.updateData);
-        Actions.map.liste_concentrateurs(this.props.parkingId);
+        Actions.map.init_modale(this.props.parkingId);
 
     },
 
@@ -59,6 +62,10 @@ var ModalCapteur = React.createClass({
 
     },
 
+    /**
+     * Met à jour le state avec les données du store
+     * @param data : données à ajouter au state
+     */
     updateData: function (data) {
         console.log('COMPOSANT MODALE update data : %o', data);
         this.setState(data);
@@ -77,7 +84,7 @@ var ModalCapteur = React.createClass({
                         <InputSelectEditable
                             editable={true}
                             data={this.state.listConcentrateurs}
-                            selectedValue=''
+                            selectedValue={this.state.concentrateur_id}
                             placeholder={Lang.get('global.concentrateur')}
                             attributes={{
                                 name: 'concentrateur_id',
@@ -92,11 +99,11 @@ var ModalCapteur = React.createClass({
 
                         <InputSelectEditable
                             editable={true}
-                            data={this.state.listConcentrateurs}
-                            selectedValue=''
+                            data={this.state.listBuses}
+                            selectedValue={this.state.bus_id}
                             placeholder={Lang.get('global.bus')}
                             attributes={{
-                                name: 'concentrateur_id',
+                                name: 'bus_id',
                                 label: Lang.get('global.bus'),
                                 labelCol: 4,
                                 selectCol: 6,
@@ -108,11 +115,11 @@ var ModalCapteur = React.createClass({
 
                         <InputSelectEditable
                             editable={true}
-                            data={this.state.listConcentrateurs}
-                            selectedValue=''
+                            data={this.state.listAdress}
+                            selectedValue={this.state.capteur_id}
                             placeholder={Lang.get('global.adresse')}
                             attributes={{
-                                name: 'concentrateur_id',
+                                name: 'capteur_id',
                                 label: Lang.get('global.adresse'),
                                 labelCol: 4,
                                 selectCol: 6,
@@ -139,6 +146,9 @@ var ModalCapteur = React.createClass({
     }
 });
 
+/**
+ * Store qui gère les données des combobox
+ */
 var store = Reflux.createStore({
     _inst: {
         dataAjax: [],       // Les données brutes reçues en AJAX
@@ -153,8 +163,12 @@ var store = Reflux.createStore({
     // Initial setup
     init: function () {
         // REGISTER STATUSUPDATE ACTION
-        this.listenTo(Actions.validation.form_field_verif, this.updateCombos);
-        this.listenTo(Actions.map.liste_concentrateurs, this.listeConcentrateurs);
+        this.listenTo(Actions.validation.form_field_changed, this.updateCombos);
+        this.listenTo(Actions.map.init_modale, this.loadInitData); // Appellé à l'affichage de la modale
+        //
+        this.listenTo(Actions.map.liste_concentrateurs, this.getConcentrateurCombo);
+        this.listenTo(Actions.map.liste_buses, this.getBusCombo);
+        this.listenTo(Actions.map.liste_capteurs, this.getAdresseCombo);
     },
     /**
      * Mise à jour des combos sur chaque action de l'utilisateur
@@ -163,13 +177,30 @@ var store = Reflux.createStore({
      */
     updateCombos: function (data) {
         console.log('UpdateCombos data : %o', data);
+
+        var retour = {};
+        retour[data.name] = data.value;
+        switch (data.name) {
+            case 'concentrateur_id':
+                retour.bus_id = "";
+                retour.listBuses = this.getBusCombo(data.value);
+                retour.capteur_id = "";
+                retour.listAdress = this.getAdresseCombo("");
+                break;
+            case 'bus_id':
+                retour.capteur_id = "";
+                retour.listAdress = this.getAdresseCombo(data.value);
+                break;
+        }
+
+        this.trigger(retour);
     },
     /**
-     * Charge les données de la combo des concentrateurs en fonction de l'ID du parking
+     * Charge les données du réseau du parking en fonction de l'ID du parking
      * @param parkId : id du parking
      */
-    listeConcentrateurs: function (parkId) {
-        console.log('PASS liste concentrateurs avec id : %o', parkId);
+    loadInitData: function (parkId) {
+        console.log('PASS INIT DATA avec id : %o', parkId);
 
         $.ajax({
             type: 'GET',
@@ -181,6 +212,10 @@ var store = Reflux.createStore({
         })
             .done(function (data) {
                 this.handleAjaxResult(data);
+                var concentrateursData = this.getConcentrateurCombo();
+                this.trigger({
+                    listConcentrateurs: concentrateursData
+                });
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert
@@ -235,6 +270,11 @@ var store = Reflux.createStore({
         console.log('GET BUSES COMBO : %o', this.getBusCombo(1));
         console.log('GET ADRESSES COMBO : %o', this.getAdresseCombo(1));
     },
+
+    /*****************************************************************************
+     * UPDATE COMBOBOXES *********************************************************
+     *****************************************************************************/
+
     /**
      * Retourne la liste des concentrateurs pour la combo
      *

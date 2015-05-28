@@ -43,10 +43,10 @@ require('sweetalert');
      |--------------------------------------------------------------------------
      */
     global.Actions.validation = Reflux.createActions([
-        "form_field_changed",
-        "form_field_verif",
-        "verify_form_save",
-        "submit_form"
+        "form_field_changed", // Appellée quand la valeur d'un champ de formulaire est modifié
+        "form_field_verif",   // Appellée quand la valeur d'un champ de formulaire est valide
+        "submit_form",        // Appellée quand le form est validé par l'utilisateur
+        "verify_form_save"    // Appellée quand le form est validé par l'utilisateur et que les champs sont bons
     ]);
 
     /*
@@ -104,7 +104,10 @@ require('sweetalert');
         // CHANGEMENT DE PLAN
         "plan_selected",
         // MODALE CAPTEURS DE PLACE
-        "liste_concentrateurs"
+        "init_modale",
+        "liste_concentrateurs",
+        "liste_buses",
+        "liste_capteurs"
     ]);
 
     /*
