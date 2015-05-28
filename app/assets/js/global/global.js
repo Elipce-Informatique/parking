@@ -23,6 +23,8 @@ require('sweetalert');
      */
     // URL de base du projet. Définie en PHP dans structure.blade.php, ici juste pour référence IDE.
     global.BASE_URI;
+    global.STORAGE_URI = global.BASE_URI + 'app/storage/';
+    global.DOC_URI = global.STORAGE_URI + 'documents/';
     global.ALLOW_BLOCK_UI = true;
 
     /*
@@ -197,7 +199,8 @@ require('sweetalert');
     global.Actions.niveau = Reflux.createActions([
         "display_all_niveaux", // affiche tous les niveaux
         "display_detail_niveau", // affiche le détail du niveau
-        "add_upload" // ajoute une ligne d'upload
+        "add_upload", // ajoute une ligne d'upload
+        "del_upload" // supprime une ligne d'upload
     ]);
 
 })(window);

@@ -1,5 +1,5 @@
 var React = require('react/addons');
-var Input = ReactB.Input;
+var Thumbnail = ReactB.Thumbnail;
 var InputFile = require('./formulaire/react_form_fields').InputFile;
 /**
  * Photo de protrait
@@ -24,8 +24,14 @@ var Photo = React.createClass({
     },
 
     render: function () {
+
         return (
-            <img src={this.props.src} {...this.props.attributes} {...this.props.evts} className="img-thumbnail img-responsive img-editable"/>
+            <Thumbnail
+                src={this.props.src}
+                {...this.props.attributes}
+                {...this.props.evts}>
+            </Thumbnail>
+
         )
     }
 });
@@ -71,29 +77,36 @@ var PhotoEditable = React.createClass({
 
     render: function () {
         var retour;
-        var photo = <Photo
-            src = {this.state.src}
-            attributes = {this.props.attributes}
-            evts = {this.props.evts}
-        />;
         // EDITABLE
         if (this.props.editable) {
-            var evts = {onChange: this.onChange};
-            retour = <span key='photoEditableWrapper'>
-                    {photo}
-                <InputFile
-                    typeOfFile={'img'}
-                    alertOn={this.props.alertOn}
-                    gestMod={this.props.gestMod}
-                    name={this.props.name}
-                    libelle={Lang.get('global.modifier')}
-                    evts={evts}
-                    ref="InputPhoto" />
-            </span>
+            var evts = {
+                onChange: this.onChange
+            };
+            retour = (
+                <Thumbnail
+                    src={this.state.src}
+                {...this.props.attributes}
+                {...this.props.evts}>
+                    <InputFile
+                        typeOfFile={'img'}
+                        alertOn={this.props.alertOn}
+                        gestMod={this.props.gestMod}
+                        name={this.props.name}
+                        libelle={Lang.get('global.modifier')}
+                        evts={evts}
+                        ref="InputPhoto" />
+                </Thumbnail>
+            );
         }
         // NON EDITABLE
         else {
-            retour = photo;
+            retour = (
+                <Photo
+                    src = {this.state.src}
+                    attributes = {this.props.attributes}
+                    evts = {this.props.evts}
+                />
+            );
         }
         return retour;
     },

@@ -45,70 +45,112 @@ var FormNiveau = React.createClass({
     },
 
     /**
+     * Supprime un plan au render
+     */
+    delPlan: function () {
+        //this.setState({nbUpload : (this.props.nbUpload + 1) });
+        Actions.niveau.del_upload();
+    },
+
+    /**
+     * Généreles boutons plus moins en fonction de l'index passé en param
+     * @param i: index correspondant au  numéro de ligne de plan
+     * @param nbPlans: nb total de plans
+     */
+    generatePlusMinus: function (i, nbPlans) {
+        var plus = '';
+        // Dernière ligne
+        if (i === (nbPlans - 1)) {
+            // Première ligne
+            if (i == 0) {
+                plus = (
+                    <Col md={2}>
+                        <Button
+                            onClick={this.addPlan}>
+                            <Glyph
+                                glyph='plus'/>
+                        </Button>
+                    </Col>
+                );
+            }
+            // Autre que 1ere ligne
+            else {
+                plus = (
+                    <Col md={2}>
+                        <Button
+                            onClick={this.addPlan}>
+                            <Glyph
+                                glyph='plus'/>
+                        </Button>
+                        <Button
+                            onClick={this.delPlan}>
+                            <Glyph
+                                glyph='minus'/>
+                        </Button>
+                    </Col>
+                );
+            }
+        }
+        return plus;
+    },
+
+    /**
      * Génère les composants plan à afficher
      * @returns {Array}
      */
     getPlans: function () {
 
         var retour = [];
+        var plus = '';
 
         // Mode edition
         if (this.props.idNiveau !== 0) {
             // Parcours des plans du niveau
-            plans = _.map(this.props.detailNiveau.plans, function (plan) {
+            retour = _.map(this.props.detailNiveau.plans, function (plan, index, collection) {
+                // Plus et moins
+                plus = this.generatePlusMinus(index, collection.length);
+
                 return (
-                    <Row>
-                        <InputTextEditable
-                            attributes={{
-                                label: Lang.get('global.plan'),
-                                name: "plan",
-                                value: this.props.detailNiveau.plans.libelle,
-                                required: true,
-                                wrapperClassName: 'col-md-4',
-                                labelClassName: 'col-md-1 text-right',
-                                groupClassName: 'col-md-5'
-                            }}
-                            editable={this.props.editable}/>
+                    <Row key={index}>
+                        <Col
+                            md={1}
+                            className="text-right">
+                            <label>{Lang.get('global.plan')}</label>
+                        </Col>
+                        <Col md={4}>
+                            <InputTextEditable
+                                attributes={{
+                                    name: "plan" + plan.id,
+                                    value: plan.libelle,
+                                    required: true
+                                }}
+                                editable={this.props.editable}/>
+                        </Col>
                         <Col md={2}>
-                            <Upload
-                                name="url"
+                            <Photo
+                                editable={this.props.editable}
+                                src = {DOC_URI + 'plans/' + plan.url}
+                                name={"url" + plan.id}
                                 typeOfFile="img"
                                 alertOn={true}
                                 libelle={Lang.get('administration_parking.niveau.modif_plan')}
                                 attributes={{
                                     required: true
-                                }}
-                            />
+                                }}/>
                         </Col>
-                        <Col md={2}>
-                            <Photo
-                                src = {this.props.detailNiveau.plans.url}/>
-                        </Col>
+                    {plus}
                     </Row>
                 );
-            })
+            }, this);
+
         }
         // Mode création
         else {
-            console.log('NB upload : ' + this.props.nbUpload);
-            // Bouton "plus" seulement sur la dernière ligne
-            var plus = '';
 
             // Nb bouton upload
             for (var i = 0; i < this.props.nbUpload; i++) {
 
-                // Dernière ligne
-                if (i === (this.props.nbUpload - 1)) {
-                    plus = (
-                        <Col md={2}>
-                            <Button
-                                onClick={this.addPlan}>
-                                <Glyph
-                                    glyph='plus'/>
-                            </Button>
-                        </Col>
-                    );
-                }
+                plus = this.generatePlusMinus(i, this.props.nbUpload);
 
                 // Ligne complète
                 retour.push(
