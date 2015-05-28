@@ -34,6 +34,7 @@ Voulez-vous vraiment quitter cette page ?',
     'notif_warning' => 'Message de danger générique',
     'notif_erreur' => 'Une erreur s\'est produite, veuillez contacter un responsable informatique',
     'notif_default' => 'Message d\'information générique',
+    'notif_erreur_upload' => 'Erreur de téléchargement du fichier',
 
     // CHARGEMENT
     'block_ui' => 'Chargement....',
@@ -86,6 +87,7 @@ Voulez-vous vraiment quitter cette page ?',
     'selection' => 'Sélection',
     'nom' => 'Nom',
     'description' => 'Description',
+    'telecharger' => "Télécharger",
 
     // FORMULAIRE
     'select' => 'Sélection...',

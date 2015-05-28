@@ -490,14 +490,21 @@ var storeNiveau = Reflux.createStore({
                     // Maj state
                     this.trigger(this.stateLocal);
                 }
-                // Le niveau existe déjà
-                else if (!tab.save && !tab.errorBdd) {
-                    // Notification
-                    Actions.notif.error(Lang.get('administration_parking.niveau.libelleExists'));
-                }
-                // Erreur SQL
+                // Sauvegarde KO
                 else {
-                    Actions.notif.error(Lang.get('global.notif_erreur'));
+                    // Upload KO
+                    if(!tab.upload){
+                        Actions.notif.error(Lang.get('global.notif_erreur_upload'));
+                    }
+                    // Le niveau existe déjà
+                    else if (!tab.errorBdd) {
+                        // Notification
+                        Actions.notif.error(Lang.get('administration_parking.niveau.libelleExists'));
+                    }
+                    // Erreur SQL
+                    else {
+                        Actions.notif.error(Lang.get('global.notif_erreur'));
+                    }
                 }
             },
 

@@ -38,19 +38,18 @@ class NiveauxController extends \BaseController
         $retour = [
             'save' => true,
             'errorBdd' => false,
-            'model' => null
+            'model' => null,
+            'upload' => true
         ];
 
         // Les données passées en POST
         $fields = Input::all();
-        Log::debug(print_r($fields, true));
-
+//        Log::debug(print_r($fields, true));
 
         // Plans
         $plans = array_filter($fields, function ($value, $key) {
             return (count(explode('plan', $key)) > 1);
         }, ARRAY_FILTER_USE_BOTH);
-
 //        Log::debug('plans: '.print_r($plans, true));
 
         // Début transaction
@@ -88,36 +87,41 @@ class NiveauxController extends \BaseController
                 } // Le fichier n'existe pas
                 else {
                     Log::error('Erreur enregistrement fichier plan. ' . $filePostName);
-                    DB::rollBack();
-                    $retour['errorBdd'] = true;
                     $retour['save'] = false;
+                    $retour['upload'] = false;
+                    break;
                 }
             }
 
-            // Le niveau n'existe pas en BDD
-            if (!Niveau::isLibelleExists($fields['parking_id'], $fields['libelle'])) {
+            // Plans OK (enregsitrement + upload)
+            if ($retour['save']) {
+                // Le libellé niveau est unique
+                if (!Niveau::isLibelleExists($fields['parking_id'], $fields['libelle'])) {
 
-                // Essai d'enregistrement
-                try {
                     // Création du niveau
                     $newNiveau = Niveau::create($fields);
+                    // Assoc niveau et plans
                     $newNiveau->plans()->saveMany($modelsPlan);
                     $retour['model'] = $newNiveau;
-                } catch (Exception $e) {
-                    Log::error('Erreur de création niveau : ' . $e->getMessage());
-                    $retour['errorBdd'] = true;
+                } // Le niveau existe
+                else {
                     $retour['save'] = false;
+                    Log::error("Le niveau " . $fields['libelle'] . " existe déjà. ");
                 }
-            } // Le niveau existe
-            else {
-                $retour['save'] = false;
-                Log::error("Le niveau " . $fields['libelle'] . " existe déjà. ");
             }
         } catch (Exception $e) {
-            Log::error("Erreur de création d'un plan. " . $e->getMessage());
-            DB::rollBack();
+            Log::error("Erreur store niveau. " . $e->getMessage());
             $retour['errorBdd'] = true;
             $retour['save'] = false;
+        }
+
+        // Enregistrement BDD
+        if($retour['save']){
+            DB::commit();
+        }
+        // Enregistrement KO
+        else{
+            DB::rollBack();
         }
 
         return json_encode($retour);
