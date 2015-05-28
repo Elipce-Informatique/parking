@@ -58,7 +58,8 @@ var parkingMap = React.createClass({
             zonesGroup: {},                       // Layer group contenant toutes les zones
             afficheursGroup: {},                  // Layer group contenant tous les afficheurs
             calibreGroup: {},                     // Juste pour l'init du calibre
-            drawControl: {}                       // Barre d'outils de dessin active sur la carte
+            drawControl: {},                      // Barre d'outils de dessin active sur la carte
+            infosControl: undefined               // Cadre d'informations en bas à droite de la carte
         };
     },
 
@@ -366,6 +367,49 @@ var parkingMap = React.createClass({
     },
 
     /**
+     * Affiche le cadre d'information en bas à droite
+     */
+    showInfos: function () {
+        // Just in case :
+        this.hideInfos();
+
+        this._inst.infosControl = L.control({
+            position: 'bottomright'
+        });
+
+        this._inst.infosControl.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+            this.update();
+            return this._div;
+        };
+
+        // Méthode appellée lors de la mise à jour du controle
+        this._inst.infosControl.update = function (message) {
+            this._div.innerHTML = message != undefined ? message : '';
+        };
+
+        this._inst.infosControl.addTo(this._inst.map);
+    },
+
+    /**
+     * Met à jour le contenu du block d'infos
+     * @param message : Message HTML à afficher dans le div d'infos
+     */
+    updateInfos: function (message) {
+        this._inst.infosControl.update(message);
+    },
+
+    /**
+     * Masque le contenu du bloc d'info
+     */
+    hideInfos: function () {
+        if (typeof(this._inst.infosControl) == 'object') {
+            this._inst.map.removeControl(this._inst.infosControl);
+        }
+        this._inst.infosControl = undefined;
+    },
+
+    /**
      * Déclenché par la mise à jour des données du store
      */
     onStoreTrigger: function (data) {
@@ -399,6 +443,15 @@ var parkingMap = React.createClass({
             case mapOptions.type_messages.new_allee:
                 this._onNewAllee(data);
                 break;
+            case mapOptions.type_messages.show_infos:
+                this.showInfos();
+                break;
+            case mapOptions.type_messages.update_infos:
+                this.updateInfos(data.data);
+                break;
+            case mapOptions.type_messages.hide_infos:
+                this.hideInfos();
+                break;
 
             case mapOptions.type_messages.hide_modal:
                 this.setState({
@@ -418,6 +471,8 @@ var parkingMap = React.createClass({
      * @param data
      */
     onModeChange: function (data) {
+        // Suppression du div d'infos si présent
+        this.hideInfos();
         /**
          * Fonction locale pour sélectionner un bouton
          * @param className : classe du bouton
@@ -452,6 +507,7 @@ var parkingMap = React.createClass({
                 this.changeDrawToolbar(null);
                 selectButton(mapOptions.icon.capteur);
                 // TRAITEMENT CHANGEMENT MODE À LA MAIN ICI
+                // CAR PAS PRIS EN COMPTE DANS changeDrawToolbar(null)
                 this._inst.currentMode = mapOptions.dessin.capteur;
                 this.setState({
                     modalType: mapOptions.modal_type.capteur,
@@ -789,6 +845,7 @@ var parkingMap = React.createClass({
             isModalOpen: !this.state.isModalOpen
         });
     },
+
 
     /**
      * Affichage du composant

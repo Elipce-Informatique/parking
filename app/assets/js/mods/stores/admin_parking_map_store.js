@@ -328,6 +328,7 @@ var store = Reflux.createStore({
             swal(Lang.get)
         }
     },
+
     onMode_capteur: function (data) {
         if (this._inst.parkingInfos.init != 0) {
             this._inst.currentMode = mapOptions.dessin.capteur;
@@ -372,6 +373,9 @@ var store = Reflux.createStore({
                 break;
             case "form_mod_allee":
                 this.handleAllee(formDom, this._inst.lastDraw);
+                break;
+            case "form_mod_capteur":
+                this.handleCapteur(formDom);
                 break;
 
             default:
@@ -569,6 +573,28 @@ var store = Reflux.createStore({
                 Actions.notif.error();
             }
         }.bind(this));
+    },
+
+    /**
+     * Gère la validation de la modale "capteur de place"
+     * @param formDom : le DOM du formulaire
+     */
+    handleCapteur: function (formDom) {
+        console.log('PASS handleCapteur : %o', formDom);
+
+        var concentrateurId, busId, capteurId, $dom = $(formDom);
+        concentrateurId = $dom.find('[name=concentrateur_id]').val();
+        busId = $dom.find('[name=bus_id]').val();
+        capteurId = $dom.find('[name=capteur_id]').val();
+
+        console.log('Concentrateur Id : %o, Bus Id : %o, Capteur Id : %o', concentrateurId, busId, capteurId);
+
+        var retour = {
+            type: mapOptions.type_messages.show_infos,
+            data: {}
+        };
+
+        this.trigger(retour);
     },
 
     /**

@@ -77,7 +77,10 @@ module.exports.type_messages = {
     new_zone: 10,
     new_allee: 11,
     add_zones: 12,
-    add_allees: 13
+    add_allees: 13,
+    show_infos: 14,
+    update_infos: 15,
+    hide_infos: 16
 };
 
 /**
@@ -134,6 +137,5 @@ module.exports.modal_type = {
     place_simple: 5,
     capteur: 6,
     luminosite: 7,
-    calibre: 8,
-    capteur: 9
+    calibre: 8
 };
