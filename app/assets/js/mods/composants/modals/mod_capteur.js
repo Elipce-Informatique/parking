@@ -67,14 +67,12 @@ var ModalCapteur = React.createClass({
      * @param data : données à ajouter au state
      */
     updateData: function (data) {
-        console.log('COMPOSANT MODALE update data : %o', data);
         this.setState(data);
     },
 
     render: function () {
         return (
             <Modal
-                bsStyle="primary"
                 title={Lang.get('administration_parking.carte.titre_capteur')}
                 onRequestHide={this.props.onToggle}>
 
@@ -176,17 +174,19 @@ var store = Reflux.createStore({
      * @param data
      */
     updateCombos: function (data) {
-        console.log('UpdateCombos data : %o', data);
 
         var retour = {};
+        // update selected value de la combo actuelle
         retour[data.name] = data.value;
         switch (data.name) {
+            // Concentrateur selected
             case 'concentrateur_id':
                 retour.bus_id = "";
                 retour.listBuses = this.getBusCombo(data.value);
                 retour.capteur_id = "";
                 retour.listAdress = this.getAdresseCombo("");
                 break;
+            // Bus selected
             case 'bus_id':
                 retour.capteur_id = "";
                 retour.listAdress = this.getAdresseCombo(data.value);
@@ -200,7 +200,7 @@ var store = Reflux.createStore({
      * @param parkId : id du parking
      */
     loadInitData: function (parkId) {
-        console.log('PASS INIT DATA avec id : %o', parkId);
+        //console.log('PASS INIT DATA avec id : %o', parkId);
 
         $.ajax({
             type: 'GET',
@@ -246,9 +246,9 @@ var store = Reflux.createStore({
             Array.prototype.push.apply(allCapteurs, b.capteurs);
 
             // FILTRE DES CAPTEURS POUR TROUVER QUE CEUX QUI N'ONT PAS DE PLACE
-            clearCapteurs = _.filter(b.capteurs, function (c) {
+            Array.prototype.push.apply(clearCapteurs, _.filter(b.capteurs, function (c) {
                 return c.place == null;
-            });
+            }));
 
             // MODIF DES CAPTEURS DE CE BUS ET RETURN
             var retour = b;
@@ -260,15 +260,6 @@ var store = Reflux.createStore({
         this._inst.buses = buses;
         this._inst.allCapteurs = allCapteurs;
         this._inst.clearCapteurs = clearCapteurs;
-
-        console.log('TOUS LES CONCENTRATEURS: %o', concentrateurs);
-        console.log('TOUS LES BUSES: %o', buses);
-        console.log('ALL CAPTEURS : %o', allCapteurs);
-        console.log('CLEAR CAPTEURS : %o', clearCapteurs);
-
-        console.log('GET CONCENTRATEURS COMBO : %o', this.getConcentrateurCombo());
-        console.log('GET BUSES COMBO : %o', this.getBusCombo(1));
-        console.log('GET ADRESSES COMBO : %o', this.getAdresseCombo(1));
     },
 
     /*****************************************************************************
@@ -280,15 +271,15 @@ var store = Reflux.createStore({
      *
      * @return retourne les données au format attendu par le composant select:
      * [
-     *   {label:'Framboise', value:0, ce que l'on veut...},
-     *   {label:'Pomme', value:1, ce que l'on veut...}
+     *   {label:'Framboise', value:'0', ce que l'on veut...},
+     *   {label:'Pomme', value:'1', ce que l'on veut...}
      * ]
      */
     getConcentrateurCombo: function () {
         return _.map(this._inst.concentrateurs, function (c) {
             return {
                 label: c.v4_id,
-                value: c.id
+                value: c.id.toString()
             };
         });
     },
@@ -297,8 +288,8 @@ var store = Reflux.createStore({
      *
      * @return retourne les données au format attendu par le composant select:
      * [
-     *   {label:'Framboise', value:0, ce que l'on veut...},
-     *   {label:'Pomme', value:1, ce que l'on veut...}
+     *   {label:'Framboise', value:'0', ce que l'on veut...},
+     *   {label:'Pomme', value:'1', ce que l'on veut...}
      * ]
      */
     getBusCombo: function (concentrateurId) {
@@ -307,8 +298,8 @@ var store = Reflux.createStore({
         });
         return _.map(buses, function (b) {
             return {
-                label: b.num,
-                value: b.id
+                label: b.num.toString(),
+                value: b.id.toString()
             }
         });
 
@@ -318,8 +309,8 @@ var store = Reflux.createStore({
      *
      * @return retourne les données au format attendu par le composant select:
      * [
-     *   {label:'Framboise', value:0, ce que l'on veut...},
-     *   {label:'Pomme', value:1, ce que l'on veut...}
+     *   {label:'Framboise', value:'0', ce que l'on veut...},
+     *   {label:'Pomme', value:'1', ce que l'on veut...}
      * ]
      */
     getAdresseCombo: function (busId) {
@@ -330,7 +321,7 @@ var store = Reflux.createStore({
         return _.map(capteurs, function (c) {
             return {
                 label: c.adresse,
-                value: c.id
+                value: c.id.toString()
             }
         });
     }

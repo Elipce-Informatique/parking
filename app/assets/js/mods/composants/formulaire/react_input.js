@@ -440,7 +440,7 @@ var InputPasswordEditable = React.createClass({
 /**
  * Champ select (react-select)
  * @param data: array({label:'Framboise', value:0}, {label:'Pomme', value:1})
- * @param selectedValue: array('0', '1')
+ * @param selectedValue: array('0', '1') /!\ IMPORTANT D'APPLIQUER .toString SUR LES ID DE BDD !!! /!\
  * @param placeholder: string, par défaut 'Sélection..'
  * @param multi: bool, à choix multiple, par défaut non
  * @param attributes: attributs HTML du select:
