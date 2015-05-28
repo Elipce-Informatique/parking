@@ -1054,7 +1054,6 @@ var InputTelEditable = React.createClass({
  * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputFile = React.createClass({
-    mixins: [MixinInputValue],
 
     propTypes: {
         name: React.PropTypes.string.isRequired,
@@ -1073,9 +1072,53 @@ var InputFile = React.createClass({
             attributes: {},
             evts: {},
             gestMod: true,
-            onChange: this.handleChange,
             style: "btn-primary",
-            libelle: "Upload",
+            libelle: Lang.get('global.telecharger'),
+            typeOfFile: 'all',
+            alertOn: false
+        };
+    },
+    render: function () {
+
+        return (
+            <div className={"fileUpload btn " + this.props.style}>
+                <span>{this.props.libelle}</span>
+                <InputFileOriginal
+                    name={this.props.name}
+                    typeOfFile={this.props.typeOfFile}
+                    alertOn={this.props.alertOn}
+                    attributes={this.props.attibutes}
+                    evts={this.props.evts}
+                    gestMod={this.props.gestMod}
+                />
+                ;
+            </div>
+        );
+    }
+});
+
+
+/**
+ * Ne pas utiliser ce composant, prendre InputFile qui appelle InputFileOriginal
+ */
+var InputFileOriginal = React.createClass({
+    mixins: [MixinInputValue],
+
+    propTypes: {
+        name: React.PropTypes.string.isRequired,
+        typeOfFile: React.PropTypes.string,
+        alertOn: React.PropTypes.bool,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        gestMod: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+
+        return {
+            attributes: {},
+            evts: {},
+            gestMod: true,
             typeOfFile: 'all',
             alertOn: false,
             validator: function (val, props, state) {
@@ -1095,14 +1138,17 @@ var InputFile = React.createClass({
             }
         };
     },
+
+    shouldComponentUpdate: function(){
+        return false;
+    },
+
     render: function () {
 
         // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
         var attrs = this.generateAttributes();
 
         return (
-            <div className={"fileUpload btn " + this.props.style}>
-                <span>{this.props.libelle}</span>
                 <Input
                     type="file"
                     name={this.props.name}
@@ -1112,8 +1158,6 @@ var InputFile = React.createClass({
                     onChange = {this.handleChange}
                     ref = "InputField"
                 />
-                ;
-            </div>
         );
     }
 });

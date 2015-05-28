@@ -129,6 +129,7 @@ var FormNiveau = React.createClass({
                         </Col>
                         <Col md={2}>
                             <Upload
+                                key={i}
                                 name={"url" + i}
                                 typeOfFile="img"
                                 alertOn={true}
