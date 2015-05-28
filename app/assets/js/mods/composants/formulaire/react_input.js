@@ -1930,7 +1930,7 @@ var modeEditableFalse = function (attr) {
             </div>
         </div>
     )
-}
+};
 
 /**
  * Verifie l'extension d'un fichier
@@ -2015,4 +2015,4 @@ var checkFileExtension = function (value, mode, withAlert) {
         }
     }
     return inArray;
-}
+};
