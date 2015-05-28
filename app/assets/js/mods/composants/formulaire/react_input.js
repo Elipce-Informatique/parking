@@ -508,7 +508,11 @@ var InputSelect = React.createClass({
                 }
                 // Option sélectionnée
                 else {
-                    retour = {'data-valid': true, 'data-class': 'has-success', 'data-tooltip': ''};
+                    retour = {
+                        'data-valid': true,
+                        'data-class': 'has-success',
+                        'data-tooltip': ''
+                    };
                 }
                 return retour;
             }
@@ -524,6 +528,18 @@ var InputSelect = React.createClass({
         this.setState({attributes: validations});
     },
 
+    componentWillReceiveProps: function (newProps) {
+        // VALUE PAR DÉFAUT
+        var val = '';
+        if (newProps.selectedValue !== undefined) {
+            val = newProps.selectedValue;
+        }
+        // 2. VALIDATION VALUE
+        var validation = newProps.validator(val, newProps, this.state);
+        // MISE À JOUR DE L'ÉTAT DU COMPOSANT
+        this.setState({attributes: validation});
+    },
+    
     /**
      * Gestion des modifications+
      * Action field_change +
