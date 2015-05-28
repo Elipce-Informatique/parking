@@ -203,7 +203,7 @@ var storeNiveau = Reflux.createStore({
 
     },
     /**
-     * 1er chargement des données, tous les jours pérédéfinis
+     * 1er chargement des données, tous les niveaux
      * @returns {*}
      */
     getInitialState: function () {
@@ -335,6 +335,14 @@ var storeNiveau = Reflux.createStore({
      */
     onAdd_upload: function(){
         this.stateLocal.nbUpload += 1;
+        this.trigger(this.stateLocal);
+    },
+
+    /**
+     * Supprime une ligne d'upload
+     */
+    onDel_upload: function(){
+        this.stateLocal.nbUpload -= 1;
         this.trigger(this.stateLocal);
     },
 

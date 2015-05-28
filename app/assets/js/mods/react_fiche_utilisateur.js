@@ -304,7 +304,7 @@ var FicheUser = React.createClass({
         // Attributs du formulaire
         var fAttrs = {className: "form_utilisateur", id: "form_utilisateur"};
         // URL de la photo
-        var srcPhoto = './app/storage/documents/photo/' + this.state.photo;
+        var srcPhoto = DOC_URI + 'photo/' + this.state.photo;
         return (
             <Form ref="form" attributes={fAttrs}>
                 <Row>
@@ -524,7 +524,7 @@ var ficheUserStore = Reflux.createStore({
 
         // RÉCUPÉRATION DES DONNÉES
         var fData = form_data_helper('form_utilisateur', method);
-        fData.append('photo',$("[name=photo]")[0].files[0]);
+        fData.append('photo', $("[name=photo]")[0].files[0]);
 
         // Requête
         $.ajax({
