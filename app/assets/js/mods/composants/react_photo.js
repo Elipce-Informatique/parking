@@ -1,5 +1,6 @@
 var React = require('react/addons');
 var Thumbnail = ReactB.Thumbnail;
+var Col = ReactB.Col;
 var InputFile = require('./formulaire/react_form_fields').InputFile;
 /**
  * Photo de protrait
@@ -30,6 +31,7 @@ var Photo = React.createClass({
                 src={this.props.src}
                 {...this.props.attributes}
                 {...this.props.evts}>
+            {this.props.children}
             </Thumbnail>
 
         )
@@ -83,7 +85,7 @@ var PhotoEditable = React.createClass({
                 onChange: this.onChange
             };
             retour = (
-                <Thumbnail
+                <Photo
                     src={this.state.src}
                 {...this.props.attributes}
                 {...this.props.evts}>
@@ -95,7 +97,7 @@ var PhotoEditable = React.createClass({
                         libelle={Lang.get('global.modifier')}
                         evts={evts}
                         ref="InputPhoto" />
-                </Thumbnail>
+                </Photo>
             );
         }
         // NON EDITABLE

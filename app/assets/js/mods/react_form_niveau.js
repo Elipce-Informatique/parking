@@ -59,36 +59,38 @@ var FormNiveau = React.createClass({
      */
     generatePlusMinus: function (i, nbPlans) {
         var plus = '';
-        // Dernière ligne
-        if (i === (nbPlans - 1)) {
-            // Première ligne
-            if (i == 0) {
-                plus = (
-                    <Col md={2}>
-                        <Button
-                            onClick={this.addPlan}>
-                            <Glyph
-                                glyph='plus'/>
-                        </Button>
-                    </Col>
-                );
-            }
-            // Autre que 1ere ligne
-            else {
-                plus = (
-                    <Col md={2}>
-                        <Button
-                            onClick={this.addPlan}>
-                            <Glyph
-                                glyph='plus'/>
-                        </Button>
-                        <Button
-                            onClick={this.delPlan}>
-                            <Glyph
-                                glyph='minus'/>
-                        </Button>
-                    </Col>
-                );
+        if (this.props.editable) {
+            // Dernière ligne
+            if (i === (nbPlans - 1)) {
+                // Première ligne
+                if (i == 0) {
+                    plus = (
+                        <Col md={2}>
+                            <Button
+                                onClick={this.addPlan}>
+                                <Glyph
+                                    glyph='plus'/>
+                            </Button>
+                        </Col>
+                    );
+                }
+                // Autre que 1ere ligne
+                else {
+                    plus = (
+                        <Col md={2}>
+                            <Button
+                                onClick={this.addPlan}>
+                                <Glyph
+                                    glyph='plus'/>
+                            </Button>
+                            <Button
+                                onClick={this.delPlan}>
+                                <Glyph
+                                    glyph='minus'/>
+                            </Button>
+                        </Col>
+                    );
+                }
             }
         }
         return plus;
@@ -108,7 +110,7 @@ var FormNiveau = React.createClass({
             // Parcours des plans du niveau
             retour = _.map(this.props.detailNiveau.plans, function (plan, index, collection) {
                 // Plus et moins
-                plus = this.generatePlusMinus(index, collection.length);
+                plus = this.generatePlusMinus(index, (collection.length + this.props.nbUpload));
 
                 return (
                     <Row key={index}>
@@ -126,7 +128,9 @@ var FormNiveau = React.createClass({
                                 }}
                                 editable={this.props.editable}/>
                         </Col>
-                        <Col md={2}>
+                        <Col
+                            md={2}
+                            className = "text-center">
                             <Photo
                                 editable={this.props.editable}
                                 src = {DOC_URI + 'plans/' + plan.url}
@@ -141,8 +145,54 @@ var FormNiveau = React.createClass({
                     {plus}
                     </Row>
                 );
-            }, this);
+            }, this); // Fin map
+            // De nouveaux plans à ajouter
+            if (this.props.nbUpload > 0) {
+                // Ajout de nouveaux plans
+                for (var i = 0; i < this.props.nbUpload; i++) {
 
+                    plus = this.generatePlusMinus((i + this.props.detailNiveau.plans.length), (this.props.detailNiveau.plans.length + this.props.nbUpload));
+
+                    // Ligne complète
+                    retour.push(
+                        <Row key={i + this.props.detailNiveau.plans.length}>
+                            <Col
+                                md={1}
+                                className="text-right">
+                                <label>{Lang.get('global.plan')}</label>
+                            </Col>
+                            <Col md={4}>
+                                <InputTextEditable
+                                    attributes={{
+                                        name: "plan_new_" + i,
+                                        required: true,
+                                        value: this.props.detailNiveau['plan_new_' + i]
+                                    }}
+                                    editable={this.props.editable}/>
+                            </Col>
+                            <Col md={2}>
+                                <Upload
+                                    key={i}
+                                    name={"url_new_" + i}
+                                    typeOfFile="img"
+                                    alertOn={true}
+                                    libelle={Lang.get('administration_parking.niveau.download_plan')}
+                                    attributes={{
+                                        required: true
+                                    }}
+                                />
+                            </Col>
+                    {plus}
+                        </Row>
+                    );
+                }
+            }
+            // Des plans à supprimer
+            else{
+                for(var i = this.props.nbUpload; i < 0; i++){
+                    retour.pop();
+                }
+            }
         }
         // Mode création
         else {
@@ -206,7 +256,7 @@ var FormNiveau = React.createClass({
                     }}
                     data         ={this.props.parkings}
                     editable     ={this.props.editable}
-                    selectedValue={this.props.detailNiveau.parking_id}
+                    selectedValue={this.props.detailNiveau.parking_id.toString()}
                     placeholder  ={Lang.get('global.selection')}
                     labelClass = "text-right"
                     key={Date.now()}/>

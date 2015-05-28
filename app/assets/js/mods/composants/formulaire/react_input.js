@@ -1911,20 +1911,27 @@ module.exports.InputTimeEditable = InputTimeEditable;
  * @returns {XML}
  */
 var modeEditableFalse = function (attr) {
-    // Label
-    var label = (attr.label !== undefined ? attr.label : '');
-    // Texte
-    var texte = (attr.value !== undefined ? attr.value : '');
     // CSS
     var classRow = (attr.groupClassName !== undefined ? {className: attr.groupClassName} : {});
     var classLabel = (attr.labelClassName !== undefined ? {className: attr.labelClassName} : {});
     var classTexte = (attr.wrapperClassName !== undefined ? {className: attr.wrapperClassName} : {});
 
+    // Label
+    var label = '';
+    if(attr.label !== undefined){
+        label = (
+            <label {...classLabel}>
+                <span>{attr.label}</span>
+            </label>
+        );
+    }
+    // Texte
+    var texte = (attr.value !== undefined ? attr.value : '');
+
+
     return (
         <div {...classRow}>
-            <label {...classLabel}>
-                <span>{label}</span>
-            </label>
+        {label}
             <div {...classTexte}>
                 <span>{texte}</span>
             </div>

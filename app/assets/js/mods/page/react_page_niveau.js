@@ -90,7 +90,8 @@ var PageNiveau = React.createClass({
                             editable={false}
                             detailNiveau={this.state.detailNiveau}
                             idNiveau={this.state.idNiveau}
-                            parkings={this.state.parkings}/>
+                            parkings={this.state.parkings}
+                            nbUpload={this.state.nbUpload}/>
                     </div>;
                 break;
             case pageState.creation:
@@ -291,6 +292,7 @@ var storeNiveau = Reflux.createStore({
                 this.stateLocal.detailNiveau = data;
                 // Maj libelle + id
                 this.stateLocal.sousTitre = data.libelle;
+                this.stateLocal.nbUpload = 0;
                 // Maj page
                 this.trigger(this.stateLocal);
             },
@@ -354,11 +356,11 @@ var storeNiveau = Reflux.createStore({
         var state = {
             idNiveau: 0,
             etat: pageState.creation,
+            nbUpload: 1,
             detailNiveau: {
                 libelle: '',
                 description: '',
-                parking_id: 0,
-                nbUpload: 1,
+                parking_id: '',
                 plan0: '',
                 url0: ''
             }
@@ -372,7 +374,8 @@ var storeNiveau = Reflux.createStore({
     onEditer: function () {
         // Passage en mode edition
         this.stateLocal = _.extend(this.stateLocal, {
-            etat: pageState.edition
+            etat: pageState.edition,
+            nbUpload: 0
         });
         // Update composant React
         this.trigger(this.stateLocal);
