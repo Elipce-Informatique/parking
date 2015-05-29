@@ -374,9 +374,6 @@ var store = Reflux.createStore({
             case "form_mod_allee":
                 this.handleAllee(formDom, this._inst.lastDraw);
                 break;
-            case "form_mod_capteur":
-                this.handleCapteur(formDom);
-                break;
 
             default:
                 break;
@@ -576,24 +573,30 @@ var store = Reflux.createStore({
     },
 
     /**
-     * Gère la validation de la modale "capteur de place"
-     * @param formDom : le DOM du formulaire
+     *
+     * @param concentrateur
+     * @param bus
+     * @param capteurInit
+     * @param capteurs
      */
-    handleCapteur: function (formDom) {
-        console.log('PASS handleCapteur : %o', formDom);
-
-        var concentrateurId, busId, capteurId, $dom = $(formDom);
-        concentrateurId = $dom.find('[name=concentrateur_id]').val();
-        busId = $dom.find('[name=bus_id]').val();
-        capteurId = $dom.find('[name=capteur_id]').val();
-
-        console.log('Concentrateur Id : %o, Bus Id : %o, Capteur Id : %o', concentrateurId, busId, capteurId);
+    onStart_affectation_capteurs: function (concentrateur, bus, capteurInit, capteurs) {
+        var infos = mapHelper.generateInfosCapteurPlace(concentrateur.v4_id, bus.num, capteurInit.adresse, capteurs.length);
+        console.log('Infos a afficher : %o', infos);
 
         var retour = {
             type: mapOptions.type_messages.show_infos,
+            data: infos
+        };
+        this.trigger(retour);
+    },
+
+    onStop_affectation_capteurs: function () {
+        console.log('PASS STOP AFFECTATION: %o', arguments);
+
+        var retour = {
+            type: mapOptions.type_messages.hide_infos,
             data: {}
         };
-
         this.trigger(retour);
     },
 

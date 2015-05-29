@@ -1,6 +1,8 @@
 /**
  * Created by yann on 22/01/2015.
  */
+
+var React = require('react');
 var _ = require('lodash');
 var classifyPoint = require("robust-point-in-polygon");
 var poly = require('polygon');
@@ -8,6 +10,7 @@ var poly = require('polygon');
 var mapOptions = require('./map_options');
 var MathHelper = require('./math_helper');
 
+var Button = ReactB.Button;
 
 /**
  * Calcul le barycentre géométrique du polygon passé en paramètres
@@ -543,6 +546,31 @@ function getDefaultAlleeIdInZoneFromPoint(point, zones) {
 }
 
 /**
+ * Génère le message HTML à placer dans le cadre d'information
+ * de la carte pour le cycle de vie d'association capteur-place
+ * @param concentrateurV4Id : id du concentrateur sur la base Olav
+ * @param busNum : Nulméro du bus
+ * @param adressCapteur : id du capteur
+ * @param nbRestant : Capteurs restant sur le bus
+ *
+ */
+function generateInfosCapteurPlace(concentrateurV4Id, busNum, adressCapteur, nbRestant) {
+    console.log('Concentrateur V4Id : %o, Bus Num : %o, Capteur Adress : %o', concentrateurV4Id, busNum, adressCapteur);
+    var titre = '<h4>' + Lang.get('administration_parking.carte.infos_capteur_titre') + '</h4>';
+    var adresse = '<p>' + Lang.get('administration_parking.carte.infos_capteur_adresse') + '<strong>' + concentrateurV4Id + '.' + busNum + '.' + adressCapteur + '</strong>';
+    var restant = '<br />' + Lang.get('administration_parking.carte.infos_capteur_restant') + '<strong>' + nbRestant + '</strong>';
+    var bouton = '</p><br />' +
+        '<button ' +
+        'type="button" ' +
+        'class="btn btn-success" ' +
+        'onclick="Actions.map.stop_affectation_capteurs()">' +
+        Lang.get('administration_parking.carte.infos_capteur_bouton') +
+        '</button>';
+
+    return titre + adresse + restant + bouton;
+}
+
+/**
  * Ce que le module exporte.
  * @type {{getCentroid: getCentroid, isPointInPolygon: isPointInPolygon, isPolygonInPolygonByCenter: isPolygonInPolygonByCenter, getLatLngArrayFromCoordsArray: getCoordsArrayFromLatLngArray, isPolygonInPolygon: arePointsInPolygon}}
  */
@@ -569,5 +597,6 @@ module.exports = {
     createFeatureFromCoordinates: createFeatureFromCoordinates,
     getAlleeIdFromPoint: getAlleeIdFromPoint,
     getDefaultAlleeIdInZoneFromPoint: getDefaultAlleeIdInZoneFromPoint,
-    customZoomCRS: customZoomCRS
+    customZoomCRS: customZoomCRS,
+    generateInfosCapteurPlace: generateInfosCapteurPlace
 };

@@ -368,8 +368,9 @@ var parkingMap = React.createClass({
 
     /**
      * Affiche le cadre d'information en bas à droite
+     * avec un message par défaut (param)
      */
-    showInfos: function () {
+    showInfos: function (message) {
         // Just in case :
         this.hideInfos();
 
@@ -379,7 +380,7 @@ var parkingMap = React.createClass({
 
         this._inst.infosControl.onAdd = function (map) {
             this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
-            this.update();
+            this.update(message);
             return this._div;
         };
 
@@ -444,7 +445,7 @@ var parkingMap = React.createClass({
                 this._onNewAllee(data);
                 break;
             case mapOptions.type_messages.show_infos:
-                this.showInfos();
+                this.showInfos(data.data);
                 break;
             case mapOptions.type_messages.update_infos:
                 this.updateInfos(data.data);
