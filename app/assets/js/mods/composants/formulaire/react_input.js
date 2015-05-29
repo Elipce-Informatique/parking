@@ -1171,6 +1171,7 @@ var InputFileOriginal = React.createClass({
                     {...attrs}
                     {...this.props.evts}
                     onChange = {this.handleChange}
+                    onBlur = {this.handleBlur}
                     ref = "InputField"
                 />
         );

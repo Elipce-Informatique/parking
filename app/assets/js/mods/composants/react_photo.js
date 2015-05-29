@@ -132,6 +132,7 @@ var PhotoEditable = React.createClass({
 
             reader.readAsDataURL(input.files[0]);
         }
+        // Envoie du change
     }
 });
 module.exports.PhotoEditable = PhotoEditable;

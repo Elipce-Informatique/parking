@@ -104,6 +104,7 @@ var FormNiveau = React.createClass({
 
         var retour = [];
         var plus = '';
+        var src = {};
 
         // Mode edition
         if (this.props.idNiveau !== 0) {
@@ -111,7 +112,10 @@ var FormNiveau = React.createClass({
             retour = _.map(this.props.detailNiveau.plans, function (plan, index, collection) {
                 // Plus et moins
                 plus = this.generatePlusMinus(index, (collection.length + this.props.nbUpload));
-
+                src = this.props.detailNiveau["url" + plan.id] !== undefined ? {} : {
+                    src: DOC_URI + 'plans/' + plan.url
+                };
+                //console.log(src);
                 return (
                     <Row key={index}>
                         <Col
@@ -123,7 +127,7 @@ var FormNiveau = React.createClass({
                             <InputTextEditable
                                 attributes={{
                                     name: "plan" + plan.id,
-                                    value: plan.libelle,
+                                    value: this.props.detailNiveau["plan" + plan.id] !== undefined ? this.props.detailNiveau["plan" + plan.id] : plan.libelle,
                                     required: true
                                 }}
                                 editable={this.props.editable}/>
@@ -133,13 +137,14 @@ var FormNiveau = React.createClass({
                             className = "text-center">
                             <Photo
                                 editable={this.props.editable}
-                                src = {DOC_URI + 'plans/' + plan.url}
+                            {...src}
                                 name={"url" + plan.id}
                                 typeOfFile="img"
                                 alertOn={true}
                                 libelle={Lang.get('administration_parking.niveau.modif_plan')}
                                 attributes={{
-                                    required: true
+                                    required: true,
+                                    name: "url" + plan.id
                                 }}/>
                         </Col>
                     {plus}
@@ -188,8 +193,8 @@ var FormNiveau = React.createClass({
                 }
             }
             // Des plans à supprimer
-            else{
-                for(var i = this.props.nbUpload; i < 0; i++){
+            else {
+                for (var i = this.props.nbUpload; i < 0; i++) {
                     retour.pop();
                 }
             }

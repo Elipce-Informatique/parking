@@ -99,4 +99,15 @@ class Niveau extends BaseModel
         return ($result > 0);
     }
 
+    /**
+     * Tous les plans du niveau
+     * @param $id: ID nivreau
+     * @return mixed
+     */
+    public static function getPlans($id){
+        return Niveau::where('id', '=', $id)
+            ->with('plans')
+            ->first();
+    }
+
 }
