@@ -207,6 +207,7 @@ require('sweetalert');
 
 
 $(function () {
+
     /*
      |--------------------------------------------------------------------------
      | GESTION DES NOTIFICATIONS
