@@ -52,6 +52,13 @@ var store = Reflux.createStore({
             parking_id: 0,
             etat_general_id: 0
         },
+        capteur_place: {
+            concentrateur: {},  // Concentrateur concerné
+            bus: {},            // Bus concerné
+            capteurInit: {},    // Capteur initial pour l'affectation
+            capteursTotaux: [], // Liste des capteurs totaux à affecter
+            capteursRestant: [] // Liste des capteurs restant à affecter
+        },
         types_places: [], // Types de places de la BDD
         currentMode: mapOptions.dessin.place,
         places: [], // Places avec data base de données
@@ -341,6 +348,9 @@ var store = Reflux.createStore({
             };
 
             this.trigger(retour);
+
+            // Pour éviter d'éventuels glitch du à une utilisation bizarre
+            this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
         } else {
             swal(Lang.get('administration_parking.carte.err_parking_non_init'));
 
@@ -580,24 +590,78 @@ var store = Reflux.createStore({
      * @param capteurs
      */
     onStart_affectation_capteurs: function (concentrateur, bus, capteurInit, capteurs) {
-        var infos = mapHelper.generateInfosCapteurPlace(concentrateur.v4_id, bus.num, capteurInit.adresse, capteurs.length);
-        console.log('Infos a afficher : %o', infos);
+        // REMPLISSAGE DES INFOS
+        this._inst.capteur_place.concentrateur = concentrateur;
+        this._inst.capteur_place.bus = bus;
+        this._inst.capteur_place.capteurInit = capteurInit;
+        this._inst.capteur_place.capteursTotaux = capteurs;
+        this._inst.capteur_place.capteursRestant = capteurs;
+
+        // MISE À JOUR DU MESSAGE D'INFO
+        var infos = mapHelper.generateInfosCapteurPlace(
+            concentrateur.v4_id,
+            bus.num,
+            capteurInit.adresse,
+            capteurs.length
+        );
 
         var retour = {
+            type: mapOptions.type_messages.hide_modal,
+            data: {}
+        };
+        this.trigger(retour);
+
+        retour = {
             type: mapOptions.type_messages.show_infos,
             data: infos
         };
         this.trigger(retour);
+
+        // ATTACHEMENT DES ÉVÈNEMENTS SUR LES PLACES
+        console.log('Map : %o', this._inst.mapInst);
+        this._inst.mapInst.placesGroup.on('click', this.onPlaceCapteurClick, this);
     },
 
+    /**
+     * Event listener sur click d'une place quand on est en mode capteur.
+     * - Récupère la place cliquée
+     * - Récupère le capteur à affecter
+     * - Test si place libre en JS
+     * - Lance l'update AJAX
+     * - Si succès
+     *      - changement couleur place affectée
+     *      - Affectation du capteur id dans la place sur la carte
+     *      - Suppression du capteur de la liste restante
+     *      - Modification du message d'info
+     *      - Avertissement si on a affecté le dernier capteur
+     * - Si fail
+     *      - Notification utilisateur (Place déjà affectée )
+     *
+     * @param evt
+     */
+    onPlaceCapteurClick: function (evt) {
+        console.log('Pass Click place : %o', evt);
+        var place = evt.layer.options.data;
+        console.log('Place cliquée : %o', place);
+    },
+
+    /**
+     * TODO Arrête l'affectation:
+     * - Supprime les events listeners sur les places
+     * - Vide les données du store en rapport avec l'affectation
+     */
     onStop_affectation_capteurs: function () {
         console.log('PASS STOP AFFECTATION: %o', arguments);
 
+        // MISE À JOUR DU MESSAGE D'INFO
         var retour = {
             type: mapOptions.type_messages.hide_infos,
             data: {}
         };
         this.trigger(retour);
+
+        // DÉTACHEMENT DES ÉVÈNEMENTS SUR LES PLACES
+        this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
     },
 
     /**
@@ -605,6 +669,7 @@ var store = Reflux.createStore({
      * UTILITAIRES DIVERSES ------------------------------------------------------
      * ---------------------------------------------------------------------------
      */
+
     /**
      * Les data correspondent au layer créé par le plugin.
      * Le premier test consiste à vérifier qu'on ait 3 points.
