@@ -215,8 +215,10 @@ var storeNiveau = Reflux.createStore({
             context: this,
             async: false,
             success: function (data) {
+                //console.log(data);
                 // Calcul des niveaux à afficher
                 var niveaux = this.processNiveauxList(data);
+                //console.log(niveaux);
                 // MAJ du state local
                 this.stateLocal.listeNiveaux = niveaux;
                 //console.log(data);
@@ -265,7 +267,7 @@ var storeNiveau = Reflux.createStore({
                     }.bind(this));
 
                     // Ajout au tableau de niveaux
-                    niveaux = _.extend(niveaux, niveauParkCourant);
+                    Array.prototype.push.apply(niveaux, niveauParkCourant);
                 }
 
             }, this);
@@ -386,10 +388,11 @@ var storeNiveau = Reflux.createStore({
      * @param e: Object {name: "email", value: "yann.pltv@gmail.com", form: DOMNode}
      */
     onForm_field_changed: function (e) {
-        //console.log('FIELD CHANGE %o',e);
+        console.log('FIELD CHANGE %o',e);
         var data = {};
         // MAJ du state STORE
         data[e.name] = e.value;
+        console.log('data %o',data);
         this.stateLocal.detailNiveau = _.extend(this.stateLocal.detailNiveau, data);
 
         // Si on est sur une combo on trigger pour la selectedValue
@@ -459,16 +462,28 @@ var storeNiveau = Reflux.createStore({
      */
     onSubmit_form: function (e) {
         // Variables
-        var url = this.stateLocal.idNiveau === 0 ? '' : this.stateLocal.idNiveau;
-        url = BASE_URI + 'parking/niveau/' + url;
+        var url = '';
         var method = this.stateLocal.idNiveau === 0 ? 'POST' : 'PUT';
 
         // FormData
         var fData = form_data_helper('form_niveau', method);
-        // Ajout des url upload
-        for(var i=0; i<this.stateLocal.nbUpload; i++){
-            fData.append('url'+i, $('[name=url'+i+']')[0].files[0]);
+        // Mode création
+        if(this.stateLocal.idNiveau === 0) {
+            // Ajout des url upload
+            for (var i = 0; i < this.stateLocal.nbUpload; i++) {
+                fData.append('url' + i, $('[name=url' + i + ']')[0].files[0]);
+            }
         }
+        // Mode edition
+        else{
+            url = this.stateLocal.idNiveau;
+            // Fichiers existants avant modification
+            $('[name^="url"]').each(function(elt){
+                fData.append($(this).attr('name'), this.files[0]);
+            });
+        }
+
+        url = BASE_URI + 'parking/niveau/' + url;
 
         // Requête
         $.ajax({
@@ -531,7 +546,7 @@ var storeNiveau = Reflux.createStore({
      */
     onSupprimer: function () {
         // Variables
-        var url = BASE_URI + 'calendrier_jours/' + this.stateLocal.idNiveau;
+        var url = BASE_URI + 'parking/niveau/' + this.stateLocal.idNiveau;
         var method = 'DELETE';
 
         // Requête
@@ -545,7 +560,7 @@ var storeNiveau = Reflux.createStore({
                 // suppression OK
                 if (bool) {
                     // Mode liste
-                    this.modeListe();
+                    this.onDisplay_all_niveaux();
                     // Notification green
                     Actions.notif.success(Lang.get('global.notif_success'));
                 }
