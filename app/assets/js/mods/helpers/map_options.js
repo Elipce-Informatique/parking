@@ -95,7 +95,7 @@ module.exports.afficheurMarker = L.Icon.extend({
 });
 
 /**
- * TODO : Place SVG générique à colorier en CSS (Pas forcément possible finnalement)
+ * Marker de place tut tut la voiture
  * @type {void|*}
  */
 module.exports.placeGenerique = L.Icon.extend({
@@ -107,7 +107,7 @@ module.exports.placeGenerique = L.Icon.extend({
 });
 
 /**
- * TODO : Place SVG générique à colorier en CSS (Pas forcément possible finnalement)
+ * Marker de place tut tut la voiture
  * @type {void|*}
  */
 module.exports.placeRouge = L.Icon.extend({

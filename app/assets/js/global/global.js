@@ -47,8 +47,8 @@ require('sweetalert');
     global.Actions.validation = Reflux.createActions([
         "form_field_changed", // Appellée quand la valeur d'un champ de formulaire est modifié
         "form_field_verif",   // Appellée quand la valeur d'un champ de formulaire est valide
-        "submit_form",        // Appellée quand le form est validé par l'utilisateur
-        "verify_form_save"    // Appellée quand le form est validé par l'utilisateur et que les champs sont bons
+        "verify_form_save",   // Appellée quand le form est validé par l'utilisateur
+        "submit_form"        // Appellée quand le form est validé par l'utilisateur et que les champs sont bons
     ]);
 
     /*
@@ -109,7 +109,9 @@ require('sweetalert');
         "init_modale",
         "liste_concentrateurs",
         "liste_buses",
-        "liste_capteurs"
+        "liste_capteurs",
+        "start_affectation_capteurs",
+        "stop_affectation_capteurs"
     ]);
 
     /*
@@ -207,6 +209,7 @@ require('sweetalert');
 
 
 $(function () {
+
     /*
      |--------------------------------------------------------------------------
      | GESTION DES NOTIFICATIONS

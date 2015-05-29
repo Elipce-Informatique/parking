@@ -65,6 +65,11 @@ return array(
         'err_zone_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une allée.',
         'err_allee_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une autre allée.',
         'err_parking_non_init' => 'Erreur : Le parking n\'a pas encore été initialisé.',
+        // MESSAGE D'INFOS CAPTEUR (Cadre bas droite map)
+        'infos_capteur_titre' => 'Capteur de place',
+        'infos_capteur_adresse' => 'Adresse : ',
+        'infos_capteur_restant' => 'Capteurs restant sur le bus : ',
+        'infos_capteur_bouton' => 'Terminer l\'affectation',
     ],
 
     // MODULE TEMPS REEL

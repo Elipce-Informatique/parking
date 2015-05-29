@@ -162,12 +162,54 @@ var store = Reflux.createStore({
     init: function () {
         // REGISTER STATUSUPDATE ACTION
         this.listenTo(Actions.validation.form_field_changed, this.updateCombos);
+        this.listenTo(Actions.validation.submit_form, this.onSubmit_form);
         this.listenTo(Actions.map.init_modale, this.loadInitData); // Appellé à l'affichage de la modale
-        //
+
         this.listenTo(Actions.map.liste_concentrateurs, this.getConcentrateurCombo);
         this.listenTo(Actions.map.liste_buses, this.getBusCombo);
         this.listenTo(Actions.map.liste_capteurs, this.getAdresseCombo);
     },
+
+    /**
+     * Appellée quand un formulaire a été validé syntaxiquement et métierment parlent.
+     * @param formDom : noeud racine contenant le formulaire
+     * @param formId : id du formulaire
+     */
+    onSubmit_form: function (formDom, formId) {
+        // OBLIGÉ DE TRAITER ÇA ICI PLUTOT QUE DANS LE STORE DE LA MAP
+        // POUR AVOIR ACCÈS AUX DONNÉES DES CAPTEURS.
+        // LA SUITE SE PASSE DANS LE STORE MAP UNE FOIS QUE LES DONNÉES ONT ÉTÉ RÉCUPÉRÉES.
+        switch (formId) {
+            case "form_mod_capteur":
+                this.handleCapteur(formDom);
+                break;
+        }
+    },
+
+    /**
+     * Gère la validation de la modale "capteur de plac".
+     * - Remplis le cadre d'infos de la carte
+     * - Lance le cycle de vie d'affectation des capteurs
+     *
+     * @param formDom : le DOM du formulaire
+     */
+    handleCapteur: function (formDom) {
+        console.log('PASS handleCapteur : %o', formDom);
+
+        var concentrateurId, busId, capteurId, $dom = $(formDom);
+        concentrateurId = $dom.find('[name=concentrateur_id]').val();
+        busId = $dom.find('[name=bus_id]').val();
+        capteurId = $dom.find('[name=capteur_id]').val();
+
+        var concentrateur = this.getConcentrateurFromId(concentrateurId);
+        var bus = this.getBusFromId(busId);
+        var capteurInit = this.getCapteurFromId(capteurId);
+        var capteurs = this.getRemainingClearCapteursFromBus(busId, capteurInit);
+
+        // LANCEMENT DE LA PROCÉDURE D'AFFECTATION DANS LE STORE PARKING MAP
+        Actions.map.start_affectation_capteurs(concentrateur, bus, capteurInit, capteurs);
+    },
+
     /**
      * Mise à jour des combos sur chaque action de l'utilisateur
      * passant les tests de vérification auto.
@@ -324,6 +366,58 @@ var store = Reflux.createStore({
                 value: c.id.toString()
             }
         });
+    },
+
+    /**
+     * Retourne la liste des capteurs non affectés du bus
+     * à partir de l'adresse passée en params
+     *
+     * @return retourne la liste des capteurs clears du bus à partir du capteur passé en param
+     */
+    getRemainingClearCapteursFromBus: function (busId, capteurInit) {
+        return _.filter(this._inst.clearCapteurs, function (c) {
+            return (c.bus_id == busId) && (c.adresse >= capteurInit.adresse);
+        });
+    },
+
+    /**
+     * Retourne le concentrateur en fonction de son id
+     * @param concentrateurId : id du concentrateur
+     */
+    getConcentrateurFromId: function (concentrateurId) {
+        return _.reduce(this._inst.concentrateurs, function (retour, c) {
+            if (c.id == concentrateurId) {
+                return c;
+            } else {
+                return retour;
+            }
+        }, null);
+    },
+    /**
+     * Retourne le bus en fonction de son id
+     * @param busId : id du bus
+     */
+    getBusFromId: function (busId) {
+        return _.reduce(this._inst.buses, function (retour, b) {
+            if (b.id == busId) {
+                return b;
+            } else {
+                return retour;
+            }
+        }, null);
+    },
+    /**
+     * Retourne le capteur en fonction de son id
+     * @param capteurId : id du capteur
+     */
+    getCapteurFromId: function (capteurId) {
+        return _.reduce(this._inst.allCapteurs, function (retour, c) {
+            if (c.id == capteurId) {
+                return c;
+            } else {
+                return retour;
+            }
+        }, null);
     }
 
 });

@@ -90,8 +90,11 @@ class ParkingsController extends \BaseController
      */
     public function getConcentrateurs($id)
     {
-        return Concentrateur::with('buses.capteurs.place')
-            ->where('parking_id', '=', $id)
+        return Concentrateur::with(['buses' => function ($q) {
+            $q->with(['capteurs' => function ($q) {
+                $q->with('place')->orderBy('adresse');
+            }]);
+        }])->where('parking_id', '=', $id)
             ->get();
     }
 

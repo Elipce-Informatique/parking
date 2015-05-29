@@ -6,6 +6,7 @@ var addRequiredAddon = require('../helpers/field_helper').addRequiredAddon;
  * Mixin permettant le gérer la value des inputs
  * Pré-requis: le mixin est utilisé sur un composant ayant une ref="InputField"
  *
+ * Ce mixin gère l'appel à la fonction validator des composants
  */
 var InputValueMixin = {
     handleChange: function (e) {

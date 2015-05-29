@@ -1,6 +1,10 @@
 var storeGestMod = require('../stores/gestion_modif');
 /**
  * Created by yann on 17/12/2014.
+ *
+ * Mixin appliqué sur le composant page ou formulaire
+ * pour gérer les modifications des champs comportant
+ * l'attribut 'data-gest-mod'
  */
 var mixinGestionModif = {
     componentDidMount: function () {

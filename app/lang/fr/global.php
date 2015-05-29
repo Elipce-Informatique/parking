@@ -24,6 +24,9 @@ return array(
     'suppression_titre' => 'Êtes-vous sur?',
     'suppression_corps' => 'La suppression est une action irréversible.',
 
+    // CHARGEMENT
+    'block_ui' => 'Chargement....',
+
     // GESTION MODIFS
     'gest_mod_confirm' => 'Des modifications non enregistrées on été effectuées.',
     'gest_mod_confirm_question' => 'Des modifications non enregistrées on été effectuées.
