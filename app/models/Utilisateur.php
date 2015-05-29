@@ -15,9 +15,8 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
     | ATTRIBUTS
     |--------------------------------------------------------------------------
     */
-    public $timestamp = false;
 
-    protected $fillable = ['nom', 'prenom', 'email', 'password'];
+    protected $fillable = ['nom', 'prenom', 'email', 'password', 'photo'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -33,7 +32,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
     */
     public function profils()
     {
-        return $this->belongsToMany('Profil');
+        return $this->belongsToMany('Profil')->withTimestamps();
     }
 
     /*
@@ -158,7 +157,6 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             ->join('modules', 'modules.id', '=', 'profil_module.module_id')
             ->join('module_module', 'module_module.fils_id', '=', 'modules.id')
             ->where('utilisateurs.id', $this->id)
-            ->groupBy('modules.id')
             ->get(['modules.*', 'profil_module.access_level']);
     }
 
@@ -189,7 +187,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
     /**
      * Récupère tous les profils du user
-     * @param $id: ID utilisateur
+     * @param $id : ID utilisateur
      * @return array
      */
     public static function getProfilsUsers($id)
@@ -207,8 +205,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 ->get(['profils.id', 'profils.traduction', DB::raw("IF(profil_utilisateur.profil_id IS NULL,'non', 'oui')AS profil")]);
 
             $data['dataProfil'] = $dataProfil;
-        }
-        // Récupère uniquement les profils
+        } // Récupère uniquement les profils
         else {
             $data = [
                 'id' => 0,
@@ -251,7 +248,8 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      *
      * @return bool : statu de la suppression (false si l'utilisateur n'a pas de photo autre que no.gif)
      */
-    public function deletePhoto(){
+    public function deletePhoto()
+    {
         $photo = $this->photo;
         $path = storage_path() . '/documents/photo/' . $photo;
         if ($photo != "no.gif" && File::exists($path)) {
@@ -312,38 +310,22 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             DB::beginTransaction();
 
             // Sauvegarde des données utilisateur
-            $bSave = $user->save();
-
-            // Sauvegarde OK
-            if ($bSave) {
-
+            if($bSave = $user->save()){
                 // Parcours des droits de chaque profil
                 foreach ($fields as $key => $value) {
                     // On coupe le name courant selon '_'
                     $aEtat = explode('_', $key);
                     // Radio
                     if ($aEtat[0] == 'profil') {
-                        // Requete profil_utilisateur
-                        $ligne = DB::table('profil_utilisateur')
-                            ->where('profil_id', $aEtat[1])
-                            ->where('utilisateur_id', $id)
-                            ->first(['profil_utilisateur.*']);
-
-                        // Utilisateur déjà associé au profil
-                        if (count($ligne) > 0) {
-                            // Plus d'accès
-                            if ($value == 'non') {
-                                $bSave = DB::table('profil_utilisateur')->delete($ligne->id);
-                            }
+                        // Profil concerné
+                        $profilId = $aEtat[1];
+                        // Plus d'accès
+                        if ($value == 'non') {
+                            // Supprime un profil au user
+                            $user->profils()->detach($profilId);
                         } // Nouveau droit
-                        else if ($value != 'non') {
-                            $ligne = [
-                                'utilisateur_id' => $id,
-                                'profil_id' => $aEtat[1]
-                            ];
-
-                            // Défini les droits associés au profil
-                            $bSave = DB::table('profil_utilisateur')->insert($ligne);
+                        else {
+                            $user->profils()->attach($profilId);
                         }
                     }
                 }
@@ -356,14 +338,16 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 else {
                     // Transaction SQL KO
                     DB::rollback();
+                    Log::debug('Erreur update utilisateur (false) '.DB::getQueryLog());
                 }
             }
-        }
-        // Erreur dans la transaction SQL
+        } // Erreur dans la transaction SQL
         catch (Exception $e) {
+            Log::debug('Erreur update utilisateur (catch) '.$e->getMessage());
             $bSave = false;
             DB::rollback();
         }
+
         return array('save' => $bSave, 'idUser' => $id);
     }
 
@@ -384,15 +368,15 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
             // Récupère la donnée de l'utilisateur
             $fieldUser = [
-                'nom'      => strtoupper($fields['nom']),
-                'prenom'   => ucfirst(strtolower($fields['prenom'])),
-                'email'    => $fields['email']
+                'nom' => strtoupper($fields['nom']),
+                'prenom' => ucfirst(strtolower($fields['prenom'])),
+                'email' => $fields['email']
             ];
 
             // Mot de passe généré sur 8 digits
-            $pwd    = Hash::make(time());
-            $pwd    = substr($pwd, 8, 6);// 6 caractères au hasard
-            $pwd    = 'k'.$pwd.'1';// au moins une lettre et un chiffre
+            $pwd = Hash::make(time());
+            $pwd = substr($pwd, 8, 6);// 6 caractères au hasard
+            $pwd = 'k' . $pwd . '1';// au moins une lettre et un chiffre
             $pwdBdd = Hash::make($pwd); // Cryptage avant enregistrement
             $fieldUser['password'] = $pwdBdd;
 
@@ -402,7 +386,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 $extFile = Input::file('photo')->getClientOriginalExtension();
 
                 //  Nom du fichier (email + extension)
-                $fileName = str_replace(array('.','@'), array('',''), $fields['email']); // Suppression des points et @
+                $fileName = str_replace(array('.', '@'), array('', ''), $fields['email']); // Suppression des points et @
                 $fileName .= '.' . $extFile; // Ajout extension
 
                 // Sauvegarde de la photo dans le bon dossier
@@ -411,8 +395,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
                 // Mise à jour du champ en base de donnée
                 $fieldUser['photo'] = $fileName;
-            }
-            // Photo par défaut
+            } // Photo par défaut
             else {
                 $fieldUser['photo'] = 'no.gif';
             }
@@ -422,7 +405,8 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 DB::beginTransaction();
 
                 // Nouvel utilisateur
-                $idUser = Utilisateur::insertGetId($fieldUser);
+                $oUser = Utilisateur::create($fieldUser);
+                $idUser = $oUser->id;
 
                 // Parcours des profils du user
                 foreach ($fields as $key => $value) {
@@ -430,26 +414,22 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                     $aEtat = explode('_', $key);
                     // Radio
                     if ($aEtat[0] == 'profil' && $value == 'oui') {
-                        $new = [
-                            'utilisateur_id' => $idUser,
-                            'profil_id' => $aEtat[1]
-                        ];
 
+                        $profilId = $aEtat[1];
                         // Ajoute un profil au user
-                        $bSave = DB::table('profil_utilisateur')->insert($new);
+                        $oUser->profils()->attach($profilId);
                     }
                 }
 
                 // Création et envoie du mail
                 $titre = Lang::get('mail.creation_utilisateur_titre');
-                $texte = str_replace('[-pwd-]', $pwd,  Lang::get('mail.creation_utilisateur_text'));
+                $texte = str_replace('[-pwd-]', $pwd, Lang::get('mail.creation_utilisateur_text'));
                 $infos = array(
-                    'nom'    => $fieldUser['nom'],
+                    'nom' => $fieldUser['nom'],
                     'prenom' => $fieldUser['prenom'],
-                    'titre'  => $titre,
-                    'texte'  => $texte);
-                Mail::send('emails.creation_utilisateur', $infos, function($message) use ($fields, $titre)
-                {
+                    'titre' => $titre,
+                    'texte' => $texte);
+                Mail::send('emails.creation_utilisateur', $infos, function ($message) use ($fields, $titre) {
                     $message->to($fields['email'])->subject($titre);
                 });
 
@@ -459,14 +439,13 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                     'idUser' => $idUser,
                     'save' => $bSave
                 );
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
+                Log::debug('Erreur insert utilisateur (catch) '.$e->getMessage());
                 // Transaction KO
                 DB::rollback();
                 $retour = array('save' => false);
             }
-        }
-        // Email existe déjà
+        } // Email existe déjà
         else {
             $retour = array('save' => false);
         }
@@ -478,7 +457,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      * @param $email email de l'utilisateur
      * @return bool true/false
      */
-    public static function isMailExists($email, $idUser=0)
+    public static function isMailExists($email, $idUser = 0)
     {
         $and = $idUser === 0 ? '' : " AND id <> $idUser";
         $nb = DB::table('utilisateurs')->whereRaw("email='$email' $and")->count();
@@ -487,7 +466,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
     /**
      * Bon mot de passe ?
-     * @param $pass: mot de passe
+     * @param $pass : mot de passe
      * @return array
      */
     public static function isPasswordOk($pass)

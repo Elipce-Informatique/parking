@@ -508,7 +508,11 @@ var InputSelect = React.createClass({
                 }
                 // Option sélectionnée
                 else {
-                    retour = {'data-valid': true, 'data-class': 'has-success', 'data-tooltip': ''};
+                    retour = {
+                        'data-valid': true,
+                        'data-class': 'has-success',
+                        'data-tooltip': ''
+                    };
                 }
                 return retour;
             }
@@ -524,6 +528,18 @@ var InputSelect = React.createClass({
         this.setState({attributes: validations});
     },
 
+    componentWillReceiveProps: function (newProps) {
+        // VALUE PAR DÉFAUT
+        var val = '';
+        if (newProps.selectedValue !== undefined) {
+            val = newProps.selectedValue;
+        }
+        // 2. VALIDATION VALUE
+        var validation = newProps.validator(val, newProps, this.state);
+        // MISE À JOUR DE L'ÉTAT DU COMPOSANT
+        this.setState({attributes: validation});
+    },
+    
     /**
      * Gestion des modifications+
      * Action field_change +
@@ -1036,16 +1052,23 @@ var InputTelEditable = React.createClass({
     }
 });
 
-
 /**
- * Created by yann on 12/01/2015.
+ * Modified by vivian on 28/05/2015.
  *
  * Champ upload stylé
  * @param name : nom a afficher dans le composant
  * @param typeOfFile : all, docs, word, excel, pdf, txt, img
+ * @param alertOn: false par défaut. Sio true affiche un message d'info si l'extension du fichier est KO
+ * @param style: classes CSS
+ * @param libelle: Texte affiché sur le bouton
+ * @param attributes: props de Input (react bootstrap) ex: {value:Toto, label: Champ texte:}
+ *          SPECIFICITE: {for: id_du_form} permet de lier le champ au formulaire souhaité.
+ *          Indispensable lorsqu'il y a plusieurs formulmaires dans la même page.
+ *          Permet de distinguer 2 champs au name identique de deux formulaires différents
+ * @param evts: evenements de Input (react bootstrap)  ex: {onClick: maFonction}
+ * @param gestMod: booléen: prise en compte ou pas de la gestion des modifications
  */
 var InputFile = React.createClass({
-    mixins: [MixinInputValue],
 
     propTypes: {
         name: React.PropTypes.string.isRequired,
@@ -1059,13 +1082,58 @@ var InputFile = React.createClass({
     },
 
     getDefaultProps: function () {
+
         return {
             attributes: {},
             evts: {},
             gestMod: true,
-            onChange: this.handleChange,
             style: "btn-primary",
-            libelle: "Upload",
+            libelle: Lang.get('global.telecharger'),
+            typeOfFile: 'all',
+            alertOn: false
+        };
+    },
+    render: function () {
+
+        return (
+            <div className={"fileUpload btn " + this.props.style}>
+                <span>{this.props.libelle}</span>
+                <InputFileOriginal
+                    name={this.props.name}
+                    typeOfFile={this.props.typeOfFile}
+                    alertOn={this.props.alertOn}
+                    attributes={this.props.attibutes}
+                    evts={this.props.evts}
+                    gestMod={this.props.gestMod}
+                />
+                ;
+            </div>
+        );
+    }
+});
+
+
+/**
+ * Ne pas utiliser ce composant, prendre InputFile qui appelle InputFileOriginal
+ */
+var InputFileOriginal = React.createClass({
+    mixins: [MixinInputValue],
+
+    propTypes: {
+        name: React.PropTypes.string.isRequired,
+        typeOfFile: React.PropTypes.string,
+        alertOn: React.PropTypes.bool,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        gestMod: React.PropTypes.bool
+    },
+
+    getDefaultProps: function () {
+
+        return {
+            attributes: {},
+            evts: {},
+            gestMod: true,
             typeOfFile: 'all',
             alertOn: false,
             validator: function (val, props, state) {
@@ -1085,25 +1153,26 @@ var InputFile = React.createClass({
             }
         };
     },
+
+    shouldComponentUpdate: function(){
+        return false;
+    },
+
     render: function () {
 
         // IMPORTANT Génère les attributs à passer à l'INPUT (attributs du DEV + ceux du MIXIN)
         var attrs = this.generateAttributes();
 
         return (
-            <div className={"fileUpload btn " + this.props.style}>
-                <span>{this.props.libelle}</span>
-                <Input
-                    type="file"
-                    name={this.props.name}
-                    className="upload"
+            <Input
+                type="file"
+                name={this.props.name}
+                className="upload"
                     {...attrs}
                     {...this.props.evts}
-                    onChange = {this.handleChange}
-                    ref = "InputField"
-                />
-                ;
-            </div>
+                onChange = {this.handleChange}
+                ref = "InputField"
+            />
         );
     }
 });
@@ -1841,7 +1910,7 @@ module.exports.InputTimeEditable = InputTimeEditable;
  * @param attr: this.props.attributes
  * @returns {XML}
  */
-function modeEditableFalse(attr) {
+var modeEditableFalse = function (attr) {
     // Label
     var label = (attr.label !== undefined ? attr.label : '');
     // Texte
@@ -1870,7 +1939,7 @@ function modeEditableFalse(attr) {
  * @param withAlert: booléen si on affiche ou non une alert si l'extension n'est pas bonne
  * @return booléen
  */
-function checkFileExtension(value, mode, withAlert) {
+var checkFileExtension = function (value, mode, withAlert) {
     var filePath = value;
 
     if (filePath.indexOf('.') == -1)
@@ -1880,64 +1949,70 @@ function checkFileExtension(value, mode, withAlert) {
     var ext = filePath.substring(filePath.lastIndexOf('.') + 1).toLowerCase();
     switch (mode) {
         case 'all':
-            validExtensions[0] = 'jpg';
-            validExtensions[1] = 'bmp';
-            validExtensions[2] = 'png';
-            validExtensions[3] = 'gif';
-            validExtensions[4] = 'txt';
-            validExtensions[5] = 'doc';
-            validExtensions[6] = 'docx';
-            validExtensions[7] = 'xls';
-            validExtensions[8] = 'xlsx';
-            validExtensions[9] = 'pdf';
+            validExtensions = [
+                'jpg',
+                'bmp',
+                'png',
+                'gif',
+                'txt',
+                'doc',
+                'docx',
+                'xls',
+                'xlsx',
+                'pdf'
+            ]
             break;
         case 'docs':
-            validExtensions[0] = 'doc';
-            validExtensions[1] = 'docx';
-            validExtensions[2] = 'pdf';
+            validExtensions = [
+                'doc',
+                'docx',
+                'pdf'
+            ];
             break;
         case 'word':
-            validExtensions[0] = 'doc';
-            validExtensions[1] = 'docx';
+            validExtensions = [
+                'doc',
+                'docx'
+            ]
             break;
         case 'excel':
-            validExtensions[0] = 'xls';
-            validExtensions[1] = 'xlsx';
+            validExtensions = [
+                'xls',
+                'xlsx'
+            ]
             break;
         case 'pdf':
-            validExtensions[0] = 'pdf';
+            validExtensions = ['pdf'];
             break;
         case 'txt':
-            validExtensions[0] = 'txt';
+            validExtensions = ['txt'];
             break;
         case 'img':
-            validExtensions[0] = 'jpg';
-            validExtensions[1] = 'jpeg';
-            validExtensions[2] = 'bmp';
-            validExtensions[3] = 'png';
-            validExtensions[4] = 'gif';
+            validExtensions = [
+                'jpg',
+                'jpeg',
+                'bmp',
+                'png',
+                'gif',
+                'svg'
+            ];
             break;
 
         default:
             break;
     }
 
-    for (var i = 0; i < validExtensions.length; i++) {
-        if (ext == validExtensions[i]) {
-            return true;
+    var inArray = _.indexOf(validExtensions, ext) > -1;
+
+    // Extension invalide
+    if (!inArray) {
+        // Avec alerte
+        if (withAlert) {
+            // Construction message
+            var str = Lang.get('global.erreurFileInput').replace('[extensions]', validExtensions.join(', '));
+            // Popup
+            swal(str);
         }
     }
-    var temp = '';
-    for (var i = 0; i < validExtensions.length; i++) {
-        temp = temp + '.' + validExtensions[i] + '\n';
-    }
-
-    var str = Lang.get('global.erreurFileInput');
-    str = str.replace('[extensions]', temp);
-
-    if (withAlert) {
-        swal(str);
-    }
-
-    return false;
+    return inArray;
 }

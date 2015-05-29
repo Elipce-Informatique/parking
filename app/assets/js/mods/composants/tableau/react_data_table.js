@@ -51,6 +51,7 @@ var DataTableReact = React.createClass({
                 destroy: true,
                 editable: false,
                 responsive: true,
+                stateSave: true,
                 "language": {
                     "sProcessing": Lang.get('global.datatable.sProcessing'),
                     "sSearch": Lang.get('global.datatable.sSearch'),
