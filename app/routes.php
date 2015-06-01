@@ -184,6 +184,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::get('journal_equipement/{planId}/{journalId}', 'JournalEquipementPlanController@showFromVersion');
     Route::get('journal_place/{planId}/{journalId}', 'JournalEquipementPlanController@showPlacesFromVersion');
 
+    Route::get('simulator/foire/{planId}', 'SimulatorController@foire');
     Route::resource('simulator', 'SimulatorController');
 });
 
