@@ -85,5 +85,46 @@ class PlacesController extends \BaseController
         //
     }
 
+    /**
+     * Attache un capteur à la place désignée par l'id
+     *
+     * Attend un param POST 'capteur_id'
+     * @param $id
+     *
+     * @return etat insertion
+     */
+    public function setCapteur($id)
+    {
+        $retour = [
+            'save' => true,
+            'errorBdd' => false,
+            'model' => null
+        ];
+
+        $capteur_id = input::get('capteur_id');
+        $place = Place::find($id);
+        $capteur = Capteur::find($capteur_id);
+
+        try {
+            $place->capteur()->associate($capteur);
+            $place->save();
+            $retour['model'] = Place::with('capteur.bus.concentrateur')->find($id);
+
+            Log::debug('PASS ATTACHE PLACE CAPTEUR');
+            Log::debug(print_r($retour, true));
+
+            // OK
+            return $retour;
+
+        } catch (Exception $e) {
+            $retour['save'] = false;
+            $retour['errorBdd'] = true;
+
+            // KO
+            return $retour;
+        }
+
+    }
+
 
 }

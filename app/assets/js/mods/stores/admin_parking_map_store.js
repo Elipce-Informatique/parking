@@ -57,7 +57,7 @@ var store = Reflux.createStore({
             bus: {},            // Bus concerné
             capteurInit: {},    // Capteur initial pour l'affectation
             capteursTotaux: [], // Liste des capteurs totaux à affecter
-            capteursRestant: [] // Liste des capteurs restant à affecter
+            capteursRestant: [] // Liste des capteurs restant à affecter sur le bus
         },
         types_places: [], // Types de places de la BDD
         currentMode: mapOptions.dessin.place,
@@ -97,6 +97,7 @@ var store = Reflux.createStore({
         // Récupération du calibre
         this._inst.calibre = calibre;
         this._inst.mapInst = mapInst;
+        console.log('MapInst : %o', mapInst);
 
         // Récupération en BDD des données du parking sélectionné
         var p1 = this.recupInfosParking(map, calibre, parkingInfos);
@@ -583,11 +584,12 @@ var store = Reflux.createStore({
     },
 
     /**
+     * Appellée quand la modale est validée pour initialiser la série d'affectation.
      *
      * @param concentrateur
      * @param bus
-     * @param capteurInit
-     * @param capteurs
+     * @param capteurInit -> Premier capteur à affecter
+     * @param capteurs -> Capteurs restant sur le BUS concerné
      */
     onStart_affectation_capteurs: function (concentrateur, bus, capteurInit, capteurs) {
         // REMPLISSAGE DES INFOS
@@ -611,6 +613,7 @@ var store = Reflux.createStore({
         };
         this.trigger(retour);
 
+        // INIT MESSAGE D INFO
         retour = {
             type: mapOptions.type_messages.show_infos,
             data: infos
@@ -624,15 +627,15 @@ var store = Reflux.createStore({
 
     /**
      * Event listener sur click d'une place quand on est en mode capteur.
-     * - Récupère la place cliquée
-     * - Récupère le capteur à affecter
-     * - Test si place libre en JS
-     * - Lance l'update AJAX
+     * #- Récupère la place cliquée
+     * #- Récupère le capteur à affecter
+     * #- Test si place libre en JS
+     * #- Lance l'update AJAX
      * - Si succès
-     *      - changement couleur place affectée
-     *      - Affectation du capteur id dans la place sur la carte
-     *      - Suppression du capteur de la liste restante
-     *      - Modification du message d'info
+     *      #- changement couleur place affectée
+     *      #- Affectation du capteur id dans la place sur la carte
+     *      #- Suppression du capteur de la liste restante
+     *      #- Modification du message d'info
      *      - Avertissement si on a affecté le dernier capteur
      * - Si fail
      *      - Notification utilisateur (Place déjà affectée )
@@ -641,12 +644,96 @@ var store = Reflux.createStore({
      */
     onPlaceCapteurClick: function (evt) {
         console.log('Pass Click place : %o', evt);
-        var place = evt.layer.options.data;
+
+        var place = _.cloneDeep(evt.layer.options.data);
+        var capteur = _.first(this._inst.capteur_place.capteursRestant);
+
         console.log('Place cliquée : %o', place);
+        console.log('Capteur associé : %o', capteur);
+
+        // PLACE NON AFFECTÉE
+        if (place.capteur_id == null) {
+
+            // Formattage des données
+            var fData = formDataHelper('', 'POST');
+            fData.append('capteur_id', capteur.id);
+
+            $.ajax({
+                type: 'POST',
+                url: BASE_URI + 'parking/place/' + place.id + '/setCapteur',
+                processData: false,
+                contentType: false,
+                data: fData,
+                context: this
+            })
+                .done(function (retour) {
+                    console.log('SUCCESS : %o', retour);
+                    // OK
+                    if (retour.save) {
+
+                        // SUPPRESSION PLACE MAP
+                        var retourTrigger = {
+                            type: mapOptions.type_messages.delete_place,
+                            data: {
+                                place_id: place.id
+                            }
+                        };
+                        this.trigger(retourTrigger);
+
+                        var newPlace = retour.model;
+                        // CREATION PLACE MAP
+                        retourTrigger = {
+                            type: mapOptions.type_messages.add_places,
+                            data: this.createPlacesMapFromPlacesBDD([newPlace])
+                        };
+                        this.trigger(retourTrigger);
+
+                        // SUPPRESSION DU CAPTEUR DE LA LISTE RESTANTE
+                        this._inst.capteur_place.capteursRestant = _.drop(this._inst.capteur_place.capteursRestant);
+
+                        // MODIFICATION MESSAGE INFOS
+                        var infos = mapHelper.generateInfosCapteurPlace(
+                            this._inst.capteur_place.concentrateur.v4_id,
+                            this._inst.capteur_place.bus.num,
+                            this._inst.capteur_place.capteurInit.adresse,
+                            this._inst.capteur_place.capteursRestant.length
+                        );
+
+                        retourTrigger = {
+                            type: mapOptions.type_messages.update_infos,
+                            data: infos
+                        };
+
+                        this.trigger(retourTrigger);
+
+                        // DERNIER CAPTEUR ?
+                        if (this._inst.capteur_place.capteursRestant.length == 0) {
+                            swal(Lang.get('administration_parking.carte.swal_capteur_bus_finie'));
+
+                            retourTrigger = {
+                                type: mapOptions.type_messages.hide_infos,
+                                data: infos
+                            };
+                            this.trigger(retourTrigger);
+                        }
+
+                    }
+                })
+                .fail(function (xhr, type, exception) {
+                    // if ajax fails display error alert
+                    alert("ajax error response error " + type);
+                    alert("ajax error response body " + xhr.responseText);
+                });
+        }
+        // PLACE AFFECTÉE
+        else {
+            // Petite notif
+            Actions.notif.error(Lang.get('administration_parking.carte.place_deja_affectee'));
+        }
     },
 
     /**
-     * TODO Arrête l'affectation:
+     * Arrête l'affectation:
      * - Supprime les events listeners sur les places
      * - Vide les données du store en rapport avec l'affectation
      */

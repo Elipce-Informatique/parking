@@ -134,7 +134,7 @@ var parkingMap = React.createClass({
             planId: this.props.planId
         };
         // INIT des layers
-        this._inst.placesMarkersGroup = new L.FeatureGroup();
+        this._inst.placesMarkersGroup = new L.LayerGroup();
         this._inst.map.addLayer(this._inst.placesMarkersGroup);
         this._inst.placesGroup = new L.FeatureGroup();
         this._inst.map.addLayer(this._inst.placesGroup);
@@ -438,6 +438,9 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.type_messages.delete_forme:
                 break;
+            case mapOptions.type_messages.delete_place:
+                this.onDeletePlace(data);
+                break;
             case mapOptions.type_messages.new_zone:
                 this._onNewZone(data);
                 break;
@@ -547,8 +550,19 @@ var parkingMap = React.createClass({
         _.each(liste_data, function (place) {
             this._inst.lastNum = Math.max(this._inst.lastNum, place.data.num);
             this._inst.placesGroup.addLayer(place.polygon);
-            // Pas de marker en mode admin ?
-            //this._inst.placesMarkersGroup.addLayer(place.marker);
+
+            // MARKER SI CAPTEUR
+            if (place.data.capteur_id != null) {
+                var marker = L.marker([place.data.lat, place.data.lng], {
+                    icon: new mapOptions.pastilleCapteur()
+                }).bindLabel(
+                    place.data.capteur.bus.concentrateur.v4_id + '.' +
+                    place.data.capteur.bus.num + '.' +
+                    place.data.capteur.adresse
+                );
+                this._inst.placesMarkersGroup.addLayer(marker);
+            }
+            //
         }, this);
 
         this.setState({
@@ -575,7 +589,7 @@ var parkingMap = React.createClass({
 
     /**
      * Ajoute les ALLEES
-     * @param data : le couple type-data envoyé par le store
+     * @param data -> le couple type-data envoyé par le store
      */
     onAlleesAdded: function (formes) {
         var liste_data = formes.data;
@@ -588,6 +602,23 @@ var parkingMap = React.createClass({
         this.setState({
             isModalOpen: false
         });
+    },
+
+    /**
+     * Supprime une place du plan
+     * @param data -> le couple type-data envoyé par le store
+     */
+    onDeletePlace: function (data) {
+        var place_id = data.data.place_id;
+        _.each(this._inst.placesGroup._layers, function (p) {
+            var id = p.options.data.id;
+
+            // Id identiques, on supprime la place
+            if (id == place_id) {
+                console.log('Place a suppr !!!! %o', p);
+                this._inst.placesGroup.removeLayer(p);
+            }
+        }, this);
     },
 
 

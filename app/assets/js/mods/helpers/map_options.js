@@ -80,7 +80,8 @@ module.exports.type_messages = {
     add_allees: 13,
     show_infos: 14,
     update_infos: 15,
-    hide_infos: 16
+    hide_infos: 16,
+    delete_place: 17
 };
 
 /**
@@ -115,6 +116,18 @@ module.exports.placeRouge = L.Icon.extend({
         iconAnchor: new L.Point(9, 20),
         iconSize: new L.Point(18, 40),
         iconUrl: BASE_URI + 'public/images/icone_voiture_rouge.svg'
+    }
+});
+
+/**
+ * Marker de place tut tut la voiture
+ * @type {void|*}
+ */
+module.exports.pastilleCapteur = L.Icon.extend({
+    options: {
+        iconAnchor: new L.Point(7,7),
+        iconSize: new L.Point(14,14),
+        iconUrl: BASE_URI + 'public/images/pastille.png'
     }
 });
 
