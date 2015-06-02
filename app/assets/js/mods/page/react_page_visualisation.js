@@ -144,7 +144,7 @@ var Page = React.createClass({
 
                 <Row id="page_test" className="flex-body" key={2}>
                     <Col md={12} id="visualisation_parking" className="full-height" style={{position: 'absolute'}}>
-                        <Collapse align="left" sideWidth={2}>
+                        <Collapse align="left" sideWidth={1}>
                             <CollapseBody>
                                 <Collapse align="right" sideWidth={3}>
                                     <CollapseBody>

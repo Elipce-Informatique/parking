@@ -657,6 +657,7 @@ var store = Reflux.createStore({
             // Formattage des données
             var fData = formDataHelper('', 'POST');
             fData.append('capteur_id', capteur.id);
+            fData.append('mode_modif', 0);
 
             $.ajax({
                 type: 'POST',
@@ -664,7 +665,8 @@ var store = Reflux.createStore({
                 processData: false,
                 contentType: false,
                 data: fData,
-                context: this
+                context: this,
+                global: false
             })
                 .done(function (retour) {
                     console.log('SUCCESS : %o', retour);
@@ -695,7 +697,7 @@ var store = Reflux.createStore({
                         var infos = mapHelper.generateInfosCapteurPlace(
                             this._inst.capteur_place.concentrateur.v4_id,
                             this._inst.capteur_place.bus.num,
-                            this._inst.capteur_place.capteurInit.adresse,
+                            _.first(this._inst.capteur_place.capteursRestant).adresse,
                             this._inst.capteur_place.capteursRestant.length
                         );
 
@@ -719,6 +721,14 @@ var store = Reflux.createStore({
                         }
 
                     }
+                    // ERREURS
+                    else if (retour.doublon) {
+                        // Petite notif venant de PHP
+                        Actions.notif.error(Lang.get('administration_parking.carte.place_deja_affectee'));
+                    } else {
+                        // Erreur de BDD
+                        Actions.notif.error();
+                    }
                 })
                 .fail(function (xhr, type, exception) {
                     //TODO if ajax fails display error alert
@@ -728,7 +738,7 @@ var store = Reflux.createStore({
         }
         // PLACE AFFECTÉE
         else {
-            // Petite notif
+            // Petite notif selon vérif JS
             Actions.notif.error(Lang.get('administration_parking.carte.place_deja_affectee'));
         }
     },
