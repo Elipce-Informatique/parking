@@ -52,7 +52,7 @@ return array(
         'incr' => 'Inc.',
         'field_calibre' => 'Longueur (cm)',
         '3_points_seulement' => 'Merci de tracer exactement 3 points !',
-        'swal_interval_incorrect' => 'L\'interval entre les poteaux est incorrect, il doit être inférieur au nombre de places saisi.',
+        'swal_interval_incorrect' => 'L\'intervalle entre les poteaux est incorrect, il doit être inférieur au nombre de places saisi.',
         'swal_calibre_points_ko' => 'Merci de tracer deux points uniquement.',
         'swal_calibre_non_init_titre' => 'Plan non calibré',
         'swal_calibre_non_init' => 'Ce plan n\'a pas encore été calibré. Pour le calibrer, veuillez utiliser l\'outil suivant : <br /><i class="fa fa-arrows"></i>',
