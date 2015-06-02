@@ -80,6 +80,7 @@ var ModalZone = React.createClass({
                                 wrapperClassName: 'col-md-9',
                                 labelClassName: 'col-md-3 text-right'
                             }}
+                            area = {true}
                             editable={true}
                             evts={{}} />
                     </Form>
