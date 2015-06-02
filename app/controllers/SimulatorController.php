@@ -177,32 +177,53 @@ class SimulatorController extends \BaseController
             switch ($date->day) {
                 // lundi 10h soit 36000s
                 case 1:
-                    $nb = 300;
+                    $crenau = [120, 60, 120];
                     break;
                 // mardi, jeudi
                 case 2:
                 case 4:
-                    $nb = 750;
+                    $crenau = [310, 90, 350];
                     break;
-                // mercredi vendredi
+                // mercredi
                 case 3:
+                    $crenau = [205, 226, 694];
+                // vendredi
                 case 5:
-                    $nb = 1125;
+                    $crenau = [480, 153, 492];
                     break;
                 // samedi
                 case 6:
-                    $nb = 1350;
+                    $crenau = [501, 350 ,499];
                     break;
                 // dimanche
                 default:
-                    $nb = 0;
+                    $crenau = [0, 0, 0];
                     break;
             }
-            // Parcours du nombre d'insertions
-            for ($i = 0; $i < $nb; $i++) {
-                $copie = clone $date;
-                $copie = $copie->addSeconds(mt_rand(0, 36000));
-                echo $copie->toDateTimeString().'<br>';
+            // Parcours des crénaux horaires
+            foreach($crenau as $key => $nb) {
+                switch($key){
+                    case 0:
+                        $randMin = 0;
+                        $randMax = 10800; // nb secondes de 9à 12h
+                        break;
+                    case 1:
+                        $randMin = 10801;
+                        $randMax = 18000; // 12 à 14h
+                        break;
+                    case 2:
+                        $randMin = 18001;
+                        $randMax = 43200; // 14 à 21h
+                        break;
+                    default:
+                        break;
+                }
+                // Parcours du nombre d'insertions
+                for ($i = 0; $i < $nb; $i++) {
+                    $copie = clone $date;
+                    $copie = $copie->addSeconds(mt_rand($randMin, $randMax));
+                    echo $copie->toDateTimeString() . '<br>';
+                }
             }
             // Add 1 day
             $date = $date->addDay();
@@ -270,6 +291,36 @@ class SimulatorController extends \BaseController
             DB::rollBack();
         }
         return json_encode($retour);
+    }
+
+    /**
+     * Création aléatoire de capteurs sur les BUS ID de 1 à 8
+     * @return string
+     */
+    public function capteurs(){
+
+        DB::beginTransaction();
+        // Parcours des ID de bus
+        for($i=1; $i<=8; $i++){
+            // Combien de noeud sur le bus
+            $nb = mt_rand(120, 250);
+            // Parcours des noeuds à creer
+            for($j=1; $j<=$nb; $j++) {
+                try {
+                    Capteur::create([
+                        'bus_id' => $i,
+                        'num_noeud' => $j,
+                        'adresse' => $j,
+                    ]);
+                } catch (Exception $e) {
+                    Log::error('erreur creation capteurs ' . $e->getMessage());
+                    DB::rollBack();
+                    return json_encode(false);
+                }
+            }
+        }
+        DB::commit();
+        return json_encode(true);
     }
 
 
