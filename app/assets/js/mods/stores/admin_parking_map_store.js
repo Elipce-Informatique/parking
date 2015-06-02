@@ -665,8 +665,7 @@ var store = Reflux.createStore({
                 processData: false,
                 contentType: false,
                 data: fData,
-                context: this,
-                global: false
+                context: this
             })
                 .done(function (retour) {
                     console.log('SUCCESS : %o', retour);
