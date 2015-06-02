@@ -132,6 +132,18 @@ module.exports.pastilleCapteur = L.Icon.extend({
 });
 
 /**
+ * Marker de place tut tut la voiture
+ * @type {void|*}
+ */
+module.exports.iconInvisible = L.Icon.extend({
+    options: {
+        iconAnchor: new L.Point(0,0),
+        iconSize: new L.Point(0,0),
+        iconUrl: BASE_URI + 'public/images/pastille.png'
+    }
+});
+
+/**
  * Ajout de propriétés perso au marker de type place
  * @type {void|*}
  */

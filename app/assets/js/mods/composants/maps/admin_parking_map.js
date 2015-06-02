@@ -554,12 +554,21 @@ var parkingMap = React.createClass({
             // MARKER SI CAPTEUR
             if (place.data.capteur_id != null) {
                 var marker = L.marker([place.data.lat, place.data.lng], {
-                    icon: new mapOptions.pastilleCapteur()
+                    icon: new mapOptions.pastilleCapteur(),
+                    data: place.data
                 }).bindLabel(
                     place.data.capteur.bus.concentrateur.v4_id + '.' +
                     place.data.capteur.bus.num + '.' +
                     place.data.capteur.adresse
                 );
+                this._inst.placesMarkersGroup.addLayer(marker);
+            }
+            // MARKER INVISIBLE SI PAS CAPTEUR
+            else {
+                var marker = L.marker([place.data.lat, place.data.lng], {
+                    icon: new mapOptions.iconInvisible(),
+                    data: place.data
+                });
                 this._inst.placesMarkersGroup.addLayer(marker);
             }
             //
