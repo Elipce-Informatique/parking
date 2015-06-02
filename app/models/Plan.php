@@ -50,4 +50,21 @@ class Plan extends BaseModel
             ->select('place.id', 'place.num', 'etat_occupation.is_occupe')
             ->get();
     }
+
+
+    /**
+     * La place max du niveau $id
+     * @param $id : ID du niveau
+     * @return int: numéro de place
+     */
+    public static function getMaxPlace($id)
+    {
+        return Plan::find($id)
+            ->join('zone', 'zone.plan_id', '=', 'plan.id')
+            ->join('allee', 'allee.zone_id', '=', 'zone.id')
+            ->join('place', 'place.allee_id', '=', 'allee.id')
+            ->join('etat_occupation', 'etat_occupation.id', '=', 'place.etat_occupation_id')
+            ->select('place.id', 'place.num', 'etat_occupation.is_occupe')
+            ->max('place.num');
+    }
 }
