@@ -11,8 +11,12 @@ var ParkingMap = require('../composants/maps/supervision_parking_map');
 var TestD3 = require('../charts/test_d3');
 var ZoneTempsReel = require('../composants/react_supervision_temps_reel');
 var ZoneReporting = require('../composants/react_supervision_reporting');
+
 var Col = ReactB.Col;
 var Row = ReactB.Row;
+var Jumbotron = ReactB.Jumbotron;
+var PageHeader = ReactB.PageHeader;
+var Glyphicon = ReactB.Glyphicon;
 
 /* Gestion de la modification et des droits */
 var AuthentMixins = require('../mixins/component_access');
@@ -21,6 +25,7 @@ var MixinGestMod = require('../mixins/gestion_modif');
 /* Pour la gestion des modifs */
 // HELPERS
 var pageState = require('../helpers/page_helper').pageState;
+var mapHelper = require('../helpers/map_helper');
 
 /************************************************************************************************/
 /*                                                                                              */
@@ -44,7 +49,11 @@ var Page = React.createClass({
      */
     getInitialState: function () {
         return {
-            etatPage: pageState.liste
+            etatPage: pageState.liste,
+            treeView: [],
+            planId: '',
+            url: false,
+            parkingId: ''
         };
     },
 
@@ -81,43 +90,50 @@ var Page = React.createClass({
      * @private
      */
     modeCarte: function () {
-        var data = [
-            {
-                text: 'Beauvais',
-                id: '1',
-                nodes: [
-                    {
-                        text: 'Niveau 1',
-                        id: '11'
-                    },
-                    {
-                        text: 'Niveau 2',
-                        id: '12'
 
-                    },
-                    {
-                        text: 'Niveau 3',
-                        id: '12'
-                    }
-                ]
-            },
-            {
-                text: 'Las Vegas',
-                id: '2',
-                nodes: [
-                    {
-                        text: 'Sous sol 1',
-                        id: '11'
-                    },
-                    {
-                        text: 'Sous sol 2',
-                        id: '12'
+        // CRÉATION TREEVIEW
+        var treeView = {};
+        if (this.state.treeView.length) {
+            var data = this.state.treeView;
+            treeView = (<TreeView
+                key="tree"
+                data={data}
+                levels={3}
+                color="#555555"
+                selectedColor="#222222"
+                selectedBackColor='#eeeeee'
+                onLineClicked={Actions.map.plan_selected}
+                isSelectionExclusive={true}
+                treeNodeAttributes={{
+                    'data-id': 'id',
+                    'data-is-plan': 'is-plan',
+                    'data-plan-id': 'plan-id',
+                    'data-parking-id': 'parking-id',
+                    'data-url': 'url'
+                }}/>);
+        }
 
-                    }
-                ]
-            }
-        ];
         var url = BASE_URI + 'public/images/beauvais_p3.svg';
+        // CRÉATION MAP
+        var map = (
+            <Jumbotron className="jumbo-selection" bsStyle='warning'>
+                <h1>
+                    <Glyphicon glyph='hand-up' /> {Lang.get('global.selection')}
+                </h1>
+                <p>{Lang.get('supervision.carte.selection_plan')}</p>
+            </Jumbotron>
+        );
+        if (this.state.url) {
+            map = <ParkingMap
+                imgUrl={this.state.url}
+                parkingId={this.state.parkingId}
+                planId={this.state.planId}
+                divId="div_carte"
+                key={Date.now()}
+            />
+        }
+
+
         return (
             <Col md={12} className="full-height flex-wrapper">
                 <Row id="row_reporting" className="flex-header" key={1}>
@@ -132,7 +148,7 @@ var Page = React.createClass({
                             <CollapseBody>
                                 <Collapse align="right" sideWidth={3}>
                                     <CollapseBody>
-                                        <ParkingMap parkingId={1} planId={1} imgUrl={url} divId="div_carte"/>
+                                    {map}
                                     </CollapseBody>
                                     <CollapseSidebar title="Temps Réel">
                                         <ZoneTempsReel levels={3} vertical={true} />
@@ -140,20 +156,7 @@ var Page = React.createClass({
                                 </Collapse>
                             </CollapseBody>
                             <CollapseSidebar title="Sélection">
-
-
-                                <TreeView
-                                    data={data}
-                                    levels={0}
-                                    color="#555555"
-                                    selectedColor="#222222"
-                                    selectedBackColor='#eeeeee'
-                                    onLineClicked={function () {
-                                    }}
-                                    isSelectionExclusive={true}
-                                    treeNodeAttributes={{'data-id': 'id'}}/>
-
-
+                            {treeView}
                             </CollapseSidebar>
                         </Collapse>
                     </Col>
@@ -198,8 +201,8 @@ var store = Reflux.createStore({
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert
-                alert("ajax error response error " + type);
-                alert("ajax error response body " + xhr.responseText);
+                log.error("ajax error response error " + type);
+                log.error("ajax error response body " + xhr.responseText);
             });
 
         return retour;
@@ -210,6 +213,36 @@ var store = Reflux.createStore({
         this.listenTo(Actions.bandeau.editer, this._edit);
         this.listenTo(Actions.bandeau.supprimer, this._suppr);
         this.listenTo(Actions.validation.submit_form, this._save);
+        this.listenTo(Actions.map.plan_selected, this._plan_selected);
+
+        // Init du treeView
+        mapHelper.initTreeviewParkingAjax(function (data) {
+            var dataTableau = mapHelper.recursiveTreeViewParking(data, 0);
+            this.trigger({treeView: dataTableau});
+        }, this);
+    },
+
+    /**
+     * Quand un item du treeview est cliqué
+     * @param evt :
+     * @private
+     */
+    _plan_selected: function (evt) {
+        var $elt = $(evt.currentTarget);
+
+        // ON EST SUR UN ELT DE TYPE PLAN !
+        if ($elt.data('is-plan')) {
+            var data = $elt.data();
+
+            var state = {
+                planId: data.id,
+                url: data.url,
+                parkingId: data.parkingId
+            };
+            this.trigger(state);
+        } else {
+
+        }
     },
 
     // Action create du bandeau

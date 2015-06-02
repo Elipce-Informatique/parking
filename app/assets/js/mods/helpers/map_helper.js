@@ -571,6 +571,75 @@ function generateInfosCapteurPlace(concentrateurV4Id, busNum, adressCapteur, nbR
 }
 
 /**
+ * Génère les données du treeview à gauche de la map
+ *
+ * @param onSuccess -> Callback de succès
+ * @param context -> Contexte pour la callback
+ */
+function initTreeviewParkingAjax(onSuccess, context) {
+    $.ajax({
+        type: 'GET',
+        url: BASE_URI + 'configuration_parking/treeview_carte',
+        context: context
+    })
+        .done(onSuccess)
+        .fail(function (xhr, type, exception) {
+            // if ajax fails display error alert
+            log.error("ajax error response error " + type);
+            log.error("ajax error response body " + xhr.responseText);
+        });
+}
+
+/**
+ * Génère les données à donner au composant TreeView
+ *
+ * @param data
+ * @param parkingId
+ * @returns {Array|*}
+ */
+function recursiveTreeViewParking(data, parkingId) {
+    var retour = _.map(data, function (d, i) {
+
+        var elt = {text: d.libelle, id: d.id, icon: ''};
+        //var elt = {text: d.libelle, id: d.id, icon: 'glyphicon glyphicon-chevron-right'};
+
+        // On est actuellement sur un parking
+        if (d.niveaux !== undefined) {
+            elt['nodes'] = this.recursiveTreeViewParking(d.niveaux, d.id);
+        }
+        // On est sur un niveau
+        else if (d.plans !== undefined) {
+            elt['parking-id'] = parkingId;
+            // On est sur un niveau à un seul plan
+            if (d.plans.length === 1) {
+                elt['url'] = d.plans[0].url;
+                elt['is-plan'] = true;
+
+                elt.icon = '';
+                //elt.icon = 'glyphicon glyphicon-cog';
+
+                elt.id = d.plans[0].id;
+            } else {
+                elt['nodes'] = this.recursiveTreeViewParking(d.plans, parkingId);
+            }
+        }
+        // On est sur un plan
+        else if (d.url != undefined) {
+            elt['url'] = d.url;
+            elt['is-plan'] = true;
+            elt['parking-id'] = parkingId;
+
+            elt.icon = '';
+            //elt.icon = 'glyphicon glyphicon-cog';
+        }
+        return elt;
+    }, this);
+
+    return retour;
+}
+
+
+/**
  * Ce que le module exporte.
  * @type {{getCentroid: getCentroid, isPointInPolygon: isPointInPolygon, isPolygonInPolygonByCenter: isPolygonInPolygonByCenter, getLatLngArrayFromCoordsArray: getCoordsArrayFromLatLngArray, isPolygonInPolygon: arePointsInPolygon}}
  */
@@ -598,5 +667,7 @@ module.exports = {
     getAlleeIdFromPoint: getAlleeIdFromPoint,
     getDefaultAlleeIdInZoneFromPoint: getDefaultAlleeIdInZoneFromPoint,
     customZoomCRS: customZoomCRS,
-    generateInfosCapteurPlace: generateInfosCapteurPlace
+    generateInfosCapteurPlace: generateInfosCapteurPlace,
+    initTreeviewParkingAjax: initTreeviewParkingAjax,
+    recursiveTreeViewParking: recursiveTreeViewParking
 };

@@ -14,4 +14,7 @@ return array(
         "block_commandes_titre" => "Commandes forcées",
         "block_commandes_texte" => "Permet d'envoyer des commandes au concentrateur.",
     ],
+    'carte' => [
+        'selection_plan' => 'Veuillez sélectionner un plan à superviser dans le menu de gauche.',
+    ]
 );

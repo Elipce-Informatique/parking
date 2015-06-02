@@ -2,6 +2,7 @@ var _ = require('lodash');
 
 var mapOptions = require('../helpers/map_options');
 var mapHelper = require('../helpers/map_helper');
+var placeHelper = require('../helpers/place_helper');
 var supervision_helper = require('../helpers/supervision_helper');
 
 /**
@@ -248,6 +249,7 @@ var store = Reflux.createStore({
             context: this,
             success: function (data) {
                 this._inst.planInfos.last_journal_init = parseInt(data);
+                // TODO : revoir le chargement AJAX ?
                 supervision_helper.refreshPlaces.init(this._inst.planInfos.id, this._inst.planInfos.last_journal_init);
             },
             error: function (xhr, status, err) {
@@ -286,8 +288,8 @@ var store = Reflux.createStore({
             },
             error: function (xhr, type, exception) {
                 // if ajax fails display error alert
-                alert("ajax error response error " + type);
-                alert("ajax error response body " + xhr.responseText);
+                log.error("ajax error response error " + type);
+                log.error("ajax error response body " + xhr.responseText);
             }
         });
     },
@@ -297,7 +299,7 @@ var store = Reflux.createStore({
      */
     affichageDataInitial: function () {
         var placesMap = _.map(this._inst.places, function (p) {
-            return mapHelper.createPlaceFromData(p, this._inst.types_places);
+            return placeHelper.createPlaceFromData(p, this._inst.types_places);
         }, this);
 
         var message = {
