@@ -95,25 +95,40 @@ class PlacesController extends \BaseController
      */
     public function setCapteur($id)
     {
+        // Préparation retour
         $retour = [
             'save' => true,
             'errorBdd' => false,
-            'model' => null
+            'model' => null,
+            'doublon' => false
         ];
-
-        $capteur_id = input::get('capteur_id');
-        $place = Place::find($id);
-        $capteur = Capteur::find($capteur_id);
-
         try {
-            $place->capteur()->associate($capteur);
-            $place->save();
-            $retour['model'] = Place::with('capteur.bus.concentrateur')->find($id);
+            // RÉCUP DES INFOS POUR L'UPDATE
+            $all = Input::all();
+            $capteur_id = $all['capteur_id'];
+            $isModif = $all['mode_modif'];
+            $place = Place::find($id);
+            $capteur = Capteur::find($capteur_id);
 
-            Log::debug('PASS ATTACHE PLACE CAPTEUR');
-            Log::debug(print_r($retour, true));
+            $capteur_id_precedent = $place->capteur_id;
 
-            // OK
+            // MODE MODIF
+            if ($isModif) {
+                $place->capteur()->associate($capteur);
+                $place->save();
+                $retour['model'] = Place::with('capteur.bus.concentrateur')->find($id);
+            } // MODE AFFECTATION KO CAR PLACE DÉJÀ AFFECTÉE
+            else if ($capteur_id_precedent != null) {
+                $retour['save'] = false;
+                $retour['doublon'] = true;
+            } // MODE AFFECTATION OK
+            else {
+                $place->capteur()->associate($capteur);
+                $place->save();
+                $retour['model'] = Place::with('capteur.bus.concentrateur')->find($id);
+            }
+
+            // RETOUR
             return $retour;
 
         } catch (Exception $e) {
