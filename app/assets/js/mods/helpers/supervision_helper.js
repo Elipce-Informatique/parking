@@ -23,7 +23,8 @@ module.exports.refreshPlaces = {
         $.ajax({
             type: 'GET',
             url: BASE_URI + 'parking/journal_place/' + this._planId + '/' + this._journalId,
-            context: this
+            context: this,
+            global: false
         })
             .done(function (data) {
                 // ON A DES NOUVELLES DONNÉES
@@ -36,8 +37,8 @@ module.exports.refreshPlaces = {
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert
-                alert("ajax error response error " + type);
-                alert("ajax error response body " + xhr.responseText);
+                log.error("ajax error response error " + type);
+                log.error("ajax error response body " + xhr.responseText);
             });
     }
 };

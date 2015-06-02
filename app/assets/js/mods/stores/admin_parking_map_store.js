@@ -474,8 +474,8 @@ var store = Reflux.createStore({
                 },
                 error: function (xhr, type, exception) {
                     // if ajax fails display error alert
-                    alert("ajax error response error " + type);
-                    alert("ajax error response body " + xhr.responseText);
+                    log.error("ajax error response error " + type);
+                    log.error("ajax error response body " + xhr.responseText);
                 }
             });
             // --------------------------------------------------------------------------
@@ -522,8 +522,8 @@ var store = Reflux.createStore({
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert
-                alert("ajax error response error " + type);
-                alert("ajax error response body " + xhr.responseText);
+                log.error("ajax error response error " + type);
+                log.error("ajax error response body " + xhr.responseText);
             });
 
     },
@@ -715,14 +715,15 @@ var store = Reflux.createStore({
                                 data: infos
                             };
                             this.trigger(retourTrigger);
+                            this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
                         }
 
                     }
                 })
                 .fail(function (xhr, type, exception) {
-                    // if ajax fails display error alert
-                    alert("ajax error response error " + type);
-                    alert("ajax error response body " + xhr.responseText);
+                    //TODO if ajax fails display error alert
+                    log.error("ajax error response error " + type);
+                    log.error("ajax error response body " + xhr.responseText);
                 });
         }
         // PLACE AFFECTÉE
@@ -921,8 +922,8 @@ var store = Reflux.createStore({
             },
             error: function (xhr, type, exception) {
                 // if ajax fails display error alert
-                alert("ajax error response error " + type);
-                alert("ajax error response body " + xhr.responseText);
+                log.error("ajax error response error " + type);
+                log.error("ajax error response body " + xhr.responseText);
             }
         });
     },

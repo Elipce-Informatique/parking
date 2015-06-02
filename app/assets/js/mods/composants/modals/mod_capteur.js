@@ -261,8 +261,8 @@ var store = Reflux.createStore({
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert
-                alert("ajax error response error " + type);
-                alert("ajax error response body " + xhr.responseText);
+                log.error("ajax error response error " + type);
+                log.error("ajax error response body " + xhr.responseText);
             });
     },
     /**

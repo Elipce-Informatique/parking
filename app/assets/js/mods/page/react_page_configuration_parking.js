@@ -5,6 +5,7 @@ var TreeView = require('react-bootstrap-treeview/dist/js/react-bootstrap-treevie
 var Collapse = require('../composants/react_collapse').Collapse;
 var CollapseBody = require('../composants/react_collapse').CollapseBody;
 var CollapseSidebar = require('../composants/react_collapse').CollapseSidebar;
+var mapHelper = require('../helpers/map_helper');
 
 var Jumbotron = ReactB.Jumbotron;
 var PageHeader = ReactB.PageHeader;
@@ -193,66 +194,16 @@ var store = Reflux.createStore({
         this.listenTo(Actions.map.plan_selected, this._plan_selected);
 
         // Init du treeView
-        this._initRecursiveAjax();
-    },
-    /**
-     * Génère les données du treeview à gauche de la map
-     * @param data
-     */
-    _initRecursiveAjax: function () {
-        $.ajax({
-            type: 'GET',
-            url: BASE_URI + 'configuration_parking/treeview_carte',
-            context: this
-        })
-            .done(function (data) {
-                var dataTableau = this._recursiveTreeView(data, 0);
-                this.trigger({treeView: dataTableau});
-            })
-            .fail(function (xhr, type, exception) {
-                // if ajax fails display error alert
-                alert("ajax error response error " + type);
-                alert("ajax error response body " + xhr.responseText);
-            });
-    },
-
-    _recursiveTreeView: function (data, parkingId) {
-        var retour = _.map(data, function (d, i) {
-            var elt = {text: d.libelle, id: d.id, icon: 'glyphicon glyphicon-chevron-right'};
-
-            // On est actuellement sur un parking
-            if (d.niveaux !== undefined) {
-                elt['nodes'] = this._recursiveTreeView(d.niveaux, d.id);
-            }
-            // On est sur un niveau
-            else if (d.plans !== undefined) {
-                elt['parking-id'] = parkingId;
-                // On est sur un niveau à un seul plan
-                if (d.plans.length === 1) {
-                    elt['url'] = d.plans[0].url;
-                    elt['is-plan'] = true;
-                    elt.icon = 'glyphicon glyphicon-cog';
-                    elt.id = d.plans[0].id;
-                } else {
-                    elt['nodes'] = this._recursiveTreeView(d.plans, parkingId);
-                }
-            }
-            // On est sur un plan
-            else if (d.url != undefined) {
-                elt['url'] = d.url;
-                elt['is-plan'] = true;
-                elt['parking-id'] = parkingId;
-                elt.icon = 'glyphicon glyphicon-cog';
-            }
-            return elt;
+        mapHelper.initTreeviewParkingAjax(function (data) {
+            var dataTableau = mapHelper.recursiveTreeViewParking(data, 0);
+            this.trigger({treeView: dataTableau});
         }, this);
-
-        return retour;
     },
+
 
     /**
      * Quand un item du treeview est cliqué
-     * @param evt : TODO
+     * @param evt :
      * @private
      */
     _plan_selected: function (evt) {
@@ -266,7 +217,7 @@ var store = Reflux.createStore({
                 planId: data.id,
                 url: data.url,
                 parkingId: data.parkingId
-            }
+            };
             this.trigger(state);
         } else {
 
