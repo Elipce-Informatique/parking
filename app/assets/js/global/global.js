@@ -238,7 +238,9 @@ $(function () {
                 css: {
                     'border-radius': '5px',
                     'border-color': '#E7CC9D'
-                }
+                },
+                fadeOut: 50,
+                fadeIn: 100
             });
         }
     }).ajaxStop(function () {
