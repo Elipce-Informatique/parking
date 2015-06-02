@@ -171,6 +171,8 @@ class SimulatorController extends \BaseController
         $min = 1;
         $max = Plan::getMaxPlace($id);
 
+        DB::beginTransaction();
+
         while ($bool) {
 //            echo 'RIGHT '.$date->day.'<br>';
             // lundi
@@ -220,9 +222,36 @@ class SimulatorController extends \BaseController
                 }
                 // Parcours du nombre d'insertions
                 for ($i = 0; $i < $nb; $i++) {
+                    // Simulatiojn de la date /heure
                     $copie = clone $date;
                     $copie = $copie->addSeconds(mt_rand($randMin, $randMax));
-                    echo $copie->toDateTimeString() . '<br>';
+
+                    // Place aléatoire
+                    $numPlace = mt_rand($min, $max);
+
+                    // ID place
+                    $oPlace = Place::getPlaceFromNum($numPlace, $id);
+
+                    // Etat d'occupation courrant
+                    $etatCourant = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe);
+
+                    // Etat d'occupation inverse
+                    $etatNew = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, !$oPlace->is_occupe);
+                    if (!$etatNew) {
+                        $etatNew = $etatCourant;
+                    }
+//                Log::debug('OLD: '.$etatCourant->libelle.' NEW: '.$etatNew->libelle);
+                    // Journal
+                    if (!JournalEquipementPlan::createJournalPlace([
+                        'plan_id' => $id,
+                        'place_id' => $oPlace->id,
+                        'etat_occupation_id' => $etatNew->id,
+                        'date_evt' => $copie->toDateTimeString()
+                    ])) {
+                        Log::error('Rollback simulator insert journal: ' . $oPlace->id);
+                        DB::rollBack();
+                        return false;
+                    }
                 }
             }
             // Add 1 day
@@ -233,64 +262,8 @@ class SimulatorController extends \BaseController
             }
         }
 
-        return;
-
-
-
-        try {
-            DB::beginTransaction();
-
-            // Parcours des places à modifier
-            for ($i = 0; $i < $nb; $i++) {
-                // Place aléatoire
-                $numPlace = mt_rand($min, $max);
-
-                // ID place
-                $oPlace = Place::getPlaceFromNum($numPlace, $id);
-                $idPlace = $oPlace->id;
-//                Log::debug('num place: '.$numPlace. ' id place: '.$idPlace);
-
-                // Etat d'occupation courrant
-                $etatCourant = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe);
-
-                // Etat d'occupation inverse
-                $etatNew = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, !$oPlace->is_occupe);
-                if (!$etatNew) {
-                    $etatNew = $etatCourant;
-                }
-//                Log::debug('OLD: '.$etatCourant->libelle.' NEW: '.$etatNew->libelle);
-
-                // Modification place
-                if (!Place::updatePlace($idPlace, ['etat_occupation_id' => $etatNew->id])) {
-                    Log::error('Rollback simulator update place: ' . $idPlace);
-                    $retour = false;
-                    break;
-                }
-                // Journal
-                if (!JournalEquipementPlan::createJournalPlace([
-                    'plan_id' => $id,
-                    'place_id' => $idPlace,
-                    'etat_occupation_id' => $etatNew->id,
-                    'date_evt' => date('Y-m-d H:i:s')
-                ])
-                ) {
-                    Log::error('Rollback simulator insert journal: ' . $idPlace);
-                    $retour = false;
-                    break;
-                }
-            }
-            // Pas d'exception si on arrive ici
-            DB::commit();
-        } catch (Exception $e) {
-            // Erreur SQL, on log
-            Log::error('Rollback simulator !' . $e->getMessage());
-            $retour = false;
-        }
-        // Pas d'insertions
-        if (!$retour) {
-            DB::rollBack();
-        }
-        return json_encode($retour);
+       DB::commit();
+        return json_encode(true);
     }
 
     /**
