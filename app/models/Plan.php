@@ -42,7 +42,7 @@ class Plan extends BaseModel
      */
     public static function getPlaces($id)
     {
-        return Plan::find($id)
+        return Plan::where('plan.id', '=', $id)
             ->join('zone', 'zone.plan_id', '=', 'plan.id')
             ->join('allee', 'allee.zone_id', '=', 'zone.id')
             ->join('place', 'place.allee_id', '=', 'allee.id')
@@ -59,7 +59,7 @@ class Plan extends BaseModel
      */
     public static function getMaxPlace($id)
     {
-        return Plan::find($id)
+        return Plan::where('plan.id', '=', $id)
             ->join('zone', 'zone.plan_id', '=', 'plan.id')
             ->join('allee', 'allee.zone_id', '=', 'zone.id')
             ->join('place', 'place.allee_id', '=', 'allee.id')
