@@ -550,7 +550,6 @@ var parkingMap = React.createClass({
         _.each(liste_data, function (place) {
             this._inst.lastNum = Math.max(this._inst.lastNum, place.data.num);
             this._inst.placesGroup.addLayer(place.polygon);
-
             // MARKER SI CAPTEUR
             if (place.data.capteur_id != null) {
                 var marker = L.marker([place.data.lat, place.data.lng], {

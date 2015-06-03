@@ -7,6 +7,7 @@ var supervisionStore = require('../../stores/supervision_parking_map_store');
 
 // UTILITAIRES
 var ListenerMixin = Reflux.ListenerMixin;
+var simu = require('../../simulator/react_simulator');
 
 /**
  * Created by yann on 27/01/2015.
@@ -60,6 +61,9 @@ var parkingMap = React.createClass({
         this.initMap();
 
         this.listenTo(supervisionStore, this.onStoreTrigger);
+
+        // Lancement du simulateur
+        //simu(this.props.planId);
     },
 
     /**
