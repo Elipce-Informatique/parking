@@ -110,7 +110,13 @@ var Page = React.createClass({
                     'data-plan-id': 'plan-id',
                     'data-parking-id': 'parking-id',
                     'data-url': 'url'
-                }}/>);
+                }}
+                nodeIcon= "glyphicon glyphicon-stop small"
+                enableLinks={false}
+                expandIcon= "glyphicon glyphicon-plus small"
+                collapseIcon= "glyphicon glyphicon-minus small"
+                classText="small"
+                showTags={true}/>);
         }
 
         var url = BASE_URI + 'public/images/beauvais_p3.svg';
@@ -144,7 +150,7 @@ var Page = React.createClass({
 
                 <Row id="page_test" className="flex-body" key={2}>
                     <Col md={12} id="visualisation_parking" className="full-height" style={{position: 'absolute'}}>
-                        <Collapse align="left" sideWidth={1}>
+                        <Collapse align="left" sideWidth={2}>
                             <CollapseBody>
                             {map}
                             </CollapseBody>

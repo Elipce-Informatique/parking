@@ -122,7 +122,13 @@ var Page = React.createClass({
                     'data-plan-id': 'plan-id',
                     'data-parking-id': 'parking-id',
                     'data-url': 'url'
-                }}/>);
+                }}
+                nodeIcon= "glyphicon glyphicon-stop small"
+                enableLinks={false}
+                expandIcon= "glyphicon glyphicon-plus small"
+                collapseIcon= "glyphicon glyphicon-minus small"
+                classText="small"
+                showTags={true}/>);
         }
 
         // Création Map
