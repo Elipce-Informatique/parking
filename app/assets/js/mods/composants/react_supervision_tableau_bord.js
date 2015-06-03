@@ -19,7 +19,7 @@ var Tooltip = ReactB.Tooltip;
  * Created by yann on 20/02/2015.
  *
  */
-var ZoneReporting = React.createClass({
+var TableauBord = React.createClass({
 
     propTypes: {
         vertical: React.PropTypes.bool
@@ -114,7 +114,7 @@ var PanelOccupCourante = React.createClass({
 
     render: function () {
         return (
-            <Panel header={<strong>Occupation courante</strong>} style={{height: '115px'}}>
+            <Panel style={{height: '115px'}}>
                 <StatBarWrapper libelle="Occupation du parking" tooltip="45.5% de places occupées" key={1}>
                     <StackedStatBar data={this.state.dataOccupationPark} max={1500} />
                 </StatBarWrapper>
@@ -217,7 +217,7 @@ var PanelOccupNiveaux = React.createClass({
             );
         });
         return (
-            <Panel header={<strong>Occupation des niveaux</strong>} style={{height: '115px'}}>
+            <Panel style={{height: '115px'}}>
             {bars}
             </Panel>);
     }
@@ -314,7 +314,7 @@ var PanelOccupZones = React.createClass({
             );
         });
         return (
-            <Panel header={<strong>Occupation des zones</strong>} style={{height: '115px'}}>
+            <Panel style={{height: '115px'}}>
                 {bars}
             </Panel>);
     }
@@ -485,4 +485,4 @@ var StatBarWrapper = React.createClass({
 });
 
 
-module.exports = ZoneReporting;
+module.exports = TableauBord;

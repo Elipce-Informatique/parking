@@ -10,7 +10,7 @@ var CollapseSidebar = require('../composants/react_collapse').CollapseSidebar;
 var ParkingMap = require('../composants/maps/supervision_parking_map');
 var TestD3 = require('../charts/test_d3');
 var ZoneTempsReel = require('../composants/react_supervision_temps_reel');
-var ZoneReporting = require('../composants/react_supervision_reporting');
+var TableauBord = require('../composants/react_supervision_tableau_bord');
 
 var Col = ReactB.Col;
 var Row = ReactB.Row;
@@ -138,7 +138,7 @@ var Page = React.createClass({
             <Col md={12} className="full-height flex-wrapper">
                 <Row id="row_reporting" className="flex-header" key={1}>
                     <Col id="zone_reporting" className="full-height" md={12}>
-                        <ZoneReporting />
+                        <TableauBord />
                     </Col>
                 </Row>
 
@@ -146,14 +146,7 @@ var Page = React.createClass({
                     <Col md={12} id="visualisation_parking" className="full-height" style={{position: 'absolute'}}>
                         <Collapse align="left" sideWidth={1}>
                             <CollapseBody>
-                                <Collapse align="right" sideWidth={3}>
-                                    <CollapseBody>
-                                    {map}
-                                    </CollapseBody>
-                                    <CollapseSidebar title="Temps Réel">
-                                        <ZoneTempsReel levels={3} vertical={true} />
-                                    </CollapseSidebar>
-                                </Collapse>
+                            {map}
                             </CollapseBody>
                             <CollapseSidebar title="Sélection">
                             {treeView}
