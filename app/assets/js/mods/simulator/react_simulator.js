@@ -1,16 +1,16 @@
-var form_data_helper  = require('../helpers/form_data_helper');
+var form_data_helper = require('../helpers/form_data_helper');
 
-var simu = function (idNiveau){
+var simu = function (idPlan) {
 
     // Répétition
-    window.setInterval(function(){
+    window.setInterval(function () {
 
         // FormData
         var fData = form_data_helper('', 'GET');
 
         // Requête
         $.ajax({
-            url: BASE_URI + 'parking/simulator/' + idNiveau,
+            url: BASE_URI + 'parking/simulator/' + idPlan,
             type: 'POST',
             data: fData,
             processData: false,
@@ -25,8 +25,7 @@ var simu = function (idNiveau){
         });
 
     }, 7000);
-}
-
+};
 
 
 module.exports = simu;

@@ -288,8 +288,8 @@ var store = Reflux.createStore({
             },
             error: function (xhr, type, exception) {
                 // if ajax fails display error alert
-                log.error("ajax error response error " + type);
-                log.error("ajax error response body " + xhr.responseText);
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
             }
         });
     },

@@ -152,7 +152,7 @@ class SimulatorController extends \BaseController
 
     /**
      * Init des statistiques pour la foire
-     * @param $id: ID plan
+     * @param $id : ID plan
      * @return string|void
      */
     public function foire($id)
@@ -195,7 +195,7 @@ class SimulatorController extends \BaseController
                     break;
                 // samedi
                 case 6:
-                    $crenau = [501, 350 ,499];
+                    $crenau = [501, 350, 499];
                     break;
                 // dimanche
                 default:
@@ -203,8 +203,8 @@ class SimulatorController extends \BaseController
                     break;
             }
             // Parcours des crénaux horaires
-            foreach($crenau as $key => $nb) {
-                switch($key){
+            foreach ($crenau as $key => $nb) {
+                switch ($key) {
                     case 0:
                         $randMin = 0;
                         $randMax = 10800; // nb secondes de 9à 12h
@@ -247,7 +247,8 @@ class SimulatorController extends \BaseController
                         'place_id' => $oPlace->id,
                         'etat_occupation_id' => $etatNew->id,
                         'date_evt' => $copie->toDateTimeString()
-                    ])) {
+                    ])
+                    ) {
                         Log::error('Rollback simulator insert journal: ' . $oPlace->id);
                         DB::rollBack();
                         return false;
@@ -262,7 +263,7 @@ class SimulatorController extends \BaseController
             }
         }
 
-       DB::commit();
+        DB::commit();
         return json_encode(true);
     }
 
@@ -270,15 +271,16 @@ class SimulatorController extends \BaseController
      * Création aléatoire de capteurs sur les BUS ID de 1 à 8
      * @return string
      */
-    public function capteurs(){
+    public function capteurs()
+    {
 
         DB::beginTransaction();
         // Parcours des ID de bus
-        for($i=1; $i<=8; $i++){
+        for ($i = 1; $i <= 8; $i++) {
             // Combien de noeud sur le bus
             $nb = mt_rand(120, 250);
             // Parcours des noeuds à creer
-            for($j=1; $j<=$nb; $j++) {
+            for ($j = 1; $j <= $nb; $j++) {
                 try {
                     Capteur::create([
                         'bus_id' => $i,
