@@ -128,12 +128,11 @@ class Place extends BaseModel
     /**
      * Récupère la placeà partir de son numéro et de son niveau
      * @param $num : numéro de place
-     * @param $niveau : niveau.id
+     * @param $plan : plan.id
      */
-    public static function getPlaceFromNum($num, $niveau)
+    public static function getPlaceFromNumAndPlan($num, $plan)
     {
-        return Niveau::find($niveau)
-            ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
+        return Plan::where('plan.id', '=', $plan)
             ->join('zone', 'zone.plan_id', '=', 'plan.id')
             ->join('allee', 'allee.zone_id', '=', 'zone.id')
             ->join('place', 'place.allee_id', '=', 'allee.id')

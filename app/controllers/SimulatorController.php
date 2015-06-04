@@ -160,8 +160,8 @@ class SimulatorController extends \BaseController
 
         // Variables
         $bool = true;
-        $date = Carbon::create(2015, 6, 1, 9, 0, 0);
-        $fin = Carbon::create(2015, 6, 7, 19, 0, 0);
+        $date = Carbon::create(2015, 6, 1, 8, 0, 0);
+        $fin = Carbon::create(2015, 6, 7, 20, 0, 0);
         $retour = true;
 
         // Toutes les places du plan
@@ -179,27 +179,28 @@ class SimulatorController extends \BaseController
             switch ($date->day) {
                 // lundi 10h soit 36000s
                 case 1:
-                    $crenau = [120, 60, 120];
+                    $crenau = [92, 30, 178];
                     break;
                 // mardi, jeudi
                 case 2:
                 case 4:
-                    $crenau = [310, 90, 350];
+                    $crenau = [240, 40, 470];
                     break;
                 // mercredi
                 case 3:
-                    $crenau = [205, 226, 694];
+                    $crenau = [180, 195, 750];
+                    break;
                 // vendredi
                 case 5:
-                    $crenau = [480, 153, 492];
+                    $crenau = [350, 125, 650];
                     break;
                 // samedi
                 case 6:
-                    $crenau = [501, 350, 499];
+                    $crenau = [350, 250 ,750];
                     break;
                 // dimanche
                 default:
-                    $crenau = [0, 0, 0];
+                    $crenau = [10, 10, 10];
                     break;
             }
             // Parcours des crénaux horaires
@@ -207,15 +208,15 @@ class SimulatorController extends \BaseController
                 switch ($key) {
                     case 0:
                         $randMin = 0;
-                        $randMax = 10800; // nb secondes de 9à 12h
+                        $randMax = 10800; // nb secondes de 8 à 11h
                         break;
                     case 1:
                         $randMin = 10801;
-                        $randMax = 18000; // 12 à 14h
+                        $randMax = 21600; // 11 à 14h
                         break;
                     case 2:
-                        $randMin = 18001;
-                        $randMax = 43200; // 14 à 21h
+                        $randMin = 21601;
+                        $randMax = 43200; // 14 à 20h
                         break;
                     default:
                         break;
@@ -230,22 +231,13 @@ class SimulatorController extends \BaseController
                     $numPlace = mt_rand($min, $max);
 
                     // ID place
-                    $oPlace = Place::getPlaceFromNum($numPlace, $id);
+                    $oPlace = Place::getPlaceFromNumAndPlan($numPlace, $id);
 
-                    // Etat d'occupation courrant
-                    $etatCourant = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe);
-
-                    // Etat d'occupation inverse
-                    $etatNew = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, !$oPlace->is_occupe);
-                    if (!$etatNew) {
-                        $etatNew = $etatCourant;
-                    }
-//                Log::debug('OLD: '.$etatCourant->libelle.' NEW: '.$etatNew->libelle);
                     // Journal
                     if (!JournalEquipementPlan::createJournalPlace([
                         'plan_id' => $id,
                         'place_id' => $oPlace->id,
-                        'etat_occupation_id' => $etatNew->id,
+                        'etat_occupation_id' => 11,
                         'date_evt' => $copie->toDateTimeString()
                     ])
                     ) {
