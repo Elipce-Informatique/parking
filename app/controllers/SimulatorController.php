@@ -10,7 +10,7 @@ class SimulatorController extends \BaseController
      */
     public function index()
     {
-        //
+        return EtatsDoccupation::getEtatFromTypeAndOccupation(1, '0');
     }
 
 
@@ -64,7 +64,7 @@ class SimulatorController extends \BaseController
                 $numPlace = mt_rand($min, $max);
 
                 // ID place
-                $oPlace = Place::getPlaceFromNum($numPlace, $id);
+                $oPlace = Place::getPlaceFromNumAndPlan($numPlace, $id);
                 $idPlace = $oPlace->id;
 //                Log::debug('num place: '.$numPlace. ' id place: '.$idPlace);
 
@@ -72,7 +72,7 @@ class SimulatorController extends \BaseController
                 $etatCourant = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe);
 
                 // Etat d'occupation inverse
-                $etatNew = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, !$oPlace->is_occupe);
+                $etatNew = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe='1'?'0':'1');
                 if (!$etatNew) {
                     $etatNew = $etatCourant;
                 }
