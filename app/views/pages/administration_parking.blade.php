@@ -12,9 +12,10 @@
     </div>
 
     <div class="row" id="blocks_admin">
-        <div class="col-md-4" id="1"></div>
-        <div class="col-md-4" id="2"></div>
-        <div class="col-md-4" id="3"></div>
+        <div class="col-md-3" id="1"></div>
+        <div class="col-md-3" id="2"></div>
+        <div class="col-md-3" id="3"></div>
+        <div class="col-md-3" id="4"></div>
     </div>
 @stop
 

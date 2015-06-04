@@ -205,6 +205,16 @@ require('sweetalert');
         "del_upload" // supprime une ligne d'upload
     ]);
 
+    /*
+     |--------------------------------------------------------------------------
+     | ACTIONS PARKING
+     |--------------------------------------------------------------------------
+     */
+    global.Actions.parking = Reflux.createActions([
+        "display_all_parkings", // affiche tous les parkings
+        "display_detail_parking", // affiche le détail du parking
+    ]);
+
 })(window);
 
 

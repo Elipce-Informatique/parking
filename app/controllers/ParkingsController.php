@@ -10,7 +10,7 @@ class ParkingsController extends \BaseController
      */
     public function index()
     {
-        //
+        return View::make('pages.parking');
     }
 
 
@@ -174,6 +174,23 @@ class ParkingsController extends \BaseController
 
 
         return $retour;
+    }
+
+    /**
+     * Tous les parkings du user
+     * @return mixed
+     */
+    public function all(){
+        return json_encode(
+            Auth::user()
+                ->parkings()
+                ->select([
+                    'parking.id',
+                    'parking.libelle',
+                    'parking.description',
+                    'parking.ip',
+                    'parking.v4_id'])
+                ->get());
     }
 
 

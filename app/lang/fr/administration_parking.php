@@ -91,6 +91,11 @@ return array(
         'download_plan' => "Télécharger plan",
         'modif_plan' => "Modifier plan",
         'libelleExists' => "Le nom de niveau existe déjà"
+    ],
+
+    'parking' => [
+        'texte' => 'Permet de créer, modifier, supprimer des parkings. Un parking peut être composé de plusieurs niveaux.',
+        'titre' => "Gestion des parkings"
     ]
 );
 

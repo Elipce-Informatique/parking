@@ -140,6 +140,10 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
      * Niveaux
      */
     Route::get('niveau', 'NiveauxController@index');
+    /*
+     * Parking
+     */
+    Route::get('gestion_parking', 'ParkingsController@index');
 
     /* **************************************************************************
      * Test
@@ -176,6 +180,9 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::resource('allee', 'AlleesController');
     Route::resource('place', 'PlacesController');
     Route::resource('capteur', 'CapteursController');
+    Route::get('gestion_parking/all', 'ParkingsController@all');
+    Route::get('gestion_parking/libelle/{libelle}/{id?}', 'ParkingsController@verifLibelle');
+    Route::resource('gestion_parking', 'ParkingsController');
 
     // Type place
     Route::get('type_place/all', 'TypesPlacesController@showAll');

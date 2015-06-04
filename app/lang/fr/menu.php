@@ -27,6 +27,7 @@ return [
         "visualisation"=>"Visualisation parking",
         "commandes_forcees"=>"Commandes forcées",
         "niveau"=>"Gestion des niveaux",
+        "parking"=>"Gestion des parkings",
 
     ],
 
