@@ -98,5 +98,83 @@ class ParkingsController extends \BaseController
             ->get();
     }
 
+    /**
+     * Récupère TOUTES les données du tableau de bord du parking:
+     *
+     * - Global parking
+     * - Global parking par type
+     *
+     * - Global plan
+     * - Global plan par type
+     *
+     * - Global zone
+     * - Global zone par type
+     *
+     * - TODO Paramètres, d'ordre des barres pour chaque bloc
+     * @param $parkId id du parking
+     *
+     * @return retour
+     */
+    public function getTableauBordData($parkId)
+    {
+        $retour = [];
+
+        // -------------------------------------------------------------------------------------------------------------
+        // RÉCUPÉRATION DES PRÉFÉRENCES DE L'UTILISATEUR
+        // -------------------------------------------------------------------------------------------------------------
+        $preferences = Auth::user()->getPreferences(['bloc_1', 'bloc_2', 'bloc_3']);
+        $preferences = $preferences['preferences'];
+
+        $typesBlock1 = [];
+        $typesBlock2 = [];
+        $typesBlock3 = [];
+
+        foreach ($preferences AS $pref) {
+            switch ($pref->key) {
+                case 'bloc_1':
+                    $typesBlock1[] = $pref->value;
+                    break;
+                case 'bloc_2':
+                    $typesBlock2[] = $pref->value;
+                    break;
+                case 'bloc_3':
+                    $typesBlock3[] = $pref->value;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+        // BLOCK 1 - PARKING
+        // -------------------------------------------------------------------------------------------------------------
+
+        // GLOBAL PARKING
+        $retour = Parking::getTabBordBlock1($parkId, $typesBlock1);
+
+
+        // GLOBAL PAR TYPE
+
+        // -------------------------------------------------------------------------------------------------------------
+        // BLOCK 2 - PLANS
+        // -------------------------------------------------------------------------------------------------------------
+
+        $retour = Parking::getTabBordBlock2($parkId, $typesBlock2);
+        // GLOBAL PAR PLANS
+
+        // GLOBAL PAR PLANS PAR TYPE
+
+        // -------------------------------------------------------------------------------------------------------------
+        // BLOCK 3 - ZONES
+        // -------------------------------------------------------------------------------------------------------------
+
+        // GLOBAL PAR ZONES
+
+        // GLOBAL PAR ZONES PAR TYPE
+
+
+        return $retour;
+    }
+
 
 }
