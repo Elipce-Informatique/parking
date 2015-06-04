@@ -43,7 +43,7 @@ class Niveau extends BaseModel
      */
     public function journal_equipement()
     {
-        return $this->hasMany('JournalEquipementNiveau');
+        return $this->hasMany('JournalEquipementPlan');
     }
 
 

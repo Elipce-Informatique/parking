@@ -54,7 +54,7 @@ class Place extends BaseModel
      */
     public function journal_equipement()
     {
-        return $this->hasMany('JournalEquipementNiveau');
+        return $this->hasMany('JournalEquipementPlan');
     }
 
     /**
@@ -63,7 +63,7 @@ class Place extends BaseModel
      */
     public function latest_journal_equipement()
     {
-        return $this->hasOne('JournalEquipementNiveau')->latest();
+        return $this->hasOne('JournalEquipementPlan')->latest();
     }
 
     /*****************************************************************************
