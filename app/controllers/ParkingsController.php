@@ -117,7 +117,11 @@ class ParkingsController extends \BaseController
      */
     public function getTableauBordData($parkId)
     {
-        $retour = [];
+        $retour = [
+            'b1' => [],
+            'b2' => [],
+            'b3' => [],
+        ];
 
         // -------------------------------------------------------------------------------------------------------------
         // RÉCUPÉRATION DES PRÉFÉRENCES DE L'UTILISATEUR
@@ -150,8 +154,11 @@ class ParkingsController extends \BaseController
         // -------------------------------------------------------------------------------------------------------------
 
         // GLOBAL PARKING
-        $retour = Parking::getTabBordBlock1($parkId, $typesBlock1);
+        $bloc1 = Parking::getTabBordBlock1($parkId, $typesBlock1);
 
+        foreach($bloc1[0] AS $ligne){
+
+        }
 
         // GLOBAL PAR TYPE
 

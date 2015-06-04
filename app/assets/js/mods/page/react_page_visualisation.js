@@ -113,8 +113,8 @@ var Page = React.createClass({
                 }}
                 nodeIcon= "glyphicon glyphicon-stop small"
                 enableLinks={false}
-                expandIcon= "glyphicon glyphicon-plus small"
-                collapseIcon= "glyphicon glyphicon-minus small"
+                expandIcon= "glyphicon glyphicon-folder-close small"
+                collapseIcon= "glyphicon glyphicon-folder-open small"
                 classText="small"
                 showTags={true}/>);
         }
