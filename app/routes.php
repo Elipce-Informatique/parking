@@ -192,9 +192,10 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::get('simulator/foire/{planId}', 'SimulatorController@foire');
     Route::resource('simulator', 'SimulatorController');
 });
-
+// RESSOURCE PARKING SÉPARÉE DU GROUPE AVEC PRÉFIXE PARKING POUR DES RAISONS LOGIQUES
 Route::group(['before' => 'auth|auth.canaccess|auth.parking'], function () {
     Route::get('parking/{id}/concentrateurs', 'ParkingsController@getConcentrateurs');
+    Route::get('parking/{id}/tableau_bord', 'ParkingsController@getTableauBordData');
     Route::resource('parking', 'ParkingsController');
 });
 

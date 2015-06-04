@@ -105,7 +105,7 @@ class UtilisateurController extends \BaseController
      * Calcule si le mail de l'utilisateur existe
      * @param $email : email à tester
      * @param int $idUser : utilisateur à ne opas prendre en compte dans la recherche
-     * @return
+     * @return toto
      */
     public function isMailExists($email, $idUser = 0)
     {
@@ -151,6 +151,7 @@ class UtilisateurController extends \BaseController
     /**
      * Vérifie le mot de pass de l'utilisateur actuel
      * @param $pass : mot de pass à tester
+     * @return toto
      */
     public function verifMDPcompte($pass)
     {

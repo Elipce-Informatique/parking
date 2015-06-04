@@ -40,6 +40,11 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         return $this->belongsToMany('Parking');
     }
 
+    public function preferences()
+    {
+        return $this->hasMany('Preference');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | MÉTHODES MÉTIER DE CLASSE
@@ -317,7 +322,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
             DB::beginTransaction();
 
             // Sauvegarde des données utilisateur
-            if($bSave = $user->save()){
+            if ($bSave = $user->save()) {
                 // Parcours des droits de chaque profil
                 foreach ($fields as $key => $value) {
                     // On coupe le name courant selon '_'
@@ -345,12 +350,12 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 else {
                     // Transaction SQL KO
                     DB::rollback();
-                    Log::debug('Erreur update utilisateur (false) '.DB::getQueryLog());
+                    Log::debug('Erreur update utilisateur (false) ' . DB::getQueryLog());
                 }
             }
         } // Erreur dans la transaction SQL
         catch (Exception $e) {
-            Log::debug('Erreur update utilisateur (catch) '.$e->getMessage());
+            Log::debug('Erreur update utilisateur (catch) ' . $e->getMessage());
             $bSave = false;
             DB::rollback();
         }
@@ -447,7 +452,7 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                     'save' => $bSave
                 );
             } catch (Exception $e) {
-                Log::debug('Erreur insert utilisateur (catch) '.$e->getMessage());
+                Log::debug('Erreur insert utilisateur (catch) ' . $e->getMessage());
                 // Transaction KO
                 DB::rollback();
                 $retour = array('save' => false);
@@ -482,5 +487,26 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
         $oUser = Auth::user();
         // Hash du mot de passe
         return Hash::check($pass, $oUser->password);
+    }
+
+
+    /**
+     * Récupère les préférences dont les clés sont listés dans le tableaud de param
+     * Toutes les préférences si aucunes clés fournies
+     *
+     * @param $keys : Clés à récupérer
+     */
+    public function getPreferences($keys = [])
+    {
+        $whereKeys = "('" . implode($keys, "','") . "')";
+        return $this
+            ->with(['preferences' => function ($q) use ($keys, $whereKeys) {
+                if (count($keys) > 0) {
+                    $q->whereRaw('preference.key in ' . $whereKeys);
+                }
+            }])
+            ->where('id', '=', $this->id)
+            ->select('id')
+            ->first();
     }
 }
