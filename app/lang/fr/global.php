@@ -109,6 +109,8 @@ Voulez-vous vraiment quitter cette page ?',
     'bus' => 'Bus',
     'capteur' => 'Capteur',
     'adresse' => 'Adresse',
+    'ip' => "Adresse IP",
+    'v4id' => "ID réseau terrain",
 
 
     /*

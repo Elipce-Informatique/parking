@@ -1,12 +1,12 @@
 // ATTENTION la majuscule est super importante
 require('./global/global');
 var React = require('react/addons');
-var PageNiveau = require('./mods/page/react_page_parking').Composant;
+var PageParking = require('./mods/page/react_page_parking').Composant;
 
 $(function(){
 
     React.render(
-        <PageNiveau/>,
+        <PageParking/>,
         document.getElementById('content_parking')
     );
 });

@@ -17,6 +17,15 @@ $(function () {
             module_url="etats_d_occupation"/>,
         document.getElementById('1'));
 
+    // Parking
+    React.render(<Block
+            titre={Lang.get('menu.side.parking')}
+            texte={Lang.get('administration_parking.parking.texte')}
+            bouton={Lang.get('global.gerer')}
+            bouton_url={BASE_URI + 'gestion_parking'}
+            module_url="gestion_parking"/>,
+        document.getElementById('2'));
+
     // Niveaux
     React.render(<Block
             titre={Lang.get('menu.side.niveau')}
@@ -24,7 +33,7 @@ $(function () {
             bouton={Lang.get('global.gerer')}
             bouton_url={BASE_URI + 'niveau'}
             module_url="niveau"/>,
-        document.getElementById('2'));
+        document.getElementById('3'));
 
     // Configuration du parking
     React.render(<Block
@@ -33,5 +42,5 @@ $(function () {
             bouton={Lang.get('global.gerer')}
             bouton_url={url_configuration_parking}
             module_url="configuration_parking"/>,
-        document.getElementById('3'));
+        document.getElementById('4'));
 });
