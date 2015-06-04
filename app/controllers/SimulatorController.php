@@ -72,7 +72,7 @@ class SimulatorController extends \BaseController
                 $etatCourant = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe);
 
                 // Etat d'occupation inverse
-                $etatNew = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe='1'?'0':'1');
+                $etatNew = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe=='1'?'0':'1');
                 if (!$etatNew) {
                     $etatNew = $etatCourant;
                 }

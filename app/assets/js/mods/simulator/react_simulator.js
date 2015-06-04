@@ -13,6 +13,7 @@ var simu = function (idPlan) {
             url: BASE_URI + 'parking/simulator/' + idPlan,
             type: 'POST',
             data: fData,
+            global: false,
             processData: false,
             contentType: false,
             dataType: 'json',

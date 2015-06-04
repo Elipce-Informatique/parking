@@ -63,7 +63,7 @@ var parkingMap = React.createClass({
         this.listenTo(supervisionStore, this.onStoreTrigger);
 
         // Lancement du simulateur
-        //simu(this.props.planId);
+        simu(this.props.planId);
     },
 
     /**
