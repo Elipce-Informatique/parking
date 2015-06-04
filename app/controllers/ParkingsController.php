@@ -149,6 +149,12 @@ class ParkingsController extends \BaseController
             }
         }
 
+        Log::debug('-------------------------------------------- Types par blocks ------------------------------------');
+        Log::debug('BLOCK 1 -> ' . print_r($typesBlock1, true));
+        Log::debug('BLOCK 2 -> ' . print_r($typesBlock2, true));
+        Log::debug('BLOCK 3 -> ' . print_r($typesBlock3, true));
+        Log::debug('--------------------------------------------------------------------------------------------------');
+
         // -------------------------------------------------------------------------------------------------------------
         // BLOCK 1 - PARKING
         // -------------------------------------------------------------------------------------------------------------
@@ -156,20 +162,78 @@ class ParkingsController extends \BaseController
         // GLOBAL PARKING
         $bloc1 = Parking::getTabBordBlock1($parkId, $typesBlock1);
 
-        foreach($bloc1[0] AS $ligne){
-
+        // GLOBAL PAR TYPE #####################
+        $temp = [];
+        foreach ($bloc1[1] AS $ligne) {
+            switch ($ligne->type) {
+                // places libres
+                case '0':
+                    $temp[$ligne->type_place_id]['libre'] = $ligne->nb;
+                    break;
+                // places occupés
+                case '1':
+                    $temp[$ligne->type_place_id]['occupee'] = $ligne->nb;
+                    break;
+                // somme totale
+                case '2':
+                    $temp[$ligne->type_place_id]['total'] = $ligne->nb;
+                    $temp[$ligne->type_place_id]['libelle'] = $ligne->libelle;
+                    break;
+            }
         }
+        $retour['b1'] = $temp;
 
-        // GLOBAL PAR TYPE
+        // PARCOURS DES DONNÉES GLOBALES SANS FILTRE SUR LES TYPES #####################
+        $temp = [
+            'libelle' => Lang::get('supervision.tab_bord.global_parking')
+        ];
+        foreach ($bloc1[0] AS $ligne) {
+            switch ($ligne->type) {
+                // places libres
+                case '0':
+                    $temp['libre'] = $ligne->nb;
+                    break;
+                // places occupés
+                case '1':
+                    $temp['occupee'] = $ligne->nb;
+                    break;
+                // somme totale
+                case '2':
+                    $temp['total'] = $ligne->nb;
+
+                    break;
+            }
+        }
+        $retour['b1']['TOTAL'] = $temp;
 
         // -------------------------------------------------------------------------------------------------------------
         // BLOCK 2 - PLANS
         // -------------------------------------------------------------------------------------------------------------
 
-        // GLOBAL PAR PLANS
-//        $retour = Parking::getTabBordBlock2($parkId, $typesBlock2);
+        $bloc2 = Parking::getTabBordBlock2($parkId, $typesBlock2);
 
-        // GLOBAL PAR PLANS PAR TYPE
+        // GLOBAL PAR PLAN PAR TYPE #####################
+        $temp = [];
+        foreach ($bloc2[1] AS $ligne) {
+            switch ($ligne->type) {
+                // places libres
+                case '0':
+                    $temp[$ligne->plan][$ligne->type_place_id]['libre'] = $ligne->nb;
+                    break;
+                // places occupés
+                case '1':
+                    $temp[$ligne->plan][$ligne->type_place_id]['occupee'] = $ligne->nb;
+                    break;
+                // somme totale
+                case '2':
+                    $temp[$ligne->plan][$ligne->type_place_id]['total'] = $ligne->nb;
+                    $temp[$ligne->plan][$ligne->type_place_id]['libelle'] = $ligne->libelle;
+                    break;
+            }
+        }
+        $retour['b2'] = $temp;
+
+        // GLOBAL PAR PLANS SANS FILTRE SUR LES TYPES DE PLACES
 
         // -------------------------------------------------------------------------------------------------------------
         // BLOCK 3 - ZONES

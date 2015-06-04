@@ -16,5 +16,8 @@ return array(
     ],
     'carte' => [
         'selection_plan' => 'Veuillez sélectionner un plan à superviser dans le menu de gauche.',
+    ],
+    'tab_bord' => [
+        'global_parking' => 'Global parking'
     ]
 );

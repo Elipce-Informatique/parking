@@ -190,7 +190,8 @@ class Parking extends BaseModel
             ->where('parking.id', '=', $parkId)// ON SE PLACE SUR LE PARKING
 
             ->groupBy('plan.id', 'etat_occupation.is_occupe')
-            ->select(DB::raw('plan.id AS plan'), 'type_place.libelle', DB::raw('is_occupe AS type'), DB::raw('COUNT(*) AS nb'));
+            ->orderBy('plan.id')
+            ->select(DB::raw('plan.id AS plan'), DB::raw('\'TOTAL\' AS libelle'), DB::raw('is_occupe AS type'), DB::raw('COUNT(*) AS nb'));
 
         $totalGlobal = DB::table('parking')->join('niveau', 'parking.id', '=', 'niveau.parking_id')
             ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
@@ -202,7 +203,8 @@ class Parking extends BaseModel
             ->where('parking.id', '=', $parkId)// ON SE PLACE SUR LE PARKING
 
             ->groupBy('plan.id', 'place.type_place_id')
-            ->select(DB::raw('plan.id AS plan'), 'type_place.libelle', DB::raw('2 AS type'), DB::raw('COUNT(*) AS nb'))
+            ->orderBy('plan.id')
+            ->select(DB::raw('plan.id AS plan'), DB::raw('\'TOTAL\' AS libelle'), DB::raw('2 AS type'), DB::raw('COUNT(*) AS nb'))
             ->unionAll($groupGlobal)->get();
 
         $whereKeys = "('" . implode($types_places, "','") . "')";
@@ -217,8 +219,8 @@ class Parking extends BaseModel
             ->join('etat_occupation', 'etat_occupation.id', '=', 'place.etat_occupation_id')
             ->where('parking.id', '=', $parkId)// ON SE PLACE SUR LE PARKING
             ->whereRaw('etat_occupation.type_place_id in ' . $whereKeys)
-            ->groupBy('parking.id', 'place.type_place_id', 'etat_occupation.is_occupe')
-            ->select('plan.libelle', 'type_place.libelle', DB::raw('is_occupe AS type'), DB::raw('COUNT(*) AS nb'));
+            ->groupBy('plan.id', 'place.type_place_id', 'etat_occupation.is_occupe')
+            ->select(DB::raw('type_place.id AS type_place_id'), DB::raw('plan.id AS plan'), 'type_place.libelle', DB::raw('is_occupe AS type'), DB::raw('COUNT(*) AS nb'));
 
         $totalDetail = DB::table('parking')->join('niveau', 'parking.id', '=', 'niveau.parking_id')
             ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
@@ -229,8 +231,8 @@ class Parking extends BaseModel
             ->join('etat_occupation', 'etat_occupation.id', '=', 'place.etat_occupation_id')
             ->where('parking.id', '=', $parkId)// ON SE PLACE SUR LE PARKING
             ->whereRaw('etat_occupation.type_place_id in ' . $whereKeys)
-            ->groupBy('parking.id', 'place.type_place_id')
-            ->select('plan.libelle', 'type_place.libelle', DB::raw('2 AS type'), DB::raw('COUNT(*) AS nb'))
+            ->groupBy('plan.id', 'place.type_place_id')
+            ->select(DB::raw('type_place.id AS type_place_id'), DB::raw('plan.id AS plan'), 'type_place.libelle', DB::raw('2 AS type'), DB::raw('COUNT(*) AS nb'))
             ->unionAll($groupDetail)->get();
 
         return [$totalGlobal, $totalDetail];
