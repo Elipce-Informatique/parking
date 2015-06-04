@@ -307,7 +307,7 @@ function createPlaceFromData(p, types_places) {
     }, "FF0000", this);
 
     var marker = {};
-    if (p.etat_occupation.is_occupe == "1") {
+    if (p.etat_occupation && p.etat_occupation.is_occupe == "1") {
         marker = createPlaceMarker(coords, nom, angleMarker, extraData);
     }
     var polygon = createPlaceParallelogrammeFromCoordinates(JSON.parse(p.geojson), extraData, nom, color);

@@ -109,7 +109,7 @@ var store = Reflux.createStore({
         var ajout = [], suppression = [];
         _.each(data, function (p, i) {
             // C'EST UN AJOUT
-            if (p.etat_occupation.is_occupe == "1") {
+            if (p.etat_occupation && p.etat_occupation.is_occupe == "1") {
                 ajout.push(mapHelper.createPlaceFromData(p, this._inst.types_places));
             }
             // C'EST UNE SUPPRESSION
