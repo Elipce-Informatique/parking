@@ -159,8 +159,8 @@ class ParkingsController extends \BaseController
         // BLOCK 2 - PLANS
         // -------------------------------------------------------------------------------------------------------------
 
-        $retour = Parking::getTabBordBlock2($parkId, $typesBlock2);
         // GLOBAL PAR PLANS
+//        $retour = Parking::getTabBordBlock2($parkId, $typesBlock2);
 
         // GLOBAL PAR PLANS PAR TYPE
 

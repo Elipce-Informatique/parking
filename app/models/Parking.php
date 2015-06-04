@@ -177,7 +177,7 @@ class Parking extends BaseModel
      */
     public static function getTabBordBlock2($parkId, $types_places = [])
     {
-        // GLOBAL PAR PLAN
+        // GLOBAL PAR PLAN BLOC 2
         $groupGlobal = DB::table('parking')->join('niveau', 'parking.id', '=', 'niveau.parking_id')
             ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
             ->join('zone', 'zone.plan_id', '=', 'plan.id')
@@ -205,7 +205,7 @@ class Parking extends BaseModel
 
         $whereKeys = "('" . implode($types_places, "','") . "')";
 
-        // DETAIL PAR PLAN
+        // DETAIL PAR PLAN BLOC 2
         $groupDetail = DB::table('parking')->join('niveau', 'parking.id', '=', 'niveau.parking_id')
             ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
             ->join('zone', 'zone.plan_id', '=', 'plan.id')
