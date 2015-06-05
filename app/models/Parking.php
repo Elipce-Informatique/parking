@@ -3,7 +3,7 @@
 class Parking extends BaseModel
 {
     protected $table = 'parking';
-    protected $fillable = [];
+    protected $fillable = ['libelle', 'description', 'ip', 'v4_id'];
 
     /*****************************************************************************
      * RELATIONS DU MODELE *******************************************************
@@ -324,6 +324,142 @@ class Parking extends BaseModel
             ->unionAll($groupDetail)->get();
 
         return [$totalGlobal, $totalDetail];
+    }
+
+
+    /**
+     * calcule si le libelle passé en param existe déjà
+     * @param $libelle : libellé à vérifier
+     * @param string $id : ID à ne pas prendre en compte lors de la vérif (mode édition)
+     * @return bool
+     */
+    public static function isLibelleExists($libelle, $id = '')
+    {
+        $and = $id === '' ? '' : "AND id <> $id";
+        $result = Parking::whereRaw("libelle = '$libelle' $and")
+            ->count();
+//        dd($result);
+        return ($result > 0);
+    }
+
+    /**
+     * Créé un parking à partir des POST
+     * @param $fields
+     * @return array
+     */
+    public static function createParking($fields)
+    {
+//        Log::debug(print_r($fields, true));
+
+        // Variable de retour
+        $retour = [
+            'save' => true,
+            'errorBdd' => false,
+            'model' => null,
+        ];
+
+        // Le jour n'existe pas en BDD
+        if (!Parking::isLibelleExists($fields['libelle'])) {
+
+            // Essai d'enregistrement
+            try {
+                // Création du parking
+                $model = Parking::create($fields);
+
+                // Association des users
+                if (isset($fields['utilisateurs']) && $fields['utilisateurs'] !== '') {
+                    $model->utilisateurs()->attach(explode('[-]', $fields['utilisateurs']));
+                } // No user
+                else {
+                    $model->utilisateurs()->attach(Auth::user());
+                }
+
+                // Le model complet
+                $retour['model'] = Parking::with('utilisateurs')
+                    ->where('parking.id', '=', $model->id)
+                    ->get();
+
+            } catch (Exception $e) {
+                $retour['save'] = false;
+                $retour['errorBdd'] = true;
+            }
+        } // Le jour existe déjà en BDD
+        else {
+            $retour['save'] = false;
+        }
+        return $retour;
+    }
+
+
+    /**
+     * Update parking
+     *
+     * @param  int $id : ID du parking à modifier
+     * @return Response
+     */
+    public static function updateParking($id)
+    {
+        // Variable de retour
+        $retour = [
+            'save' => true,
+            'errorBdd' => false,
+            'model' => null
+        ];
+
+        // Les données passées en PUT
+        $fields = Input::all();
+
+        // Début transaction
+        DB::beginTransaction();
+
+        try {
+
+            // Le libellé parking est unique
+            if (!Parking::isLibelleExists($fields['libelle'], $id)) {
+                // Parking à modifier
+                $model = Parking::find($id);
+                // Champs filtrés
+                $filteredFields = [];
+                // Parcours de tous les champs
+                foreach ($model->getFillable() as $key) {
+                    // On ne garde que les clés qui nous interessent
+                    $filteredFields[$key] = $fields[$key];
+                }
+
+                // Update parking
+                $model->update($filteredFields);
+
+                // Association des users
+                if (isset($fields['utilisateurs']) && $fields['utilisateurs'] !== '') {
+                    $model->utilisateurs()->attach(explode('[-]', $fields['utilisateurs']));
+                }
+                // TODO traiter les ajouts / suppressions
+
+                // Le model complet
+                $retour['model'] = Parking::with('utilisateurs')
+                    ->where('parking.id', '=', $id)
+                    ->get();
+            } // Le parking existe
+            else {
+                $retour['save'] = false;
+                Log::error("Le parking " . $fields['libelle'] . " existe déjà. ");
+            }
+
+        } catch (Exception $e) {
+            Log::error("Erreur store parking. " . $e->getMessage());
+            $retour['errorBdd'] = true;
+            $retour['save'] = false;
+        }
+
+        // Enregistrement BDD
+        if ($retour['save']) {
+            DB::commit();
+        } // Enregistrement KO
+        else {
+            DB::rollBack();
+        }
+
+        return $retour;
     }
 
 }
