@@ -29,6 +29,27 @@ class TypePlace extends BaseModel
     }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | MÉTHODES MÉTIER
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * @return un tableau associatif
+     * [
+     *      id => 'libelle'
+     * ]
+     */
+    public static function getAssocIdLibelle()
+    {
+        $temp = TypePlace::all();
+        $retour = [];
+        foreach ($temp As $t) {
+            $retour[$t->id] = $t->libelle;
+        }
+        return $retour;
+    }
 
 
 }

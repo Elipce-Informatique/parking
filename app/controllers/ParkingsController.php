@@ -212,9 +212,6 @@ class ParkingsController extends \BaseController
 
         $bloc2 = Parking::getTabBordBlock2($parkId, $typesBlock2);
 
-        Log::debug('BLOC 2 :');
-        Log::debug(print_r($bloc2, true));
-
         // GLOBAL PAR PLAN PAR TYPE #####################
         $temp = [];
         foreach ($bloc2[1] AS $ligne) {
@@ -261,9 +258,6 @@ class ParkingsController extends \BaseController
 
         $bloc3 = Parking::getTabBordBlock3($parkId, $typesBlock3);
 
-        Log::debug('BLOC 3 :');
-        Log::debug(print_r($bloc3, true));
-
         // GLOBAL PAR PLAN PAR TYPE #####################
         $temp = [];
         foreach ($bloc3[1] AS $ligne) {
@@ -301,6 +295,58 @@ class ParkingsController extends \BaseController
                     $retour['b3'][$ligne->zone]['TOTAL']['total'] = $ligne->nb;
                     $retour['b3'][$ligne->zone]['TOTAL']['libelle'] = Lang::get('supervision.tab_bord.global_zone');
                     break;
+            }
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+        // FILL IN THE BLANKS - RAJOUT DES TYPES DE PLACES NON RENSEIGNÉS DANS LES DONNÉES RÉELLES
+        // -------------------------------------------------------------------------------------------------------------
+
+        $types = TypePlace::getAssocIdLibelle();
+
+        // BLOC 1 -------------------------------
+        foreach ($typesBlock1 AS $t) {
+            // $t = type de place
+            // LE TYPE N'EST PAS DANS B1, ON LE RAJOUTE VIDE
+            if (!array_key_exists($t, $retour['b1'])) {
+                $retour['b1'][$t] = [
+                    "total" => 0,
+                    "libelle" => $types[$t],
+                    "libre" => 0,
+                    "occupee" => 0
+                ];
+            }
+        }
+
+        // BLOC 2 -------------------------------
+        foreach ($retour['b2'] AS $libellePlan => $plan) {
+            // $t -> id du type de place
+            foreach ($typesBlock2 AS $t) {
+                // LE TYPE N'EST PAS DANS B1, ON LE RAJOUTE VIDE
+                if (!array_key_exists($t, $retour['b2'][$libellePlan])) {
+                    $retour['b2'][$libellePlan][$t] = [
+                        "libelle" => $types[$t],
+                        "total" => 0,
+                        "libre" => 0,
+                        "occupee" => 0
+                    ];
+                }
+            }
+        }
+
+        // BLOC 3 -------------------------------
+        foreach ($retour['b3'] AS $libelleZone => $plan) {
+            // $t -> id du type de place
+            foreach ($typesBlock2 AS $t) {
+                // LE TYPE N'EST PAS DANS B1, ON LE RAJOUTE VIDE
+                if (!array_key_exists($t, $retour['b3'][$libelleZone])) {
+                    $retour['b3'][$libelleZone][$t] = [
+                        "libelle" => $types[$t],
+                        "total" => 0,
+                        "libre" => 0,
+                        "occupee" => 0
+                    ];
+                }
             }
         }
 
