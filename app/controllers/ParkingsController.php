@@ -117,10 +117,26 @@ class ParkingsController extends \BaseController
      */
     public function getTableauBordData($parkId)
     {
+        // FORMAT GLOBAL DES DONNÉES DE RETOUR?
         $retour = [
             'b1' => [],
             'b2' => [],
             'b3' => [],
+            'prefs' => [
+                'b1' => [
+                    'types' => [],
+                    'ordre' => []
+                ],
+                'b2' => [
+                    'types' => [],
+                    'ordre' => []
+                ],
+                'b3' => [
+                    'types' => [],
+                    'ordre' => []
+                ]
+            ],
+            'types' => []
         ];
 
         // -------------------------------------------------------------------------------------------------------------
@@ -149,11 +165,9 @@ class ParkingsController extends \BaseController
             }
         }
 
-        Log::debug('-------------------------------------------- Types par blocks ------------------------------------');
-        Log::debug('BLOCK 1 -> ' . print_r($typesBlock1, true));
-        Log::debug('BLOCK 2 -> ' . print_r($typesBlock2, true));
-        Log::debug('BLOCK 3 -> ' . print_r($typesBlock3, true));
-        Log::debug('--------------------------------------------------------------------------------------------------');
+        $retour['prefs']['b1']['types'] = $typesBlock1;
+        $retour['prefs']['b2']['types'] = $typesBlock2;
+        $retour['prefs']['b3']['types'] = $typesBlock3;
 
         // -------------------------------------------------------------------------------------------------------------
         // BLOCK 1 - PARKING
@@ -303,6 +317,9 @@ class ParkingsController extends \BaseController
         // -------------------------------------------------------------------------------------------------------------
 
         $types = TypePlace::getAssocIdLibelle();
+
+        // Retour des types pour les listes à choix multiples
+        $retour['types'] = $types;
 
         // BLOC 1 -------------------------------
         foreach ($typesBlock1 AS $t) {
