@@ -128,10 +128,26 @@ class ParkingsController extends \BaseController
      */
     public function getTableauBordData($parkId)
     {
+        // FORMAT GLOBAL DES DONNÉES DE RETOUR?
         $retour = [
             'b1' => [],
             'b2' => [],
             'b3' => [],
+            'prefs' => [
+                'b1' => [
+                    'types' => [],
+                    'ordre' => []
+                ],
+                'b2' => [
+                    'types' => [],
+                    'ordre' => []
+                ],
+                'b3' => [
+                    'types' => [],
+                    'ordre' => []
+                ]
+            ],
+            'types' => []
         ];
 
         // -------------------------------------------------------------------------------------------------------------
@@ -160,11 +176,9 @@ class ParkingsController extends \BaseController
             }
         }
 
-        Log::debug('-------------------------------------------- Types par blocks ------------------------------------');
-        Log::debug('BLOCK 1 -> ' . print_r($typesBlock1, true));
-        Log::debug('BLOCK 2 -> ' . print_r($typesBlock2, true));
-        Log::debug('BLOCK 3 -> ' . print_r($typesBlock3, true));
-        Log::debug('--------------------------------------------------------------------------------------------------');
+        $retour['prefs']['b1']['types'] = $typesBlock1;
+        $retour['prefs']['b2']['types'] = $typesBlock2;
+        $retour['prefs']['b3']['types'] = $typesBlock3;
 
         // -------------------------------------------------------------------------------------------------------------
         // BLOCK 1 - PARKING
@@ -245,14 +259,124 @@ class ParkingsController extends \BaseController
         $retour['b2'] = $temp;
 
         // GLOBAL PAR PLANS SANS FILTRE SUR LES TYPES DE PLACES
+        foreach ($bloc2[0] AS $ligne) {
+            switch ($ligne->type) {
+                // places libres
+                case '0':
+                    $retour['b2'][$ligne->plan]['TOTAL']['libre'] = $ligne->nb;
+                    break;
+                // places occupés
+                case '1':
+                    $retour['b2'][$ligne->plan]['TOTAL']['occupee'] = $ligne->nb;
+                    break;
+                // somme totale
+                case '2':
+                    $retour['b2'][$ligne->plan]['TOTAL']['total'] = $ligne->nb;
+                    $retour['b2'][$ligne->plan]['TOTAL']['libelle'] = Lang::get('supervision.tab_bord.global_niveau');
+                    break;
+            }
+        }
 
         // -------------------------------------------------------------------------------------------------------------
         // BLOCK 3 - ZONES
         // -------------------------------------------------------------------------------------------------------------
 
-        // GLOBAL PAR ZONES
+        $bloc3 = Parking::getTabBordBlock3($parkId, $typesBlock3);
 
-        // GLOBAL PAR ZONES PAR TYPE
+        // GLOBAL PAR PLAN PAR TYPE #####################
+        $temp = [];
+        foreach ($bloc3[1] AS $ligne) {
+            switch ($ligne->type) {
+                // places libres
+                case '0':
+                    $temp[$ligne->zone][$ligne->type_place_id]['libre'] = $ligne->nb;
+                    break;
+                // places occupés
+                case '1':
+                    $temp[$ligne->zone][$ligne->type_place_id]['occupee'] = $ligne->nb;
+                    break;
+                // somme totale
+                case '2':
+                    $temp[$ligne->zone][$ligne->type_place_id]['total'] = $ligne->nb;
+                    $temp[$ligne->zone][$ligne->type_place_id]['libelle'] = $ligne->libelle;
+                    break;
+            }
+        }
+        $retour['b3'] = $temp;
+
+        // GLOBAL PAR PLANS SANS FILTRE SUR LES TYPES DE PLACES
+        foreach ($bloc3[0] AS $ligne) {
+            switch ($ligne->type) {
+                // places libres
+                case '0':
+                    $retour['b3'][$ligne->zone]['TOTAL']['libre'] = $ligne->nb;
+                    break;
+                // places occupés
+                case '1':
+                    $retour['b3'][$ligne->zone]['TOTAL']['occupee'] = $ligne->nb;
+                    break;
+                // somme totale
+                case '2':
+                    $retour['b3'][$ligne->zone]['TOTAL']['total'] = $ligne->nb;
+                    $retour['b3'][$ligne->zone]['TOTAL']['libelle'] = Lang::get('supervision.tab_bord.global_zone');
+                    break;
+            }
+        }
+
+        // -------------------------------------------------------------------------------------------------------------
+        // FILL IN THE BLANKS - RAJOUT DES TYPES DE PLACES NON RENSEIGNÉS DANS LES DONNÉES RÉELLES
+        // -------------------------------------------------------------------------------------------------------------
+
+        $types = TypePlace::getAssocIdLibelle();
+
+        // Retour des types pour les listes à choix multiples
+        $retour['types'] = $types;
+
+        // BLOC 1 -------------------------------
+        foreach ($typesBlock1 AS $t) {
+            // $t = type de place
+            // LE TYPE N'EST PAS DANS B1, ON LE RAJOUTE VIDE
+            if (!array_key_exists($t, $retour['b1'])) {
+                $retour['b1'][$t] = [
+                    "total" => 0,
+                    "libelle" => $types[$t],
+                    "libre" => 0,
+                    "occupee" => 0
+                ];
+            }
+        }
+
+        // BLOC 2 -------------------------------
+        foreach ($retour['b2'] AS $libellePlan => $plan) {
+            // $t -> id du type de place
+            foreach ($typesBlock2 AS $t) {
+                // LE TYPE N'EST PAS DANS B1, ON LE RAJOUTE VIDE
+                if (!array_key_exists($t, $retour['b2'][$libellePlan])) {
+                    $retour['b2'][$libellePlan][$t] = [
+                        "libelle" => $types[$t],
+                        "total" => 0,
+                        "libre" => 0,
+                        "occupee" => 0
+                    ];
+                }
+            }
+        }
+
+        // BLOC 3 -------------------------------
+        foreach ($retour['b3'] AS $libelleZone => $plan) {
+            // $t -> id du type de place
+            foreach ($typesBlock2 AS $t) {
+                // LE TYPE N'EST PAS DANS B1, ON LE RAJOUTE VIDE
+                if (!array_key_exists($t, $retour['b3'][$libelleZone])) {
+                    $retour['b3'][$libelleZone][$t] = [
+                        "libelle" => $types[$t],
+                        "total" => 0,
+                        "libre" => 0,
+                        "occupee" => 0
+                    ];
+                }
+            }
+        }
 
 
         return $retour;
