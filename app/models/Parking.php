@@ -191,7 +191,7 @@ class Parking extends BaseModel
             ->where('parking.id', '=', $parkId)// ON SE PLACE SUR LE PARKING
 
             ->groupBy('plan.id', 'etat_occupation.is_occupe')
-            ->select(DB::raw('plan.id AS plan'), DB::raw('\'TOTAL\' AS libelle'), DB::raw('is_occupe AS type'), DB::raw('COUNT(*) AS nb'));
+            ->select(DB::raw('plan.libelle AS plan'), DB::raw('\'TOTAL\' AS libelle'), DB::raw('is_occupe AS type'), DB::raw('COUNT(*) AS nb'));
 
         $totalGlobal = DB::table('parking')->join('niveau', 'parking.id', '=', 'niveau.parking_id')
             ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
@@ -203,7 +203,7 @@ class Parking extends BaseModel
             ->where('parking.id', '=', $parkId)// ON SE PLACE SUR LE PARKING
 
             ->groupBy('plan.id')
-            ->select(DB::raw('plan.id AS plan'), DB::raw('\'TOTAL\' AS libelle'), DB::raw('2 AS type'), DB::raw('COUNT(*) AS nb'))
+            ->select(DB::raw('plan.libelle AS plan'), DB::raw('\'TOTAL\' AS libelle'), DB::raw('2 AS type'), DB::raw('COUNT(*) AS nb'))
             ->unionAll($groupGlobal);
 
         $sub = $totalGlobal; // Eloquent Builder instance
@@ -229,7 +229,7 @@ class Parking extends BaseModel
             ->where('parking.id', '=', $parkId)// ON SE PLACE SUR LE PARKING
             ->whereRaw('etat_occupation.type_place_id in ' . $whereKeys)
             ->groupBy('plan.id', 'place.type_place_id', 'etat_occupation.is_occupe')
-            ->select(DB::raw('type_place.id AS type_place_id'), DB::raw('plan.id AS plan'), 'type_place.libelle', DB::raw('is_occupe AS type'), DB::raw('COUNT(*) AS nb'));
+            ->select(DB::raw('type_place.id AS type_place_id'), DB::raw('plan.libelle AS plan'), 'type_place.libelle', DB::raw('is_occupe AS type'), DB::raw('COUNT(*) AS nb'));
 
         $totalDetail = DB::table('parking')->join('niveau', 'parking.id', '=', 'niveau.parking_id')
             ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
@@ -241,7 +241,7 @@ class Parking extends BaseModel
             ->where('parking.id', '=', $parkId)// ON SE PLACE SUR LE PARKING
             ->whereRaw('etat_occupation.type_place_id in ' . $whereKeys)
             ->groupBy('plan.id', 'place.type_place_id')
-            ->select(DB::raw('type_place.id AS type_place_id'), DB::raw('plan.id AS plan'), 'type_place.libelle', DB::raw('2 AS type'), DB::raw('COUNT(*) AS nb'))
+            ->select(DB::raw('type_place.id AS type_place_id'), DB::raw('plan.libelle AS plan'), 'type_place.libelle', DB::raw('2 AS type'), DB::raw('COUNT(*) AS nb'))
             ->unionAll($groupDetail);
 
         $sub = $totalDetail; // Eloquent Builder instance
@@ -271,8 +271,9 @@ class Parking extends BaseModel
      */
     public static function getTabBordBlock3($parkId, $types_places = [])
     {
-        // GLOBAL
-        $groupGlobal = DB::table('parking')->join('niveau', 'parking.id', '=', 'niveau.parking_id')
+        // GLOBAL PAR ZONE BLOC 3
+        $groupGlobal = DB::table('parking')
+            ->join('niveau', 'parking.id', '=', 'niveau.parking_id')
             ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
             ->join('zone', 'zone.plan_id', '=', 'plan.id')
             ->join('allee', 'allee.zone_id', '=', 'zone.id')
@@ -280,10 +281,12 @@ class Parking extends BaseModel
             ->join('type_place', 'place.type_place_id', '=', 'type_place.id')
             ->join('etat_occupation', 'etat_occupation.id', '=', 'place.etat_occupation_id')
             ->where('parking.id', '=', $parkId)// ON SE PLACE SUR LE PARKING
-            ->groupBy('etat_occupation.is_occupe')
-            ->select('type_place.libelle', DB::raw('is_occupe AS type'), DB::raw('COUNT(*) AS nb'));
 
-        $totalGlobal = DB::table('parking')->join('niveau', 'parking.id', '=', 'niveau.parking_id')
+            ->groupBy('zone.id', 'etat_occupation.is_occupe')
+            ->select(DB::raw('zone.libelle AS zone'), DB::raw('\'TOTAL\' AS libelle'), DB::raw('is_occupe AS type'), DB::raw('COUNT(*) AS nb'));
+
+        $totalGlobal = DB::table('parking')
+            ->join('niveau', 'parking.id', '=', 'niveau.parking_id')
             ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
             ->join('zone', 'zone.plan_id', '=', 'plan.id')
             ->join('allee', 'allee.zone_id', '=', 'zone.id')
@@ -291,14 +294,26 @@ class Parking extends BaseModel
             ->join('type_place', 'place.type_place_id', '=', 'type_place.id')
             ->join('etat_occupation', 'etat_occupation.id', '=', 'place.etat_occupation_id')
             ->where('parking.id', '=', $parkId)// ON SE PLACE SUR LE PARKING
-            ->groupBy('parking.id')
-            ->select('type_place.libelle', DB::raw('2 AS type'), DB::raw('COUNT(*) AS nb'))
-            ->unionAll($groupGlobal)->get();
+
+            ->groupBy('zone.id')
+            ->select(DB::raw('zone.libelle AS zone'), DB::raw('\'TOTAL\' AS libelle'), DB::raw('2 AS type'), DB::raw('COUNT(*) AS nb'))
+            ->unionAll($groupGlobal);
+
+        $sub = $totalGlobal; // Eloquent Builder instance
+
+        $totalGlobal = DB::table(DB::raw("({$sub->toSql()}) as sub"))
+            ->mergeBindings($sub)// you need to get underlying Query Builder
+            ->select('sub.zone', 'sub.libelle', 'sub.type', 'sub.nb')
+            ->orderBy('sub.zone', 'asc')
+            ->orderBy('sub.type', 'asc')
+            ->get();
+
 
         $whereKeys = "('" . implode($types_places, "','") . "')";
 
-        // DETAIL
-        $groupDetail = DB::table('parking')->join('niveau', 'parking.id', '=', 'niveau.parking_id')
+        // DETAIL PAR PLAN BLOC 2
+        $groupDetail = DB::table('parking')
+            ->join('niveau', 'parking.id', '=', 'niveau.parking_id')
             ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
             ->join('zone', 'zone.plan_id', '=', 'plan.id')
             ->join('allee', 'allee.zone_id', '=', 'zone.id')
@@ -307,10 +322,11 @@ class Parking extends BaseModel
             ->join('etat_occupation', 'etat_occupation.id', '=', 'place.etat_occupation_id')
             ->where('parking.id', '=', $parkId)// ON SE PLACE SUR LE PARKING
             ->whereRaw('etat_occupation.type_place_id in ' . $whereKeys)
-            ->groupBy('parking.id', 'place.type_place_id', 'etat_occupation.is_occupe')
-            ->select('type_place.libelle', DB::raw('is_occupe AS type'), DB::raw('COUNT(*) AS nb'));
+            ->groupBy('zone.id', 'place.type_place_id', 'etat_occupation.is_occupe')
+            ->select(DB::raw('type_place.id AS type_place_id'), DB::raw('zone.libelle AS zone'), 'type_place.libelle', DB::raw('is_occupe AS type'), DB::raw('COUNT(*) AS nb'));
 
-        $totalDetail = DB::table('parking')->join('niveau', 'parking.id', '=', 'niveau.parking_id')
+        $totalDetail = DB::table('parking')
+            ->join('niveau', 'parking.id', '=', 'niveau.parking_id')
             ->join('plan', 'plan.niveau_id', '=', 'niveau.id')
             ->join('zone', 'zone.plan_id', '=', 'plan.id')
             ->join('allee', 'allee.zone_id', '=', 'zone.id')
@@ -319,9 +335,19 @@ class Parking extends BaseModel
             ->join('etat_occupation', 'etat_occupation.id', '=', 'place.etat_occupation_id')
             ->where('parking.id', '=', $parkId)// ON SE PLACE SUR LE PARKING
             ->whereRaw('etat_occupation.type_place_id in ' . $whereKeys)
-            ->groupBy('parking.id', 'place.type_place_id')
-            ->select('type_place.libelle', DB::raw('2 AS type'), DB::raw('COUNT(*) AS nb'))
-            ->unionAll($groupDetail)->get();
+            ->groupBy('zone.id', 'place.type_place_id')
+            ->select(DB::raw('type_place.id AS type_place_id'), DB::raw('zone.libelle AS zone'), 'type_place.libelle', DB::raw('2 AS type'), DB::raw('COUNT(*) AS nb'))
+            ->unionAll($groupDetail);
+
+        $sub = $totalDetail; // Eloquent Builder instance
+
+        $totalDetail = DB::table(DB::raw("({$sub->toSql()}) as sub"))
+            ->mergeBindings($sub)// you need to get underlying Query Builder
+            ->select('sub.type_place_id', 'sub.zone', 'sub.libelle', 'sub.type', 'sub.nb')
+            ->orderBy('sub.zone', 'asc')
+            ->orderBy('sub.type', 'asc')
+            ->get();
+
 
         return [$totalGlobal, $totalDetail];
     }

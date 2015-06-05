@@ -212,6 +212,9 @@ class ParkingsController extends \BaseController
 
         $bloc2 = Parking::getTabBordBlock2($parkId, $typesBlock2);
 
+        Log::debug('BLOC 2 :');
+        Log::debug(print_r($bloc2, true));
+
         // GLOBAL PAR PLAN PAR TYPE #####################
         $temp = [];
         foreach ($bloc2[1] AS $ligne) {
@@ -234,14 +237,72 @@ class ParkingsController extends \BaseController
         $retour['b2'] = $temp;
 
         // GLOBAL PAR PLANS SANS FILTRE SUR LES TYPES DE PLACES
+        foreach ($bloc2[0] AS $ligne) {
+            switch ($ligne->type) {
+                // places libres
+                case '0':
+                    $retour['b2'][$ligne->plan]['TOTAL']['libre'] = $ligne->nb;
+                    break;
+                // places occupés
+                case '1':
+                    $retour['b2'][$ligne->plan]['TOTAL']['occupee'] = $ligne->nb;
+                    break;
+                // somme totale
+                case '2':
+                    $retour['b2'][$ligne->plan]['TOTAL']['total'] = $ligne->nb;
+                    $retour['b2'][$ligne->plan]['TOTAL']['libelle'] = Lang::get('supervision.tab_bord.global_niveau');
+                    break;
+            }
+        }
 
         // -------------------------------------------------------------------------------------------------------------
         // BLOCK 3 - ZONES
         // -------------------------------------------------------------------------------------------------------------
 
-        // GLOBAL PAR ZONES
+        $bloc3 = Parking::getTabBordBlock3($parkId, $typesBlock3);
 
-        // GLOBAL PAR ZONES PAR TYPE
+        Log::debug('BLOC 3 :');
+        Log::debug(print_r($bloc3, true));
+
+        // GLOBAL PAR PLAN PAR TYPE #####################
+        $temp = [];
+        foreach ($bloc3[1] AS $ligne) {
+            switch ($ligne->type) {
+                // places libres
+                case '0':
+                    $temp[$ligne->zone][$ligne->type_place_id]['libre'] = $ligne->nb;
+                    break;
+                // places occupés
+                case '1':
+                    $temp[$ligne->zone][$ligne->type_place_id]['occupee'] = $ligne->nb;
+                    break;
+                // somme totale
+                case '2':
+                    $temp[$ligne->zone][$ligne->type_place_id]['total'] = $ligne->nb;
+                    $temp[$ligne->zone][$ligne->type_place_id]['libelle'] = $ligne->libelle;
+                    break;
+            }
+        }
+        $retour['b3'] = $temp;
+
+        // GLOBAL PAR PLANS SANS FILTRE SUR LES TYPES DE PLACES
+        foreach ($bloc3[0] AS $ligne) {
+            switch ($ligne->type) {
+                // places libres
+                case '0':
+                    $retour['b3'][$ligne->zone]['TOTAL']['libre'] = $ligne->nb;
+                    break;
+                // places occupés
+                case '1':
+                    $retour['b3'][$ligne->zone]['TOTAL']['occupee'] = $ligne->nb;
+                    break;
+                // somme totale
+                case '2':
+                    $retour['b3'][$ligne->zone]['TOTAL']['total'] = $ligne->nb;
+                    $retour['b3'][$ligne->zone]['TOTAL']['libelle'] = Lang::get('supervision.tab_bord.global_zone');
+                    break;
+            }
+        }
 
 
         return $retour;
@@ -251,7 +312,8 @@ class ParkingsController extends \BaseController
      * Tous les parkings du user
      * @return mixed
      */
-    public function all(){
+    public function all()
+    {
         return json_encode(
             Auth::user()
                 ->parkings()
