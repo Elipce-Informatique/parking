@@ -32,7 +32,7 @@ class ParkingsController extends \BaseController
      */
     public function store()
     {
-        //
+        return json_encode(Parking::createParking(Input::all()));
     }
 
 
@@ -44,7 +44,9 @@ class ParkingsController extends \BaseController
      */
     public function show($id)
     {
-        return Parking::find($id);
+        return json_encode(Parking::with('utilisateurs')
+            ->where('parking.id', '=', $id)
+            ->first());
     }
 
 
@@ -68,7 +70,7 @@ class ParkingsController extends \BaseController
      */
     public function update($id)
     {
-        //
+        return json_encode(Parking::updateParking($id));
     }
 
 
@@ -80,7 +82,16 @@ class ParkingsController extends \BaseController
      */
     public function destroy($id)
     {
-        //
+        // Suppression parking
+        try {
+            Parking::find($id)->delete();
+            $retour = true;
+        }
+        catch (Exception $e) {
+            Log::error("Erreur suppression parking $id ".$e->getMessage());
+            $retour = false;
+        }
+        return json_encode($retour);
     }
 
     /**
@@ -377,7 +388,7 @@ class ParkingsController extends \BaseController
      */
     public function all()
     {
-        return json_encode(
+        $parks =
             Auth::user()
                 ->parkings()
                 ->select([
@@ -386,7 +397,24 @@ class ParkingsController extends \BaseController
                     'parking.description',
                     'parking.ip',
                     'parking.v4_id'])
-                ->get());
+                ->get();
+
+        return json_encode([
+            'parkings' => $parks,
+            'users' => Utilisateur::orderBy('nom')->orderBy('prenom')->get()
+        ]);
+    }
+
+    /**
+     * Vérifie l'unicité du libellé parking
+     * @param $libelle : parking.libelle
+     * @param string $id : ID en mode edition
+     * @return string
+     */
+    public function verifLibelle($libelle, $id = '')
+    {
+
+        return json_encode(Parking::isLibelleExists($libelle, $id));
     }
 
 

@@ -388,11 +388,11 @@ var storeNiveau = Reflux.createStore({
      * @param e: Object {name: "email", value: "yann.pltv@gmail.com", form: DOMNode}
      */
     onForm_field_changed: function (e) {
-        console.log('FIELD CHANGE %o',e);
+        //console.log('FIELD CHANGE %o',e);
         var data = {};
         // MAJ du state STORE
         data[e.name] = e.value;
-        console.log('data %o',data);
+        //console.log('data %o',data);
         this.stateLocal.detailNiveau = _.extend(this.stateLocal.detailNiveau, data);
 
         // Si on est sur une combo on trigger pour la selectedValue

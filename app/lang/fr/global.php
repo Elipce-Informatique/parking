@@ -53,6 +53,7 @@ Voulez-vous vraiment quitter cette page ?',
     'validation_erreur_time' => 'Format incorrect (HH:MM:SS)',
     'form_incorrect' => 'Formulaire invalide',
     'champ_obligatoire' => 'Champ obligatoire',
+    'validation_erreur_ip' => "L'adresse IP saisie n'est pas valide XXX.XXX.XXX.XXX",
 
 
     // BOUTONS

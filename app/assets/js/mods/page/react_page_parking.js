@@ -15,7 +15,7 @@ var AuthentMixins = require('../mixins/component_access');
 var MixinGestMod = require('../mixins/gestion_modif');
 // HELPERS
 var pageState = require('../helpers/page_helper').pageState;
-var form_data_helper  = require('../helpers/form_data_helper');
+var form_data_helper = require('../helpers/form_data_helper');
 
 /**
  * Page parking
@@ -36,9 +36,10 @@ var PageParking = React.createClass({
             etat: pageState.liste,
             idParking: 0,
             listeParkings: [],// Tableau de jours prédéfinis
-            detailParking : {}, // Objet contenant les infos du jour prédéfini en cours de sélection
-            validationLibelle : {}, // Etat de validation du libelle (vert ou rouge),
-            sousTitre : '' // sous titre du bandeau
+            detailParking: {}, // Objet contenant les infos du jour prédéfini en cours de sélection
+            validationLibelle: {}, // Etat de validation du libelle (vert ou rouge),
+            sousTitre: '', // sous titre du bandeau
+            users: [] // Tous les utilisateurs
         };
     },
     componentDidMount: function () {
@@ -54,7 +55,17 @@ var PageParking = React.createClass({
     onRetour: function () {
         this.setState({etat: pageState.liste, idParking: 0});
         // Maj liste des jours prédéfinis
-        Actions.jours.display_all_parkings();
+        Actions.parking.display_all_parkings();
+    },
+
+    /**
+     * Affichage du détail du parking
+     * @param e
+     */
+    displayParking: function (e) {
+        // Ligne du tableau
+        var id = $(e.currentTarget).data('id');
+        Actions.parking.display_detail_parking(id);
     },
 
     /**
@@ -66,6 +77,7 @@ var PageParking = React.createClass({
         var react;
         var mode = 1;
 
+        //console.log('render page: %o', this.state.users);
         // Affichage en fonction de l'état de la page
         switch (this.state.etat) {
             case pageState.visu:
@@ -79,10 +91,13 @@ var PageParking = React.createClass({
                             sousTitre={this.state.sousTitre}/>
                         <Form
                             editable={false}
-                            detailNiveau={this.state.detailNiveau}
+                            detailParking={this.state.detailParking}
                             idNiveau={this.state.idNiveau}
                             parkings={this.state.parkings}
-                            nbUpload={this.state.nbUpload}/>
+                            nbUpload={this.state.nbUpload}
+                            users={this.state.users}
+                            usersSelected={this.state.detailParking.utilisateurs}
+                        />
                     </div>;
                 break;
             case pageState.creation:
@@ -97,11 +112,13 @@ var PageParking = React.createClass({
                             titre={Lang.get('administration_parking.parking.titre')}/>
                         <Form
                             editable={true}
-                            detailNiveau={this.state.detailNiveau}
+                            detailParking={this.state.detailParking}
                             idNiveau={this.state.idNiveau}
                             validationLibelle={this.state.validationLibelle}
                             parkings={this.state.parkings}
-                            nbUpload={this.state.nbUpload}/>
+                            nbUpload={this.state.nbUpload}
+                            users={this.state.users}
+                            usersSelected={this.state.detailParking.utilisateurs}/>
                     </div>;
                 break;
             case pageState.edition:
@@ -116,11 +133,13 @@ var PageParking = React.createClass({
                             sousTitre={this.state.sousTitre}/>
                         <Form
                             editable={true}
-                            detailNiveau={this.state.detailNiveau}
+                            detailParking={this.state.detailParking}
                             idNiveau={this.state.idNiveau}
                             validationLibelle={this.state.validationLibelle}
                             parkings={this.state.parkings}
-                            nbUpload={this.state.nbUpload}/>
+                            nbUpload={this.state.nbUpload}
+                            users={this.state.users}
+                            usersSelected={this.state.detailParking.utilisateurs}/>
                     </div>;
                 break;
             default:
@@ -179,14 +198,16 @@ var storeParking = Reflux.createStore({
         etat: pageState.liste,
         listeParkings: [],
         detailParking: {},
-        validationLibelle : {},
-        sousTitre : ''
+        validationLibelle: {},
+        sousTitre: '',
+        users: [],
+        usersSelected: []
     },
 
     // Initial setup
     init: function () {
         // Register statusUpdate action
-        this.listenToMany(Actions.gestion_parking);
+        this.listenToMany(Actions.parking);
         // Toutes les actions de bandeau et validation
         this.listenToMany(Actions.bandeau);
         this.listenToMany(Actions.validation);
@@ -203,15 +224,25 @@ var storeParking = Reflux.createStore({
             dataType: 'json',
             context: this,
             async: false,
-            success: function (data) {
-                this.stateLocal.listeParkings = _.map(data, function(park){
+            success: function (parkPlusUsers) {
+                // Parkings
+                var data = parkPlusUsers.parkings;
+                this.stateLocal.listeParkings = _.map(data, function (park) {
                     return _.omit(park, 'pivot')
                 }, this);
-                //console.log(data);
+                // Utilisateurs
+                this.stateLocal.users = _.map(parkPlusUsers.users, function (user) {
+                    // Données du niveau qui nous intéressent
+                    return {
+                        label: user.nom+' '+user.prenom,
+                        value: user.id.toString()
+                    };
+                }.bind(this));
             },
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
                 this.stateLocal.listeParkings = [];
+                this.stateLocal.users = [];
             }
         });
         return this.stateLocal;
@@ -232,16 +263,26 @@ var storeParking = Reflux.createStore({
             dataType: 'json',
             context: this,
             async: true,
-            success: function (data) {
-                // Tous les parkings en BDD
-                this.stateLocal.listeParkings = _.map(data, function(park){
+            success: function (parkPlusUsers) {
+                // Parkings
+                var data = parkPlusUsers.parkings;
+                this.stateLocal.listeParkings = _.map(data, function (park) {
                     return _.omit(park, 'pivot')
                 }, this);
+                // Utilisateurs
+                this.stateLocal.users = _.map(parkPlusUsers.users, function (user) {
+                    // Données du niveau qui nous intéressent
+                    return {
+                        label: user.nom+' '+user.prenom,
+                        value: user.id.toString()
+                    };
+                }.bind(this));
                 this.trigger(this.stateLocal);
             },
             error: function (xhr, status, err) {
                 console.error(status, err.toString());
                 this.stateLocal.listeParkings = [];
+                this.stateLocal.users = [];
             }
         });
     },
@@ -261,6 +302,10 @@ var storeParking = Reflux.createStore({
             context: this,
             async: true,
             success: function (data) {
+                // ID des utilsateurs associés au parking
+                data.utilisateurs = _.map(data.utilisateurs, function(user){
+                   return user.id.toString();
+                });
                 // Détail du jour + id
                 this.stateLocal.detailParking = data;
                 // Maj libelle + id
@@ -283,9 +328,9 @@ var storeParking = Reflux.createStore({
             etat: pageState.creation,
             detailParking: {
                 libelle: '',
-                ouverture: '',
-                fermeture: '',
-                couleur: ''
+                description: '',
+                ip: '',
+                v4_id: ''
             }
         };
         this.trigger(this.stateLocal);
@@ -307,21 +352,26 @@ var storeParking = Reflux.createStore({
      * onChange de n'importe quel élément du FORM
      * @param e: evt
      */
-    onForm_field_changed: function(e){
+    onForm_field_changed: function (e) {
         var data = {};
         // MAJ du state STORE
         data[e.name] = e.value
         this.stateLocal.detailParking = _.extend(this.stateLocal.detailParking, data);
+
+        // Si on est sur une combo on trigger pour les selectedValue
+        if(e.name = 'utilisateurs'){
+            this.trigger(this.stateLocal);
+        }
     },
 
     /**
      * Vérifications "Métiers" du formulaire sur onBlur de n'imoprte quel champ du FORM
      * @param data : Object {name: "email", value: "yann.pltv@gmail.com", form: DOMNode}
      */
-    onForm_field_verif: function(data){
+    onForm_field_verif: function (data) {
 
         // Le champ BLUR est le champ libelle
-        if(data.name == 'libelle'){
+        if (data.name == 'libelle') {
             //  Test doublon du libellé
             this.stateLocal.validationLibelle = this.libelleChange(data.value, this.stateLocal.idParking);
             this.trigger(this.stateLocal);
@@ -332,32 +382,34 @@ var storeParking = Reflux.createStore({
     /**
      * Vérification de l'unicité du libelle en BDD
      * @param value: valeur du champ libelle
-     * @param id: ID jour_calendrier ou 0 si mode création
+     * @param id: ID parking ou 0 si mode création
      * @returns {{}}
      */
-    libelleChange: function(value, id){
-        /* Variable de retour */
+    libelleChange: function (value, id) {
+        // Variable de retour
         var retour = {};
 
-        /* libelle  non vide et non identique au libellé de départ */
-        if(value.length>0 && value != this.stateLocal.sousTitre){
+        // libelle  non vide et non identique au libellé de départ
+        if (value.length > 0 && value != this.stateLocal.sousTitre) {
 
             // URL en fonction du mode création ou edtion
-            var finUrl = id === 0 ? '' : '/'+id;
-            
+            var finUrl = id === 0 ? '' : '/' + id;
+
             // AJAX
             $.ajax({
-                url:      BASE_URI + 'calendrier_jours/libelle/'+value +finUrl,
+                url: BASE_URI + 'parking/gestion_parking/libelle/' + value + finUrl,
                 dataType: 'json',
-                context:  this,
+                context: this,
                 async: false,
-                success:  function (bExist) {
+                success: function (bExist) {
                     // Le libellé existe déjà
-                    if(bExist){
+                    if (bExist) {
                         // Champ libelle erroné
-                        retour['data-valid'] = false;
-                        retour.bsStyle   = 'error';
-                        retour.help = Lang.get('calendrier.jours.libelleExists');
+                        retour = {
+                            'data-valid': false,
+                            bsStyle: 'error',
+                            help: Lang.get('administration_parking.parking.libelleExists')
+                        };
                     }
                 },
 
@@ -376,11 +428,11 @@ var storeParking = Reflux.createStore({
     onSubmit_form: function (e) {
         // Variables
         var url = this.stateLocal.idParking === 0 ? '' : this.stateLocal.idParking;
-        url = BASE_URI + 'calendrier_jours/' + url;
+        url = BASE_URI + 'parking/gestion_parking/' + url;
         var method = this.stateLocal.idParking === 0 ? 'POST' : 'PUT';
 
         // FormData
-        var fData = form_data_helper('form_jours', method);
+        var fData = form_data_helper('form_parking', method);
 
         // Requête
         $.ajax({
@@ -399,24 +451,24 @@ var storeParking = Reflux.createStore({
                     // Mode edition
                     this.stateLocal.etat = pageState.edition;
                     // Mode création Ok
-                    if(tab.obj !== null) {
+                    if (tab.model !== null) {
                         // Maj State local + nouveau libellé
-                        this.stateLocal.idParking = tab.obj.id;
-                        this.stateLocal.detailParking = tab.obj;
-                        this.stateLocal.sousTitre = tab.obj.libelle;
+                        this.stateLocal.idParking = tab.model.id;
+                        this.stateLocal.detailParking = tab.model;
+                        this.stateLocal.sousTitre = tab.model.libelle;
                     }
                     // Mode édition
-                    else{
+                    else {
                         // Nouveau sous titre
                         this.stateLocal.sousTitre = this.stateLocal.detailParking.libelle;
                     }
                     // Maj state
                     this.trigger(this.stateLocal);
                 }
-                // Le jour existe déjà
+                // Libellé existant
                 else if (tab.save == false && tab.errorBdd == false) {
                     // Notification
-                    Actions.notif.error(Lang.get('calendrier.jours.libelleExists'));
+                    Actions.notif.error(Lang.get('administration_parking.parking.libelleExists'));
                 }
                 // Erreur SQL
                 else {
@@ -436,7 +488,7 @@ var storeParking = Reflux.createStore({
      */
     onSupprimer: function () {
         // Variables
-        var url = BASE_URI + 'calendrier_jours/' + this.stateLocal.idParking;
+        var url = BASE_URI + 'parking/gestion_parking/' + this.stateLocal.idParking;
         var method = 'DELETE';
 
         // Requête
@@ -448,14 +500,14 @@ var storeParking = Reflux.createStore({
             data: {'_token': $('#_token').val()},
             success: function (bool) {
                 // suppression OK
-                if(bool) {
+                if (bool) {
                     // Mode liste
-                    this.modeListe();
+                    this.onDisplay_all_parkings();
                     // Notification green
                     Actions.notif.success(Lang.get('global.notif_success'));
                 }
                 // Suppression KO
-                else{
+                else {
                     // Notifictaion erreur
                     Actions.notif.error(Lang.get('global.notif_erreur'));
                 }
