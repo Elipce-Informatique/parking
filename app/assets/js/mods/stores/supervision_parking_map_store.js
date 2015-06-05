@@ -106,11 +106,12 @@ var store = Reflux.createStore({
      * @param data
      */
     onRefresh_places: function (data) {
+
         var ajout = [], suppression = [];
         _.each(data, function (p, i) {
             // C'EST UN AJOUT
             if (p.etat_occupation && p.etat_occupation.is_occupe == "1") {
-                ajout.push(mapHelper.createPlaceFromData(p, this._inst.types_places));
+                ajout.push(placeHelper.createPlaceFromData(p, this._inst.types_places));
             }
             // C'EST UNE SUPPRESSION
             else {
@@ -132,6 +133,8 @@ var store = Reflux.createStore({
                 data: suppression
             });
         }
+
+        Actions.supervision.tableau_bord_update(this._inst.parkingInfos.id);
 
     },
 

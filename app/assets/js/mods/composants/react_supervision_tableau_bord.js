@@ -21,7 +21,10 @@ var Tooltip = ReactB.Tooltip;
  */
 var TableauBord = React.createClass({
 
+    mixins: [Reflux.ListenerMixin],
+
     propTypes: {
+        parkingId: React.PropTypes.any.isRequired,
         vertical: React.PropTypes.bool
     },
 
@@ -30,24 +33,62 @@ var TableauBord = React.createClass({
     },
 
     getInitialState: function () {
-        return {};
+        // State vide pour éviter les erreurs de références
+        return {
+            'b1': [],
+            'b2': [],
+            'b3': [],
+            'prefs': {
+                'b1': {
+                    'types': [],
+                    'ordre': []
+                },
+                'b2': {
+                    'types': [],
+                    'ordre': []
+                },
+                'b3': {
+                    'types': [],
+                    'ordre': []
+                }
+            },
+            'types': []
+
+        };
     },
 
-    componentDidMount: function () {
-
+    componentWillMount: function () {
+        this.listenTo(store, this.updateState, this.updateState);
     },
 
     shouldComponentUpdate: function (nextProps, nextState) {
         return true;
     },
 
+    componentWillReceiveProps: function (np) {
+        if (np.parkingId != '') {
+            Actions.supervision.tableau_bord_update(np.parkingId);
+        }
+    },
+
+    /**
+     * Retour du store, met à jour le state de la page
+     * @param data : les nouvelles données venant du store
+     */
+    updateState: function (data) {
+        // MAJ data automatique, lifecycle "UPDATE"
+        this.setState(data);
+    },
+
     render: function () {
         var md = this.props.vertical ? 12 : 4;
+
+        console.log('State tableau de bord : %o', this.state);
 
         return (
             <Row className="row_reporting full-height">
                 <Col md={md} className="full-height" key={1}>
-                    <PanelOccupCourante />
+                    <PanelOccupCourante data={this.state.b1} preferences={this.state.prefs.b1} />
                 </Col>
                 <Col md={md} className="full-height" key={2}>
                     <PanelOccupNiveaux />
@@ -62,44 +103,22 @@ var TableauBord = React.createClass({
 
 /**
  * Created by yann on 15/04/2015.
- * TODO tout traduire et lier le state aux données réelles (ajouter total etc...)
+ * TODO tout refaire avec les bonnes données
  * @param name : nom a afficher dans le composant
  */
 var PanelOccupCourante = React.createClass({
 
-    propTypes: {},
+    propTypes: {
+        data: React.PropTypes.array.isRequired,
+        preferences: React.PropTypes.object.isRequired
+    },
 
     getDefaultProps: function () {
         return {};
     },
 
     getInitialState: function () {
-        return {
-            dataOccupationPark: [
-                {
-                    bsStyle: 'danger',
-                    label: '%(now)s',
-                    now: 683
-                },
-                {
-                    bsStyle: 'success',
-                    label: '%(now)s',
-                    now: 817
-                }
-            ],
-            dataOccupationNiveau: [
-                {
-                    bsStyle: 'danger',
-                    label: '%(now)s',
-                    now: 125
-                },
-                {
-                    bsStyle: 'success',
-                    label: '%(now)s',
-                    now: 375
-                }
-            ]
-        };
+        return {};
     },
 
     componentDidMount: function () {
@@ -113,15 +132,47 @@ var PanelOccupCourante = React.createClass({
     ,
 
     render: function () {
+        console.log('DATA parking : %o', this.props.data);
+        if (_.keys(this.props.data).length > 0) {
+            // Séparation des données
+            var data = this.props.data;
+            var total = data['TOTAL'];
+            var detail = _.omit(data, 'TOTAL');
+
+            console.log('TOTAL parking : %o', total);
+            console.log('DETAIL parking : %o', detail);
+
+            // Génération de la barre de total
+            var dataTotal = [
+                {
+                    bsStyle: 'danger',
+                    label: '%(now)s',
+                    now: total.occupee
+                },
+                {
+                    bsStyle: 'success',
+                    label: '%(now)s',
+                    now: total.libre
+                }
+            ];
+            var totalBar = (
+                <StatBarWrapper
+                    libelle={total.libelle + ' (' + total.total + ')'}
+                    tooltip={(total.occupee / total.total * 100).toFixed(2) + "% de places occupées"}
+                    key='total'>
+                    <StackedStatBar
+                        data={dataTotal}
+                        max={total.total} />
+                </StatBarWrapper>
+            );
+        }
+
         return (
             <Panel style={{height: '115px'}}>
-                <StatBarWrapper libelle="Occupation du parking" tooltip="45.5% de places occupées" key={1}>
-                    <StackedStatBar data={this.state.dataOccupationPark} max={1500} />
-                </StatBarWrapper>
-                <StatBarWrapper libelle="Occupation du niveau" tooltip="25% de places occupées" key={2}>
-                    <StackedStatBar data={this.state.dataOccupationNiveau} max={500} />
-                </StatBarWrapper>
-            </Panel>);
+            {totalBar}
+
+            </Panel>
+        );
     }
 });
 
@@ -141,59 +192,7 @@ var PanelOccupNiveaux = React.createClass({
 
     getInitialState: function () {
         return {
-            dataOccupation: [
-                {
-                    libelle: 'Niveau 1',
-                    taux: 75,
-                    max: 500,
-                    data: [
-                        {
-                            bsStyle: 'danger',
-                            label: '%(now)s',
-                            now: 333
-                        },
-                        {
-                            bsStyle: 'success',
-                            label: '%(now)s',
-                            now: 167
-                        }
-                    ]
-                },
-                {
-                    libelle: 'Niveau 2',
-                    taux: 45,
-                    max: 500,
-                    data: [
-                        {
-                            bsStyle: 'danger',
-                            label: '%(now)s',
-                            now: 225
-                        },
-                        {
-                            bsStyle: 'success',
-                            label: '%(now)s',
-                            now: 275
-                        }
-                    ]
-                },
-                {
-                    libelle: 'Niveau 3',
-                    taux: 25,
-                    max: 500,
-                    data: [
-                        {
-                            bsStyle: 'danger',
-                            label: '%(now)s',
-                            now: 125
-                        },
-                        {
-                            bsStyle: 'success',
-                            label: '%(now)s',
-                            now: 375
-                        }
-                    ]
-                }
-            ]
+            dataOccupation: []
         };
     },
 
@@ -239,61 +238,8 @@ var PanelOccupZones = React.createClass({
 
     getInitialState: function () {
         return {
-            dataOccupation: [
-                {
-                    libelle: 'Zone par défaut 1',
-                    taux: 75,
-                    max: 500,
-                    data: [
-                        {
-                            bsStyle: 'danger',
-                            label: '%(now)s',
-                            now: 333
-                        },
-                        {
-                            bsStyle: 'success',
-                            label: '%(now)s',
-                            now: 167
-                        }
-                    ]
-                },
-                {
-                    libelle: 'Zone par défaut 2',
-                    taux: 45,
-                    max: 500,
-                    data: [
-                        {
-                            bsStyle: 'danger',
-                            label: '%(now)s',
-                            now: 225
-                        },
-                        {
-                            bsStyle: 'success',
-                            label: '%(now)s',
-                            now: 275
-                        }
-                    ]
-                },
-                {
-                    libelle: 'Zone par défaut 3',
-                    taux: 25,
-                    max: 500,
-                    data: [
-                        {
-                            bsStyle: 'danger',
-                            label: '%(now)s',
-                            now: 125
-                        },
-                        {
-                            bsStyle: 'success',
-                            label: '%(now)s',
-                            now: 375
-                        }
-                    ]
-                }
-            ]
+            dataOccupation: []
         };
-        ;
     },
 
     componentDidMount: function () {
@@ -486,3 +432,38 @@ var StatBarWrapper = React.createClass({
 
 
 module.exports = TableauBord;
+
+
+var store = Reflux.createStore({
+    getInitialState: function () {
+        return {};
+    },
+    // Initial setup
+    init: function () {
+        // Register statusUpdate action
+        this.listenTo(Actions.supervision.tableau_bord_update, this.updateTableauBord);
+
+    },
+    /**
+     * Récupère les donnée AJAX du tabeau de bord
+     */
+    updateTableauBord: function (parkingId) {
+        var url = BASE_URI + 'parking/' + parkingId + '/tableau_bord';
+        console.log('url = %o', url);
+        $.ajax({
+            type: 'GET',
+            url: url,
+            context: this,
+            global: false
+        })
+            .done(function (retour) {
+                // On success use return data here
+                this.trigger(retour);
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
+    }
+});

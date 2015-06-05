@@ -139,12 +139,11 @@ var Page = React.createClass({
             />
         }
 
-
         return (
             <Col md={12} className="full-height flex-wrapper">
                 <Row id="row_reporting" className="flex-header" key={1}>
                     <Col id="zone_reporting" className="full-height" md={12}>
-                        <TableauBord />
+                        <TableauBord parkingId={this.state.parkingId} />
                     </Col>
                 </Row>
 

@@ -215,6 +215,10 @@ require('sweetalert');
         "display_detail_parking", // affiche le détail du parking
     ]);
 
+    global.Actions.supervision = Reflux.createActions([
+        "tableau_bord_update", // affiche tous les parkings
+    ]);
+
 })(window);
 
 
