@@ -142,6 +142,7 @@ var PanelOccupCourante = React.createClass({
             console.log('TOTAL parking : %o', total);
             console.log('DETAIL parking : %o', detail);
 
+            // ---------------------------------
             // Génération de la barre de total
             var dataTotal = [
                 {
@@ -158,19 +159,47 @@ var PanelOccupCourante = React.createClass({
             var totalBar = (
                 <StatBarWrapper
                     libelle={total.libelle + ' (' + total.total + ')'}
-                    tooltip={(total.occupee / total.total * 100).toFixed(2) + "% de places occupées"}
+                    tooltip={(total.occupee / total.total * 100).toFixed(2) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
                     key='total'>
                     <StackedStatBar
                         data={dataTotal}
                         max={total.total} />
                 </StatBarWrapper>
             );
+
+            // ---------------------------------
+            // Génération des barres de détail
+            var detailBars = _.map(detail, function (d) {
+                var dataDetail = [
+                    {
+                        bsStyle: 'danger',
+                        label: '%(now)s',
+                        now: d.occupee
+                    },
+                    {
+                        bsStyle: 'success',
+                        label: '%(now)s',
+                        now: d.libre
+                    }
+                ];
+
+                return (
+                    <StatBarWrapper
+                        libelle={d.libelle + ' (' + d.total + ')'}
+                        tooltip={(d.occupee / d.total * 100).toFixed(2) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
+                        key={'detail-' + d.libelle}>
+                        <StackedStatBar
+                            data={dataDetail}
+                            max={d.total} />
+                    </StatBarWrapper>);
+            });
+
         }
 
         return (
             <Panel style={{height: '115px'}}>
             {totalBar}
-
+            {detailBars}
             </Panel>
         );
     }

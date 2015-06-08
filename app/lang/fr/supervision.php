@@ -20,7 +20,7 @@ return array(
     'tab_bord' => [
         'global_parking' => 'Global parking',
         'global_niveau' => 'Global niveau',
-        'global_zone' => 'Global zone'
-
+        'global_zone' => 'Global zone',
+        'tooltip_occupation' => 'de places occupées',
     ]
 );

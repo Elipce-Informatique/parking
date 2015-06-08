@@ -193,16 +193,17 @@ class ParkingsController extends \BaseController
             switch ($ligne->type) {
                 // places libres
                 case '0':
-                    $temp[$ligne->type_place_id]['libre'] = $ligne->nb;
+                    $temp[$ligne->ordre]['libre'] = $ligne->nb;
                     break;
                 // places occupés
                 case '1':
-                    $temp[$ligne->type_place_id]['occupee'] = $ligne->nb;
+                    $temp[$ligne->ordre]['occupee'] = $ligne->nb;
                     break;
                 // somme totale
                 case '2':
-                    $temp[$ligne->type_place_id]['total'] = $ligne->nb;
-                    $temp[$ligne->type_place_id]['libelle'] = $ligne->libelle;
+                    $temp[$ligne->ordre]['total'] = $ligne->nb;
+                    $temp[$ligne->ordre]['libelle'] = $ligne->libelle;
+                    $temp[$ligne->ordre]['type_place_id'] = $ligne->type_place_id;
                     break;
             }
         }
@@ -243,16 +244,17 @@ class ParkingsController extends \BaseController
             switch ($ligne->type) {
                 // places libres
                 case '0':
-                    $temp[$ligne->plan][$ligne->type_place_id]['libre'] = $ligne->nb;
+                    $temp[$ligne->plan][$ligne->ordre]['libre'] = $ligne->nb;
                     break;
                 // places occupés
                 case '1':
-                    $temp[$ligne->plan][$ligne->type_place_id]['occupee'] = $ligne->nb;
+                    $temp[$ligne->plan][$ligne->ordre]['occupee'] = $ligne->nb;
                     break;
                 // somme totale
                 case '2':
-                    $temp[$ligne->plan][$ligne->type_place_id]['total'] = $ligne->nb;
-                    $temp[$ligne->plan][$ligne->type_place_id]['libelle'] = $ligne->libelle;
+                    $temp[$ligne->plan][$ligne->ordre]['total'] = $ligne->nb;
+                    $temp[$ligne->plan][$ligne->ordre]['libelle'] = $ligne->libelle;
+                    $temp[$ligne->plan][$ligne->ordre]['type_place_id'] = $ligne->type_place_id;
                     break;
             }
         }
@@ -289,16 +291,17 @@ class ParkingsController extends \BaseController
             switch ($ligne->type) {
                 // places libres
                 case '0':
-                    $temp[$ligne->zone][$ligne->type_place_id]['libre'] = $ligne->nb;
+                    $temp[$ligne->zone][$ligne->ordre]['libre'] = $ligne->nb;
                     break;
                 // places occupés
                 case '1':
-                    $temp[$ligne->zone][$ligne->type_place_id]['occupee'] = $ligne->nb;
+                    $temp[$ligne->zone][$ligne->ordre]['occupee'] = $ligne->nb;
                     break;
                 // somme totale
                 case '2':
-                    $temp[$ligne->zone][$ligne->type_place_id]['total'] = $ligne->nb;
-                    $temp[$ligne->zone][$ligne->type_place_id]['libelle'] = $ligne->libelle;
+                    $temp[$ligne->zone][$ligne->ordre]['total'] = $ligne->nb;
+                    $temp[$ligne->zone][$ligne->ordre]['libelle'] = $ligne->libelle;
+                    $temp[$ligne->zone][$ligne->ordre]['type_place_id'] = $ligne->type_place_id;
                     break;
             }
         }
