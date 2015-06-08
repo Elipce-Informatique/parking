@@ -91,10 +91,10 @@ var TableauBord = React.createClass({
                     <PanelOccupCourante data={this.state.b1} preferences={this.state.prefs.b1} />
                 </Col>
                 <Col md={md} className="full-height" key={2}>
-                    <PanelOccupNiveaux />
+                    <PanelOccupNiveaux data={this.state.b2} preferences={this.state.prefs.b2}/>
                 </Col>
                 <Col md={md} className="full-height" key={3}>
-                    <PanelOccupZones />
+                    <PanelOccupZones data={this.state.b3} preferences={this.state.prefs.b3}/>
                 </Col>
             </Row>
         );
@@ -109,7 +109,7 @@ var TableauBord = React.createClass({
 var PanelOccupCourante = React.createClass({
 
     propTypes: {
-        data: React.PropTypes.array.isRequired,
+        data: React.PropTypes.any.isRequired,
         preferences: React.PropTypes.object.isRequired
     },
 
@@ -132,16 +132,17 @@ var PanelOccupCourante = React.createClass({
     ,
 
     render: function () {
-        console.log('DATA parking : %o', this.props.data);
+
+        var totalBar = [];
+        var detailBars = [];
+        // DATA dispo
         if (_.keys(this.props.data).length > 0) {
             // Séparation des données
             var data = this.props.data;
             var total = data['TOTAL'];
             var detail = _.omit(data, 'TOTAL');
 
-            console.log('TOTAL parking : %o', total);
-            console.log('DETAIL parking : %o', detail);
-
+            // ---------------------------------
             // Génération de la barre de total
             var dataTotal = [
                 {
@@ -155,22 +156,50 @@ var PanelOccupCourante = React.createClass({
                     now: total.libre
                 }
             ];
-            var totalBar = (
+            totalBar = (
                 <StatBarWrapper
                     libelle={total.libelle + ' (' + total.total + ')'}
-                    tooltip={(total.occupee / total.total * 100).toFixed(2) + "% de places occupées"}
+                    tooltip={(total.occupee / total.total * 100).toFixed(2) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
                     key='total'>
                     <StackedStatBar
                         data={dataTotal}
                         max={total.total} />
                 </StatBarWrapper>
             );
+
+            // ---------------------------------
+            // Génération des barres de détail
+            detailBars = _.map(detail, function (d) {
+                var dataDetail = [
+                    {
+                        bsStyle: 'danger',
+                        label: '%(now)s',
+                        now: d.occupee
+                    },
+                    {
+                        bsStyle: 'success',
+                        label: '%(now)s',
+                        now: d.libre
+                    }
+                ];
+
+                return (
+                    <StatBarWrapper
+                        libelle={d.libelle + ' (' + d.total + ')'}
+                        tooltip={(d.occupee / d.total * 100).toFixed(2) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
+                        key={'detail-' + d.libelle}>
+                        <StackedStatBar
+                            data={dataDetail}
+                            max={d.total} />
+                    </StatBarWrapper>);
+            });
+
         }
 
         return (
             <Panel style={{height: '115px'}}>
             {totalBar}
-
+            {detailBars}
             </Panel>
         );
     }
@@ -184,7 +213,10 @@ var PanelOccupCourante = React.createClass({
  */
 var PanelOccupNiveaux = React.createClass({
 
-    propTypes: {},
+    propTypes: {
+        data: React.PropTypes.any.isRequired,
+        preferences: React.PropTypes.object.isRequired
+    },
 
     getDefaultProps: function () {
         return {};
@@ -207,17 +239,11 @@ var PanelOccupNiveaux = React.createClass({
     ,
 
     render: function () {
-        var bars = [];
-        bars = _.map(this.state.dataOccupation, function (d, i) {
-            return (
-                <StatBarWrapper libelle={d.libelle} tooltip={d.taux + "% de places occupées"} key={i}>
-                    <StackedStatBar data={d.data} max={d.max} />
-                </StatBarWrapper>
-            );
-        });
+        var bars = generateBarsFromData(this.props.data);
+
         return (
             <Panel style={{height: '115px'}}>
-            {bars}
+                {bars}
             </Panel>);
     }
 });
@@ -230,7 +256,10 @@ var PanelOccupNiveaux = React.createClass({
  */
 var PanelOccupZones = React.createClass({
 
-    propTypes: {},
+    propTypes: {
+        data: React.PropTypes.any.isRequired,
+        preferences: React.PropTypes.object.isRequired
+    },
 
     getDefaultProps: function () {
         return {};
@@ -251,14 +280,8 @@ var PanelOccupZones = React.createClass({
     },
 
     render: function () {
-        var bars = [];
-        bars = _.map(this.state.dataOccupation, function (d, i) {
-            return (
-                <StatBarWrapper libelle={d.libelle} tooltip={d.taux + "% de places occupées"}  key={i}>
-                    <StackedStatBar data={d.data} max={d.max} />
-                </StatBarWrapper>
-            );
-        });
+        var bars = generateBarsFromData(this.props.data);
+
         return (
             <Panel style={{height: '115px'}}>
                 {bars}
@@ -430,6 +453,81 @@ var StatBarWrapper = React.createClass({
     }
 });
 
+/**
+ * Génère les barres des blocs 2 et 3 (groupés par plan et zone)
+ *
+ * @param dataBars
+ * @returns {Array}
+ */
+function generateBarsFromData(dataBars) {
+    var bars = [];
+    // DATA dispos
+    if (_.keys(dataBars).length > 0) {
+
+        // PARCOURT DES PLANS
+        _.each(dataBars, function (plan, libelle) {
+
+            // Séparation des données
+            var data = plan;
+            var total = data['TOTAL'];
+            var detail = _.omit(data, 'TOTAL');
+
+            // ---------------------------------
+            // Génération de la barre de total
+            var dataTotal = [
+                {
+                    bsStyle: 'danger',
+                    label: '%(now)s',
+                    now: total.occupee
+                },
+                {
+                    bsStyle: 'success',
+                    label: '%(now)s',
+                    now: total.libre
+                }
+            ];
+            bars.push(
+                <StatBarWrapper
+                    libelle={total.libelle + ' ' + libelle + ' (' + total.total + ')'}
+                    tooltip={(total.occupee / total.total * 100).toFixed(2) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
+                    key={'total' + libelle}>
+                    <StackedStatBar
+                        data={dataTotal}
+                        max={total.total} />
+                </StatBarWrapper>
+            );
+
+            // ---------------------------------
+            // Génération des barres de détail
+            Array.prototype.push.apply(bars, _.map(detail, function (d) {
+                var dataDetail = [
+                    {
+                        bsStyle: 'danger',
+                        label: '%(now)s',
+                        now: d.occupee
+                    },
+                    {
+                        bsStyle: 'success',
+                        label: '%(now)s',
+                        now: d.libre
+                    }
+                ];
+                return (
+                    <StatBarWrapper
+                        libelle={d.libelle + ' (' + d.total + ')'}
+                        tooltip={(d.occupee / d.total * 100).toFixed(2) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
+                        key={'detail-' + libelle + '-' + d.libelle }>
+                        <StackedStatBar
+                            data={dataDetail}
+                            max={d.total} />
+                    </StatBarWrapper>);
+            }));
+
+        });
+    }
+
+    return bars;
+}
 
 module.exports = TableauBord;
 

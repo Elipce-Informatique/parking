@@ -86,9 +86,8 @@ class ParkingsController extends \BaseController
         try {
             Parking::find($id)->delete();
             $retour = true;
-        }
-        catch (Exception $e) {
-            Log::error("Erreur suppression parking $id ".$e->getMessage());
+        } catch (Exception $e) {
+            Log::error("Erreur suppression parking $id " . $e->getMessage());
             $retour = false;
         }
         return json_encode($retour);
@@ -130,9 +129,9 @@ class ParkingsController extends \BaseController
     {
         // FORMAT GLOBAL DES DONNÉES DE RETOUR?
         $retour = [
-            'b1' => [],
-            'b2' => [],
-            'b3' => [],
+            'b1' => array(),
+            'b2' => array(),
+            'b3' => array(),
             'prefs' => [
                 'b1' => [
                     'types' => [],
@@ -147,7 +146,7 @@ class ParkingsController extends \BaseController
                     'ordre' => []
                 ]
             ],
-            'types' => []
+            'types' => [],
         ];
 
         // -------------------------------------------------------------------------------------------------------------
@@ -186,6 +185,7 @@ class ParkingsController extends \BaseController
 
         // GLOBAL PARKING
         $bloc1 = Parking::getTabBordBlock1($parkId, $typesBlock1);
+        $parkingLibelle = $bloc1[0][0]->parking;
 
         // GLOBAL PAR TYPE #####################
         $temp = [];
@@ -193,16 +193,17 @@ class ParkingsController extends \BaseController
             switch ($ligne->type) {
                 // places libres
                 case '0':
-                    $temp[$ligne->type_place_id]['libre'] = $ligne->nb;
+                    $temp[$ligne->ordre]['libre'] = $ligne->nb;
                     break;
                 // places occupés
                 case '1':
-                    $temp[$ligne->type_place_id]['occupee'] = $ligne->nb;
+                    $temp[$ligne->ordre]['occupee'] = $ligne->nb;
                     break;
                 // somme totale
                 case '2':
-                    $temp[$ligne->type_place_id]['total'] = $ligne->nb;
-                    $temp[$ligne->type_place_id]['libelle'] = $ligne->libelle;
+                    $temp[$ligne->ordre]['total'] = $ligne->nb;
+                    $temp[$ligne->ordre]['libelle'] = $ligne->libelle;
+                    $temp[$ligne->ordre]['type_place_id'] = $ligne->type_place_id;
                     break;
             }
         }
@@ -210,7 +211,7 @@ class ParkingsController extends \BaseController
 
         // PARCOURS DES DONNÉES GLOBALES SANS FILTRE SUR LES TYPES #####################
         $temp = [
-            'libelle' => Lang::get('supervision.tab_bord.global_parking')
+            'libelle' => Lang::get('supervision.tab_bord.global') . ' ' . $parkingLibelle
         ];
         foreach ($bloc1[0] AS $ligne) {
             switch ($ligne->type) {
@@ -243,16 +244,17 @@ class ParkingsController extends \BaseController
             switch ($ligne->type) {
                 // places libres
                 case '0':
-                    $temp[$ligne->plan][$ligne->type_place_id]['libre'] = $ligne->nb;
+                    $temp[$ligne->plan][$ligne->ordre]['libre'] = $ligne->nb;
                     break;
                 // places occupés
                 case '1':
-                    $temp[$ligne->plan][$ligne->type_place_id]['occupee'] = $ligne->nb;
+                    $temp[$ligne->plan][$ligne->ordre]['occupee'] = $ligne->nb;
                     break;
                 // somme totale
                 case '2':
-                    $temp[$ligne->plan][$ligne->type_place_id]['total'] = $ligne->nb;
-                    $temp[$ligne->plan][$ligne->type_place_id]['libelle'] = $ligne->libelle;
+                    $temp[$ligne->plan][$ligne->ordre]['total'] = $ligne->nb;
+                    $temp[$ligne->plan][$ligne->ordre]['libelle'] = $ligne->libelle;
+                    $temp[$ligne->plan][$ligne->ordre]['type_place_id'] = $ligne->type_place_id;
                     break;
             }
         }
@@ -272,7 +274,7 @@ class ParkingsController extends \BaseController
                 // somme totale
                 case '2':
                     $retour['b2'][$ligne->plan]['TOTAL']['total'] = $ligne->nb;
-                    $retour['b2'][$ligne->plan]['TOTAL']['libelle'] = Lang::get('supervision.tab_bord.global_niveau');
+                    $retour['b2'][$ligne->plan]['TOTAL']['libelle'] = Lang::get('supervision.tab_bord.global');
                     break;
             }
         }
@@ -289,16 +291,17 @@ class ParkingsController extends \BaseController
             switch ($ligne->type) {
                 // places libres
                 case '0':
-                    $temp[$ligne->zone][$ligne->type_place_id]['libre'] = $ligne->nb;
+                    $temp[$ligne->zone][$ligne->ordre]['libre'] = $ligne->nb;
                     break;
                 // places occupés
                 case '1':
-                    $temp[$ligne->zone][$ligne->type_place_id]['occupee'] = $ligne->nb;
+                    $temp[$ligne->zone][$ligne->ordre]['occupee'] = $ligne->nb;
                     break;
                 // somme totale
                 case '2':
-                    $temp[$ligne->zone][$ligne->type_place_id]['total'] = $ligne->nb;
-                    $temp[$ligne->zone][$ligne->type_place_id]['libelle'] = $ligne->libelle;
+                    $temp[$ligne->zone][$ligne->ordre]['total'] = $ligne->nb;
+                    $temp[$ligne->zone][$ligne->ordre]['libelle'] = $ligne->libelle;
+                    $temp[$ligne->zone][$ligne->ordre]['type_place_id'] = $ligne->type_place_id;
                     break;
             }
         }
@@ -318,7 +321,7 @@ class ParkingsController extends \BaseController
                 // somme totale
                 case '2':
                     $retour['b3'][$ligne->zone]['TOTAL']['total'] = $ligne->nb;
-                    $retour['b3'][$ligne->zone]['TOTAL']['libelle'] = Lang::get('supervision.tab_bord.global_zone');
+                    $retour['b3'][$ligne->zone]['TOTAL']['libelle'] = Lang::get('supervision.tab_bord.global');
                     break;
             }
         }
@@ -327,19 +330,34 @@ class ParkingsController extends \BaseController
         // FILL IN THE BLANKS - RAJOUT DES TYPES DE PLACES NON RENSEIGNÉS DANS LES DONNÉES RÉELLES
         // -------------------------------------------------------------------------------------------------------------
 
-        $types = TypePlace::getAssocIdLibelle();
+        $types = TypePlace::getAssocIdType();
 
         // Retour des types pour les listes à choix multiples
         $retour['types'] = $types;
 
+        Log::debug('B1 : ' . print_r($retour['b1'], true));
+        Log::debug('B2 : ' . print_r($retour['b2'], true));
+        Log::debug('B3 : ' . print_r($retour['b3'], true));
+
+
         // BLOC 1 -------------------------------
         foreach ($typesBlock1 AS $t) {
-            // $t = type de place
-            // LE TYPE N'EST PAS DANS B1, ON LE RAJOUTE VIDE
-            if (!array_key_exists($t, $retour['b1'])) {
-                $retour['b1'][$t] = [
+
+            $inRetour = false;
+            // On recherche le type parmi les résultats
+            foreach ($retour['b1'] AS $stat) {
+                try {
+                    if ($stat['type_place_id'] == $t) {
+                        $inRetour = true;
+                    }
+                } catch (Exception $e) {
+
+                }
+            }
+            if (!$inRetour) {
+                $retour['b1'][$types[$t]->ordre] = [
+                    "libelle" => $types[$t]->libelle,
                     "total" => 0,
-                    "libelle" => $types[$t],
                     "libre" => 0,
                     "occupee" => 0
                 ];
@@ -350,10 +368,21 @@ class ParkingsController extends \BaseController
         foreach ($retour['b2'] AS $libellePlan => $plan) {
             // $t -> id du type de place
             foreach ($typesBlock2 AS $t) {
-                // LE TYPE N'EST PAS DANS B1, ON LE RAJOUTE VIDE
-                if (!array_key_exists($t, $retour['b2'][$libellePlan])) {
-                    $retour['b2'][$libellePlan][$t] = [
-                        "libelle" => $types[$t],
+
+                $inRetour = false;
+                // On recherche le type parmi les résultats
+                foreach ($plan AS $stat) {
+                    try {
+                        if ($stat['type_place_id'] == $t) {
+                            $inRetour = true;
+                        }
+                    } catch (Exception $e) {
+
+                    }
+                }
+                if (!$inRetour) {
+                    $retour['b2'][$libellePlan][$types[$t]->ordre] = [
+                        "libelle" => $types[$t]->libelle,
                         "total" => 0,
                         "libre" => 0,
                         "occupee" => 0
@@ -363,18 +392,32 @@ class ParkingsController extends \BaseController
         }
 
         // BLOC 3 -------------------------------
-        foreach ($retour['b3'] AS $libelleZone => $plan) {
+        foreach ($retour['b3'] AS $libelleZone => $zone) {
+
+            //-------------------------
             // $t -> id du type de place
             foreach ($typesBlock2 AS $t) {
-                // LE TYPE N'EST PAS DANS B1, ON LE RAJOUTE VIDE
-                if (!array_key_exists($t, $retour['b3'][$libelleZone])) {
-                    $retour['b3'][$libelleZone][$t] = [
-                        "libelle" => $types[$t],
+
+                $inRetour = false;
+                // On recherche le type parmi les résultats
+                foreach ($zone AS $stat) {
+                    try {
+                        if ($stat['type_place_id'] == $t) {
+                            $inRetour = true;
+                        }
+                    } catch (Exception $e) {
+
+                    }
+                }
+                if (!$inRetour) {
+                    $retour['b3'][$libelleZone][$types[$t]->ordre] = [
+                        "libelle" => $types[$t]->libelle,
                         "total" => 0,
                         "libre" => 0,
                         "occupee" => 0
                     ];
                 }
+
             }
         }
 
