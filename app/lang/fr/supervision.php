@@ -18,6 +18,7 @@ return array(
         'selection_plan' => 'Veuillez sélectionner un plan à superviser dans le menu de gauche.',
     ],
     'tab_bord' => [
+        'global' => 'Global',
         'global_parking' => 'Global parking',
         'global_niveau' => 'Global niveau',
         'global_zone' => 'Global zone',

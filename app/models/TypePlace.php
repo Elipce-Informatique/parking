@@ -51,5 +51,21 @@ class TypePlace extends BaseModel
         return $retour;
     }
 
+    /**
+     * @return un tableau associatif
+     * [
+     *      id => {type_place}
+     * ]
+     */
+    public static function getAssocIdType()
+    {
+        $temp = TypePlace::all();
+        $retour = [];
+        foreach ($temp As $t) {
+            $retour[$t->id] = $t;
+        }
+        return $retour;
+    }
+
 
 }
