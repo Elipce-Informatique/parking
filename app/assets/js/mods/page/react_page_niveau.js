@@ -168,6 +168,7 @@ var PageNiveau = React.createClass({
     },
 
     render: function () {
+
         var dynamic = this.display();
         return (
             <Col md={12}>
@@ -396,7 +397,7 @@ var storeNiveau = Reflux.createStore({
         this.stateLocal.detailNiveau = _.extend(this.stateLocal.detailNiveau, data);
 
         // Si on est sur une combo on trigger pour la selectedValue
-        if(e.name = 'parking_id'){
+        if(e.name == 'parking_id'){
             this.trigger(this.stateLocal);
         }
     },

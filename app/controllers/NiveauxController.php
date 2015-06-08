@@ -223,7 +223,6 @@ class NiveauxController extends \BaseController
             $modelsPlan = [];
             // Parcours des plans
             foreach ($plansApresModif as $key => $plan) {
-
                 $temp = explode('_new_', $key);
                 // Nouveau plan
                 if (count($temp) > 1) {
@@ -238,18 +237,19 @@ class NiveauxController extends \BaseController
                 else {
                     $idPlan = explode('plan', $key)[1];
                     // Update libelle
-                    $model = Plan::find($idPlan)->libelle = $plan;
-                    $model = Niveau::with('plans')->find($model->id);
+                    $model = Plan::find($idPlan);
+                    $model->libelle = $plan;
+                    $model->save();
+                    $model = Niveau::with('plans')->find($model->id);;
                     // Save file
                     $filePostName = 'url' . $idPlan;
                 }
 
                 // Upload
                 if (Input::hasFile($filePostName)) {
-Log::debug('file post name: '.$filePostName);
                     // Fichier plan
                     $fileCourant = Input::file($filePostName);
-                    Log::debug('load');
+
                     // Extension
                     $extFile = $fileCourant->getClientOriginalExtension();
 
@@ -297,7 +297,6 @@ Log::debug('file post name: '.$filePostName);
                     $model->update($filteredFields);
                     // Assoc niveau et plans
                     $model->plans()->saveMany($modelsPlan);
-                    $retour['model'] = $model;
                 } // Le niveau existe
                 else {
                     $retour['save'] = false;
