@@ -479,6 +479,7 @@ var storeNiveau = Reflux.createStore({
             url = this.stateLocal.idNiveau;
             // Fichiers existants avant modification
             $('[name^="url"]').each(function(elt){
+                //console.log('upload %o', this);
                 fData.append($(this).attr('name'), this.files[0]);
             });
         }

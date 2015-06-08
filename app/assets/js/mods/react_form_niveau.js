@@ -114,7 +114,7 @@ var FormNiveau = React.createClass({
                 plus = this.generatePlusMinus(index, (collection.length + this.props.nbUpload));
                 src = this.props.detailNiveau["url" + plan.id] !== undefined ? {} : {
                     src: DOC_URI + 'plans/' + plan.url
-                };
+            };
                 //console.log(src);
                 return (
                     <Row key={index}>
@@ -143,8 +143,7 @@ var FormNiveau = React.createClass({
                                 alertOn={true}
                                 libelle={Lang.get('administration_parking.niveau.modif_plan')}
                                 attributes={{
-                                    required: true,
-                                    name: "url" + plan.id
+                                    required: true
                                 }}/>
                         </Col>
                     {plus}

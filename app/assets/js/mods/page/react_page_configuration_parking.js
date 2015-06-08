@@ -221,7 +221,7 @@ var store = Reflux.createStore({
 
             var state = {
                 planId: data.id,
-                url: data.url,
+                url: DOC_URI + 'plans/' + data.url,
                 parkingId: data.parkingId
             };
             this.trigger(state);
