@@ -96,7 +96,8 @@ return array(
     'parking' => [
         'texte' => 'Permet de créer, modifier, supprimer des parkings. Un parking peut être composé de plusieurs niveaux.',
         'titre' => "Gestion des parkings",
-        'libelleExists' => "Le nom du parking existe déjà"
+        'libelleExists' => "Le nom du parking existe déjà",
+        'users' => "Utilisateurs associés au parking"
     ]
 );
 

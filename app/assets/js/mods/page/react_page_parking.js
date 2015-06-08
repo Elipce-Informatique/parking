@@ -444,24 +444,25 @@ var storeParking = Reflux.createStore({
             dataType: 'json',
             context: this,
             success: function (tab) {
+                console.log('retour creation %o', tab);
                 // Sauvegarde OK
                 if (tab.save) {
                     // Notification
                     Actions.notif.success(Lang.get('global.notif_success'));
-                    // Mode edition
+                    // On passe en mode edition
                     this.stateLocal.etat = pageState.edition;
-                    // Mode création Ok
-                    if (tab.model !== null) {
-                        // Maj State local + nouveau libellé
-                        this.stateLocal.idParking = tab.model.id;
-                        this.stateLocal.detailParking = tab.model;
-                        this.stateLocal.sousTitre = tab.model.libelle;
-                    }
-                    // Mode édition
-                    else {
-                        // Nouveau sous titre
-                        this.stateLocal.sousTitre = this.stateLocal.detailParking.libelle;
-                    }
+
+
+                    // ID des utilsateurs associés au parking
+                    tab.model.utilisateurs = _.map(tab.model.utilisateurs, function(user){
+                        return user.id.toString();
+                    });
+
+                    // Maj State local + nouveau libellé
+                    this.stateLocal.idParking = tab.model.id;
+                    this.stateLocal.detailParking = tab.model;
+                    this.stateLocal.sousTitre = tab.model.libelle;
+
                     // Maj state
                     this.trigger(this.stateLocal);
                 }
