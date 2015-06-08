@@ -825,7 +825,6 @@ var parkingMap = React.createClass({
     },
 
     /**
-     * TODO : Modal de saisie des informations pour régler le calibre
      * @returns {XML}
      * @private
      */
@@ -834,7 +833,7 @@ var parkingMap = React.createClass({
             return <span/>;
         } else {
             return (
-                <ModalCapteur
+                <ModalCalibre
                     onToggle={this.handleToggle}
                 />
             );

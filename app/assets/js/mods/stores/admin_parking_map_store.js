@@ -144,8 +144,9 @@ var store = Reflux.createStore({
                 }
                 break;
             // -------------------------------------------------------------
-            // CALCUL DU CALIBRE ET SUPPRESSION DE LA FORME
+            // CALCUL DU CALIBRE
             case mapOptions.dessin.calibre:
+                console.log('PASS ICI ');
                 var coords = this.checkCalibre(data);
 
                 // LE SEGMENT N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
@@ -331,10 +332,6 @@ var store = Reflux.createStore({
         };
 
         this.trigger(retour);
-
-        if (parseFloat(data.calibre) != 0) {
-            swal(Lang.get)
-        }
     },
 
     onMode_capteur: function (data) {
