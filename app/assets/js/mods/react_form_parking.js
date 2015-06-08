@@ -36,7 +36,7 @@ var FormParking = React.createClass({
     },
 
     render: function () {
-        console.log('render form detail: %o',this.props.detailParking);
+        //console.log('render form detail: %o',this.props.detailParking);
         return (
             <Form attributes={{id: "form_parking"}}>
                 <Row />
@@ -47,7 +47,7 @@ var FormParking = React.createClass({
                         value: this.props.detailParking.libelle,
                         required: true,
                         wrapperClassName: 'col-md-4',
-                        labelClassName: 'col-md-1 text-right',
+                        labelClassName: 'col-md-2 text-right',
                         groupClassName: 'row'
                     }, this.props.validationLibelle)}
                     editable={this.props.editable}/>
@@ -58,8 +58,8 @@ var FormParking = React.createClass({
                         name: "description",
                         value: this.props.detailParking.description,
                         required: false,
-                        wrapperClassName: 'col-md-2',
-                        labelClassName: 'col-md-1 text-right',
+                        wrapperClassName: 'col-md-4',
+                        labelClassName: 'col-md-2 text-right',
                         groupClassName: 'row'
                     }}
                     editable={this.props.editable}
@@ -72,7 +72,7 @@ var FormParking = React.createClass({
                         value: this.props.detailParking.ip,
                         required: true,
                         wrapperClassName: 'col-md-2',
-                        labelClassName: 'col-md-1 text-right',
+                        labelClassName: 'col-md-2 text-right',
                         groupClassName: 'row',
                         maxLength: 15
                     }}
@@ -103,7 +103,7 @@ var FormParking = React.createClass({
                         value: this.props.detailParking.v4_id,
                         required: true,
                         wrapperClassName: 'col-md-2',
-                        labelClassName: 'col-md-1 text-right',
+                        labelClassName: 'col-md-2 text-right',
                         groupClassName: 'row'
                     }}
                     editable={this.props.editable}
@@ -111,10 +111,10 @@ var FormParking = React.createClass({
 
                 <Select
                     attributes={{
-                        label: Lang.get('administration.utilisateur.titre'),
+                        label: Lang.get('administration_parking.parking.users'),
                         name: "utilisateurs",
                         selectCol: 4,
-                        labelCol: 1,
+                        labelCol: 2,
                         required: false
                     }}
                     data         ={this.props.users}

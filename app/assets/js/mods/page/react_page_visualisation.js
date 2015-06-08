@@ -119,7 +119,6 @@ var Page = React.createClass({
                 showTags={true}/>);
         }
 
-        var url = BASE_URI + 'public/images/beauvais_p3.svg';
         // CRÉATION MAP
         var map = (
             <Jumbotron className="jumbo-selection" bsStyle='warning'>
@@ -234,7 +233,7 @@ var store = Reflux.createStore({
 
             var state = {
                 planId: data.id,
-                url: data.url,
+                url: DOC_URI + 'plans/' + data.url,
                 parkingId: data.parkingId
             };
             this.trigger(state);

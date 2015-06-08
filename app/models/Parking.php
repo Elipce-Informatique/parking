@@ -403,7 +403,7 @@ class Parking extends BaseModel
                 // Le model complet
                 $retour['model'] = Parking::with('utilisateurs')
                     ->where('parking.id', '=', $model->id)
-                    ->get();
+                    ->first();
 
             } catch (Exception $e) {
                 $retour['save'] = false;
@@ -455,16 +455,44 @@ class Parking extends BaseModel
                 // Update parking
                 $model->update($filteredFields);
 
+                // Les users avant insertion
+                $usersBefore = $model->utilisateurs()->get();
+
                 // Association des users
                 if (isset($fields['utilisateurs']) && $fields['utilisateurs'] !== '') {
-                    $model->utilisateurs()->attach(explode('[-]', $fields['utilisateurs']));
+                    // Utilisteurs après validation
+                    $usersAfter = explode('[-]', $fields['utilisateurs']);
+
+                    // Parcours des users avant insertion
+                    foreach ($usersBefore as $user) {
+                        // Utilisateur plus associé
+                        if (!in_array($user->id, $usersAfter)) {
+                            $model->utilisateurs()->detach($user->id);
+                        } // utilisateur déjà associé
+                        else {
+                            $key = array_search($user->id, $usersAfter);
+                            unset($usersAfter[$key]);
+                        }
+                    }
+
+                    // Users à ajouter
+                    if (count($usersAfter) > 0) {
+                        $model->utilisateurs()->attach($usersAfter);
+                    }
+
+                } // Plus d'utilisateurs liés (seulement le connecté)
+                else {
+                    foreach ($usersBefore as $userB) {
+                        $model->utilisateurs()->detach($userB->id);
+                    }
+                    // Utilisateur connecté
+                    $model->utilisateurs()->attach(Auth::user());
                 }
-                // TODO traiter les ajouts / suppressions
 
                 // Le model complet
                 $retour['model'] = Parking::with('utilisateurs')
                     ->where('parking.id', '=', $id)
-                    ->get();
+                    ->first();
             } // Le parking existe
             else {
                 $retour['save'] = false;
