@@ -26,7 +26,7 @@ class NiveauxController extends \BaseController
     }
 
     /**
-     * Store a newly created resource in storage.
+     *  a newly created resource in storage.
      * POST /niveaux
      *
      * @return Response
@@ -246,10 +246,10 @@ class NiveauxController extends \BaseController
 
                 // Upload
                 if (Input::hasFile($filePostName)) {
-
+Log::debug('file post name: '.$filePostName);
                     // Fichier plan
                     $fileCourant = Input::file($filePostName);
-
+                    Log::debug('load');
                     // Extension
                     $extFile = $fileCourant->getClientOriginalExtension();
 
@@ -305,7 +305,7 @@ class NiveauxController extends \BaseController
                 }
             }
         } catch (Exception $e) {
-            Log::error("Erreur store niveau. " . $e->getMessage());
+            Log::error("Erreur update niveau. " . $e->getMessage());
             $retour['errorBdd'] = true;
             $retour['save'] = false;
         }
