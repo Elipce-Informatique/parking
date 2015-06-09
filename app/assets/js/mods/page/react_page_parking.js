@@ -359,7 +359,7 @@ var storeParking = Reflux.createStore({
         this.stateLocal.detailParking = _.extend(this.stateLocal.detailParking, data);
 
         // Si on est sur une combo on trigger pour les selectedValue
-        if(e.name = 'utilisateurs'){
+        if(e.name == 'utilisateurs'){
             this.trigger(this.stateLocal);
         }
     },

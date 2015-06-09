@@ -108,6 +108,7 @@ var FormNiveau = React.createClass({
 
         // Mode edition
         if (this.props.idNiveau !== 0) {
+            //console.log('plans : %o', this.props.detailNiveau.plans);
             // Parcours des plans du niveau
             retour = _.map(this.props.detailNiveau.plans, function (plan, index, collection) {
                 // Plus et moins

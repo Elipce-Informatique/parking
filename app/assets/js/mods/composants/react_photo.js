@@ -77,7 +77,38 @@ var PhotoEditable = React.createClass({
         return state;
     },
 
+    shouldComponentUpdate: function(){
+        return true;
+    },
+
+
+    componentWillReceiveProps: function (np) {
+
+        if (np.cacheable) {
+            this.setState({src: np.src});
+        } else {
+            var date = new Date();
+            this.setState({src: np.src + "?t=" + date.getMilliseconds()});
+        }
+    },
+
+    onChange: function () {
+        var input = $(this.refs.InputPhoto.getDOMNode()).find('input')[0];
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                this.setState({src: e.target.result});
+            }.bind(this);
+
+            reader.readAsDataURL(input.files[0]);
+        }
+        // Envoie du change
+    },
+
     render: function () {
+
         var retour;
         // EDITABLE
         if (this.props.editable) {
@@ -111,28 +142,6 @@ var PhotoEditable = React.createClass({
             );
         }
         return retour;
-    },
-    componentWillReceiveProps: function (np) {
-        if (np.cacheable) {
-            this.setState({src: np.src});
-        } else {
-            var date = new Date();
-            this.setState({src: np.src + "?t=" + date.getMilliseconds()});
-        }
-    },
-    onChange: function () {
-        var input = $(this.refs.InputPhoto.getDOMNode()).find('input')[0];
-
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-
-            reader.onload = function (e) {
-                this.setState({src: e.target.result});
-            }.bind(this);
-
-            reader.readAsDataURL(input.files[0]);
-        }
-        // Envoie du change
     }
 });
 module.exports.PhotoEditable = PhotoEditable;
