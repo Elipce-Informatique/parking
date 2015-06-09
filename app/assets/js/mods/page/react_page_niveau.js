@@ -504,17 +504,17 @@ var storeNiveau = Reflux.createStore({
                     // Mode edition
                     this.stateLocal.etat = pageState.edition;
                     // Mode création Ok
-                    if (tab.model !== null) {
+                    //if (tab.model !== null) {
                         // Maj State local + nouveau libellé
                         this.stateLocal.idNiveau = tab.model.id;
                         this.stateLocal.detailNiveau = tab.model;
                         this.stateLocal.sousTitre = tab.model.libelle;
-                    }
-                    // Mode édition
-                    else {
-                        // Nouveau sous titre
-                        this.stateLocal.sousTitre = this.stateLocal.detailNiveau.libelle;
-                    }
+                    //}
+                    //// Mode édition
+                    //else {
+                    //    // Nouveau sous titre
+                    //    this.stateLocal.sousTitre = this.stateLocal.detailNiveau.libelle;
+                    //}
                     // Maj state
                     this.trigger(this.stateLocal);
                 }

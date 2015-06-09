@@ -91,7 +91,7 @@ Voulez-vous vraiment quitter cette page ?',
     'selection' => 'Sélection',
     'nom' => 'Nom',
     'description' => 'Description',
-    'telecharger' => "Télécharger",
+    'defaut' => 'Défaut',
 
     // FORMULAIRE
     'select' => 'Sélection...',
