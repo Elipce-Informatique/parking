@@ -78,7 +78,7 @@ return array(
 	|
 	*/
 
-	'key' => 'ceci est une clé secrète!!!',
+	'key' => 'elipce_workflow_vivian_yann_2015',
 
 	'cipher' => MCRYPT_RIJNDAEL_128,
 

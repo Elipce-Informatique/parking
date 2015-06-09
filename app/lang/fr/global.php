@@ -82,7 +82,8 @@ Voulez-vous vraiment quitter cette page ?',
 
     // FORMULAIRE
     'select' => 'Sélection...',
-    'saisieNumber' => 'La saisie doit être entre [min] et [max], et par pas de [pas]',
+    'saisieNumber' => 'Veuillez saisir un nombre',
+    'saisieNumberBis' => ' entre %1 et %2',
     'inputTelError' => 'Numéro incorrect',
     'erreurFileInput' => "Seules les extensions suivantes sont prises en compte :\n [extensions]",
 

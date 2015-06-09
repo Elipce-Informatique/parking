@@ -59,8 +59,16 @@ var PageCompte = React.createClass({
             case pageState.edition:
                 comp =
                     <div key="pageCompteRootEdit">
-                        <BandeauEdition mode={1} titre={Lang.get('administration.moncompte.titre')} sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}/>
-                        <FicheUser editable={true} userData={this.props.dataUser} idUser={this.props.idUser} modeCompte={true}/>
+                        <BandeauEdition
+                            mode={1}
+                            titre={Lang.get('administration.moncompte.titre')}
+                            sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}
+                            form_id="form_utilisateur"/>
+                        <FicheUser
+                            editable={true}
+                            userData={this.props.dataUser}
+                            idUser={this.props.idUser}
+                            modeCompte={true}/>
                     </div>;
                 break;
             default:
@@ -77,7 +85,11 @@ var PageCompte = React.createClass({
                             titre={Lang.get('administration.moncompte.titre')}
                             sousTitre={this.state.dataUser.nom + ' ' + this.state.dataUser.prenom}
                             btnList={btnEditer}/>
-                        <FicheUser editable={false} userData={this.props.dataUser} idUser={this.props.idUser} modeCompte={true}/>
+                        <FicheUser
+                            editable={false}
+                            userData={this.props.dataUser}
+                            idUser={this.props.idUser}
+                            modeCompte={true}/>
                     </div>);
                 break;
 
@@ -95,7 +107,7 @@ var PageCompte = React.createClass({
     },
 
     onRetour: function () {
-        window.location.replace(BASE_URI+'moncompte');
+        window.location.replace(BASE_URI + 'moncompte');
     }
 });
 

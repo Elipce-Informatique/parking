@@ -333,11 +333,11 @@ var ReactPageTest = React.createClass({
                 <InputNumberEditable
                     min={-10}
                     max={10}
-                    step={0.01}
+                    step={0.1}
                     attributes={{
+                        required: true,
                         label: 'Input number',
                         name: "InputNumber",
-                        value: 5,
                         wrapperClassName: 'col-md-4',
                         labelClassName: 'col-md-2',
                         groupClassName: 'row'
