@@ -63,6 +63,20 @@ class NiveauxController extends \BaseController
                 // Save plan
                 $newPlan = Plan::create(['libelle' => $plan]);
 
+                // Save zone defaut
+                $modelZone = Zone::create([
+                    'libelle' => Lang::get('global.defaut'),
+                    'defaut' => '1',
+                    'plan_id' => $newPlan->id
+                ]);
+
+                // Save allée defaut
+                $modelAllee = Allee::create([
+                    'libelle' => Lang::get('global.defaut'),
+                    'defaut' => '1',
+                    'zone_id' => $modelZone->id
+                ]);
+
                 // Save file
                 $filePostName = 'url' . explode('plan', $key)[1];
                 if (Input::hasFile($filePostName)) {
@@ -211,8 +225,8 @@ class NiveauxController extends \BaseController
                         // Supression
                         Plan::find($avant->id)->delete();
                         // Suppression du fichier
-                        if(!File::delete($destFolder .'/'. $avant->url)){
-                            Log::error('Erreur suppression plan. ' . $destFolder .'/'. $avant->url);
+                        if (!File::delete($destFolder . '/' . $avant->url)) {
+                            Log::error('Erreur suppression plan. ' . $destFolder . '/' . $avant->url);
                             $retour['save'] = false;
                             $retour['upload'] = false;
                         }
@@ -228,8 +242,22 @@ class NiveauxController extends \BaseController
                 if (count($temp) > 1) {
                     $idPlan = $temp[1];
                     // Save plan
-                    $model = Plan::create(['libelle' => $plan]);
-                    $model = Niveau::with('plans')->find($model->id);
+                    $modelPlan = Plan::create(['libelle' => $plan]);
+
+                    // Save zone defaut
+                    $modelZone = Zone::create([
+                        'libelle' => Lang::get('global.defaut'),
+                        'defaut' => '1',
+                        'plan_id' => $modelPlan->id
+                    ]);
+
+                    // Save allée defaut
+                    $modelAllee = Allee::create([
+                        'libelle' => Lang::get('global.defaut'),
+                        'defaut' => '1',
+                        'zone_id' => $modelZone->id
+                    ]);
+
                     // Save file
                     $filePostName = 'url_new_' . $idPlan;
 
@@ -237,10 +265,9 @@ class NiveauxController extends \BaseController
                 else {
                     $idPlan = explode('plan', $key)[1];
                     // Update libelle
-                    $model = Plan::find($idPlan);
-                    $model->libelle = $plan;
-                    $model->save();
-                    $model = Niveau::with('plans')->find($model->id);;
+                    $modelPlan = Plan::find($idPlan);
+                    $modelPlan->libelle = $plan;
+
                     // Save file
                     $filePostName = 'url' . $idPlan;
                 }
@@ -253,17 +280,18 @@ class NiveauxController extends \BaseController
                     // Extension
                     $extFile = $fileCourant->getClientOriginalExtension();
 
-                    //  Nom du fichier (ID + extension)
-                    $fileName = $model->id . '.' . $extFile;
+                    //  Nom du fichier Plan (ID + extension)
+                    $fileName = $modelPlan->id . '.' . $extFile;
 
                     // Sauvegarde dans "documents/plans"
                     $fileCourant->move($destFolder, $fileName);
 
                     // Mise à jour du champ en base de donnée
-                    $model->url = $fileName;
-                    $model->save();
+                    $modelPlan->url = $fileName;
+                    $modelPlan->save();
+
                     // Ajout du plan à insérer dans le niveau
-                    $modelsPlan[] = $model;
+                    $modelsPlan[] = $modelPlan;
 
                 } // Le fichier n'a pas été POST
                 else {
@@ -284,19 +312,21 @@ class NiveauxController extends \BaseController
                 // Le libellé niveau est unique
                 if (!Niveau::isLibelleExists($fields['parking_id'], $fields['libelle'], $id)) {
                     // Niveau à modifier
-                    $model = Niveau::find($id);
+                    $modelNiveau = Niveau::find($id);
                     // Champs filtrés
                     $filteredFields = [];
                     // Parcours de tous les champs
-                    foreach ($model->getFillable() as $key) {
+                    foreach ($modelNiveau->getFillable() as $key) {
                         // On ne garde que les clés qui nous interessent
                         $filteredFields[$key] = $fields[$key];
                     }
 
                     // Update niveau
-                    $model->update($filteredFields);
+                    $modelNiveau->update($filteredFields);
                     // Assoc niveau et plans
-                    $model->plans()->saveMany($modelsPlan);
+                    $modelNiveau->plans()->saveMany($modelsPlan);
+                    // Niveau à retourner
+                    $retour['model'] = Niveau::with('plans')->find($id);
                 } // Le niveau existe
                 else {
                     $retour['save'] = false;
@@ -333,9 +363,8 @@ class NiveauxController extends \BaseController
         try {
             Niveau::find($id)->delete();
             $retour = true;
-        }
-        catch (Exception $e) {
-            Log::error("Erreur suppression niveau $id ".$e->getMessage());
+        } catch (Exception $e) {
+            Log::error("Erreur suppression niveau $id " . $e->getMessage());
             $retour = false;
         }
         return json_encode($retour);
