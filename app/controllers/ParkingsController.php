@@ -185,7 +185,12 @@ class ParkingsController extends \BaseController
 
         // GLOBAL PARKING
         $bloc1 = Parking::getTabBordBlock1($parkId, $typesBlock1);
-        $parkingLibelle = $bloc1[0][0]->parking;
+//        dd($parkId);
+        try {
+            $parkingLibelle = $bloc1[0][0]->parking;
+        }catch (Exception $e){
+            return '';
+        }
 
         // GLOBAL PAR TYPE #####################
         $temp = [];

@@ -3,6 +3,7 @@ var React = require('react/addons');
 var moment = require('moment');
 require('moment/locale/fr');
 moment.locale(Lang.locale());
+require('sweetalert');
 
 // Chargement des composants React Bootstrap
 var Row = ReactB.Row;
@@ -77,7 +78,12 @@ var TableauBord = React.createClass({
      */
     updateState: function (data) {
         // MAJ data automatique, lifecycle "UPDATE"
-        this.setState(data);
+        if (!data.reset) {
+            this.setState(data);
+        } else {
+            this.replaceState(this.getInitialState());
+
+        }
     },
 
     render: function () {
@@ -556,7 +562,12 @@ var store = Reflux.createStore({
         })
             .done(function (retour) {
                 // On success use return data here
-                this.trigger(retour);
+                if (retour != '') {
+                    this.trigger(retour);
+                } else {
+                    swal(Lang.get('supervision.tab_bord.swal_aucune_place'));
+                    this.trigger({reset: true});
+                }
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert

@@ -146,7 +146,6 @@ var store = Reflux.createStore({
             // -------------------------------------------------------------
             // CALCUL DU CALIBRE
             case mapOptions.dessin.calibre:
-                console.log('PASS ICI ');
                 var coords = this.checkCalibre(data);
 
                 // LE SEGMENT N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
