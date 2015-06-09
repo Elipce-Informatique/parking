@@ -23,5 +23,6 @@ return array(
         'global_niveau' => 'Global niveau',
         'global_zone' => 'Global zone',
         'tooltip_occupation' => 'de places occupées',
+        'swal_aucune_place' => 'Aucune place n\'est renseignée sur ce parking.'
     ]
 );
