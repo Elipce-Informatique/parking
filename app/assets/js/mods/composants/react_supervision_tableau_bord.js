@@ -16,13 +16,17 @@ var Glyph = ReactB.Glyphicon;
 var OverlayTrigger = ReactB.OverlayTrigger;
 var Tooltip = ReactB.Tooltip;
 
+// MODALS
+var ModalPrefs = require('./modals/mod_preferences_blocs');
+var form_data_helper = require('../helpers/form_data_helper');
+
 /**
  * Created by yann on 20/02/2015.
  *
  */
 var TableauBord = React.createClass({
 
-    mixins: [Reflux.ListenerMixin],
+    mixins: [Reflux.ListenerMixin, ReactB.OverlayMixin],
 
     propTypes: {
         parkingId: React.PropTypes.any.isRequired,
@@ -53,8 +57,11 @@ var TableauBord = React.createClass({
                     'ordre': []
                 }
             },
-            'types': []
-
+            'types': [],
+            modalPref: {
+                display: false,
+                bloc: ''
+            }
         };
     },
 
@@ -84,6 +91,54 @@ var TableauBord = React.createClass({
             this.replaceState(this.getInitialState());
 
         }
+    },
+    /**
+     * Méthode appellée par le "OverlayMixin", au moment du montage initial et de chaque update.
+     * La valeur retournée est ajoutée au body de la page.
+     * @returns {XML}
+     */
+    renderOverlay: function () {
+        if (this.state.modalPref.display) {
+            // Préparation des datas de la combobox:
+            var dataCombo = _.map(this.state.types, function (t) {
+                return {label: t.libelle, value: t.id.toString()};
+            });
+            var selectedIds = this.state.prefs[this.state.modalPref.bloc].types;
+            console.log('Selected Ids : %o', selectedIds);
+
+            var mod = (
+                <ModalPrefs
+                    onToggle={this.toggleModal}
+                    bloc={this.state.modalPref.bloc}
+                    titre={Lang.get('supervision.tab_bord.' + this.state.modalPref.bloc)}
+                    dataCombo={dataCombo}
+                    initialSelectedIds={selectedIds}
+                />);
+            return mod;
+        } else {
+            return null;
+        }
+    },
+    toggleModal: function () {
+        this.setState({
+            modalPref: {
+                display: !this.state.modalPref.display
+            }
+        });
+    },
+    showModal: function () {
+        this.setState({
+            modalPref: {
+                display: true
+            }
+        });
+    },
+    hideModal: function () {
+        this.setState({
+            modalPref: {
+                display: false
+            }
+        });
     },
 
     render: function () {
@@ -134,9 +189,15 @@ var PanelOccupCourante = React.createClass({
 
     shouldComponentUpdate: function (nextProps, nextState) {
         return true;
-    }
-    ,
+    },
 
+    /**
+     *
+     * @param e
+     */
+    _handleClick: function (e) {
+        Actions.supervision.preferences_blocs('b1');
+    },
     render: function () {
 
         var totalBar = [];
@@ -203,7 +264,7 @@ var PanelOccupCourante = React.createClass({
         }
 
         return (
-            <Panel style={{height: '115px'}}>
+            <Panel onClick={this._handleClick} style={{height: '115px'}}>
             {totalBar}
             {detailBars}
             </Panel>
@@ -241,14 +302,20 @@ var PanelOccupNiveaux = React.createClass({
 
     shouldComponentUpdate: function (nextProps, nextState) {
         return true;
-    }
-    ,
+    },
+    /**
+     *
+     * @param e
+     */
+    _handleClick: function (e) {
+        Actions.supervision.preferences_blocs('b2');
+    },
 
     render: function () {
         var bars = generateBarsFromData(this.props.data);
 
         return (
-            <Panel style={{height: '115px'}}>
+            <Panel onClick={this._handleClick} style={{height: '115px'}}>
                 {bars}
             </Panel>);
     }
@@ -284,12 +351,18 @@ var PanelOccupZones = React.createClass({
     shouldComponentUpdate: function (nextProps, nextState) {
         return true;
     },
-
+    /**
+     *
+     * @param e
+     */
+    _handleClick: function (e) {
+        Actions.supervision.preferences_blocs('b3');
+    },
     render: function () {
         var bars = generateBarsFromData(this.props.data);
 
         return (
-            <Panel style={{height: '115px'}}>
+            <Panel onClick={this._handleClick} style={{height: '115px'}}>
                 {bars}
             </Panel>);
     }
@@ -539,6 +612,10 @@ module.exports = TableauBord;
 
 
 var store = Reflux.createStore({
+    _inst: {
+        prefs: {},
+        types: {}
+    },
     getInitialState: function () {
         return {};
     },
@@ -546,6 +623,8 @@ var store = Reflux.createStore({
     init: function () {
         // Register statusUpdate action
         this.listenTo(Actions.supervision.tableau_bord_update, this.updateTableauBord);
+        this.listenTo(Actions.supervision.preferences_blocs, this.modalPreferences);
+        this.listenTo(Actions.validation.submit_form, this.submitModal);
 
     },
     /**
@@ -561,13 +640,54 @@ var store = Reflux.createStore({
             global: false
         })
             .done(function (retour) {
+                console.log('Retour store tab bord : %o', retour);
                 // On success use return data here
                 if (retour != '') {
                     this.trigger(retour);
+                    this._inst.prefs = retour.prefs;
                 } else {
                     swal(Lang.get('supervision.tab_bord.swal_aucune_place'));
                     this.trigger({reset: true});
                 }
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
+    },
+
+    modalPreferences: function (bloc) {
+        var prefsBloc = this._inst.prefs[bloc];
+
+        // On est bien sur un parking
+        if (prefsBloc != undefined) {
+            // Il faut maintenant appeller la popup avec en paramètres les préférences de l'utilisateur
+            // (Vu qu'elles sont dispos dans le composant (state) on a juste à appeller l'overlayTrigger)
+            console.log('PASS avant trigger : %o', prefsBloc);
+            this.trigger({
+                modalPref: {
+                    display: true,
+                    bloc: bloc
+                }
+            });
+        }
+    },
+
+    /**
+     * Gère l'enregistrement AJAX des données sélectionnées dans la modale
+     */
+    submitModal: function (e) {
+        var fData = form_data_helper('form_mod_prefs', 'POST');
+        $.ajax({
+            type: 'POST',
+            url: '',
+            processData: false,
+            contentType: false,
+            data: fData
+        })
+            .done(function () {
+                // on success use return data here
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert

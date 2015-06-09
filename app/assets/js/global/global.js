@@ -48,7 +48,7 @@ require('sweetalert');
         "form_field_changed", // Appellée quand la valeur d'un champ de formulaire est modifié
         "form_field_verif",   // Appellée quand la valeur d'un champ de formulaire est valide
         "verify_form_save",   // Appellée quand le form est validé par l'utilisateur
-        "submit_form"        // Appellée quand le form est validé par l'utilisateur et que les champs sont bons
+        "submit_form"         // Appellée quand le form est validé par l'utilisateur et que les champs sont bons
     ]);
 
     /*
@@ -217,6 +217,7 @@ require('sweetalert');
 
     global.Actions.supervision = Reflux.createActions([
         "tableau_bord_update", // affiche tous les parkings
+        "preferences_blocs",// Affichage popup en fonction du bloc cliqué
     ]);
 
 })(window);

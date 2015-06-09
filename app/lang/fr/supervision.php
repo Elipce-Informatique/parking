@@ -23,6 +23,12 @@ return array(
         'global_niveau' => 'Global niveau',
         'global_zone' => 'Global zone',
         'tooltip_occupation' => 'de places occupées',
-        'swal_aucune_place' => 'Aucune place n\'est renseignée sur ce parking.'
+        'swal_aucune_place' => 'Aucune place n\'est renseignée sur ce parking.',
+        'type_place' => "Type de place",
+        'types_places' => "Types de places",
+        "b1" => "Préférences d'affichage bloc général",
+        "b2" => "Préférences d'affichage bloc plans",
+        "b3" => "Préférences d'affichage bloc zones",
+
     ]
 );

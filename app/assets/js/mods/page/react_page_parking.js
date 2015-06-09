@@ -355,7 +355,7 @@ var storeParking = Reflux.createStore({
     onForm_field_changed: function (e) {
         var data = {};
         // MAJ du state STORE
-        data[e.name] = e.value
+        data[e.name] = e.value;
         this.stateLocal.detailParking = _.extend(this.stateLocal.detailParking, data);
 
         // Si on est sur une combo on trigger pour les selectedValue

@@ -401,7 +401,7 @@ class ParkingsController extends \BaseController
 
             //-------------------------
             // $t -> id du type de place
-            foreach ($typesBlock2 AS $t) {
+            foreach ($typesBlock3 AS $t) {
 
                 $inRetour = false;
                 // On recherche le type parmi les résultats
