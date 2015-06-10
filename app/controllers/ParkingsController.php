@@ -152,7 +152,7 @@ class ParkingsController extends \BaseController
         // -------------------------------------------------------------------------------------------------------------
         // RÉCUPÉRATION DES PRÉFÉRENCES DE L'UTILISATEUR
         // -------------------------------------------------------------------------------------------------------------
-        $preferences = Auth::user()->getPreferences(['bloc_1', 'bloc_2', 'bloc_3']);
+        $preferences = Auth::user()->getPreferences(['bloc_1', 'bloc_2', 'bloc_3'], $parkId);
         $preferences = $preferences['preferences'];
 
         $typesBlock1 = [];
@@ -188,7 +188,7 @@ class ParkingsController extends \BaseController
 //        dd($parkId);
         try {
             $parkingLibelle = $bloc1[0][0]->parking;
-        }catch (Exception $e){
+        } catch (Exception $e) {
             return '';
         }
 

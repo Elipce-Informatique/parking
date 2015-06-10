@@ -597,7 +597,7 @@ function initTreeviewParkingAjax(onSuccess, context) {
  * @param parkingId
  * @returns {Array|*}
  */
-function recursiveTreeViewParking(data, parkingId) {
+function recursiveTreeViewParking(data, parkingId, logo) {
     var retour = _.map(data, function (d, i) {
 
         var elt = {text: d.libelle, id: d.id, icon: ''};
@@ -605,7 +605,7 @@ function recursiveTreeViewParking(data, parkingId) {
 
         // On est actuellement sur un parking
         if (d.niveaux !== undefined) {
-            elt['nodes'] = this.recursiveTreeViewParking(d.niveaux, d.id);
+            elt['nodes'] = this.recursiveTreeViewParking(d.niveaux, d.id, d.logo);
         }
         // On est sur un niveau
         else if (d.plans !== undefined) {
@@ -619,8 +619,9 @@ function recursiveTreeViewParking(data, parkingId) {
                 elt.icon = 'glyphicon glyphicon-eye-open';
 
                 elt.id = d.plans[0].id;
+                elt['logo'] = logo;
             } else {
-                elt['nodes'] = this.recursiveTreeViewParking(d.plans, parkingId);
+                elt['nodes'] = this.recursiveTreeViewParking(d.plans, parkingId, logo);
             }
         }
         // On est sur un plan
@@ -628,6 +629,7 @@ function recursiveTreeViewParking(data, parkingId) {
             elt['url'] = d.url;
             elt['is-plan'] = true;
             elt['parking-id'] = parkingId;
+            elt['logo'] = logo;
 
             elt.icon = '';
             elt.icon = 'glyphicon glyphicon-eye-open';

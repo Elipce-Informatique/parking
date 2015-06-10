@@ -109,7 +109,8 @@ var Page = React.createClass({
                     'data-is-plan': 'is-plan',
                     'data-plan-id': 'plan-id',
                     'data-parking-id': 'parking-id',
-                    'data-url': 'url'
+                    'data-url': 'url',
+                    'data-logo': 'logo'
                 }}
                 nodeIcon= "glyphicon glyphicon-stop small"
                 enableLinks={false}
@@ -129,9 +130,11 @@ var Page = React.createClass({
             </Jumbotron>
         );
         if (this.state.url) {
+
             map = <ParkingMap
                 imgUrl={this.state.url}
                 parkingId={this.state.parkingId}
+                parkingLogo={this.state.logo}
                 planId={this.state.planId}
                 divId="div_carte"
                 key={Date.now()}
@@ -185,80 +188,85 @@ module.exports = Page;
 /*                                                                                              */
 /************************************************************************************************/
 var store = Reflux.createStore({
-    getInitialState: function () {
-        var retour = {};
+        getInitialState: function () {
+            var retour = {};
 
-        $.ajax({
-            type: 'GET',
-            url: BASE_URI + 'parking/plan/1',
-            async: false
-        })
-            .done(function (data) {
-                retour = {niveau: data};
+            $.ajax({
+                type: 'GET',
+                url: BASE_URI + 'parking/plan/1',
+                async: false
             })
-            .fail(function (xhr, type, exception) {
-                // if ajax fails display error alert
-                console.error("ajax error response error " + type);
-                console.error("ajax error response body " + xhr.responseText);
-            });
+                .done(function (data) {
+                    retour = {niveau: data};
+                })
+                .fail(function (xhr, type, exception) {
+                    // if ajax fails display error alert
+                    console.error("ajax error response error " + type);
+                    console.error("ajax error response body " + xhr.responseText);
+                });
 
-        return retour;
-    },
-    // Initial setup
-    init: function () {
-        this.listenTo(Actions.bandeau.creer, this._create);
-        this.listenTo(Actions.bandeau.editer, this._edit);
-        this.listenTo(Actions.bandeau.supprimer, this._suppr);
-        this.listenTo(Actions.validation.submit_form, this._save);
-        this.listenTo(Actions.map.plan_selected, this._plan_selected);
+            return retour;
+        },
+        // Initial setup
+        init: function () {
+            this.listenTo(Actions.bandeau.creer, this._create);
+            this.listenTo(Actions.bandeau.editer, this._edit);
+            this.listenTo(Actions.bandeau.supprimer, this._suppr);
+            this.listenTo(Actions.validation.submit_form, this._save);
+            this.listenTo(Actions.map.plan_selected, this._plan_selected);
 
-        // Init du treeView
-        mapHelper.initTreeviewParkingAjax(function (data) {
-            var dataTableau = mapHelper.recursiveTreeViewParking(data, 0);
-            this.trigger({treeView: dataTableau});
-        }, this);
-    },
+            // Init du treeView
+            mapHelper.initTreeviewParkingAjax(function (data) {
+                var dataTableau = mapHelper.recursiveTreeViewParking(data, 0);
+                this.trigger({treeView: dataTableau});
+            }, this);
+        },
 
-    /**
-     * Quand un item du treeview est cliqué
-     * @param evt :
-     * @private
-     */
-    _plan_selected: function (evt) {
-        var $elt = $(evt.currentTarget);
+        /**
+         * Quand un item du treeview est cliqué
+         * @param evt :
+         * @private
+         */
+        _plan_selected: function (evt) {
+            var $elt = $(evt.currentTarget);
 
-        // ON EST SUR UN ELT DE TYPE PLAN !
-        if ($elt.data('is-plan')) {
-            var data = $elt.data();
+            // ON EST SUR UN ELT DE TYPE PLAN !
+            if ($elt.data('is-plan')) {
+                var data = $elt.data();
+                console.log('data: %o', data);
 
-            var state = {
-                planId: data.id,
-                url: DOC_URI + 'plans/' + data.url,
-                parkingId: data.parkingId
-            };
-            this.trigger(state);
-        } else {
+                var state = {
+                    planId: data.id,
+                    url: DOC_URI + 'plans/' + data.url,
+                    parkingId: data.parkingId,
+                    logo: data.logo
+                };
+                this.trigger(state);
+            } else {
+            }
+        },
+
+        // Action create du bandeau
+        _create: function () {
 
         }
-    },
+        ,
 
-    // Action create du bandeau
-    _create: function () {
+// Action edit du bandeau
+        _edit: function () {
 
-    },
+        }
+        ,
 
-    // Action edit du bandeau
-    _edit: function () {
+// Action suppr du bandeau
+        _suppr: function () {
 
-    },
+        }
+        ,
 
-    // Action suppr du bandeau
-    _suppr: function () {
+// Action save du bandeau
+        _save: function () {
 
-    },
-
-    // Action save du bandeau
-    _save: function () {
-
-    }
-});
+        }
+    })
+    ;

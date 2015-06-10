@@ -223,10 +223,11 @@ var PanelOccupCourante = React.createClass({
                     now: total.libre
                 }
             ];
+            var pourcent = parseFloat((total.occupee / total.total * 100).toFixed(2));
             totalBar = (
                 <StatBarWrapper
                     libelle={total.libelle + ' (' + total.total + ')'}
-                    tooltip={(total.occupee / total.total * 100).toFixed(2) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
+                    tooltip={(isNaN(pourcent) ? 0 : pourcent) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
                     key='total'>
                     <StackedStatBar
                         data={dataTotal}
@@ -565,10 +566,11 @@ function generateBarsFromData(dataBars) {
                     now: total.libre
                 }
             ];
+            var pourcent = parseFloat((total.occupee / total.total * 100).toFixed(2));
             bars.push(
                 <StatBarWrapper
                     libelle={total.libelle + ' ' + libelle + ' (' + total.total + ')'}
-                    tooltip={(total.occupee / total.total * 100).toFixed(2) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
+                    tooltip={(isNaN(pourcent) ? 0 : pourcent) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
                     key={'total' + libelle}>
                     <StackedStatBar
                         data={dataTotal}
@@ -591,10 +593,12 @@ function generateBarsFromData(dataBars) {
                         now: d.libre
                     }
                 ];
+                var pourcent = parseFloat((d.occupee / d.total * 100).toFixed(2));
+
                 return (
                     <StatBarWrapper
                         libelle={d.libelle + ' (' + d.total + ')'}
-                        tooltip={(d.occupee / d.total * 100).toFixed(2) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
+                        tooltip={(isNaN(pourcent) ? 0 : pourcent) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
                         key={'detail-' + libelle + '-' + d.libelle }>
                         <StackedStatBar
                             data={dataDetail}

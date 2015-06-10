@@ -496,17 +496,30 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
      *
      * @param $keys : Clés à récupérer
      */
-    public function getPreferences($keys = [])
+    public function getPreferences($keys = [], $parkingId = '')
     {
         $whereKeys = "('" . implode($keys, "','") . "')";
-        return $this
-            ->with(['preferences' => function ($q) use ($keys, $whereKeys) {
-                if (count($keys) > 0) {
-                    $q->whereRaw('preference.key in ' . $whereKeys);
-                }
-            }])
-            ->where('id', '=', $this->id)
-            ->select('id')
-            ->first();
+        if ($parkingId == '') {
+            return $this
+                ->with(['preferences' => function ($q) use ($keys, $whereKeys) {
+                    if (count($keys) > 0) {
+                        $q->whereRaw('preference.key in ' . $whereKeys);
+                    }
+                }])
+                ->where('id', '=', $this->id)
+                ->select('id')
+                ->first();
+        } else {
+            return $this
+                ->with(['preferences' => function ($q) use ($keys, $whereKeys, $parkingId) {
+                    if (count($keys) > 0) {
+                        $q->whereRaw('preference.key in ' . $whereKeys)
+                            ->where('parking_id', '=', $parkingId);
+                    }
+                }])
+                ->where('id', '=', $this->id)
+                ->select('id')
+                ->first();
+        }
     }
 }
