@@ -87,7 +87,6 @@ var Page = React.createClass({
     /**
      *
      * @returns {XML}
-     * @private
      */
     modeCarte: function () {
 

@@ -61,7 +61,8 @@ var TableauBord = React.createClass({
             modalPref: {
                 display: false,
                 bloc: ''
-            }
+            },
+            display: false
         };
     },
 
@@ -76,6 +77,9 @@ var TableauBord = React.createClass({
     componentWillReceiveProps: function (np) {
         if (np.parkingId != '') {
             Actions.supervision.tableau_bord_update(np.parkingId);
+            this.setState({display: true});
+        } else {
+            this.setState({display: false});
         }
     },
 
@@ -146,19 +150,23 @@ var TableauBord = React.createClass({
 
         console.log('State tableau de bord : %o', this.state);
 
-        return (
-            <Row className="row_reporting full-height">
-                <Col md={md} className="full-height" key={1}>
-                    <PanelOccupCourante data={this.state.b1} preferences={this.state.prefs.b1} />
-                </Col>
-                <Col md={md} className="full-height" key={2}>
-                    <PanelOccupNiveaux data={this.state.b2} preferences={this.state.prefs.b2}/>
-                </Col>
-                <Col md={md} className="full-height" key={3}>
-                    <PanelOccupZones data={this.state.b3} preferences={this.state.prefs.b3}/>
-                </Col>
-            </Row>
-        );
+        if (this.state.display) {
+            return (
+                <Row className="row_reporting full-height">
+                    <Col md={md} className="full-height" key={1}>
+                        <PanelOccupCourante data={this.state.b1} preferences={this.state.prefs.b1} />
+                    </Col>
+                    <Col md={md} className="full-height" key={2}>
+                        <PanelOccupNiveaux data={this.state.b2} preferences={this.state.prefs.b2}/>
+                    </Col>
+                    <Col md={md} className="full-height" key={3}>
+                        <PanelOccupZones data={this.state.b3} preferences={this.state.prefs.b3}/>
+                    </Col>
+                </Row>
+            );
+        } else {
+            return null;
+        }
     }
 });
 
@@ -226,8 +234,9 @@ var PanelOccupCourante = React.createClass({
             var pourcent = parseFloat((total.occupee / total.total * 100).toFixed(2));
             totalBar = (
                 <StatBarWrapper
-                    libelle={total.libelle + ' (' + total.total + ')'}
+                    libelle={total.libelle}
                     tooltip={(isNaN(pourcent) ? 0 : pourcent) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
+                    badge={total.total}
                     key='total'>
                     <StackedStatBar
                         data={dataTotal}
@@ -253,8 +262,9 @@ var PanelOccupCourante = React.createClass({
 
                 return (
                     <StatBarWrapper
-                        libelle={d.libelle + ' (' + d.total + ')'}
+                        libelle={d.libelle}
                         tooltip={(d.occupee / d.total * 100).toFixed(2) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
+                        badge={d.total}
                         key={'detail-' + d.libelle}>
                         <StackedStatBar
                             data={dataDetail}
@@ -479,20 +489,20 @@ var StackedStatBar = React.createClass({
 
 /**
  * Created by yann on 15/04/2015.
- *
- * @param name : nom a afficher dans le composant
  */
 var StatBarWrapper = React.createClass({
 
     propTypes: {
         libelle: React.PropTypes.string.isRequired,
         tooltip: React.PropTypes.string,
+        badge: React.PropTypes.string,
         simpleBarData: React.PropTypes.object
     },
 
     getDefaultProps: function () {
         return {
-            tooltip: ''
+            tooltip: '',
+            badge: ''
         };
     },
 
@@ -520,10 +530,26 @@ var StatBarWrapper = React.createClass({
                 </OverlayTrigger>);
         }
 
+        var badge = '';
+        if (this.props.badge != '') {
+            badge = (<Label
+                className="label-stats"
+                bsStyle='primary' >
+                        {this.props.badge}
+            </Label>);
+        }
+
         return (
             <Row>
                 <Col md={4} key={1}>
-                    <label className="label-stats">{this.props.libelle}</label>
+                    <Row className="row-label">
+                        <Col md={2}>
+                            {{badge}}
+                        </Col>
+                        <Col md={10}>
+                            <label className="label-stats">{'' + this.props.libelle}</label>
+                        </Col>
+                    </Row>
                 </Col>
                 <Col md={8} key={2}>
                     {bars}
@@ -569,8 +595,9 @@ function generateBarsFromData(dataBars) {
             var pourcent = parseFloat((total.occupee / total.total * 100).toFixed(2));
             bars.push(
                 <StatBarWrapper
-                    libelle={total.libelle + ' ' + libelle + ' (' + total.total + ')'}
+                    libelle={total.libelle + ' ' + libelle}
                     tooltip={(isNaN(pourcent) ? 0 : pourcent) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
+                    badge={total.total}
                     key={'total' + libelle}>
                     <StackedStatBar
                         data={dataTotal}
@@ -595,10 +622,12 @@ function generateBarsFromData(dataBars) {
                 ];
                 var pourcent = parseFloat((d.occupee / d.total * 100).toFixed(2));
 
+                console.log('TOTAL : %o', d.total);
                 return (
                     <StatBarWrapper
-                        libelle={d.libelle + ' (' + d.total + ')'}
+                        libelle={d.libelle + ' ' + libelle }
                         tooltip={(isNaN(pourcent) ? 0 : pourcent) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
+                        badge={d.total.toString()}
                         key={'detail-' + libelle + '-' + d.libelle }>
                         <StackedStatBar
                             data={dataDetail}
