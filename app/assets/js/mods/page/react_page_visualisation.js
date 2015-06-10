@@ -188,85 +188,81 @@ module.exports = Page;
 /*                                                                                              */
 /************************************************************************************************/
 var store = Reflux.createStore({
-        getInitialState: function () {
-            var retour = {};
+    getInitialState: function () {
+        var retour = {};
 
-            $.ajax({
-                type: 'GET',
-                url: BASE_URI + 'parking/plan/1',
-                async: false
+        $.ajax({
+            type: 'GET',
+            url: BASE_URI + 'parking/plan/1',
+            async: false
+        })
+            .done(function (data) {
+                retour = {niveau: data};
             })
-                .done(function (data) {
-                    retour = {niveau: data};
-                })
-                .fail(function (xhr, type, exception) {
-                    // if ajax fails display error alert
-                    console.error("ajax error response error " + type);
-                    console.error("ajax error response body " + xhr.responseText);
-                });
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
 
-            return retour;
-        },
-        // Initial setup
-        init: function () {
-            this.listenTo(Actions.bandeau.creer, this._create);
-            this.listenTo(Actions.bandeau.editer, this._edit);
-            this.listenTo(Actions.bandeau.supprimer, this._suppr);
-            this.listenTo(Actions.validation.submit_form, this._save);
-            this.listenTo(Actions.map.plan_selected, this._plan_selected);
+        return retour;
+    },
+    // Initial setup
+    init: function () {
+        this.listenTo(Actions.bandeau.creer, this._create);
+        this.listenTo(Actions.bandeau.editer, this._edit);
+        this.listenTo(Actions.bandeau.supprimer, this._suppr);
+        this.listenTo(Actions.validation.submit_form, this._save);
+        this.listenTo(Actions.map.plan_selected, this._plan_selected);
 
-            // Init du treeView
-            mapHelper.initTreeviewParkingAjax(function (data) {
-                var dataTableau = mapHelper.recursiveTreeViewParking(data, 0);
-                this.trigger({treeView: dataTableau});
-            }, this);
-        },
+        // Init du treeView
+        mapHelper.initTreeviewParkingAjax(function (data) {
+            var dataTableau = mapHelper.recursiveTreeViewParking(data, 0);
+            this.trigger({treeView: dataTableau});
+        }, this);
+    },
 
-        /**
-         * Quand un item du treeview est cliqué
-         * @param evt :
-         * @private
-         */
-        _plan_selected: function (evt) {
-            var $elt = $(evt.currentTarget);
+    /**
+     * Quand un item du treeview est cliqué
+     * @param evt :
+     * @private
+     */
+    _plan_selected: function (evt) {
+        var $elt = $(evt.currentTarget);
 
-            // ON EST SUR UN ELT DE TYPE PLAN !
-            if ($elt.data('is-plan')) {
-                var data = $elt.data();
-                console.log('data: %o', data);
+        // ON EST SUR UN ELT DE TYPE PLAN !
+        if ($elt.data('is-plan')) {
+            var data = $elt.data();
+            console.log('data: %o', data);
 
-                var state = {
-                    planId: data.id,
-                    url: DOC_URI + 'plans/' + data.url,
-                    parkingId: data.parkingId,
-                    logo: data.logo
-                };
-                this.trigger(state);
-            } else {
-            }
-        },
-
-        // Action create du bandeau
-        _create: function () {
-
+            var state = {
+                planId: data.id,
+                url: DOC_URI + 'plans/' + data.url,
+                parkingId: data.parkingId,
+                logo: data.logo
+            };
+            this.trigger(state);
+        } else {
         }
-        ,
+    },
+
+    // Action create du bandeau
+    _create: function () {
+
+    },
 
 // Action edit du bandeau
-        _edit: function () {
+    _edit: function () {
 
-        }
-        ,
+    },
 
 // Action suppr du bandeau
-        _suppr: function () {
+    _suppr: function () {
 
-        }
-        ,
+    },
 
 // Action save du bandeau
-        _save: function () {
+    _save: function () {
 
-        }
-    })
-    ;
+    }
+});
