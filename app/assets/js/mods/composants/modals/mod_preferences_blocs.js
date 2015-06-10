@@ -86,7 +86,7 @@ var ModalPreferences = React.createClass({
                     </Button>
                     <BtnSave
                         form_id="form_mod_prefs"
-                        libelle={Lang.get('global.create')} />
+                        libelle={Lang.get('global.edit')} />
                 </div>
             </Modal>
         );

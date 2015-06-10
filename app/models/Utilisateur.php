@@ -522,4 +522,71 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
                 ->first();
         }
     }
+
+    /**
+     * Ajoute les préférences passés en params à l'utilisateur
+     * @param $preferences => tableau associatif [key=>value,key=>value,key=>value,key=>value]
+     * @param string $parkingId => optionnel, préférences sur un parking
+     * @return true ou false => résultat de l'insertion
+     */
+    public function setPreferences($preferences, $parkingId = '')
+    {
+        $idUser = $this->id;
+        // Création des préférences
+
+        try {
+            foreach ($preferences As $key => $value) {
+                $pref = false;
+                if ($parkingId != '') {
+                    $pref = Preference::create([
+                        'parking_id' => $parkingId,
+                        'utilisateur_id' => $idUser,
+                        'key' => $key,
+                        'value' => $value
+                    ]);
+                    $pref->utilisateur()->associate($this);
+                    $pref->save();
+                } else {
+                    $pref = Preference::create([
+                        'utilisateur_id' => $idUser,
+                        'key' => $key,
+                        'value' => $value
+                    ]);
+                    $pref->utilisateur()->associate($this);
+                    $pref->save();
+                }
+            }
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * supprime les préférences passés en params de l'utilisateur
+     * @param $keys => tableau associatif des clés à supprimer
+     * @param string $parkingId => optionnel, préférences sur un parking
+     * @return bool
+     */
+    public function deletePreferences($keys, $parkingId = '')
+    {
+        $idUser = $this->id;
+
+        try {
+            if ($parkingId != '') {
+                $affected = Preference::where('utilisateur_id', '=', $idUser)
+                    ->where('parking_id', '=', $parkingId)
+                    ->whereIn('key', $keys)
+                    ->delete();
+            } else {
+                $affected = Preference::where('utilisateur_id', '=', $idUser)
+                    ->whereIn('key', $keys)
+                    ->delete();
+            }
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+
+    }
 }

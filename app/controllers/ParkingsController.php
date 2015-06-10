@@ -340,10 +340,6 @@ class ParkingsController extends \BaseController
         // Retour des types pour les listes à choix multiples
         $retour['types'] = $types;
 
-        Log::debug('B1 : ' . print_r($retour['b1'], true));
-        Log::debug('B2 : ' . print_r($retour['b2'], true));
-        Log::debug('B3 : ' . print_r($retour['b3'], true));
-
 
         // BLOC 1 -------------------------------
         foreach ($typesBlock1 AS $t) {

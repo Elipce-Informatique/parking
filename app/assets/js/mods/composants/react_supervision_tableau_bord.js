@@ -622,7 +622,6 @@ function generateBarsFromData(dataBars) {
                 ];
                 var pourcent = parseFloat((d.occupee / d.total * 100).toFixed(2));
 
-                console.log('TOTAL : %o', d.total);
                 return (
                     <StatBarWrapper
                         libelle={d.libelle + ' ' + libelle }
@@ -647,7 +646,9 @@ module.exports = TableauBord;
 var store = Reflux.createStore({
     _inst: {
         prefs: {},
-        types: {}
+        types: {},
+        parkingId: '',
+        bloc_modal: ''
     },
     getInitialState: function () {
         return {};
@@ -673,11 +674,11 @@ var store = Reflux.createStore({
             global: false
         })
             .done(function (retour) {
-                console.log('Retour store tab bord : %o', retour);
                 // On success use return data here
                 if (retour != '') {
                     this.trigger(retour);
                     this._inst.prefs = retour.prefs;
+                    this._inst.parkingId = parkingId;
                 } else {
                     swal(Lang.get('supervision.tab_bord.swal_aucune_place'));
                     this.trigger({reset: true});
@@ -697,7 +698,7 @@ var store = Reflux.createStore({
         if (prefsBloc != undefined) {
             // Il faut maintenant appeller la popup avec en paramètres les préférences de l'utilisateur
             // (Vu qu'elles sont dispos dans le composant (state) on a juste à appeller l'overlayTrigger)
-            console.log('PASS avant trigger : %o', prefsBloc);
+            this._inst.bloc_modal = bloc;
             this.trigger({
                 modalPref: {
                     display: true,
@@ -712,15 +713,32 @@ var store = Reflux.createStore({
      */
     submitModal: function (e) {
         var fData = form_data_helper('form_mod_prefs', 'POST');
+        fData.append('parking_id', this._inst.parkingId);
+        fData.append('bloc', this._inst.bloc_modal);
+
         $.ajax({
             type: 'POST',
-            url: '',
+            url: BASE_URI + 'moncompte/preferences_supervision',
             processData: false,
             contentType: false,
-            data: fData
+            data: fData,
+            context: this
         })
-            .done(function () {
-                // on success use return data here
+            .done(function (retour) {
+                if (retour.save) {
+                    // MASQUAGE MODALE
+                    this.trigger({
+                        modalPref: {
+                            display: false,
+                            bloc: ''
+                        }
+                    });
+                    // RAFRAICHISSEMENT TAB BORD
+                    Actions.supervision.tableau_bord_update(this._inst.parkingId);
+                    Actions.notif.success();
+                } else {
+                    Actions.notif.error();
+                }
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert
