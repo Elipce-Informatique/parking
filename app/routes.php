@@ -52,6 +52,7 @@ Route::group(['before' => 'auth'], function () {
     Route::get('moncompte', 'UtilisateurController@compte');
     Route::put('moncompte', 'UtilisateurController@updateCompte');
     Route::get('moncompte/verifMPD/{pass}', 'UtilisateurController@verifMDPcompte');
+    Route::post('moncompte/preferences_supervision', 'UtilisateurController@setPreferenceSupervision');
 });
 
 /*

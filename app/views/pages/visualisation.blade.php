@@ -2,6 +2,7 @@
 
 @section('css')
     <link href="{{URL::asset('public/css/leaflet_plugins.css')}}" rel="stylesheet">
+    <link href="{{URL::asset('public/css/parking.css')}}" rel="stylesheet">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 @stop
 

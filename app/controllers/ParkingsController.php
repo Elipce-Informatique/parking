@@ -152,7 +152,7 @@ class ParkingsController extends \BaseController
         // -------------------------------------------------------------------------------------------------------------
         // RÉCUPÉRATION DES PRÉFÉRENCES DE L'UTILISATEUR
         // -------------------------------------------------------------------------------------------------------------
-        $preferences = Auth::user()->getPreferences(['bloc_1', 'bloc_2', 'bloc_3']);
+        $preferences = Auth::user()->getPreferences(['bloc_1', 'bloc_2', 'bloc_3'], $parkId);
         $preferences = $preferences['preferences'];
 
         $typesBlock1 = [];
@@ -188,7 +188,7 @@ class ParkingsController extends \BaseController
 //        dd($parkId);
         try {
             $parkingLibelle = $bloc1[0][0]->parking;
-        }catch (Exception $e){
+        } catch (Exception $e) {
             return '';
         }
 
@@ -209,6 +209,7 @@ class ParkingsController extends \BaseController
                     $temp[$ligne->ordre]['total'] = $ligne->nb;
                     $temp[$ligne->ordre]['libelle'] = $ligne->libelle;
                     $temp[$ligne->ordre]['type_place_id'] = $ligne->type_place_id;
+                    $temp[$ligne->ordre]['couleur'] = $ligne->couleur;
                     break;
             }
         }
@@ -260,6 +261,7 @@ class ParkingsController extends \BaseController
                     $temp[$ligne->plan][$ligne->ordre]['total'] = $ligne->nb;
                     $temp[$ligne->plan][$ligne->ordre]['libelle'] = $ligne->libelle;
                     $temp[$ligne->plan][$ligne->ordre]['type_place_id'] = $ligne->type_place_id;
+                    $temp[$ligne->plan][$ligne->ordre]['couleur'] = $ligne->couleur;
                     break;
             }
         }
@@ -307,6 +309,7 @@ class ParkingsController extends \BaseController
                     $temp[$ligne->zone][$ligne->ordre]['total'] = $ligne->nb;
                     $temp[$ligne->zone][$ligne->ordre]['libelle'] = $ligne->libelle;
                     $temp[$ligne->zone][$ligne->ordre]['type_place_id'] = $ligne->type_place_id;
+                    $temp[$ligne->zone][$ligne->ordre]['couleur'] = $ligne->couleur;
                     break;
             }
         }
@@ -340,10 +343,6 @@ class ParkingsController extends \BaseController
         // Retour des types pour les listes à choix multiples
         $retour['types'] = $types;
 
-        Log::debug('B1 : ' . print_r($retour['b1'], true));
-        Log::debug('B2 : ' . print_r($retour['b2'], true));
-        Log::debug('B3 : ' . print_r($retour['b3'], true));
-
 
         // BLOC 1 -------------------------------
         foreach ($typesBlock1 AS $t) {
@@ -364,7 +363,8 @@ class ParkingsController extends \BaseController
                     "libelle" => $types[$t]->libelle,
                     "total" => 0,
                     "libre" => 0,
-                    "occupee" => 0
+                    "occupee" => 0,
+                    "couleur" => $types[$t]->couleur
                 ];
             }
         }
@@ -390,7 +390,8 @@ class ParkingsController extends \BaseController
                         "libelle" => $types[$t]->libelle,
                         "total" => 0,
                         "libre" => 0,
-                        "occupee" => 0
+                        "occupee" => 0,
+                        "couleur" => $types[$t]->couleur
                     ];
                 }
             }
@@ -401,7 +402,7 @@ class ParkingsController extends \BaseController
 
             //-------------------------
             // $t -> id du type de place
-            foreach ($typesBlock2 AS $t) {
+            foreach ($typesBlock3 AS $t) {
 
                 $inRetour = false;
                 // On recherche le type parmi les résultats
@@ -419,7 +420,8 @@ class ParkingsController extends \BaseController
                         "libelle" => $types[$t]->libelle,
                         "total" => 0,
                         "libre" => 0,
-                        "occupee" => 0
+                        "occupee" => 0,
+                        "couleur" => $types[$t]->couleur
                     ];
                 }
 

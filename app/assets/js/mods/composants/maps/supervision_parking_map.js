@@ -25,6 +25,7 @@ var parkingMap = React.createClass({
         imgUrl: React.PropTypes.string.isRequired,
         parkingId: React.PropTypes.number.isRequired,
         planId: React.PropTypes.number.isRequired,
+        parkingLogo: React.PropTypes.string,
         mapHeight: React.PropTypes.number,
         calibre: React.PropTypes.number
     },
@@ -43,10 +44,10 @@ var parkingMap = React.createClass({
 
     getDefaultProps: function () {
         return {
-            defaultDrawMode: mapOptions.dessin.place,
             mapHeight: 300,
             calibre: 93,
-            module_url: 'parking'
+            module_url: 'parking',
+            parkingLogo: ''
         };
     },
 
@@ -64,6 +65,14 @@ var parkingMap = React.createClass({
 
         // Lancement du simulateur
         //simu(this.props.planId);
+    },
+
+    /**
+     * Clear la map avant de supprimer le node
+     */
+    componentWillUnmount: function () {
+        this._inst.map.remove();
+        this.hideLogo();
     },
 
     /**
@@ -103,7 +112,7 @@ var parkingMap = React.createClass({
 
         // INIT des layers
         this._inst.placesMarkersGroup = new L.MarkerClusterGroup({
-            maxClusterRadius: 25
+            maxClusterRadius: 15
         });
         this._inst.map.addLayer(this._inst.placesMarkersGroup);
         this._inst.placesGroup = new L.geoJson();
@@ -114,6 +123,54 @@ var parkingMap = React.createClass({
         this._inst.map.addLayer(this._inst.zonesGroup);
         this._inst.afficheursGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.afficheursGroup);
+
+        if (this.props.parkingLogo != '') {
+            this.showLogo(this.props.parkingLogo);
+        }
+    },
+
+    /**
+     * Affiche le cadre d'information en haut à droite
+     * avec un logo
+     */
+    showLogo: function (logo) {
+        // Just in case :
+        this.hideLogo();
+
+        this._inst.infosControl = L.control({
+            position: 'topright'
+        });
+
+        this._inst.infosControl.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+            this.update(logo);
+            return this._div;
+        };
+
+        // Méthode appellée lors de la mise à jour du controle
+        this._inst.infosControl.update = function (logo) {
+            this._div.innerHTML = logo != undefined ? '<img src="' + DOC_URI + 'logo_parking/' + logo + '" />' : '';
+        };
+
+        this._inst.infosControl.addTo(this._inst.map);
+    },
+
+    /**
+     * Met à jour le contenu du block d'infos
+     * @param logo : Message HTML à afficher dans le div d'infos
+     */
+    updateLogo: function (logo) {
+        this._inst.infosControl.update(logo);
+    },
+
+    /**
+     * Masque le contenu du bloc d'info
+     */
+    hideLogo: function () {
+        if (typeof(this._inst.infosControl) == 'object') {
+            this._inst.map.removeControl(this._inst.infosControl);
+        }
+        this._inst.infosControl = undefined;
     },
 
     /**

@@ -87,7 +87,6 @@ var Page = React.createClass({
     /**
      *
      * @returns {XML}
-     * @private
      */
     modeCarte: function () {
 
@@ -109,7 +108,8 @@ var Page = React.createClass({
                     'data-is-plan': 'is-plan',
                     'data-plan-id': 'plan-id',
                     'data-parking-id': 'parking-id',
-                    'data-url': 'url'
+                    'data-url': 'url',
+                    'data-logo': 'logo'
                 }}
                 nodeIcon= "glyphicon glyphicon-stop small"
                 enableLinks={false}
@@ -129,9 +129,11 @@ var Page = React.createClass({
             </Jumbotron>
         );
         if (this.state.url) {
+
             map = <ParkingMap
                 imgUrl={this.state.url}
                 parkingId={this.state.parkingId}
+                parkingLogo={this.state.logo}
                 planId={this.state.planId}
                 divId="div_carte"
                 key={Date.now()}
@@ -230,15 +232,16 @@ var store = Reflux.createStore({
         // ON EST SUR UN ELT DE TYPE PLAN !
         if ($elt.data('is-plan')) {
             var data = $elt.data();
+            console.log('data: %o', data);
 
             var state = {
                 planId: data.id,
                 url: DOC_URI + 'plans/' + data.url,
-                parkingId: data.parkingId
+                parkingId: data.parkingId,
+                logo: data.logo
             };
             this.trigger(state);
         } else {
-
         }
     },
 
@@ -247,17 +250,17 @@ var store = Reflux.createStore({
 
     },
 
-    // Action edit du bandeau
+// Action edit du bandeau
     _edit: function () {
 
     },
 
-    // Action suppr du bandeau
+// Action suppr du bandeau
     _suppr: function () {
 
     },
 
-    // Action save du bandeau
+// Action save du bandeau
     _save: function () {
 
     }

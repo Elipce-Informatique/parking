@@ -158,4 +158,55 @@ class UtilisateurController extends \BaseController
         return json_encode(Utilisateur::isPasswordOk($pass));
     }
 
+    /**
+     * Met à jour les préférences de l'utilisateur pour le parking
+     */
+    public function setPreferenceSupervision()
+    {
+        $retour = [
+            'save' => true,
+            'errorBdd' => false,
+            'model' => null,
+            'upload' => true
+        ];
+
+        $types = Input::get('combo_types') != '' ? explode('[-]', Input::get('combo_types')) : [];
+        $parking_id = Input::get('parking_id');
+        $bloc = Input::get('bloc');
+        $oUser = Auth::user();
+
+        // CONVERSION DU BLOC
+        switch ($bloc) {
+            case 'b1':
+                $bloc = 'bloc_1';
+                break;
+            case 'b2':
+                $bloc = 'bloc_2';
+                break;
+            case 'b3':
+                $bloc = 'bloc_3';
+                break;
+        }
+
+        // 1 SUPPRESSION DES PRÉFÉRENCES DU BLOC COURANT
+        if ($oUser->deletePreferences([$bloc], $parking_id)) {
+        }
+
+        // 2 AJOUR DES NOUVELLES PREFS
+        if (count($types) > 0) {
+            foreach ($types AS $t) {
+                $pref = array($bloc => $t);
+                Log::debug('Pref => ' . print_r($pref, true));
+                if (!$oUser->setPreferences($pref, $parking_id)) {
+                    $retour['errorBdd'] = true;
+                    $retour['save'] = false;
+                }
+            }
+        }
+
+        return $retour;
+
+
+    }
+
 }
