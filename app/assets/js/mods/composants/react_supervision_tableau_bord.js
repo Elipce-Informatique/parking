@@ -236,7 +236,7 @@ var PanelOccupCourante = React.createClass({
                 <StatBarWrapper
                     libelle={total.libelle}
                     tooltip={(isNaN(pourcent) ? 0 : pourcent) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
-                    badge={total.total}
+                    badge={total.total.toString()}
                     key='total'>
                     <StackedStatBar
                         data={dataTotal}
@@ -259,12 +259,12 @@ var PanelOccupCourante = React.createClass({
                         now: d.libre
                     }
                 ];
-
                 return (
                     <StatBarWrapper
                         libelle={d.libelle}
+                        libelleColor={d.couleur}
                         tooltip={(d.occupee / d.total * 100).toFixed(2) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
-                        badge={d.total}
+                        badge={d.total.toString()}
                         key={'detail-' + d.libelle}>
                         <StackedStatBar
                             data={dataDetail}
@@ -494,6 +494,7 @@ var StatBarWrapper = React.createClass({
 
     propTypes: {
         libelle: React.PropTypes.string.isRequired,
+        libelleColor: React.PropTypes.string,
         tooltip: React.PropTypes.string,
         badge: React.PropTypes.string,
         simpleBarData: React.PropTypes.object
@@ -502,7 +503,8 @@ var StatBarWrapper = React.createClass({
     getDefaultProps: function () {
         return {
             tooltip: '',
-            badge: ''
+            badge: '',
+            libelleColor: ''
         };
     },
 
@@ -520,6 +522,8 @@ var StatBarWrapper = React.createClass({
 
     render: function () {
         var bars = this.props.simpleBarData ? <StatBar {...this.props.simpleBarData} /> : this.props.children;
+
+        // Génération du tooltip pour la barre
         if (this.props.tooltip != '') {
             bars = (
                 <OverlayTrigger
@@ -530,11 +534,21 @@ var StatBarWrapper = React.createClass({
                 </OverlayTrigger>);
         }
 
+        // Génération de la couleur du label
+        var style = {};
+        if (this.props.libelleColor != '') {
+            style = {
+                'background-color': '#' + this.props.libelleColor
+            };
+        }
+
+        // Génération du badge pour le label
         var badge = '';
         if (this.props.badge != '') {
             badge = (<Label
                 className="label-stats"
-                bsStyle='primary' >
+                bsStyle='primary'
+                style={style}>
                         {this.props.badge}
             </Label>);
         }
@@ -547,7 +561,7 @@ var StatBarWrapper = React.createClass({
                             {{badge}}
                         </Col>
                         <Col md={10}>
-                            <label className="label-stats">{'' + this.props.libelle}</label>
+                            <label className="label-stats" >{'' + this.props.libelle}</label>
                         </Col>
                     </Row>
                 </Col>
@@ -625,6 +639,7 @@ function generateBarsFromData(dataBars) {
                 return (
                     <StatBarWrapper
                         libelle={d.libelle + ' ' + libelle }
+                        libelleColor={d.couleur}
                         tooltip={(isNaN(pourcent) ? 0 : pourcent) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
                         badge={d.total.toString()}
                         key={'detail-' + libelle + '-' + d.libelle }>

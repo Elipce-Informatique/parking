@@ -209,6 +209,7 @@ class ParkingsController extends \BaseController
                     $temp[$ligne->ordre]['total'] = $ligne->nb;
                     $temp[$ligne->ordre]['libelle'] = $ligne->libelle;
                     $temp[$ligne->ordre]['type_place_id'] = $ligne->type_place_id;
+                    $temp[$ligne->ordre]['couleur'] = $ligne->couleur;
                     break;
             }
         }
@@ -260,6 +261,7 @@ class ParkingsController extends \BaseController
                     $temp[$ligne->plan][$ligne->ordre]['total'] = $ligne->nb;
                     $temp[$ligne->plan][$ligne->ordre]['libelle'] = $ligne->libelle;
                     $temp[$ligne->plan][$ligne->ordre]['type_place_id'] = $ligne->type_place_id;
+                    $temp[$ligne->plan][$ligne->ordre]['couleur'] = $ligne->couleur;
                     break;
             }
         }
@@ -307,6 +309,7 @@ class ParkingsController extends \BaseController
                     $temp[$ligne->zone][$ligne->ordre]['total'] = $ligne->nb;
                     $temp[$ligne->zone][$ligne->ordre]['libelle'] = $ligne->libelle;
                     $temp[$ligne->zone][$ligne->ordre]['type_place_id'] = $ligne->type_place_id;
+                    $temp[$ligne->zone][$ligne->ordre]['couleur'] = $ligne->couleur;
                     break;
             }
         }
@@ -360,7 +363,8 @@ class ParkingsController extends \BaseController
                     "libelle" => $types[$t]->libelle,
                     "total" => 0,
                     "libre" => 0,
-                    "occupee" => 0
+                    "occupee" => 0,
+                    "couleur" => $types[$t]->couleur
                 ];
             }
         }
@@ -386,7 +390,8 @@ class ParkingsController extends \BaseController
                         "libelle" => $types[$t]->libelle,
                         "total" => 0,
                         "libre" => 0,
-                        "occupee" => 0
+                        "occupee" => 0,
+                        "couleur" => $types[$t]->couleur
                     ];
                 }
             }
@@ -415,7 +420,8 @@ class ParkingsController extends \BaseController
                         "libelle" => $types[$t]->libelle,
                         "total" => 0,
                         "libre" => 0,
-                        "occupee" => 0
+                        "occupee" => 0,
+                        "couleur" => $types[$t]->couleur
                     ];
                 }
 
