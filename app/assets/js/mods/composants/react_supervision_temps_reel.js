@@ -13,12 +13,15 @@ var Badge = ReactB.Badge;
 var Glyph = ReactB.Glyphicon;
 
 /**
- * Created by yann on 20/02/2015.
- *
+ * Created by yann on 11/06/2015.
+ * ce composant ne peut être géré comme le tableau de bord car il est placé
+ * dans un treeview. Il est donc détruit et réinit à chaque pliage / dépliage
  */
 var ZoneTempsReel = React.createClass({
+    mixins: [Reflux.ListenerMixin],
 
     propTypes: {
+        plan_id: React.PropTypes.string.isRequired,
         vertical: React.PropTypes.bool
     },
 
@@ -27,7 +30,10 @@ var ZoneTempsReel = React.createClass({
     },
 
     getInitialState: function () {
-        return {};
+        return {
+            journal: [],
+            alertes: []
+        };
     },
 
     componentDidMount: function () {
@@ -40,75 +46,81 @@ var ZoneTempsReel = React.createClass({
 
     render: function () {
         var md = this.props.vertical ? 12 : 3;
-        var style = {}
+        var style = {};
         if (this.props.vertical) {
             style = {
-                style: {
-                    height: '25%'
-                }
+                height: '50%'
             };
         }
         return (
             <Row className="row_temps_reel full-height">
-                <Col md={md} {...style}>
-                    <Panel
-                        header={<strong>{Lang.get('administration_parking.treel.alerte')}</strong>}
-                        bsStyle="default"
-                        className="treel-alerte full-height">
-                        <AlertMessage bsStyle="danger" label="Zone 1" message="est complète."/>
-                        <AlertMessage bsStyle="success" label="Allée 1" message="est vide."/>
-                        <AlertMessage bsStyle="success" label="Zone 2" message="est vide."/>
-                        <AlertMessage bsStyle="warning" label="Ventouse" message="sur la place p42."/>
-                        <AlertMessage bsStyle="danger" label="Zone 1" message="est complète."/>
-                        <AlertMessage bsStyle="info" label="Niveau 2" message="s'est allumé."/>
-                        <AlertMessage bsStyle="success" label="Zone 2" message="est vide."/>
-                        <AlertMessage bsStyle="danger" label="allée 42" message="est complète."/>
-                        <AlertMessage bsStyle="danger" label="niveau 3" message="est complète."/>
-                        <AlertMessage bsStyle="info" label="Niveau 2" message="s'est allumé."/>
-                        <AlertMessage bsStyle="warning" label="Ventouse" message="sur la place p24."/>
-
-                    </Panel>
+                <Col md={md} style={style}>
+                    <PanelGenerique
+                        title={Lang.get('administration_parking.treel.journal')}
+                    />
                 </Col>
-                <Col md={md} {...style}>
-                    <Panel
-                        header={<strong>{Lang.get('administration_parking.treel.journal')}</strong>}
-                        bsStyle="default"
-                        className="treel-journal full-height">
-                        <AlertMessage bsStyle="success" label="P8" message="se libère."/>
-                        <AlertMessage bsStyle="success" label="P32" message="se libère."/>
-                        <AlertMessage bsStyle="warning" label="P21" message="est occupée."/>
-                        <AlertMessage bsStyle="success" label="P534" message="se libère."/>
-                        <AlertMessage bsStyle="warning" label="P850" message="est occupée."/>
-                        <AlertMessage bsStyle="warning" label="P73" message="est occupée."/>
-                        <AlertMessage bsStyle="warning" label="P245" message="est occupée."/>
-                        <AlertMessage bsStyle="success" label="P42" message="se libère."/>
-                    </Panel>
+                <Col md={md} style={style}>
+                    <PanelGenerique
+                        title={Lang.get('administration_parking.treel.alerte')}
+                    />
                 </Col>
-                <Col md={md} {...style}>
-                    <Panel
-                        header={<strong>{Lang.get('administration_parking.treel.anomalie')}</strong>}
-                        bsStyle="default"
-                        className="treel-anomalie full-height">
-                        <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 01-03-128 ne fonctionne plus."/>
-                        <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 04-02-136 ne fonctionne plus."/>
-                        <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 01-05-037 ne fonctionne plus."/>
-                        <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 03-06-201 ne fonctionne plus."/>
-                        <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 03-00-205 ne fonctionne plus."/>
-                        <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 01-08-209 ne fonctionne plus."/>
-                        <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 02-04-204 ne fonctionne plus."/>
-                    </Panel>
-                </Col>
-                <Col md={md} {...style}>
-                    <Panel
-                        header={<strong>{Lang.get('administration_parking.treel.test')}</strong>}
-                        bsStyle="default"
-                        className="treel-test full-height">
-                        Panel content
-                    </Panel>
-                </Col>
+            {/*<Col md={md} {...style}>
+             <Panel
+             header={<strong>{Lang.get('administration_parking.treel.anomalie')}</strong>}
+             bsStyle="default"
+             className="treel-anomalie full-height">
+             <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 01-03-128 ne fonctionne plus."/>
+             <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 04-02-136 ne fonctionne plus."/>
+             <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 01-05-037 ne fonctionne plus."/>
+             <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 03-06-201 ne fonctionne plus."/>
+             <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 03-00-205 ne fonctionne plus."/>
+             <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 01-08-209 ne fonctionne plus."/>
+             <AlertMessage bsStyle="danger" label={<Glyph glyph="exclamation-sign"/>} message="le capteur 02-04-204 ne fonctionne plus."/>
+             </Panel>
+             </Col>*/}
             </Row>
-        )
-            ;
+        );
+    }
+});
+
+/**
+ * Created by yann on 15/04/2015.
+ *
+ * TODO tout traduire et lier le state aux données réelles
+ * @param name : nom a afficher dans le composant
+ */
+var PanelGenerique = React.createClass({
+
+    propTypes: {
+        title: React.PropTypes.string.isRequired,
+        data: React.PropTypes.any.isRequired
+    },
+
+    getDefaultProps: function () {
+        return {};
+    },
+
+    getInitialState: function () {
+        return {};
+    },
+
+    componentDidMount: function () {
+
+    }
+    ,
+
+    shouldComponentUpdate: function (nextProps, nextState) {
+        return true;
+    },
+
+    render: function () {
+
+        return (
+            <Panel
+                header={<strong>{this.props.title}</strong>}
+                bsStyle="default"
+                className="treel-journal full-height" >
+            </Panel>);
     }
 });
 

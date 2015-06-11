@@ -148,8 +148,6 @@ var TableauBord = React.createClass({
     render: function () {
         var md = this.props.vertical ? 12 : 4;
 
-        console.log('State tableau de bord : %o', this.state);
-
         if (this.state.display) {
             return (
                 <Row className="row_reporting full-height">
@@ -237,7 +235,7 @@ var PanelOccupCourante = React.createClass({
                     libelle={total.libelle}
                     tooltip={(isNaN(pourcent) ? 0 : pourcent) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
                     badge={total.total.toString()}
-                    key='total'>
+                    key={'total' + total.libelle}>
                     <StackedStatBar
                         data={dataTotal}
                         max={total.total} />
@@ -538,7 +536,7 @@ var StatBarWrapper = React.createClass({
         var style = {};
         if (this.props.libelleColor != '') {
             style = {
-                'background-color': '#' + this.props.libelleColor
+                backgroundColor: '#' + this.props.libelleColor
             };
         }
 
@@ -611,7 +609,7 @@ function generateBarsFromData(dataBars) {
                 <StatBarWrapper
                     libelle={total.libelle + ' ' + libelle}
                     tooltip={(isNaN(pourcent) ? 0 : pourcent) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
-                    badge={total.total}
+                    badge={total.total.toString()}
                     key={'total' + libelle}>
                     <StackedStatBar
                         data={dataTotal}
@@ -681,7 +679,6 @@ var store = Reflux.createStore({
      */
     updateTableauBord: function (parkingId) {
         var url = BASE_URI + 'parking/' + parkingId + '/tableau_bord';
-        console.log('url = %o', url);
         $.ajax({
             type: 'GET',
             url: url,
