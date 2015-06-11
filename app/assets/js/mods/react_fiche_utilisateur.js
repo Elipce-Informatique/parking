@@ -100,14 +100,6 @@ var FicheUser = React.createClass({
     },
 
     /**
-     * Changer la photo
-     * @param evt
-     */
-    changePhoto: function (evt) {
-        Actions.utilisateur.changePhoto(_.clone(evt));
-    },
-
-    /**
      * Mise à jour des données utilisateur
      * @param {object} data
      */
@@ -333,7 +325,6 @@ var FicheUser = React.createClass({
                             cacheable={false}
                             alertOn={true}
                             src={srcPhoto}
-                            evts={{onChange: this.changePhoto}}
                             editable={this.props.editable} />
                     </Col>
                     <Col md={10}>
@@ -444,9 +435,6 @@ var ficheUserStore = Reflux.createStore({
                 break;
             case 'passConfirm':
                 data.passConfirmValue = e.value;
-                break;
-            case 'photo':
-                //data.photo = e.value;
                 break;
             default:
                 break;

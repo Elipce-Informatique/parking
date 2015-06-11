@@ -1,5 +1,6 @@
 var React = require('react/addons');
-var Input = ReactB.Input;
+var Thumbnail = ReactB.Thumbnail;
+var Col = ReactB.Col;
 var InputFile = require('./formulaire/react_form_fields').InputFile;
 /**
  * Photo de protrait
@@ -24,8 +25,15 @@ var Photo = React.createClass({
     },
 
     render: function () {
+
         return (
-            <img src={this.props.src} {...this.props.attributes} {...this.props.evts} className="img-thumbnail img-responsive img-editable"/>
+            <Thumbnail
+                src={this.props.src}
+                {...this.props.attributes}
+                {...this.props.evts}>
+            {this.props.children}
+            </Thumbnail>
+
         )
     }
 });
@@ -55,68 +63,103 @@ var PhotoEditable = React.createClass({
             attributes: {},
             evts: {},
             alertOn: false,
-            cacheable: true
+            cacheable: false
         }
-    },
-    getInitialState: function () {
-        var state = {};
-        if (this.props.cacheable) {
-            state = {src: this.props.src};
-        } else {
-            var date = new Date();
-            state = {src: this.props.src + "?t=" + date.getMilliseconds()};
-        }
-        return state;
     },
 
-    render: function () {
-        var retour;
-        var photo = <Photo
-            src = {this.state.src}
-            attributes = {this.props.attributes}
-            evts = {this.props.evts}
-        />;
-        // EDITABLE
-        if (this.props.editable) {
-            var evts = {onChange: this.onChange};
-            retour = <span key='photoEditableWrapper'>
-                    {photo}
-                <InputFile
-                    typeOfFile={'img'}
-                    alertOn={this.props.alertOn}
-                    gestMod={this.props.gestMod}
-                    name={this.props.name}
-                    libelle={Lang.get('global.modifier')}
-                    evts={evts}
-                    ref="InputPhoto" />
-            </span>
-        }
-        // NON EDITABLE
-        else {
-            retour = photo;
-        }
-        return retour;
+    getInitialState: function () {
+        return {
+            src: this.props.src,
+            srcApresUpload: ''
+        };
     },
+
+    /**
+     * Update state seulement si src a changé.
+     * @param np
+     * @param ns
+     * @returns {boolean}
+     */
+    shouldComponentUpdate: function (np, ns) {
+        return true;
+    },
+
     componentWillReceiveProps: function (np) {
-        if (np.cacheable) {
-            this.setState({src: np.src});
-        } else {
-            var date = new Date();
-            this.setState({src: np.src + "?t=" + date.getMilliseconds()});
-        }
+        this.setState({
+            src: np.src
+        });
     },
-    onChange: function () {
+
+    onChange: function (e) {
         var input = $(this.refs.InputPhoto.getDOMNode()).find('input')[0];
 
         if (input.files && input.files[0]) {
             var reader = new FileReader();
 
             reader.onload = function (e) {
-                this.setState({src: e.target.result});
+                this.setState({
+                    srcApresUpload: e.target.result
+                });
             }.bind(this);
 
             reader.readAsDataURL(input.files[0]);
         }
+        // OnChage custom du dev
+        if(this.props.evts.onChange !== undefined){
+            this.props.evts.onChange(_.cloneDeep(e));
+        }
+    },
+
+    render: function () {
+
+        var src = '';
+
+        // L'utilisateur a chargé une image
+        if(this.state.srcApresUpload != ''){
+            src = this.state.srcApresUpload;
+        }
+        // L'image est une image existantesur le serveur
+        else{
+            src = this.state.src;
+            // Image pas en cache
+            if (!this.props.cacheable) {
+                src += "?t=" + new Date().getMilliseconds();
+            }
+        }
+
+        var retour;
+        // EDITABLE
+        if (this.props.editable) {
+            var evts = {
+                onChange: this.onChange
+            };
+            retour = (
+                <Photo
+                    src={src}
+                {...this.props.attributes}
+                {...this.props.evts}>
+                    <InputFile
+                        typeOfFile={'img'}
+                        alertOn={this.props.alertOn}
+                        gestMod={this.props.gestMod}
+                        name={this.props.name}
+                        libelle={Lang.get('global.modifier')}
+                        evts={evts}
+                        ref="InputPhoto" />
+                </Photo>
+            );
+        }
+        // NON EDITABLE
+        else {
+            retour = (
+                <Photo
+                    src = {src}
+                    attributes = {this.props.attributes}
+                    evts = {this.props.evts}
+                />
+            );
+        }
+        return retour;
     }
 });
 module.exports.PhotoEditable = PhotoEditable;
