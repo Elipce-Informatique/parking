@@ -141,7 +141,6 @@ require('sweetalert');
         "edit_user",
         "create_user",
         "delete_user",
-        "changePhoto",
         "saveOK",
         "supprOK",
         "updateBandeau",

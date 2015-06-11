@@ -100,14 +100,6 @@ var FicheUser = React.createClass({
     },
 
     /**
-     * Changer la photo
-     * @param evt
-     */
-    changePhoto: function (evt) {
-        Actions.utilisateur.changePhoto(_.clone(evt));
-    },
-
-    /**
      * Mise à jour des données utilisateur
      * @param {object} data
      */
@@ -215,20 +207,30 @@ var FicheUser = React.createClass({
 
             // On affiche la modification du password
             var password = (
-                <span>
-                    <InputPasswordEditable attributes={attrsPassOld}     editable={this.props.editable} />
-                    <InputPasswordEditable attributes={attrsPassNew}     editable={this.props.editable} />
-                    <InputPasswordEditable attributes={attrsPassConfirm} editable={this.props.editable} />
+                <span
+                    key="span">
+                    <InputPasswordEditable
+                        key={1}
+                        attributes={attrsPassOld}
+                        editable={this.props.editable} />
+                    <InputPasswordEditable
+                        key={2}
+                        attributes={attrsPassNew}
+                        editable={this.props.editable} />
+                    <InputPasswordEditable
+                        key={3}
+                        attributes={attrsPassConfirm}
+                        editable={this.props.editable} />
                 </span>);
 
             // Mot de passes cachés
             if (this.state.tabProfilHide) {
-                password = {};
+                password = '';
             }
             // Affichage des mots de passe
             SuiteCode = (
                 <span>
-                    <Row>
+                    <Row key={1}>
                         <Col md={2}>
                             <h3
                                 className="btn btn-default hand-over"
@@ -237,9 +239,12 @@ var FicheUser = React.createClass({
                             </h3>
                         </Col>
                     </Row>
-                    <Row className="marge">
+                    <Row
+                        key={2}
+                        className="marge">
                         <Col md={12}>
-                            <ReactCSSTransitionGroup transitionName="tabprofil" key="transitionGroupTable">
+                            <ReactCSSTransitionGroup
+                                transitionName="tabprofil">
                                 {password}
                             </ReactCSSTransitionGroup >
                         </Col>
@@ -281,14 +286,16 @@ var FicheUser = React.createClass({
             // On affiche le tableau des profils associés
             SuiteCode = (
                 <span>
-                    <Row>
+                    <Row
+                        key={1}>
                         <Col md={2}>
                             <h3 className="btn btn-default hand-over" onClick={fctHideShow}>
                                 {titreBis}
                             </h3>
                         </Col>
                     </Row>
-                    <Row>
+                    <Row
+                        key={2}>
                         <Col md={12} key="colTable">
                             <ReactCSSTransitionGroup
                                 transitionName="tabprofil"
@@ -302,23 +309,28 @@ var FicheUser = React.createClass({
         }
 
         // Attributs du formulaire
-        var fAttrs = {className: "form_utilisateur", id: "form_utilisateur"};
+        var fAttrs = {
+            className: "form_utilisateur",
+            id: "form_utilisateur"
+        };
         // URL de la photo
         var srcPhoto = DOC_URI + 'photo/' + this.state.photo;
         return (
             <Form ref="form" attributes={fAttrs}>
-                <Row>
-                    <Col md={2} className="photo">
+                <Row key="row">
+                    <Col md={2}
+                        className="photo text-center">
                         <PhotoEditable
                             name="photo"
                             cacheable={false}
                             alertOn={true}
                             src={srcPhoto}
-                            evts={{onChange: this.changePhoto}}
                             editable={this.props.editable} />
                     </Col>
                     <Col md={10}>
-                        <InputTextEditable ref="nom"
+                        <InputTextEditable
+                            key={1}
+                            ref="nom"
                             attributes={
                             {
                                 label: Lang.get('administration.utilisateur.tableau.nom'),
@@ -331,15 +343,17 @@ var FicheUser = React.createClass({
                             }}
                             editable={this.props.editable}
                             evts={{onChange: this.test}}/>
-                        <InputTextEditable attributes={{
-                            label: Lang.get('administration.utilisateur.tableau.prenom'),
-                            name: "prenom",
-                            value: this.state.prenom,
-                            required: true,
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-1 text-right',
-                            groupClassName: 'row'
-                        }} editable={this.props.editable} />
+                        <InputTextEditable
+                            key={2}
+                            attributes={{
+                                label: Lang.get('administration.utilisateur.tableau.prenom'),
+                                name: "prenom",
+                                value: this.state.prenom,
+                                required: true,
+                                wrapperClassName: 'col-md-4',
+                                labelClassName: 'col-md-1 text-right',
+                                groupClassName: 'row'
+                            }} editable={this.props.editable} />
                         <InputMailEditable
                             attributes={attrs}
                             editable={this.props.editable} />
@@ -421,9 +435,6 @@ var ficheUserStore = Reflux.createStore({
                 break;
             case 'passConfirm':
                 data.passConfirmValue = e.value;
-                break;
-            case 'photo':
-                data.photo = e.value;
                 break;
             default:
                 break;
