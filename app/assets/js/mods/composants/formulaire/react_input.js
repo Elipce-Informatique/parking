@@ -1154,7 +1154,7 @@ var InputFileOriginal = React.createClass({
         };
     },
 
-    shouldComponentUpdate: function(){
+    shouldComponentUpdate: function () {
         return false;
     },
 
@@ -1164,16 +1164,16 @@ var InputFileOriginal = React.createClass({
         var attrs = this.generateAttributes();
 
         return (
-                <Input
-                    type="file"
-                    name={this.props.name}
-                    className="upload"
+            <Input
+                type="file"
+                name={this.props.name}
+                className="upload"
                     {...attrs}
                     {...this.props.evts}
-                    onChange = {this.handleChange}
-                    onBlur = {this.handleBlur}
-                    ref = "InputField"
-                />
+                onChange = {this.handleChange}
+                onBlur = {this.handleBlur}
+                ref = "InputField"
+            />
         );
     }
 });
@@ -1919,7 +1919,7 @@ var modeEditableFalse = function (attr) {
 
     // Label
     var label = '';
-    if(attr.label !== undefined){
+    if (attr.label !== undefined) {
         label = (
             <label {...classLabel}>
                 <span>{attr.label}</span>

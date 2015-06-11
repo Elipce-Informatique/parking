@@ -338,7 +338,7 @@ var storeNiveau = Reflux.createStore({
     /**
      * Ajoute une ligne d'upload
      */
-    onAdd_upload: function(){
+    onAdd_upload: function () {
         this.stateLocal.nbUpload += 1;
         this.trigger(this.stateLocal);
     },
@@ -346,7 +346,7 @@ var storeNiveau = Reflux.createStore({
     /**
      * Supprime une ligne d'upload
      */
-    onDel_upload: function(){
+    onDel_upload: function () {
         this.stateLocal.nbUpload -= 1;
         this.trigger(this.stateLocal);
     },
@@ -397,7 +397,7 @@ var storeNiveau = Reflux.createStore({
         this.stateLocal.detailNiveau = _.extend(this.stateLocal.detailNiveau, data);
 
         // Si on est sur une combo on trigger pour la selectedValue
-        if(e.name == 'parking_id'){
+        if (e.name == 'parking_id') {
             this.trigger(this.stateLocal);
         }
     },
@@ -469,17 +469,17 @@ var storeNiveau = Reflux.createStore({
         // FormData
         var fData = form_data_helper('form_niveau', method);
         // Mode création
-        if(this.stateLocal.idNiveau === 0) {
+        if (this.stateLocal.idNiveau === 0) {
             // Ajout des url upload
             for (var i = 0; i < this.stateLocal.nbUpload; i++) {
                 fData.append('url' + i, $('[name=url' + i + ']')[0].files[0]);
             }
         }
         // Mode edition
-        else{
+        else {
             url = this.stateLocal.idNiveau;
             // Fichiers existants avant modification
-            $('[name^="url"]').each(function(elt){
+            $('[name^="url"]').each(function (elt) {
                 //console.log('upload %o', this);
                 fData.append($(this).attr('name'), this.files[0]);
             });
@@ -503,25 +503,19 @@ var storeNiveau = Reflux.createStore({
                     Actions.notif.success(Lang.get('global.notif_success'));
                     // Mode edition
                     this.stateLocal.etat = pageState.edition;
-                    // Mode création Ok
-                    //if (tab.model !== null) {
-                        // Maj State local + nouveau libellé
-                        this.stateLocal.idNiveau = tab.model.id;
-                        this.stateLocal.detailNiveau = tab.model;
-                        this.stateLocal.sousTitre = tab.model.libelle;
-                    //}
-                    //// Mode édition
-                    //else {
-                    //    // Nouveau sous titre
-                    //    this.stateLocal.sousTitre = this.stateLocal.detailNiveau.libelle;
-                    //}
+
+                    // Maj State local + nouveau libellé
+                    this.stateLocal.idNiveau = tab.model.id;
+                    this.stateLocal.detailNiveau = tab.model;
+                    this.stateLocal.sousTitre = tab.model.libelle;
+
                     // Maj state
                     this.trigger(this.stateLocal);
                 }
                 // Sauvegarde KO
                 else {
                     // Upload KO
-                    if(!tab.upload){
+                    if (!tab.upload) {
                         Actions.notif.error(Lang.get('global.notif_erreur_upload'));
                     }
                     // Le niveau existe déjà
