@@ -794,6 +794,8 @@ var InputSelectEditable = React.createClass({
  *      tooltip: 'La donnée saisie est déjà présente dans la base de données.' | ''
  *      style: 'success|warning|error|default',
  * }
+ * ATTENTION: Lorsque le champ InputNumber est required et vide, il y a un cadre rouge généré par le navigateur.
+ * Un champ vide de type number est invalide.__defineGetter__Pour palier à cela, par défaut mettre 0 et non ''.
  */
 var InputNumber = React.createClass({
     mixins: [MixinInputValue],
@@ -810,40 +812,69 @@ var InputNumber = React.createClass({
 
     getDefaultProps: function () {
         return {
-            min: -9999999999,
-            max: 9999999999,
             step: 1,
             attributes: {},
             evts: {},
             gestMod: true,
             validator: function (val, props, state) {
 
-                /* Pour résoudre le problème de float accuracy */
-                var resModulo = (val / props.step).toFixed(1);
-                var test = resModulo + '';
+                // Pour résoudre le problème de float accuracy
+                var resModulo = (val / props.step).toFixed(1);// 1 décimale
+                var test = resModulo.toString();
                 var aTest = test.split('.');
 
                 // Champ obligatoire vide
-                if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
-                    return {isValid: false, style: 'default', tooltip: ''};
+                if (val.length == 0 && props.attributes.required !== undefined && props.attributes.required) {
+                    return {
+                        isValid: true,
+                        style: 'default',
+                        tooltip: ''
+                    };
                 }
-                // Champ obligatoire vide
+                // Champ optionnel vide
                 else if (val.length == 0) {
-                    return {isValid: true, style: 'default', tooltip: ''};
+                    return {
+                        isValid: true,
+                        style: 'default',
+                        tooltip: ''
+                    };
                 }
-                // Champ non vide valeur incorrecte
-                else if (val < props.min || val > props.max || aTest[1] != 0) {
-                    var tooltip = Lang.get('global.saisieNumber');
-                    tooltip = tooltip.replace('[min]', props.min);
-                    tooltip = tooltip.replace('[max]', props.max);
-                    var step = props.step + '';
-                    step = step.replace('.', ',');
-                    tooltip = tooltip.replace('[pas]', step);
-                    return {isValid: false, style: 'error', tooltip: tooltip};
-                }
-                // Champ non vide valeur correcte
+                // Champ non vide
                 else {
-                    return {isValid: true, style: 'success', tooltip: ''};
+                    var tooltip = Lang.get('global.saisieNumber');
+                    // Pas un nombre
+                    if (isNaN(val)) {
+                        return {
+                            isValid: false,
+                            style: 'error',
+                            tooltip: tooltip
+                        };
+                    }
+                    // Val est un nombre
+                    else {
+                        //Min et max définis
+                        if (props.min !== undefined && props.max !== undefined) {
+                            // Pas dans l'intervalle
+                            if (val < props.min || val > props.max || aTest[1] != 0) {
+                                // Construction chaine
+                                tooltip += Lang.get('global.saisieNumberBis').replace('%1', props.min);
+                                tooltip = tooltip.replace('%2', props.max);
+
+                                return {
+                                    isValid: false,
+                                    style: 'error',
+                                    tooltip: tooltip
+                                };
+                            }
+                        }
+                        // Champ non vide valeur correcte
+                        return {
+                            isValid: true,
+                            style: 'success',
+                            tooltip: ''
+                        };
+
+                    }
                 }
             }
         };
@@ -1154,7 +1185,7 @@ var InputFileOriginal = React.createClass({
         };
     },
 
-    shouldComponentUpdate: function(){
+    shouldComponentUpdate: function () {
         return false;
     },
 
@@ -1164,16 +1195,16 @@ var InputFileOriginal = React.createClass({
         var attrs = this.generateAttributes();
 
         return (
-                <Input
-                    type="file"
-                    name={this.props.name}
-                    className="upload"
+            <Input
+                type="file"
+                name={this.props.name}
+                className="upload"
                     {...attrs}
                     {...this.props.evts}
-                    onChange = {this.handleChange}
-                    onBlur = {this.handleBlur}
-                    ref = "InputField"
-                />
+                onChange = {this.handleChange}
+                onBlur = {this.handleBlur}
+                ref = "InputField"
+            />
         );
     }
 });
@@ -1919,7 +1950,7 @@ var modeEditableFalse = function (attr) {
 
     // Label
     var label = '';
-    if(attr.label !== undefined){
+    if (attr.label !== undefined) {
         label = (
             <label {...classLabel}>
                 <span>{attr.label}</span>

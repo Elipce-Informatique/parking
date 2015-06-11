@@ -90,7 +90,7 @@ var InputValueMixin = {
         var validation = this.props.validator(val, this.props, this.state, DOM);
         // 3. ATTR DATA-VALID
         var html5Validity = true;
-        if (typeof(DOM) != 'undefined') {
+        if (DOM !== undefined) {
             html5Validity = $(DOM).find(':invalid').length == 0;
         }
         attrs = _.extend({'data-valid': validation.isValid && html5Validity}, attrs);
@@ -117,7 +117,7 @@ var InputValueMixin = {
         var attrs = _.extend(propsAttrs, this.state.attributes);
 
         // Ajout de l'addon required si besoin
-        if (typeof(this.props.attributes.required) != "undefined" && this.props.attributes.required == true) {
+        if (this.props.attributes.required !== undefined && this.props.attributes.required) {
 
             // Pas d'addon sur InputFile
             if (this.props.typeOfFile === undefined) {

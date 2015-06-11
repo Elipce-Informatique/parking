@@ -66,48 +66,65 @@ var PhotoEditable = React.createClass({
             cacheable: false
         }
     },
+
     getInitialState: function () {
-        var state = {};
-        if (this.props.cacheable) {
-            state = {src: this.props.src};
-        } else {
-            var date = new Date();
-            state = {src: this.props.src + "?t=" + date.getMilliseconds()};
-        }
-        return state;
+        return {
+            src: this.props.src,
+            srcApresUpload: ''
+        };
     },
 
-    shouldComponentUpdate: function(){
+    /**
+     * Update state seulement si src a changé.
+     * @param np
+     * @param ns
+     * @returns {boolean}
+     */
+    shouldComponentUpdate: function (np, ns) {
         return true;
     },
-
-
     componentWillReceiveProps: function (np) {
-
-        if (np.cacheable) {
-            this.setState({src: np.src});
-        } else {
-            var date = new Date();
-            this.setState({src: np.src + "?t=" + date.getMilliseconds()});
-        }
+        this.setState({
+            src: np.src
+        });
     },
 
-    onChange: function () {
+    onChange: function (e) {
         var input = $(this.refs.InputPhoto.getDOMNode()).find('input')[0];
 
         if (input.files && input.files[0]) {
             var reader = new FileReader();
 
             reader.onload = function (e) {
-                this.setState({src: e.target.result});
+                this.setState({
+                    srcApresUpload: e.target.result
+                });
             }.bind(this);
 
             reader.readAsDataURL(input.files[0]);
         }
-        // Envoie du change
+        // OnChage custom du dev
+        if(this.props.evts.onChange !== undefined){
+            this.props.evts.onChange(_.cloneDeep(e));
+        }
     },
 
     render: function () {
+
+        var src = '';
+
+        // L'utilisateur a chargé une image
+        if(this.state.srcApresUpload != ''){
+            src = this.state.srcApresUpload;
+        }
+        // L'image est une image existantesur le serveur
+        else{
+            src = this.state.src;
+            // Image pas en cache
+            if (!this.props.cacheable) {
+                src += "?t=" + new Date().getMilliseconds();
+            }
+        }
 
         var retour;
         // EDITABLE
@@ -117,7 +134,7 @@ var PhotoEditable = React.createClass({
             };
             retour = (
                 <Photo
-                    src={this.state.src}
+                    src={src}
                 {...this.props.attributes}
                 {...this.props.evts}>
                     <InputFile
@@ -135,7 +152,7 @@ var PhotoEditable = React.createClass({
         else {
             retour = (
                 <Photo
-                    src = {this.state.src}
+                    src = {src}
                     attributes = {this.props.attributes}
                     evts = {this.props.evts}
                 />

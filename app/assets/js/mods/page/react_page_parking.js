@@ -330,7 +330,7 @@ var storeParking = Reflux.createStore({
                 libelle: '',
                 description: '',
                 ip: '',
-                v4_id: ''
+                v4_id: 0
             }
         };
         this.trigger(this.stateLocal);
