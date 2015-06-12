@@ -64,7 +64,6 @@ var Page = React.createClass({
     },
 
     componentWillMount: function () {
-        Simulator(2);
 
         this.listenTo(store, this.updateState, this.updateState);
     },
@@ -269,6 +268,8 @@ var store = Reflux.createStore({
         // ON EST SUR UN ELT DE TYPE PLAN !
         if ($elt.data('is-plan')) {
             var data = $elt.data();
+
+            Simulator.init(data.id);
 
             this._inst = _.extend(this._inst, {
                 planId: data.id,
