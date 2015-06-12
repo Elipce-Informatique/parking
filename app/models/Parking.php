@@ -71,7 +71,9 @@ class Parking extends BaseModel
      */
     public static function getTreeviewParking()
     {
-        return Auth::user()->parkings()->with('niveaux.plans')->get();
+        return Auth::user()->parkings()->with(['niveaux.plans' => function ($q) {
+            $q->orderBy('plan.libelle');
+        }])->get();
     }
 
     /**
