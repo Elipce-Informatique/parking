@@ -60,6 +60,7 @@ var ModalPreferences = React.createClass({
             <Modal
                 bsStyle="primary"
                 title={this.props.titre}
+                backdrop='static'
                 onRequestHide={this.props.onToggle}>
 
                 <div className="modal-body">
