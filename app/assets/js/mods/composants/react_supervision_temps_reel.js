@@ -31,10 +31,7 @@ var ZoneTempsReel = React.createClass({
     },
 
     getInitialState: function () {
-        return {
-            journal: [],
-            alertes: []
-        };
+        return {};
     },
 
     componentDidMount: function () {
@@ -53,6 +50,8 @@ var ZoneTempsReel = React.createClass({
                 height: '50%'
             };
         }
+
+        console.log('UPDATE JOURNAUX : %o', this.props.data);
         return (
             <Row className="row_temps_reel full-height">
                 <Col md={md} style={style}>

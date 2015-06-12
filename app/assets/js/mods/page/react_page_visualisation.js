@@ -144,7 +144,7 @@ var Page = React.createClass({
                 parkingLogo={this.state.logo}
                 planId={this.state.planId}
                 divId="div_carte"
-                key={Date.now()}
+                key={'map-' + this.state.planId}
             />
         }
 
@@ -340,7 +340,6 @@ var store = Reflux.createStore({
      * @private
      */
     _update_temps_reel_journal: function (data) {
-        console.log('Data JOURNAL = %o', data);
 
         Array.prototype.push.apply(this._inst.temps_reel.journal, data);
         if (this._inst.temps_reel.journal.length > 100) {
