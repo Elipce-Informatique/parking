@@ -109,6 +109,7 @@ var Page = React.createClass({
                 selectedBackColor='#eeeeee'
                 onLineClicked={Actions.map.plan_selected}
                 isSelectionExclusive={true}
+                underlineLeafOnly={true}
                 treeNodeAttributes={{
                     'data-id': 'id',
                     'data-is-plan': 'is-plan',
@@ -117,7 +118,8 @@ var Page = React.createClass({
                     'data-url': 'url',
                     'data-logo': 'logo'
                 }}
-                nodeIcon= "glyphicon glyphicon-stop small"
+                nodeIcon= "glyphicon glyphicon-eye-close small"
+                nodeIconSelected= "glyphicon glyphicon-eye-open small"
                 enableLinks={false}
                 expandIcon= "glyphicon glyphicon-folder-close small"
                 collapseIcon= "glyphicon glyphicon-folder-open small"

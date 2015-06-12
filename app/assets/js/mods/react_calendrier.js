@@ -5,11 +5,6 @@ var Col = ReactB.Col;
 var {Calendar, Month, Week, Day} = require('react-calendar/react-calendar');
 var ButtonGroup = ReactB.ButtonGroup;
 var Button = ReactB.Button;
-// PANEL GAUCHE
-var TreeView = require('react-bootstrap-treeview/dist/js/react-bootstrap-treeview');
-var Collapse = require('./composants/react_collapse').Collapse;
-var CollapseBody = require('./composants/react_collapse').CollapseBody;
-var CollapseSidebar = require('./composants/react_collapse').CollapseSidebar;
 
 // LIBS
 var moment = require('moment');
