@@ -44,13 +44,11 @@ class SimulatorController extends \BaseController
     public function show($id)
     {
         $retour = true;
-        // Toutes les places du parking $id
-        $places = Plan::getPlaces($id);
 
         // Min et max des places
-        $min = 0;
+        $min = Plan::getMinPlace($id);
         $max = Plan::getMaxPlace($id);
-//        Log::debug('random max: '.$max);
+//        Log::debug('random min: '.$min.' max: '.$max);
 
         // Nb aléatoire de places qui bougent
         $nb = mt_rand(2, 5);
@@ -62,6 +60,7 @@ class SimulatorController extends \BaseController
             for ($i = 0; $i < $nb; $i++) {
                 // Place aléatoire
                 $numPlace = mt_rand($min, $max);
+//                Log::debug('num place: '.$numPlace);
 
                 // ID place
                 $oPlace = Place::getPlaceFromNumAndPlan($numPlace, $id);
@@ -71,31 +70,45 @@ class SimulatorController extends \BaseController
                 // Etat d'occupation courrant
                 $etatCourant = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe);
 
-                // Etat d'occupation inverse
-                $etatNew = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe == '1' ? '0' : '1');
-                if (!$etatNew) {
-                    $etatNew = $etatCourant;
+                // Place actuellement ocupée
+                if($oPlace->is_occupe == '1'){
+                    // Un coup sur 3 on change d'état
+                    $rand = mt_rand(0, 2);
                 }
-//                Log::debug('OLD: '.$etatCourant->libelle.' NEW: '.$etatNew->libelle);
+                // Place libre
+                else{
+                    // On l'(occupe
+                    $rand = 1;
+                }
 
-                // Modification place
-                if (!Place::updatePlace($idPlace, ['etat_occupation_id' => $etatNew->id])) {
-                    Log::error('Rollback simulator update place: ' . $idPlace);
-                    $retour = false;
-                    break;
+                // Changement d'état
+                if($rand == 1) {
+                    // Etat d'occupation inverse
+                    $etatNew = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe == '1' ? '0' : '1');
+                    // On garde le même état
+                    if (!$etatNew) {
+                        $etatNew = $etatCourant;
+                    }
+                    // Modification place
+                    if (!Place::updatePlace($idPlace, ['etat_occupation_id' => $etatNew->id])) {
+                        Log::error('Rollback simulator update place: ' . $idPlace);
+                        $retour = false;
+                        break;
+                    }
+                    // Journal
+                    if (!JournalEquipementPlan::createJournalPlace([
+                        'plan_id' => $id,
+                        'place_id' => $idPlace,
+                        'etat_occupation_id' => $etatNew->id,
+                        'date_evt' => date('Y-m-d H:i:s')
+                    ])
+                    ) {
+                        Log::error('Rollback simulator insert journal: ' . $idPlace);
+                        $retour = false;
+                        break;
+                    }
                 }
-                // Journal
-                if (!JournalEquipementPlan::createJournalPlace([
-                    'plan_id' => $id,
-                    'place_id' => $idPlace,
-                    'etat_occupation_id' => $etatNew->id,
-                    'date_evt' => date('Y-m-d H:i:s')
-                ])
-                ) {
-                    Log::error('Rollback simulator insert journal: ' . $idPlace);
-                    $retour = false;
-                    break;
-                }
+
             }
             // Pas d'exception si on arrive ici
             DB::commit();

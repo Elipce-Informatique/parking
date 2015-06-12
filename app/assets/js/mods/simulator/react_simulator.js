@@ -1,7 +1,6 @@
 var form_data_helper = require('../helpers/form_data_helper');
 
 var simu = {
-
     timer: {},
 
     init: function (idPlan) {
