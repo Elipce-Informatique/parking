@@ -217,8 +217,8 @@ require('sweetalert');
     global.Actions.supervision = Reflux.createActions([
         "tableau_bord_update", // affiche tous les parkings
         "preferences_blocs", // Affichage popup en fonction du bloc cliqué
-        "temps_reel_init", // Récup last id des journaux à afficher
-        "temps_reel_update" // Affichage temps réel basé sur le last id
+        "temps_reel_update_journal", // Affichage temps réel BLOC JOURNAL basé sur le last id
+        "temps_reel_update_alertes" // Affichage temps réel BLOC ALERTES basé sur le last id
     ]);
 
 })(window);

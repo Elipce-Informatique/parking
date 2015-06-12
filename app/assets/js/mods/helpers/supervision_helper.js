@@ -22,7 +22,7 @@ module.exports.refreshJournalEquipement = {
         }
     }
     ,
-    destroyPlaces: function () {
+    destroyTimerPlaces: function () {
         if (this._timer) {
             clearInterval(this._timer);
             this._timer = false;
@@ -38,7 +38,7 @@ module.exports.refreshJournalEquipement = {
         // UPDATE TABLEAU DE BORD EN PARALLÈLE
         Actions.supervision.tableau_bord_update(this._parkingId);
 
-        // UPDATE PLAN ET SIDEBAR
+        // UPDATE PLAN ET JOURNAL SIDEBAR
         $.ajax({
             type: 'GET',
             url: BASE_URI + 'parking/journal_place/' + this._planId + '/' + this._journalId,
@@ -46,10 +46,11 @@ module.exports.refreshJournalEquipement = {
             global: false
         })
             .done(function (data) {
+                // --------------------------------------------
                 // ON A DES NOUVELLES DONNÉES
                 if (data.length) {
                     Actions.map.refresh_places(data);
-                    Actions.supervision.temps_reel_update(data);
+                    Actions.supervision.temps_reel_update_journal(data);
 
                     // Calcul du prochain nouvel ID journal
                     _.each(data, function (p, i) {
@@ -62,6 +63,23 @@ module.exports.refreshJournalEquipement = {
                 console.error("ajax error response error " + type);
                 console.error("ajax error response body " + xhr.responseText);
             });
+
+        // TODO : update alertes sidebar
+        //$.ajax({
+        //    type: 'get',
+        //    url: '',
+        //    processdata: false,
+        //    contenttype: false,
+        //    data: {}
+        //})
+        //    .done(function () {
+        //        // on success use return data here
+        //    })
+        //    .fail(function (xhr, type, exception) {
+        //        // if ajax fails display error alert
+        //        console.error("ajax error response error " + type);
+        //        console.error("ajax error response body " + xhr.responsetext);
+        //    });
     }
 }
 ;

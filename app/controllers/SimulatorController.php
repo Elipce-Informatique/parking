@@ -53,7 +53,7 @@ class SimulatorController extends \BaseController
 //        Log::debug('random max: '.$max);
 
         // Nb aléatoire de places qui bougent
-        $nb = mt_rand(5, 15);
+        $nb = mt_rand(2, 5);
 
         try {
             DB::beginTransaction();
@@ -72,7 +72,7 @@ class SimulatorController extends \BaseController
                 $etatCourant = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe);
 
                 // Etat d'occupation inverse
-                $etatNew = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe=='1'?'0':'1');
+                $etatNew = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe == '1' ? '0' : '1');
                 if (!$etatNew) {
                     $etatNew = $etatCourant;
                 }
@@ -196,7 +196,7 @@ class SimulatorController extends \BaseController
                     break;
                 // samedi
                 case 6:
-                    $crenau = [350, 250 ,750];
+                    $crenau = [350, 250, 750];
                     break;
                 // dimanche
                 default:

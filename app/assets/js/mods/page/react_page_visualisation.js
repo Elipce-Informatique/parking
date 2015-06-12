@@ -91,7 +91,7 @@ var Page = React.createClass({
     },
 
     /**
-     *
+     * Crée la page en mode carte
      * @returns {XML}
      */
     modeCarte: function () {
@@ -238,8 +238,8 @@ var store = Reflux.createStore({
         this.listenTo(Actions.validation.submit_form, this._save);
         this.listenTo(Actions.map.plan_selected, this._plan_selected);
 
-        this.listenTo(Actions.supervision.temps_reel_init, this._init_temps_reel);
-        this.listenTo(Actions.supervision.temps_reel_update, this._update_temps_reel);
+        this.listenTo(Actions.supervision.temps_reel_update_journal, this._update_temps_reel_journal);
+        this.listenTo(Actions.supervision.temps_reel_update_alertes, this._update_temps_reel_alertes);
 
         // Init du treeView
         mapHelper.initTreeviewParkingAjax(function (data) {
@@ -272,11 +272,10 @@ var store = Reflux.createStore({
                 }
             });
 
-            var state = this._inst;
-            this.trigger(state);
+            this.trigger(this._inst);
 
             // Init de toutes les données temps réel
-            Actions.supervision.temps_reel_init(data.id);
+            this._init_temps_reel(data.id);
 
         } else {
             // Rien à faire dans ce cas
@@ -284,6 +283,7 @@ var store = Reflux.createStore({
     },
 
     /**
+     * INITIALISATION DE TOUTES LES DONNÉES TEMPS REEL
      * Récupère le last ID en base
      * Clear les données présentes
      * Lance le rafraichissement des données
@@ -307,7 +307,7 @@ var store = Reflux.createStore({
                 // on success use return data here
                 if (!isNaN(data)) {
                     this._inst.temps_reel.last_id = data;
-                    supervision_helper.refreshJournalEquipement.destroyPlaces();
+                    supervision_helper.refreshJournalEquipement.destroyTimerPlaces();
                     supervision_helper.refreshJournalEquipement.init(this._inst.planId, data, this._inst.parkingId);
                 }
                 // On envoi du bois
@@ -321,11 +321,21 @@ var store = Reflux.createStore({
     },
 
     /**
-     * @param planId
+     * Met à jour le journal avec les données reçues
+     * @param data
      * @private
      */
-    _update_temps_reel: function (data) {
+    _update_temps_reel_journal: function (data) {
+        console.log('Data ALERTES = %o', data);
+    },
 
+    /**
+     * Met à jour les alertes avec les données reçues
+     * @param data
+     * @private
+     */
+    _update_temps_reel_alertes: function (data) {
+        console.log('Data ALERTES = %o', data);
     },
 
     // Action create du bandeau
