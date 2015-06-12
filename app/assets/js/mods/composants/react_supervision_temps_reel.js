@@ -56,13 +56,13 @@ var ZoneTempsReel = React.createClass({
         return (
             <Row className="row_temps_reel full-height">
                 <Col md={md} style={style}>
-                    <PanelGenerique
+                    <PanelJournal
                         title={Lang.get('administration_parking.treel.journal')}
                         data={this.props.data.journal}
                     />
                 </Col>
                 <Col md={md} style={style}>
-                    <PanelGenerique
+                    <PanelAlertes
                         title={Lang.get('administration_parking.treel.alerte')}
                         data={this.props.data.alertes}
                     />
@@ -88,11 +88,89 @@ var ZoneTempsReel = React.createClass({
 
 /**
  * Created by yann on 15/04/2015.
+ */
+var PanelJournal = React.createClass({
+
+    propTypes: {
+        title: React.PropTypes.string.isRequired,
+        data: React.PropTypes.array.isRequired
+    },
+
+    getDefaultProps: function () {
+        return {};
+    },
+
+    getInitialState: function () {
+        return {};
+    },
+
+    componentDidMount: function () {
+
+    }
+    ,
+
+    shouldComponentUpdate: function (nextProps, nextState) {
+        return true;
+    },
+
+    render: function () {
+        console.log('Data : %o', this.props.data);
+        var messages = _.map(this.props.data, function (d) {
+            var message = '';
+            var bsStyle = '';
+            var glyph = '';
+
+            // Création du message et bsStyle
+            if (d.etat_occupation.is_occupe == "1") {
+                message = Lang.get('supervision.temps_reel.j_place_occupee');
+                bsStyle = 'danger';
+                glyph = 'minus-sign';
+            }
+            else {
+                message = Lang.get('supervision.temps_reel.j_place_libre');
+                bsStyle = 'success';
+                glyph = 'ok-sign';
+            }
+            message = message.split('[-]');
+            var libelle = <b> {d.libelle} </b>;
+
+            // TRANSFORMATION DE LA DATE EN BDD EN DATE LOCALE
+            var time = moment.utc(d.latest_journal_equipement.date_evt)
+                .local()
+                .format('LT');
+
+            var retour = (
+                <AlertMessage
+                    bsStyle={bsStyle}
+                    label={<Glyph glyph={glyph}/>}
+                    datetime={time}
+                    message={<span>{message[0]} {libelle} {message[1]}</span>}
+                    key={d.latest_journal_equipement.id}
+                />);
+            return retour;
+
+        });
+
+        // Affichage des derniers messages en permier
+        var messages = _(messages).reverse().value();
+
+        return (
+            <Panel
+                header={<strong>{this.props.title}</strong>}
+                bsStyle="default"
+                className="treel-journal full-height" >
+                    {messages}
+            </Panel>);
+    }
+});
+
+/**
+ * Created by yann on 15/04/2015.
  *
  * TODO tout traduire et lier le state aux données réelles
  * @param name : nom a afficher dans le composant
  */
-var PanelGenerique = React.createClass({
+var PanelAlertes = React.createClass({
 
     propTypes: {
         title: React.PropTypes.string.isRequired,
