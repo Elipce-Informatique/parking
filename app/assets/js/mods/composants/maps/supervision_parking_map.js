@@ -59,6 +59,7 @@ var parkingMap = React.createClass({
      * Application de la carte sur le div avec les paramètres
      */
     componentDidMount: function () {
+        console.log('PASS did moint');
         this.initMap();
 
         this.listenTo(supervisionStore, this.onStoreTrigger);
