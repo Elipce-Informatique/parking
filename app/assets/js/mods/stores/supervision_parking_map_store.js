@@ -3,7 +3,6 @@ var _ = require('lodash');
 var mapOptions = require('../helpers/map_options');
 var mapHelper = require('../helpers/map_helper');
 var placeHelper = require('../helpers/place_helper');
-var supervision_helper = require('../helpers/supervision_helper');
 
 /**
  * Created by yann on 27/01/2015.
@@ -252,8 +251,6 @@ var store = Reflux.createStore({
             context: this,
             success: function (data) {
                 this._inst.planInfos.last_journal_init = parseInt(data);
-                // TODO : revoir le chargement AJAX ?
-                supervision_helper.refreshPlaces.init(this._inst.planInfos.id, this._inst.planInfos.last_journal_init);
             },
             error: function (xhr, status, err) {
                 console.error(status, err);

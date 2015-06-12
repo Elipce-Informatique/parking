@@ -2,6 +2,7 @@
 var React = require('react');
 var TreeView = require('react-bootstrap-treeview/dist/js/react-bootstrap-treeview');
 var Simulator = require('../simulator/react_simulator');
+var supervision_helper = require('../helpers/supervision_helper');
 
 // COMPOSANTS NÉCESSAIRES:
 var Collapse = require('../composants/react_collapse').Collapse;
@@ -53,7 +54,12 @@ var Page = React.createClass({
             treeView: [],
             planId: '',
             url: false,
-            parkingId: ''
+            parkingId: '',
+            temps_reel: {
+                last_id: 0,
+                journal: [],
+                alertes: []
+            }
         };
     },
 
@@ -152,10 +158,17 @@ var Page = React.createClass({
                     <Col md={12} id="visualisation_parking" className="full-height" style={{position: 'absolute'}}>
                         <Collapse align="left" sideWidth={2}>
                             <CollapseBody>
-                            {map}
+                                <Collapse isCollapsed={true} align="right" sideWidth={3}>
+                                    <CollapseBody>
+                                        {map}
+                                    </CollapseBody>
+                                    <CollapseSidebar title="Sélection">
+                                        <ZoneTempsReel levels={3} vertical={true} />
+                                    </CollapseSidebar>
+                                </Collapse>
                             </CollapseBody>
                             <CollapseSidebar title="Sélection">
-                            {treeView}
+                                {treeView}
                             </CollapseSidebar>
                         </Collapse>
                     </Col>
@@ -187,6 +200,17 @@ module.exports = Page;
 /*                                                                                              */
 /************************************************************************************************/
 var store = Reflux.createStore({
+    _inst: {
+        planId: 0,
+        url: '',
+        parkingId: 0,
+        logo: '',
+        temps_reel: {
+            last_id: 0,
+            journal: [],
+            alertes: []
+        }
+    },
     getInitialState: function () {
         var retour = {};
 
@@ -214,6 +238,9 @@ var store = Reflux.createStore({
         this.listenTo(Actions.validation.submit_form, this._save);
         this.listenTo(Actions.map.plan_selected, this._plan_selected);
 
+        this.listenTo(Actions.supervision.temps_reel_init, this._init_temps_reel);
+        this.listenTo(Actions.supervision.temps_reel_update, this._update_temps_reel);
+
         // Init du treeView
         mapHelper.initTreeviewParkingAjax(function (data) {
             var dataTableau = mapHelper.recursiveTreeViewParking(data, 0);
@@ -232,17 +259,73 @@ var store = Reflux.createStore({
         // ON EST SUR UN ELT DE TYPE PLAN !
         if ($elt.data('is-plan')) {
             var data = $elt.data();
-            console.log('data: %o', data);
 
-            var state = {
+            this._inst = _.extend(this._inst, {
                 planId: data.id,
                 url: DOC_URI + 'plans/' + data.url,
                 parkingId: data.parkingId,
-                logo: data.logo
-            };
+                logo: data.logo,
+                temps_reel: {
+                    last_id: 0,
+                    journal: [],
+                    alertes: []
+                }
+            });
+
+            var state = this._inst;
             this.trigger(state);
+
+            // Init de toutes les données temps réel
+            Actions.supervision.temps_reel_init(data.id);
+
         } else {
+            // Rien à faire dans ce cas
         }
+    },
+
+    /**
+     * Récupère le last ID en base
+     * Clear les données présentes
+     * Lance le rafraichissement des données
+     * - de la map
+     * - Du tableau de bord
+     * - Du volet temps réel
+     * @param planId
+     * @private
+     */
+    _init_temps_reel: function (planId) {
+        $.ajax({
+            type: 'GET',
+            url: BASE_URI + 'parking/journal_equipement/last/' + planId,
+            processData: false,
+            contentType: false,
+            data: {},
+            context: this,
+            global: false
+        })
+            .done(function (data) {
+                // on success use return data here
+                if (!isNaN(data)) {
+                    this._inst.temps_reel.last_id = data;
+                    supervision_helper.refreshJournalEquipement.destroyPlaces();
+                    supervision_helper.refreshJournalEquipement.init(this._inst.planId, data, this._inst.parkingId);
+                }
+                // On envoi du bois
+                this.trigger(this._inst);
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
+    },
+
+    /**
+     * @param planId
+     * @private
+     */
+    _update_temps_reel: function (data) {
+
     },
 
     // Action create du bandeau
