@@ -148,11 +148,13 @@ var Page = React.createClass({
         }
 
         // Création panel temps réel right
+        console.log('Data temps reel page: %o', this.state.temps_reel);
         var zoneTr = (
             <ZoneTempsReel
                 plan_id={this.state.planId}
                 vertical={true}
                 data={this.state.temps_reel}
+                key={'ztr-' + this.state.planId}
             />);
 
         return (
@@ -344,9 +346,8 @@ var store = Reflux.createStore({
 
         Array.prototype.push.apply(this._inst.temps_reel.journal, data);
         if (this._inst.temps_reel.journal.length > 100) {
-            var start = 99;
             var count = this._inst.temps_reel.journal.length - 100;
-            this._inst.temps_reel.journal.splice(start, count);
+            Array.prototype.shift.apply(this._inst.temps_reel.journal, _.range(count));
         }
 
         this.trigger(this._inst);
@@ -362,9 +363,9 @@ var store = Reflux.createStore({
 
         Array.prototype.push.apply(this._inst.temps_reel.alertes, data);
         if (this._inst.temps_reel.alertes.length > 100) {
-            var start = 99;
             var count = this._inst.temps_reel.alertes.length - 100;
-            this._inst.temps_reel.alertes.splice(start, count);
+            Array.prototype.shift.apply(
+                this._inst.temps_reel.alertes, _.range(count));
         }
 
         this.trigger(this._inst);

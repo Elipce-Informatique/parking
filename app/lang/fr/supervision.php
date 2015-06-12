@@ -30,5 +30,9 @@ return array(
         "b2" => "Préférences d'affichage bloc plans",
         "b3" => "Préférences d'affichage bloc zones",
 
+    ],
+    'temps_reel' => [
+        'j_place_occupee' => "La place [-] est occupée",
+        'j_place_libre' => "La place [-] est libre",
     ]
 );
