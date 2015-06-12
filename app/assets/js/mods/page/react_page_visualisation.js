@@ -64,7 +64,7 @@ var Page = React.createClass({
     },
 
     componentWillMount: function () {
-        //Simulator(1);
+        Simulator(2);
 
         this.listenTo(store, this.updateState, this.updateState);
     },
@@ -146,6 +146,14 @@ var Page = React.createClass({
             />
         }
 
+        // Création panel temps réel right
+        var zoneTr = (
+            <ZoneTempsReel
+                plan_id={this.state.planId}
+                vertical={true}
+                data={this.state.temps_reel}
+            />);
+
         return (
             <Col md={12} className="full-height flex-wrapper">
                 <Row id="row_reporting" className="flex-header" key={1}>
@@ -163,7 +171,7 @@ var Page = React.createClass({
                                         {map}
                                     </CollapseBody>
                                     <CollapseSidebar title="Sélection">
-                                        <ZoneTempsReel levels={3} vertical={true} />
+                                    {zoneTr}
                                     </CollapseSidebar>
                                 </Collapse>
                             </CollapseBody>
@@ -276,6 +284,8 @@ var store = Reflux.createStore({
 
             // Init de toutes les données temps réel
             this._init_temps_reel(data.id);
+            // Init données tableau de bord
+            Actions.supervision.tableau_bord_update(this._inst.parkingId);
 
         } else {
             // Rien à faire dans ce cas
@@ -294,6 +304,7 @@ var store = Reflux.createStore({
      * @private
      */
     _init_temps_reel: function (planId) {
+        console.log('Plan ID : %o', planId);
         $.ajax({
             type: 'GET',
             url: BASE_URI + 'parking/journal_equipement/last/' + planId,
@@ -321,12 +332,22 @@ var store = Reflux.createStore({
     },
 
     /**
-     * Met à jour le journal avec les données reçues
+     * Met à jour le journal avec les données reçues.
+     * Maximum de 100 éléments dans les tableaux
      * @param data
      * @private
      */
     _update_temps_reel_journal: function (data) {
-        console.log('Data ALERTES = %o', data);
+        console.log('Data JOURNAL = %o', data);
+
+        Array.prototype.push.apply(this._inst.temps_reel.journal, data);
+        if (this._inst.temps_reel.journal.length > 100) {
+            var start = 99;
+            var count = this._inst.temps_reel.journal.length - 100;
+            this._inst.temps_reel.journal.splice(start, count);
+        }
+
+        this.trigger(this._inst);
     },
 
     /**
@@ -336,6 +357,15 @@ var store = Reflux.createStore({
      */
     _update_temps_reel_alertes: function (data) {
         console.log('Data ALERTES = %o', data);
+
+        Array.prototype.push.apply(this._inst.temps_reel.alertes, data);
+        if (this._inst.temps_reel.alertes.length > 100) {
+            var start = 99;
+            var count = this._inst.temps_reel.alertes.length - 100;
+            this._inst.temps_reel.alertes.splice(start, count);
+        }
+
+        this.trigger(this._inst);
     },
 
     // Action create du bandeau

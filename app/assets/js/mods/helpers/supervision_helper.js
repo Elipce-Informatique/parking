@@ -35,10 +35,10 @@ module.exports.refreshJournalEquipement = {
      * @private
      */
     _handleAjax: function () {
-        // UPDATE TABLEAU DE BORD EN PARALLÈLE
+        // 1 - UPDATE TABLEAU DE BORD EN PARALLÈLE
         Actions.supervision.tableau_bord_update(this._parkingId);
 
-        // UPDATE PLAN ET JOURNAL SIDEBAR
+        // 2 - UPDATE PLAN ET JOURNAL SIDEBAR
         $.ajax({
             type: 'GET',
             url: BASE_URI + 'parking/journal_place/' + this._planId + '/' + this._journalId,
@@ -49,7 +49,9 @@ module.exports.refreshJournalEquipement = {
                 // --------------------------------------------
                 // ON A DES NOUVELLES DONNÉES
                 if (data.length) {
+                    // 2.1 - UPDATE PLACES CARTE
                     Actions.map.refresh_places(data);
+                    // 2.2 - UPDATE JOURNAL TEMPS REEL
                     Actions.supervision.temps_reel_update_journal(data);
 
                     // Calcul du prochain nouvel ID journal
@@ -64,7 +66,7 @@ module.exports.refreshJournalEquipement = {
                 console.error("ajax error response body " + xhr.responseText);
             });
 
-        // TODO : update alertes sidebar
+        // TODO : 3 - UPDATE ALERTES SIDEBAR
         //$.ajax({
         //    type: 'get',
         //    url: '',

@@ -22,7 +22,8 @@ var ZoneTempsReel = React.createClass({
 
     propTypes: {
         plan_id: React.PropTypes.string.isRequired,
-        vertical: React.PropTypes.bool
+        vertical: React.PropTypes.bool,
+        data: React.PropTypes.object
     },
 
     getDefaultProps: function () {

@@ -46,8 +46,7 @@ var store = Reflux.createStore({
             description: '',
             plan: '',
             parking_id: 0,
-            etat_general_id: 0,
-            last_journal_init: 0
+            etat_general_id: 0
         },
         types_places: [],
         places: [],
@@ -93,8 +92,6 @@ var store = Reflux.createStore({
 
 
         $.when(p1, p2, p3).done(function () {
-            // infos journal
-            this.recupInfosJournal(map, calibre, parkingInfos);
             // Affichage des places du niveau
             this.affichageDataInitial();
         }.bind(this));
@@ -132,9 +129,6 @@ var store = Reflux.createStore({
                 data: suppression
             });
         }
-
-        Actions.supervision.tableau_bord_update(this._inst.parkingInfos.id);
-
     },
 
     /**
@@ -236,21 +230,6 @@ var store = Reflux.createStore({
                 this._inst.zones = zones;
                 this._inst.afficheurs = [];
                 // ---------------------------------------------------------------------
-            },
-            error: function (xhr, status, err) {
-                console.error(status, err);
-            }
-        });
-    },
-
-    recupInfosJournal: function (map, calibre, parkingInfos) {
-        return $.ajax({
-            method: 'GET',
-            url: BASE_URI + 'parking/journal_equipement/last/' + parkingInfos.planId,
-            dataType: 'json',
-            context: this,
-            success: function (data) {
-                this._inst.planInfos.last_journal_init = parseInt(data);
             },
             error: function (xhr, status, err) {
                 console.error(status, err);

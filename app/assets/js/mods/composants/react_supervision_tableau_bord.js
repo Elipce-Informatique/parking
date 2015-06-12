@@ -76,7 +76,6 @@ var TableauBord = React.createClass({
 
     componentWillReceiveProps: function (np) {
         if (np.parkingId != '') {
-            Actions.supervision.tableau_bord_update(np.parkingId);
             this.setState({display: true});
         } else {
             this.setState({display: false});

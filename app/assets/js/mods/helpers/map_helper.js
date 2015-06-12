@@ -615,9 +615,6 @@ function recursiveTreeViewParking(data, parkingId, logo) {
                 elt['url'] = d.plans[0].url;
                 elt['is-plan'] = true;
 
-                elt.icon = '';
-                elt.icon = 'glyphicon glyphicon-eye-open';
-
                 elt.id = d.plans[0].id;
                 elt['logo'] = logo;
             } else {
@@ -630,9 +627,6 @@ function recursiveTreeViewParking(data, parkingId, logo) {
             elt['is-plan'] = true;
             elt['parking-id'] = parkingId;
             elt['logo'] = logo;
-
-            elt.icon = '';
-            elt.icon = 'glyphicon glyphicon-eye-open';
         }
         return elt;
     }, this);
