@@ -151,4 +151,19 @@ class Place extends BaseModel
             ->get()
             ->first();
     }
+
+    /**
+     * Calcule si une place est occupée ou pas
+     * @param $id : place.id
+     * @return bool
+     */
+    public static function isOccupied($id)
+    {
+        $place =  Place::where('id', '=', $id)
+            ->leftJoin('etat_occupation', 'etat_occupation.id', '=', 'place.etat_occupation_id')
+            ->where('etat_occupation.is_occupe','=','1')
+            ->get();
+
+        return count($place) == 1;
+    }
 }

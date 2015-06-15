@@ -12,7 +12,7 @@ class JournalAlerte extends BaseModel
      * L'alerte de cette entrée de journal
      * @return mixed
      */
-    public function alertes()
+    public function alerte()
     {
         return $this->belongsTo('Alerte');
     }
