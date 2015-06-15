@@ -77,7 +77,7 @@ class SimulatorController extends \BaseController
                 }
                 // Place libre
                 else{
-                    // On l'(occupe
+                    // On l'occupe
                     $rand = 1;
                 }
 
@@ -301,6 +301,26 @@ class SimulatorController extends \BaseController
         }
         DB::commit();
         return json_encode(true);
+    }
+
+    /**
+     * Renseigne le journal_alerte
+     * @return string
+     */
+    public function alertes()
+    {
+        $alertes = Auth::user()
+            ->parkings()
+            ->with('alertes.type.places')
+            ->get();
+
+        return $alertes;
+        if(count($alertes) > 0){
+            // Parecours des alertes
+            foreach($alertes as $alertes){
+
+            }
+        }
     }
 
 

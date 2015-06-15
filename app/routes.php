@@ -198,6 +198,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
 
     Route::get('simulator/capteurs', 'SimulatorController@capteurs');
     Route::get('simulator/foire/{planId}', 'SimulatorController@foire');
+    Route::get('simulator/alertes', 'SimulatorController@alertes');
     Route::resource('simulator', 'SimulatorController');
 });
 // RESSOURCE PARKING SÉPARÉE DU GROUPE AVEC PRÉFIXE PARKING POUR DES RAISONS LOGIQUES

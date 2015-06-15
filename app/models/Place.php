@@ -66,6 +66,15 @@ class Place extends BaseModel
         return $this->hasOne('JournalEquipementPlan')->latest();
     }
 
+    /**
+     * Tables d'association alerte_place
+     * @return mixed
+     */
+    public function alertes()
+    {
+        return $this->belongsToMany('Alerte');
+    }
+
     /*****************************************************************************
      * INSERTION DES DONNÉES *****************************************************
      *****************************************************************************/
