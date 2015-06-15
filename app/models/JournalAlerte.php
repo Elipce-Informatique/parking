@@ -9,12 +9,12 @@ class JournalAlerte extends BaseModel
      * RELATIONS DU MODELE *******************************************************
      *****************************************************************************/
     /**
-     * Les places de l'alerte
+     * L'alerte de cette entrée de journal
      * @return mixed
      */
     public function alertes()
     {
-        return $this->hasMany('Alerte');
+        return $this->belongsTo('Alerte');
     }
 
     /*****************************************************************************

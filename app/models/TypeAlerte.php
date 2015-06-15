@@ -9,7 +9,7 @@ class TypeAlerte extends BaseModel
      * RELATIONS DU MODELE *******************************************************
      *****************************************************************************/
     /**
-     * Les places de l'alerte
+     * Les alertes attachées à ce type
      * @return mixed
      */
     public function alertes()

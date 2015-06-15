@@ -18,12 +18,12 @@ class Alerte extends BaseModel
     }
 
     /**
-     * Le journal des alertes
+     * Les entrées de journal de l'alerte
      * @return mixed
      */
-    public function journaux()
+    public function journal()
     {
-        return $this->belongsTo('JournalAlerte');
+        return $this->hasMany('JournalAlerte');
     }
 
     /**

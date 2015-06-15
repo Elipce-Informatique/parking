@@ -189,12 +189,16 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::get('type_place/all', 'TypesPlacesController@showAll');
     Route::resource('type_place', 'TypesPlacesController');
 
-    // JOURNAUX
+    // JOURNAL EQUIPEMENTS
     Route::get('journal_equipement', 'JournalEquipementPlanController@index');
     Route::get('journal_equipement/last/{planId}', 'JournalEquipementPlanController@last');
     Route::get('journal_equipement/{planId}', 'JournalEquipementPlanController@show');
     Route::get('journal_equipement/{planId}/{journalId}', 'JournalEquipementPlanController@showFromVersion');
     Route::get('journal_place/{planId}/{journalId}', 'JournalEquipementPlanController@showPlacesFromVersion');
+
+    // JOURNAL ALERTES
+    Route::get('journal_alerte/last/{parkingId}', 'JournalAlerteParkingController@last');
+    Route::get('journal_alerte/{parkingId}/{journalId}', 'JournalAlerteParking@showFromVersion');
 
     Route::get('simulator/capteurs', 'SimulatorController@capteurs');
     Route::get('simulator/foire/{planId}', 'SimulatorController@foire');
