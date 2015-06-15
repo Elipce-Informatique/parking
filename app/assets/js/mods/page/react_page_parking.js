@@ -444,7 +444,6 @@ var storeParking = Reflux.createStore({
             dataType: 'json',
             context: this,
             success: function (tab) {
-                console.log('retour creation %o', tab);
                 // Sauvegarde OK
                 if (tab.save) {
                     // Notification

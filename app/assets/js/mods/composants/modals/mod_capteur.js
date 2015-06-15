@@ -194,7 +194,6 @@ var store = Reflux.createStore({
      * @param formDom : le DOM du formulaire
      */
     handleCapteur: function (formDom) {
-        console.log('PASS handleCapteur : %o', formDom);
 
         var concentrateurId, busId, capteurId, $dom = $(formDom);
         concentrateurId = $dom.find('[name=concentrateur_id]').val();

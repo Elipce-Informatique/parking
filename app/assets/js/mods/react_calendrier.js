@@ -172,7 +172,6 @@ var Calendrier = React.createClass({
         },
 
         render: function () {
-            console.log('DATA calendrier %o', this.props.data);
 
             // Chargement des jours du calendrier
             var days = _.map(this.props.data, function (jour, index) {

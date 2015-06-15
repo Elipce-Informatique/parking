@@ -67,21 +67,22 @@ module.exports.refreshJournalEquipement = {
             });
 
         // TODO : 3 - UPDATE ALERTES SIDEBAR
-        //$.ajax({
-        //    type: 'get',
-        //    url: '',
-        //    processdata: false,
-        //    contenttype: false,
-        //    data: {}
-        //})
-        //    .done(function () {
-        //        // on success use return data here
-        //    })
-        //    .fail(function (xhr, type, exception) {
-        //        // if ajax fails display error alert
-        //        console.error("ajax error response error " + type);
-        //        console.error("ajax error response body " + xhr.responsetext);
-        //    });
+        $.ajax({
+            type: 'get',
+            url: BASE_URI + 'parking/journal_alerte/' + this._planId + '/' + this._journalId,
+            processdata: false,
+            contenttype: false,
+            data: {}
+        })
+            .done(function (data) {
+                // on success use return data here
+                console.log('PASS RETOUR ALERTES : %o', data);
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responsetext);
+            });
     }
 }
 ;

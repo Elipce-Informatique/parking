@@ -97,7 +97,6 @@ var store = Reflux.createStore({
         // Récupération du calibre
         this._inst.calibre = calibre;
         this._inst.mapInst = mapInst;
-        console.log('MapInst : %o', mapInst);
 
         // Récupération en BDD des données du parking sélectionné
         var p1 = this.recupInfosParking(map, calibre, parkingInfos);
@@ -124,7 +123,6 @@ var store = Reflux.createStore({
     onDraw_created: function (data) {
         this._inst.lastDraw = data;
 
-        console.log('Dessin utilisateur : %o', JSON.stringify(data.e.layer._latlngs));
 
         switch (this._inst.currentMode) {
             // -------------------------------------------------------------
@@ -166,7 +164,6 @@ var store = Reflux.createStore({
                 allees = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.alleesGroup);
 
                 var geometryOk = zoneHelper.geometryCheck(data.e.layer._latlngs, zones, allees);
-                console.log('Géométrie Zone ok = %o', geometryOk);
 
                 // Géométrie OK ouverture de la POPUP
                 if (geometryOk) {
@@ -185,7 +182,6 @@ var store = Reflux.createStore({
                 allees = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.alleesGroup);
 
                 var geometryOk = alleeHelper.geometryCheck(data.e.layer._latlngs, zones, allees);
-                console.log('Géométrie Allée ok = %o', geometryOk);
 
                 // Géométrie OK ouverture de la POPUP
                 if (geometryOk) {
@@ -208,9 +204,7 @@ var store = Reflux.createStore({
         }
     },
     onDraw_deleted: function (data) {
-        console.log('Pass onDraw_deleted %o', data);
         var deletedEntities = _.values(data.e.layers._layers);
-        console.log('Entités supprimées %o', deletedEntities);
         switch (this._inst.currentMode) {
             // -------------------------------------------------------------
             // SUPPRESSION D'UNE OU PLUSIEURS PLACES
@@ -449,7 +443,6 @@ var store = Reflux.createStore({
                 data: fData,
                 context: this,
                 success: function (data) {
-                    console.log('Data retour places : %o', data);
                     // TEST ÉTAT INSERTION
                     if (data.retour.length > 0) {
                         // 1 - TRANSFORMATION DES DATA DE LA BDD EN PLACES
@@ -557,7 +550,6 @@ var store = Reflux.createStore({
      * @param allee
      */
     handleAllee: function (formDom, allee) {
-        console.log('Allée : %o', allee);
         alleeHelper.createAllee(formDom, allee, this._inst, function (data) {
             data = JSON.parse(data);
             // TEST ÉTAT INSERTION
@@ -617,7 +609,6 @@ var store = Reflux.createStore({
         this.trigger(retour);
 
         // ATTACHEMENT DES ÉVÈNEMENTS SUR LES PLACES
-        console.log('Map : %o', this._inst.mapInst);
         this._inst.mapInst.placesGroup.on('click', this.onPlaceCapteurClick, this);
     },
 
@@ -639,13 +630,10 @@ var store = Reflux.createStore({
      * @param evt
      */
     onPlaceCapteurClick: function (evt) {
-        console.log('Pass Click place : %o', evt);
 
         var place = _.cloneDeep(evt.layer.options.data);
         var capteur = _.first(this._inst.capteur_place.capteursRestant);
 
-        console.log('Place cliquée : %o', place);
-        console.log('Capteur associé : %o', capteur);
 
         // PLACE NON AFFECTÉE
         if (place.capteur_id == null) {
@@ -664,7 +652,6 @@ var store = Reflux.createStore({
                 context: this
             })
                 .done(function (retour) {
-                    console.log('SUCCESS : %o', retour);
                     // OK
                     if (retour.save) {
 
@@ -744,7 +731,6 @@ var store = Reflux.createStore({
      * - Vide les données du store en rapport avec l'affectation
      */
     onStop_affectation_capteurs: function () {
-        console.log('PASS STOP AFFECTATION: %o', arguments);
 
         // MISE À JOUR DU MESSAGE D'INFO
         var retour = {
@@ -1010,7 +996,6 @@ var store = Reflux.createStore({
         return _.map(zonesBDD, function (z) {
             if (z.geojson != "") {
                 var extraData = z;
-                console.log('Zone à afficher : %o', z);
                 var polygon = mapHelper.createFeatureFromCoordinates(JSON.parse(z.geojson), extraData, zoneStyle);
                 return {
                     data: z,

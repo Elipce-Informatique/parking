@@ -114,6 +114,9 @@ Voulez-vous vraiment quitter cette page ?',
     'ip' => "Adresse IP",
     'v4id' => "ID réseau terrain",
 
+    // ALERTES
+    'alerte_full' => "",
+    'alerte_empty' => "",
 
     /*
     |--------------------------------------------------------------------------

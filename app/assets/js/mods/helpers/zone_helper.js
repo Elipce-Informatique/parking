@@ -158,7 +158,6 @@ function createZone(formDom, zone, _inst, callback) {
 function insertZone(formDom, data, callback) {
     // CONSTRUCTION DE l'AJAX DE CRÉATION
     var fData = formDataHelper('form_mod_zone', 'POST');
-    console.log('Data insert : %o', data);
     fData.append('data', JSON.stringify(data));
 
     $.ajax({
@@ -199,7 +198,6 @@ function getAlleesInZone(formDom, zone, _inst) {
         return allee.options.data;
     });
 
-    console.log('Allées dans la zone : %o', alleesInZone);
     return {alleesData: alleesInZoneData, alleesGeometrie: alleesInZone};
 }
 

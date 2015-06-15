@@ -39,7 +39,6 @@ var ZoneTempsReel = React.createClass({
     },
 
     shouldComponentUpdate: function (nextProps, nextState) {
-        console.log('PASS should');
         return true;
     },
 
@@ -51,8 +50,6 @@ var ZoneTempsReel = React.createClass({
                 height: '50%'
             };
         }
-
-        console.log('UPDATE JOURNAUX : %o', this.props.data);
         return (
             <Row className="row_temps_reel full-height">
                 <Col md={md} style={style}>
@@ -114,7 +111,6 @@ var PanelJournal = React.createClass({
     },
 
     render: function () {
-        console.log('Data : %o', this.props.data);
         var messages = _.map(this.props.data, function (d) {
             var message = '';
             var bsStyle = '';
@@ -195,7 +191,6 @@ var PanelAlertes = React.createClass({
     },
 
     render: function () {
-        console.log('Data : %o', this.props.data);
         var messages = _.map(this.props.data, function (d) {
             var message = '';
             var bsStyle = '';

@@ -623,7 +623,6 @@ var parkingMap = React.createClass({
 
             // Id identiques, on supprime la place
             if (id == place_id) {
-                console.log('Place a suppr !!!! %o', p);
                 this._inst.placesGroup.removeLayer(p);
             }
         }, this);

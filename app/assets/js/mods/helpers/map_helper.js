@@ -555,7 +555,6 @@ function getDefaultAlleeIdInZoneFromPoint(point, zones) {
  *
  */
 function generateInfosCapteurPlace(concentrateurV4Id, busNum, adressCapteur, nbRestant) {
-    console.log('Concentrateur V4Id : %o, Bus Num : %o, Capteur Adress : %o', concentrateurV4Id, busNum, adressCapteur);
     var titre = '<h4>' + Lang.get('administration_parking.carte.infos_capteur_titre') + '</h4>';
     var adresse = '<p>' + Lang.get('administration_parking.carte.infos_capteur_adresse') + '<strong>' + concentrateurV4Id + '.' + busNum + '.' + adressCapteur + '</strong>';
     var restant = '<br />' + Lang.get('administration_parking.carte.infos_capteur_restant') + '<strong>' + nbRestant + '</strong>';

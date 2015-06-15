@@ -107,7 +107,6 @@ var TableauBord = React.createClass({
                 return {label: t.libelle, value: t.id.toString()};
             });
             var selectedIds = this.state.prefs[this.state.modalPref.bloc].types;
-            console.log('Selected Ids : %o', selectedIds);
 
             var mod = (
                 <ModalPrefs

@@ -67,7 +67,6 @@ function geometryCheck(newAllee, zones, allees) {
  * @param callback : function appellée lors du retour AJAX de l'insertion
  */
 function createAllee(formDom, allee, _inst, callback) {
-    console.log('CreateAllee avec %o', arguments);
 
     // Une allée contient la zone ?
     var zoneWrapper = getZoneWrapper(formDom, allee, _inst);
@@ -77,7 +76,6 @@ function createAllee(formDom, allee, _inst, callback) {
 
     // ALLÉE HORS ZONE : Zone par défaut
     if (zoneWrapper.length != 1) {
-        console.log('Pass zone défaut');
         var defaultZoneId = _inst.defaults.zone.id;
         data = {
             allee_geojson: geoJson,
@@ -97,7 +95,6 @@ function createAllee(formDom, allee, _inst, callback) {
     var places = mapHelper.getPlacesInAllee(allee.e.layer, _inst);
     data['places'] = places;
 
-    console.log('Data allée = %o', data);
     insertAllee(formDom, data, callback);
 }
 
@@ -137,11 +134,8 @@ function getZoneWrapper(formDom, allee, _inst) {
 
     // ZONE QUI CONTIENT L'ALLÉE
     var zoneContainAllee = _.filter(allZones, function (zone) {
-        console.log('Layer = %o', allee.e.layer);
         return mapHelper.polygonContainsPolygon(zone._latlngs, allee.e.layer._latlngs);
     });
-
-    console.log('Zone Contenant l\'allée : %o', zoneContainAllee);
 
     // EXTRACTION DE LA PROPRIÉTÉ DATA POUR ÉVITER LA REDONDANCE LIÉE À LA MAP.
     zoneContainAllee = _.map(zoneContainAllee, function (zone) {

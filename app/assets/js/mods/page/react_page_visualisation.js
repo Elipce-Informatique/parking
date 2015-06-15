@@ -148,7 +148,6 @@ var Page = React.createClass({
         }
 
         // Création panel temps réel right
-        console.log('Data temps reel page: %o', this.state.temps_reel);
         var zoneTr = (
             <ZoneTempsReel
                 plan_id={this.state.planId}
@@ -309,7 +308,6 @@ var store = Reflux.createStore({
      * @private
      */
     _init_temps_reel: function (planId) {
-        console.log('Plan ID : %o', planId);
         $.ajax({
             type: 'GET',
             url: BASE_URI + 'parking/journal_equipement/last/' + planId,
@@ -343,7 +341,6 @@ var store = Reflux.createStore({
      * @private
      */
     _update_temps_reel_journal: function (data) {
-
         Array.prototype.push.apply(this._inst.temps_reel.journal, data);
         if (this._inst.temps_reel.journal.length > 100) {
             var count = this._inst.temps_reel.journal.length - 100;
@@ -359,7 +356,6 @@ var store = Reflux.createStore({
      * @private
      */
     _update_temps_reel_alertes: function (data) {
-        console.log('Data ALERTES = %o', data);
 
         Array.prototype.push.apply(this._inst.temps_reel.alertes, data);
         if (this._inst.temps_reel.alertes.length > 100) {
