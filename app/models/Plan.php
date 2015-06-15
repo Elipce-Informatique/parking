@@ -84,4 +84,18 @@ class Plan extends BaseModel
             ->select('place.id', 'place.num', 'etat_occupation.is_occupe')
             ->min('place.num');
     }
+
+    /**
+     * Calucle l'ID parking en fonction du plan
+     * @param $idPlan
+     * @return mixed
+     */
+    public static function getParkingId($idPlan){
+        $plan = Plan::where('plan.id', '=', $idPlan)
+            ->niveau()
+            ->first();
+
+        return $plan['niveau']['parking_id'];
+    }
+
 }

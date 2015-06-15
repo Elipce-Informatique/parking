@@ -32,7 +32,7 @@ class Alerte extends BaseModel
      */
     public function type()
     {
-        return $this->belongsTo('TypeAlerte');
+        return $this->belongsTo('TypeAlerte', 'type_alerte_id', 'id');
     }
 
     /**

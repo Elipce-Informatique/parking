@@ -71,18 +71,17 @@ class SimulatorController extends \BaseController
                 $etatCourant = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe);
 
                 // Place actuellement ocupée
-                if($oPlace->is_occupe == '1'){
+                if ($oPlace->is_occupe == '1') {
                     // Un coup sur 3 on change d'état
                     $rand = mt_rand(0, 2);
-                }
-                // Place libre
-                else{
+                } // Place libre
+                else {
                     // On l'occupe
                     $rand = 1;
                 }
 
                 // Changement d'état
-                if($rand == 1) {
+                if ($rand == 1) {
                     // Etat d'occupation inverse
                     $etatNew = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe == '1' ? '0' : '1');
                     // On garde le même état
@@ -121,6 +120,10 @@ class SimulatorController extends \BaseController
         if (!$retour) {
             DB::rollBack();
         }
+
+        // Alertes
+        $this->alertes(Plan::getParkingId($id));
+
         return json_encode($retour);
     }
 
@@ -307,18 +310,51 @@ class SimulatorController extends \BaseController
      * Renseigne le journal_alerte
      * @return string
      */
-    public function alertes()
+    public function alertes($idParking)
     {
-        $alertes = Auth::user()
+        Log::debug('id park ' . $idParking);
+
+        $park = Auth::user()
             ->parkings()
-            ->with('alertes.type.places')
-            ->get();
+            ->where('parking.id', '=', $idParking)
+            ->with('alertes.type', 'alertes.places')
+            ->first();
 
-        return $alertes;
-        if(count($alertes) > 0){
-            // Parecours des alertes
-            foreach($alertes as $alertes){
 
+        // On a des alertes sur le parking
+        if (isset($park['alertes']) && count($park['alertes']) > 0) {
+            // Parcours des alertes
+            foreach ($park['alertes'] as $alerte) {
+                // Quel type d'alerte
+                switch ($alerte['type']['code']) {
+                    case 'full':
+                        $full = true;
+                        // Parcours des places
+                        foreach ($alerte['places'] as $place) {
+                            // Place libre
+                            if (!Place::isOccupied($place['id'])) {
+                                $full = false;
+                                break;
+                            }
+                        }
+                        // Toutes les places sont prises
+                        if ($full) {
+                            try {
+                                JournalAlerte::create([
+                                    'alerte_id' => $alerte['type']['id'],
+                                    'date_journal' => date('Y-m-d H:i:s')
+                                ]);
+                            } catch (Exception $e) {
+                                Log::error('erreur insertion journal_alerte ' . $e->getMessage());
+                            }
+                        }
+
+                        break;
+                    case 'change':
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
