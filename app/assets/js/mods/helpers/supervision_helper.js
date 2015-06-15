@@ -13,12 +13,14 @@ module.exports.refreshJournalEquipement = {
     _planId: 0,
     _journalId: 0,
     _parkingId: 0,
-    init: function (planId, journalId, parkingId) {
+    _journalAlerteId: 0,
+    init: function (planId, journalId, parkingId, journalAlerteId) {
         if (!this._timer) {
             this._timer = setInterval(this._handleAjax.bind(this), 5000);
             this._planId = planId;
             this._journalId = journalId;
             this._parkingId = parkingId;
+            this._journalAlerteId = journalAlerteId;
         }
     }
     ,
@@ -66,17 +68,28 @@ module.exports.refreshJournalEquipement = {
                 console.error("ajax error response body " + xhr.responseText);
             });
 
-        // TODO : 3 - UPDATE ALERTES SIDEBAR
+        // 3 - UPDATE ALERTES SIDEBAR
         $.ajax({
             type: 'get',
-            url: BASE_URI + 'parking/journal_alerte/' + this._planId + '/' + this._journalId,
+            url: BASE_URI + 'parking/journal_alerte/' + this._parkingId + '/' + this._journalAlerteId,
             processdata: false,
             contenttype: false,
-            data: {}
+            data: {},
+            context: this,
+            global: false
         })
             .done(function (data) {
                 // on success use return data here
                 console.log('PASS RETOUR ALERTES : %o', data);
+                if (data.length) {
+                    Actions.supervision.temps_reel_update_alertes(data);
+
+                    // Calcul du prochain nouvel ID journal
+                    _.each(data, function (p, i) {
+                        // TODO mettre à jout l'id
+                        //this._journalAlerteId = Math.max(this._journalAlerteId, p.id);
+                    }, this);
+                }
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert

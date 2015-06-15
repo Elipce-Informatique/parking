@@ -217,6 +217,7 @@ var store = Reflux.createStore({
         logo: '',
         temps_reel: {
             last_id: 0,
+            last_alerte_id: 0,
             journal: [],
             alertes: []
         }
@@ -308,7 +309,8 @@ var store = Reflux.createStore({
      * @private
      */
     _init_temps_reel: function (planId) {
-        $.ajax({
+        var journalId, journalAlerteId;
+        var $1 = $.ajax({
             type: 'GET',
             url: BASE_URI + 'parking/journal_equipement/last/' + planId,
             processData: false,
@@ -321,8 +323,6 @@ var store = Reflux.createStore({
                 // on success use return data here
                 if (!isNaN(data)) {
                     this._inst.temps_reel.last_id = data;
-                    supervision_helper.refreshJournalEquipement.destroyTimerPlaces();
-                    supervision_helper.refreshJournalEquipement.init(this._inst.planId, data, this._inst.parkingId);
                 }
                 // On envoi du bois
                 this.trigger(this._inst);
@@ -332,6 +332,41 @@ var store = Reflux.createStore({
                 console.error("ajax error response error " + type);
                 console.error("ajax error response body " + xhr.responseText);
             });
+
+        var $2 = $.ajax({
+            type: 'GET',
+            url: BASE_URI + 'parking/journal_alerte/last/' + this._inst.parkingId,
+            processData: false,
+            contentType: false,
+            data: {},
+            context: this,
+            global: false
+        })
+            .done(function (data) {
+                // on success use return data here
+                if (!isNaN(data)) {
+                    this._inst.temps_reel.last_alerte_id = data;
+                }
+                // On envoi du bois
+                this.trigger(this._inst);
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
+
+        // ATTENTE DES DEUX REQUÊTES POUR ENVOYER LE PATHÉ EN CROUTE
+        $.when($1, $2).done(function () {
+            console.log('PASS FIN DES 2 REQUETES');
+            supervision_helper.refreshJournalEquipement.destroyTimerPlaces();
+            supervision_helper.refreshJournalEquipement.init(
+                this._inst.planId,
+                this._inst.temps_reel.last_id,
+                this._inst.parkingId,
+                0);
+            //this._inst.temps_reel.last_alerte_id);
+        }.bind(this));
     },
 
     /**

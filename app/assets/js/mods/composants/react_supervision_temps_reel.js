@@ -192,26 +192,23 @@ var PanelAlertes = React.createClass({
 
     render: function () {
         var messages = _.map(this.props.data, function (d) {
-            var message = '';
+            // RÉCUP DU MESSAGE
+            var message = d.alerte.message;
             var bsStyle = '';
             var glyph = '';
 
-            // Création du message et bsStyle
-            if (d.etat_occupation.is_occupe == "1") {
-                message = Lang.get('supervision.temps_reel.j_place_occupee');
-                bsStyle = 'danger';
-                glyph = 'minus-sign';
+            // GÉNÉRATION DU STYLE
+            switch (d.alerte.type.code) {
+                case 'full':
+                    break;
+                case 'change':
+                    break;
             }
-            else {
-                message = Lang.get('supervision.temps_reel.j_place_libre');
-                bsStyle = 'success';
-                glyph = 'ok-sign';
-            }
-            message = message.split('[-]');
-            var libelle = <b> {d.libelle} </b>;
+
+            // GÉNÉRATION DU GLYPH
 
             // TRANSFORMATION DE LA DATE EN BDD EN DATE LOCALE
-            var time = moment.utc(d.latest_journal_equipement.date_evt)
+            var time = moment.utc(d.date_journal)
                 .local()
                 .format('LT');
 
@@ -226,6 +223,8 @@ var PanelAlertes = React.createClass({
             return retour;
 
         });
+        console.log('DATA ALERTES = %o', this.props.data);
+
 
         // Affichage des derniers messages en permier
         var messages = _(messages).reverse().value();
