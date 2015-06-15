@@ -92,7 +92,7 @@ class Plan extends BaseModel
      */
     public static function getParkingId($idPlan){
         $plan = Plan::where('plan.id', '=', $idPlan)
-            ->niveau()
+            ->with('niveau')
             ->first();
 
         return $plan['niveau']['parking_id'];

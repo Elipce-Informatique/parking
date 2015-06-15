@@ -45,6 +45,9 @@ class SimulatorController extends \BaseController
     {
         $retour = true;
 
+        // Parking
+        $park = Plan::getParkingId($id);
+
         // Min et max des places
         $min = Plan::getMinPlace($id);
         $max = Plan::getMaxPlace($id);
@@ -66,6 +69,9 @@ class SimulatorController extends \BaseController
                 $oPlace = Place::getPlaceFromNumAndPlan($numPlace, $id);
                 $idPlace = $oPlace->id;
 //                Log::debug('num place: '.$numPlace. ' id place: '.$idPlace);
+
+                // Alertes
+                $this->alertes($park, $oPlace->id);
 
                 // Etat d'occupation courrant
                 $etatCourant = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe);
@@ -120,9 +126,6 @@ class SimulatorController extends \BaseController
         if (!$retour) {
             DB::rollBack();
         }
-
-        // Alertes
-        $this->alertes(Plan::getParkingId($id));
 
         return json_encode($retour);
     }
@@ -310,15 +313,15 @@ class SimulatorController extends \BaseController
      * Renseigne le journal_alerte
      * @return string
      */
-    public function alertes($idParking)
+    public function alertes($idParking, $idPlace)
     {
-        Log::debug('id park ' . $idParking);
-
+        // toutes les alertes liées au parking
         $park = Auth::user()
             ->parkings()
             ->where('parking.id', '=', $idParking)
             ->with('alertes.type', 'alertes.places')
-            ->first();
+            ->first()
+            ->toArray();
 
 
         // On a des alertes sur le parking
@@ -328,29 +331,57 @@ class SimulatorController extends \BaseController
                 // Quel type d'alerte
                 switch ($alerte['type']['code']) {
                     case 'full':
-                        $full = true;
-                        // Parcours des places
-                        foreach ($alerte['places'] as $place) {
-                            // Place libre
-                            if (!Place::isOccupied($place['id'])) {
-                                $full = false;
-                                break;
+                        $full = false;
+                        // Extraction des ID de l'alerte
+                        $aPlaces = array_map(function($place){
+                            return $place['id'];
+                        }, $alerte['places']);
+
+                        //  Place dans l'alerte
+                        if(in_array($idPlace, $aPlaces)) {
+                            $bool = true;
+                            // Parcours des places
+                            foreach ($alerte['places'] as $place) {
+                                // Place libre
+                                if (!Place::isOccupied($place['id'])) {
+                                    $bool = false;
+                                    break;
+                                }
                             }
+                            $full = $bool;
                         }
                         // Toutes les places sont prises
                         if ($full) {
                             try {
                                 JournalAlerte::create([
-                                    'alerte_id' => $alerte['type']['id'],
+                                    'alerte_id' => $alerte['id'],
                                     'date_journal' => date('Y-m-d H:i:s')
                                 ]);
                             } catch (Exception $e) {
-                                Log::error('erreur insertion journal_alerte ' . $e->getMessage());
+                                Log::error('erreur insertion journal_alerte "full"' . $e->getMessage());
                             }
                         }
 
                         break;
                     case 'change':
+
+                        // Extraction des ID de l'alerte
+                        $aPlaces = array_map(function($place){
+                            return $place['id'];
+                        }, $alerte['places']);
+
+                        // La place a changé d'état
+                        if(in_array($idPlace, $aPlaces)) {
+
+                            try {
+                                JournalAlerte::create([
+                                    'alerte_id' => $alerte['id'],
+                                    'date_journal' => date('Y-m-d H:i:s')
+                                ]);
+                            } catch (Exception $e) {
+                                Log::error('erreur insertion journal_alerte "change" ' . $e->getMessage());
+                            }
+                        }
                         break;
                     default:
                         break;

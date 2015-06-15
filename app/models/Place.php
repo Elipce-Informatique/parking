@@ -159,7 +159,7 @@ class Place extends BaseModel
      */
     public static function isOccupied($id)
     {
-        $place =  Place::where('id', '=', $id)
+        $place =  Place::where('place.id', '=', $id)
             ->leftJoin('etat_occupation', 'etat_occupation.id', '=', 'place.etat_occupation_id')
             ->where('etat_occupation.is_occupe','=','1')
             ->get();
