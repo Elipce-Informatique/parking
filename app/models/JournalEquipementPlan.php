@@ -117,10 +117,9 @@ class JournalEquipementPlan extends BaseModel
 //            Log::debug('fields journal :'.print_r($fields,true));
             // Création du journal
             $newjournal = JournalEquipementPlan::create($fields);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $bRetour = false;
-            Log::error('Rollback create journal :'.$e->getMessage());
+            Log::error('Rollback create journal :' . $e->getMessage());
         }
 
         return $bRetour;

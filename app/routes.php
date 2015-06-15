@@ -197,14 +197,16 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::get('journal_place/{planId}/{journalId}', 'JournalEquipementPlanController@showPlacesFromVersion');
 
     // JOURNAL ALERTES
-    Route::get('journal_alerte/last/{parkingId}', 'JournalAlerteParkingController@last');
-    Route::get('journal_alerte/{parkingId}/{journalId}', 'JournalAlerteParking@showFromVersion');
+    Route::get('journal_alerte/last/{parkingId}', 'JournalAlerteController@last');
+    Route::get('journal_alerte/{parkingId}/{journalId}', 'JournalAlerteController@showFromVersion');
 
+    // SIMULATEUR
     Route::get('simulator/capteurs', 'SimulatorController@capteurs');
     Route::get('simulator/foire/{planId}', 'SimulatorController@foire');
     Route::get('simulator/alertes', 'SimulatorController@alertes');
     Route::resource('simulator', 'SimulatorController');
 });
+
 // RESSOURCE PARKING SÉPARÉE DU GROUPE AVEC PRÉFIXE PARKING POUR DES RAISONS LOGIQUES
 Route::group(['before' => 'auth|auth.canaccess|auth.parking'], function () {
     Route::get('parking/{id}/concentrateurs', 'ParkingsController@getConcentrateurs');
