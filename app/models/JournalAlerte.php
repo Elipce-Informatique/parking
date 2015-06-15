@@ -12,7 +12,7 @@ class JournalAlerte extends BaseModel
      * L'alerte de cette entrée de journal
      * @return mixed
      */
-    public function alertes()
+    public function alerte()
     {
         return $this->belongsTo('Alerte');
     }
@@ -20,6 +20,19 @@ class JournalAlerte extends BaseModel
     /*****************************************************************************
      * UTILITAIRES DU MODELE *****************************************************
      *****************************************************************************/
+
+    /**
+     *
+     * @param $parkingId
+     * @param $journalId
+     */
+    public static function getJournalAlerteFromVersion($parkingId, $journalId)
+    {
+        return JournalAlerte::with(['alerte' => function ($q) use ($parkingId) {
+            $q->where('parking_id', '=', $parkingId)
+                ->with('type');
+        }])->where('id', '>', $journalId)->get();
+    }
 
 
 }
