@@ -378,6 +378,7 @@ var storeCalendrierProg = Reflux.createStore({
             contentType: false,
             dataType: 'json',
             context: this,
+            global: false,
             success: function (bool) {
                 // Sauvegarde KO
                 if (!bool) {
