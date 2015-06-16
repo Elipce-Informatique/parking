@@ -276,6 +276,7 @@ var store = Reflux.createStore({
         if ($elt.data('is-plan')) {
             var data = $elt.data();
 
+            supervision_helper.refreshJournalEquipement.abortAjax();
             Simulator.init(data.id);
 
             this._inst = _.extend(this._inst, {
@@ -369,7 +370,7 @@ var store = Reflux.createStore({
                 this._inst.planId,
                 this._inst.temps_reel.last_id,
                 this._inst.parkingId,
-                0);
+                this._inst.temps_reel.last_alerte_id);
             //this._inst.temps_reel.last_alerte_id);
         }.bind(this));
     },
@@ -384,7 +385,12 @@ var store = Reflux.createStore({
         Array.prototype.push.apply(this._inst.temps_reel.journal, data);
         if (this._inst.temps_reel.journal.length > 100) {
             var count = this._inst.temps_reel.journal.length - 100;
-            Array.prototype.shift.apply(this._inst.temps_reel.journal, _.range(count));
+
+            console.log('Lengthn avant shift : %o', this._inst.temps_reel.journal.length);
+            _.each(_.range(count), function () {
+                this._inst.temps_reel.journal.shift();
+            }, this);
+            console.log('Lengthn après shift : %o', this._inst.temps_reel.journal.length);
         }
 
         this.trigger(this._inst);

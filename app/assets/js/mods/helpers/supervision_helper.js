@@ -14,6 +14,7 @@ module.exports.refreshJournalEquipement = {
     _journalId: 0,
     _parkingId: 0,
     _journalAlerteId: 0,
+    _ajaxInstances: {},
     init: function (planId, journalId, parkingId, journalAlerteId) {
         if (!this._timer) {
             this._timer = setInterval(this._handleAjax.bind(this), 5000);
@@ -38,10 +39,11 @@ module.exports.refreshJournalEquipement = {
      */
     _handleAjax: function () {
         // 1 - UPDATE TABLEAU DE BORD EN PARALLÈLE
+        this.abortAjax();
         Actions.supervision.tableau_bord_update(this._parkingId);
 
         // 2 - UPDATE PLAN ET JOURNAL SIDEBAR
-        $.ajax({
+        this._ajaxInstances['1'] = $.ajax({
             type: 'GET',
             url: BASE_URI + 'parking/journal_place/' + this._planId + '/' + this._journalId,
             context: this,
@@ -69,7 +71,7 @@ module.exports.refreshJournalEquipement = {
             });
 
         // 3 - UPDATE ALERTES SIDEBAR
-        $.ajax({
+        this._ajaxInstances['2'] = $.ajax({
             type: 'get',
             url: BASE_URI + 'parking/journal_alerte/' + this._parkingId + '/' + this._journalAlerteId,
             processdata: false,
@@ -80,7 +82,7 @@ module.exports.refreshJournalEquipement = {
         })
             .done(function (data) {
                 // on success use return data here
-                console.log('PASS RETOUR ALERTES : %o', data);
+                //console.log('PASS RETOUR ALERTES : %o', data);
                 if (data.length) {
                     Actions.supervision.temps_reel_update_alertes(data);
 
@@ -96,6 +98,15 @@ module.exports.refreshJournalEquipement = {
                 console.error("ajax error response error " + type);
                 console.error("ajax error response body " + xhr.responsetext);
             });
+    },
+
+    /**
+     * Annule toutes les requêtes ajax en cours
+     */
+    abortAjax: function () {
+        _.each(this._ajaxInstances, function ($req) {
+            $req.abort();
+        });
     }
 }
 ;
