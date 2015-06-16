@@ -191,51 +191,52 @@ var PanelAlertes = React.createClass({
     },
 
     render: function () {
-        //var messages = _.map(this.props.data, function (d) {
-        //    // RÉCUP DU MESSAGE
-        //    var message = d.alerte.message;
-        //    var bsStyle = '';
-        //    var glyph = '';
-        //
-        //    // TODO GÉNÉRATION DU STYLE
-        //    switch (d.alerte.type.code) {
-        //        case 'full':
-        //
-        //            break;
-        //        case 'change':
-        //
-        //            break;
-        //    }
-        //
-        //    // GÉNÉRATION DU GLYPH
-        //
-        //    // TRANSFORMATION DE LA DATE EN BDD EN DATE LOCALE
-        //    var time = moment.utc(d.date_journal)
-        //        .local()
-        //        .format('LT');
-        //
-        //    var retour = (
-        //        <AlertMessage
-        //            bsStyle={bsStyle}
-        //            label={<Glyph glyph={glyph}/>}
-        //            datetime={time}
-        //            message={<span>{message[0]} {libelle} {message[1]}</span>}
-        //            key={d.latest_journal_equipement.id}
-        //        />);
-        //    return retour;
-        //
-        //});
-        //console.log('DATA ALERTES = %o', this.props.data);
-        //
-        //
-        //// Affichage des derniers messages en permier
-        //var messages = _(messages).reverse().value();
-        //
+        console.log('PASS render');
+        var messages = _.map(this.props.data, function (d) {
+            console.log('ALERTE A AFFICHER : %o', d);
+            // RÉCUP DU MESSAGE
+            var message = d.alerte.message;
+            var bsStyle = '';
+            var glyph = '';
+
+            // GÉNÉRATION DU STYLE
+            switch (d.alerte.type.code) {
+                case 'full':
+                    bsStyle = 'danger';
+                    break;
+                case 'change':
+                    bsStyle = 'warning';
+                    break;
+            }
+
+            // GÉNÉRATION DU GLYPH
+            glyph = 'exclamation-sign';
+
+            // TRANSFORMATION DE LA DATE EN BDD EN DATE LOCALE
+            var time = moment.utc(d.date_journal)
+                .local()
+                .format('LT');
+
+            var retour = (
+                <AlertMessage
+                    bsStyle={bsStyle}
+                    label={<Glyph glyph={glyph}/>}
+                    datetime={time}
+                    message={<span>{message}</span>}
+                />);
+            return retour;
+
+        });
+
+        // Affichage des derniers messages en permier
+        var messages = _(messages).reverse().value();
+
         return (
             <Panel
                 header={<strong>{this.props.title}</strong>}
                 bsStyle="default"
                 className="treel-journal full-height" >
+                {messages}
             </Panel>);
     }
 });

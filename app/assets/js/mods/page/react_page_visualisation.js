@@ -58,6 +58,7 @@ var Page = React.createClass({
             parkingId: '',
             temps_reel: {
                 last_id: 0,
+                last_alerte_id: 0,
                 journal: [],
                 alertes: []
             }
@@ -276,8 +277,8 @@ var store = Reflux.createStore({
         if ($elt.data('is-plan')) {
             var data = $elt.data();
 
-            supervision_helper.refreshJournalEquipement.destroyTimerPlaces();
-            supervision_helper.refreshJournalEquipement.abortAjax();
+            supervision_helper.refresh.destroyTimerPlaces();
+            supervision_helper.refresh.abortAjax();
             Simulator.init(data.id);
 
             this._inst = _.extend(this._inst, {
@@ -366,8 +367,8 @@ var store = Reflux.createStore({
         // ATTENTE DES DEUX REQUÊTES POUR ENVOYER LE PATHÉ EN CROUTE
         $.when($1, $2).done(function () {
             console.log('PASS FIN DES 2 REQUETES');
-            supervision_helper.refreshJournalEquipement.destroyTimerPlaces();
-            supervision_helper.refreshJournalEquipement.init(
+            supervision_helper.refresh.destroyTimerPlaces();
+            supervision_helper.refresh.init(
                 this._inst.planId,
                 this._inst.temps_reel.last_id,
                 this._inst.parkingId,
@@ -385,12 +386,9 @@ var store = Reflux.createStore({
         Array.prototype.push.apply(this._inst.temps_reel.journal, data);
         if (this._inst.temps_reel.journal.length > 100) {
             var count = this._inst.temps_reel.journal.length - 100;
-
-            console.log('Lengthn avant shift : %o', this._inst.temps_reel.journal.length);
             _.each(_.range(count), function () {
                 this._inst.temps_reel.journal.shift();
             }, this);
-            console.log('Lengthn après shift : %o', this._inst.temps_reel.journal.length);
         }
 
         this.trigger(this._inst);
@@ -406,8 +404,11 @@ var store = Reflux.createStore({
         Array.prototype.push.apply(this._inst.temps_reel.alertes, data);
         if (this._inst.temps_reel.alertes.length > 100) {
             var count = this._inst.temps_reel.alertes.length - 100;
-            Array.prototype.shift.apply(
-                this._inst.temps_reel.alertes, _.range(count));
+            console.log('Lengthn avant shift : %o', this._inst.temps_reel.alertes.length);
+            _.each(_.range(count), function () {
+                this._inst.temps_reel.alertes.shift();
+            }, this);
+            console.log('Lengthn après shift : %o', this._inst.temps_reel.journal.length);
         }
 
         this.trigger(this._inst);

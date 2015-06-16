@@ -8,7 +8,7 @@ var _ = require('lodash');
  * Gère le rafraichissement des données de la supervision
  *
  */
-module.exports.refreshJournalEquipement = {
+module.exports.refresh = {
     _timer: false,
     _planId: 0,
     _journalId: 0,
@@ -51,7 +51,6 @@ module.exports.refreshJournalEquipement = {
             global: false
         })
             .done(function (data) {
-                console.log('data REFRESH : %o', data);
                 // ON A DES NOUVELLES DONNÉES
                 if (data.length) {
                     // 2.1 - UPDATE PLACES CARTE
@@ -83,15 +82,12 @@ module.exports.refreshJournalEquipement = {
             global: false
         })
             .done(function (data) {
-                // on success use return data here
-                //console.log('PASS RETOUR ALERTES : %o', data);
                 if (data.length) {
                     Actions.supervision.temps_reel_update_alertes(data);
 
                     // Calcul du prochain nouvel ID journal
                     _.each(data, function (p, i) {
-                        // TODO mettre à jout l'id
-                        //this._journalAlerteId = Math.max(this._journalAlerteId, p.id);
+                        this._journalAlerteId = Math.max(this._journalAlerteId, p.id);
                     }, this);
                 }
             })

@@ -97,7 +97,6 @@ var TableauBord = React.createClass({
     updateState: function (data) {
         // MAJ data automatique, lifecycle "UPDATE"
         if (!data.reset && !_.isEmpty(data)) {
-            console.log('Data : %o', data);
             // CLEAR ET AJOUT CSS DYNAMIQUE
             $('#dynamic_css').remove();
             var $styleTag = $('<style id="dynamic_css" />');
