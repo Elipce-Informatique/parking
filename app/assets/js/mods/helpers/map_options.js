@@ -113,8 +113,8 @@ module.exports.placeGenerique = L.Icon.extend({
  */
 module.exports.placeRouge = L.Icon.extend({
     options: {
-        iconAnchor: new L.Point(9, 20),
-        iconSize: new L.Point(18, 40),
+        iconAnchor: new L.Point(7, 16),
+        iconSize: new L.Point(14, 32),
         iconUrl: BASE_URI + 'public/images/icone_voiture_rouge.svg'
     }
 });

@@ -267,13 +267,14 @@ class NiveauxController extends \BaseController
                     // Update libelle
                     $modelPlan = Plan::find($idPlan);
                     $modelPlan->libelle = $plan;
+                    $modelPlan->save();
 
                     // Save file
                     $filePostName = 'url' . $idPlan;
                 }
 
                 // Upload
-                if (Input::hasFile($filePostName)) {
+                if (Input::file($filePostName)->isValid()){
                     // Fichier plan
                     $fileCourant = Input::file($filePostName);
 
@@ -304,6 +305,7 @@ class NiveauxController extends \BaseController
                         break;
                     }
                     // else mode edition sans modification de fichier
+
                 }
             }
 
