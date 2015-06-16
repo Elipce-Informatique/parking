@@ -76,10 +76,11 @@ var store = Reflux.createStore({
      * @param calibre : calibre initial de la carte (cm/deg)
      * @param parkingInfos : object avec deux clés parkingId et niveauId
      */
-    onMap_initialized: function (map, calibre, parkingInfos) {
+    onMap_initialized: function (map, calibre, parkingInfos, mapInst) {
 
         // Récupération du calibre
         this._inst.calibre = calibre;
+        this._inst.mapInst = mapInst;
 
         // Récupération en BDD des données du parking sélectionné
         var p1 = this.recupInfosParking(map, calibre, parkingInfos);
@@ -203,6 +204,9 @@ var store = Reflux.createStore({
                 var jsonAllees = [];
                 var places = [];
                 var jsonPlaces = [];
+
+                this._inst.mapInst.placesMarkersGroup.options.maxClusterRadius = data.cluster_radius;
+                map.setZoom(data.zoom_level);
 
                 // RÉCUPÉRATION DES JSON ZONES ET DES ALLÉES
                 _.each(zones, function (z) {

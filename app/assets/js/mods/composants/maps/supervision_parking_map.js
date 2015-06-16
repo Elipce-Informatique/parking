@@ -108,12 +108,13 @@ var parkingMap = React.createClass({
             parkingId: this.props.parkingId,
             planId: this.props.planId
         };
-        Actions.map.map_initialized(this._inst.map, this.props.calibre, parkingData);
+        Actions.map.map_initialized(this._inst.map, this.props.calibre, parkingData, this._inst);
 
         // INIT des layers
         this._inst.placesMarkersGroup = new L.MarkerClusterGroup({
             maxClusterRadius: 15
         });
+
         this._inst.map.addLayer(this._inst.placesMarkersGroup);
         this._inst.placesGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.placesGroup);
