@@ -593,7 +593,7 @@ var StatBarWrapper = React.createClass({
         var badge = '';
         if (this.props.badge != '') {
             badge = (<Label
-                className="label-stats"
+                className="badge-stats"
                 bsStyle='primary'
                 style={style}>
                         {this.props.badge}
@@ -602,7 +602,7 @@ var StatBarWrapper = React.createClass({
 
         return (
             <Row>
-                <Col md={4} key={1}>
+                <Col md={5} key={1}>
                     <Row className="row-label">
                         <Col md={2}>
                             {{badge}}
@@ -612,7 +612,7 @@ var StatBarWrapper = React.createClass({
                         </Col>
                     </Row>
                 </Col>
-                <Col md={8} key={2}>
+                <Col md={7} key={2}>
                     {bars}
                 </Col>
             </Row>
