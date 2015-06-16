@@ -54,7 +54,7 @@ class SimulatorController extends \BaseController
 //        Log::debug('random min: '.$min.' max: '.$max);
 
         // Nb aléatoire de places qui bougent
-        $nb = mt_rand(2, 5);
+        $nb = mt_rand(15, 20);
 
         try {
             DB::beginTransaction();
