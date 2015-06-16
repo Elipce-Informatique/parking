@@ -206,6 +206,9 @@ var UserInfos = React.createClass({
 
         return (
             <ul className="nav navbar-nav navbar-right">
+                <li className="li-logo-navbar">
+                    <LogoEntreprise url={BASE_URI + "public/images/logo_navbar.jpg"} />
+                </li>
                 <li className="dropdown">
                     <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                         <Glyphicon glyph="user"/> {this.props.nomUtilisateur}
@@ -232,6 +235,70 @@ var UserInfos = React.createClass({
                     <a href={this.props.logoutRoute}>{this.props.logoutText}</a>
                 </li>
             </ul>
+        );
+    }
+});
+
+/**
+ * Created by yann on 19/11/2014.
+ *
+ * Composant placé à droite du menu haut pour afficher les infos de l'utilisateur
+ * @param nomUtilisateur : nom de l'utilisateur
+ * @param logoutRoute : url de logout de l'application
+ * @param logoutText : Texte pour le bouton logout
+ * @param dropdown : menu déroulant contenant les raccourcis de l'utilisateur
+ * [
+ *  {label: "profil", route:"/utilisateur/120"},
+ *  {label: "parametres", route:"/parametres"}
+ * ]
+ */
+var LogoEntreprise = React.createClass({
+    /**
+     * Vérification éventuelle des types des propriétés
+     */
+    propTypes: {
+        url: React.PropTypes.string.isRequired
+    },
+    /**
+     * Méthode appellée à la création du composant,
+     * initialise les propriétés non définies lors de l'appel avec les valeurs retournées
+     * @returns object
+     */
+    getDefaultProps: function () {
+        return {dropdown: []};
+    },
+    /**
+     * État initial des données du composant
+     * @returns les données de l'état initial
+     */
+    getInitialState: function () {
+        return {};
+    },
+    /**
+     * Callback appelé lorsque le composant est affiché.
+     * C'est par exemple ici qu'on peut faire un appel ajax pour
+     * charger ses données dynamiquement !
+     */
+    componentDidMount: function () {
+
+    },
+    /**
+     * Test si le composant doit être réaffiché avec les nouvelles données
+     * @param nextProps : Nouvelles propriétés
+     * @param nextState : Nouvel état
+     * @returns {boolean} : true ou false selon si le composant doit être mis à jour
+     */
+    shouldComponentUpdate: function (nextProps, nextState) {
+        return true;
+    },
+    /**
+     * Méthode appellée pour construire le composant.
+     * A chaque fois que son contenu est mis à jour.
+     * @returns {XML}
+     */
+    render: function () {
+        return (
+            <img src={this.props.url} className="img-logo-navbar" />
         );
     }
 });
@@ -266,7 +333,7 @@ var MenuTop = React.createClass({
         var state = {
             userInfos: {},
             dataItems: []
-        }
+        };
         return state;
     },
     componentWillMount: function () {
