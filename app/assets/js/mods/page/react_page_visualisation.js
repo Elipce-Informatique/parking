@@ -276,6 +276,7 @@ var store = Reflux.createStore({
         if ($elt.data('is-plan')) {
             var data = $elt.data();
 
+            supervision_helper.refreshJournalEquipement.destroyTimerPlaces();
             supervision_helper.refreshJournalEquipement.abortAjax();
             Simulator.init(data.id);
 
@@ -371,7 +372,6 @@ var store = Reflux.createStore({
                 this._inst.temps_reel.last_id,
                 this._inst.parkingId,
                 this._inst.temps_reel.last_alerte_id);
-            //this._inst.temps_reel.last_alerte_id);
         }.bind(this));
     },
 

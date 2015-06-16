@@ -42,6 +42,7 @@ module.exports.refreshJournalEquipement = {
         this.abortAjax();
         Actions.supervision.tableau_bord_update(this._parkingId);
 
+        // --------------------------------------
         // 2 - UPDATE PLAN ET JOURNAL SIDEBAR
         this._ajaxInstances['1'] = $.ajax({
             type: 'GET',
@@ -50,11 +51,11 @@ module.exports.refreshJournalEquipement = {
             global: false
         })
             .done(function (data) {
-                // --------------------------------------------
+                console.log('data REFRESH : %o', data);
                 // ON A DES NOUVELLES DONNÉES
                 if (data.length) {
                     // 2.1 - UPDATE PLACES CARTE
-                    Actions.map.refresh_places(data);
+                    Actions.map.refresh_places(data, this._planId);
                     // 2.2 - UPDATE JOURNAL TEMPS REEL
                     Actions.supervision.temps_reel_update_journal(data);
 
@@ -70,6 +71,7 @@ module.exports.refreshJournalEquipement = {
                 console.error("ajax error response body " + xhr.responseText);
             });
 
+        // --------------------------------------------------------
         // 3 - UPDATE ALERTES SIDEBAR
         this._ajaxInstances['2'] = $.ajax({
             type: 'get',

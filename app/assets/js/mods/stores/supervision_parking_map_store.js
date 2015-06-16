@@ -101,33 +101,35 @@ var store = Reflux.createStore({
      * Récupère les places qui ont changé
      * @param data
      */
-    onRefresh_places: function (data) {
+    onRefresh_places: function (data, planId) {
 
-        var ajout = [], suppression = [];
-        _.each(data, function (p, i) {
-            // C'EST UN AJOUT
-            if (p.etat_occupation && p.etat_occupation.is_occupe == "1") {
-                ajout.push(placeHelper.createPlaceFromData(p, this._inst.types_places));
-            }
-            // C'EST UNE SUPPRESSION
-            else {
-                suppression.push(p);
-            }
-        }, this);
+        if (this._inst.planInfos.id == planId) {
+            var ajout = [], suppression = [];
+            _.each(data, function (p, i) {
+                // C'EST UN AJOUT
+                if (p.etat_occupation && p.etat_occupation.is_occupe == "1") {
+                    ajout.push(placeHelper.createPlaceFromData(p, this._inst.types_places));
+                }
+                // C'EST UNE SUPPRESSION
+                else {
+                    suppression.push(p);
+                }
+            }, this);
 
-        if (ajout.length) {
-            // On balance les ajout
-            this.trigger({
-                type: mapOptions.type_messages.occuper_places,
-                data: ajout
-            });
-        }
-        if (suppression.length) {
-            // On balance les suppressions
-            this.trigger({
-                type: mapOptions.type_messages.liberer_places,
-                data: suppression
-            });
+            if (ajout.length) {
+                // On balance les ajout
+                this.trigger({
+                    type: mapOptions.type_messages.occuper_places,
+                    data: ajout
+                });
+            }
+            if (suppression.length) {
+                // On balance les suppressions
+                this.trigger({
+                    type: mapOptions.type_messages.liberer_places,
+                    data: suppression
+                });
+            }
         }
     },
 
