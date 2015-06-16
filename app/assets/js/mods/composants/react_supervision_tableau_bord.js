@@ -27,6 +27,10 @@ var form_data_helper = require('../helpers/form_data_helper');
 var TableauBord = React.createClass({
 
     mixins: [Reflux.ListenerMixin, ReactB.OverlayMixin],
+    statics: {
+        cssPrefix: 'bar-color-',
+        defaultColor: '808080'
+    },
 
     propTypes: {
         parkingId: React.PropTypes.any.isRequired,
@@ -92,7 +96,27 @@ var TableauBord = React.createClass({
      */
     updateState: function (data) {
         // MAJ data automatique, lifecycle "UPDATE"
-        if (!data.reset) {
+        if (!data.reset && !_.isEmpty(data)) {
+            console.log('Data : %o', data);
+            // CLEAR ET AJOUT CSS DYNAMIQUE
+            $('#dynamic_css').remove();
+            var $styleTag = $('<style id="dynamic_css" />');
+            $('head').append($styleTag);
+
+            // GÉNÉRATION DES CLASSES CSS DYNAMIQUES
+            var customClasses = "";
+            _.each(data.types, function (type, index) {
+                customClasses += '.' + TableauBord.cssPrefix + type.couleur + '{' +
+                'background-color: #' + type.couleur +
+                '}';
+            }, this);
+
+            // Ajout de la couleur défault
+            customClasses += '.' + TableauBord.cssPrefix + TableauBord.defaultColor + '{' +
+            'background-color: #' + TableauBord.defaultColor + '}';
+
+            // Ajout à la balise style
+            $('#dynamic_css').append(customClasses);
             this.setState(data);
         } else {
             this.replaceState(this.getInitialState());
@@ -273,7 +297,8 @@ var PanelOccupCourante = React.createClass({
                     now: total.occupee
                 },
                 {
-                    bsStyle: 'success',
+                    bsStyle: 'default',
+                    couleur: TableauBord.defaultColor,
                     label: '%(now)s',
                     now: total.libre
                 }
@@ -284,6 +309,7 @@ var PanelOccupCourante = React.createClass({
                     libelle={total.libelle}
                     tooltip={(isNaN(pourcent) ? 0 : pourcent) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
                     badge={total.total.toString()}
+                    libelleColor={TableauBord.defaultColor}
                     key={'total' + total.libelle}>
                     <StackedStatBar
                         data={dataTotal}
@@ -302,6 +328,7 @@ var PanelOccupCourante = React.createClass({
                     },
                     {
                         bsStyle: 'success',
+                        couleur: d.couleur,
                         label: '%(now)s',
                         now: d.libre
                     }
@@ -492,6 +519,7 @@ var StackedStatBar = React.createClass({
         max: React.PropTypes.number,
         striped: React.PropTypes.bool,
         active: React.PropTypes.bool
+
     },
 
     getDefaultProps: function () {
@@ -517,8 +545,13 @@ var StackedStatBar = React.createClass({
 
     render: function () {
         var bars = _.map(this.props.data, function (d, i) {
+            var css = "";
+            if (d.couleur !== undefined) {
+                css = TableauBord.cssPrefix + d.couleur
+            }
             return (
                 <ProgressBar {...d}
+                    className={css}
                     min={this.props.min}
                     max={this.props.max}
                     key={i}
@@ -551,7 +584,7 @@ var StatBarWrapper = React.createClass({
         return {
             tooltip: '',
             badge: '',
-            libelleColor: ''
+            couleurLibre: ''
         };
     },
 
@@ -648,7 +681,8 @@ function generateBarsFromData(dataBars) {
                     now: total.occupee
                 },
                 {
-                    bsStyle: 'success',
+                    bsStyle: 'default',
+                    couleur: TableauBord.defaultColor,
                     label: '%(now)s',
                     now: total.libre
                 }
@@ -659,6 +693,7 @@ function generateBarsFromData(dataBars) {
                     libelle={total.libelle + ' ' + libelle}
                     tooltip={(isNaN(pourcent) ? 0 : pourcent) + "% " + Lang.get('supervision.tab_bord.tooltip_occupation')}
                     badge={total.total.toString()}
+                    libelleColor={TableauBord.defaultColor}
                     key={'total' + libelle}>
                     <StackedStatBar
                         data={dataTotal}
@@ -677,6 +712,7 @@ function generateBarsFromData(dataBars) {
                     },
                     {
                         bsStyle: 'success',
+                        couleur: d.couleur,
                         label: '%(now)s',
                         now: d.libre
                     }
