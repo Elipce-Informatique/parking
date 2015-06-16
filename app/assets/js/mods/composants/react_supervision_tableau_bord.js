@@ -30,11 +30,15 @@ var TableauBord = React.createClass({
 
     propTypes: {
         parkingId: React.PropTypes.any.isRequired,
-        vertical: React.PropTypes.bool
+        vertical: React.PropTypes.bool,
+        panelLogos: React.PropTypes.object
     },
 
     getDefaultProps: function () {
-        return {vertical: false};
+        return {
+            vertical: false,
+            panelLogos: {}
+        };
     },
 
     getInitialState: function () {
@@ -149,14 +153,21 @@ var TableauBord = React.createClass({
         if (this.state.display) {
             return (
                 <Row className="row_reporting full-height">
-                    <Col md={md} className="full-height" key={1}>
-                        <PanelOccupCourante data={this.state.b1} preferences={this.state.prefs.b1} />
+                    <Col md={11} className="full-height" key={'wrap-1'}>
+                        <Row className="full-height">
+                            <Col md={md} className="full-height panel-tab-bord" key={1}>
+                                <PanelOccupCourante data={this.state.b1} preferences={this.state.prefs.b1} />
+                            </Col>
+                            <Col md={md} className="full-height panel-tab-bord" key={2}>
+                                <PanelOccupNiveaux data={this.state.b2} preferences={this.state.prefs.b2}/>
+                            </Col>
+                            <Col md={md} className="full-height panel-tab-bord" key={3}>
+                                <PanelOccupZones data={this.state.b3} preferences={this.state.prefs.b3}/>
+                            </Col>
+                        </Row>
                     </Col>
-                    <Col md={md} className="full-height" key={2}>
-                        <PanelOccupNiveaux data={this.state.b2} preferences={this.state.prefs.b2}/>
-                    </Col>
-                    <Col md={md} className="full-height" key={3}>
-                        <PanelOccupZones data={this.state.b3} preferences={this.state.prefs.b3}/>
+                    <Col md={1} className="full-height col-logos" key={'wrap-2'}>
+                        {this.props.panelLogos}
                     </Col>
                 </Row>
             );
@@ -165,6 +176,46 @@ var TableauBord = React.createClass({
         }
     }
 });
+
+/**
+ * Affiche le logo du parking en dessous du logo de Bruno
+ *
+ * TODO : Snippet de base pour un composant react. Commentaire à éditer
+ * @param name : nom a afficher dans le composant
+ */
+var PanelLogos = React.createClass({
+
+    propTypes: {
+        urlParking: React.PropTypes.string
+    },
+
+    getDefaultProps: function () {
+        return {
+            urlParking: ''
+
+        };
+    },
+
+    getInitialState: function () {
+        return {};
+    },
+
+    componentDidMount: function () {
+
+    },
+
+    shouldComponentUpdate: function (nextProps, nextState) {
+        return true;
+    },
+
+    render: function () {
+        return (
+            <Panel style={{height: '115px'}}>
+                <img src={this.props.urlParking} className="img-parking-supervision img-responsive" />
+            </Panel>);
+    }
+});
+
 
 /**
  * Created by yann on 15/04/2015.
@@ -650,8 +701,9 @@ function generateBarsFromData(dataBars) {
 
     return bars;
 }
+module.exports.tab_bord = TableauBord;
 
-module.exports = TableauBord;
+module.exports.panel_logos = PanelLogos;
 
 
 var store = Reflux.createStore({

@@ -11,7 +11,8 @@ var CollapseSidebar = require('../composants/react_collapse').CollapseSidebar;
 var ParkingMap = require('../composants/maps/supervision_parking_map');
 var TestD3 = require('../charts/test_d3');
 var ZoneTempsReel = require('../composants/react_supervision_temps_reel');
-var TableauBord = require('../composants/react_supervision_tableau_bord');
+var TableauBord = require('../composants/react_supervision_tableau_bord').tab_bord;
+var PanelLogos = require('../composants/react_supervision_tableau_bord').panel_logos;
 
 var Col = ReactB.Col;
 var Row = ReactB.Row;
@@ -140,7 +141,6 @@ var Page = React.createClass({
             map = <ParkingMap
                 imgUrl={this.state.url}
                 parkingId={this.state.parkingId}
-                parkingLogo={this.state.logo}
                 planId={this.state.planId}
                 divId="div_carte"
                 key={'map-' + this.state.planId}
@@ -160,7 +160,12 @@ var Page = React.createClass({
             <Col md={12} className="full-height flex-wrapper">
                 <Row id="row_reporting" className="flex-header" key={1}>
                     <Col id="zone_reporting" className="full-height" md={12}>
-                        <TableauBord parkingId={this.state.parkingId} />
+                        <TableauBord
+                            parkingId={this.state.parkingId}
+                            panelLogos={<PanelLogos
+                                urlParking={DOC_URI + 'logo_parking/' + this.state.logo}
+                            />}
+                        />
                     </Col>
                 </Row>
 

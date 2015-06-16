@@ -21,7 +21,7 @@ var ZoneTempsReel = React.createClass({
     mixins: [Reflux.ListenerMixin],
 
     propTypes: {
-        plan_id: React.PropTypes.string.isRequired,
+        plan_id: React.PropTypes.number.isRequired,
         vertical: React.PropTypes.bool,
         data: React.PropTypes.object
     },
