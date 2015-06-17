@@ -528,7 +528,7 @@ var store = Reflux.createStore({
             // TEST ÉTAT INSERTION
             if (typeof(data.retour) !== 'undefined') {
                 // 1 - TRANSFORMATION DES DATA DE LA BDD EN ZONES
-                var zonesCreated = this.createZonesMapFromZonesBDD([data.retour], zoneHelper.style);
+                var zonesCreated = zoneHelper.createZonesMapFromZonesBDD([data.retour], zoneHelper.style);
                 // 2 - SAUVEGARDE DES ZONES EN LOCAL DNAS LE STORE
                 this._inst.zones = this._inst.zones.concat(zonesCreated);
                 // 3 - ENVOI DES INFOS À AFFICHER SUR LA CARTE
@@ -555,7 +555,7 @@ var store = Reflux.createStore({
             // TEST ÉTAT INSERTION
             if (typeof(data.retour) !== 'undefined') {
                 // 1 - TRANSFORMATION DES DATA DE LA BDD EN ALLEES
-                var alleesCreated = this.createAlleesMapFromAlleesBDD([data.retour], alleeHelper.style);
+                var alleesCreated = alleeHelper.createAlleesMapFromAlleesBDD([data.retour], alleeHelper.style);
                 // 2 - SAUVEGARDE DES ALLEES EN LOCAL DNAS LE STORE
                 this._inst.allees = this._inst.allees.concat(alleesCreated);
                 // 3 - ENVOI DES INFOS À AFFICHER SUR LA CARTE
@@ -935,7 +935,7 @@ var store = Reflux.createStore({
         this.trigger(message);
 
         // LES ALLEES À AFFICHER SUR LA MAP ----------------------------------------------------
-        var alleesMap = this.createAlleesMapFromAlleesBDD(this._inst.allees, alleeHelper.style);
+        var alleesMap = alleeHelper.createAlleesMapFromAlleesBDD(this._inst.allees, alleeHelper.style);
 
         message = {
             type: mapOptions.type_messages.add_allees,
@@ -944,7 +944,7 @@ var store = Reflux.createStore({
         this.trigger(message);
 
         // LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
-        var zonesMap = this.createZonesMapFromZonesBDD(this._inst.zones, zoneHelper.style);
+        var zonesMap = zoneHelper.createZonesMapFromZonesBDD(this._inst.zones, zoneHelper.style);
 
         message = {
             type: mapOptions.type_messages.add_zones,
@@ -987,50 +987,6 @@ var store = Reflux.createStore({
         }, this);
     },
 
-    /**
-     * Crée les zones à afficher sur la map en fonction d'un tableau de places venant directement de la BDD
-     *
-     * @param zonesBDD : tableau d'objet de type zone sorti d'Eloquent.
-     * @param zoneStyle : style à appliquer sur les zones
-     * @returns : tableau de zones prêt pour le trigger vers la map
-     */
-    createZonesMapFromZonesBDD: function (zonesBDD, zoneStyle) {
-        return _.map(zonesBDD, function (z) {
-            if (z.geojson != "") {
-                var extraData = z;
-                var polygon = mapHelper.createFeatureFromCoordinates(JSON.parse(z.geojson), extraData, zoneStyle);
-                return {
-                    data: z,
-                    polygon: polygon
-                };
-            } else {
-                return null;
-            }
-        }, this);
-    },
-
-    /**
-     * Crée les allees à afficher sur la map en fonction d'un tableau de places venant directement de la BDD
-     *
-     * @param alleesBDD : tableau d'objet de type allee sorti d'Eloquent.
-     * @param alleeStyle : style à appliquer sur les allees
-     * @returns : tableau de allees prêt pour le trigger vers la map
-     */
-    createAlleesMapFromAlleesBDD: function (alleesBDD, alleeStyle) {
-        return _.map(alleesBDD, function (a) {
-            if (a.geojson != "") {
-                var extraData = a;
-                var polygon = mapHelper.createFeatureFromCoordinates(JSON.parse(a.geojson), extraData, alleeStyle);
-
-                return {
-                    data: a,
-                    polygon: polygon
-                };
-            } else {
-                return null;
-            }
-        }, this);
-    },
     /**
      * Prévient l'utilisateur que le plan qu'il visualise n'est pas calibré.
      */
