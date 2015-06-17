@@ -112,7 +112,7 @@ var parkingMap = React.createClass({
 
         // INIT des layers
         this._inst.placesMarkersGroup = new L.MarkerClusterGroup({
-            maxClusterRadius: 15
+            maxClusterRadius: 10
         });
 
         this._inst.map.addLayer(this._inst.placesMarkersGroup);

@@ -830,7 +830,6 @@ var store = Reflux.createStore({
                     this.swalCalibre();
                 }
 
-                this._inst.mapInst.placesMarkersGroup.options.maxClusterRadius = data.cluster_radius;
                 map.setZoom(data.zoom_level);
 
                 // Extraction des sous éléments du niveau
