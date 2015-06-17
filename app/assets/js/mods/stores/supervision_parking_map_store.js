@@ -2,6 +2,8 @@ var _ = require('lodash');
 
 var mapOptions = require('../helpers/map_options');
 var mapHelper = require('../helpers/map_helper');
+var zoneHelper = require('../helpers/zone_helper');
+var alleeHelper = require('../helpers/allee_helper');
 var placeHelper = require('../helpers/place_helper');
 
 /**
@@ -280,9 +282,58 @@ var store = Reflux.createStore({
     },
 
     /**
+     * Crée les zones à afficher sur la map en fonction d'un tableau de places venant directement de la BDD
+     *
+     * @param zonesBDD : tableau d'objet de type zone sorti d'Eloquent.
+     * @param zoneStyle : style à appliquer sur les zones
+     * @returns : tableau de zones prêt pour le trigger vers la map
+     */
+    createZonesMapFromZonesBDD: function (zonesBDD, zoneStyle) {
+        return _.map(zonesBDD, function (z) {
+            if (z.geojson != "") {
+                var extraData = z;
+                var polygon = mapHelper.createFeatureFromCoordinates(JSON.parse(z.geojson), extraData, zoneStyle);
+                polygon.bindLabel(z.libelle);
+
+                return {
+                    data: z,
+                    polygon: polygon
+                };
+            } else {
+                return null;
+            }
+        }, this);
+    },
+
+    /**
+     * Crée les allees à afficher sur la map en fonction d'un tableau de places venant directement de la BDD
+     *
+     * @param alleesBDD : tableau d'objet de type allee sorti d'Eloquent.
+     * @param alleeStyle : style à appliquer sur les allees
+     * @returns : tableau de allees prêt pour le trigger vers la map
+     */
+    createAlleesMapFromAlleesBDD: function (alleesBDD, alleeStyle) {
+        return _.map(alleesBDD, function (a) {
+            if (a.geojson != "") {
+                var extraData = a;
+                var polygon = mapHelper.createFeatureFromCoordinates(JSON.parse(a.geojson), extraData, alleeStyle);
+                polygon.bindLabel(a.libelle);
+
+                return {
+                    data: a,
+                    polygon: polygon
+                };
+            } else {
+                return null;
+            }
+        }, this);
+    },
+
+    /**
      * Fonction appellée lors de l'init, on a déjà toutes les données dans _inst
      */
     affichageDataInitial: function () {
+        // LES PLACES À AFFICHER SUR LA MAP ----------------------------------------------------
         var placesMap = _.map(this._inst.places, function (p) {
             return placeHelper.createPlaceFromData(p, this._inst.types_places);
         }, this);
@@ -290,6 +341,24 @@ var store = Reflux.createStore({
         var message = {
             type: mapOptions.type_messages.add_places,
             data: placesMap
+        };
+        this.trigger(message);
+
+        // LES ALLEES À AFFICHER SUR LA MAP ----------------------------------------------------
+        var alleesMap = this.createAlleesMapFromAlleesBDD(this._inst.allees, alleeHelper.style);
+
+        message = {
+            type: mapOptions.type_messages.add_allees,
+            data: alleesMap
+        };
+        this.trigger(message);
+
+        // LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
+        var zonesMap = this.createZonesMapFromZonesBDD(this._inst.zones, zoneHelper.style);
+
+        message = {
+            type: mapOptions.type_messages.add_zones,
+            data: zonesMap
         };
         this.trigger(message);
 
