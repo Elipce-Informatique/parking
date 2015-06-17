@@ -2,6 +2,8 @@ var _ = require('lodash');
 
 var mapOptions = require('../helpers/map_options');
 var mapHelper = require('../helpers/map_helper');
+var zoneHelper = require('../helpers/zone_helper');
+var alleeHelper = require('../helpers/allee_helper');
 var placeHelper = require('../helpers/place_helper');
 
 /**
@@ -283,6 +285,7 @@ var store = Reflux.createStore({
      * Fonction appellée lors de l'init, on a déjà toutes les données dans _inst
      */
     affichageDataInitial: function () {
+        // LES PLACES À AFFICHER SUR LA MAP ----------------------------------------------------
         var placesMap = _.map(this._inst.places, function (p) {
             return placeHelper.createPlaceFromData(p, this._inst.types_places);
         }, this);
@@ -290,6 +293,24 @@ var store = Reflux.createStore({
         var message = {
             type: mapOptions.type_messages.add_places,
             data: placesMap
+        };
+        this.trigger(message);
+
+        // LES ALLEES À AFFICHER SUR LA MAP ----------------------------------------------------
+        var alleesMap = alleeHelper.createAlleesMapFromAlleesBDD(this._inst.allees, alleeHelper.style);
+
+        message = {
+            type: mapOptions.type_messages.add_allees,
+            data: alleesMap
+        };
+        this.trigger(message);
+
+        // LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
+        var zonesMap = zoneHelper.createZonesMapFromZonesBDD(this._inst.zones, zoneHelper.style);
+
+        message = {
+            type: mapOptions.type_messages.add_zones,
+            data: zonesMap
         };
         this.trigger(message);
 
