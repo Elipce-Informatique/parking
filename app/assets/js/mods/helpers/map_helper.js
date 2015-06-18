@@ -275,8 +275,7 @@ function polygonContainsPolygon(container, contained) {
 }
 
 /**
- * Test si container contient totalement contained (pas d'intersection de leurs côtés)
- * Les deux paramètres sont un tableau de lat lng comme suit:
+ * Test l'intersection de deux polygons
  * [
  *  {lat: xx,yyy, lng: xx,yyy},
  *  {lat: xx,yyy, lng: xx,yyy},
@@ -295,8 +294,8 @@ function polygonIntersection(poly1, poly2) {
     // Les polygons ne se contiennent pas totalement l'un l'autre, intersection possible
     if (!polygonContainsPolygon(poly1, poly2) || !polygonContainsPolygon(poly2, poly1)) {
         var intersect = oPoly1.union(oPoly2);
-        // Si on a une union entre les deux, c'est qu'il y a intersection
-        return !(intersect.length == 0);
+        // Test si on a eu une intersection sur le poly1
+        return !intersect.equal(oPoly1);
     } else {
         return false;
     }

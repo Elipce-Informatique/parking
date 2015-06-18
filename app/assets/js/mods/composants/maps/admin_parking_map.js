@@ -719,7 +719,7 @@ var parkingMap = React.createClass({
         if (!this.state.isModalOpen) {
             return <span/>;
         } else {
-            return (<ModalPreferencesZones
+            return (<ModalZone
                 onToggle={this.handleToggle}
             />);
         }
