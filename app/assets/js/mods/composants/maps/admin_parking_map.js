@@ -188,6 +188,12 @@ var parkingMap = React.createClass({
             data.e = e;
             Actions.map.draw_editstart(data);
         });
+        // QUAND UNE OU PLUSIEURS FORMES ONT ÉTÉ ÉDITÉES
+        this._inst.map.on('draw:edited', function (e) {
+            var data = {e: {}};
+            data.e = e;
+            Actions.map.draw_edited(data);
+        });
         // QUAND L'ÉDITION EST ARRÊTÉE
         this._inst.map.on('draw:editstop', function (e) {
             var data = {e: {}};

@@ -203,6 +203,10 @@ var store = Reflux.createStore({
                 break;
         }
     },
+    onDraw_edited: function (data) {
+        console.log('Pass onDraw_edited %o', data);
+    },
+    // SUPPRESSION D'UN DESSIN
     onDraw_deleted: function (data) {
         var deletedEntities = _.values(data.e.layers._layers);
         switch (this._inst.currentMode) {
