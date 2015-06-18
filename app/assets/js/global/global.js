@@ -83,6 +83,7 @@ require('sweetalert');
         "map_initialized",
         // ACTIONS DE DESSIN
         "draw_created",
+        "draw_edited",
         "draw_deleted",
         "draw_drawstart",
         "draw_drawstop",
