@@ -207,28 +207,82 @@ var store = Reflux.createStore({
     },
     // SUPPRESSION D'UN DESSIN
     onDraw_deleted: function (data) {
+        console.log('Pass onDraw_deleted %o', data);
         var deletedEntities = _.values(data.e.layers._layers);
         switch (this._inst.currentMode) {
             // -------------------------------------------------------------
             // SUPPRESSION D'UNE OU PLUSIEURS PLACES
             case mapOptions.dessin.place:
             case mapOptions.dessin.place_auto:
-                swal('Suppression de ' + deletedEntities.length + ' places !');
+                var context = this;
+                swal({
+                    title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                    text: Lang.get('administration_parking.carte.swal_msg_confirm_allee'),
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: Lang.get('global.del'),
+                    cancelButtonText: Lang.get('global.annuler'),
+                    closeOnConfirm: true,
+                    closeOnCancel: true
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        context.deletePlaces(deletedEntities)
+                    } else {
+                        context.cancelDeletePlaces(deletedEntities);
+                    }
+                });
                 break;
             // -------------------------------------------------------------
             // SUPPRESSION D'UNE OU PLUSIEURS ZONES
             case mapOptions.dessin.zone:
-                swal('ATTENTION supprimer une zone va supprimmer toutes les allées et les places contenues dedans.');
+                var context = this;
+                swal({
+                    title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                    text: Lang.get('administration_parking.carte.swal_msg_confirm_zone'),
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: Lang.get('global.del'),
+                    cancelButtonText: Lang.get('global.annuler'),
+                    closeOnConfirm: true,
+                    closeOnCancel: true
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        context.deleteZones(deletedEntities)
+                    } else {
+                        console.log('PASS CANCEL');
+                        context.cancelDeleteZones(deletedEntities);
+                    }
+
+                });
                 break;
             // -------------------------------------------------------------
             // SUPPRESSION D'UNE OU PLUSIEURS ALLÉES
             case mapOptions.dessin.allee:
-                swal('ATTENTION supprimer une allée va supprimmer toutes places contenues dedans.');
+                var context = this;
+                swal({
+                    title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                    text: Lang.get('administration_parking.carte.swal_msg_confirm_allee'),
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: Lang.get('global.del'),
+                    cancelButtonText: Lang.get('global.annuler'),
+                    closeOnConfirm: true,
+                    closeOnCancel: true
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        context.deleteAllees(deletedEntities)
+                    } else {
+                        context.cancelDeleteAllees(deletedEntities);
+                    }
+                });
                 break;
             // -------------------------------------------------------------
             // SUPPRESSION D'UN OU PLISIEURS AFFICHEURS
             case mapOptions.dessin.afficheur:
-                //
+                // pas encore pris en compte
                 break;
             // -------------------------------------------------------------
             // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
@@ -572,6 +626,88 @@ var store = Reflux.createStore({
                 Actions.notif.error();
             }
         }.bind(this));
+    },
+
+
+    /**
+     * Supprime des zones
+     * @param data : array les données formes à supprimer
+     */
+    deleteZones: function (data) {
+        console.log('deleteZones avec : %o', data);
+    },
+    /**
+     * Annule la suppression visuelle des zones
+     * @param data : array les données formes à remettre sur la carte
+     */
+    cancelDeleteZones: function (data) {
+        console.log('cancelDeleteZones avec : %o', data);
+        var zonesMap = _.map(data, function (z) {
+            return {
+                data: z.options.data,
+                polygon: z
+            };
+        }, this);
+
+        var message = {
+            type: mapOptions.type_messages.add_zones,
+            data: zonesMap
+        };
+        this.trigger(message);
+    },
+    /**
+     * Supprime des allées
+     * @param data : array les données fournies par l'event "draw:deleted"
+     * de leaflet.draw
+     */
+    deleteAllees: function (data) {
+        console.log('deleteAllees avec : %o', data);
+    },
+    /**
+     * Annule la suppression visuelle des allées
+     * @param data : array les données formes à remettre sur la carte
+     */
+    cancelDeleteAllees: function (data) {
+        console.log('cancelDeleteAllees avec : %o', data);
+        var alleesMap = _.map(data, function (a) {
+            return {
+                data: a.options.data,
+                polygon: a
+            };
+        }, this);
+
+        var message = {
+            type: mapOptions.type_messages.add_allees,
+            data: alleesMap
+        };
+        this.trigger(message);
+    },
+    /**
+     * Supprime des places
+     * @param data : array les données fournies par l'event "draw:deleted"
+     * de leaflet.draw
+     */
+    deletePlaces: function (data) {
+        console.log('deletePlaces avec : %o', data);
+    },
+    /**
+     * Annule la suppression visuelle des places
+     * @param data : array les données formes à remettre sur la carte
+     */
+    cancelDeletePlaces: function (data) {
+        console.log('cancelDeletePlaces avec : %o', data);
+        var placesMap = _.map(data, function (p) {
+            return {
+                data: p.options.data,
+                polygon: p
+            };
+        }, this);
+
+        var message = {
+            type: mapOptions.type_messages.add_places,
+            data: placesMap
+        };
+        this.trigger(message);
     },
 
     /**

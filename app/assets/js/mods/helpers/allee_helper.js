@@ -26,7 +26,7 @@ function geometryCheck(newAllee, zones, allees) {
         // I - CHEVAUCHE UNE ZONE ?
         if (mapHelper.polygonIntersection(newAllee, z)) {
             isValid = false;
-            message = Lang.get('administration_parking.carte.err_zone_chevauche');
+            message = Lang.get('administration_parking.carte.err_allee_chevauche_zone');
             return false; // Break the each
         }
     });

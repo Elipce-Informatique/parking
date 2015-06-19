@@ -64,6 +64,7 @@ return array(
         'err_zone_contenue' => 'Erreur : La zone dessinée ne doit ni contenir ni être contenue dans une autre zone.',
         'err_zone_chevauche' => 'Erreur : La zone dessinée coupe une autre zone.',
         'err_allee_chevauche' => 'Erreur : La zone dessinée coupe une allée.',
+        'err_allee_chevauche_zone' => 'Erreur : L\'allée dessinée coupe une zone.',
         'err_zone_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une allée.',
         'err_allee_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une autre allée.',
         'err_parking_non_init' => 'Erreur : Le parking n\'a pas encore été initialisé.',
@@ -72,7 +73,9 @@ return array(
         'infos_capteur_adresse' => 'Adresse : ',
         'infos_capteur_restant' => 'Capteurs restant sur le bus : ',
         'infos_capteur_bouton' => 'Terminer l\'affectation',
-        ''
+        'swal_titre_confirm' => "Êtes-vous sûr ?",
+        'swal_msg_confirm_zone' => "ATTENTION supprimer une zone va supprimmer toutes les allées et les places qu'elle contient.",
+        'swal_msg_confirm_allee' => "ATTENTION supprimer une allée va supprimmer toutes les places qu'elle contient.",
     ],
 
     // MODULE TEMPS REEL

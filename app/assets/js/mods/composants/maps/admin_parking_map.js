@@ -149,7 +149,6 @@ var parkingMap = React.createClass({
         this._inst.calibreGroup = new L.FeatureGroup();
         this._inst.map.addLayer(this._inst.calibreGroup);
 
-        console.log('Calibre à l\'init : %o', this.props.calibre);
         Actions.map.map_initialized(this._inst.map, this.props.calibre, parkingData, this._inst);
     },
     /**
@@ -312,7 +311,6 @@ var parkingMap = React.createClass({
         }
         // MISE EN PLACE DE LA BARRE DE DESSIN
         else if (this._inst.calibre != 0) {
-            console.log('PASS !=0 -> %o', this._inst.calibre);
             // 2 : MISE EN PLACE DU NOUVEAU MODE
             this._inst.currentMode = mode_dessin;
 
@@ -352,7 +350,6 @@ var parkingMap = React.createClass({
 
             // 3 : Init du layerGroup pour la modif
             var group = this._inst[mapOptions.control.groups[this._inst.currentMode]];
-            console.log('Group : %o', group);
 
 
             // 3 CRÉATION DU NOUVEAU CONTRÔLE
@@ -375,7 +372,7 @@ var parkingMap = React.createClass({
             this._inst.drawControl = new L.Control.Draw(options);
             this._inst.map.addControl(this._inst.drawControl);
         }
-        // Calibre 0, on n'autorise que l'outil calibre !
+        // CALIBRE 0, ON N'AUTORISE QUE L'OUTIL CALIBRE !
         else {
             this._inst.currentMode = mode_dessin;
             // ------- MODE CALIBRE SEULEMENT ----------
@@ -387,7 +384,6 @@ var parkingMap = React.createClass({
 
             // LAYER CALIBRE
             var group = this._inst[mapOptions.control.groups[this._inst.currentMode]];
-            console.log('Group : %o', group);
 
             var options = {
                 position: 'topright',
