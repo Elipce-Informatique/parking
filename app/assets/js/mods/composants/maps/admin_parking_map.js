@@ -59,7 +59,9 @@ var parkingMap = React.createClass({
             afficheursGroup: {},                  // Layer group contenant tous les afficheurs
             calibreGroup: {},                     // Juste pour l'init du calibre
             drawControl: {},                      // Barre d'outils de dessin active sur la carte
-            infosControl: undefined               // Cadre d'informations en bas à droite de la carte
+            infosControl: undefined,              // Cadre d'informations en bas à droite de la carte
+            calibre: 0
+
         };
     },
 
@@ -147,6 +149,7 @@ var parkingMap = React.createClass({
         this._inst.calibreGroup = new L.FeatureGroup();
         this._inst.map.addLayer(this._inst.calibreGroup);
 
+        console.log('Calibre à l\'init : %o', this.props.calibre);
         Actions.map.map_initialized(this._inst.map, this.props.calibre, parkingData, this._inst);
     },
     /**
@@ -308,7 +311,8 @@ var parkingMap = React.createClass({
             this._inst.drawControl = {};
         }
         // MISE EN PLACE DE LA BARRE DE DESSIN
-        else {
+        else if (this._inst.calibre != 0) {
+            console.log('PASS !=0 -> %o', this._inst.calibre);
             // 2 : MISE EN PLACE DU NOUVEAU MODE
             this._inst.currentMode = mode_dessin;
 
@@ -348,6 +352,7 @@ var parkingMap = React.createClass({
 
             // 3 : Init du layerGroup pour la modif
             var group = this._inst[mapOptions.control.groups[this._inst.currentMode]];
+            console.log('Group : %o', group);
 
 
             // 3 CRÉATION DU NOUVEAU CONTRÔLE
@@ -366,6 +371,38 @@ var parkingMap = React.createClass({
                 }
             };
 
+
+            this._inst.drawControl = new L.Control.Draw(options);
+            this._inst.map.addControl(this._inst.drawControl);
+        }
+        // Calibre 0, on n'autorise que l'outil calibre !
+        else {
+            this._inst.currentMode = mode_dessin;
+            // ------- MODE CALIBRE SEULEMENT ----------
+            var polyline = this._inst.currentMode == mapOptions.dessin.calibre ? {
+                shapeOptions: {
+                    color: mapOptions.control.draw.colors[this._inst.currentMode]
+                }
+            } : false;
+
+            // LAYER CALIBRE
+            var group = this._inst[mapOptions.control.groups[this._inst.currentMode]];
+            console.log('Group : %o', group);
+
+            var options = {
+                position: 'topright',
+                draw: {
+                    polyline: polyline,
+                    polygon: false,
+                    circle: false,
+                    rectangle: false,
+                    marker: false
+                },
+                edit: {
+                    featureGroup: group,
+                    remove: true
+                }
+            };
 
             this._inst.drawControl = new L.Control.Draw(options);
             this._inst.map.addControl(this._inst.drawControl);
@@ -415,6 +452,7 @@ var parkingMap = React.createClass({
         }
         this._inst.infosControl = undefined;
     },
+
 
     /**
      * Déclenché par la mise à jour des données du store
@@ -467,6 +505,9 @@ var parkingMap = React.createClass({
                 this.setState({
                     isModalOpen: false
                 });
+                break;
+            case mapOptions.type_messages.set_calibre:
+                this.onSetCalibre(data);
                 break;
             default:
                 break;
@@ -535,6 +576,16 @@ var parkingMap = React.createClass({
                 selectButton(mapOptions.icon.place);
                 break;
         }
+    },
+
+    /**
+     * Met à jour le calibre sur la map
+     * Permet d'activer ou désactiver le dessin si calibre = 0
+     * @param data
+     */
+    onSetCalibre: function (data) {
+        this._inst.calibre = data.data;
+        this.changeDrawToolbar(this._inst.currentMode);
     },
 
     /**

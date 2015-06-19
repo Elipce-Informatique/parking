@@ -31,7 +31,7 @@ var formDataHelper = require('../helpers/form_data_helper');
  */
 var store = Reflux.createStore({
     _inst: {
-        calibre: 1,
+        calibre: 0,
         defaults: { // Objets par défauts pour la création des places
             type_place: {},
             zone: {},
@@ -94,8 +94,7 @@ var store = Reflux.createStore({
      */
     onMap_initialized: function (map, calibre, parkingInfos, mapInst) {
 
-        // Récupération du calibre
-        this._inst.calibre = calibre;
+        // Récupération de l'instance de la map
         this._inst.mapInst = mapInst;
 
         // Récupération en BDD des données du parking sélectionné
@@ -929,6 +928,13 @@ var store = Reflux.createStore({
      * Fonction appellée lors de l'init, on a déjà toutes les données dans _inst
      */
     affichageDataInitial: function () {
+        // SETUP CALIBRE -----------------------------------------------------------------------
+        message = {
+            type: mapOptions.type_messages.set_calibre,
+            data: this._inst.calibre
+        };
+        this.trigger(message);
+
         // LES PLACES À AFFICHER SUR LA MAP ----------------------------------------------------
         var placesMap = this.createPlacesMapFromPlacesBDD(this._inst.places);
 
