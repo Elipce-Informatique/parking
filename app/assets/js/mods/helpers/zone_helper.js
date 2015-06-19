@@ -202,11 +202,36 @@ function getAlleesInZone(formDom, zone, _inst) {
 }
 
 /**
+ * Crée les zones à afficher sur la map en fonction d'un tableau de places venant directement de la BDD
+ *
+ * @param zonesBDD : tableau d'objet de type zone sorti d'Eloquent.
+ * @param zoneStyle : style à appliquer sur les zones
+ * @returns : tableau de zones prêt pour le trigger vers la map
+ */
+function createZonesMapFromZonesBDD(zonesBDD, zoneStyle) {
+    return _.map(zonesBDD, function (z) {
+        if (z.geojson != "") {
+            var extraData = z;
+            var polygon = mapHelper.createFeatureFromCoordinates(JSON.parse(z.geojson), extraData, zoneStyle);
+            polygon.bindLabel(z.libelle);
+
+            return {
+                data: z,
+                polygon: polygon
+            };
+        } else {
+            return null;
+        }
+    }, this);
+}
+
+/**
  * Interface publique du module
  */
 module.exports = {
     geometryCheck: geometryCheck,
     createZone: createZone,
+    createZonesMapFromZonesBDD: createZonesMapFromZonesBDD,
     style: {
         color: '#daa520',
         weight: 2,

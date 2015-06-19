@@ -26,7 +26,7 @@ function geometryCheck(newAllee, zones, allees) {
         // I - CHEVAUCHE UNE ZONE ?
         if (mapHelper.polygonIntersection(newAllee, z)) {
             isValid = false;
-            message = Lang.get('administration_parking.carte.err_zone_chevauche');
+            message = Lang.get('administration_parking.carte.err_allee_chevauche_zone');
             return false; // Break the each
         }
     });
@@ -146,11 +146,36 @@ function getZoneWrapper(formDom, allee, _inst) {
 }
 
 /**
+ * Crée les allees à afficher sur la map en fonction d'un tableau de places venant directement de la BDD
+ *
+ * @param alleesBDD : tableau d'objet de type allee sorti d'Eloquent.
+ * @param alleeStyle : style à appliquer sur les allees
+ * @returns : tableau de allees prêt pour le trigger vers la map
+ */
+function createAlleesMapFromAlleesBDD(alleesBDD, alleeStyle) {
+    return _.map(alleesBDD, function (a) {
+        if (a.geojson != "") {
+            var extraData = a;
+            var polygon = mapHelper.createFeatureFromCoordinates(JSON.parse(a.geojson), extraData, alleeStyle);
+            polygon.bindLabel(a.libelle);
+
+            return {
+                data: a,
+                polygon: polygon
+            };
+        } else {
+            return null;
+        }
+    }, this);
+}
+
+/**
  * Interface publique du module
  */
 module.exports = {
     geometryCheck: geometryCheck,
     createAllee: createAllee,
+    createAlleesMapFromAlleesBDD: createAlleesMapFromAlleesBDD,
     style: {
         color: '#1e90ff',
         weight: 2,

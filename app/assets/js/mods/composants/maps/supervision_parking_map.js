@@ -94,35 +94,48 @@ var parkingMap = React.createClass({
         var origine = [-250, -250];
         var haut_droit = [250, 250];
 
+
         // CRÉATION DE LA MAP
+        var baseLayer = L.imageOverlay(this.props.imgUrl, [origine, haut_droit]);
         this._inst.map = new L.Map(this.props.divId, {
             crs: mapHelper.customZoomCRS,
+            layers: [baseLayer],
             maxZoom: 12
         }).setView([0, 0], 0);
 
-        // AJOUT DE L'IMAGE DE FOND
-        L.imageOverlay(this.props.imgUrl, [origine, haut_droit]).addTo(this._inst.map);
+        // GESTION RÉORGANISATION DES LAYERS
+        this._inst.map.on('overlayadd', this.orderLayerGroups);
 
         // Transmission des données du parking au store:
         var parkingData = {
             parkingId: this.props.parkingId,
             planId: this.props.planId
         };
-        Actions.map.map_initialized(this._inst.map, this.props.calibre, parkingData);
+        Actions.map.map_initialized(this._inst.map, this.props.calibre, parkingData, this._inst);
 
         // INIT des layers
         this._inst.placesMarkersGroup = new L.MarkerClusterGroup({
-            maxClusterRadius: 15
+            maxClusterRadius: 10
         });
+
         this._inst.map.addLayer(this._inst.placesMarkersGroup);
         this._inst.placesGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.placesGroup);
         this._inst.alleesGroup = new L.geoJson();
-        this._inst.map.addLayer(this._inst.alleesGroup);
+        //this._inst.map.addLayer(this._inst.alleesGroup);
         this._inst.zonesGroup = new L.geoJson();
-        this._inst.map.addLayer(this._inst.zonesGroup);
+        //this._inst.map.addLayer(this._inst.zonesGroup);
         this._inst.afficheursGroup = new L.geoJson();
         this._inst.map.addLayer(this._inst.afficheursGroup);
+
+        // LayerControl pour afficher ou non les zones et allées
+        var overlaysMaps = {
+            "Zones": this._inst.zonesGroup,
+            "Allées": this._inst.alleesGroup
+        };
+
+        var layerControl = L.control.layers({}, overlaysMaps);
+        layerControl.addTo(this._inst.map);
 
         if (this.props.parkingLogo != '') {
             this.showLogo(this.props.parkingLogo);
@@ -184,6 +197,33 @@ var parkingMap = React.createClass({
     },
 
     /**
+     * Ajoute les ZONES
+     * @param data : le couple type-data envoyé par le store
+     */
+    onZonesAdded: function (formes) {
+        var liste_data = formes.data;
+        _.each(liste_data, function (zone) {
+            if (zone != null) {
+                this._inst.zonesGroup.addLayer(zone.polygon);
+            }
+        }, this);
+
+    },
+
+    /**
+     * Ajoute les ALLEES
+     * @param data -> le couple type-data envoyé par le store
+     */
+    onAlleesAdded: function (formes) {
+        var liste_data = formes.data;
+        _.each(liste_data, function (allee) {
+            if (allee != null) {
+                this._inst.alleesGroup.addLayer(allee.polygon);
+            }
+        }, this);
+    },
+
+    /**
      * Ajoute les PLACES
      * @param formes : tableau de places
      */
@@ -237,10 +277,26 @@ var parkingMap = React.createClass({
      * - Afficheur
      */
     orderLayerGroups: function () {
-        this._inst.zonesGroup.bringToFront();
-        this._inst.alleesGroup.bringToFront();
-        this._inst.placesGroup.bringToFront();
-        this._inst.afficheursGroup.bringToFront()
+        try {
+            this._inst.zonesGroup.bringToFront();
+        } catch (e) {
+
+        }
+        try {
+            this._inst.alleesGroup.bringToFront();
+        } catch (e) {
+
+        }
+        try {
+            this._inst.placesGroup.bringToFront();
+        } catch (e) {
+
+        }
+        try {
+            this._inst.afficheursGroup.bringToFront()
+        } catch (e) {
+
+        }
     },
     /**
      * Déclenché par la mise à jour des données du store
@@ -249,6 +305,12 @@ var parkingMap = React.createClass({
         switch (data.type) {
             case mapOptions.type_messages.add_forme:
                 this.onFormeAdded(data);
+                break;
+            case mapOptions.type_messages.add_zones:
+                this.onZonesAdded(data);
+                break;
+            case mapOptions.type_messages.add_allees:
+                this.onAlleesAdded(data);
                 break;
             case mapOptions.type_messages.add_places:
                 this.onPlacesAdded(data);

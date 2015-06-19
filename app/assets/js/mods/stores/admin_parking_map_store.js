@@ -31,7 +31,7 @@ var formDataHelper = require('../helpers/form_data_helper');
  */
 var store = Reflux.createStore({
     _inst: {
-        calibre: 1,
+        calibre: 0,
         defaults: { // Objets par défauts pour la création des places
             type_place: {},
             zone: {},
@@ -94,8 +94,7 @@ var store = Reflux.createStore({
      */
     onMap_initialized: function (map, calibre, parkingInfos, mapInst) {
 
-        // Récupération du calibre
-        this._inst.calibre = calibre;
+        // Récupération de l'instance de la map
         this._inst.mapInst = mapInst;
 
         // Récupération en BDD des données du parking sélectionné
@@ -203,29 +202,87 @@ var store = Reflux.createStore({
                 break;
         }
     },
+    onDraw_edited: function (data) {
+        console.log('Pass onDraw_edited %o', data);
+    },
+    // SUPPRESSION D'UN DESSIN
     onDraw_deleted: function (data) {
+        console.log('Pass onDraw_deleted %o', data);
         var deletedEntities = _.values(data.e.layers._layers);
         switch (this._inst.currentMode) {
             // -------------------------------------------------------------
             // SUPPRESSION D'UNE OU PLUSIEURS PLACES
             case mapOptions.dessin.place:
             case mapOptions.dessin.place_auto:
-                swal('Suppression de ' + deletedEntities.length + ' places !');
+                var context = this;
+                swal({
+                    title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                    text: Lang.get('administration_parking.carte.swal_msg_confirm_allee'),
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: Lang.get('global.del'),
+                    cancelButtonText: Lang.get('global.annuler'),
+                    closeOnConfirm: true,
+                    closeOnCancel: true
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        context.deletePlaces(deletedEntities)
+                    } else {
+                        context.cancelDeletePlaces(deletedEntities);
+                    }
+                });
                 break;
             // -------------------------------------------------------------
             // SUPPRESSION D'UNE OU PLUSIEURS ZONES
             case mapOptions.dessin.zone:
-                swal('ATTENTION supprimer une zone va supprimmer toutes les allées et les places contenues dedans.');
+                var context = this;
+                swal({
+                    title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                    text: Lang.get('administration_parking.carte.swal_msg_confirm_zone'),
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: Lang.get('global.del'),
+                    cancelButtonText: Lang.get('global.annuler'),
+                    closeOnConfirm: true,
+                    closeOnCancel: true
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        context.deleteZones(deletedEntities)
+                    } else {
+                        console.log('PASS CANCEL');
+                        context.cancelDeleteZones(deletedEntities);
+                    }
+
+                });
                 break;
             // -------------------------------------------------------------
             // SUPPRESSION D'UNE OU PLUSIEURS ALLÉES
             case mapOptions.dessin.allee:
-                swal('ATTENTION supprimer une allée va supprimmer toutes places contenues dedans.');
+                var context = this;
+                swal({
+                    title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                    text: Lang.get('administration_parking.carte.swal_msg_confirm_allee'),
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: Lang.get('global.del'),
+                    cancelButtonText: Lang.get('global.annuler'),
+                    closeOnConfirm: true,
+                    closeOnCancel: true
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        context.deleteAllees(deletedEntities)
+                    } else {
+                        context.cancelDeleteAllees(deletedEntities);
+                    }
+                });
                 break;
             // -------------------------------------------------------------
             // SUPPRESSION D'UN OU PLISIEURS AFFICHEURS
             case mapOptions.dessin.afficheur:
-                //
+                // pas encore pris en compte
                 break;
             // -------------------------------------------------------------
             // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
@@ -528,7 +585,7 @@ var store = Reflux.createStore({
             // TEST ÉTAT INSERTION
             if (typeof(data.retour) !== 'undefined') {
                 // 1 - TRANSFORMATION DES DATA DE LA BDD EN ZONES
-                var zonesCreated = this.createZonesMapFromZonesBDD([data.retour], zoneHelper.style);
+                var zonesCreated = zoneHelper.createZonesMapFromZonesBDD([data.retour], zoneHelper.style);
                 // 2 - SAUVEGARDE DES ZONES EN LOCAL DNAS LE STORE
                 this._inst.zones = this._inst.zones.concat(zonesCreated);
                 // 3 - ENVOI DES INFOS À AFFICHER SUR LA CARTE
@@ -555,7 +612,7 @@ var store = Reflux.createStore({
             // TEST ÉTAT INSERTION
             if (typeof(data.retour) !== 'undefined') {
                 // 1 - TRANSFORMATION DES DATA DE LA BDD EN ALLEES
-                var alleesCreated = this.createAlleesMapFromAlleesBDD([data.retour], alleeHelper.style);
+                var alleesCreated = alleeHelper.createAlleesMapFromAlleesBDD([data.retour], alleeHelper.style);
                 // 2 - SAUVEGARDE DES ALLEES EN LOCAL DNAS LE STORE
                 this._inst.allees = this._inst.allees.concat(alleesCreated);
                 // 3 - ENVOI DES INFOS À AFFICHER SUR LA CARTE
@@ -569,6 +626,88 @@ var store = Reflux.createStore({
                 Actions.notif.error();
             }
         }.bind(this));
+    },
+
+
+    /**
+     * Supprime des zones
+     * @param data : array les données formes à supprimer
+     */
+    deleteZones: function (data) {
+        console.log('deleteZones avec : %o', data);
+    },
+    /**
+     * Annule la suppression visuelle des zones
+     * @param data : array les données formes à remettre sur la carte
+     */
+    cancelDeleteZones: function (data) {
+        console.log('cancelDeleteZones avec : %o', data);
+        var zonesMap = _.map(data, function (z) {
+            return {
+                data: z.options.data,
+                polygon: z
+            };
+        }, this);
+
+        var message = {
+            type: mapOptions.type_messages.add_zones,
+            data: zonesMap
+        };
+        this.trigger(message);
+    },
+    /**
+     * Supprime des allées
+     * @param data : array les données fournies par l'event "draw:deleted"
+     * de leaflet.draw
+     */
+    deleteAllees: function (data) {
+        console.log('deleteAllees avec : %o', data);
+    },
+    /**
+     * Annule la suppression visuelle des allées
+     * @param data : array les données formes à remettre sur la carte
+     */
+    cancelDeleteAllees: function (data) {
+        console.log('cancelDeleteAllees avec : %o', data);
+        var alleesMap = _.map(data, function (a) {
+            return {
+                data: a.options.data,
+                polygon: a
+            };
+        }, this);
+
+        var message = {
+            type: mapOptions.type_messages.add_allees,
+            data: alleesMap
+        };
+        this.trigger(message);
+    },
+    /**
+     * Supprime des places
+     * @param data : array les données fournies par l'event "draw:deleted"
+     * de leaflet.draw
+     */
+    deletePlaces: function (data) {
+        console.log('deletePlaces avec : %o', data);
+    },
+    /**
+     * Annule la suppression visuelle des places
+     * @param data : array les données formes à remettre sur la carte
+     */
+    cancelDeletePlaces: function (data) {
+        console.log('cancelDeletePlaces avec : %o', data);
+        var placesMap = _.map(data, function (p) {
+            return {
+                data: p.options.data,
+                polygon: p
+            };
+        }, this);
+
+        var message = {
+            type: mapOptions.type_messages.add_places,
+            data: placesMap
+        };
+        this.trigger(message);
     },
 
     /**
@@ -830,6 +969,8 @@ var store = Reflux.createStore({
                     this.swalCalibre();
                 }
 
+                map.setZoom(data.zoom_level);
+
                 // Extraction des sous éléments du niveau
                 var plan = data;
                 var zones = [];
@@ -923,6 +1064,13 @@ var store = Reflux.createStore({
      * Fonction appellée lors de l'init, on a déjà toutes les données dans _inst
      */
     affichageDataInitial: function () {
+        // SETUP CALIBRE -----------------------------------------------------------------------
+        message = {
+            type: mapOptions.type_messages.set_calibre,
+            data: this._inst.calibre
+        };
+        this.trigger(message);
+
         // LES PLACES À AFFICHER SUR LA MAP ----------------------------------------------------
         var placesMap = this.createPlacesMapFromPlacesBDD(this._inst.places);
 
@@ -933,7 +1081,7 @@ var store = Reflux.createStore({
         this.trigger(message);
 
         // LES ALLEES À AFFICHER SUR LA MAP ----------------------------------------------------
-        var alleesMap = this.createAlleesMapFromAlleesBDD(this._inst.allees, alleeHelper.style);
+        var alleesMap = alleeHelper.createAlleesMapFromAlleesBDD(this._inst.allees, alleeHelper.style);
 
         message = {
             type: mapOptions.type_messages.add_allees,
@@ -942,7 +1090,7 @@ var store = Reflux.createStore({
         this.trigger(message);
 
         // LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
-        var zonesMap = this.createZonesMapFromZonesBDD(this._inst.zones, zoneHelper.style);
+        var zonesMap = zoneHelper.createZonesMapFromZonesBDD(this._inst.zones, zoneHelper.style);
 
         message = {
             type: mapOptions.type_messages.add_zones,
@@ -985,50 +1133,6 @@ var store = Reflux.createStore({
         }, this);
     },
 
-    /**
-     * Crée les zones à afficher sur la map en fonction d'un tableau de places venant directement de la BDD
-     *
-     * @param zonesBDD : tableau d'objet de type zone sorti d'Eloquent.
-     * @param zoneStyle : style à appliquer sur les zones
-     * @returns : tableau de zones prêt pour le trigger vers la map
-     */
-    createZonesMapFromZonesBDD: function (zonesBDD, zoneStyle) {
-        return _.map(zonesBDD, function (z) {
-            if (z.geojson != "") {
-                var extraData = z;
-                var polygon = mapHelper.createFeatureFromCoordinates(JSON.parse(z.geojson), extraData, zoneStyle);
-                return {
-                    data: z,
-                    polygon: polygon
-                };
-            } else {
-                return null;
-            }
-        }, this);
-    },
-
-    /**
-     * Crée les allees à afficher sur la map en fonction d'un tableau de places venant directement de la BDD
-     *
-     * @param alleesBDD : tableau d'objet de type allee sorti d'Eloquent.
-     * @param alleeStyle : style à appliquer sur les allees
-     * @returns : tableau de allees prêt pour le trigger vers la map
-     */
-    createAlleesMapFromAlleesBDD: function (alleesBDD, alleeStyle) {
-        return _.map(alleesBDD, function (a) {
-            if (a.geojson != "") {
-                var extraData = a;
-                var polygon = mapHelper.createFeatureFromCoordinates(JSON.parse(a.geojson), extraData, alleeStyle);
-
-                return {
-                    data: a,
-                    polygon: polygon
-                };
-            } else {
-                return null;
-            }
-        }, this);
-    },
     /**
      * Prévient l'utilisateur que le plan qu'il visualise n'est pas calibré.
      */

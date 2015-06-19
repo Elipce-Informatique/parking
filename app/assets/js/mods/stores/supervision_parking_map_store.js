@@ -2,6 +2,8 @@ var _ = require('lodash');
 
 var mapOptions = require('../helpers/map_options');
 var mapHelper = require('../helpers/map_helper');
+var zoneHelper = require('../helpers/zone_helper');
+var alleeHelper = require('../helpers/allee_helper');
 var placeHelper = require('../helpers/place_helper');
 
 /**
@@ -76,10 +78,11 @@ var store = Reflux.createStore({
      * @param calibre : calibre initial de la carte (cm/deg)
      * @param parkingInfos : object avec deux clés parkingId et niveauId
      */
-    onMap_initialized: function (map, calibre, parkingInfos) {
+    onMap_initialized: function (map, calibre, parkingInfos, mapInst) {
 
         // Récupération du calibre
         this._inst.calibre = calibre;
+        this._inst.mapInst = mapInst;
 
         // Récupération en BDD des données du parking sélectionné
         var p1 = this.recupInfosParking(map, calibre, parkingInfos);
@@ -204,6 +207,9 @@ var store = Reflux.createStore({
                 var places = [];
                 var jsonPlaces = [];
 
+                this._inst.mapInst.placesMarkersGroup.options.maxClusterRadius = data.cluster_radius;
+                map.setZoom(data.zoom_level);
+
                 // RÉCUPÉRATION DES JSON ZONES ET DES ALLÉES
                 _.each(zones, function (z) {
                     jsonZones.push(z.geojson);
@@ -279,6 +285,7 @@ var store = Reflux.createStore({
      * Fonction appellée lors de l'init, on a déjà toutes les données dans _inst
      */
     affichageDataInitial: function () {
+        // LES PLACES À AFFICHER SUR LA MAP ----------------------------------------------------
         var placesMap = _.map(this._inst.places, function (p) {
             return placeHelper.createPlaceFromData(p, this._inst.types_places);
         }, this);
@@ -286,6 +293,24 @@ var store = Reflux.createStore({
         var message = {
             type: mapOptions.type_messages.add_places,
             data: placesMap
+        };
+        this.trigger(message);
+
+        // LES ALLEES À AFFICHER SUR LA MAP ----------------------------------------------------
+        var alleesMap = alleeHelper.createAlleesMapFromAlleesBDD(this._inst.allees, alleeHelper.style);
+
+        message = {
+            type: mapOptions.type_messages.add_allees,
+            data: alleesMap
+        };
+        this.trigger(message);
+
+        // LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
+        var zonesMap = zoneHelper.createZonesMapFromZonesBDD(this._inst.zones, zoneHelper.style);
+
+        message = {
+            type: mapOptions.type_messages.add_zones,
+            data: zonesMap
         };
         this.trigger(message);
 

@@ -81,7 +81,8 @@ module.exports.type_messages = {
     show_infos: 14,
     update_infos: 15,
     hide_infos: 16,
-    delete_place: 17
+    delete_place: 17,
+    set_calibre: 18
 };
 
 /**
