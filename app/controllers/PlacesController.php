@@ -86,6 +86,25 @@ class PlacesController extends \BaseController
     }
 
     /**
+     * Remove the specified resources from storage.
+     *
+     * @return Response
+     */
+    public function destroyMany()
+    {
+        Log::debug('destroyMany, avec ces données : ' . print_r(Input::all(), true));
+        $ids = explode(',', Input::get('ids'));
+        $action = Place::deletePlaces($ids);
+        $retour = [
+            'save' => $action,
+            'errorBdd' => !$action,
+            'model' => null,
+            'doublon' => false
+        ];
+        return $retour;
+    }
+
+    /**
      * Attache un capteur à la place désignée par l'id
      *
      * Attend un param POST 'capteur_id'

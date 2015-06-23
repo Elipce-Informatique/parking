@@ -217,7 +217,7 @@ var store = Reflux.createStore({
                 var context = this;
                 swal({
                     title: Lang.get('administration_parking.carte.swal_titre_confirm'),
-                    text: Lang.get('administration_parking.carte.swal_msg_confirm_allee'),
+                    text: Lang.get('administration_parking.carte.swal_msg_confirm_place'),
                     type: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#DD6B55",
@@ -635,6 +635,19 @@ var store = Reflux.createStore({
      */
     deleteZones: function (data) {
         console.log('deleteZones avec : %o', data);
+
+        // INIT des données de retour
+        var fData = formDataHelper('', 'DELETE');
+        var ids = _.map(data, function (d) {
+            return d.options.data.id;
+        });
+        fData.append('ids', ids);
+        console.log('Ids : %o', ids);
+
+        var url = BASE_URI + 'parking/zone/delete_many';
+
+        this.deleteFromIds(url, fData);
+
     },
     /**
      * Annule la suppression visuelle des zones
@@ -662,6 +675,18 @@ var store = Reflux.createStore({
      */
     deleteAllees: function (data) {
         console.log('deleteAllees avec : %o', data);
+
+        // INIT des données de retour
+        var fData = formDataHelper('', 'DELETE');
+        var ids = _.map(data, function (d) {
+            return d.options.data.id;
+        });
+        fData.append('ids', ids);
+        console.log('Ids : %o', ids);
+
+        var url = BASE_URI + 'parking/allee/delete_many';
+
+        this.deleteFromIds(url, fData);
     },
     /**
      * Annule la suppression visuelle des allées
@@ -689,6 +714,18 @@ var store = Reflux.createStore({
      */
     deletePlaces: function (data) {
         console.log('deletePlaces avec : %o', data);
+
+        // INIT des données de retour
+        var fData = formDataHelper('', 'DELETE');
+        var ids = _.map(data, function (d) {
+            return d.options.data.id;
+        });
+        fData.append('ids', ids);
+        console.log('Ids : %o', ids);
+
+        var url = BASE_URI + 'parking/place/delete_many';
+
+        this.deleteFromIds(url, fData);
     },
     /**
      * Annule la suppression visuelle des places
@@ -708,6 +745,36 @@ var store = Reflux.createStore({
             data: placesMap
         };
         this.trigger(message);
+    },
+
+    /**
+     * Lance une requête AJAX sur l'url et les data passées en params
+     * puis notifie l'utilisateur selon le retour
+     * @param url => url à appeller
+     * @param fData => données à passer dans la requête
+     */
+    deleteFromIds: function (url, fData) {
+        $.ajax({
+            type: 'POST',
+            url: url,
+            processData: false,
+            contentType: false,
+            data: fData
+        })
+            .done(function (result) {
+                console.log('Success de la requête de suppression ? %o', result);
+                if (result.save) {
+                    Actions.notif.success();
+                } else {
+                    Actions.notif.error();
+                }
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+                Actions.notif.error();
+            });
     },
 
     /**

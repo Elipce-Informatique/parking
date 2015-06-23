@@ -158,5 +158,19 @@ class ZonesController extends \BaseController
         //
     }
 
+    /**
+     * Remove the specified resources from storage.
+     *
+     * @return Response
+     */
+    public function destroyMany()
+    {
+        Log::debug('destroyMany, avec ces données : ' . print_r(Input::all(), true));
+        $ids = explode(',', Input::get('ids'));
+        foreach ($ids as $id) {
+            Log::debug('Id => ' . print_r($id, true));
+        }
+    }
+
 
 }

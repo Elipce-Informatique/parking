@@ -159,11 +159,33 @@ class Place extends BaseModel
      */
     public static function isOccupied($id)
     {
-        $place =  Place::where('place.id', '=', $id)
+        $place = Place::where('place.id', '=', $id)
             ->leftJoin('etat_occupation', 'etat_occupation.id', '=', 'place.etat_occupation_id')
-            ->where('etat_occupation.is_occupe','=','1')
+            ->where('etat_occupation.is_occupe', '=', '1')
             ->get();
 
         return count($place) == 1;
+    }
+
+    /**
+     * Supprime les places désignées par les ids fournis
+     * @param array $ids
+     * @return boolean
+     */
+    public static function deletePlaces(array $ids)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Suppression des places
+            $retour = (Place::destroy($ids) > 0);
+            Log::debug('Retour du destyoy ? ' . print_r($retour, true));
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            $retour = false;
+        }
+        return $retour;
     }
 }
