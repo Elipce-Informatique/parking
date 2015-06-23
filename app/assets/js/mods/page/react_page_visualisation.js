@@ -318,12 +318,16 @@ var store = Reflux.createStore({
      */
     _init_temps_reel: function (planId) {
         var journalId, journalAlerteId;
+
+
+        var url = BASE_URI + 'parking/journal_equipement/last/' + planId;
+        console.log('PLan Id : %o', planId);
+        console.log('Url : %o', url);
         var $1 = $.ajax({
             type: 'GET',
-            url: BASE_URI + 'parking/journal_equipement/last/' + planId,
+            url: url,
             processData: false,
             contentType: false,
-            data: {},
             context: this,
             global: false
         })
@@ -346,7 +350,6 @@ var store = Reflux.createStore({
             url: BASE_URI + 'parking/journal_alerte/last/' + this._inst.parkingId,
             processData: false,
             contentType: false,
-            data: {},
             context: this,
             global: false
         })

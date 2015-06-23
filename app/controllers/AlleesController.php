@@ -122,7 +122,26 @@ class AlleesController extends \BaseController
      */
     public function destroy($id)
     {
-        //
+        Log::debug('destroy, avec ces données : ' . print_r($id, true));
+    }
+
+    /**
+     * Remove the specified resources from storage.
+     *
+     * @return Response
+     */
+    public function destroyMany()
+    {
+        Log::debug('destroyMany, avec ces données : ' . print_r(Input::all(), true));
+        $ids = explode(',', Input::get('ids'));
+        $action = Allee::deleteAllees($ids);
+        $retour = [
+            'save' => $action,
+            'errorBdd' => !$action,
+            'model' => null,
+            'doublon' => false
+        ];
+        return $retour;
     }
 
 

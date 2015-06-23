@@ -163,15 +163,24 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
 */
 Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parking'], function () {
 
+    // GESTION PLANS ET NIVEAUX
     Route::get('plan/{id}/places', 'PlansController@showWithPlaces');
     Route::post('plan/{id}/calibre', 'PlansController@updateCalibre');
     Route::get('niveau/{id}/places', 'NiveauxController@showWithPlaces');
 
-    // Seulement des data, jamais du HTML (créer d'autres routes pour les pages d'adiministration des niveaux, zones, allées)
+    // SEULEMENT DES DATA, jamais du HTML (créer d'autres routes pour les pages d'adiministration des niveaux, zones, allées)
     Route::get('niveau/all', 'NiveauxController@all');
     Route::get('niveau/libelle/{libelle}/{id?}', 'NiveauxController@verifLibelle');
 
+    // GESTION ZONES ALLEES PLACES
+    Route::delete('zone/delete_many', 'ZonesController@destroyMany');
+    Route::delete('allee/delete_many', 'AlleesController@destroyMany');
+    Route::delete('place/delete_many', 'PlacesController@destroyMany');
     Route::post('place/{id}/setCapteur', 'PlacesController@setCapteur');
+
+    // GESTION PARKING
+    Route::get('gestion_parking/all', 'ParkingsController@all');
+    Route::get('gestion_parking/libelle/{libelle}/{id?}', 'ParkingsController@verifLibelle');
 
     // RESSOURCES DÉPENDANT D'UN PARKING
     Route::resource('niveau', 'NiveauxController');
@@ -181,8 +190,6 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::resource('allee', 'AlleesController');
     Route::resource('place', 'PlacesController');
     Route::resource('capteur', 'CapteursController');
-    Route::get('gestion_parking/all', 'ParkingsController@all');
-    Route::get('gestion_parking/libelle/{libelle}/{id?}', 'ParkingsController@verifLibelle');
     Route::resource('gestion_parking', 'ParkingsController');
 
     // Type place
