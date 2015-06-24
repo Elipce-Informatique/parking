@@ -167,9 +167,14 @@ class ZonesController extends \BaseController
     {
         Log::debug('destroyMany, avec ces données : ' . print_r(Input::all(), true));
         $ids = explode(',', Input::get('ids'));
-        foreach ($ids as $id) {
-            Log::debug('Id => ' . print_r($id, true));
-        }
+        $action = Zone::deleteZones($ids);
+        $retour = [
+            'save' => $action,
+            'errorBdd' => !$action,
+            'model' => null,
+            'doublon' => false
+        ];
+        return $retour;
     }
 
 

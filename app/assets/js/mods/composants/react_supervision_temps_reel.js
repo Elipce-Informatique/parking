@@ -191,9 +191,7 @@ var PanelAlertes = React.createClass({
     },
 
     render: function () {
-        console.log('PASS render');
         var messages = _.map(this.props.data, function (d) {
-            console.log('ALERTE A AFFICHER : %o', d);
             // RÉCUP DU MESSAGE
             var message = d.alerte.message;
             var bsStyle = '';

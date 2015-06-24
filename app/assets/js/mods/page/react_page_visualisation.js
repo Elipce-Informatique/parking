@@ -318,11 +318,7 @@ var store = Reflux.createStore({
      */
     _init_temps_reel: function (planId) {
         var journalId, journalAlerteId;
-
-
         var url = BASE_URI + 'parking/journal_equipement/last/' + planId;
-        console.log('PLan Id : %o', planId);
-        console.log('Url : %o', url);
         var $1 = $.ajax({
             type: 'GET',
             url: url,
@@ -407,11 +403,9 @@ var store = Reflux.createStore({
         Array.prototype.push.apply(this._inst.temps_reel.alertes, data);
         if (this._inst.temps_reel.alertes.length > 100) {
             var count = this._inst.temps_reel.alertes.length - 100;
-            console.log('Lengthn avant shift : %o', this._inst.temps_reel.alertes.length);
             _.each(_.range(count), function () {
                 this._inst.temps_reel.alertes.shift();
             }, this);
-            console.log('Lengthn après shift : %o', this._inst.temps_reel.journal.length);
         }
 
         this.trigger(this._inst);
