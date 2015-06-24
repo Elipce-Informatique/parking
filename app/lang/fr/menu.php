@@ -28,7 +28,9 @@ return [
         "commandes_forcees"=>"Commandes forcées",
         "niveau"=>"Gestion des niveaux",
         "parking"=>"Gestion des parkings",
-
+        "alerte" => "Gestion des alertes et réservations",
+        "filtre_parking" => "Filtres droits d'accès aux parkings",
+        "test" => "Page de test"
     ],
 
     "user" => [

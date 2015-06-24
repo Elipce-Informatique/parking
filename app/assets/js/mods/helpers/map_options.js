@@ -1,8 +1,4 @@
 /**
- * Created by yann on 29/01/2015.
- */
-
-/**
  * Enum des diférents modes de dessin
  * @type {{place: number, allee: number, zone: number, afficheur: number}}
  */
