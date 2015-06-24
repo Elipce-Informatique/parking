@@ -3,7 +3,7 @@ return array(
 
     /*
     |--------------------------------------------------------------------------
-    | TEXTES DE LA PAGE D'ADMINISTRATION
+    | TEXTES DU METIER SUPERVISION
     |--------------------------------------------------------------------------
     */
     'accueil' => [
@@ -34,5 +34,8 @@ return array(
     'temps_reel' => [
         'j_place_occupee' => "La place [-] est occupée",
         'j_place_libre' => "La place [-] est libre",
+    ],
+    'alerte' => [
+        'description' => 'Veuillez sélectionner un plan afin de définir des alertes et réservations'
     ]
 );

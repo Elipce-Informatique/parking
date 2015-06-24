@@ -17,7 +17,7 @@ var wss = new WebSocketServer({
 wss.on('connection', function connection(client) {
     client.on('message', function incoming(message) {
         console.log('reçu: %s', message);
-        client.send('Hello Olaf, there is your message: "'+ message+'"');
+        client.send('Hello Olav, this is your message: "'+ message+'"');
     });
 });
 

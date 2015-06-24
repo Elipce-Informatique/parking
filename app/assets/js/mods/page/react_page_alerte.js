@@ -11,7 +11,7 @@ var Jumbotron = ReactB.Jumbotron;
 var PageHeader = ReactB.PageHeader;
 var Glyphicon = ReactB.Glyphicon;
 
-var AdminMap = require('../composants/maps/admin_parking_map');
+var AlerteMap = require('../composants/maps/alerte_map');
 /* Gestion de la modification et des droits */
 var AuthentMixins = require('../mixins/component_access');
 /* Pour le listenTo           */
@@ -40,7 +40,6 @@ var Page = React.createClass({
      */
     getInitialState: function () {
         return {
-            etatPage: pageState.liste,
             treeView: [],
             url: false,
             planId: 0,
@@ -52,17 +51,11 @@ var Page = React.createClass({
         this.listenTo(store, this._updateState, this._updateState);
     },
 
-    componentDidMount: function () {
-
-    },
-
     shouldComponentUpdate: function (nextProps, nextState) {
         return true;
     },
 
-    onRetour: function () {
-
-    },
+    onRetour: function(){},
 
     /**
      * Retour du store, met à jour le state de la page
@@ -73,36 +66,7 @@ var Page = React.createClass({
         this.setState(data);
     },
 
-    /**
-     * Page en mode liste
-     * @returns {XML}
-     * @private
-     */
-    _liste: function () {
-        return <div>Hello liste !</div>;
-    },
-
-    /**
-     * page en mode visu
-     * @returns {XML}
-     * @private
-     */
-    _visu: function () {
-        return <div>Hello world !</div>;
-    },
-
-    /**
-     * Page en mode creation
-     * @returns {XML}
-     * @private
-     */
-    _creation: function () {
-        return <div>Hello world !</div>;
-    },
-
-    // Affiche la carte
-    _carte: function () {
-
+    render: function () {
         // Création Treeview
         var treeView = '';
         if (this.state.treeView.length) {
@@ -127,8 +91,8 @@ var Page = React.createClass({
                 nodeIcon= "glyphicon glyphicon-eye-close small"
                 nodeIconSelected= "glyphicon glyphicon-eye-open small"
                 enableLinks={false}
-                expandIcon= "glyphicon glyphicon-plus small"
-                collapseIcon= "glyphicon glyphicon-minus small"
+                expandIcon= "glyphicon glyphicon-folder-open small"
+                collapseIcon= "glyphicon glyphicon-folder-close small"
                 classText="small"
                 showTags={true}/>);
         }
@@ -139,43 +103,37 @@ var Page = React.createClass({
                 <h1>
                     <Glyphicon glyph='hand-up' /> {Lang.get('global.selection')}
                 </h1>
-                <p>{Lang.get('administration_parking.carte.selection_plan')}</p>
+                <p>{Lang.get('supervision.alerte.description')}</p>
             </Jumbotron>
         );
+        // Plan sélectionné
         if (this.state.url) {
-            map = <AdminMap
-                imgUrl={this.state.url}
-                divId="div_carte"
-                parkingId={this.state.parkingId}
-                planId={this.state.planId}
-                key={Date.now()}/>;
+            map = (
+                <AlerteMap
+                    imgUrl={this.state.url}
+                    divId="div_carte"
+                    parkingId={this.state.parkingId}
+                    planId={this.state.planId}
+                    key={Date.now()}/>
+            );
         }
 
         /*
 
          */
-        return <Collapse isCollapsed={false} align="left" sideWidth={2}>
-            <CollapseBody>
+        return (
+            <Collapse
+                isCollapsed={false}
+                align="left"
+                sideWidth={2}>
+                <CollapseBody>
                 {map}
-            </CollapseBody>
-            <CollapseSidebar title="Sélection">
+                </CollapseBody>
+                <CollapseSidebar title="Sélection">
                 {treeView}
-            </CollapseSidebar>
-        </Collapse>;
-    },
-
-    render: function () {
-        var retour = {};
-
-        // Switch la structure de la page en fonction de l'état courant
-        switch (this.state.etatPage) {
-            case pageState.liste:
-                retour = this._carte();
-                break;
-            default:
-                retour = this._liste();
-        }
-        return retour;
+                </CollapseSidebar>
+            </Collapse>
+        );
     }
 });
 
@@ -188,11 +146,8 @@ module.exports = Page;
 /************************************************************************************************/
 var store = Reflux.createStore({
     state: {
-        pageState: pageState.liste
     },
-    getInitialState: function () {
-        return {pageState: this.state.pageState};
-    },
+
     // Initial setup
     init: function () {
         this.listenTo(Actions.map.plan_selected, this._plan_selected);

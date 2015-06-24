@@ -6,7 +6,7 @@
 @stop
 
 @section('content')
-    <div class="row" id="content_alerte"/>
+    <div id="content_alerte" class="full-height"/>
 @stop
 
 @section('scripts')
