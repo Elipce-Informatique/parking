@@ -1,5 +1,3 @@
-var _ = require('lodash');
-
 var mapOptions = require('../helpers/map_options');
 var mapHelper = require('../helpers/map_helper');
 var zoneHelper = require('../helpers/zone_helper');

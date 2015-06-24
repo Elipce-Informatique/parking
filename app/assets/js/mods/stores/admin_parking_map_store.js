@@ -1,4 +1,3 @@
-var _ = require('lodash');
 require('sweetalert');
 
 var mapOptions = require('../helpers/map_options');

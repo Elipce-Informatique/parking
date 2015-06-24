@@ -3,7 +3,6 @@
  */
 
 var React = require('react');
-var _ = require('lodash');
 var classifyPoint = require("robust-point-in-polygon");
 var poly = require('polygon');
 
