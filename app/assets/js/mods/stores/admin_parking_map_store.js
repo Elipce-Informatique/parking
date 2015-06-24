@@ -251,7 +251,6 @@ var store = Reflux.createStore({
                     if (isConfirm) {
                         context.deleteZones(deletedEntities)
                     } else {
-                        console.log('PASS CANCEL');
                         context.cancelDeleteZones(deletedEntities);
                     }
 
@@ -634,7 +633,6 @@ var store = Reflux.createStore({
      * @param data : array les données formes à supprimer
      */
     deleteZones: function (data) {
-        console.log('deleteZones avec : %o', data);
 
         // INIT des données de retour
         var fData = formDataHelper('', 'DELETE');
@@ -642,7 +640,6 @@ var store = Reflux.createStore({
             return d.options.data.id;
         });
         fData.append('ids', ids);
-        console.log('Ids : %o', ids);
 
         var url = BASE_URI + 'parking/zone/delete_many';
 
@@ -674,7 +671,6 @@ var store = Reflux.createStore({
      * de leaflet.draw
      */
     deleteAllees: function (data) {
-        console.log('deleteAllees avec : %o', data);
 
         // INIT des données de retour
         var fData = formDataHelper('', 'DELETE');
@@ -682,7 +678,6 @@ var store = Reflux.createStore({
             return d.options.data.id;
         });
         fData.append('ids', ids);
-        console.log('Ids : %o', ids);
 
         var url = BASE_URI + 'parking/allee/delete_many';
 
@@ -713,7 +708,6 @@ var store = Reflux.createStore({
      * de leaflet.draw
      */
     deletePlaces: function (data) {
-        console.log('deletePlaces avec : %o', data);
 
         // INIT des données de retour
         var fData = formDataHelper('', 'DELETE');
@@ -721,7 +715,6 @@ var store = Reflux.createStore({
             return d.options.data.id;
         });
         fData.append('ids', ids);
-        console.log('Ids : %o', ids);
 
         var url = BASE_URI + 'parking/place/delete_many';
 
@@ -762,7 +755,6 @@ var store = Reflux.createStore({
             data: fData
         })
             .done(function (result) {
-                console.log('Success de la requête de suppression ? %o', result);
                 if (result.save) {
                     Actions.notif.success();
                 } else {

@@ -44,19 +44,40 @@ class Zone extends BaseModel
             DB::beginTransaction();
 
             foreach ($ids as $zoneId) {
-                // 1 - RÉCUP ID ZONE PAR DÉFAUT DU PLAN PARENT
-                $defaultZoneId = Zone::where('id', '=', $zoneId)
-                    //->where('defaut', '=', 1) TODO
+
+                // 1 - RÉCUP DE L'ID DU PLAN
+                $planId = Zone::where('id', '=', $zoneId)
+                    ->select('plan_id')
+                    ->first()->plan_id;
+
+                // 2 - RÉCUP ID ZONE PAR DÉFAUT DU PLAN PARENT
+                $defaultZoneId = Zone::where('plan_id', '=', $planId)
+                    ->where('defaut', '=', '1')
                     ->select('id')
                     ->first()->id;
-                // 2 - RÉCUP ID ALLEE PAR DÉFAUT DU PLAN PARENT
 
-                // 3 - UPDATE DES PLACES SOUS L'ALLÉE PAR DÉFAUT DE LA ZONE À SUPPRIMER
-//                Place::where('allee_id', '=', $alleeId)
-//                    ->update(array('allee_id' => $alleeDefautId));
-//
-//                // 3 - SUPPRESSION DE L'ALLÉE
-//                Allee::destroy($alleeId);
+                // 3 - RÉCUP ID ALLEE PAR DÉFAUT DU PLAN PARENT
+                $defaultAlleeId = Allee::where('zone_id', '=', $defaultZoneId)
+                    ->where('defaut', '=', '1')
+                    ->select('id')
+                    ->first()->id;
+
+                // 4 - RÉCUP ID ALLÉE DÉFAUT DE LA ZONE A SUPPR
+                $defaultAlleeSupprId = Allee::where('zone_id', '=', $zoneId)
+                    ->where('defaut', '=', '1')
+                    ->select('id')
+                    ->first()->id;
+
+                // 5 - UPDATE DES PLACES SOUS L'ALLÉE PAR DÉFAUT DE LA ZONE À SUPPRIMER
+                Place::where('allee_id', '=', $defaultAlleeSupprId)
+                    ->update(array('allee_id' => $defaultAlleeId));
+
+                // 6 - UPDATE DES ALLÉES SOUS LA ZONE À SUPPRIMER
+                Allee::where('zone_id', '=', $zoneId)
+                    ->update(array('zone_id' => $defaultZoneId));
+
+                // 7 - Suppression de la zone
+                Zone::destroy($zoneId);
             }
             DB::commit();
         } catch (Exception $e) {
