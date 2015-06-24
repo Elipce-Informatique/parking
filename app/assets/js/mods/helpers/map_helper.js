@@ -512,7 +512,7 @@ function getAlleeIdFromPoint(point, allees) {
     return _.reduce(allees, function (result, a) {
         if (a.geojson != "") {
             var poly = JSON.parse(a.geojson);
-            if ((result == null) && this.isPointInPolygon(poly, point)) {
+            if ((result == null) && isPointInPolygon(poly, point)) {
                 return a.id;
             } else {
                 return result;
@@ -532,7 +532,7 @@ function getDefaultAlleeIdInZoneFromPoint(point, zones) {
     return _.reduce(zones, function (result, z) {
         if (z.geojson != "") {
             var poly = JSON.parse(z.geojson);
-            if ((result == null) && this.isPointInPolygon(poly, point)) {
+            if ((result == null) && isPointInPolygon(poly, point)) {
                 return z.alleeDefault.id;
             } else {
                 return result;
@@ -631,6 +631,23 @@ function recursiveTreeViewParking(data, parkingId, logo) {
     return retour;
 }
 
+/**
+ *
+ * @param coords -> {lat: xxx, lng: xxx}
+ * @param zones
+ * @param allees
+ * @returns {*}
+ */
+function getAlleeIdFromCoords(coords, zones, allees, defaultId) {
+    var alleeId = getAlleeIdFromPoint(coords, allees);
+    if (alleeId == null) {
+        alleeId = getDefaultAlleeIdInZoneFromPoint(coords, zones);
+
+        alleeId = (alleeId == null) ? defaultId : alleeId;
+    }
+    return alleeId
+}
+
 
 /**
  * Ce que le module exporte.
@@ -645,6 +662,7 @@ module.exports = {
     polygonContainsPolygon: polygonContainsPolygon,
     polygonIntersection: polygonIntersection,
     getCoordsArrayFromLatLngArray: getCoordsArrayFromLatLngArray,
+    getLatLngArrayFromCoordsArray: getLatLngArrayFromCoordsArray,
     getLastPointOfParallelogramme: getLastPointOfParallelogramme,
     findMarkerByPlaceId: findMarkerByPlaceId,
     generateCalibreValue: generateCalibreValue,
@@ -662,5 +680,6 @@ module.exports = {
     customZoomCRS: customZoomCRS,
     generateInfosCapteurPlace: generateInfosCapteurPlace,
     initTreeviewParkingAjax: initTreeviewParkingAjax,
-    recursiveTreeViewParking: recursiveTreeViewParking
+    recursiveTreeViewParking: recursiveTreeViewParking,
+    getAlleeIdFromCoords: getAlleeIdFromCoords
 };

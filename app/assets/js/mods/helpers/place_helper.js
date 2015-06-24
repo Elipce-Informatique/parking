@@ -340,11 +340,48 @@ function createPlaceParallelogrammeFromCoordinates(coords, extraData, nom, color
     return parallelogrammePlace;
 }
 
+/**
+ * Update les géojsons de ces places en BDD
+ * @param entities
+ * @param zones
+ * @param allees
+ */
+function editPlacesGeometry(entities, zones, allees, alleeDefault) {
+    console.log('Entités à modifier : %o', entities);
+
+    var modifs = _.map(entities, function (place) {
+
+        var data = {
+            id: place.options.data.id,
+            centre: undefined,
+            allee_id: undefined,
+            json: undefined
+        };
+        // RÉCUPÈRE LE NOUVEAU BARYCENTRE DE LA PLACE
+        data.centre = mapHelper.getLatLngArrayFromCoordsArray([mapHelper.getCentroid(place._latlngs)])[0];
+        console.log('Nouveau centre : %o', data.centre);
+
+        // RÉCUPÈRE LE NOUVEL ID D'ALLÉE:
+        data.allee_id = mapHelper.getAlleeIdFromCoords(data.centre, zones, allees, alleeDefault.id);
+        console.log('Nouvelle Allee : %o', data.allee_id);
+
+        // CRÉE LE GEOJSON
+        data.json = JSON.stringify(place._latlngs);
+        console.log('JSON : %o', data.json);
+
+        return data;
+
+    });
+
+    console.log('Modifs à effectuer : %o', modifs);
+
+}
 
 module.exports = {
     createPlacesFromParallelogramme: createPlacesFromParallelogramme,
     createPlaceMarker: createPlaceMarker,
     createPlaceParallelogramme: createPlaceParallelogramme,
     createPlaceParallelogrammeFromCoordinates: createPlaceParallelogrammeFromCoordinates,
-    createPlaceFromData: createPlaceFromData
+    createPlaceFromData: createPlaceFromData,
+    editPlacesGeometry: editPlacesGeometry
 };
