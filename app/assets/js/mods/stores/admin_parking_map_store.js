@@ -1,4 +1,3 @@
-var _ = require('lodash');
 require('sweetalert');
 
 var mapOptions = require('../helpers/map_options');
@@ -204,6 +203,33 @@ var store = Reflux.createStore({
     },
     onDraw_edited: function (data) {
         console.log('Pass onDraw_edited %o', data);
+        var editedEntities = _.values(data.e.layers._layers);
+        switch (this._inst.currentMode) {
+            // -------------------------------------------------------------
+            // MODIFICATION D'UNE OU PLUSIEURS PLACES
+            case mapOptions.dessin.place:
+            case mapOptions.dessin.place_auto:
+                placeHelper.editPlacesGeometry(editedEntities, this._inst.zones, this._inst.allees, this._inst.defaults.allee);
+                break;
+            // -------------------------------------------------------------
+            // MODIFICATION D'UNE OU PLUSIEURS ZONES
+            case mapOptions.dessin.zone:
+                break;
+            // -------------------------------------------------------------
+            // MODIFICATION D'UNE OU PLUSIEURS ALLÉES
+            case mapOptions.dessin.allee:
+                break;
+            // -------------------------------------------------------------
+            // MODIFICATION D'UN OU PLISIEURS AFFICHEURS
+            case mapOptions.dessin.afficheur:
+                // pas encore pris en compte
+                break;
+            // -------------------------------------------------------------
+            // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
+            default:
+                //
+                break;
+        }
     },
     // SUPPRESSION D'UN DESSIN
     onDraw_deleted: function (data) {

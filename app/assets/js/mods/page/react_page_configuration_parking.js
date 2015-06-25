@@ -104,7 +104,7 @@ var Page = React.createClass({
     _carte: function () {
 
         // Création Treeview
-        var treeView = {};
+        var treeView = '';
         if (this.state.treeView.length) {
             var data = this.state.treeView;
             treeView = (<TreeView

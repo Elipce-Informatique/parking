@@ -2,7 +2,6 @@
  * Created by yann on 21/04/2015.
  *
  */
-var _ = require('lodash');
 
 /**
  * Gère le rafraichissement des données de la supervision

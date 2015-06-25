@@ -4,6 +4,7 @@
 var mapOptions = require('./map_options');
 var MathHelper = require('./math_helper');
 var mapHelper = require('./map_helper');
+var formDataHelper = require('../helpers/form_data_helper');
 
 /**
  * Crée les places (Markers placés au milieu des places)
@@ -340,11 +341,68 @@ function createPlaceParallelogrammeFromCoordinates(coords, extraData, nom, color
     return parallelogrammePlace;
 }
 
+/**
+ * Update les géojsons de ces places en BDD
+ * @param entities
+ * @param zones
+ * @param allees
+ */
+function editPlacesGeometry(entities, zones, allees, alleeDefault) {
+    console.log('Entités à modifier : %o', entities);
+
+    var modifs = _.map(entities, function (place) {
+
+        var data = {
+            id: place.options.data.id,
+            lat: undefined,
+            lng: undefined,
+            allee_id: undefined,
+            geojson: undefined
+        };
+        // RÉCUPÈRE LE NOUVEAU BARYCENTRE DE LA PLACE
+        var centre = mapHelper.getLatLngArrayFromCoordsArray([mapHelper.getCentroid(place._latlngs)])[0];
+        data.lat = centre.lat;
+        data.lng = centre.lng;
+
+        // RÉCUPÈRE LE NOUVEL ID D'ALLÉE:
+        data.allee_id = mapHelper.getAlleeIdFromCoords(centre, zones, allees, alleeDefault.id);
+
+        // CRÉE LE GEOJSON
+        data.geojson = JSON.stringify(place._latlngs);
+
+        return data;
+
+    });
+
+    var fData = formDataHelper('', 'PATCH');
+    fData.append('data', JSON.stringify(modifs));
+
+    $.ajax({
+        type: 'POST',
+        url: BASE_URI + 'parking/place/update_places_geo',
+        processData: false,
+        contentType: false,
+        data: fData
+    })
+        .done(function (retour) {
+            if (retour.save) {
+                Actions.notif.success();
+            } else {
+                Actions.notif.error(Lang.get('administration_parking.carte.insert_places_fail'));
+            }
+        })
+        .fail(function (xhr, type, exception) {
+            // if ajax fails display error alert
+            console.error("ajax error response error " + type);
+            console.error("ajax error response body " + xhr.responseText);
+        });
+}
 
 module.exports = {
     createPlacesFromParallelogramme: createPlacesFromParallelogramme,
     createPlaceMarker: createPlaceMarker,
     createPlaceParallelogramme: createPlaceParallelogramme,
     createPlaceParallelogrammeFromCoordinates: createPlaceParallelogrammeFromCoordinates,
-    createPlaceFromData: createPlaceFromData
+    createPlaceFromData: createPlaceFromData,
+    editPlacesGeometry: editPlacesGeometry
 };

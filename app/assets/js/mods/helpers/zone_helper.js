@@ -1,7 +1,6 @@
 /**
  * Created by yann on 04/05/2015.
  */
-var _ = require('lodash');
 var mapHelper = require('./map_helper');
 var jh = require('./json_helper');
 var formDataHelper = require('./form_data_helper');

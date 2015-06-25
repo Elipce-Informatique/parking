@@ -22,49 +22,49 @@ var React = require('react/addons');
 /*********************************************/
 /* Composant input pour le libelle du profil */
 var React = require('react/addons');
-var Field             = require('./composants/formulaire/react_form_fields');
+var Field = require('./composants/formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
-var Form              = Field.Form;
+var Form = Field.Form;
 
-var AuthentMixins        = require('./mixins/component_access');
-var DataTable            = require('./composants/tableau/react_data_table');
+var AuthentMixins = require('./mixins/component_access');
+var DataTable = require('./composants/tableau/react_data_table');
 var DataTableModuleReact = React.createClass({
 
-    mixins: [Reflux.ListenerMixin,AuthentMixins],
+    mixins: [Reflux.ListenerMixin, AuthentMixins],
 
     propTypes: {
-        head:          React.PropTypes.array.isRequired,
-        hide:          React.PropTypes.array.isRequired,
-        id:            React.PropTypes.string.isRequired,  // id du tableau
-        idProfil:      React.PropTypes.number.isRequired, // profil.id
-        nameProfil:    React.PropTypes.string.isRequired, // libelle profil
-        editable:      React.PropTypes.bool.isRequired,
-        settings:      React.PropTypes.object,
-        attributes:    React.PropTypes.object,
-        evts:          React.PropTypes.object,
-        bUnderline:    React.PropTypes.bool,
+        head: React.PropTypes.array.isRequired,
+        hide: React.PropTypes.array.isRequired,
+        id: React.PropTypes.string.isRequired,  // id du tableau
+        idProfil: React.PropTypes.number.isRequired, // profil.id
+        nameProfil: React.PropTypes.string.isRequired, // libelle profil
+        editable: React.PropTypes.bool.isRequired,
+        settings: React.PropTypes.object,
+        attributes: React.PropTypes.object,
+        evts: React.PropTypes.object,
+        bUnderline: React.PropTypes.bool,
         reactElements: React.PropTypes.object
     },
 
     /**
      * Les props par défaut
      */
-    getDefaultProps: function() {
+    getDefaultProps: function () {
 
         return {
             attributes: {},
-            evts:{},
+            evts: {},
             bUnderline: true,
-            reactElements:{},
+            reactElements: {},
             module_url: 'profils'
         };
     },
 
-    getInitialState: function(){
+    getInitialState: function () {
         return {
-            data : [],
-            libelle : this.props.nameProfil,
-            validationLibelle : {} // Validation métier libelle
+            data: [],
+            libelle: this.props.nameProfil,
+            validationLibelle: {} // Validation métier libelle
         };
     },
 
@@ -73,7 +73,7 @@ var DataTableModuleReact = React.createClass({
      * Abonne le composant au store "profilStore"
      * @returns {undefined}
      */
-    componentWillMount: function(){
+    componentWillMount: function () {
 
         // Ecoute le store profilStore qui se charge de mettre à jour les données
         this.listenTo(moduleStore, this.majState);
@@ -82,7 +82,7 @@ var DataTableModuleReact = React.createClass({
         Actions.profil.module_update(this.props.idProfil, this.props.nameProfil);
     },
 
-    componentWillReceiveProps: function(newProps){
+    componentWillReceiveProps: function (newProps) {
 
         // Récupère les modules du profil
         Actions.profil.module_update(newProps.idProfil, newProps.nameProfil);
@@ -93,65 +93,65 @@ var DataTableModuleReact = React.createClass({
      * @param {type} data
      * @returns {undefined}
      */
-    majState: function(data) {
+    majState: function (data) {
         // MAJ data automatique, lifecycle "UPDATE"
         this.setState(data);
     },
 
-    render: function() {
+    render: function () {
 
         // Attributs du libellé
         var attrs = {
-            label:Lang.get('administration.profil.profil'),
-            required:true, name:"libelle",
+            label: Lang.get('administration.profil.profil'),
+            required: true, name: "libelle",
             value: this.state.libelle,
-            wrapperClassName:'col-md-4',
-            labelClassName:'col-md-1',
-            groupClassName:'row'
+            wrapperClassName: 'col-md-4',
+            labelClassName: 'col-md-1',
+            groupClassName: 'row'
         };
 
         // Key du datatable
-        var attrTable = {key : "tab_modules"};//+ Math.random()};// TODO trouver l'update
+        var attrTable = {key: "tab_modules"};//+ Math.random()};// TODO trouver l'update
 
         // On traite les vérifications métiers
-        if(this.state.validationLibelle.style != undefined ){
-            var attrs2  = {
-                bsStyle:this.state.validationLibelle.style,
-                'data-valid':this.state.validationLibelle.isValid,
-                help:this.state.validationLibelle.tooltip
+        if (this.state.validationLibelle.style != undefined) {
+            var attrs2 = {
+                bsStyle: this.state.validationLibelle.style,
+                'data-valid': this.state.validationLibelle.isValid,
+                help: this.state.validationLibelle.tooltip
             };
-            attrs       = _.merge(attrs, attrs2);
+            attrs = _.merge(attrs, attrs2);
 
             // Verif false
-            if(!this.state.validationLibelle.isValid){
+            if (!this.state.validationLibelle.isValid) {
                 // Rechargement du datatable pour le fixedheader car le tooltip (en bas) décale l'en-tête de tableau
-                attrTable = {key : Math.random()};
+                attrTable = {key: Math.random()};
             }
         }
 
         //console.log('RENDER FORM %o', _.cloneDeep(this.state));
-        return(
-        <Form
-            ref="form_profil"
-            attributes  = {{id : 'form_profil'}}
-        >
-            <InputTextEditable
-                ref="libelle"
-                attributes={attrs}
-                editable={this.props.editable}
-            />
-            <DataTable
+        return (
+            <Form
+                ref="form_profil"
+                attributes  = {{id: 'form_profil'}}
+            >
+                <InputTextEditable
+                    ref="libelle"
+                    attributes={attrs}
+                    editable={this.props.editable}
+                />
+                <DataTable
                 {...attrTable}
-                id={this.props.id}
-                head={this.props.head}
-                data={this.state.data}
-                hide={this.props.hide}
-                attributes={this.props.attributes}
-                bUnderline={this.props.bUnderline}
-                evts={this.props.evts}
-                reactElements={this.props.reactElements}
-                editable={this.props.editable}/>
-        </Form>
+                    id={this.props.id}
+                    head={this.props.head}
+                    data={this.state.data}
+                    hide={this.props.hide}
+                    attributes={this.props.attributes}
+                    bUnderline={this.props.bUnderline}
+                    evts={this.props.evts}
+                    reactElements={this.props.reactElements}
+                    editable={this.props.editable}/>
+            </Form>
         );
     }
 });
@@ -162,16 +162,16 @@ module.exports.composant = DataTableModuleReact;
 /*          Store associé au tableau des modules                */
 /****************************************************************/
 var moduleStore = Reflux.createStore({
-    idProfil:0,
-    libelleInitial : '',
-    storeLocal : {
-        libelle : '', // libelle du profil
-        data : [], // modules du profil
-        validationLibelle : {} // Validation métier du champ libelle
+    idProfil: 0,
+    libelleInitial: '',
+    storeLocal: {
+        libelle: '', // libelle du profil
+        data: [], // modules du profil
+        validationLibelle: {} // Validation métier du champ libelle
     },
 
     // Initial setup
-    init: function() {
+    init: function () {
         // Charge les données du tableau module à chaque évènement "profil_select"
         this.listenTo(Actions.profil.module_update, this.updateModule);
 
@@ -183,7 +183,7 @@ var moduleStore = Reflux.createStore({
      * Calcule les modules associés au profil
      * @param idProfil : ID du profil sélectionné
      */
-    updateModule: function(idProfil, libelleProfil) {
+    updateModule: function (idProfil, libelleProfil) {
 
         // Mise à jour du state local
         this.idProfil = idProfil;
@@ -192,12 +192,12 @@ var moduleStore = Reflux.createStore({
 
         // AJAX
         $.ajax({
-            url:      BASE_URI + 'profils/'+this.idProfil+'/modules',
+            url: BASE_URI + 'profils/' + this.idProfil + '/modules',
             dataType: 'json',
-            context:  this,
+            context: this,
             async: false,
-            success:  function (dataFromBdd) {
-                
+            success: function (dataFromBdd) {
+
                 // Maj state du store
                 this.storeLocal.data = dataFromBdd;
                 this.storeLocal.validationLibelle = {};
@@ -218,7 +218,7 @@ var moduleStore = Reflux.createStore({
      */
     onForm_field_changed: function (obj) {
         // Mise à jour du state local
-        if(obj.name == 'libelle'){
+        if (obj.name == 'libelle') {
             this.storeLocal.libelle = obj.value;
         }
     },
@@ -227,41 +227,41 @@ var moduleStore = Reflux.createStore({
      * Vérifications métier
      * @param obj: {name: .., value: ..., form: ...}
      */
-    onForm_field_verif:function(obj){
+    onForm_field_verif: function (obj) {
 
         // L'utilisateur est sorti du champ libellé
-        if(obj.name == 'libelle'){
+        if (obj.name == 'libelle') {
 
             // Le libellé a changé
-            if(obj.value != this.libelleInitial){
+            if (obj.value != this.libelleInitial) {
 
                 // Param en fonction du mode en édition ou création
-                var paramUrl = this.idProfil === 0 ? '' : '/'+this.idProfil;
+                var paramUrl = this.idProfil === 0 ? '' : '/' + this.idProfil;
 
                 // AJAX
                 $.ajax({
-                    url:      BASE_URI + 'profils/libelle/'+obj.value+paramUrl,
+                    url: BASE_URI + 'profils/libelle/' + obj.value + paramUrl,
                     dataType: 'json',
-                    context:  this,
-                    async:    true,
-                    success:  function (bool) {
+                    context: this,
+                    async: true,
+                    success: function (bool) {
 
                         // Le libellé n'existe pas
-                        if(!bool){
+                        if (!bool) {
                             // Vert
                             this.storeLocal.validationLibelle = {
-                                isValid : true,
-                                style   : 'success',
-                                tooltip : ''
+                                isValid: true,
+                                style: 'success',
+                                tooltip: ''
                             }
                         }
                         // Le libellé existe
-                        else{
+                        else {
                             // Rouge
                             this.storeLocal.validationLibelle = {
-                                isValid : false,
-                                style   : 'error',
-                                tooltip : Lang.get('administration.profil.profilExist')
+                                isValid: false,
+                                style: 'error',
+                                tooltip: Lang.get('administration.profil.profilExist')
                             }
                         }
 
