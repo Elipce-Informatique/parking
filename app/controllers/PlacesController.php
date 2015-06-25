@@ -160,5 +160,37 @@ class PlacesController extends \BaseController
 
     }
 
+    /**
+     *
+     */
+    public function updatePlacesGeo()
+    {
+        $retour = [
+            'save' => true,
+            'errorBdd' => false,
+            'model' => null,
+            'doublon' => false
+        ];
+
+        $data = json_decode(Input::get('data'), true);
+        Log::debug('Voila les données à modifier : ' . print_r($data, true));
+
+        try {
+            DB::beginTransaction();
+            foreach ($data as $p) {
+                $place = Place::find($p['id']);
+                $place->update($p);
+            }
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Erreur SQL : ');
+            Log::error($e);
+            $retour['save'] = false;
+            $retour['errorBdd'] = true;
+        }
+        return $retour;
+    }
+
 
 }

@@ -98,7 +98,7 @@ var Page = React.createClass({
     modeCarte: function () {
 
         // CRÉATION TREEVIEW
-        var treeView = {};
+        var treeView = '';
         if (this.state.treeView.length) {
             var data = this.state.treeView;
             treeView = (<TreeView

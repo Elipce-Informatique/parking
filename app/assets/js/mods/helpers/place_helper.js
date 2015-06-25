@@ -4,6 +4,7 @@
 var mapOptions = require('./map_options');
 var MathHelper = require('./math_helper');
 var mapHelper = require('./map_helper');
+var formDataHelper = require('../helpers/form_data_helper');
 
 /**
  * Crée les places (Markers placés au milieu des places)
@@ -353,28 +354,48 @@ function editPlacesGeometry(entities, zones, allees, alleeDefault) {
 
         var data = {
             id: place.options.data.id,
-            centre: undefined,
+            lat: undefined,
+            lng: undefined,
             allee_id: undefined,
-            json: undefined
+            geojson: undefined
         };
         // RÉCUPÈRE LE NOUVEAU BARYCENTRE DE LA PLACE
-        data.centre = mapHelper.getLatLngArrayFromCoordsArray([mapHelper.getCentroid(place._latlngs)])[0];
-        console.log('Nouveau centre : %o', data.centre);
+        var centre = mapHelper.getLatLngArrayFromCoordsArray([mapHelper.getCentroid(place._latlngs)])[0];
+        data.lat = centre.lat;
+        data.lng = centre.lng;
 
         // RÉCUPÈRE LE NOUVEL ID D'ALLÉE:
-        data.allee_id = mapHelper.getAlleeIdFromCoords(data.centre, zones, allees, alleeDefault.id);
-        console.log('Nouvelle Allee : %o', data.allee_id);
+        data.allee_id = mapHelper.getAlleeIdFromCoords(centre, zones, allees, alleeDefault.id);
 
         // CRÉE LE GEOJSON
-        data.json = JSON.stringify(place._latlngs);
-        console.log('JSON : %o', data.json);
+        data.geojson = JSON.stringify(place._latlngs);
 
         return data;
 
     });
 
-    console.log('Modifs à effectuer : %o', modifs);
+    var fData = formDataHelper('', 'PATCH');
+    fData.append('data', JSON.stringify(modifs));
 
+    $.ajax({
+        type: 'POST',
+        url: BASE_URI + 'parking/place/update_places_geo',
+        processData: false,
+        contentType: false,
+        data: fData
+    })
+        .done(function (retour) {
+            if (retour.save) {
+                Actions.notif.success();
+            } else {
+                Actions.notif.error(Lang.get('administration_parking.carte.insert_places_fail'));
+            }
+        })
+        .fail(function (xhr, type, exception) {
+            // if ajax fails display error alert
+            console.error("ajax error response error " + type);
+            console.error("ajax error response body " + xhr.responseText);
+        });
 }
 
 module.exports = {
