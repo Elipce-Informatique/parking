@@ -51,7 +51,7 @@ var store = Reflux.createStore({
             parking_id: 0,
             etat_general_id: 0
         },
-        capteur_place: {
+        capteur_place: { // Dernier capteur placé
             concentrateur: {},  // Concentrateur concerné
             bus: {},            // Bus concerné
             capteurInit: {},    // Capteur initial pour l'affectation
@@ -209,7 +209,12 @@ var store = Reflux.createStore({
             // MODIFICATION D'UNE OU PLUSIEURS PLACES
             case mapOptions.dessin.place:
             case mapOptions.dessin.place_auto:
-                placeHelper.editPlacesGeometry(editedEntities, this._inst.zones, this._inst.allees, this._inst.defaults.allee);
+                placeHelper.editPlacesGeometry(
+                    editedEntities,
+                    this._inst.zones,
+                    this._inst.allees,
+                    this._inst.defaults.allee
+                );
                 break;
             // -------------------------------------------------------------
             // MODIFICATION D'UNE OU PLUSIEURS ZONES

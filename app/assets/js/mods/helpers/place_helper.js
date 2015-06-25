@@ -348,7 +348,6 @@ function createPlaceParallelogrammeFromCoordinates(coords, extraData, nom, color
  * @param allees
  */
 function editPlacesGeometry(entities, zones, allees, alleeDefault) {
-    console.log('Entités à modifier : %o', entities);
 
     var modifs = _.map(entities, function (place) {
 

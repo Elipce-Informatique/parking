@@ -168,6 +168,8 @@ function createAlleesMapFromAlleesBDD(alleesBDD, alleeStyle) {
     }, this);
 }
 
+
+
 /**
  * Interface publique du module
  */

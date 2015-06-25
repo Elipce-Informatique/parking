@@ -160,7 +160,7 @@ var parkingMap = React.createClass({
         /**
          * ÉVÈNEMENTS LIÉS AU PLUGIN
          */
-            // QUAND UNE FORME EST CRÉÉE
+        // QUAND UNE FORME EST CRÉÉE
         this._inst.map.on('draw:created', function (e) {
             var data = {e: {}};
             data.e = e;
