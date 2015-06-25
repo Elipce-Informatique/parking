@@ -9,7 +9,10 @@ module.exports.dessin = {
     afficheur: 4,
     place_auto: 5,
     calibre: 6,
-    capteur: 7 // Pas vraiment un mode de dessin, c'est pour savoir qu'on est en mode capteur
+    capteur: 7, // Pas vraiment un mode de dessin, c'est pour savoir qu'on est en mode capteur
+    alerte_full: 8,
+    alerte_change: 9,
+    reservation: 10
 };
 
 /**
@@ -23,7 +26,10 @@ module.exports.icon = {
     afficheur: "fa-desktop",
     place_auto: "fa-magic",
     calibre: "fa-arrows",
-    capteur: "fa-wifi"
+    capteur: "fa-wifi",
+    alerte_full: 'fa-stop',
+    alerte_change: 'fa-exchange',
+    reservation: 'fa-ticket'
 };
 
 // PRÉPARATION DE L'OBJET COLOR :
