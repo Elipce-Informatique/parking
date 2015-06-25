@@ -3,7 +3,7 @@ return array(
 
     /*
     |--------------------------------------------------------------------------
-    | TEXTES DE LA PAGE D'ADMINISTRATION
+    | TEXTES DU METIER SUPERVISION
     |--------------------------------------------------------------------------
     */
     'accueil' => [
@@ -11,8 +11,8 @@ return array(
         'text' => 'La section supervision permet d\'avoir une vue d\'ensemble de l\'état d\'un parking',
         "block_visualisation_titre" => "Visualisation d'un parking",
         "block_visualisation_texte" => "Permet d'avoir une vue d'ensemble d'un parking, de son occupation et d'afficher des statistiques d'utilisation.",
-        "block_commandes_titre" => "Commandes forcées",
-        "block_commandes_texte" => "Permet d'envoyer des commandes au concentrateur.",
+        "block_alerte_titre" => "Gestion des alertes et des réservations",
+        "block_alerte_texte" => "Permet de créer, modifier, supprimer des alertes de type 'zone complète' ou 'changement d'état de la place'. Permet également de créer, modifier, supprimer des réservations de places.",
     ],
     'carte' => [
         'selection_plan' => 'Veuillez sélectionner un plan à superviser dans le menu de gauche.',
@@ -34,5 +34,8 @@ return array(
     'temps_reel' => [
         'j_place_occupee' => "La place [-] est occupée",
         'j_place_libre' => "La place [-] est libre",
+    ],
+    'alerte' => [
+        'description' => 'Veuillez sélectionner un plan afin de définir des alertes et réservations'
     ]
 );

@@ -123,32 +123,27 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
      */
     Route::resource('calendrier', 'CalendrierController');
 
-    /*
-     * Jours prédéfinis
-     */
+    // Jours prédéfinis
     Route::get('calendrier_jours/all', 'CalendrierJoursController@all');
     Route::get('calendrier_jours/libelle/{libelle}/{id?}', 'CalendrierJoursController@verifLibelle');
     Route::resource('calendrier_jours', 'CalendrierJoursController');
 
-    /*
-     * Programmation horaire
-     */
+    //  Programmation horaire
     Route::get('calendrier_programmation/init', 'CalendrierProgrammationController@init');
     Route::get('calendrier_programmation/visu/{parking}/{annee}', 'CalendrierProgrammationController@visu');
     Route::resource('calendrier_programmation', 'CalendrierProgrammationController');
 
-    /*
-     * Niveaux
-     */
+
+    // Niveaux
     Route::get('niveau', 'NiveauxController@index');
-    /*
-     * Parking
-     */
+
+    // Alertes
+    Route::get('alerte', 'AlerteController@index');
+
+    // Parking
     Route::get('gestion_parking', 'ParkingsController@index');
 
-    /* **************************************************************************
-     * Test
-     */
+    /* **************************************************************************/
     Route::resource('test', 'TestController');
 });
 
@@ -184,6 +179,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::get('gestion_parking/libelle/{libelle}/{id?}', 'ParkingsController@verifLibelle');
 
     // RESSOURCES DÉPENDANT D'UN PARKING
+    Route::resource('alerte', 'AlerteController');
     Route::resource('niveau', 'NiveauxController');
     Route::resource('plan', 'PlansController');
     Route::resource('afficheur', 'AfficheursController');
