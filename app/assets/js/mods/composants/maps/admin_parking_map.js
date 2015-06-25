@@ -160,7 +160,7 @@ var parkingMap = React.createClass({
         /**
          * ÉVÈNEMENTS LIÉS AU PLUGIN
          */
-        // QUAND UNE FORME EST CRÉÉE
+            // QUAND UNE FORME EST CRÉÉE
         this._inst.map.on('draw:created', function (e) {
             var data = {e: {}};
             data.e = e;
@@ -364,7 +364,8 @@ var parkingMap = React.createClass({
                 },
                 edit: {
                     featureGroup: group,
-                    remove: true
+                    edit: (this._inst.currentMode == mapOptions.dessin.place || this._inst.currentMode == mapOptions.dessin.place_auto),
+                    remove: (this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone || this._inst.currentMode == mapOptions.dessin.place_auto || this._inst.currentMode == mapOptions.dessin.place)
                 }
             };
 
@@ -382,9 +383,6 @@ var parkingMap = React.createClass({
                 }
             } : false;
 
-            // LAYER CALIBRE
-            var group = this._inst[mapOptions.control.groups[this._inst.currentMode]];
-
             var options = {
                 position: 'topright',
                 draw: {
@@ -394,10 +392,7 @@ var parkingMap = React.createClass({
                     rectangle: false,
                     marker: false
                 },
-                edit: {
-                    featureGroup: group,
-                    remove: true
-                }
+                edit: false
             };
 
             this._inst.drawControl = new L.Control.Draw(options);
