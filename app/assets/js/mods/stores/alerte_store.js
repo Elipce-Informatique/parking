@@ -124,8 +124,9 @@ var store = Reflux.createStore({
 
         switch (this._inst.currentMode) {
             // -------------------------------------------------------------
-            // SI EN MODE PLACE AUTO, ON VA CALCULER LE PARALLELLOGRAMME
-            case mapOptions.dessin.place_auto:
+            // Alerte full
+            case mapOptions.dessin.alerte_full:
+                // Création parallèlogramme
                 var donnee = this.createParallelogramme(data);
 
                 // LE PARALLÉLOGRAMME N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
@@ -133,30 +134,32 @@ var store = Reflux.createStore({
                     // on garde le parallélogramme dans le store pour le retour de la popup
                     this._inst.lastParallelogramme = donnee;
                     var retour = {
-                        type: mapOptions.type_messages.new_place_auto,
+                        type: mapOptions.type_messages.alerte_full,
                         data: donnee
                     };
                     this.trigger(retour);
                 }
                 break;
             // -------------------------------------------------------------
-            // CALCUL DU CALIBRE
-            case mapOptions.dessin.calibre:
-                var coords = this.checkCalibre(data);
+            // Alerte change
+            case mapOptions.dessin.alerte_change:
+                // Création parallèlogramme
+                var donnee = this.createParallelogramme(data);
 
-                // LE SEGMENT N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
-                if (!_.isEmpty(coords)) {
-                    this._inst.lastCalibre = data;
+                // LE PARALLÉLOGRAMME N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
+                if (!_.isEmpty(donnee)) {
+                    // on garde le parallélogramme dans le store pour le retour de la popup
+                    this._inst.lastParallelogramme = donnee;
                     var retour = {
-                        type: mapOptions.type_messages.new_calibre,
-                        data: coords
+                        type: mapOptions.type_messages.alerte_change,
+                        data: donnee
                     };
                     this.trigger(retour);
                 }
                 break;
             // -------------------------------------------------------------
-            // PROCÉDURE DE CRÉATION DE ZONE
-            case mapOptions.dessin.zone:
+            // Réservation
+            case mapOptions.dessin.reservation:
                 var zones, allees;
                 zones = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.zonesGroup);
                 allees = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.alleesGroup);
@@ -166,30 +169,13 @@ var store = Reflux.createStore({
                 // Géométrie OK ouverture de la POPUP
                 if (geometryOk) {
                     var retour = {
-                        type: mapOptions.type_messages.new_zone,
+                        type: mapOptions.type_messages.reservation,
                         data: data
                     };
                     this.trigger(retour);
                 }
                 break;
-            // -------------------------------------------------------------
-            // PROCÉDURE DE CRÉATION D'ALLÉE
-            case mapOptions.dessin.allee:
-                var zones, allees;
-                zones = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.zonesGroup);
-                allees = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.alleesGroup);
 
-                var geometryOk = alleeHelper.geometryCheck(data.e.layer._latlngs, zones, allees);
-
-                // Géométrie OK ouverture de la POPUP
-                if (geometryOk) {
-                    var retour = {
-                        type: mapOptions.type_messages.new_allee,
-                        data: data
-                    };
-                    this.trigger(retour);
-                }
-                break;
             // -------------------------------------------------------------
             // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
             default:

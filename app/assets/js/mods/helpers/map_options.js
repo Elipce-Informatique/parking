@@ -48,6 +48,9 @@ groups[module.exports.dessin.allee] = 'alleesGroup';
 groups[module.exports.dessin.zone] = 'zonesGroup';
 groups[module.exports.dessin.afficheur] = 'afficheursGroup';
 groups[module.exports.dessin.calibre] = 'calibreGroup';
+groups[module.exports.dessin.alerte_full] = 'alerteFullGroup';
+groups[module.exports.dessin.alerte_change] = 'alerteChangeGroup';
+groups[module.exports.dessin.reservation] = 'reservationGroup';
 
 /**
  * Paramètres du controle de dessin
@@ -84,7 +87,8 @@ module.exports.type_messages = {
     update_infos: 15,
     hide_infos: 16,
     delete_place: 17,
-    set_calibre: 18
+    set_calibre: 18,
+    alerte_full:19
 };
 
 /**

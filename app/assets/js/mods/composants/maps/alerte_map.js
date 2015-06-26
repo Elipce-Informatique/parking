@@ -139,6 +139,12 @@ var parkingMap = React.createClass({
         this._inst.map.addLayer(this._inst.afficheursGroup);
         this._inst.calibreGroup = new L.FeatureGroup();
         this._inst.map.addLayer(this._inst.calibreGroup);
+        this._inst.alerteFullGroup = new L.FeatureGroup();
+        this._inst.map.addLayer(this._inst.alerteFullGroup);
+        this._inst.alerteChangeGroup = new L.FeatureGroup();
+        this._inst.map.addLayer(this._inst.alerteChangeGroup);
+        this._inst.reservationGroup = new L.FeatureGroup();
+        this._inst.map.addLayer(this._inst.reservationGroup);
 
         Actions.map.map_initialized(this._inst.map, this.props.calibre, parkingData, this._inst);
     },
@@ -254,6 +260,7 @@ var parkingMap = React.createClass({
      */
     changeDrawToolbar: function (mode_dessin) {
         // 1 : SUPPRIMER L'ANCIENNE TOOLBAR :
+        //console.log('uuu %o', this._inst.drawControl);
         jQuery.isEmptyObject(this._inst.drawControl) ? '' : this._inst.map.removeControl(this._inst.drawControl);
 
         // AUCUN DESSIN NÉCESSAIRE
@@ -292,7 +299,7 @@ var parkingMap = React.createClass({
 
             // 3 : Init du layerGroup pour la modif
             var group = this._inst[mapOptions.control.groups[this._inst.currentMode]];
-            console.log('polygone %o', polygon);
+            //console.log('polygone %o', polygon);
 
             // 3 CRÉATION DU NOUVEAU CONTRÔLE
             var options = {
