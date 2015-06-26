@@ -33,6 +33,7 @@ colors[module.exports.dessin.place_auto] = '#bada55';
 colors[module.exports.dessin.allee] = '#5478da';
 colors[module.exports.dessin.zone] = '#da5454';
 colors[module.exports.dessin.calibre] = '#2C75FF';
+colors[module.exports.dessin.afficheur] = '#000000';
 
 // PRÉPARATION DE L'OBJET GROUPS:
 var groups = {};
@@ -78,7 +79,8 @@ module.exports.type_messages = {
     update_infos: 15,
     hide_infos: 16,
     delete_place: 17,
-    set_calibre: 18
+    set_calibre: 18,
+    new_afficheur: 19
 };
 
 /**
@@ -122,8 +124,8 @@ module.exports.placeRouge = L.Icon.extend({
  */
 module.exports.pastilleCapteur = L.Icon.extend({
     options: {
-        iconAnchor: new L.Point(7,7),
-        iconSize: new L.Point(14,14),
+        iconAnchor: new L.Point(7, 7),
+        iconSize: new L.Point(14, 14),
         iconUrl: BASE_URI + 'public/images/pastille.png'
     }
 });
@@ -134,8 +136,8 @@ module.exports.pastilleCapteur = L.Icon.extend({
  */
 module.exports.iconInvisible = L.Icon.extend({
     options: {
-        iconAnchor: new L.Point(0,0),
-        iconSize: new L.Point(0,0),
+        iconAnchor: new L.Point(0, 0),
+        iconSize: new L.Point(0, 0),
         iconUrl: BASE_URI + 'public/images/pastille.png'
     }
 });

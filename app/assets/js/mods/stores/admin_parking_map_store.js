@@ -5,6 +5,7 @@ var mapHelper = require('../helpers/map_helper');
 var zoneHelper = require('../helpers/zone_helper');
 var alleeHelper = require('../helpers/allee_helper');
 var placeHelper = require('../helpers/place_helper');
+var afficheurHelper = require('../helpers/afficheur_helper');
 var formDataHelper = require('../helpers/form_data_helper');
 /**
  * Created by yann on 27/01/2015.
@@ -189,6 +190,41 @@ var store = Reflux.createStore({
                     };
                     this.trigger(retour);
                 }
+                break;
+            // -------------------------------------------------------------
+            // PROCÉDURE DE CRÉATION D'AFFICHEUR
+            case mapOptions.dessin.afficheur:
+                console.log('PASS ADD AFFICHEUR : %o', data);
+                var dessin = data.e.layer;
+
+                // INIT DES VARIABLES NÉCESSAIRES À LA CRÉATION
+                var poly = null;
+                var marker = {};
+                var markerCoords = {};
+
+                // GÉNÉRATION DES INFOS SELON LE MODE DE DESSON CHOISI
+                if (data.e.layerType === "polyline") {
+                    poly = dessin;
+                    markerCoords = afficheurHelper.getCoordAfficheurFromPolyline(dessin);
+
+                    // Mode polyline, on crée un marker au bout
+                    marker = new L.marker(markerCoords);
+                } else {
+                    marker = dessin;
+                    markerCoords = dessin._latlng;
+                    // Mode marker, on laisse le polyline à null
+                }
+
+                // PRÉPARATION DU RETOUR
+                var retour = {
+                    type: mapOptions.type_messages.new_afficheur,
+                    data: {
+                        coords: markerCoords,
+                        polyline: poly,
+                        marker: marker
+                    }
+                };
+                this.trigger(retour);
                 break;
             // -------------------------------------------------------------
             // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP

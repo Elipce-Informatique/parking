@@ -162,12 +162,13 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::get('plan/{id}/places', 'PlansController@showWithPlaces');
     Route::post('plan/{id}/calibre', 'PlansController@updateCalibre');
     Route::get('niveau/{id}/places', 'NiveauxController@showWithPlaces');
+    Route::get('niveau/{id}/afficheurs', 'NiveauxController@getAfficheurs');
 
     // SEULEMENT DES DATA, jamais du HTML (créer d'autres routes pour les pages d'adiministration des niveaux, zones, allées)
     Route::get('niveau/all', 'NiveauxController@all');
     Route::get('niveau/libelle/{libelle}/{id?}', 'NiveauxController@verifLibelle');
 
-    // GESTION ZONES ALLEES PLACES
+    // GESTION ZONES ALLEES PLACES, AFFICHEURS
     Route::delete('zone/delete_many', 'ZonesController@destroyMany');
     Route::delete('allee/delete_many', 'AlleesController@destroyMany');
     Route::delete('place/delete_many', 'PlacesController@destroyMany');
@@ -214,6 +215,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
 // RESSOURCE PARKING SÉPARÉE DU GROUPE AVEC PRÉFIXE PARKING POUR DES RAISONS LOGIQUES
 Route::group(['before' => 'auth|auth.canaccess|auth.parking'], function () {
     Route::get('parking/{id}/concentrateurs', 'ParkingsController@getConcentrateurs');
+    Route::get('parking/{id}/afficheurs', 'ParkingsController@getAfficheurs');
     Route::get('parking/{id}/tableau_bord', 'ParkingsController@getTableauBordData');
     Route::resource('parking', 'ParkingsController');
 });

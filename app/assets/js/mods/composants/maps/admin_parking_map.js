@@ -149,6 +149,12 @@ var parkingMap = React.createClass({
         this._inst.calibreGroup = new L.FeatureGroup();
         this._inst.map.addLayer(this._inst.calibreGroup);
 
+        // Style de l'afficheur group
+        this._inst.afficheursGroup.setStyle({
+            weight: 1,
+            opacity: 1
+        });
+
         Actions.map.map_initialized(this._inst.map, this.props.calibre, parkingData, this._inst);
     },
     /**
@@ -316,7 +322,7 @@ var parkingMap = React.createClass({
 
             // 2 CONSTRUCTION DES OPTIONS
             // ------- LES POLYLINES ----------
-            var polyline = this._inst.currentMode == mapOptions.dessin.calibre ? {
+            var polyline = (this._inst.currentMode == mapOptions.dessin.calibre || this._inst.currentMode == mapOptions.dessin.afficheur) ? {
                 shapeOptions: {
                     color: mapOptions.control.draw.colors[this._inst.currentMode]
                 }
@@ -343,7 +349,7 @@ var parkingMap = React.createClass({
                 repeatMode: true
             } : false;
             // ------- LES MARKERS ----------
-            var marker = (this._inst.currentMode == mapOptions.dessin.place || this._inst.currentMode == mapOptions.dessin.afficheur) ? {
+            var marker = (this._inst.currentMode == mapOptions.dessin.afficheur) ? {
                 icon: new mapOptions.afficheurMarker(),
                 repeatMode: true
             } : false;
@@ -499,6 +505,10 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.type_messages.set_calibre:
                 this.onSetCalibre(data);
+                break;
+            case mapOptions.type_messages.new_afficheur:
+                console.log('AFFICHER LA MODALE AFFICHEUR : %o', data);
+                this._onNewAfficheur(data);
                 break;
             default:
                 break;
@@ -746,6 +756,20 @@ var parkingMap = React.createClass({
             modalType: mapOptions.modal_type.allee,
             isModalOpen: true,
             parallelogramme_places: data
+        });
+    },
+
+    /**
+     * Affiche la modale de création d'allée
+     * @param data
+     * @private
+     */
+    _onNewAfficheur: function (data) {
+        console.log('_onNewAfficheur : %o', data);
+        this.setState({
+            modalType: mapOptions.modal_type.afficheur,
+            isModalOpen: true,
+            afficheurData : data.data
         });
     },
 

@@ -274,7 +274,7 @@ class NiveauxController extends \BaseController
                 }
 
                 // Upload
-                if (Input::file($filePostName)->isValid()){
+                if (Input::file($filePostName)->isValid()) {
                     // Fichier plan
                     $fileCourant = Input::file($filePostName);
 
@@ -389,6 +389,14 @@ class NiveauxController extends \BaseController
     public function verifLibelle($libelle, $id = '')
     {
         return json_encode(Niveau::isLibelleExists($libelle, $id));
+    }
+
+    /**
+     * @param $niveauId
+     */
+    public function getAfficheurs($niveauId)
+    {
+
     }
 
 
