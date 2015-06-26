@@ -36,6 +36,9 @@ return array(
         'j_place_libre' => "La place [-] est libre",
     ],
     'alerte' => [
-        'description' => 'Veuillez sélectionner un plan afin de définir des alertes et réservations'
+        'description' => 'Veuillez sélectionner un plan afin de définir des alertes et réservations',
+        'full' => 'Alerte groupe de places complet',
+        'change' => 'Alerte changement état place',
+        'reservation' => 'Réserver des places'
     ]
 );

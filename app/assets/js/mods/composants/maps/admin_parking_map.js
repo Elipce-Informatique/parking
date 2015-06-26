@@ -517,7 +517,7 @@ var parkingMap = React.createClass({
     },
 
     /**
-     * Effectue les actions nécessaires au chandement du mode de dessin
+     * Effectue les actions nécessaires au changement du mode de dessin
      * - Sélection du bouton
      * - Changement contrôle de dessin pour changer de layer
      * @param data

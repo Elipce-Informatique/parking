@@ -8,13 +8,12 @@ var alleeHelper = require('../helpers/allee_helper');
 var placeHelper = require('../helpers/place_helper');
 var formDataHelper = require('../helpers/form_data_helper');
 /**
- * Created by yann on 27/01/2015.
  *
- * Store permettant la gestion de toutes les actions liés à une carte.
+ * Store permettant la gestion de toutes les actions liées à une carte.
  *
  *
- * @param object parkingInfos: infos sur le parking sur lequel on travail
- * @param string currentMode: Mode de dessin actuel (place|allee|zone|afficheur)
+ * @param object parkingInfos: infos sur le parking sur lequel on travaille
+ * @param string currentMode: Mode de dessin actuel (alerte_full|alerte_change|reservation)
  * @param array places: Tableau des places (type layer)
  * @param array allees: Tableau des allées (type layer)
  * @param array zones: Tableau des zones (type layer)
@@ -125,8 +124,9 @@ var store = Reflux.createStore({
 
         switch (this._inst.currentMode) {
             // -------------------------------------------------------------
-            // SI EN MODE PLACE AUTO, ON VA CALCULER LE PARALLELLOGRAMME
-            case mapOptions.dessin.place_auto:
+            // Alerte full
+            case mapOptions.dessin.alerte_full:
+                // Création parallèlogramme
                 var donnee = this.createParallelogramme(data);
 
                 // LE PARALLÉLOGRAMME N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
@@ -134,30 +134,32 @@ var store = Reflux.createStore({
                     // on garde le parallélogramme dans le store pour le retour de la popup
                     this._inst.lastParallelogramme = donnee;
                     var retour = {
-                        type: mapOptions.type_messages.new_place_auto,
+                        type: mapOptions.type_messages.alerte_full,
                         data: donnee
                     };
                     this.trigger(retour);
                 }
                 break;
             // -------------------------------------------------------------
-            // CALCUL DU CALIBRE
-            case mapOptions.dessin.calibre:
-                var coords = this.checkCalibre(data);
+            // Alerte change
+            case mapOptions.dessin.alerte_change:
+                // Création parallèlogramme
+                var donnee = this.createParallelogramme(data);
 
-                // LE SEGMENT N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
-                if (!_.isEmpty(coords)) {
-                    this._inst.lastCalibre = data;
+                // LE PARALLÉLOGRAMME N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
+                if (!_.isEmpty(donnee)) {
+                    // on garde le parallélogramme dans le store pour le retour de la popup
+                    this._inst.lastParallelogramme = donnee;
                     var retour = {
-                        type: mapOptions.type_messages.new_calibre,
-                        data: coords
+                        type: mapOptions.type_messages.alerte_change,
+                        data: donnee
                     };
                     this.trigger(retour);
                 }
                 break;
             // -------------------------------------------------------------
-            // PROCÉDURE DE CRÉATION DE ZONE
-            case mapOptions.dessin.zone:
+            // Réservation
+            case mapOptions.dessin.reservation:
                 var zones, allees;
                 zones = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.zonesGroup);
                 allees = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.alleesGroup);
@@ -167,30 +169,13 @@ var store = Reflux.createStore({
                 // Géométrie OK ouverture de la POPUP
                 if (geometryOk) {
                     var retour = {
-                        type: mapOptions.type_messages.new_zone,
+                        type: mapOptions.type_messages.reservation,
                         data: data
                     };
                     this.trigger(retour);
                 }
                 break;
-            // -------------------------------------------------------------
-            // PROCÉDURE DE CRÉATION D'ALLÉE
-            case mapOptions.dessin.allee:
-                var zones, allees;
-                zones = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.zonesGroup);
-                allees = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.alleesGroup);
 
-                var geometryOk = alleeHelper.geometryCheck(data.e.layer._latlngs, zones, allees);
-
-                // Géométrie OK ouverture de la POPUP
-                if (geometryOk) {
-                    var retour = {
-                        type: mapOptions.type_messages.new_allee,
-                        data: data
-                    };
-                    this.trigger(retour);
-                }
-                break;
             // -------------------------------------------------------------
             // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
             default:
@@ -316,93 +301,38 @@ var store = Reflux.createStore({
      * CHANGEMENT DU MODE DE DESSIN ----------------------------------------------
      * ---------------------------------------------------------------------------
      */
-    onMode_place: function (data) {
-        this._inst.currentMode = mapOptions.dessin.place;
+    onMode_alerte_full: function (data) {
+        this._inst.currentMode = mapOptions.dessin.alerte_full;
 
         var retour = {
             type: mapOptions.type_messages.mode_change,
             data: {
-                mode: mapOptions.dessin.place
+                mode: mapOptions.dessin.alerte_full
             }
         };
         this.trigger(retour);
     },
-    onMode_place_auto: function (data) {
-        this._inst.currentMode = mapOptions.dessin.place_auto;
+    onMode_alerte_change: function (data) {
+        this._inst.currentMode = mapOptions.dessin.alerte_change;
 
         var retour = {
             type: mapOptions.type_messages.mode_change,
             data: {
-                mode: mapOptions.dessin.place_auto
+                mode: mapOptions.dessin.alerte_change
             }
         };
         this.trigger(retour);
     },
-    onMode_allee: function (data) {
-        this._inst.currentMode = mapOptions.dessin.allee;
+    onMode_reservation: function (data) {
+        this._inst.currentMode = mapOptions.dessin.reservation;
 
         var retour = {
             type: mapOptions.type_messages.mode_change,
             data: {
-                mode: mapOptions.dessin.allee
+                mode: mapOptions.dessin.reservation
             }
         };
         this.trigger(retour);
-    },
-    onMode_zone: function (data) {
-        this._inst.currentMode = mapOptions.dessin.zone;
-
-        var retour = {
-            type: mapOptions.type_messages.mode_change,
-            data: {
-                mode: mapOptions.dessin.zone
-            }
-        };
-        this.trigger(retour);
-    },
-    onMode_afficheur: function (data) {
-        this._inst.currentMode = mapOptions.dessin.afficheur;
-
-        var retour = {
-            type: mapOptions.type_messages.mode_change,
-            data: {
-                mode: mapOptions.dessin.afficheur
-            }
-        };
-        this.trigger(retour);
-    },
-    onMode_calibre: function (data) {
-        this._inst.currentMode = mapOptions.dessin.calibre;
-
-        var retour = {
-            type: mapOptions.type_messages.mode_change,
-            data: {
-                mode: mapOptions.dessin.calibre
-            }
-        };
-
-        this.trigger(retour);
-    },
-
-    onMode_capteur: function (data) {
-        if (this._inst.parkingInfos.init != 0) {
-            this._inst.currentMode = mapOptions.dessin.capteur;
-
-            var retour = {
-                type: mapOptions.type_messages.mode_change,
-                data: {
-                    mode: mapOptions.dessin.capteur
-                }
-            };
-
-            this.trigger(retour);
-
-            // Pour éviter d'éventuels glitch du à une utilisation bizarre
-            this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
-        } else {
-            swal(Lang.get('administration_parking.carte.err_parking_non_init'));
-
-        }
     },
 
     /**
@@ -1031,6 +961,7 @@ var store = Reflux.createStore({
                 this._inst.planInfos.parking_id = data.parking_id;
                 this._inst.planInfos.etat_general_id = data.etat_general_id;
                 this._inst.calibre = data.calibre;
+                //console.log('calibre '+ this._inst.calibre);
 
                 if (parseFloat(data.calibre) == 0) {
                     this.swalCalibre();

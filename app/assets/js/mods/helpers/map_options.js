@@ -9,7 +9,10 @@ module.exports.dessin = {
     afficheur: 4,
     place_auto: 5,
     calibre: 6,
-    capteur: 7 // Pas vraiment un mode de dessin, c'est pour savoir qu'on est en mode capteur
+    capteur: 7, // Pas vraiment un mode de dessin, c'est pour savoir qu'on est en mode capteur
+    alerte_full: 8,
+    alerte_change: 9,
+    reservation: 10
 };
 
 /**
@@ -23,7 +26,10 @@ module.exports.icon = {
     afficheur: "fa-desktop",
     place_auto: "fa-magic",
     calibre: "fa-arrows",
-    capteur: "fa-wifi"
+    capteur: "fa-wifi",
+    alerte_full: 'fa-stop',
+    alerte_change: 'fa-exchange',
+    reservation: 'fa-ticket'
 };
 
 // PRÉPARATION DE L'OBJET COLOR :
@@ -43,6 +49,9 @@ groups[module.exports.dessin.allee] = 'alleesGroup';
 groups[module.exports.dessin.zone] = 'zonesGroup';
 groups[module.exports.dessin.afficheur] = 'afficheursGroup';
 groups[module.exports.dessin.calibre] = 'calibreGroup';
+groups[module.exports.dessin.alerte_full] = 'alerteFullGroup';
+groups[module.exports.dessin.alerte_change] = 'alerteChangeGroup';
+groups[module.exports.dessin.reservation] = 'reservationGroup';
 
 /**
  * Paramètres du controle de dessin
@@ -80,7 +89,8 @@ module.exports.type_messages = {
     hide_infos: 16,
     delete_place: 17,
     set_calibre: 18,
-    new_afficheur: 19
+    new_afficheur: 19,
+    alerte_full:20
 };
 
 /**
