@@ -83,5 +83,31 @@ class AfficheursController extends \BaseController
         //
     }
 
+    public function setGeometry($id)
+    {
+        Log::debug('Données reçues en PHP : ' . print_r(Input::all(), true));
+
+        $retour = [
+            'save' => true,
+            'errorBdd' => false,
+            'model' => null,
+            'doublon' => false
+        ];
+
+        try {
+            Afficheur::find($id)->update([
+                'ligne' => Input::get('ligne'),
+                'lat' => Input::get('lat'),
+                'lng' => Input::get('lng')
+            ]);
+        } catch (Exception $e) {
+            Log::error('Erreur SQL : ');
+            Log::error($e);
+            $retour['save'] = false;
+            $retour['errorBdd'] = true;
+        }
+        return $retour;
+    }
+
 
 }

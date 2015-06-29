@@ -1268,6 +1268,17 @@ var store = Reflux.createStore({
             text: Lang.get('administration_parking.carte.swal_calibre_non_init'),
             html: true
         });
+    },
+
+    /**
+     * Masque la modale active
+     */
+    onHide_modale: function () {
+        var retour = {
+            type: mapOptions.type_messages.hide_modal,
+            data: {}
+        };
+        this.trigger(retour);
     }
 });
 

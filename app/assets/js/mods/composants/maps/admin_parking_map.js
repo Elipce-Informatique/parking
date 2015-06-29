@@ -10,6 +10,7 @@ var ModalCalibre = require('../modals/mod_calibre');
 var ModalZone = require('../modals/mod_zone');
 var ModalAllee = require('../modals/mod_allee');
 var ModalCapteur = require('../modals/mod_capteur');
+var ModalAfficheur = require('../modals/mod_afficheur');
 var Field = require('../formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputNumberEditable = Field.InputNumberEditable;
@@ -507,7 +508,6 @@ var parkingMap = React.createClass({
                 this.onSetCalibre(data);
                 break;
             case mapOptions.type_messages.new_afficheur:
-                console.log('AFFICHER LA MODALE AFFICHEUR : %o', data);
                 this._onNewAfficheur(data);
                 break;
             default:
@@ -769,7 +769,7 @@ var parkingMap = React.createClass({
         this.setState({
             modalType: mapOptions.modal_type.afficheur,
             isModalOpen: true,
-            afficheurData : data.data
+            afficheurData: data.data
         });
     },
 
@@ -777,7 +777,7 @@ var parkingMap = React.createClass({
     /*******************************************************************/
     /*******************************************************************/
     /**
-     * TODO : Modal de saisie des informations pour créer une zone
+     * Modal de saisie des informations pour créer une zone
      * @returns {XML}
      * @private
      */
@@ -791,7 +791,7 @@ var parkingMap = React.createClass({
         }
     },
     /**
-     * TODO : Modal de saisie des informations pour créer une allée
+     * Modal de saisie des informations pour créer une allée
      * @returns {XML}
      * @private
      */
@@ -806,7 +806,7 @@ var parkingMap = React.createClass({
     },
 
     /**
-     * TODO : Modal de saisie des informations pour créer un afficheur
+     * Modal de saisie des informations pour créer un afficheur
      * @returns {XML}
      * @private
      */
@@ -814,14 +814,11 @@ var parkingMap = React.createClass({
         if (!this.state.isModalOpen) {
             return <span/>;
         } else {
-            return (<Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
-                <div className="modal-body">
-                    This modal is controlled by our custom trigger component.
-                </div>
-                <div className="modal-footer">
-                    <Button onClick={this.handleToggle}>Close</Button>
-                </div>
-            </Modal>);
+            return (<ModalAfficheur
+                onToggle={this.handleToggle}
+                parkingId={this.props.parkingId}
+                drawData={this.state.afficheurData}
+            />);
         }
     },
     /**

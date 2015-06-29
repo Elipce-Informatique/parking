@@ -26,4 +26,13 @@ class Buses extends \Eloquent {
     {
         return $this->hasMany('Capteur', 'bus_id', 'id');
     }
+
+    /**
+     * Les afficheurs du bus
+     * @return mixed
+     */
+    public function afficheurs()
+    {
+        return $this->hasMany('Afficheur');
+    }
 }

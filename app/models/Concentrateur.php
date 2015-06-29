@@ -1,6 +1,7 @@
 <?php
 
-class Concentrateur extends \Eloquent {
+class Concentrateur extends \Eloquent
+{
     protected $table = 'concentrateur';
     protected $guarded = ['id'];
 
@@ -25,15 +26,4 @@ class Concentrateur extends \Eloquent {
     {
         return $this->hasMany('Buses');
     }
-
-
-    /**
-     * Les afficheurs du concentrateur
-     * @return mixed
-     */
-    public function afficheurs()
-    {
-        return $this->hasMany('Afficheur');
-    }
-
 }
