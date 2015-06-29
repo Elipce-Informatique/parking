@@ -5,6 +5,7 @@ var ComponentAccessMixins = require('../../mixins/component_access');
 var MixinGestMod = require('../../mixins/gestion_modif');
 
 var Field = require('../formulaire/react_form_fields');
+var formDataHeler = require('../../helpers/form_data_helper');
 var Form = Field.Form;
 var BtnSave = Field.BtnSave;
 var InputNumberEditable = Field.InputNumberEditable;
@@ -25,7 +26,8 @@ var ModalAfficheur = React.createClass({
 
     propTypes: {
         onToggle: React.PropTypes.func.isRequired,
-        parkingId: React.PropTypes.number.isRequired
+        parkingId: React.PropTypes.number.isRequired,
+        drawData: React.PropTypes.object.isRequired
     },
 
     getDefaultProps: function () {
@@ -42,7 +44,7 @@ var ModalAfficheur = React.createClass({
     },
     componentWillMount: function () {
         this.listenTo(store, this.updateData);
-        Actions.map.init_modale(this.props.parkingId);
+        Actions.map.init_modale(this.props.parkingId, this.props.drawData);
 
     },
 
@@ -77,7 +79,7 @@ var ModalAfficheur = React.createClass({
 
                         <InputSelectEditable
                             editable={true}
-                            data={this.state.listAfficheurs}
+                            data={this.state.combo}
                             selectedValue={this.state.afficheur_id}
                             placeholder={Lang.get('global.afficheur')}
                             attributes={{
@@ -112,7 +114,9 @@ var ModalAfficheur = React.createClass({
  */
 var store = Reflux.createStore({
     _inst: {
-        dataAjax: []       // Les données brutes reçues en AJAX (liste des afficheurs)
+        afficheurs: [],       // Les données brutes reçues en AJAX (liste des afficheurs)
+        comboAfficheurs: [],
+        dataForme: {}
     },
     getInitialState: function () {
         return {};
@@ -148,6 +152,39 @@ var store = Reflux.createStore({
      */
     handleAfficheur: function (formDom) {
         // TODO traiter le form de la modale
+        console.log('Validation modale: %o', formDom);
+        console.log('Données graphiques : %o', this._inst.dataForme);
+
+        var fData = formDataHeler('', 'POST');
+        fData.append('lat', this._inst.dataForme.coords.lat);
+        fData.append('lng', this._inst.dataForme.coords.lng);
+        fData.append('ligne', JSON.stringify(this._inst.dataForme.polyline._latlngs));
+
+        var $form = $(formDom);
+        var id = $form.find('[name=afficheur_id]').val();
+
+        $.ajax({
+            type: 'POST',
+            url: BASE_URI + 'parking/afficheur/' + id + '/setGeometry',
+            processData: false,
+            contentType: false,
+            data: fData
+        })
+            .done(function (retour) {
+                // on success use return data here
+                console.log('Retour insertion AJAX: %o', retour);
+                if (retour.save) {
+                    Actions.notif.success();
+                    Actions.map.hide_modale();
+                } else {
+                    Actions.notif.error(Lang.get('administration_parking.carte.insert_places_fail'));
+                }
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
     },
 
     /**
@@ -156,15 +193,17 @@ var store = Reflux.createStore({
      * @param data
      */
     updateCombos: function (data) {
-        var retour = {};
-
-        this.trigger(retour);
+        if (data.name == "afficheur_id") {
+            var retour = {afficheur_id: data.value};
+            this.trigger(retour);
+        }
     },
     /**
      * Charge les données du réseau du parking en fonction de l'ID du parking
      * @param parkId : id du parking
      */
-    loadInitData: function (parkId) {
+    loadInitData: function (parkId, dataForme) {
+        this._inst.dataForme = dataForme;
 
         $.ajax({
             type: 'GET',
@@ -176,6 +215,9 @@ var store = Reflux.createStore({
         })
             .done(function (data) {
                 console.log('Data init chargées : %o', data);
+                this._inst.afficheurs = data;
+                this._inst.comboAfficheurs = this.getComboAfficheurs(data);
+                this.trigger({combo: this._inst.comboAfficheurs});
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert
@@ -187,14 +229,18 @@ var store = Reflux.createStore({
     /*****************************************************************************
      * UPDATE COMBOBOXES *********************************************************
      *****************************************************************************/
+    getComboAfficheurs: function (data) {
+        var combo = _.map(data, function (d) {
+            return {
+                label: d.reference,
+                value: d.id.toString()
+            };
+        });
 
-    /**
-     *
-     */
-    getComboAfficheurs: function () {
+        console.log('combo : %o', combo);
 
+        return combo
     }
-
 
 });
 

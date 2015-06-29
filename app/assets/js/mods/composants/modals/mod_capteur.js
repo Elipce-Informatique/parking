@@ -149,7 +149,7 @@ var ModalCapteur = React.createClass({
  */
 var store = Reflux.createStore({
     _inst: {
-        dataAjax: [],       // Les données brutes reçues en AJAX
+        ajax_data: [],      // Les données brutes reçues en AJAX
         concentrateurs: [], // La liste de tous les concentrateurs du parking
         buses: [],          // La liste de tous les buses du parking
         allCapteurs: [],    // La liste de tous les capteurs du parking
@@ -269,7 +269,7 @@ var store = Reflux.createStore({
      * @param data
      */
     handleAjaxResult: function (data) {
-        this._inst.dataAjax = data;
+        this._inst.ajax_data = data;
 
         var concentrateurs = data;
         var buses = [];

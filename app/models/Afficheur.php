@@ -3,6 +3,8 @@
 class Afficheur extends BaseModel
 {
     protected $fillable = [];
+    protected $guarded = ['id'];
+    protected $table = 'afficheur';
 
     /*****************************************************************************
      * RELATIONS DU MODELE *******************************************************
@@ -27,12 +29,12 @@ class Afficheur extends BaseModel
     }
 
     /**
-     * Le concentrateur de l'afficheur
+     * Le bus de l'afficheur
      * @return mixed
      */
     public function concentrateur()
     {
-        return $this->belongsTo('Concentrateur');
+        return $this->belongsTo('Bus');
     }
 
 
