@@ -119,6 +119,7 @@ var store = Reflux.createStore({
      */
     // CRÉATION D'UN DESSIN FINIE (Ajout a la carte)
     onDraw_created: function (data) {
+        console.log('Darw created %o',data);
         this._inst.lastDraw = data;
 
 
@@ -126,19 +127,12 @@ var store = Reflux.createStore({
             // -------------------------------------------------------------
             // Alerte full
             case mapOptions.dessin.alerte_full:
-                // Création parallèlogramme
-                var donnee = this.createParallelogramme(data);
+                var retour = {
+                    type: mapOptions.type_messages.alerte_full,
+                    data: data
+                };
+                this.trigger(retour);
 
-                // LE PARALLÉLOGRAMME N'A PAS ÉTÉ CONSTRUIT (PAS LE BON NOMBRE DE POINTS PROBABLEMENT)
-                if (!_.isEmpty(donnee)) {
-                    // on garde le parallélogramme dans le store pour le retour de la popup
-                    this._inst.lastParallelogramme = donnee;
-                    var retour = {
-                        type: mapOptions.type_messages.alerte_full,
-                        data: donnee
-                    };
-                    this.trigger(retour);
-                }
                 break;
             // -------------------------------------------------------------
             // Alerte change
@@ -350,170 +344,30 @@ var store = Reflux.createStore({
 
         // SÉLECTION DU FORMULAIRE POUR TRAITER L'ACTION
         switch (formId) {
-            case "form_mod_places_multiples":
-                this.handlePlacesMultiples(formDom, this._inst.lastParallelogramme.e.layer._latlngs);
+            case "form_alerte_full":
+                this.handleFull(formDom, this._inst.lastDraw);
                 break;
-            case "form_mod_calibre":
-                this.handleCalibre(formDom, this._inst.lastCalibre.e.layer._latlngs);
+            case "form_alerte_change":
+                this.handleChange(formDom, this._inst.lastDraw);
                 break;
-            case "form_mod_zone":
-                this.handleZone(formDom, this._inst.lastDraw);
+            case "form_reservation":
+                this.handleReservation(formDom, this._inst.lastDraw);
                 break;
-            case "form_mod_allee":
-                this.handleAllee(formDom, this._inst.lastDraw);
-                break;
-
             default:
                 break;
         }
     },
 
     /**
-     * Récupère les données de la popup de création de plusieurs places.
-     *
-     * @param formDom : dom du formulaire avec les informations de la popup
-     * @param parallelogramme : tableau des points du parallélogramme
+     * Création d'une alerte de type "full"
+     * @param formDom: Objet DOM du formulaire
+     * @param zone: zone géométrique dessinée par le user
      */
-    handlePlacesMultiples: function (formDom, parallelogramme) {
-        var $form = $(formDom);
-
-        // RÉCUPÉRATION DES DONNÉES DE LA MODALE
-        var nbPlaces = $form.find('[name=nb_place]').val(),
-            spacePoteaux = $form.find('[name=nb_poteaux]').val(),
-            largPoteaux = $form.find('[name=taille_poteaux]').val(),
-            pref = $form.find('[name=prefixe]').val(),
-            num = $form.find('[name=num_initial]').val(),
-            suff = $form.find('[name=suffixe]').val(),
-            incr = $form.find('[name=increment]').val();
-
-        var places = [];
-        // CONTRÔLE DES NOMBRES ENTRÉS
-        if (parseInt(spacePoteaux) < parseInt(nbPlaces)) {
-            places = placeHelper.createPlacesFromParallelogramme(
-                this._inst.calibre,
-                parallelogramme,
-                nbPlaces,
-                spacePoteaux,
-                largPoteaux,
-                pref,
-                num,
-                suff,
-                incr,
-                this._inst.defaults.allee.id,
-                this._inst.defaults.type_place.id,
-                this._inst.defaults.type_place.couleur,
-                this._inst.defaults.etat_occupation,
-                this._inst.allees,
-                this._inst.zones
-            );
-
-            // CRÉATION DU TABLEAU DE DONNÉES À ENREGISTRER
-            var dataPlaces = _.map(places, function (p) {
-                var json = JSON.stringify(p.polygon._latlngs);
-                return _.extend(p.data, {
-                    geoJson: json
-                });
-            }, this);
-
-            // --------------------------------------------------------------------------
-
-            // FORMATAGE DES DONNÉES POUR L'ENVOI
-            var fData = formDataHelper('', 'POST');
-            fData.append('places', JSON.stringify(dataPlaces));
-
-            // ENREGISTREMENT AJAX DES PLACES
-            $.ajax({
-                type: 'POST',
-                url: BASE_URI + 'parking/place',
-                processData: false,
-                contentType: false,
-                data: fData,
-                context: this,
-                success: function (data) {
-                    // TEST ÉTAT INSERTION
-                    if (data.retour.length > 0) {
-                        // 1 - TRANSFORMATION DES DATA DE LA BDD EN PLACES
-                        var placesCreated = this.createPlacesMapFromPlacesBDD(data.retour);
-                        // 2 - SAUVEGARDE DES PLACES EN LOCAL DNAS LE STORE
-                        this._inst.places = this._inst.places.concat(placesCreated);
-
-                        // 3 - ENVOI DES INFOS À AFFICHER SUR LA CARTE
-                        var retour = {
-                            type: mapOptions.type_messages.add_places,
-                            data: placesCreated
-                        };
-                        this.trigger(retour);
-                        Actions.notif.success();
-                    } else {
-                        Actions.notif.error(Lang.get('administration_parking.carte.insert_places_fail'));
-                    }
-                },
-                error: function (xhr, type, exception) {
-                    // if ajax fails display error alert
-                    console.error("ajax error response error " + type);
-                    console.error("ajax error response body " + xhr.responseText);
-                }
-            });
-            // --------------------------------------------------------------------------
-        } else {
-            // NOMBRE DE POTEAUX INCORRECT
-            swal(Lang.get('administration_parking.carte.swal_interval_incorrect'));
-        }
-    },
-
-    /**
-     *
-     * @param formDom
-     * @param coords
-     */
-    handleCalibre: function (formDom, coords) {
-        var $form = $(formDom);
-        var longueur = $form.find('[name=calibre]').val();
-        var calibre = mapHelper.generateCalibreValue(parseFloat(longueur), coords);
-
-        var fData = formDataHelper('', 'POST');
-        fData.append('calibre', calibre);
-
-        $.ajax({
-            type: 'POST',
-            url: BASE_URI + 'parking/plan/' + this._inst.planInfos.id + '/calibre',
-            processData: false,
-            contentType: false,
-            data: fData,
-            context: this
-        })
-            .done(function (data) {
-
-                // TEST ÉTAT INSERTION
-                if (data.retour) {
-                    Actions.notif.success();
-                    var retour = {
-                        type: mapOptions.type_messages.hide_modal,
-                        data: {}
-                    };
-                    this.trigger(retour);
-                } else {
-                    Actions.notif.error(Lang.get('administration_parking.carte.calibre_update_fail'));
-                }
-            })
-            .fail(function (xhr, type, exception) {
-                // if ajax fails display error alert
-                console.error("ajax error response error " + type);
-                console.error("ajax error response body " + xhr.responseText);
-            });
-
-    },
-
-    /**
-     * Gère l'insertion en BDD de la zone avec le formulaire de la modale et la forme dessinée
-     * @param formDom
-     * @param zone
-     */
-    handleZone: function (formDom, zone) {
+    handleFull: function (formDom, zone) {
         zoneHelper.createZone(formDom, zone, this._inst, function (data) {
             data = JSON.parse(data);
             // TEST ÉTAT INSERTION
-            if (typeof(data.retour) !== 'undefined') {
+            if (data.retour !== undefined) {
                 // 1 - TRANSFORMATION DES DATA DE LA BDD EN ZONES
                 var zonesCreated = zoneHelper.createZonesMapFromZonesBDD([data.retour], zoneHelper.style);
                 // 2 - SAUVEGARDE DES ZONES EN LOCAL DNAS LE STORE
@@ -536,7 +390,7 @@ var store = Reflux.createStore({
      * @param formDom
      * @param allee
      */
-    handleAllee: function (formDom, allee) {
+    handleChange: function (formDom, allee) {
         alleeHelper.createAllee(formDom, allee, this._inst, function (data) {
             data = JSON.parse(data);
             // TEST ÉTAT INSERTION
@@ -556,125 +410,6 @@ var store = Reflux.createStore({
                 Actions.notif.error();
             }
         }.bind(this));
-    },
-
-
-    /**
-     * Supprime des zones
-     * @param data : array les données formes à supprimer
-     */
-    deleteZones: function (data) {
-        console.log('deleteZones avec : %o', data);
-
-        // INIT des données de retour
-        var fData = formDataHelper('', 'DELETE');
-        var ids = _.map(data, function (d) {
-            return d.options.data.id;
-        });
-        fData.append('ids', ids);
-        console.log('Ids : %o', ids);
-
-        var url = BASE_URI + 'parking/zone/delete_many';
-
-        this.deleteFromIds(url, fData);
-
-    },
-    /**
-     * Annule la suppression visuelle des zones
-     * @param data : array les données formes à remettre sur la carte
-     */
-    cancelDeleteZones: function (data) {
-        console.log('cancelDeleteZones avec : %o', data);
-        var zonesMap = _.map(data, function (z) {
-            return {
-                data: z.options.data,
-                polygon: z
-            };
-        }, this);
-
-        var message = {
-            type: mapOptions.type_messages.add_zones,
-            data: zonesMap
-        };
-        this.trigger(message);
-    },
-    /**
-     * Supprime des allées
-     * @param data : array les données fournies par l'event "draw:deleted"
-     * de leaflet.draw
-     */
-    deleteAllees: function (data) {
-        console.log('deleteAllees avec : %o', data);
-
-        // INIT des données de retour
-        var fData = formDataHelper('', 'DELETE');
-        var ids = _.map(data, function (d) {
-            return d.options.data.id;
-        });
-        fData.append('ids', ids);
-        console.log('Ids : %o', ids);
-
-        var url = BASE_URI + 'parking/allee/delete_many';
-
-        this.deleteFromIds(url, fData);
-    },
-    /**
-     * Annule la suppression visuelle des allées
-     * @param data : array les données formes à remettre sur la carte
-     */
-    cancelDeleteAllees: function (data) {
-        console.log('cancelDeleteAllees avec : %o', data);
-        var alleesMap = _.map(data, function (a) {
-            return {
-                data: a.options.data,
-                polygon: a
-            };
-        }, this);
-
-        var message = {
-            type: mapOptions.type_messages.add_allees,
-            data: alleesMap
-        };
-        this.trigger(message);
-    },
-    /**
-     * Supprime des places
-     * @param data : array les données fournies par l'event "draw:deleted"
-     * de leaflet.draw
-     */
-    deletePlaces: function (data) {
-        console.log('deletePlaces avec : %o', data);
-
-        // INIT des données de retour
-        var fData = formDataHelper('', 'DELETE');
-        var ids = _.map(data, function (d) {
-            return d.options.data.id;
-        });
-        fData.append('ids', ids);
-        console.log('Ids : %o', ids);
-
-        var url = BASE_URI + 'parking/place/delete_many';
-
-        this.deleteFromIds(url, fData);
-    },
-    /**
-     * Annule la suppression visuelle des places
-     * @param data : array les données formes à remettre sur la carte
-     */
-    cancelDeletePlaces: function (data) {
-        console.log('cancelDeletePlaces avec : %o', data);
-        var placesMap = _.map(data, function (p) {
-            return {
-                data: p.options.data,
-                polygon: p
-            };
-        }, this);
-
-        var message = {
-            type: mapOptions.type_messages.add_places,
-            data: placesMap
-        };
-        this.trigger(message);
     },
 
     /**

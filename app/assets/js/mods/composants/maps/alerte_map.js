@@ -11,6 +11,10 @@ var InputNumberEditable = Field.InputNumberEditable;
 var Modal = ReactB.Modal;
 var Button = ReactB.Button;
 
+var ModalAlerteFull = require('../modals/mod_alerte_full');
+var ModalAlerteChange= require('../modals/mod_alerte_change');
+var ModalReservation = require('../modals/mod_reservation');
+
 
 /**
  * Composant pour créer une carte de parking en mode administration outils de dessins.
@@ -397,6 +401,22 @@ var parkingMap = React.createClass({
             case mapOptions.type_messages.set_calibre:
                 this.onSetCalibre(data);
                 break;
+            case mapOptions.type_messages.alerte_full:
+                console.log('onStorreTrigger full');
+                this.setState({
+                    isModalOpen: true
+                });
+                break;
+            case mapOptions.type_messages.alerte_change:
+                this.setState({
+                    isModalOpen: true
+                });
+                break;;
+            case mapOptions.type_messages.reservation:
+                this.setState({
+                    isModalOpen: true
+                });
+                break;
             default:
                 break;
         }
@@ -557,138 +577,50 @@ var parkingMap = React.createClass({
     /*******************************************************************/
     /*******************************************************************/
     /*******************************************************************/
+    // TODO repère modal
     /**
-     * TODO : Modal de saisie des informations pour créer une zone
+     * Modal pour créer une alerte de type "full"
      * @returns {XML}
      * @private
      */
-    _modalZone: function () {
+    _modalFull: function () {
         if (!this.state.isModalOpen) {
+            console.log('modal fermée');
             return <span/>;
         } else {
-            return (<ModalZone
+            console.log('modal ouverte');
+            return (<ModalAlerteFull
                 onToggle={this.handleToggle}
             />);
         }
     },
     /**
-     * TODO : Modal de saisie des informations pour créer une allée
+     * Modal alerte de type "change"
      * @returns {XML}
      * @private
      */
-    _modalAllee: function () {
+    _modalChange: function () {
         if (!this.state.isModalOpen) {
             return <span/>;
         } else {
-            return (<ModalAllee
+            return (<ModalAlerteChange
                 onToggle={this.handleToggle}
             />);
         }
     },
 
     /**
-     * TODO : Modal de saisie des informations pour créer un afficheur
+     * Modal réservation
      * @returns {XML}
      * @private
      */
-    _modalAfficheur: function () {
+    _modalReservation: function () {
         if (!this.state.isModalOpen) {
             return <span/>;
         } else {
-            return (<Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
-                <div className="modal-body">
-                    This modal is controlled by our custom trigger component.
-                </div>
-                <div className="modal-footer">
-                    <Button onClick={this.handleToggle}>Close</Button>
-                </div>
-            </Modal>);
-        }
-    },
-    /**
-     * Modal de saisie des informations pour créer un ensemble de places
-     * @returns {XML}
-     * @private
-     */
-    _modalPlaceMultiple: function () {
-        if (!this.state.isModalOpen) {
-            return <span/>;
-        } else {
-            return (
-                <ModalPlaces
-                    onToggle={this.handleToggle}
-                    numPlace={this._inst.lastNum + 1}
-                />
-            );
-        }
-    },
-    /**
-     * TODO : Modal de saisie des informations pour créer une place
-     * @returns {XML}
-     * @private
-     */
-    _modalPlaceSimple: function () {
-        if (!this.state.isModalOpen) {
-            return <span/>;
-        } else {
-            return (<Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
-                <div className="modal-body">
-                    This modal is controlled by our custom trigger component.
-                </div>
-                <div className="modal-footer">
-                    <Button onClick={this.handleToggle}>Close</Button>
-                </div>
-            </Modal>);
-        }
-    },
-    /**
-     * TODO : Modal de saisie des informations pour créer un capteur
-     * @returns {XML}
-     * @private
-     */
-    _modalCapteur: function () {
-        if (!this.state.isModalOpen) {
-            return <span/>;
-        } else {
-            return (<ModalCapteur
+            return (<ModalReservation
                 onToggle={this.handleToggle}
-                parkingId={this.props.parkingId}
             />);
-        }
-    },
-    /**
-     * TODO : Modal de saisie des informations pour régler la luminosité
-     * @returns {XML}
-     * @private
-     */
-    _modalLuminosite: function () {
-        if (!this.state.isModalOpen) {
-            return <span/>;
-        } else {
-            return (<Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
-                <div className="modal-body">
-                    This modal is controlled by our custom trigger component.
-                </div>
-                <div className="modal-footer">
-                    <Button onClick={this.handleToggle}>Close</Button>
-                </div>
-            </Modal>);
-        }
-    },
-
-    /**
-     * @returns {XML}
-     * @private
-     */
-    _modalCalibre: function () {
-        if (!this.state.isModalOpen) {
-            return <span/>;
-        } else {
-            return (
-                <ModalCalibre
-                    onToggle={this.handleToggle}
-                />
-            );
         }
     },
 
@@ -700,29 +632,14 @@ var parkingMap = React.createClass({
     renderOverlay: function () {
         var retour = {};
         switch (this.state.modalType) {
-            case mapOptions.modal_type.zone:
-                retour = this._modalZone();
+            case mapOptions.modal_type.alerte_full:
+                retour = this._modalFull();
                 break;
-            case mapOptions.modal_type.allee:
-                retour = this._modalAllee();
+            case mapOptions.modal_type.alerte_change:
+                retour = this._modalChange();
                 break;
-            case mapOptions.modal_type.afficheur:
-                retour = this._modalAfficheur();
-                break;
-            case mapOptions.modal_type.place_multiple:
-                retour = this._modalPlaceMultiple();
-                break;
-            case mapOptions.modal_type.place_simple:
-                retour = this._modalPlaceSimple();
-                break;
-            case mapOptions.modal_type.capteur:
-                retour = this._modalCapteur();
-                break;
-            case mapOptions.modal_type.luminosite:
-                retour = this._modalLuminosite();
-                break;
-            case mapOptions.modal_type.calibre:
-                retour = this._modalCalibre();
+            case mapOptions.modal_type.reservation:
+                retour = this._modalReservation();
                 break;
             default:
                 retour = <span/>;

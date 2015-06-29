@@ -93,6 +93,7 @@ Voulez-vous vraiment quitter cette page ?',
     'nom' => 'Nom',
     'description' => 'Description',
     'defaut' => 'Défaut',
+    'message' => "Message",
 
     // FORMULAIRE
     'select' => 'Sélection...',
