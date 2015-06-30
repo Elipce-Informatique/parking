@@ -436,6 +436,17 @@ function createFeatureFromCoordinates(coordinates, extraData, style) {
 }
 
 /**
+ * Crée et retourne une forme leaflet à partir d'un geoJson
+ * @param geoJson
+ * @returns {poly}
+ */
+function createPolylineFromCoordinates(coordinates, extraData, style) {
+    var poly = new L.polyline(coordinates, style);
+    poly.options.data = extraData;
+    return poly;
+}
+
+/**
  * Retourne un tableau de marker de toutes les places présentes sur la carte
  * @param _inst
  * @returns {Array|*}
@@ -681,5 +692,6 @@ module.exports = {
     generateInfosCapteurPlace: generateInfosCapteurPlace,
     initTreeviewParkingAjax: initTreeviewParkingAjax,
     recursiveTreeViewParking: recursiveTreeViewParking,
-    getAlleeIdFromCoords: getAlleeIdFromCoords
+    getAlleeIdFromCoords: getAlleeIdFromCoords,
+    createPolylineFromCoordinates: createPolylineFromCoordinates
 };

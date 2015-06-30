@@ -142,6 +142,19 @@ module.exports.pastilleCapteur = L.Icon.extend({
 });
 
 /**
+ * TODO
+ * Marker d'afficheur
+ * @type {void|*}
+ */
+module.exports.iconAfficheur = L.Icon.extend({
+    options: {
+        iconAnchor: new L.Point(40, 15),
+        iconSize: new L.Point(80, 29),
+        iconUrl: BASE_URI + 'public/images/afficheur_icon.PNG'
+    }
+});
+
+/**
  * Marker de place tut tut la voiture
  * @type {void|*}
  */

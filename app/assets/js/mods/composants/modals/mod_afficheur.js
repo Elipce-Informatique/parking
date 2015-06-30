@@ -177,6 +177,7 @@ var store = Reflux.createStore({
                 if (retour.save) {
                     Actions.notif.success();
                     Actions.map.hide_modale();
+                    Actions.map.afficheur_created(retour.model);
                 } else {
                     Actions.notif.error(Lang.get('administration_parking.carte.insert_places_fail'));
                 }
