@@ -1224,6 +1224,15 @@ var store = Reflux.createStore({
         };
         this.trigger(message);
 
+        // LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
+        var zonesMap = zoneHelper.createZonesMapFromZonesBDD(this._inst.zones, zoneHelper.style);
+
+        message = {
+            type: mapOptions.type_messages.add_zones,
+            data: zonesMap
+        };
+        this.trigger(message);
+
     },
 
     /**
