@@ -11,14 +11,17 @@ var alerte = ({
      * @param _inst: toutes les instances de carte (layer ...)
      * @param callback: fonction de callback si création alrte BDD OK
      */
-    createZone: function (formDom, zone, _inst, callback) {
+    createAlerteFull: function (formDom, zone, _inst, callback) {
 
         // Zone dessinée par user
         var geoJson = JSON.stringify(zone.e.layer._latlngs);
 
-        // TODO get places in zone
+        // Les places de la zone
+        var places = mapHelper.getPlacesInZone(zone, _inst);
+        console.log('places %o', places);
 
         var data = {
+            places: places,
             zone_geojson: geoJson,
             plan_id: _inst.planInfos.id,
             code : 'full'
@@ -27,12 +30,15 @@ var alerte = ({
         // CONSTRUCTION DE l'AJAX DE CRÉATION
         var fData = formDataHelper('form_alerte_full', 'POST');
         fData.append('data', JSON.stringify(data));
+        fData.append('parking_id', _inst.parkingInfos.id);
+        fData.append('geojson', geoJson);
 
         $.ajax({
             type: 'POST',
             url: BASE_URI + 'parking/alerte',
             processData: false,
             contentType: false,
+            dataType: 'json',
             data: fData
         })
         .done(function (data) {

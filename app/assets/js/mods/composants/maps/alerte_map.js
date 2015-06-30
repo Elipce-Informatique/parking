@@ -328,7 +328,7 @@ var parkingMap = React.createClass({
         // CALIBRE 0
         else {
             // TODO
-            console.log('veuillez calibrer');
+            //console.log('veuillez calibrer');
         }
     },
 
@@ -381,6 +381,7 @@ var parkingMap = React.createClass({
      * Déclenché par la mise à jour des données du store
      */
     onStoreTrigger: function (data) {
+        console.log('store trigger '+data.type);
         switch (data.type) {
             // Génériques
             case mapOptions.type_messages.mode_change:
@@ -411,10 +412,15 @@ var parkingMap = React.createClass({
                 this.setState({
                     isModalOpen: true
                 });
-                break;;
+                break;
             case mapOptions.type_messages.reservation:
                 this.setState({
                     isModalOpen: true
+                });
+                break;
+            case mapOptions.type_messages.hide_modal:
+                this.setState({
+                    isModalOpen: false
                 });
                 break;
             default:
@@ -456,6 +462,7 @@ var parkingMap = React.createClass({
                 selectButton(mapOptions.icon.reservation);
                 break;
             default:
+                console.log('defeult');
                 this.changeDrawToolbar(mapOptions.dessin.alerte_full);
                 // PAR DÉFAUT, ON SÉLECTIONNE LE MODE PLACE AU CAS OÙ
                 selectButton(mapOptions.icon.alerte_full);
@@ -493,27 +500,6 @@ var parkingMap = React.createClass({
         _.each(liste_data, function (place) {
             this._inst.lastNum = Math.max(this._inst.lastNum, place.data.num);
             this._inst.placesGroup.addLayer(place.polygon);
-            // MARKER SI CAPTEUR
-            if (place.data.capteur_id != null) {
-                var marker = L.marker([place.data.lat, place.data.lng], {
-                    icon: new mapOptions.pastilleCapteur(),
-                    data: place.data
-                }).bindLabel(
-                    place.data.capteur.bus.concentrateur.v4_id + '.' +
-                    place.data.capteur.bus.num + '.' +
-                    place.data.capteur.adresse
-                );
-                this._inst.placesMarkersGroup.addLayer(marker);
-            }
-            // MARKER INVISIBLE SI PAS CAPTEUR
-            else {
-                var marker = L.marker([place.data.lat, place.data.lng], {
-                    icon: new mapOptions.iconInvisible(),
-                    data: place.data
-                });
-                this._inst.placesMarkersGroup.addLayer(marker);
-            }
-            //
         }, this);
 
         this.setState({
@@ -585,10 +571,10 @@ var parkingMap = React.createClass({
      */
     _modalFull: function () {
         if (!this.state.isModalOpen) {
-            console.log('modal fermée');
+            //console.log('modal fermée');
             return <span/>;
         } else {
-            console.log('modal ouverte');
+            //console.log('modal ouverte');
             return (<ModalAlerteFull
                 onToggle={this.handleToggle}
             />);
