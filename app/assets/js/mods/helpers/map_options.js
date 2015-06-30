@@ -90,7 +90,8 @@ module.exports.type_messages = {
     delete_place: 17,
     set_calibre: 18,
     new_afficheur: 19,
-    alerte_full:20
+    alerte_full: 20,
+    add_afficheurs: 21
 };
 
 /**
@@ -137,6 +138,19 @@ module.exports.pastilleCapteur = L.Icon.extend({
         iconAnchor: new L.Point(7, 7),
         iconSize: new L.Point(14, 14),
         iconUrl: BASE_URI + 'public/images/pastille.png'
+    }
+});
+
+/**
+ * TODO
+ * Marker d'afficheur
+ * @type {void|*}
+ */
+module.exports.iconAfficheur = L.Icon.extend({
+    options: {
+        iconAnchor: new L.Point(40, 15),
+        iconSize: new L.Point(80, 29),
+        iconUrl: BASE_URI + 'public/images/afficheur_icon.PNG'
     }
 });
 

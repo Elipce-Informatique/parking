@@ -1133,7 +1133,7 @@ var store = Reflux.createStore({
                 this._inst.places = places;
                 this._inst.allees = allees;
                 this._inst.zones = zones;
-                this._inst.afficheurs = [];
+                this._inst.afficheurs = data.afficheurs;
                 // ---------------------------------------------------------------------
 
             },
@@ -1224,6 +1224,15 @@ var store = Reflux.createStore({
         };
         this.trigger(message);
 
+        // LES AFFICHEURS À AFFICHER SUR LA MAP ----------------------------------------------------
+        var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD(this._inst.afficheurs, afficheurHelper.style);
+
+        message = {
+            type: mapOptions.type_messages.add_afficheurs,
+            data: afficheursMap
+        };
+        this.trigger(message);
+
     },
 
     /**
@@ -1257,6 +1266,19 @@ var store = Reflux.createStore({
                 marker: marker
             };
         }, this);
+    },
+
+    /**
+     * Affiche un afficheur sur la carte
+     */
+    onAfficheur_created: function (afficheur) {
+        var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD([afficheur], afficheurHelper.style);
+
+        var message = {
+            type: mapOptions.type_messages.add_afficheurs,
+            data: afficheursMap
+        };
+        this.trigger(message);
     },
 
     /**

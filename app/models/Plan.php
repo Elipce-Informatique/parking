@@ -31,6 +31,15 @@ class Plan extends BaseModel
         return $this->hasMany('Zone');
     }
 
+    /**
+     * Les afficheurs du plan
+     * @return mixed
+     */
+    public function afficheurs()
+    {
+        return $this->hasMany('Afficheur');
+    }
+
     /*****************************************************************************
      * UTILITAIRES DU MODELE *****************************************************
      *****************************************************************************/

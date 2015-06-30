@@ -466,6 +466,9 @@ var parkingMap = React.createClass({
             case mapOptions.type_messages.add_places:
                 this.onPlacesAdded(data);
                 break;
+            case mapOptions.type_messages.add_afficheurs:
+                this.onAfficheursAdded(data);
+                break;
             case mapOptions.type_messages.add_zones:
                 this.onZonesAdded(data);
                 break;
@@ -629,6 +632,38 @@ var parkingMap = React.createClass({
                 this._inst.placesMarkersGroup.addLayer(marker);
             }
             //
+        }, this);
+
+        this.setState({
+            isModalOpen: false
+        });
+    },
+
+    /**
+     * Ajoute les AFFICHEURS
+     * @param formes : [{data: {}, poly: {}}]
+     */
+    onAfficheursAdded: function (formes) {
+        var liste_data = formes.data;
+        console.log('data a afficher : %o', liste_data);
+        _.each(liste_data, function (afficheur) {
+            // MARKER DANS TOUS LES CAS
+            if (afficheur.data.lat != null && afficheur.data.lng) {
+                var marker = L.marker([afficheur.data.lat, afficheur.data.lng], {
+                    icon: new mapOptions.iconAfficheur(),
+                    data: afficheur.data
+                }).bindLabel(afficheur.data.reference);
+
+                this._inst.afficheursGroup.addLayer(marker);
+
+                // AJOUT DU POLYLINE AU GROUPE AFFICHEUR
+                console.log('Afficheur : %o', afficheur);
+                console.log('Afficheur polygon : %o', afficheur.polyline);
+                if (!_.isEmpty(afficheur.polyline)) {
+                    this._inst.afficheursGroup.addLayer(afficheur.polyline);
+                }
+            }
+
         }, this);
 
         this.setState({
@@ -817,6 +852,7 @@ var parkingMap = React.createClass({
             return (<ModalAfficheur
                 onToggle={this.handleToggle}
                 parkingId={this.props.parkingId}
+                planId={this.props.planId}
                 drawData={this.state.afficheurData}
             />);
         }

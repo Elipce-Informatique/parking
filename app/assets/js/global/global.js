@@ -112,6 +112,7 @@ require('sweetalert');
         // MODALE CAPTEURS DE PLACE
         "init_modale",
         "hide_modale",
+        "afficheur_created",
         "liste_concentrateurs",
         "liste_buses",
         "liste_capteurs",
