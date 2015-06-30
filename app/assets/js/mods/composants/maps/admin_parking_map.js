@@ -817,6 +817,7 @@ var parkingMap = React.createClass({
             return (<ModalAfficheur
                 onToggle={this.handleToggle}
                 parkingId={this.props.parkingId}
+                planId={this.props.planId}
                 drawData={this.state.afficheurData}
             />);
         }

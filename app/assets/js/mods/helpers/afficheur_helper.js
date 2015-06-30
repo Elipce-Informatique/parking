@@ -10,6 +10,18 @@ function getCoordAfficheurFromPolyline(poly) {
     return _.last(latlngs);
 }
 
+function createAfficheursMapFromAfficheursBDD(afficheursBDD, afficheursStyle){
+
+}
+
 module.exports = {
-    getCoordAfficheurFromPolyline: getCoordAfficheurFromPolyline
+    getCoordAfficheurFromPolyline: getCoordAfficheurFromPolyline,
+    createAfficheursMapFromAfficheursBDD: createAfficheursMapFromAfficheursBDD,
+    style: {
+        color: '#000000',
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 1,
+        fillColor: '#000000'
+    }
 };

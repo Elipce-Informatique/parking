@@ -90,7 +90,8 @@ module.exports.type_messages = {
     delete_place: 17,
     set_calibre: 18,
     new_afficheur: 19,
-    alerte_full:20
+    alerte_full: 20,
+    add_afficheurs: 21
 };
 
 /**

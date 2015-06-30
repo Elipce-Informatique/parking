@@ -27,6 +27,7 @@ var ModalAfficheur = React.createClass({
     propTypes: {
         onToggle: React.PropTypes.func.isRequired,
         parkingId: React.PropTypes.number.isRequired,
+        planId: React.PropTypes.number.isRequired,
         drawData: React.PropTypes.object.isRequired
     },
 
@@ -44,8 +45,8 @@ var ModalAfficheur = React.createClass({
     },
     componentWillMount: function () {
         this.listenTo(store, this.updateData);
-        Actions.map.init_modale(this.props.parkingId, this.props.drawData);
-
+        Actions.map.init_modale(this.props.parkingId, this.props.planId, this.props.drawData);
+        console.log('Plan WILLMOUNT Id : %o', this.props.planId);
     },
 
     componentDidMount: function () {
@@ -116,7 +117,9 @@ var store = Reflux.createStore({
     _inst: {
         afficheurs: [],       // Les données brutes reçues en AJAX (liste des afficheurs)
         comboAfficheurs: [],
-        dataForme: {}
+        dataForme: {},
+        planId: '',
+        parkingId: ''
     },
     getInitialState: function () {
         return {};
@@ -151,14 +154,12 @@ var store = Reflux.createStore({
      * @param formDom : le DOM du formulaire
      */
     handleAfficheur: function (formDom) {
-        // TODO traiter le form de la modale
-        console.log('Validation modale: %o', formDom);
-        console.log('Données graphiques : %o', this._inst.dataForme);
 
         var fData = formDataHeler('', 'POST');
         fData.append('lat', this._inst.dataForme.coords.lat);
         fData.append('lng', this._inst.dataForme.coords.lng);
-        fData.append('ligne', JSON.stringify(this._inst.dataForme.polyline._latlngs));
+        fData.append('ligne', (this._inst.dataForme.polyline != null) ? JSON.stringify(this._inst.dataForme.polyline._latlngs) : null);
+        fData.append('plan_id', this._inst.planId);
 
         var $form = $(formDom);
         var id = $form.find('[name=afficheur_id]').val();
@@ -202,8 +203,10 @@ var store = Reflux.createStore({
      * Charge les données du réseau du parking en fonction de l'ID du parking
      * @param parkId : id du parking
      */
-    loadInitData: function (parkId, dataForme) {
+    loadInitData: function (parkId, planId, dataForme) {
         this._inst.dataForme = dataForme;
+        this._inst.parkingId = parkId;
+        this._inst.planId = planId;
 
         $.ajax({
             type: 'GET',

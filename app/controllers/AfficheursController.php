@@ -98,8 +98,10 @@ class AfficheursController extends \BaseController
             Afficheur::find($id)->update([
                 'ligne' => Input::get('ligne'),
                 'lat' => Input::get('lat'),
-                'lng' => Input::get('lng')
+                'lng' => Input::get('lng'),
+                'plan_id' => Input::get('plan_id')
             ]);
+            $retour['model'] = Afficheur::find($id);
         } catch (Exception $e) {
             Log::error('Erreur SQL : ');
             Log::error($e);

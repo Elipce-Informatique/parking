@@ -1224,12 +1224,12 @@ var store = Reflux.createStore({
         };
         this.trigger(message);
 
-        // LES ZONES À AFFICHER SUR LA MAP ----------------------------------------------------
-        var zonesMap = zoneHelper.createZonesMapFromZonesBDD(this._inst.zones, zoneHelper.style);
+        // LES AFFICHEURS À AFFICHER SUR LA MAP ----------------------------------------------------
+        var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD(this._inst.zones, zoneHelper.style);
 
         message = {
-            type: mapOptions.type_messages.add_zones,
-            data: zonesMap
+            type: mapOptions.type_messages.add_afficheurs,
+            data: afficheursMap
         };
         this.trigger(message);
 
