@@ -371,8 +371,17 @@ var parkingMap = React.createClass({
                 },
                 edit: {
                     featureGroup: group,
-                    edit: (this._inst.currentMode == mapOptions.dessin.place || this._inst.currentMode == mapOptions.dessin.place_auto),
-                    remove: (this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone || this._inst.currentMode == mapOptions.dessin.place_auto || this._inst.currentMode == mapOptions.dessin.place)
+                    edit: (
+                    this._inst.currentMode == mapOptions.dessin.place ||
+                    this._inst.currentMode == mapOptions.dessin.place_auto
+                    ),
+                    remove: (
+                    this._inst.currentMode == mapOptions.dessin.allee ||
+                    this._inst.currentMode == mapOptions.dessin.zone ||
+                    this._inst.currentMode == mapOptions.dessin.place_auto ||
+                    this._inst.currentMode == mapOptions.dessin.place ||
+                    this._inst.currentMode == mapOptions.dessin.afficheur
+                    )
                 }
             };
 

@@ -172,6 +172,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::delete('zone/delete_many', 'ZonesController@destroyMany');
     Route::delete('allee/delete_many', 'AlleesController@destroyMany');
     Route::delete('place/delete_many', 'PlacesController@destroyMany');
+    Route::delete('afficheur/delocate_many', 'AfficheursController@delocateMany');
     Route::post('place/{id}/setCapteur', 'PlacesController@setCapteur');
     Route::patch('place/update_places_geo', 'PlacesController@updatePlacesGeo');
     Route::post('afficheur/{id}/setGeometry', 'AfficheursController@setGeometry');

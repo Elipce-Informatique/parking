@@ -111,5 +111,29 @@ class AfficheursController extends \BaseController
         return $retour;
     }
 
+    /**
+     * Délocalise les afficheurs de la carte
+     * @return array
+     */
+    public function delocateMany()
+    {
+        Log::debug('locateMany, avec ces données : ' . print_r(Input::all(), true));
+        $ids = explode(',', Input::get('ids'));
+        $action = Afficheur::whereIn('id', $ids)
+            ->update([
+                'plan_id' => null,
+                'ligne' => null,
+                'lat' => null,
+                'lng' => null
+            ]);
+        $retour = [
+            'save' => $action,
+            'errorBdd' => !$action,
+            'model' => null,
+            'doublon' => false
+        ];
+        return $retour;
+    }
+
 
 }

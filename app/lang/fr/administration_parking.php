@@ -75,9 +75,11 @@ return array(
         'infos_capteur_restant' => 'Capteurs restant sur le bus : ',
         'infos_capteur_bouton' => 'Terminer l\'affectation',
         'swal_titre_confirm' => "Êtes-vous sûr ?",
-        'swal_msg_confirm_zone' => "ATTENTION supprimer une zone va supprimmer toutes les allées et les places qu'elle contient.",
-        'swal_msg_confirm_allee' => "ATTENTION supprimer une allée va supprimmer toutes les places qu'elle contient.",
-        'swal_msg_confirm_place' => "ATTENTION supprimer une place est une action irréversible."
+        'swal_msg_confirm_zone' => "ATTENTION supprimer une zone est une action irréversible.",
+        'swal_msg_confirm_allee' => "ATTENTION supprimer une allée est une action irréversible.",
+        'swal_msg_confirm_place' => "ATTENTION supprimer une place est une action irréversible.",
+        'swal_msg_confirm_afficheur' => "ATTENTION supprimer un afficheur est une action irréversible.",
+
     ],
 
     // MODULE TEMPS REEL

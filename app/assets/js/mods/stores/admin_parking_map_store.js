@@ -348,7 +348,24 @@ var store = Reflux.createStore({
             // -------------------------------------------------------------
             // SUPPRESSION D'UN OU PLISIEURS AFFICHEURS
             case mapOptions.dessin.afficheur:
-                // pas encore pris en compte
+                var context = this;
+                swal({
+                    title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                    text: Lang.get('administration_parking.carte.swal_msg_confirm_afficheur'),
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: Lang.get('global.del'),
+                    cancelButtonText: Lang.get('global.annuler'),
+                    closeOnConfirm: true,
+                    closeOnCancel: true
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        context.deleteAfficheurs(deletedEntities)
+                    } else {
+                        context.cancelDeleteAfficheurs(deletedEntities);
+                    }
+                });
                 break;
             // -------------------------------------------------------------
             // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
@@ -803,6 +820,47 @@ var store = Reflux.createStore({
         var message = {
             type: mapOptions.type_messages.add_places,
             data: placesMap
+        };
+        this.trigger(message);
+    },
+
+    /**
+     * Supprime des allées
+     * @param data : array les données fournies par l'event "draw:deleted"
+     * de leaflet.draw
+     */
+    deleteAfficheurs: function (data) {
+
+        /**/
+        // INIT des données de retour
+        var fData = formDataHelper('', 'DELETE');
+        var ids = _.map(data, function (d) {
+            return d.options.data.id;
+        });
+        console.log('Ids à délocaliser : %o', ids);
+        fData.append('ids', ids);
+
+        var url = BASE_URI + 'parking/afficheur/delocate_many';
+
+        this.deleteFromIds(url, fData);
+        /**/
+    },
+    /**
+     * Annule la suppression visuelle des allées
+     * @param data : array les données formes à remettre sur la carte
+     */
+    cancelDeleteAfficheurs: function (data) {
+        console.log('cancelDeleteAfficheur avec : %o', data);
+        var afficheursMap = _.map(data, function (a) {
+            return {
+                data: a.options.data,
+                polygon: a
+            };
+        }, this);
+
+        var message = {
+            type: mapOptions.type_messages.add_afficheurs,
+            data: afficheursMap
         };
         this.trigger(message);
     },
