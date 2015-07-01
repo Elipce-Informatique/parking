@@ -91,7 +91,8 @@ module.exports.type_messages = {
     set_calibre: 18,
     new_afficheur: 19,
     alerte_full: 20,
-    add_afficheurs: 21
+    add_afficheurs: 21,
+    add_alertes_full: 22
 };
 
 /**

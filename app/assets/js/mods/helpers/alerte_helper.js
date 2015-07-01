@@ -18,7 +18,7 @@ var alerte = ({
 
         // Les places de la zone
         var places = mapHelper.getPlacesInZone(zone, _inst);
-        console.log('places %o', places);
+        //console.log('places %o', places);
 
         var data = {
             places: places,
@@ -30,7 +30,7 @@ var alerte = ({
         // CONSTRUCTION DE l'AJAX DE CRÉATION
         var fData = formDataHelper('form_alerte_full', 'POST');
         fData.append('data', JSON.stringify(data));
-        fData.append('parking_id', _inst.parkingInfos.id);
+        fData.append('plan_id', _inst.planInfos.id);
         fData.append('geojson', geoJson);
 
         $.ajax({
