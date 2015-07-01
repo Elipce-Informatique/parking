@@ -167,6 +167,46 @@ module.exports.iconInvisible = L.Icon.extend({
 });
 
 /**
+ * Marker de place alerte full
+ * @type {void|*}
+ */
+module.exports.markerFull = L.Icon.extend({
+    options: {
+        iconAnchor: new L.Point(7, 7),
+        iconSize: new L.Point(14, 14),
+        iconUrl: BASE_URI + 'public/images/full.png'
+    }
+});
+
+
+
+/**
+ * Marker de place alerte change
+ * @type {void|*}
+ */
+module.exports.markerChange = L.Icon.extend({
+    options: {
+        iconAnchor: new L.Point(7, 7),
+        iconSize: new L.Point(14, 14),
+        iconUrl: BASE_URI + 'public/images/change.png'
+    }
+});
+
+
+/**
+ * Marker de place reservation
+ * @type {void|*}
+ */
+module.exports.markerReservation = L.Icon.extend({
+    options: {
+        iconAnchor: new L.Point(7, 7),
+        iconSize: new L.Point(14, 14),
+        iconUrl: BASE_URI + 'public/images/reservation.png'
+    }
+});
+
+
+/**
  * Ajout de propriétés perso au marker de type place
  * @type {void|*}
  */

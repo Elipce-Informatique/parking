@@ -39,6 +39,7 @@ return array(
         'description' => 'Veuillez sélectionner un plan afin de définir des alertes et réservations',
         'full' => 'Alerte groupe de places complet',
         'change' => 'Alerte changement état place',
-        'reservation' => 'Réserver des places'
+        'reservation' => 'Réserver des places',
+        'msg_full' => "Les places ... à ... sont occupées"
     ]
 );

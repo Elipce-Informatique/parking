@@ -59,7 +59,7 @@ var ModalAlerte = React.createClass({
                             attributes={
                             {
                                 label: Lang.get('global.nom'),
-                                name: "libelle",
+                                name: "description",
                                 required: true,
                                 groupClassName: 'row',
                                 wrapperClassName: 'col-md-9',
@@ -72,6 +72,7 @@ var ModalAlerte = React.createClass({
                             attributes={
                             {
                                 label: Lang.get('global.message'),
+                                placeholder: Lang.get('supervision.alerte.msg_full'),
                                 name: "message",
                                 required: true,
                                 groupClassName: 'row',

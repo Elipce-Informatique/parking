@@ -32,23 +32,56 @@ class AlerteController extends \BaseController
      */
     public function store()
     {
+
+        // Variable de retour
+        $retour = [
+            'save' => true,
+            'errorBdd' => false,
+            'model' => null,
+        ];
+
+        // Data postées
         $fields = Input::all();
+        $fields['data'] = json_decode($fields['data'], true);
+//        Log::debug('FIELDS ' . print_r($fields, true));
+
 
         try {
-           // Get type alerte
-           $modelType = TypeAlerte::where('code', '=', $fields['code']);
+            // Get type alerte
+            $modelType = TypeAlerte::where('code', '=', $fields['data']['code'])->first();
 
+//Log::debug('0 '.print_r($modelType,true));
+            $fields['type_alerte_id'] = $modelType->id;
+//Log::debug('1');
+            // Champs filtrés
+            $filteredFields = [];
+            // Parcours de tous les champs
+            foreach (['description', 'message', 'parking_id', 'type_alerte_id', 'geojson'] as $key) {
+                // On ne garde que les clés qui nous interessent
+                $filteredFields[$key] = $fields[$key];
+            }
             // Création alerte
-            $modelAlerte = Alerte::create($fields);
-
-            // Assoc type
-            $modelAlerte->associate($modelType);
+            $modelAlerte = Alerte::create($filteredFields);
+//Log::debug('2');
+            $place = [];
+            // Places à associer
+            foreach ($fields['data']['places'] as $place) {
+                $places[] = Place::find($place['id']);
+            }
 
             // Assoc places
+            $modelAlerte->places()->saveMany($places);
+
+
+            $retour['model'] = $modelAlerte;
+            $retour['places'] = $places;
 
         } catch (Exception $e) {
             Log::error('Erreur création alerte ' . $e->getMessage());
+            $retour['save'] = false;
+            $retour['errorBdd'] = true;
         }
+        return json_encode($retour);
     }
 
 
@@ -97,6 +130,23 @@ class AlerteController extends \BaseController
     public function destroy($id)
     {
         //
+    }
+
+
+    /**
+     * Toutes les alertes du parking
+     *
+     * @return Response
+     */
+    public function all($idParking)
+    {
+        TypeAlerte::with('alertes')
+//            return Concentrateur::with(['buses' => function ($q) {
+//                $q->with(['capteurs' => function ($q) {
+//                    $q->with('place')->orderBy('adresse');
+//                }]);
+//            }])->where('parking_id', '=', $id)
+//                ->get();
     }
 
 

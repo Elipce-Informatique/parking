@@ -3,10 +3,12 @@ require('sweetalert');
 
 var mapOptions = require('../helpers/map_options');
 var mapHelper = require('../helpers/map_helper');
+var alerteHelper = require('../helpers/alerte_helper');
 var zoneHelper = require('../helpers/zone_helper');
 var alleeHelper = require('../helpers/allee_helper');
 var placeHelper = require('../helpers/place_helper');
 var formDataHelper = require('../helpers/form_data_helper');
+
 /**
  *
  * Store permettant la gestion de toutes les actions liées à une carte.
@@ -67,7 +69,12 @@ var store = Reflux.createStore({
         lastDraw: {},
         lastParallelogramme: {},
         lastCalibre: {},
-        mapInst: {}
+        mapInst: {},
+        alertes: {
+            full: [],
+            change: []
+        },
+        reservation: []
     },
 
     /**
@@ -105,6 +112,9 @@ var store = Reflux.createStore({
         // Récupération en BDD des données de types de places
         var p3 = this.recupInfosTypesPlaces();
 
+        // Récupération alertes "full"
+        var p4 = this.recupAlertes();
+
         $.when(p1, p2, p3).done(function () {
             // Affichage des places du niveau
             this.affichageDataInitial();
@@ -119,7 +129,7 @@ var store = Reflux.createStore({
      */
     // CRÉATION D'UN DESSIN FINIE (Ajout a la carte)
     onDraw_created: function (data) {
-        console.log('Darw created %o',data);
+        console.log('Darw created %o', data);
         this._inst.lastDraw = data;
 
 
@@ -158,7 +168,7 @@ var store = Reflux.createStore({
                 zones = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.zonesGroup);
                 allees = mapHelper.getPolygonsArrayFromLeafletLayerGroup(this._inst.mapInst.alleesGroup);
 
-                var geometryOk = zoneHelper.geometryCheck(data.e.layer._latlngs, zones, allees);
+                var geometryOk = alerteHelper.geometryCheck(data.e.layer._latlngs, zones, allees);
 
                 // Géométrie OK ouverture de la POPUP
                 if (geometryOk) {
@@ -364,23 +374,31 @@ var store = Reflux.createStore({
      * @param zone: zone géométrique dessinée par le user
      */
     handleFull: function (formDom, zone) {
-        zoneHelper.createZone(formDom, zone, this._inst, function (data) {
-            data = JSON.parse(data);
-            // TEST ÉTAT INSERTION
-            if (data.retour !== undefined) {
-                // 1 - TRANSFORMATION DES DATA DE LA BDD EN ZONES
-                var zonesCreated = zoneHelper.createZonesMapFromZonesBDD([data.retour], zoneHelper.style);
-                // 2 - SAUVEGARDE DES ZONES EN LOCAL DNAS LE STORE
-                this._inst.zones = this._inst.zones.concat(zonesCreated);
-                // 3 - ENVOI DES INFOS À AFFICHER SUR LA CARTE
-                var retour = {
-                    type: mapOptions.type_messages.add_zones,
-                    data: zonesCreated
-                };
-                this.trigger(retour);
-                Actions.notif.success();
-            } else {
-                Actions.notif.error();
+        alerteHelper.createAlerteFull(formDom, zone, this._inst, function (tab) {
+            // Sauvegarde OK
+            if (tab.save) {
+                // Notification
+                Actions.notif.success(Lang.get('global.notif_success'));
+
+                tab.places.forEach(function (place) {
+
+                    // Ajout des markers
+                    var marker = L.marker([place.lat, place.lng], {
+                        icon: new mapOptions.markerFull(),
+                        data: place
+                    }).bindLabel(
+                        tab.model.description
+                    );
+                    this._inst.mapInst.alerteFullGroup.addLayer(marker);
+
+                }, this);
+
+                // Fermeture modal
+                this.trigger({'type': mapOptions.type_messages.hide_modal});
+            }
+            // Erreur SQL
+            else {
+                Actions.notif.error(Lang.get('global.notif_erreur'));
             }
         }.bind(this));
     },
@@ -412,247 +430,10 @@ var store = Reflux.createStore({
         }.bind(this));
     },
 
-    /**
-     * Lance une requête AJAX sur l'url et les data passées en params
-     * puis notifie l'utilisateur selon le retour
-     * @param url => url à appeller
-     * @param fData => données à passer dans la requête
-     */
-    deleteFromIds: function (url, fData) {
-        $.ajax({
-            type: 'POST',
-            url: url,
-            processData: false,
-            contentType: false,
-            data: fData
-        })
-            .done(function (result) {
-                console.log('Success de la requête de suppression ? %o', result);
-                if (result.save) {
-                    Actions.notif.success();
-                } else {
-                    Actions.notif.error();
-                }
-            })
-            .fail(function (xhr, type, exception) {
-                // if ajax fails display error alert
-                console.error("ajax error response error " + type);
-                console.error("ajax error response body " + xhr.responseText);
-                Actions.notif.error();
-            });
-    },
 
-    /**
-     * Appellée quand la modale est validée pour initialiser la série d'affectation.
-     *
-     * @param concentrateur
-     * @param bus
-     * @param capteurInit -> Premier capteur à affecter
-     * @param capteurs -> Capteurs restant sur le BUS concerné
-     */
-    onStart_affectation_capteurs: function (concentrateur, bus, capteurInit, capteurs) {
-        // REMPLISSAGE DES INFOS
-        this._inst.capteur_place.concentrateur = concentrateur;
-        this._inst.capteur_place.bus = bus;
-        this._inst.capteur_place.capteurInit = capteurInit;
-        this._inst.capteur_place.capteursTotaux = capteurs;
-        this._inst.capteur_place.capteursRestant = capteurs;
-
-        // MISE À JOUR DU MESSAGE D'INFO
-        var infos = mapHelper.generateInfosCapteurPlace(
-            concentrateur.v4_id,
-            bus.num,
-            capteurInit.adresse,
-            capteurs.length
-        );
-
-        var retour = {
-            type: mapOptions.type_messages.hide_modal,
-            data: {}
-        };
-        this.trigger(retour);
-
-        // INIT MESSAGE D INFO
-        retour = {
-            type: mapOptions.type_messages.show_infos,
-            data: infos
-        };
-        this.trigger(retour);
-
-        // ATTACHEMENT DES ÉVÈNEMENTS SUR LES PLACES
-        this._inst.mapInst.placesGroup.on('click', this.onPlaceCapteurClick, this);
-    },
-
-    /**
-     * Event listener sur click d'une place quand on est en mode capteur.
-     * #- Récupère la place cliquée
-     * #- Récupère le capteur à affecter
-     * #- Test si place libre en JS
-     * #- Lance l'update AJAX
-     * - Si succès
-     *      #- changement couleur place affectée
-     *      #- Affectation du capteur id dans la place sur la carte
-     *      #- Suppression du capteur de la liste restante
-     *      #- Modification du message d'info
-     *      - Avertissement si on a affecté le dernier capteur
-     * - Si fail
-     *      - Notification utilisateur (Place déjà affectée )
-     *
-     * @param evt
-     */
-    onPlaceCapteurClick: function (evt) {
-
-        var place = _.cloneDeep(evt.layer.options.data);
-        var capteur = _.first(this._inst.capteur_place.capteursRestant);
-
-
-        // PLACE NON AFFECTÉE
-        if (place.capteur_id == null) {
-
-            // Formattage des données
-            var fData = formDataHelper('', 'POST');
-            fData.append('capteur_id', capteur.id);
-            fData.append('mode_modif', 0);
-
-            $.ajax({
-                type: 'POST',
-                url: BASE_URI + 'parking/place/' + place.id + '/setCapteur',
-                processData: false,
-                contentType: false,
-                data: fData,
-                context: this
-            })
-                .done(function (retour) {
-                    // OK
-                    if (retour.save) {
-
-                        // SUPPRESSION PLACE MAP
-                        var retourTrigger = {
-                            type: mapOptions.type_messages.delete_place,
-                            data: {
-                                place_id: place.id
-                            }
-                        };
-                        this.trigger(retourTrigger);
-
-                        var newPlace = retour.model;
-                        // CREATION PLACE MAP
-                        retourTrigger = {
-                            type: mapOptions.type_messages.add_places,
-                            data: this.createPlacesMapFromPlacesBDD([newPlace])
-                        };
-                        this.trigger(retourTrigger);
-
-                        // SUPPRESSION DU CAPTEUR DE LA LISTE RESTANTE
-                        this._inst.capteur_place.capteursRestant = _.drop(this._inst.capteur_place.capteursRestant);
-
-                        // MODIFICATION MESSAGE INFOS
-                        var infos = mapHelper.generateInfosCapteurPlace(
-                            this._inst.capteur_place.concentrateur.v4_id,
-                            this._inst.capteur_place.bus.num,
-                            _.first(this._inst.capteur_place.capteursRestant).adresse,
-                            this._inst.capteur_place.capteursRestant.length
-                        );
-
-                        retourTrigger = {
-                            type: mapOptions.type_messages.update_infos,
-                            data: infos
-                        };
-
-                        this.trigger(retourTrigger);
-
-                        // DERNIER CAPTEUR ?
-                        if (this._inst.capteur_place.capteursRestant.length == 0) {
-                            swal(Lang.get('administration_parking.carte.swal_capteur_bus_finie'));
-
-                            retourTrigger = {
-                                type: mapOptions.type_messages.hide_infos,
-                                data: infos
-                            };
-                            this.trigger(retourTrigger);
-                            this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
-                        }
-
-                    }
-                    // ERREURS
-                    else if (retour.doublon) {
-                        // Petite notif venant de PHP
-                        Actions.notif.error(Lang.get('administration_parking.carte.place_deja_affectee'));
-                    } else {
-                        // Erreur de BDD
-                        Actions.notif.error();
-                    }
-                })
-                .fail(function (xhr, type, exception) {
-                    //TODO if ajax fails display error alert
-                    console.error("ajax error response error " + type);
-                    console.error("ajax error response body " + xhr.responseText);
-                });
-        }
-        // PLACE AFFECTÉE
-        else {
-            // Petite notif selon vérif JS
-            Actions.notif.error(Lang.get('administration_parking.carte.place_deja_affectee'));
-        }
-    },
-
-    /**
-     * Arrête l'affectation:
-     * - Supprime les events listeners sur les places
-     * - Vide les données du store en rapport avec l'affectation
-     */
-    onStop_affectation_capteurs: function () {
-
-        // MISE À JOUR DU MESSAGE D'INFO
-        var retour = {
-            type: mapOptions.type_messages.hide_infos,
-            data: {}
-        };
-        this.trigger(retour);
-
-        // DÉTACHEMENT DES ÉVÈNEMENTS SUR LES PLACES
-        this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
-    },
-
-    /**
-     * ---------------------------------------------------------------------------
-     * UTILITAIRES DIVERSES ------------------------------------------------------
-     * ---------------------------------------------------------------------------
-     */
-
-    /**
-     * Les data correspondent au layer créé par le plugin.
-     * Le premier test consiste à vérifier qu'on ait 3 points.
-     * @param data : le Layer créé par le plugin de map
-     */
-    createParallelogramme: function (data) {
-
-        if (data.e.layer._latlngs.length != 3) {
-            swal(Lang.get('administration_parking.carte.3_points_seulement'));
-            return {};
-        } else {
-            var lastPoint = mapHelper.getLastPointOfParallelogramme(data.e.layer._latlngs);
-            data.e.layer._latlngs.push(lastPoint);
-            return data;
-        }
-
-    },
-
-    /**
-     * Vérifie le dessin pour le calibre:
-     * Deux points exactement
-     * @param data
-     * @returns {L.Polyline._latlngs|*|L.Polygon._latlngs}
-     */
-    checkCalibre: function (data) {
-        var coords = data.e.layer._latlngs;
-
-        if (coords.length != 2) {
-            swal(Lang.get('administration_parking.carte.swal_calibre_points_ko'));
-            coords = {};
-        }
-        return coords;
-    },
+    /*************************************************************************
+     * *********************************UTILITAIRES*************************
+     * **********************************************************************/
 
     /**
      * Appel AJAX pour récupérer les informations du parking
@@ -696,7 +477,6 @@ var store = Reflux.createStore({
                 this._inst.planInfos.parking_id = data.parking_id;
                 this._inst.planInfos.etat_general_id = data.etat_general_id;
                 this._inst.calibre = data.calibre;
-                //console.log('calibre '+ this._inst.calibre);
 
                 if (parseFloat(data.calibre) == 0) {
                     this.swalCalibre();
@@ -794,6 +574,26 @@ var store = Reflux.createStore({
     },
 
     /**
+     * Requête AJAX pour récupérer les alertes
+     */
+    recupAlertes: function () {
+        return $.ajax({
+            url: 'parking/alerte/all',
+            context: this,
+            success: function (data) {
+
+                // Les alertes
+                this._inst.alertes = data;
+            },
+            error: function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            }
+        });
+    },
+
+    /**
      * Fonction appellée lors de l'init, on a déjà toutes les données dans _inst
      */
     affichageDataInitial: function () {
@@ -831,6 +631,36 @@ var store = Reflux.createStore({
         };
         this.trigger(message);
 
+        // LES ALERTES FULL
+//// todo
+//        if (place.data.capteur_id != null) {
+//            var marker = L.marker([place.data.lat, place.data.lng], {
+//                icon: new mapOptions.pastilleCapteur(),
+//                data: place.data
+//            }).bindLabel(
+//                place.data.capteur.bus.concentrateur.v4_id + '.' +
+//                place.data.capteur.bus.num + '.' +
+//                place.data.capteur.adresse
+//            );
+//            this._inst.placesMarkersGroup.addLayer(marker);
+//        }
+//        // MARKER INVISIBLE SI PAS CAPTEUR
+//        else {
+//            var marker = L.marker([place.data.lat, place.data.lng], {
+//                icon: new mapOptions.iconInvisible(),
+//                data: place.data
+//            });
+//            this._inst.placesMarkersGroup.addLayer(marker);
+//        }
+
+        // Par défaut sur alerte "full"
+        message = {
+            type: mapOptions.type_messages.mode_change,
+            data: {
+                mode: mapOptions.dessin.alerte_full
+            }
+        };
+        this.trigger(message);
     },
 
     /**
@@ -864,18 +694,8 @@ var store = Reflux.createStore({
                 marker: marker
             };
         }, this);
-    },
-
-    /**
-     * Prévient l'utilisateur que le plan qu'il visualise n'est pas calibré.
-     */
-    swalCalibre: function () {
-        swal({
-            title: Lang.get('administration_parking.carte.swal_calibre_non_init_titre'),
-            text: Lang.get('administration_parking.carte.swal_calibre_non_init'),
-            html: true
-        });
     }
-});
+
+ });
 
 module.exports = store;
