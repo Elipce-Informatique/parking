@@ -92,7 +92,7 @@ module.exports.type_messages = {
     new_afficheur: 19,
     alerte_full: 20,
     add_afficheurs: 21,
-    add_alertes_full: 22
+    add_alertes_full: 22,
     edit_place: 23,
     edit_allee: 24,
     edit_zone: 25,
