@@ -99,4 +99,4 @@ Les fichier CSS sont écrits avec le langage Stylus (http://learnboost.github.io
 dans la section scripts : ```@section('scripts')```
 
 ### PHP
-- Voir le [package.json](package.json) section **"require"**
+- Voir le [composer.json](composer.json) section **"require"**
