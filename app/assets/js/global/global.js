@@ -81,6 +81,11 @@ require('sweetalert');
     global.Actions.map = Reflux.createActions([
         // ACTIONS MAP GENERALES
         "map_initialized",
+        "feature_add",
+        "feature_place_add",
+        "feature_allee_add",
+        "feature_zone_add",
+        "feature_afficheur_add",
         // ACTIONS DE DESSIN
         "draw_created",
         "draw_edited",

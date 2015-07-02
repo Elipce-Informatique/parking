@@ -91,7 +91,11 @@ module.exports.type_messages = {
     set_calibre: 18,
     new_afficheur: 19,
     alerte_full: 20,
-    add_afficheurs: 21
+    add_afficheurs: 21,
+    edit_place: 22,
+    edit_allee: 23,
+    edit_zone: 24,
+    edit_afficheur: 25
 };
 
 /**
@@ -179,7 +183,6 @@ module.exports.markerFull = L.Icon.extend({
 });
 
 
-
 /**
  * Marker de place alerte change
  * @type {void|*}
@@ -225,5 +228,9 @@ module.exports.modal_type = {
     place_simple: 5,
     capteur: 6,
     luminosite: 7,
-    calibre: 8
+    calibre: 8,
+    edit_place: 9,
+    edit_allee: 10,
+    edit_zone: 11,
+    edit_afficheur: 12
 };

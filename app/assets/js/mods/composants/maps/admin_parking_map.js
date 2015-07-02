@@ -125,7 +125,8 @@ var parkingMap = React.createClass({
         // CRÉATION DE LA MAP
         this._inst.map = new L.Map(this.props.divId, {
             crs: mapHelper.customZoomCRS,
-            maxZoom: 12
+            maxZoom: 12,
+            contextmenu: true
         }).setView([0, 0], 0);
 
         // AJOUT DE L'IMAGE DE FOND
@@ -150,11 +151,11 @@ var parkingMap = React.createClass({
         this._inst.calibreGroup = new L.FeatureGroup();
         this._inst.map.addLayer(this._inst.calibreGroup);
 
-        // Style de l'afficheur group
-        this._inst.afficheursGroup.setStyle({
-            weight: 1,
-            opacity: 1
-        });
+        // INIT EVENTS LAERS
+        this._inst.placesGroup.on('layeradd', Actions.map.feature_place_add);
+        this._inst.alleesGroup.on('layeradd', Actions.map.feature_allee_add);
+        this._inst.zonesGroup.on('layeradd', Actions.map.feature_zone_add);
+        this._inst.afficheursGroup.on('layeradd', Actions.map.feature_afficheur_add);
 
         Actions.map.map_initialized(this._inst.map, this.props.calibre, parkingData, this._inst);
     },
@@ -522,6 +523,19 @@ var parkingMap = React.createClass({
             case mapOptions.type_messages.new_afficheur:
                 this._onNewAfficheur(data);
                 break;
+
+            case mapOptions.type_messages.edit_place:
+                this._onEditPlace(data.layer);
+                break;
+            case mapOptions.type_messages.edit_allee:
+                this._onEditAllee(data.layer);
+                break;
+            case mapOptions.type_messages.edit_zone:
+                this._onEditZone(data.layer);
+                break;
+            case mapOptions.type_messages.edit_afficheur:
+                this._onEditAfficheur(data.layer);
+                break;
             default:
                 break;
         }
@@ -817,6 +831,54 @@ var parkingMap = React.createClass({
         });
     },
 
+    /**
+     * Lance l'affichage de la modale EditPlace
+     * @private
+     */
+    _onEditPlace: function (layer) {
+        this.setState({
+            modalType: mapOptions.modal_type.edit_place,
+            isModalOpen: true,
+            editData: layer
+        });
+    },
+
+    /**
+     * Lance l'affichage de la modale EditAllee
+     * @private
+     */
+    _onEditAllee: function (layer) {
+        this.setState({
+            modalType: mapOptions.modal_type.edit_allee,
+            isModalOpen: true,
+            editData: layer
+        });
+    },
+
+    /**
+     * Lance l'affichage de la modale EditZone
+     * @private
+     */
+    _onEditZone: function (layer) {
+        this.setState({
+            modalType: mapOptions.modal_type.edit_zone,
+            isModalOpen: true,
+            editData: layer
+        });
+    },
+
+    /**
+     * Lance l'affichage de la modale EditAfficheur
+     * @private
+     */
+    _onEditAfficheur: function (layer) {
+        this.setState({
+            modalType: mapOptions.modal_type.edit_afficheur,
+            isModalOpen: true,
+            editData: layer
+        });
+    },
+
     /*******************************************************************/
     /*******************************************************************/
     /*******************************************************************/
@@ -946,9 +1008,102 @@ var parkingMap = React.createClass({
             return <span/>;
         } else {
             return (
-                <ModalCalibre
-                    onToggle={this.handleToggle}
-                />
+                <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+                    <div className="modal-body">
+                        This modal is controlled by our custom trigger component.
+                    </div>
+                    <div className="modal-footer">
+                        <Button onClick={this.handleToggle}>Close</Button>
+                    </div>
+                </Modal>
+            );
+        }
+    },
+
+    /**
+     * TODO
+     * @returns {XML}
+     * @private
+     */
+    _modalEditPlace: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        } else {
+            return (
+                <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+                    <div className="modal-body">
+                        This modal is controlled by our custom trigger component.
+                    </div>
+                    <div className="modal-footer">
+                        <Button onClick={this.handleToggle}>Close</Button>
+                    </div>
+                </Modal>
+            );
+        }
+    },
+
+    /**
+     * TODO
+     * @returns {XML}
+     * @private
+     */
+    _modalEditAllee: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        } else {
+            return (
+                <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+                    <div className="modal-body">
+                        This modal is controlled by our custom trigger component.
+                    </div>
+                    <div className="modal-footer">
+                        <Button onClick={this.handleToggle}>Close</Button>
+                    </div>
+                </Modal>
+            );
+        }
+    },
+
+    /**
+     * TODO
+     * @returns {XML}
+     * @private
+     */
+    _modalEditZone: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        } else {
+            return (
+                <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+                    <div className="modal-body">
+                        This modal is controlled by our custom trigger component.
+                    </div>
+                    <div className="modal-footer">
+                        <Button onClick={this.handleToggle}>Close</Button>
+                    </div>
+                </Modal>
+            );
+        }
+    },
+
+    /**
+     * TODO
+     * @returns {XML}
+     * @private
+     */
+    _modalEditAfficheur: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        } else {
+            return (
+                <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+                    <div className="modal-body">
+                        This modal is controlled by our custom trigger component.
+                    </div>
+                    <div className="modal-footer">
+                        <Button onClick={this.handleToggle}>Close</Button>
+                    </div>
+                </Modal>
             );
         }
     },
@@ -984,6 +1139,19 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.modal_type.calibre:
                 retour = this._modalCalibre();
+                break;
+
+            case mapOptions.modal_type.edit_place:
+                retour = this._modalEditPlace();
+                break;
+            case mapOptions.modal_type.edit_allee:
+                retour = this._modalEditAllee();
+                break;
+            case mapOptions.modal_type.edit_zone:
+                retour = this._modalEditZone();
+                break;
+            case mapOptions.modal_type.edit_afficheur:
+                retour = this._modalEditAfficheur();
                 break;
             default:
                 retour = <span/>;

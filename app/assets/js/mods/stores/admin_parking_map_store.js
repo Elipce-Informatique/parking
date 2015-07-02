@@ -396,6 +396,136 @@ var store = Reflux.createStore({
 
     /**
      * ---------------------------------------------------------------------------
+     * AJOUT D'UNE FEATURE À LA CARTE --------------------------------------------
+     * ---------------------------------------------------------------------------
+     */
+    feature_place_add: function (e) {
+        console.log('feature place add : %o', e);
+        e.layer.bindContextMenu({
+            contextmenu: true,
+            contextmenuItems: [{
+                text: '<b>' + e.layer.options.data.libelle + '</b>',
+                index: 0
+            }, {
+                separator: true,
+                index: 1
+            }, {
+                text: Lang.get('global.modifier'),
+                index: 2,
+                callback: function (evt) {
+                    console.log('callback place : %o', this);
+                    // LANCEMENT DU MODAL DE MODIF DE PLACES
+                    var data = {
+                        layer: this.layer
+                    };
+                    var retour = {
+                        type: mapOptions.type_messages.edit_place,
+                        data: data
+                    };
+                    this.storeContext.trigger(retour);
+                }.bind({
+                        e: e,
+                        storeContext: this
+                    })
+            }]
+        });
+    },
+    feature_allee_add: function (e) {
+        console.log('feature allee add : %o', e);
+        e.layer.bindContextMenu({
+            contextmenu: true,
+            contextmenuItems: [{
+                text: '<b>' + e.layer.options.data.libelle + '</b>',
+                index: 0
+            }, {
+                separator: true,
+                index: 1
+            }, {
+                text: Lang.get('global.modifier'),
+                index: 2,
+                callback: function (evt) {
+                    console.log('callback place : %o', this);
+                    // LANCEMENT DU MODAL DE MODIF DE ALLEES
+                    var data = {
+                        layer: this.layer
+                    };
+                    var retour = {
+                        type: mapOptions.type_messages.edit_allee,
+                        data: data
+                    };
+                    this.storeContext.trigger(retour);
+                }.bind({
+                        e: e,
+                        storeContext: this
+                    })
+            }]
+        });
+    },
+    feature_zone_add: function (e) {
+        console.log('feature zone add : %o', e);
+        e.layer.bindContextMenu({
+            contextmenu: true,
+            contextmenuItems: [{
+                text: '<b>' + e.layer.options.data.libelle + '</b>',
+                index: 0
+            }, {
+                separator: true,
+                index: 1
+            }, {
+                text: Lang.get('global.modifier'),
+                index: 2,
+                callback: function (evt) {
+                    console.log('callback place : %o', this);
+                    // LANCEMENT DU MODAL DE MODIF DE ZONES
+                    var data = {
+                        layer: this.layer
+                    };
+                    var retour = {
+                        type: mapOptions.type_messages.edit_zone,
+                        data: data
+                    };
+                    this.storeContext.trigger(retour);
+                }.bind({
+                        e: e,
+                        storeContext: this
+                    })
+            }]
+        });
+    },
+    feature_afficheur_add: function (e) {
+        console.log('feature afficheur add : %o', e);
+        e.layer.bindContextMenu({
+            contextmenu: true,
+            contextmenuItems: [{
+                text: '<b>' + e.layer.options.data.libelle + '</b>',
+                index: 0
+            }, {
+                separator: true,
+                index: 1
+            }, {
+                text: Lang.get('global.modifier'),
+                index: 2,
+                callback: function (evt) {
+                    console.log('callback place : %o', this);
+                    // LANCEMENT DU MODAL DE MODIF DE AFFICHEURS
+                    var data = {
+                        layer: this.layer
+                    };
+                    var retour = {
+                        type: mapOptions.type_messages.edit_afficheur,
+                        data: data
+                    };
+                    this.storeContext.trigger(retour);
+                }.bind({
+                        e: e,
+                        storeContext: this
+                    })
+            }]
+        });
+    },
+
+    /**
+     * ---------------------------------------------------------------------------
      * CHANGEMENT DU MODE DE DESSIN ----------------------------------------------
      * ---------------------------------------------------------------------------
      */
