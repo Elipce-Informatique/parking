@@ -145,6 +145,8 @@ var parkingMap = React.createClass({
         this._inst.map.addLayer(this._inst.calibreGroup);
         this._inst.alerteFullGroup = new L.FeatureGroup();
         this._inst.map.addLayer(this._inst.alerteFullGroup);
+        this._inst.alerteFullMarkersGroup = new L.LayerGroup();
+        this._inst.map.addLayer(this._inst.alerteFullMarkersGroup);
         this._inst.alerteChangeGroup = new L.FeatureGroup();
         this._inst.map.addLayer(this._inst.alerteChangeGroup);
         this._inst.reservationGroup = new L.FeatureGroup();
@@ -403,16 +405,7 @@ var parkingMap = React.createClass({
                 this.onSetCalibre(data);
                 break;
             case mapOptions.type_messages.alerte_full:
-                console.log('onStorreTrigger full');
-                this.setState({
-                    isModalOpen: true
-                });
-                break;
             case mapOptions.type_messages.alerte_change:
-                this.setState({
-                    isModalOpen: true
-                });
-                break;
             case mapOptions.type_messages.reservation:
                 this.setState({
                     isModalOpen: true
@@ -422,6 +415,9 @@ var parkingMap = React.createClass({
                 this.setState({
                     isModalOpen: false
                 });
+                break;
+            case mapOptions.type_messages.add_alertes_full:
+                this.onAddAlertesMarkers(data.data);
                 break;
             default:
                 break;
@@ -498,9 +494,18 @@ var parkingMap = React.createClass({
     onPlacesAdded: function (formes) {
         var liste_data = formes.data;
         _.each(liste_data, function (place) {
+            // Dessin de la place
             this._inst.lastNum = Math.max(this._inst.lastNum, place.data.num);
             this._inst.placesGroup.addLayer(place.polygon);
+
+            // Marker invisible au centre de chaque place
+            var marker = L.marker([place.data.lat, place.data.lng], {
+                icon: new mapOptions.iconInvisible(),
+                data: place.data
+            });
+            this._inst.placesMarkersGroup.addLayer(marker);
         }, this);
+
 
         this.setState({
             isModalOpen: false
@@ -539,6 +544,18 @@ var parkingMap = React.createClass({
         this.setState({
             isModalOpen: false
         });
+    },
+
+    /**
+     * Ajout des markers de type alerte sur la map
+     * @param data: tableau de markers
+     */
+    onAddAlertesMarkers: function(data){
+        //console.log('onAddAlertesMarkers %o', data);
+        // Parcours des markers à ajouter
+        data.forEach(function(marker){
+            this._inst.alerteFullMarkersGroup.addLayer(marker);
+        },this);
     },
 
 

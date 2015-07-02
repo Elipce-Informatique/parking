@@ -70,10 +70,7 @@ var store = Reflux.createStore({
         lastParallelogramme: {},
         lastCalibre: {},
         mapInst: {},
-        alertes: {
-            full: [],
-            change: []
-        },
+        alertes: [],
         reservation: []
     },
 
@@ -113,9 +110,9 @@ var store = Reflux.createStore({
         var p3 = this.recupInfosTypesPlaces();
 
         // Récupération alertes "full"
-        var p4 = this.recupAlertes();
+        var p4 = this.recupAlertes(parkingInfos.planId);
 
-        $.when(p1, p2, p3).done(function () {
+        $.when(p1, p2, p3, p4).done(function () {
             // Affichage des places du niveau
             this.affichageDataInitial();
         }.bind(this));
@@ -576,12 +573,11 @@ var store = Reflux.createStore({
     /**
      * Requête AJAX pour récupérer les alertes
      */
-    recupAlertes: function () {
+    recupAlertes: function (planId) {
         return $.ajax({
-            url: 'parking/alerte/all',
+            url: 'parking/alerte/all/'+planId,
             context: this,
             success: function (data) {
-
                 // Les alertes
                 this._inst.alertes = data;
             },
@@ -631,27 +627,53 @@ var store = Reflux.createStore({
         };
         this.trigger(message);
 
-        // LES ALERTES FULL
-//// todo
-//        if (place.data.capteur_id != null) {
-//            var marker = L.marker([place.data.lat, place.data.lng], {
-//                icon: new mapOptions.pastilleCapteur(),
-//                data: place.data
-//            }).bindLabel(
-//                place.data.capteur.bus.concentrateur.v4_id + '.' +
-//                place.data.capteur.bus.num + '.' +
-//                place.data.capteur.adresse
-//            );
-//            this._inst.placesMarkersGroup.addLayer(marker);
-//        }
-//        // MARKER INVISIBLE SI PAS CAPTEUR
-//        else {
-//            var marker = L.marker([place.data.lat, place.data.lng], {
-//                icon: new mapOptions.iconInvisible(),
-//                data: place.data
-//            });
-//            this._inst.placesMarkersGroup.addLayer(marker);
-//        }
+        //console.log('alertes %o',this._inst.alertes);
+        // LES ALERTES
+        if (this._inst.alertes.length > 0) {
+            // Parcours des types d'alertes
+            this._inst.alertes.forEach(function (typeAlerte) {
+                switch (typeAlerte.code) {
+                    case 'full':
+                        // On a des alertes de type "full"
+                        if (typeAlerte.alertes.length > 0) {
+                            var marker;
+                            var markers = [];
+                            // Parcours des alertes de type "full"
+                            typeAlerte.alertes.forEach(function (full) {
+                                // Il y a des places associées à cette alerte
+                                if (full.places.length > 0) {
+                                    // Parcours des places
+                                    markers = _.union(markers, _.map(full.places, function (place) {
+                                        // Création du marker
+                                        marker = L.marker([place.lat, place.lng], {
+                                            icon: new mapOptions.markerFull(),
+                                            data: place
+                                        }).bindLabel(
+                                           full.description
+                                        );
+                                        return marker;
+
+                                    }.bind(this)));
+                                }
+                            }, this);
+                            // Envoie des données à la map
+                            message = {
+                                type: mapOptions.type_messages.add_alertes_full,
+                                data: markers
+                            };
+                            //console.log('message %o', message);
+                            this.trigger(message);
+                        }
+
+                        break;
+                    case 'change':
+
+                        break;
+                    default:
+                        break;
+                }
+            }, this);
+        }
 
         // Par défaut sur alerte "full"
         message = {
@@ -696,6 +718,6 @@ var store = Reflux.createStore({
         }, this);
     }
 
- });
+});
 
 module.exports = store;
