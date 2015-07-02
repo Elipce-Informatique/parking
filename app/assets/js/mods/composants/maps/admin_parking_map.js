@@ -11,6 +11,7 @@ var ModalZone = require('../modals/mod_zone');
 var ModalAllee = require('../modals/mod_allee');
 var ModalCapteur = require('../modals/mod_capteur');
 var ModalAfficheur = require('../modals/mod_afficheur');
+var ModalEditPlace = require('../modals/mod_edit_place');
 var Field = require('../formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputNumberEditable = Field.InputNumberEditable;
@@ -78,7 +79,8 @@ var parkingMap = React.createClass({
     getInitialState: function () {
         return {
             currentDrawGroup: mapOptions.control.groups[this._inst.currentMode],
-            isModalOpen: false
+            isModalOpen: false,
+            modalParams: {}
         };
     },
 
@@ -525,16 +527,16 @@ var parkingMap = React.createClass({
                 break;
 
             case mapOptions.type_messages.edit_place:
-                this._onEditPlace(data.layer);
+                this._onEditPlace(data.data);
                 break;
             case mapOptions.type_messages.edit_allee:
-                this._onEditAllee(data.layer);
+                this._onEditAllee(data.data);
                 break;
             case mapOptions.type_messages.edit_zone:
-                this._onEditZone(data.layer);
+                this._onEditZone(data.data);
                 break;
             case mapOptions.type_messages.edit_afficheur:
-                this._onEditAfficheur(data.layer);
+                this._onEditAfficheur(data.data);
                 break;
             default:
                 break;
@@ -835,11 +837,12 @@ var parkingMap = React.createClass({
      * Lance l'affichage de la modale EditPlace
      * @private
      */
-    _onEditPlace: function (layer) {
+    _onEditPlace: function (data) {
         this.setState({
             modalType: mapOptions.modal_type.edit_place,
             isModalOpen: true,
-            editData: layer
+            editData: data.layer,
+            modalParams: data.modalParams
         });
     },
 
@@ -847,11 +850,11 @@ var parkingMap = React.createClass({
      * Lance l'affichage de la modale EditAllee
      * @private
      */
-    _onEditAllee: function (layer) {
+    _onEditAllee: function (data) {
         this.setState({
             modalType: mapOptions.modal_type.edit_allee,
             isModalOpen: true,
-            editData: layer
+            editData: data.layer
         });
     },
 
@@ -859,11 +862,11 @@ var parkingMap = React.createClass({
      * Lance l'affichage de la modale EditZone
      * @private
      */
-    _onEditZone: function (layer) {
+    _onEditZone: function (data) {
         this.setState({
             modalType: mapOptions.modal_type.edit_zone,
             isModalOpen: true,
-            editData: layer
+            editData: data.layer
         });
     },
 
@@ -871,11 +874,11 @@ var parkingMap = React.createClass({
      * Lance l'affichage de la modale EditAfficheur
      * @private
      */
-    _onEditAfficheur: function (layer) {
+    _onEditAfficheur: function (data) {
         this.setState({
             modalType: mapOptions.modal_type.edit_afficheur,
             isModalOpen: true,
-            editData: layer
+            editData: data.layer
         });
     },
 
@@ -905,7 +908,7 @@ var parkingMap = React.createClass({
         if (!this.state.isModalOpen) {
             return <span/>;
         } else {
-            return (<ModalAllee
+            return (<ModalEditPlace
                 onToggle={this.handleToggle}
             />);
         }
@@ -965,7 +968,7 @@ var parkingMap = React.createClass({
         }
     },
     /**
-     * TODO : Modal de saisie des informations pour créer un capteur
+     * Modal de saisie des informations pour créer un capteur
      * @returns {XML}
      * @private
      */
@@ -1030,14 +1033,10 @@ var parkingMap = React.createClass({
             return <span/>;
         } else {
             return (
-                <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
-                    <div className="modal-body">
-                        This modal is controlled by our custom trigger component.
-                    </div>
-                    <div className="modal-footer">
-                        <Button onClick={this.handleToggle}>Close</Button>
-                    </div>
-                </Modal>
+                <ModalEditPlace
+                    onToggle={this.handleToggle}
+                    {...this.state.modalParams}
+                />
             );
         }
     },

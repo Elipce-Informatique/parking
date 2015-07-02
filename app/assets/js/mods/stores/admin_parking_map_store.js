@@ -399,7 +399,7 @@ var store = Reflux.createStore({
      * AJOUT D'UNE FEATURE À LA CARTE --------------------------------------------
      * ---------------------------------------------------------------------------
      */
-    feature_place_add: function (e) {
+    onFeature_place_add: function (e) {
         console.log('feature place add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
@@ -413,10 +413,13 @@ var store = Reflux.createStore({
                 text: Lang.get('global.modifier'),
                 index: 2,
                 callback: function (evt) {
-                    console.log('callback place : %o', this);
                     // LANCEMENT DU MODAL DE MODIF DE PLACES
                     var data = {
-                        layer: this.layer
+                        layer: this.e.layer,
+                        modalParams: {
+                            typesPlaces: this.storeContext._inst.types_places,
+                            dataItem: this.e.layer.options.data
+                        }
                     };
                     var retour = {
                         type: mapOptions.type_messages.edit_place,
@@ -430,7 +433,7 @@ var store = Reflux.createStore({
             }]
         });
     },
-    feature_allee_add: function (e) {
+    onFeature_allee_add: function (e) {
         console.log('feature allee add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
@@ -461,7 +464,7 @@ var store = Reflux.createStore({
             }]
         });
     },
-    feature_zone_add: function (e) {
+    onFeature_zone_add: function (e) {
         console.log('feature zone add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
@@ -492,7 +495,7 @@ var store = Reflux.createStore({
             }]
         });
     },
-    feature_afficheur_add: function (e) {
+    onFeature_afficheur_add: function (e) {
         console.log('feature afficheur add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
