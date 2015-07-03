@@ -49,7 +49,7 @@ var ModalEditPlace = React.createClass({
         };
     },
     componentWillMount: function () {
-        initModale(this.props.parkingId);
+        initModale(this.props.parkingId, this.props.dataItem.id);
         // Génération des données de la liste des types
         var data = _.map(this.props.typesPlaces, function (tp) {
             return {
@@ -153,10 +153,8 @@ var ModalEditPlace = React.createClass({
  */
 var store = Reflux.createStore({
     _inst: {
+        place_id: '',
         ajax_data: [],      // Les données brutes reçues en AJAX
-        concentrateurs: [], // La liste de tous les concentrateurs du parking
-        buses: [],          // La liste de tous les buses du parking
-        allCapteurs: [],    // La liste de tous les capteurs du parking
         clearCapteurs: []   // La liste des capteurs sans place du parking
     },
     getInitialState: function () {
@@ -230,8 +228,9 @@ var store = Reflux.createStore({
      * Charge les données du réseau du parking en fonction de l'ID du parking
      * @param parkId : id du parking
      */
-    loadInitData: function (parkId) {
+    loadInitData: function (parkId, place_id) {
         //console.log('PASS INIT DATA avec id : %o', parkId);
+        this._inst.place_id = place_id;
 
         $.ajax({
             type: 'GET',
@@ -257,7 +256,27 @@ var store = Reflux.createStore({
     handleAjaxResult: function (data) {
         this._inst.ajax_data = data;
 
-        // TODO retourner la combo des capteurs, clears de tout le parking
+        var concentrateurs = data;
+        var buses = [];
+        var allCapteurs = [];
+        var clearCapteurs = [];
+
+        // I - PARCOURT DES CONCENTRATEURS POUR SORTIR TOUS LES BUSES
+        _.each(concentrateurs, function (c) {
+            Array.prototype.push.apply(buses, c.buses);
+        });
+
+        _.each(buses, function (b) {
+            // LISTE DE TOUS LES CAPTEURS
+            Array.prototype.push.apply(allCapteurs, b.capteurs);
+
+            // FILTRE DES CAPTEURS POUR TROUVER QUE CEUX QUI N'ONT PAS DE PLACE
+            Array.prototype.push.apply(clearCapteurs, _.filter(b.capteurs, function (c) {
+                return (c.place == null || c.place.id == this._inst.place_id);
+            }, this));
+        }, this);
+
+
     },
 
     /*****************************************************************************
