@@ -115,6 +115,8 @@ Voulez-vous vraiment quitter cette page ?',
     'adresse' => 'Adresse',
     'ip' => "Adresse IP",
     'v4id' => "ID réseau terrain",
+    'bonne' => 'Bonne place',
+    'type_place' => 'Type de place',
 
     // ALERTES
     'alerte_full' => "",

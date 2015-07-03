@@ -4,6 +4,8 @@ var ComponentAccessMixins = require('../../mixins/component_access');
 /* Pour le listenTo */
 var MixinGestMod = require('../../mixins/gestion_modif');
 
+var initModale = Reflux.createAction();
+
 var Field = require('../formulaire/react_form_fields');
 var Form = Field.Form;
 var BtnSave = Field.BtnSave;
@@ -46,7 +48,7 @@ var ModalCapteur = React.createClass({
     },
     componentWillMount: function () {
         this.listenTo(store, this.updateData);
-        Actions.map.init_modale(this.props.parkingId);
+        initModale(this.props.parkingId);
 
     },
 
@@ -163,7 +165,7 @@ var store = Reflux.createStore({
         // REGISTER STATUSUPDATE ACTION
         this.listenTo(Actions.validation.form_field_changed, this.updateCombos);
         this.listenTo(Actions.validation.submit_form, this.onSubmit_form);
-        this.listenTo(Actions.map.init_modale, this.loadInitData); // Appellé à l'affichage de la modale
+        this.listenTo(initModale, this.loadInitData); // Appellé à l'affichage de la modale
 
         this.listenTo(Actions.map.liste_concentrateurs, this.getConcentrateurCombo);
         this.listenTo(Actions.map.liste_buses, this.getBusCombo);
