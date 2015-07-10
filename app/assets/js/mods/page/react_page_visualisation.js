@@ -66,6 +66,8 @@ var Page = React.createClass({
     },
 
     componentWillMount: function () {
+        // TODO ligne a supprimer
+        Simulator.init(3);
 
         this.listenTo(store, this.updateState, this.updateState);
     },

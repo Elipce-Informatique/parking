@@ -11,7 +11,10 @@ var WebSocket = require('ws');
 var ws = new WebSocket('ws://' + host + ':' + port);
 
 ws.on('open', function open() {
-    ws.send(JSON.stringify(helperClient.capabilities()));
+    var cap = JSON.stringify(helperClient.capabilities());
+    //var cap = JSON.stringify({'messageType':'coco',data:{}});
+    console.log('client envoie capabilities '+cap);
+    ws.send(cap);
 });
 
 ws.on('message', function (data, flags) {
