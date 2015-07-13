@@ -54,14 +54,13 @@ var simu = {
             if (client.readyState === client.OPEN) {
                 console.log('send capabilities');
                 client.send(JSON.stringify(helper.capabilities()));
-                console.log('no JSON');
-                client.send('jvm');
             }
         };
 
         client.onclose = function () {
-            console.log('echo-protocol Client Closed');
-            // TODO tenter une reconnexion
+            console.log('echo-protocol Client Closed - Tentative reconnexion');
+            // reconnexion
+            client = new W3CWebSocket('ws://' + this.host + ':' + this.port);
         };
 
         client.onmessage = function (e) {

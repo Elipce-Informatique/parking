@@ -52,26 +52,20 @@ var server = ({
             // Close DB
             //connexion.end(); // Attention fait BUGGER ???
         });
+    },
+
+    busConfigData: function(msg){
+        try {
+            var data = JSON.parse(msg);
+        }
+        catch(e){
+            logger.log('error', 'busConfigData message is not fully JSON '+msg);
+        }
+
     }
 });
 
 module.exports.Server = server;
-
-var client = ({
-    /**
-     * Client send capabilities infos (contoller)
-     * @returns {{messageType: string, data: {toto: string}}}
-     */
-    capabilities: function () {
-        var retour = {
-            messageType: 'capabilities',
-            data: {}
-        }
-        return retour;
-    }
-});
-
-module.exports.Client = client;
 
 
 // LOG
@@ -87,3 +81,21 @@ var logger = new (winston.Logger)({
 });
 
 module.exports.Log = logger;
+
+
+// ONLY USED FOR TESTS
+var client = ({
+    /**
+     * Client send capabilities infos (contoller)
+     * @returns {{messageType: string, data: {toto: string}}}
+     */
+    capabilities: function () {
+        var retour = {
+            messageType: 'capabilities',
+            data: {}
+        }
+        return retour;
+    }
+});
+
+module.exports.Client = client;
