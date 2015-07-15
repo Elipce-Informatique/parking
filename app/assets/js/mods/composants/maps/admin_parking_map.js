@@ -1036,6 +1036,7 @@ var parkingMap = React.createClass({
                 <ModalEditPlace
                     onToggle={this.handleToggle}
                     parkingId={this.props.parkingId}
+
                     {...this.state.modalParams}
                 />
             );

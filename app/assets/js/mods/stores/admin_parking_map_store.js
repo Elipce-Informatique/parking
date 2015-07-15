@@ -68,6 +68,7 @@ var store = Reflux.createStore({
         lastDraw: {},
         lastParallelogramme: {},
         lastCalibre: {},
+        contextMenuTarget: {}, // Cible du dernier context menu
         mapInst: {}
     },
 
@@ -400,7 +401,6 @@ var store = Reflux.createStore({
      * ---------------------------------------------------------------------------
      */
     onFeature_place_add: function (e) {
-        console.log('feature place add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
             contextmenuItems: [{
@@ -413,6 +413,7 @@ var store = Reflux.createStore({
                 text: Lang.get('global.modifier'),
                 index: 2,
                 callback: function (evt) {
+                    this.storeContext._inst.contextMenuTarget = this.e.layer;
                     // LANCEMENT DU MODAL DE MODIF DE PLACES
                     var data = {
                         layer: this.e.layer,
@@ -648,6 +649,9 @@ var store = Reflux.createStore({
             case "form_mod_allee":
                 this.handleAllee(formDom, this._inst.lastDraw);
                 break;
+            case "form_mod_edit_place":
+                this.handleUpdatePlace(formId, formDom);
+                break;
 
             default:
                 break;
@@ -745,6 +749,30 @@ var store = Reflux.createStore({
             // NOMBRE DE POTEAUX INCORRECT
             swal(Lang.get('administration_parking.carte.swal_interval_incorrect'));
         }
+    },
+
+    handleUpdatePlace: function (formId, formDom) {
+        console.log('PASS update place avbec data suivantes: %o', this._inst.contextMenuTarget);
+        var idPlace = this._inst.contextMenuTarget.options.data.id;
+
+        var fData = formDataHelper(formId, 'PATCH');
+
+        $.ajax({
+            type: 'POST',
+            url: BASE_URI + 'parking/place/'+idPlace.toString(),
+            processData: false,
+            contentType: false,
+            data: fData,
+            context: this,
+            success: function (data) {
+                console.log('Data retour ajax : %o', data);
+            },
+            error: function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            }
+        });
     },
 
     /**

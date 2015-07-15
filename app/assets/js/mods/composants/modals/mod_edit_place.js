@@ -31,7 +31,7 @@ var ModalEditPlace = React.createClass({
         onToggle: React.PropTypes.func.isRequired,
         typesPlaces: React.PropTypes.array.isRequired,
         dataItem: React.PropTypes.object.isRequired,
-        parkingId: React.PropTypes.number.isRequired
+        parkingId: React.PropTypes.number.isRequired,
     },
 
     getDefaultProps: function () {
@@ -178,37 +178,6 @@ var store = Reflux.createStore({
      * @param formId : id du formulaire
      */
     onSubmit_form: function (formDom, formId) {
-        // OBLIGÉ DE TRAITER ÇA ICI PLUTOT QUE DANS LE STORE DE LA MAP
-        // POUR AVOIR ACCÈS AUX DONNÉES DES CAPTEURS.
-        // LA SUITE SE PASSE DANS LE STORE MAP UNE FOIS QUE LES DONNÉES ONT ÉTÉ RÉCUPÉRÉES.
-        switch (formId) {
-            case "form_mod_edit_place":
-                this.handlePlace(formDom);
-                break;
-        }
-    },
-
-    /**
-     * Gère la validation de la modale "capteur de plac".
-     * - Remplis le cadre d'infos de la carte
-     * - Lance le cycle de vie d'affectation des capteurs
-     *
-     * @param formDom : le DOM du formulaire
-     */
-    handlePlace: function (formDom) {
-
-        var concentrateurId, busId, capteurId, $dom = $(formDom);
-        concentrateurId = $dom.find('[name=concentrateur_id]').val();
-        busId = $dom.find('[name=bus_id]').val();
-        capteurId = $dom.find('[name=capteur_id]').val();
-
-        var concentrateur = this.getConcentrateurFromId(concentrateurId);
-        var bus = this.getBusFromId(busId);
-        var capteurInit = this.getCapteurFromId(capteurId);
-        var capteurs = this.getRemainingClearCapteursFromBus(busId, capteurInit);
-
-        // LANCEMENT DE LA PROCÉDURE D'AFFECTATION DANS LE STORE PARKING MAP
-        Actions.map.start_affectation_capteurs(concentrateur, bus, capteurInit, capteurs);
     },
 
     /**

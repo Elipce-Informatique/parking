@@ -192,5 +192,22 @@ class PlacesController extends \BaseController
         return $retour;
     }
 
+    /**
+     * @param $id : id de la place à modifier
+     */
+    public function updatePlace($id)
+    {
+        $placeId = $id;
+        $data = [
+            'type_place_id' => Input::get('type_place_id'),
+            'libelle' => Input::get('libelle'),
+            'bonne' => Input::get('bonne') ? '1' : '0'
+        ];
+
+        Log::debug('Voila les data de modif : ' . print_r($data, true));
+
+
+    }
+
 
 }
