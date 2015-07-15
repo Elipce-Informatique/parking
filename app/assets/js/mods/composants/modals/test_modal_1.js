@@ -47,7 +47,7 @@ var ModalUn = React.createClass({
 
     render: function () {
         return (
-            <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.props.onToggle}>
+            <Modal bsStyle="primary" title="Modal heading" onHide={this.props.onToggle}>
                 <div className="modal-body">
                     <Form attributes={{id: "form_modal_test_1"}}>
 

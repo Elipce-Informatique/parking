@@ -81,7 +81,7 @@ var ModalEditPlace = React.createClass({
             <Modal
                 bsStyle="primary"
                 title={Lang.get('administration_parking.carte.titre_edit_place')}
-                onRequestHide={this.props.onToggle}>
+                onHide={this.props.onToggle}>
 
                 <div className="modal-body">
                     <Form attributes={{id: "form_mod_edit_place"}}>
@@ -182,8 +182,8 @@ var store = Reflux.createStore({
         // POUR AVOIR ACCÈS AUX DONNÉES DES CAPTEURS.
         // LA SUITE SE PASSE DANS LE STORE MAP UNE FOIS QUE LES DONNÉES ONT ÉTÉ RÉCUPÉRÉES.
         switch (formId) {
-            case "form_mod_capteur":
-                this.handleCapteur(formDom);
+            case "form_mod_edit_place":
+                this.handlePlace(formDom);
                 break;
         }
     },
@@ -195,7 +195,7 @@ var store = Reflux.createStore({
      *
      * @param formDom : le DOM du formulaire
      */
-    handleCapteur: function (formDom) {
+    handlePlace: function (formDom) {
 
         var concentrateurId, busId, capteurId, $dom = $(formDom);
         concentrateurId = $dom.find('[name=concentrateur_id]').val();

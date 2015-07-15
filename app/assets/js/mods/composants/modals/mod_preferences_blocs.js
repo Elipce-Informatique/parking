@@ -61,7 +61,7 @@ var ModalPreferences = React.createClass({
                 bsStyle="primary"
                 title={this.props.titre}
                 backdrop='static'
-                onRequestHide={this.props.onToggle}>
+                onHide={this.props.onToggle}>
 
                 <div className="modal-body">
                     <Form attributes={{id: "form_mod_prefs"}}>

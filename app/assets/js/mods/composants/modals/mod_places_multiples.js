@@ -68,7 +68,7 @@ var ModalPlaces = React.createClass({
             <Modal
                 bsStyle="primary"
                 title={Lang.get('administration_parking.carte.titre_places_multiples')}
-                onRequestHide={this.props.onToggle}>
+                onHide={this.props.onToggle}>
 
                 <div className="modal-body">
                     <Form attributes={{id: "form_mod_places_multiples"}}>

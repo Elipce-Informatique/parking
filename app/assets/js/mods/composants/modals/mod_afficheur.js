@@ -77,7 +77,7 @@ var ModalAfficheur = React.createClass({
         return (
             <Modal
                 title={Lang.get('administration_parking.carte.titre_afficheur')}
-                onRequestHide={this.props.onToggle}>
+                onHide={this.props.onToggle}>
 
                 <div className="modal-body">
                     <Form attributes={{id: "form_mod_afficheur"}}>

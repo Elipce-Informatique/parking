@@ -76,7 +76,7 @@ var ModalCapteur = React.createClass({
         return (
             <Modal
                 title={Lang.get('administration_parking.carte.titre_capteur')}
-                onRequestHide={this.props.onToggle}>
+                onHide={this.props.onToggle}>
 
                 <div className="modal-body">
                     <Form attributes={{id: "form_mod_capteur"}}>

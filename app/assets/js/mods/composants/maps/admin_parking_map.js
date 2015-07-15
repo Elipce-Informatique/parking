@@ -957,7 +957,7 @@ var parkingMap = React.createClass({
         if (!this.state.isModalOpen) {
             return <span/>;
         } else {
-            return (<Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+            return (<Modal bsStyle="primary" title="Modal heading" onHide={this.handleToggle}>
                 <div className="modal-body">
                     This modal is controlled by our custom trigger component.
                 </div>
@@ -991,7 +991,7 @@ var parkingMap = React.createClass({
         if (!this.state.isModalOpen) {
             return <span/>;
         } else {
-            return (<Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+            return (<Modal bsStyle="primary" title="Modal heading" onHide={this.handleToggle}>
                 <div className="modal-body">
                     This modal is controlled by our custom trigger component.
                 </div>
@@ -1011,7 +1011,7 @@ var parkingMap = React.createClass({
             return <span/>;
         } else {
             return (
-                <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+                <Modal bsStyle="primary" title="Modal heading" onHide={this.handleToggle}>
                     <div className="modal-body">
                         This modal is controlled by our custom trigger component.
                     </div>
@@ -1052,7 +1052,7 @@ var parkingMap = React.createClass({
             return <span/>;
         } else {
             return (
-                <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+                <Modal bsStyle="primary" title="Modal heading" onHide={this.handleToggle}>
                     <div className="modal-body">
                         This modal is controlled by our custom trigger component.
                     </div>
@@ -1074,7 +1074,7 @@ var parkingMap = React.createClass({
             return <span/>;
         } else {
             return (
-                <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+                <Modal bsStyle="primary" title="Modal heading" onHide={this.handleToggle}>
                     <div className="modal-body">
                         This modal is controlled by our custom trigger component.
                     </div>
@@ -1096,7 +1096,7 @@ var parkingMap = React.createClass({
             return <span/>;
         } else {
             return (
-                <Modal bsStyle="primary" title="Modal heading" onRequestHide={this.handleToggle}>
+                <Modal bsStyle="primary" title="Modal heading" onHide={this.handleToggle}>
                     <div className="modal-body">
                         This modal is controlled by our custom trigger component.
                     </div>
