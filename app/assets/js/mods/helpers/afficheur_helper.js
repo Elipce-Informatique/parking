@@ -42,6 +42,7 @@ function createAfficheursMapFromAfficheursBDD(afficheursBDD, afficheursStyle) {
     return afficheursMap;
 }
 
+
 module.exports = {
     getCoordAfficheurFromPolyline: getCoordAfficheurFromPolyline,
     createAfficheursMapFromAfficheursBDD: createAfficheursMapFromAfficheursBDD,
