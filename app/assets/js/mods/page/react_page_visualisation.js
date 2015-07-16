@@ -151,7 +151,7 @@ var Page = React.createClass({
         // Création panel temps réel right
         var zoneTr = (
             <ZoneTempsReel
-                plan_id={this.state.planId}
+                plan_id={parseInt(this.state.planId)}
                 vertical={true}
                 data={this.state.temps_reel}
                 key={'ztr-' + this.state.planId}
@@ -178,7 +178,7 @@ var Page = React.createClass({
                                     <CollapseBody>
                                         {map}
                                     </CollapseBody>
-                                    <CollapseSidebar title="Sélection">
+                                    <CollapseSidebar title="Journal">
                                     {zoneTr}
                                     </CollapseSidebar>
                                 </Collapse>
@@ -194,7 +194,7 @@ var Page = React.createClass({
     },
 
     render: function () {
-        var retour = {};
+        var retour = '';
 
         // Switch la structure de la page en fonction de l'état courant
         switch (this.state.etatPage) {

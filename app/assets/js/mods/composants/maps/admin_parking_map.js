@@ -1115,7 +1115,7 @@ var parkingMap = React.createClass({
      * @returns {XML}
      */
     renderOverlay: function () {
-        var retour = {};
+        var retour = '';
         switch (this.state.modalType) {
             case mapOptions.modal_type.zone:
                 retour = this._modalZone();
