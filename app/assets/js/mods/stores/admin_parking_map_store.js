@@ -759,13 +759,30 @@ var store = Reflux.createStore({
 
         $.ajax({
             type: 'POST',
-            url: BASE_URI + 'parking/place/'+idPlace.toString(),
+            url: BASE_URI + 'parking/place/' + idPlace.toString(),
             processData: false,
             contentType: false,
             data: fData,
             context: this,
             success: function (data) {
                 console.log('Data retour ajax : %o', data);
+                if (!data.errorBdd) {
+                    // 1 - TRANSFORMATION DES DATA DE LA BDD EN PLACES
+                    var placesCreated = this.createPlacesMapFromPlacesBDD([data.model]);
+                    console.log('Places créée : %o', placesCreated);
+                    this._inst.mapInst.placesGroup.removeLayer(this._inst.contextMenuTarget);
+                    this._inst.mapInst.placesGroup.addLayer(placesCreated[0].polygon);
+
+                    Actions.notif.success();
+                    var retour = {
+                        type: mapOptions.type_messages.hide_modal,
+                        data: {}
+                    };
+                    this.trigger(retour);
+                }
+                else {
+                    Actions.notif.error(Lang.get('administration_parking.carte.modif_places_fail'));
+                }
             },
             error: function (xhr, type, exception) {
                 // if ajax fails display error alert

@@ -197,6 +197,13 @@ class PlacesController extends \BaseController
      */
     public function updatePlace($id)
     {
+        $retour = [
+            'save' => true,
+            'errorBdd' => false,
+            'model' => null,
+            'doublon' => false
+        ];
+
         $placeId = $id;
         $data = [
             'type_place_id' => Input::get('type_place_id'),
@@ -204,7 +211,21 @@ class PlacesController extends \BaseController
             'bonne' => Input::get('bonne') ? '1' : '0'
         ];
 
-        Log::debug('Voila les data de modif : ' . print_r($data, true));
+        try {
+            DB::beginTransaction();
+            $place = Place::with('type_place')->find($placeId);
+            $place->update($data);
+            $retour['model'] = $place;
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Erreur SQL : ');
+            Log::error($e);
+            $retour['save'] = false;
+            $retour['errorBdd'] = true;
+        }
+
+        return $retour;
 
 
     }
