@@ -53,7 +53,7 @@ var ModalCalibre = React.createClass({
             <Modal
                 bsStyle="primary"
                 title={Lang.get('administration_parking.carte.titre_calibre')}
-                onRequestHide={this.props.onToggle}>
+                onHide={this.props.onToggle}>
 
                 <div className="modal-body">
                     <Form attributes={{id: "form_mod_calibre"}}>

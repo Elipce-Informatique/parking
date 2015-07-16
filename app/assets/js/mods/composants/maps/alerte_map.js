@@ -633,7 +633,7 @@ var parkingMap = React.createClass({
      * @returns {XML}
      */
     renderOverlay: function () {
-        var retour = {};
+        var retour = '';
         switch (this.state.modalType) {
             case mapOptions.modal_type.alerte_full:
                 retour = this._modalFull();

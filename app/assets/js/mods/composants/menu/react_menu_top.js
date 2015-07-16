@@ -350,7 +350,7 @@ var MenuTop = React.createClass({
      * @returns {XML}
      */
     render: function () {
-        var appName = {};
+        var appName = '';
         if (Auth.menu_left.length != 0) {
             appName = <AppName toggleMenu={true} name={this.props.appName} url={this.props.appUrl} />;
         }

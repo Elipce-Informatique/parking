@@ -175,6 +175,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::delete('afficheur/delocate_many', 'AfficheursController@delocateMany');
     Route::post('place/{id}/setCapteur', 'PlacesController@setCapteur');
     Route::patch('place/update_places_geo', 'PlacesController@updatePlacesGeo');
+    Route::patch('place/{id}', 'PlacesController@updatePlace');
     Route::post('afficheur/{id}/setGeometry', 'AfficheursController@setGeometry');
 
     // GESTION PARKING

@@ -118,14 +118,14 @@ var store = Reflux.createStore({
             }, this);
 
             if (ajout.length) {
-                // On balance les ajout
+                // On balance les occupations
                 this.trigger({
                     type: mapOptions.type_messages.occuper_places,
                     data: ajout
                 });
             }
             if (suppression.length) {
-                // On balance les suppressions
+                // On balance les libérations
                 this.trigger({
                     type: mapOptions.type_messages.liberer_places,
                     data: suppression
