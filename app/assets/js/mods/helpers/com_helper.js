@@ -57,7 +57,7 @@ var client = ({
      *************** DATABASE CONFIGURATION ************************
      ***************************************************************/
 
-    busConfigQuary: function () {
+    busConfigQuery: function () {
         return {
             messageType: "busConfigQuery",
             data: {}

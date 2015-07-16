@@ -2,6 +2,8 @@
 var modeDev = false;
 var port = 26000;
 var host = modeDev ? '127.0.0.1' : '85.14.137.12';
+var controllerClient = null;
+var webBrowserClients = [];
 
 // Dependencies
 var helper = require('./helper.js').Server;
@@ -47,8 +49,22 @@ wss.on('connection', function connection(client) {
             logger.log('info', 'Query: messageType: ' + message.messageType);
 
             switch (message.messageType) {
+                // Controller is connected
                 case 'capabilities':
+                    // Olav is speaking to us
+                    controllerClient = client;
                     helper.capabilities(port, client);
+                    break;
+                // A webbrowser is connected
+                case 'hello':
+                    webBrowserClients.push(client);
+                    break;
+                case 'busConfigQuery':
+                    // Relay message
+                    controllerClient.send(msg);
+                    break;
+                case 'busConfigData':
+                    helper.busConfigData(port, message.data);
                     break;
                 default:
                     var retour = {
@@ -91,7 +107,7 @@ if (modeDev) {
     var ws = new WebSocket('ws://' + host + ':' + port);
 
     ws.on('open', function open() {
-        var cap = JSON.stringify(helperClient.capabilities());
+        var cap = JSON.stringify(helperClient.busConfigData());
         //console.log('client envoie capabilities '+cap);
         ws.send(cap);
     });
