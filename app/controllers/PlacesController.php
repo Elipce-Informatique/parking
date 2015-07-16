@@ -208,7 +208,8 @@ class PlacesController extends \BaseController
         $data = [
             'type_place_id' => Input::get('type_place_id'),
             'libelle' => Input::get('libelle'),
-            'bonne' => Input::get('bonne') ? '1' : '0'
+            'bonne' => Input::get('bonne') ? '1' : '0',
+            'capteur_id' => Input::get('capteur_id') == 0 ? null : Input::get('capteur_id')
         ];
 
         try {
