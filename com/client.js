@@ -11,7 +11,9 @@ var WebSocket = require('ws');
 var ws = new WebSocket('ws://' + host + ':' + port);
 
 ws.on('open', function open() {
-    ws.send(JSON.stringify(helperClient.capabilities()));
+    var cap = JSON.stringify(helperClient.busConfigQuery());
+    console.log('client envoie busConfigQuery '+cap);
+    ws.send(cap);
 });
 
 ws.on('message', function (data, flags) {
