@@ -269,6 +269,39 @@ var parkingMap = React.createClass({
     },
 
     /**
+     * Ajoute les AFFICHEURS
+     * @param formes : [{data: {}, poly: {}}]
+     */
+    onAfficheursAdded: function (formes) {
+        var liste_data = formes.data;
+        console.log('data a afficher : %o', liste_data);
+        _.each(liste_data, function (afficheur) {
+
+            if (afficheur != undefined && afficheur.data.lat != null && afficheur.data.lng) {
+                var marker = L.marker([afficheur.data.lat, afficheur.data.lng], {
+                    icon: new mapOptions.iconInvisible(),
+                    data: afficheur.data
+                }).bindLabel(afficheur.data.valeur, {
+                    noHide: true,
+                    className: 'afficheur_label'
+                });
+
+                this._inst.afficheursGroup.addLayer(marker);
+
+                // AJOUT DU MARKER AU GROUPE AFFICHEUR
+                if (!_.isEmpty(afficheur.polyline)) {
+                    this._inst.afficheursGroup.addLayer(afficheur.polyline);
+                }
+            }
+
+        }, this);
+
+        this.setState({
+            isModalOpen: false
+        });
+    },
+
+    /**
      * Remet tous les featuresGroups en ordre (zIndex)
      * L'ordre de bas en haut:
      * - Zone
@@ -315,6 +348,10 @@ var parkingMap = React.createClass({
             case mapOptions.type_messages.add_places:
                 this.onPlacesAdded(data);
                 break;
+            case mapOptions.type_messages.add_afficheurs:
+                this.onAfficheursAdded(data);
+                break;
+
             case mapOptions.type_messages.delete_forme:
                 break;
             case mapOptions.type_messages.occuper_places:

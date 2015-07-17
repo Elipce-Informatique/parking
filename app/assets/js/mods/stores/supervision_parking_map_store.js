@@ -3,6 +3,7 @@ var mapHelper = require('../helpers/map_helper');
 var zoneHelper = require('../helpers/zone_helper');
 var alleeHelper = require('../helpers/allee_helper');
 var placeHelper = require('../helpers/place_helper');
+var afficheurHelper = require('../helpers/afficheur_helper');
 
 /**
  * Created by yann on 27/01/2015.
@@ -234,7 +235,8 @@ var store = Reflux.createStore({
                 this._inst.places = places;
                 this._inst.allees = allees;
                 this._inst.zones = zones;
-                this._inst.afficheurs = [];
+                this._inst.afficheurs = data.afficheurs;
+                console.log('Afficheurs dans les data : %o', data.afficheurs);
                 // ---------------------------------------------------------------------
             },
             error: function (xhr, status, err) {
@@ -309,6 +311,14 @@ var store = Reflux.createStore({
         message = {
             type: mapOptions.type_messages.add_zones,
             data: zonesMap
+        };
+        this.trigger(message);
+
+        // LES AFFICHEURS À AFFICHER SUR LA MAP ----------------------------------------------------
+        var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD(this._inst.afficheurs, afficheurHelper.style);
+        message = {
+            type: mapOptions.type_messages.add_afficheurs,
+            data: afficheursMap
         };
         this.trigger(message);
 

@@ -225,11 +225,6 @@ class PlacesController extends \BaseController
             $retour['save'] = false;
             $retour['errorBdd'] = true;
         }
-
         return $retour;
-
-
     }
-
-
 }
