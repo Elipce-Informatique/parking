@@ -1,7 +1,6 @@
 // Variables
-var modeDev = false;
 var port = 26000;
-var host = modeDev ? '127.0.0.1' : '85.14.137.12';
+var host = process.env.PRODUCTION ? '85.14.137.12' : '127.0.0.1';
 var controllerClient = null;
 var webBrowserClients = [];
 
@@ -98,15 +97,15 @@ wss.on('connection', function connection(client) {
 
     client.on('close', function (code, message) {
         // Controller closed
-        if(_.isEqual(client, controllerClient)){
+        if (_.isEqual(client, controllerClient)) {
             controllerClient = null;
         }
         // At least 1 webclient
-        else if(webBrowserClients.length > 0){
+        else if (webBrowserClients.length > 0) {
             // Parse clients
-            webBrowserClients = _.map(webBrowserClients, function(cli){
+            webBrowserClients = _.map(webBrowserClients, function (cli) {
                 // Not this client closed
-                if(!_.isEqual(client, cli)){
+                if (!_.isEqual(client, cli)) {
                     return cli;
                 }
             }.bind(this));
@@ -115,7 +114,7 @@ wss.on('connection', function connection(client) {
 });
 
 
-if (modeDev) {
+if (!process.env.PRODUCTION) {
 
     console.log('MODE DEV');
     // Dependencies

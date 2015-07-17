@@ -66,7 +66,6 @@ var server = ({
         // At least 1 controller
         if (controllers.length > 0) {
             //Query structure
-            // TODO v4_id unique dans la base + insert igore
             var sql = "INSERT IGNORE INTO bus(concentrateur_id, `type`, num, protocole, parameter, name, v4_id)" +
                 "VALUES (?,?,?,?,?,?,?)";
             // Mysql connector
