@@ -229,7 +229,8 @@ require('sweetalert');
         "tableau_bord_update", // affiche tous les parkings
         "preferences_blocs", // Affichage popup en fonction du bloc cliqué
         "temps_reel_update_journal", // Affichage temps réel BLOC JOURNAL basé sur le last id
-        "temps_reel_update_alertes" // Affichage temps réel BLOC ALERTES basé sur le last id
+        "temps_reel_update_alertes", // Affichage temps réel BLOC ALERTES basé sur le last id
+        "parking_event"
     ]);
 
 })(window);

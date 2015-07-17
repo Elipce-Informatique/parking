@@ -5,10 +5,6 @@ var W3CWebSocket = require('websocket').w3cwebsocket;
 var simu = {
     timer: {},
 
-    modeDev: false,
-    host: '85.14.137.12',
-    port: 26000,
-
     init: function (idPlan) {
 
         this.host = this.modeDev ? '127.0.0.1' : this.host;

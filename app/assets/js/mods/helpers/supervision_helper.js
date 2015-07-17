@@ -2,6 +2,7 @@
  * Created by yann on 21/04/2015.
  *
  */
+var com_helper = require('../helpers/com_helper.js');
 
 /**
  * Gère le rafraichissement des données de la supervision
@@ -14,23 +15,68 @@ module.exports.refresh = {
     _parkingId: 0,
     _journalAlerteId: 0,
     _ajaxInstances: {},
+
+    modeDev: false,
+    host: '85.14.137.12',
+    port: 26000,
+
     init: function (planId, journalId, parkingId, journalAlerteId) {
-        if (!this._timer) {
-            this._timer = setInterval(this._handleAjax.bind(this), 5000);
-            this._planId = planId;
-            this._journalId = journalId;
-            this._parkingId = parkingId;
-            this._journalAlerteId = journalAlerteId;
-        }
-    }
-    ,
+        // INIT DATA
+        this._planId = planId;
+        this._journalId = journalId;
+        this._parkingId = parkingId;
+        this._journalAlerteId = journalAlerteId;
+
+        // MODE REEL
+        Actions.supervision.parking_event.listen(this._handleAjax.bind(this));
+        this.initWebSocket();
+
+        // MODE TEST AJAX
+        //if (!this._timer) {
+        //    this._timer = setInterval(this._handleAjax.bind(this), 5000);
+        //}
+    },
+
     destroyTimerPlaces: function () {
         if (this._timer) {
             clearInterval(this._timer);
             this._timer = false;
         }
-    }
-    ,
+    },
+
+    initWebSocket: function () {
+        // Connexion websocket client
+        var client = new W3CWebSocket('ws://' + this.host + ':' + this.port);
+
+        // ERREUR
+        client.onerror = function () {
+            console.log('Connection Error');
+        };
+
+        // CONNECTION OPEN
+        client.onopen = function () {
+            console.log('WebSocket Client Connected %o', client);
+
+            if (client.readyState === client.OPEN) {
+                console.log('send capabilities');
+                client.send(JSON.stringify(com_helper.capabilities()));
+            }
+        };
+
+        // CONNECTION CLOSE
+        client.onclose = function () {
+            console.log('echo-protocol Client Closed - Tentative reconnexion');
+            // reconnexion
+            client = new W3CWebSocket('ws://' + this.host + ':' + this.port);
+        }.bind(this);
+
+        // MESSAGE REÇU
+        client.onmessage = function (e) {
+            if (typeof e.data === 'string') {
+                console.log("Received: '" + e.data + "'");
+            }
+        };
+    },
 
     /**
      * Récupère les informations sur les places et déclenche l'action
