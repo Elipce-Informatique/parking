@@ -1,8 +1,9 @@
 // Variables
+var modeDev = process.env.PRODUCTION && process.env.PRODUCTION != 'false';
 var port = 26000;
-var host = process.env.PRODUCTION ? '85.14.137.12' : '127.0.0.1';
+var host = modeDev ? '85.14.137.12' : '127.0.0.1';
 var controllerClient = null;
-var webBrowserClients = [];
+var supervisionClients = [];
 
 // Dependencies
 var helper = require('./helper.js').Server;
@@ -58,7 +59,7 @@ wss.on('connection', function connection(client) {
                     break;
                 // A webbrowser is connected
                 case 'hello':
-                    webBrowserClients.push(client);
+                    supervisionClients.push(client);
                     break;
                 case 'busConfigQuery':
                     // Relay message
@@ -95,15 +96,21 @@ wss.on('connection', function connection(client) {
         }
     });
 
+
+    /**
+     * Sur fermeture du socket, suppression du client de la liste de supervision
+     * ou du controller
+     */
+
     client.on('close', function (code, message) {
         // Controller closed
         if (_.isEqual(client, controllerClient)) {
             controllerClient = null;
         }
         // At least 1 webclient
-        else if (webBrowserClients.length > 0) {
+        else if (supervisionClients.length > 0) {
             // Parse clients
-            webBrowserClients = _.map(webBrowserClients, function (cli) {
+            supervisionClients = _.map(supervisionClients, function (cli) {
                 // Not this client closed
                 if (!_.isEqual(client, cli)) {
                     return cli;
