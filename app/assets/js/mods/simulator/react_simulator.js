@@ -61,7 +61,7 @@ var simu = {
             console.log('echo-protocol Client Closed - Tentative reconnexion');
             // reconnexion
             client = new W3CWebSocket('ws://' + this.host + ':' + this.port);
-        };
+        }.bind(this);
 
         client.onmessage = function (e) {
             if (typeof e.data === 'string') {
