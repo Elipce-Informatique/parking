@@ -5,12 +5,12 @@ var client = ({
      ***************************************************************/
 
     /**
-     * Client send capabilities infos (contoller)
+     * Client send hello
      * @returns {{messageType: string, data: {toto: string}}}
      */
-    capabilities: function () {
+    hello: function () {
         var retour = {
-            messageType: 'capabilities',
+            messageType: 'hello',
             data: {}
         }
         return retour;
