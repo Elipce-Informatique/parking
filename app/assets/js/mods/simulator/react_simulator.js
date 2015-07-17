@@ -37,7 +37,7 @@ var simu = {
         //}, 7000);
 
 
-        // Connexion websocket client
+        // CONNEXION WEBSOCKET CLIENT
         var client = new W3CWebSocket('ws://' + this.host + ':' + this.port);
 
         client.onerror = function () {
