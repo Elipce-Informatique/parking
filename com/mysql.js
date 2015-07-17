@@ -1,14 +1,14 @@
 // Variables
-var modeDev = false;
-var connexionInfos = modeDev ? {
-    host     : '192.168.1.220',
-    user     : 'root',
-    password : 'elipce',
-    database : 'parking'
-} : {
+var connexionInfos = process.env.PRODUCTION ?  {
     host     : 'localhost',
     user     : 'parking',
     password : 'bruno2015',
+    database : 'parking'
+} :
+{
+    host     : '192.168.1.220',
+    user     : 'root',
+    password : 'elipce',
     database : 'parking'
 };
 
