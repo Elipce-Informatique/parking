@@ -24,7 +24,7 @@ class SessionsController extends \BaseController
      */
     public function store()
     {
-        if (Auth::attempt(Input::only('email', 'password'))) {
+        if (Auth::attempt(Input::only('email', 'password'), Input::exists('remember-me'))) {
             return Redirect::to('/');
         }
         Flash::error(Lang::get('global.login_error'));

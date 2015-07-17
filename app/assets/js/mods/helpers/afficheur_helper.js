@@ -21,7 +21,7 @@ function createAfficheursMapFromAfficheursBDD(afficheursBDD, afficheursStyle) {
 
         // 2 CRÉATION DU POLYLINE SI BESOIN
         var polyline = {};
-        if (a.ligne != "null") {
+        if (a.ligne != null && a.ligne != 'null') {
             var ligne = JSON.parse(a.ligne);
             console.log('ligne : %o', ligne);
             polyline = mapHelper.createPolylineFromCoordinates(ligne, a, {
