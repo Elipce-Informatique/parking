@@ -8,6 +8,7 @@ var webBrowserClients = [];
 // Dependencies
 var helper = require('./helper.js').Server;
 var logger = require('./helper.js').Log;
+var _ = require('lodash');
 
 // Server HTTP
 var WebSocketServer = require('ws').Server;
@@ -91,6 +92,23 @@ wss.on('connection', function connection(client) {
                 }
             }
             client.send(JSON.stringify(retour));
+        }
+    });
+
+    client.on('close', function (code, message) {
+        // Controller closed
+        if(_.isEqual(client, controllerClient)){
+            controllerClient = null;
+        }
+        // At least 1 webclient
+        else if(webBrowserClients.length > 0){
+            // Parse clients
+            webBrowserClients = _.map(webBrowserClients, function(cli){
+                // Not this client closed
+                if(!_.isEqual(client, cli)){
+                    return cli;
+                }
+            }.bind(this));
         }
     });
 });
