@@ -49,7 +49,7 @@ var simu = {
 
             if (client.readyState === client.OPEN) {
                 console.log('send capabilities');
-                client.send(JSON.stringify(helper.capabilities()));
+                client.send(JSON.stringify(helper.hello()));
             }
         };
 

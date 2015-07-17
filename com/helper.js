@@ -67,8 +67,8 @@ var server = ({
         if (controllers.length > 0) {
             //Query structure
             // TODO v4_id unique dans la base + insert igore
-            var sql = "INSERT INTO bus(concentrateur_id, `type`, num, protocole, parameter, name)" +
-                "VALUES (?,?,?,?,?,?)";
+            var sql = "INSERT IGNORE INTO bus(concentrateur_id, `type`, num, protocole, parameter, name, v4_id)" +
+                "VALUES (?,?,?,?,?,?,?)";
             // Mysql connector
             var connection = require('./mysql.js');
             // Transaction
@@ -106,7 +106,8 @@ var server = ({
                                         bus.busNumber,
                                         bus.protocol,
                                         bus.parameter,
-                                        bus.name]);
+                                        bus.name,
+                                        bus.ID]);
 
                                     // Insert bus
                                     connection.query(inst, function (err, result) {
@@ -114,6 +115,8 @@ var server = ({
                                             return connection.rollback(function () {
                                                 logger.log('error', 'busConfigData: Transaction rollback: ' + inst);
                                             });
+                                        }else{
+                                            logger.log('info', 'inserted query: '+inst);
                                         }
                                     });
                                 }, this);

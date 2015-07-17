@@ -54,6 +54,7 @@ wss.on('connection', function connection(client) {
                 case 'capabilities':
                     // Olav is speaking to us
                     controllerClient = client;
+                    // Send capabilities
                     helper.capabilities(port, client);
                     break;
                 // A webbrowser is connected
