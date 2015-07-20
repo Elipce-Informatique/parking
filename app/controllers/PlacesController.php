@@ -214,7 +214,13 @@ class PlacesController extends \BaseController
 
         try {
             DB::beginTransaction();
-            $place = Place::with('type_place')->find($placeId);
+
+            $place = Place::with('type_place', 'etat_occupation')->find($placeId);
+            $etat_occupation = $place['etat_occupation'];
+            $newEtat = EtatsDoccupation::where('type_place_id', '=', $data['type_place_id'])
+                ->where('is_occupe', '=', $etat_occupation['is_occupe'])->first();
+            $data['etat_occupation_id'] = $newEtat['id'];
+
             $place->update($data);
             $retour['model'] = $place;
             DB::commit();
