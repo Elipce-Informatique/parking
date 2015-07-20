@@ -44,15 +44,6 @@ class Parking extends BaseModel
         return $this->hasMany('Concentrateur');
     }
 
-    /**
-     * Les alertes du parking
-     * @return mixed
-     */
-    public function alertes()
-    {
-        return $this->hasMany('Alerte');
-    }
-
     /*****************************************************************************
      * UTILITAIRES DU MODELE *****************************************************
      *****************************************************************************/

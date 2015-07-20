@@ -1,7 +1,7 @@
 /********************************************/
 var React = require('react');
 var TreeView = require('react-bootstrap-treeview/dist/js/react-bootstrap-treeview');
-//var Simulator = require('../simulator/react_simulator');
+var Simulator = require('../simulator/react_simulator');
 var supervision_helper = require('../helpers/supervision_helper');
 
 // COMPOSANTS NÉCESSAIRES:

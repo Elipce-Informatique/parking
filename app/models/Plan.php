@@ -40,6 +40,14 @@ class Plan extends BaseModel
         return $this->hasMany('Afficheur');
     }
 
+    /**
+     * Les alertes du parking
+     * @return mixed
+     */
+    public function alertes()
+    {
+        return $this->hasMany('Alerte');
+    }
     /*****************************************************************************
      * UTILITAIRES DU MODELE *****************************************************
      *****************************************************************************/

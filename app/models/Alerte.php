@@ -39,9 +39,9 @@ class Alerte extends BaseModel
      * Le parking associé à l'alerte
      * @return mixed
      */
-    public function parking()
+    public function plan()
     {
-        return $this->belongsTo('Parking');
+        return $this->belongsTo('Plan');
     }
 
 

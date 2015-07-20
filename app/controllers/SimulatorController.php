@@ -71,7 +71,7 @@ class SimulatorController extends \BaseController
 //                Log::debug('num place: '.$numPlace. ' id place: '.$idPlace);
 
                 // Alertes
-                $this->alertes($park, $oPlace->id);
+                $this->alertes($park, $oPlace->id, $id);
 
                 // Etat d'occupation courrant
                 $etatCourant = EtatsDoccupation::getEtatFromTypeAndOccupation($oPlace->type_place_id, $oPlace->is_occupe);
@@ -119,7 +119,7 @@ class SimulatorController extends \BaseController
             DB::commit();
         } catch (Exception $e) {
             // Erreur SQL, on log
-            Log::error('Rollback simulator !' . $e->getMessage());
+            Log::error('Rollback simulator !' . print_r($e, true));
             $retour = false;
         }
         // Pas d'insertions
@@ -313,32 +313,29 @@ class SimulatorController extends \BaseController
      * Renseigne le journal_alerte
      * @return string
      */
-    public function alertes($idParking, $idPlace)
+    public function alertes($idParking, $idPlace, $idPlan)
     {
         // toutes les alertes liées au parking
-        $park = Auth::user()
-            ->parkings()
-            ->where('parking.id', '=', $idParking)
-            ->with('alertes.type', 'alertes.places')
-            ->first()
+        $plan = Plan::with('alertes.type', 'alertes.places')
+            ->find($idPlan)
             ->toArray();
 
 
         // On a des alertes sur le parking
-        if (isset($park['alertes']) && count($park['alertes']) > 0) {
+        if (isset($plan['alertes']) && count($plan['alertes']) > 0) {
             // Parcours des alertes
-            foreach ($park['alertes'] as $alerte) {
+            foreach ($plan['alertes'] as $alerte) {
                 // Quel type d'alerte
                 switch ($alerte['type']['code']) {
                     case 'full':
                         $full = false;
                         // Extraction des ID de l'alerte
-                        $aPlaces = array_map(function($place){
+                        $aPlaces = array_map(function ($place) {
                             return $place['id'];
                         }, $alerte['places']);
 
                         //  Place dans l'alerte
-                        if(in_array($idPlace, $aPlaces)) {
+                        if (in_array($idPlace, $aPlaces)) {
                             $bool = true;
                             // Parcours des places
                             foreach ($alerte['places'] as $place) {
@@ -366,12 +363,12 @@ class SimulatorController extends \BaseController
                     case 'change':
 
                         // Extraction des ID de l'alerte
-                        $aPlaces = array_map(function($place){
+                        $aPlaces = array_map(function ($place) {
                             return $place['id'];
                         }, $alerte['places']);
 
                         // La place a changé d'état
-                        if(in_array($idPlace, $aPlaces)) {
+                        if (in_array($idPlace, $aPlaces)) {
 
                             try {
                                 JournalAlerte::create([

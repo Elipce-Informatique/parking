@@ -9,32 +9,32 @@ var simu = {
 
         //this.host = this.modeDev ? '127.0.0.1' : this.host;
 
-        //window.clearInterval(this.timer);
-        //
-        //// Répétition
-        //this.timer = window.setInterval(function () {
-        //
-        //    // FormData
-        //    var fData = form_data_helper('', 'GET');
-        //
-        //    // Requête
-        //    $.ajax({
-        //        url: BASE_URI + 'parking/simulator/' + idPlan,
-        //        type: 'POST',
-        //        data: fData,
-        //        global: false,
-        //        processData: false,
-        //        contentType: false,
-        //        dataType: 'json',
-        //        context: this,
-        //        success: function (bool) {
-        //        },
-        //        error: function (xhr, status, err) {
-        //            console.error(status, err.toString());
-        //        }
-        //    });
-        //
-        //}, 7000);
+        window.clearInterval(this.timer);
+
+        // Répétition
+        this.timer = window.setInterval(function () {
+
+            // FormData
+            var fData = form_data_helper('', 'GET');
+
+            // Requête
+            $.ajax({
+                url: BASE_URI + 'parking/simulator/' + idPlan,
+                type: 'POST',
+                data: fData,
+                global: false,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                context: this,
+                success: function (bool) {
+                },
+                error: function (xhr, status, err) {
+                    console.error(status, err.toString());
+                }
+            });
+
+        }, 7000);
 
 
         //// CONNEXION WEBSOCKET CLIENT

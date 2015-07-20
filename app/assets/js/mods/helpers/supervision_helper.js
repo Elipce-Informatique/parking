@@ -28,7 +28,7 @@ module.exports.refresh = {
         this._parkingId = parkingId;
         this._journalAlerteId = journalAlerteId;
 
-        // MODE REEL
+        //// MODE REEL
         Actions.supervision.parking_event.listen(this._handleAjax.bind(this));
         this.initWebSocket();
 
