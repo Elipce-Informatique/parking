@@ -1,7 +1,8 @@
 // Dependencies
 var mysql = require('mysql');
+var logger = require('./logger.js');
 
-var server = ({
+module.exports = {
     /**
      * COM server capabilities
      * @param port: port used to communicate
@@ -9,13 +10,8 @@ var server = ({
      */
     capabilities: function (port, client) {
         // Dependencies
-        var connexion = require('./mysql.js');
+        var connexion = require('./mysql_helper.js');
 
-        // Variables
-        var retour = {
-            messageType: 'capabilities',
-            data: {}
-        }
         // Query
         var sql = "" +
             "SELECT protocol_version AS protocolVersion," +
@@ -30,6 +26,12 @@ var server = ({
 
         // Exectute
         connexion.query(sql, port, function (err, rows, fields) {
+            // Variables
+            var retour = {
+                messageType: 'capabilities',
+                data: {}
+            };
+
             // Error
             if (err) {
                 // SQL error
@@ -69,7 +71,7 @@ var server = ({
             var sql = "INSERT IGNORE INTO bus(concentrateur_id, `type`, num, protocole, parameter, name, v4_id)" +
                 "VALUES (?,?,?,?,?,?,?)";
             // Mysql connector
-            var connection = require('./mysql.js');
+            var connection = require('./mysql_helper.js');
             // Transaction
             connection.beginTransaction(function (err) {
 
@@ -90,7 +92,7 @@ var server = ({
                                 logger.log('error', 'busConfigData: SELECT controller transaction rollback: ' + sqlController);
                             });
                         }
-                        else{
+                        else {
 
                             // At least 1 bus
                             if (controller.bus.length > 0) {
@@ -114,8 +116,8 @@ var server = ({
                                             return connection.rollback(function () {
                                                 logger.log('error', 'busConfigData: Transaction rollback: ' + inst);
                                             });
-                                        }else{
-                                            logger.log('info', 'inserted query: '+inst);
+                                        } else {
+                                            logger.log('info', 'inserted query: ' + inst);
                                         }
                                     });
                                 }, this);
@@ -139,89 +141,4 @@ var server = ({
         }
 
     }
-});
-
-module.exports.Server = server;
-
-
-// LOG
-var path = require('path');
-var winston = require('winston');
-
-var filename = path.join(__dirname, '/log/event');
-var logger = new (winston.Logger)({
-    transports: [
-        new (winston.transports.Console)(),
-        new (winston.transports.DailyRotateFile)({filename: filename})
-    ]
-});
-
-module.exports.Log = logger;
-
-
-// ONLY USED FOR TESTS
-var client = ({
-    /**
-     * Client send capabilities infos (contoller)
-     * @returns {{messageType: string, data: {toto: string}}}
-     */
-    capabilities: function () {
-        var retour = {
-            messageType: 'capabilities',
-            data: {}
-        }
-        return retour;
-    },
-
-    busConfigData: function () {
-        return {
-            "messageType": "busConfigData",
-            "data": [
-                {
-                    "controllerID": 1,
-                    "bus": [
-                        {
-                            "ID": 1,
-                            "busType": "CAN",
-                            "busNumber": 1,
-                            "protocol": "p8",
-                            "parameter": "ter",
-                            "name": "A"
-                        },
-                        {
-                            "ID": 2,
-                            "busType": "CAN",
-                            "busNumber": 2,
-                            "protocol": "p8",
-                            "parameter": "ter",
-                            "name": "B"
-                        }
-                    ]
-                },
-                {
-                    "controllerID": 2,
-                    "bus": [
-                        {
-                            "ID": 3,
-                            "busType": "CAN",
-                            "busNumber": 1,
-                            "protocol": "p8",
-                            "parameter": "ter",
-                            "name": "A"
-                        }
-                    ]
-                }
-            ]
-
-        }
-    },
-
-    busConfigQuery: function () {
-        return {
-            messageType: "busConfigQuery",
-            data: {}
-        }
-    }
-});
-
-module.exports.Client = client;
+};

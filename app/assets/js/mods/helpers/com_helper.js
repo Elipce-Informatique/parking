@@ -8,9 +8,9 @@ var client = ({
      * Client send hello
      * @returns {{messageType: string, data: {toto: string}}}
      */
-    hello: function () {
+    supervisionConnection: function () {
         var retour = {
-            messageType: 'hello',
+            messageType: 'supervisionConnection',
             data: {}
         }
         return retour;

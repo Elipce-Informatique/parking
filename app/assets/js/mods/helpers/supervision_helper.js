@@ -3,6 +3,7 @@
  *
  */
 var com_helper = require('../helpers/com_helper.js');
+var W3CWebSocket = require('websocket').w3cwebsocket;
 
 /**
  * Gère le rafraichissement des données de la supervision
@@ -58,8 +59,8 @@ module.exports.refresh = {
             console.log('WebSocket Client Connected %o', client);
 
             if (client.readyState === client.OPEN) {
-                console.log('send capabilities');
-                client.send(JSON.stringify(com_helper.capabilities()));
+                console.log('send supervision_connection');
+                client.send(JSON.stringify(com_helper.supervisionConnection()));
             }
         };
 

@@ -7,7 +7,7 @@ var simu = {
 
     init: function (idPlan) {
 
-        this.host = this.modeDev ? '127.0.0.1' : this.host;
+        //this.host = this.modeDev ? '127.0.0.1' : this.host;
 
         //window.clearInterval(this.timer);
         //
@@ -37,33 +37,33 @@ var simu = {
         //}, 7000);
 
 
-        // CONNEXION WEBSOCKET CLIENT
-        var client = new W3CWebSocket('ws://' + this.host + ':' + this.port);
-
-        client.onerror = function () {
-            console.log('Connection Error');
-        };
-
-        client.onopen = function () {
-            console.log('WebSocket Client Connected %o', client);
-
-            if (client.readyState === client.OPEN) {
-                console.log('send capabilities');
-                client.send(JSON.stringify(helper.hello()));
-            }
-        };
-
-        client.onclose = function () {
-            console.log('echo-protocol Client Closed - Tentative reconnexion');
-            // reconnexion
-            client = new W3CWebSocket('ws://' + this.host + ':' + this.port);
-        }.bind(this);
-
-        client.onmessage = function (e) {
-            if (typeof e.data === 'string') {
-                console.log("Received: '" + e.data + "'");
-            }
-        };
+        //// CONNEXION WEBSOCKET CLIENT
+        //var client = new W3CWebSocket('ws://' + this.host + ':' + this.port);
+        //
+        //client.onerror = function () {
+        //    console.log('Connection Error');
+        //};
+        //
+        //client.onopen = function () {
+        //    console.log('WebSocket Client Connected %o', client);
+        //
+        //    if (client.readyState === client.OPEN) {
+        //        console.log('send capabilities');
+        //        client.send(JSON.stringify(helper.hello()));
+        //    }
+        //};
+        //
+        //client.onclose = function () {
+        //    console.log('echo-protocol Client Closed - Tentative reconnexion');
+        //    // reconnexion
+        //    client = new W3CWebSocket('ws://' + this.host + ':' + this.port);
+        //}.bind(this);
+        //
+        //client.onmessage = function (e) {
+        //    if (typeof e.data === 'string') {
+        //        console.log("Received: '" + e.data + "'");
+        //    }
+        //};
     }
 };
 

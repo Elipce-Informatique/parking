@@ -1,7 +1,7 @@
 /********************************************/
 var React = require('react');
 var TreeView = require('react-bootstrap-treeview/dist/js/react-bootstrap-treeview');
-var Simulator = require('../simulator/react_simulator');
+//var Simulator = require('../simulator/react_simulator');
 var supervision_helper = require('../helpers/supervision_helper');
 
 // COMPOSANTS NÉCESSAIRES:
@@ -67,7 +67,7 @@ var Page = React.createClass({
 
     componentWillMount: function () {
         // TODO ligne a supprimer
-        Simulator.init(3);
+        //Simulator.init(3);
 
         this.listenTo(store, this.updateState, this.updateState);
     },
@@ -281,7 +281,7 @@ var store = Reflux.createStore({
 
             supervision_helper.refresh.destroyTimerPlaces();
             supervision_helper.refresh.abortAjax();
-            Simulator.init(data.id);
+            //Simulator.init(data.id);
 
             this._inst = _.extend(this._inst, {
                 planId: data.id,

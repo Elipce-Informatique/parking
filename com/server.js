@@ -6,8 +6,8 @@ var controllerClient = null;
 var supervisionClients = [];
 
 // Dependencies
-var helper = require('./helper.js').Server;
-var logger = require('./helper.js').Log;
+var helper = require('./src/server_helper.js');
+var logger = require('./src/logger.js');
 var _ = require('lodash');
 
 // Server HTTP
@@ -25,8 +25,10 @@ var wss = new WebSocketServer({
 
 // Connexion websocket
 wss.on('connection', function connection(client) {
+
     client.on('message', function incoming(msg) {
 
+        // 1 - Parsing the JSON
         try {
             // JSON decode
             message = JSON.parse(msg);
@@ -44,11 +46,12 @@ wss.on('connection', function connection(client) {
             return;
         }
 
-        // Message has a messageType key
+        // 2 - Message has a messageType key
         if (message.messageType) {
             // Trace
             logger.log('info', 'Query: messageType: ' + message.messageType);
 
+            // 3 - Dispatching the message to the right handler
             switch (message.messageType) {
                 // Controller is connected
                 case 'capabilities':
@@ -57,8 +60,8 @@ wss.on('connection', function connection(client) {
                     // Send capabilities
                     helper.capabilities(port, client);
                     break;
-                // A webbrowser is connected
-                case 'hello':
+                // A web browser is connected
+                case 'supervisionConnection':
                     supervisionClients.push(client);
                     break;
                 case 'busConfigQuery':
@@ -81,15 +84,15 @@ wss.on('connection', function connection(client) {
 
             }
         }
-        // Message doesn't have a messageType key
+        // 2bis - Message doesn't have a messageType key
         else {
             // Trace
             logger.log('info', 'Query without messageType: ' + msg);
             var retour = {
                 messageType: 'error',
                 error: {
-                    action: "messageType key missing",
-                    text: ""
+                    action: "messageType key is missing in the request",
+                    text: "There is the message you sent: " + msg
                 }
             }
             client.send(JSON.stringify(retour));
@@ -121,11 +124,12 @@ wss.on('connection', function connection(client) {
 });
 
 
-if (!process.env.PRODUCTION) {
+// ON LANCE UN CLIENT DE TEST EN MODE DEV
+if (!process.env.PRODUCTION || process.env.PRODUCTION == "false") {
 
-    console.log('MODE DEV');
+    logger.log('info', 'MODE DEV');
     // Dependencies
-    var helperClient = require('./helper.js').Client;
+    var helperClient = require('./src/test_helper.js');
 
     // Client
     var WebSocket = require('ws');
@@ -133,12 +137,12 @@ if (!process.env.PRODUCTION) {
 
     ws.on('open', function open() {
         var cap = JSON.stringify(helperClient.busConfigData());
-        //console.log('client envoie capabilities '+cap);
+        //logger.log('info', 'client envoie capabilities '+cap);
         ws.send(cap);
     });
 
     ws.on('message', function (data, flags) {
-        console.log('client reçoit: %s', data);
+        logger.log('info', 'client reçoit: %s', data);
     });
 }
 
