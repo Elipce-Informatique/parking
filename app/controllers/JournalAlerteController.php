@@ -85,26 +85,26 @@ class JournalAlerteController extends \BaseController
 
     /**
      * Retourne le dernier id de journal alerte pour le parking spécifié
-     * @param $parkingId : id du parking pour le filtre
+     * @param $planId : id du parking pour le filtre
      *
      * @return l'id max ou 0 si aucune entrée pour ce parking
      */
-    public function last($parkingId)
+    public function last($planId)
     {
-        $retour = JournalAlerte::with(['alerte' => function ($q) use ($parkingId) {
-            $q->where('parking_id', '=', $parkingId);
+        $retour = JournalAlerte::with(['alerte' => function ($q) use ($planId) {
+            $q->where('plan_id', '=', $planId);
         }])->get()->max('id');
         return $retour ? $retour : 0;
     }
 
     /**
-     * @param $parkingId
+     * @param $planId
      * @param $journalId
      * @return mixed
      */
-    public function showFromVersion($parkingId, $journalId)
+    public function showFromVersion($planId, $journalId)
     {
-        return JournalAlerte::getJournalAlerteFromVersion($parkingId, $journalId);
+        return JournalAlerte::getJournalAlerteFromVersion($planId, $journalId);
     }
 
 }

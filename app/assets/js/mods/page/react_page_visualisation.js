@@ -345,7 +345,7 @@ var store = Reflux.createStore({
 
         var $2 = $.ajax({
             type: 'GET',
-            url: BASE_URI + 'parking/journal_alerte/last/' + this._inst.parkingId,
+            url: BASE_URI + 'parking/journal_alerte/last/' + this._inst.planId,
             processData: false,
             contentType: false,
             context: this,

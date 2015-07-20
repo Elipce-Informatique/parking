@@ -120,7 +120,7 @@ module.exports.refresh = {
         // 3 - UPDATE ALERTES SIDEBAR
         this._ajaxInstances['2'] = $.ajax({
             type: 'get',
-            url: BASE_URI + 'parking/journal_alerte/' + this._parkingId + '/' + this._journalAlerteId,
+            url: BASE_URI + 'parking/journal_alerte/' + this._planId + '/' + this._journalAlerteId,
             processdata: false,
             contenttype: false,
             data: {},

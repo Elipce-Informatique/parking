@@ -23,13 +23,13 @@ class JournalAlerte extends BaseModel
 
     /**
      *
-     * @param $parkingId
+     * @param $planId
      * @param $journalId
      */
-    public static function getJournalAlerteFromVersion($parkingId, $journalId)
+    public static function getJournalAlerteFromVersion($planId, $journalId)
     {
-        return JournalAlerte::with(['alerte' => function ($q) use ($parkingId) {
-            $q->where('parking_id', '=', $parkingId)
+        return JournalAlerte::with(['alerte' => function ($q) use ($planId) {
+            $q->where('plan_id', '=', $planId)
                 ->with('type');
         }])->where('id', '>', $journalId)->get();
     }
