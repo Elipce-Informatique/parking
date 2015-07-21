@@ -1,22 +1,23 @@
 // Variables
 var modeDev = process.env.PRODUCTION && process.env.PRODUCTION != 'false';
-var port = 26000;
+var port = 26000; // TODO : configurer ça en paramètre de commande
 var host = modeDev ? '85.14.137.12' : '127.0.0.1';
-var controllerClient = null;
-var supervisionClients = [];
+global.controllerClient = null;
+global.supervisionClients = [];
 
 // Dependencies
-var helper = require('./src/server_helper.js');
+var server_helper = require('./src/config_controller.js');
 var logger = require('./src/logger.js');
+var router = require('./src/message_routes.js');
 var _ = require('lodash');
 
-// Server HTTP
+// HTTP Server requirement
 var WebSocketServer = require('ws').Server;
 var http = require('http')
     , express = require('express')
     , app = express();
 
-// Server Websocket
+// Websocket Server init
 var wss = new WebSocketServer({
     host: host,
     port: port
@@ -27,7 +28,7 @@ var wss = new WebSocketServer({
 wss.on('connection', function connection(client) {
 
     client.on('message', function incoming(msg) {
-
+        var message = {};
         // 1 - Parsing the JSON
         try {
             // JSON decode
@@ -51,38 +52,8 @@ wss.on('connection', function connection(client) {
             // Trace
             logger.log('info', 'Query: messageType: ' + message.messageType);
 
-            // 3 - Dispatching the message to the right handler
-            switch (message.messageType) {
-                // Controller is connected
-                case 'capabilities':
-                    // Olav is speaking to us
-                    controllerClient = client;
-                    // Send capabilities
-                    helper.capabilities(port, client);
-                    break;
-                // A web browser is connected
-                case 'supervisionConnection':
-                    supervisionClients.push(client);
-                    break;
-                case 'busConfigQuery':
-                    // Relay message
-                    controllerClient.send(msg);
-                    break;
-                case 'busConfigData':
-                    helper.busConfigData(port, message.data);
-                    break;
-                default:
-                    var retour = {
-                        messageType: message.messageType,
-                        error: {
-                            action: "messageType error",
-                            text: "I don't know this messageType: " + message.messageType
-                        }
-                    }
-                    client.send(JSON.stringify(retour));
-                    break;
-
-            }
+            // 3 - DISPATCHING THE MESSAGE TO THE RIGHT HANDLER
+            router.route(message, client);
         }
         // 2bis - Message doesn't have a messageType key
         else {
@@ -108,12 +79,12 @@ wss.on('connection', function connection(client) {
     client.on('close', function (code, message) {
         // Controller closed
         if (_.isEqual(client, controllerClient)) {
-            controllerClient = null;
+            global.controllerClient = null;
         }
         // At least 1 webclient
         else if (supervisionClients.length > 0) {
             // Parse clients
-            supervisionClients = _.map(supervisionClients, function (cli) {
+            global.supervisionClients = _.map(global.supervisionClients, function (cli) {
                 // Not this client closed
                 if (!_.isEqual(client, cli)) {
                     return cli;

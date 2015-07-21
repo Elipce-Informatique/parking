@@ -1,14 +1,10 @@
-// Dependencies
-var mysql = require('mysql');
-var logger = require('./logger.js');
-
 module.exports = {
     /**
      * COM server capabilities
      * @param port: port used to communicate
      * @param client: websocket client
      */
-    capabilities: function (port, client) {
+    SendCapabilities: function (port, client) {
         // Dependencies
         var connexion = require('./mysql_helper.js');
 
@@ -24,7 +20,7 @@ module.exports = {
             "FROM server_com " +
             "WHERE protocol_port = ?";
 
-        // Exectute
+        // Exectute the query with the port to find the controller
         connexion.query(sql, port, function (err, rows, fields) {
             // Variables
             var retour = {
@@ -48,7 +44,7 @@ module.exports = {
             else {
                 // Update result
                 retour.data = rows[0];
-                logger.log('info', 'capabilities answer OK');
+                logger.log('info', 'capabilities answer OK : ' + retour.data);
             }
 
             // Send
@@ -64,7 +60,7 @@ module.exports = {
      * @param port: port used to communicate
      * @param controllers: array in data key
      */
-    busConfigData: function (port, controllers) {
+    OnBusConfigData: function (port, controllers) {
         // At least 1 controller
         if (controllers.length > 0) {
             //Query structure
@@ -141,4 +137,4 @@ module.exports = {
         }
 
     }
-};
+}
