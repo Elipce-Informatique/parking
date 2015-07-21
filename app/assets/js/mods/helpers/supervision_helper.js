@@ -46,7 +46,7 @@ module.exports.refresh = {
     },
 
     initWebSocket: function () {
-        // Connexion websocket client
+        // CONNEXION WEBSOCKET CLIENT
         var client = new W3CWebSocket('ws://' + this.host + ':' + this.port);
 
         // ERREUR
@@ -74,7 +74,9 @@ module.exports.refresh = {
         // MESSAGE REÇU
         client.onmessage = function (e) {
             if (typeof e.data === 'string') {
-                console.log("Received: '" + e.data + "'");
+                console.log("W3CWebSocket MESSAGE RECEIVED : '" + e.data + "'");
+                var message = JSON.parse(e.data);
+                console.log("W3CWebSocket MESSAGE PARSED : %o", data);
             }
         };
     },
