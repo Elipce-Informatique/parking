@@ -1,12 +1,11 @@
 // Variables
-var modeDev = process.env.PRODUCTION && process.env.PRODUCTION != 'false';
-var port = 26000; // TODO : configurer ça en paramètre de commande
-var host = modeDev ? '85.14.137.12' : '127.0.0.1';
+global.modeDev = process.env.PRODUCTION && process.env.PRODUCTION != 'false';
+global.port = 26000; // TODO : configurer ça en paramètre de commande
+global.host = global.modeDev ? '85.14.137.12' : '127.0.0.1';
 global.controllerClient = null;
 global.supervisionClients = [];
 
 // Dependencies
-var server_helper = require('./src/config_controller.js');
 var logger = require('./src/logger.js');
 var router = require('./src/message_routes.js');
 var _ = require('lodash');
@@ -19,8 +18,8 @@ var http = require('http')
 
 // Websocket Server init
 var wss = new WebSocketServer({
-    host: host,
-    port: port
+    host: global.host,
+    port: global.port
 });
 
 
@@ -65,7 +64,7 @@ wss.on('connection', function connection(client) {
                     action: "messageType key is missing in the request",
                     text: "There is the message you sent: " + msg
                 }
-            }
+            };
             client.send(JSON.stringify(retour));
         }
     });
@@ -83,7 +82,7 @@ wss.on('connection', function connection(client) {
         }
         // At least 1 webclient
         else if (supervisionClients.length > 0) {
-            // Parse clients
+            // iterate over clients
             global.supervisionClients = _.map(global.supervisionClients, function (cli) {
                 // Not this client closed
                 if (!_.isEqual(client, cli)) {

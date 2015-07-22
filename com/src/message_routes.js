@@ -1,3 +1,4 @@
+// Local modules
 var config_controller = require('./config_controller.js');
 /**
  * Dispatches the message received to the right handler
@@ -10,31 +11,31 @@ module.exports.route = function (message, client) {
     switch (message.messageType) {
         // Controller is connected
         case 'capabilities':
-            // Olav is speaking to us
+            // Usher is speaking to us (Lol we're famous !)
             global.controllerClient = client;
             // Send capabilities
-            config_controller.capabilities(port, client);
+            config_controller.sendCapabilities(port, client);
             break;
         // A web browser is connected
         case 'supervisionConnection':
             global.supervisionClients.push(client);
             break;
         case 'busConfigQuery':
-            // Relay message
-            global.controllerClient.send(JSON.stringify(message));
+            // Relay the message that comes from supervision
+            config_controller.sendBusConfigQuery();
             break;
         case 'busConfigData':
             // Insert the received data in database
-            config_controller.busConfigData(port, message.data);
+            config_controller.onBusConfigData(global.port, message.data);
             break;
         default:
             var retour = {
                 messageType: message.messageType,
                 error: {
                     action: "messageType error",
-                    text: "I don't know this messageType: " + message.messageType
+                    text: "Unexpected messageType: " + message.messageType
                 }
-            }
+            };
             client.send(JSON.stringify(retour));
             break;
 

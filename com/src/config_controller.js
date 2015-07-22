@@ -1,10 +1,16 @@
+// Dependencies
+var mysql = require('mysql');
+
+// Local modules
+var logger = require('./logger.js');
+
 module.exports = {
     /**
      * COM server capabilities
      * @param port: port used to communicate
      * @param client: websocket client
      */
-    SendCapabilities: function (port, client) {
+    sendCapabilities: function (port, client) {
         // Dependencies
         var connexion = require('./mysql_helper.js');
 
@@ -56,11 +62,21 @@ module.exports = {
     },
 
     /**
-     * Configuration of all the buses
+     * Send a busConfigQuery to the controller
+     * @param message
+     */
+    sendBusConfigQuery: function (message) {
+        global.controllerClient.send(JSON.stringify({
+            "messageType": "busConfigQuery"
+        }));
+    },
+
+    /**
+     * insert the configuration of all the buses in DB
      * @param port: port used to communicate
      * @param controllers: array in data key
      */
-    OnBusConfigData: function (port, controllers) {
+    onBusConfigData: function (port, controllers) {
         // At least 1 controller
         if (controllers.length > 0) {
             //Query structure
