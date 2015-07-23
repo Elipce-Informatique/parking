@@ -283,7 +283,8 @@ var parkingMap = React.createClass({
                     data: afficheur.data
                 }).bindLabel(afficheur.data.valeur, {
                     noHide: true,
-                    className: 'afficheur_label'
+                    className: 'afficheur_label',
+                    clickable: true
                 });
 
                 this._inst.afficheursGroup.addLayer(marker);
