@@ -6,15 +6,18 @@ global.controllerClient = null;
 global.supervisionClients = [];
 
 // Dependencies
-var logger = require('./src/logger.js');
-var router = require('./src/message_routes.js');
+var WebSocketServer = require('ws').Server;
 var _ = require('lodash');
 
 // HTTP Server requirement
-var WebSocketServer = require('ws').Server;
 var http = require('http')
     , express = require('express')
     , app = express();
+
+// Local modules
+var logger = require('./src/logger.js');
+var router = require('./src/message_routes.js');
+var errorHandler = require('./src/message_routes.js');
 
 // Websocket Server init
 var wss = new WebSocketServer({
@@ -42,19 +45,16 @@ wss.on('connection', function connection(client) {
                     action: "Message is not a valid JSON",
                     text: ""
                 }
-            }));
+            }), errorHandler.onSendError);
             return;
         }
 
         // 2 - Message has a messageType key
         if (message.messageType) {
-            // Trace
-            logger.log('info', 'Query: messageType: ' + message.messageType);
-
             // 3 - DISPATCHING THE MESSAGE TO THE RIGHT HANDLER
             router.route(message, client);
         }
-        // 2bis - Message doesn't have a messageType key
+        // 2 BIS - Message doesn't have a messageType key
         else {
             // Trace
             logger.log('info', 'Query without messageType: ' + msg);
@@ -65,7 +65,7 @@ wss.on('connection', function connection(client) {
                     text: "There is the message you sent: " + msg
                 }
             };
-            client.send(JSON.stringify(retour));
+            client.send(JSON.stringify(retour), errorHandler.onSendError);
         }
     });
 
@@ -108,7 +108,7 @@ if (!process.env.PRODUCTION || process.env.PRODUCTION == "false") {
     ws.on('open', function open() {
         var cap = JSON.stringify(helperClient.busConfigData());
         //logger.log('info', 'client envoie capabilities '+cap);
-        ws.send(cap);
+        ws.send(cap, errorHandler.onSendError);
     });
 
     ws.on('message', function (data, flags) {

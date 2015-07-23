@@ -3,6 +3,7 @@ var mysql = require('mysql');
 
 // Local modules
 var logger = require('./logger.js');
+var errorHandler = require('./message_routes.js');
 
 module.exports = {
     /**
@@ -54,7 +55,7 @@ module.exports = {
             }
 
             // Send
-            client.send(JSON.stringify(retour));
+            client.send(JSON.stringify(retour), errorHandler.onSendError);
 
             // Close DB
             //connexion.end(); // Attention fait BUGGER ???
@@ -68,7 +69,7 @@ module.exports = {
     sendBusConfigQuery: function (message) {
         global.controllerClient.send(JSON.stringify({
             "messageType": "busConfigQuery"
-        }));
+        }), errorHandler.onSendError);
     },
 
     /**
@@ -153,4 +154,4 @@ module.exports = {
         }
 
     }
-}
+};
