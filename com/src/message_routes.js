@@ -19,13 +19,10 @@ module.exports.route = function (message, client) {
         // Controller is connected
         case 'capabilities':
             // Usher is speaking to us (Lol we're famous !)
-            global.controllerClient = client;
-            client.isController = true;
-            // Send capabilities back to the controller
-            config_controller.sendCapabilities(port, client);
+            config_controller.onCapabilities(message.data, client);
             break;
-        // A web browser is connected
         case 'supervisionConnection':
+            // A web browser is connected
             client.isController = false;
             global.supervisionClients.push(client);
             break;
