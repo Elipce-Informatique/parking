@@ -2,8 +2,8 @@
 var mysql = require('mysql');
 
 // Local modules
-var logger = require('./logger.js');
-var errorHandler = require('./message_routes.js');
+var logger = require('../utils/logger.js');
+var errorHandler = require('../message_routes.js');
 
 module.exports = {
     onCapabilities: function (data, client) {

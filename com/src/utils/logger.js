@@ -2,7 +2,7 @@
 var path = require('path');
 var winston = require('winston');
 
-var filename = path.join(__dirname, '../log/event');
+var filename = path.join(__dirname, '../../log/event');
 var logger = new (winston.Logger)({
     transports: [
         new (winston.transports.Console)(),

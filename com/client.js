@@ -1,12 +1,14 @@
 /**
  * Test client for the server
+ * Here we can simulate a supervision client
+ * and send commands to the controller.
  */
 
 // Dependencies
 var WebSocket = require('ws');
 
 // Local modules
-var helperClient = require('./src/test_helper.js');
+var helperClient = require('./src/utils/test_helper.js');
 
 // Mode dev
 var modeDev = process.env.PRODUCTION && process.env.PRODUCTION != 'false';

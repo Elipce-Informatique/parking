@@ -1,7 +1,7 @@
 // Local modules
-var config_controller = require('./config_controller.js');
-var logger = require('./logger.js');
-var errorHandler = require('./message_routes.js');
+var config_controller = require('./commands/config_controller.js');
+var logger = require('./utils/logger.js');
+var errorHandler = require('./utils/error_handler.js');
 
 /**
  * Dispatches the message received to the right handler

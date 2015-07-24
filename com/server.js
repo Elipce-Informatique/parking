@@ -15,9 +15,9 @@ var http = require('http')
     , app = express();
 
 // Local modules
-var logger = require('./src/logger.js');
+var logger = require('./src/utils/logger.js');
 var router = require('./src/message_routes.js');
-var errorHandler = require('./src/message_routes.js');
+var errorHandler = require('./src/utils/message_routes.js');
 
 // Websocket Server init
 var wss = new WebSocketServer({
@@ -38,7 +38,7 @@ wss.on('connection', function connection(client) {
         }
             // No JSON format
         catch (e) {
-            logger.log('error', 'Message is not a valid JSON');
+            logger.log('error', 'Message is not a valid JSON : %o', e);
             client.send(JSON.stringify({
                 messageType: 'error',
                 error: {
