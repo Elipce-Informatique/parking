@@ -19,7 +19,7 @@ module.exports = {
      */
     sendCapabilities: function (port, client) {
         // Dependencies
-        var connexion = require('./mysql_helper.js');
+        var connexion = require('../utils/mysql_helper.js');
 
         // Query
         var sql = "" +
@@ -90,7 +90,7 @@ module.exports = {
             var sql = "INSERT IGNORE INTO bus(concentrateur_id, `type`, num, protocole, parameter, name, v4_id)" +
                 "VALUES (?,?,?,?,?,?,?)";
             // Mysql connector
-            var connection = require('./mysql_helper.js');
+            var connection = require('../utils/mysql_helper.js');
             // Transaction
             connection.beginTransaction(function (err) {
 

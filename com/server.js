@@ -17,7 +17,7 @@ var http = require('http')
 // Local modules
 var logger = require('./src/utils/logger.js');
 var router = require('./src/message_routes.js');
-var errorHandler = require('./src/utils/message_routes.js');
+var errorHandler = require('./src/utils/error_handler.js');
 
 // Websocket Server init
 var wss = new WebSocketServer({
@@ -99,7 +99,7 @@ if (!process.env.PRODUCTION || process.env.PRODUCTION == "false") {
 
     logger.log('info', 'MODE DEV');
     // Dependencies
-    var helperClient = require('./src/test_helper.js');
+    var helperClient = require('./src/utils/test_helper.js');
 
     // Client
     var WebSocket = require('ws');
