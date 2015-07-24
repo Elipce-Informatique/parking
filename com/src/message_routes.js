@@ -1,5 +1,5 @@
 // Local modules
-var config_controller = require('./commands/config_controller.js');
+var config_controller = require('./commands/config.js');
 var logger = require('./utils/logger.js');
 var errorHandler = require('./utils/error_handler.js');
 

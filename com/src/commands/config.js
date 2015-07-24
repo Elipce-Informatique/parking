@@ -4,6 +4,7 @@ var mysql = require('mysql');
 // Local modules
 var logger = require('../utils/logger.js');
 var errorHandler = require('../message_routes.js');
+var servModel = require('../models/server.js');
 
 module.exports = {
     onCapabilities: function (data, client) {
@@ -18,23 +19,8 @@ module.exports = {
      * @param client: websocket client
      */
     sendCapabilities: function (port, client) {
-        // Dependencies
-        var connexion = require('../utils/mysql_helper.js');
 
-        // Query
-        var sql = "" +
-            "SELECT protocol_version AS protocolVersion," +
-            "protocol_port AS protocolPort," +
-            "software_name AS softwareName," +
-            "software_version AS softwareVersion," +
-            "software_build_date AS softwareBuildDate," +
-            "software_os AS softwareOs, " +
-            "'" + Date.now() + "' AS `date` " +
-            "FROM server_com " +
-            "WHERE protocol_port = ?";
-
-        // Exectute the query with the port to find the controller
-        connexion.query(sql, port, function (err, rows, fields) {
+        servModel.getCapabilities(port, function (err, rows, fields) {
             // Variables
             var retour = {
                 messageType: 'capabilities',
@@ -64,7 +50,7 @@ module.exports = {
             client.send(JSON.stringify(retour), errorHandler.onSendError);
 
             // Close DB
-            //connexion.end(); // Attention fait BUGGER ???
+            // connexion.end(); // Attention fait BUGGER ???
         });
     },
 
