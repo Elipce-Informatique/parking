@@ -74,8 +74,8 @@ module.exports = {
      * Get the configuration data
      * to fetch controller's configuration
      */
-    onConfigurationQuery: function (data) {
-        logger.log('error', 'Config data fron controller : ' + data);
+    onConfigurationData: function (data) {
+        logger.log('info', 'Config data fron controller : %o', data);
     },
     /**
      * Send the configuration update (without data)

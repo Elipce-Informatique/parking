@@ -23,6 +23,9 @@ module.exports.route = function (message, client) {
             config_controller.onCapabilities(message.data, client);
             ctrlSequence.onNewController(client);
             break;
+        case 'configuration':
+            config_controller.onConfigurationData(message.data);
+            break;
         case 'supervisionConnection':
             // A web browser is connected
             client.isController = false;
