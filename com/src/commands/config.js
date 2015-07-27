@@ -53,7 +53,47 @@ module.exports = {
             // connexion.end(); // Attention fait BUGGER ???
         });
     },
-
+    // --------------------------------------------------------------------------------------------
+    /**
+     * Send the configuration query (without params)
+     * to fetch controller's configuration
+     */
+    sendConfigurationQuery: function () {
+        // There is no controller yet
+        if (global.controllerClient !== null) {
+            // Error message to the original client
+            global.controllerClient.send(JSON.stringify({
+                "messageType": "configuration"
+            }), errorHandler.onSendError);
+        } else {
+            // No controller connected yet
+            logger.log('error', 'sendConfigurationQuery : No controller connected to send this message');
+        }
+    },
+    /**
+     * Get the configuration data
+     * to fetch controller's configuration
+     */
+    onConfigurationQuery: function (data) {
+        logger.log('error', 'Config data fron controller : ' + data);
+    },
+    /**
+     * Send the configuration update (without data)
+     * to update controller's configuration
+     */
+    sendConfigurationUpdate: function (data) {
+        // There is no controller yet
+        if (global.controllerClient !== null) {
+            // Error message to the original client
+            global.controllerClient.send(JSON.stringify({
+                "messageType": "configuration",
+                "data": data
+            }), errorHandler.onSendError);
+        } else {
+            // No controller connected yet
+            logger.log('error', 'sendConfigurationQuery : No controller connected to send this message');
+        }
+    },
     // --------------------------------------------------------------------------------------------
     /**
      * Send a busConfigQuery to the controller

@@ -42,24 +42,26 @@ var processRequest = function (req, res) {
     res.end("All glory to WebSockets!\n");
 };
 
-if (cfg.ssl) {
-
-    app = httpServ.createServer({
-        // providing server with  SSL key/cert
-        key: fs.readFileSync(cfg.ssl_key),
-        cert: fs.readFileSync(cfg.ssl_cert),
-        ca: [fs.readFileSync(cfg.ca)],
-        host: cfg.host,
-        requestCert: true,
-        rejectUnauthorized: true
-
-    }, processRequest).listen(cfg.port, function () {
-        logger.log('info', 'Https server bound !');
-    });
-
-} else {
-    app = httpServ.createServer(processRequest).listen(cfg.port);
-}
+//if (cfg.ssl) {
+//
+//    app = httpServ.createServer({
+//        // providing server with  SSL key/cert
+//        key: fs.readFileSync(cfg.ssl_key),
+//        cert: fs.readFileSync(cfg.ssl_cert),
+//        ca: [fs.readFileSync(cfg.ca)],
+//        host: cfg.host,
+//        requestCert: true,
+//        rejectUnauthorized: true
+//
+//    }, processRequest).listen(cfg.port, function () {
+//        logger.log('info', 'Https server bound !');
+//    });
+//
+//} else {
+//    app = httpServ.createServer({
+//        host: cfg.host
+//    }, processRequest).listen(cfg.port);
+//}
 
 // Websocket Server init
 //var wss = new WebSocketServer({server: app});

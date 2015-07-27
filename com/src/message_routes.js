@@ -2,6 +2,7 @@
 var config_controller = require('./commands/config.js');
 var logger = require('./utils/logger.js');
 var errorHandler = require('./utils/error_handler.js');
+var ctrlSequence = require('./sequences/controller_connection.js');
 
 /**
  * Dispatches the message received to the right handler
@@ -20,6 +21,7 @@ module.exports.route = function (message, client) {
         case 'capabilities':
             // Usher is speaking to us (Lol we're famous !)
             config_controller.onCapabilities(message.data, client);
+            ctrlSequence.onNewController(client);
             break;
         case 'supervisionConnection':
             // A web browser is connected
