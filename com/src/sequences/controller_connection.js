@@ -12,6 +12,13 @@ module.exports = {
      * @param client
      */
     onNewController: function (client) {
+        // Displays controller's config in logs
         config.sendConfigurationQuery();
+
+        // TODO : launch the sequence on the prod server to try ssl
+        // Update server's url in the controller (1 time action)
+        config.sendConfigurationUpdate({
+            "serverURL" : "wss://85.14.137.12:26000/"
+        });
     }
 };
