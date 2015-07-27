@@ -28,7 +28,7 @@ module.exports.route = function (message, client) {
             break;
         case 'busConfigQuery':
             // Relay the message that comes from supervision
-            config_controller.sendBusConfigQuery();
+            config_controller.sendBusConfigQuery(client);
             break;
         case 'busConfigData':
             // Insert the received data in database
@@ -46,4 +46,12 @@ module.exports.route = function (message, client) {
             break;
 
     }
+};
+/**
+ * Dispatches the errors sent by any client
+ * @param message
+ * @param client
+ */
+module.exports.error = function (message, client) {
+    logger.log('error', 'ERROR MESSAGE RECEIVED : %o', message)
 };

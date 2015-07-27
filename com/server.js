@@ -2,24 +2,68 @@
 global.modeDev = process.env.PRODUCTION && process.env.PRODUCTION != 'false';
 global.port = 26000; // TODO : configurer ça en paramètre de commande
 global.host = global.modeDev ? '85.14.137.12' : '127.0.0.1';
+//global.ssl = !global.modeDev; // TODO
+global.ssl = true;
 global.controllerClient = null;
 global.supervisionClients = [];
+
+// Local modules
+var logger = require('./src/utils/logger.js');
+
+var router = require('./src/message_routes.js');
+var errorHandler = require('./src/utils/error_handler.js');
 
 // Dependencies
 var WebSocketServer = require('ws').Server;
 var _ = require('lodash');
-
-// HTTP Server requirement
-var http = require('http')
-    , express = require('express')
+var express = require('express')
     , app = express();
 
-// Local modules
-var logger = require('./src/utils/logger.js');
-var router = require('./src/message_routes.js');
-var errorHandler = require('./src/utils/error_handler.js');
+var fs = require('fs');
+
+// you'll probably load configuration from config
+var cfg = {
+    ssl: global.ssl,
+    port: global.port,
+    host: global.host,
+    ssl_key: './auth/server.key',
+    ssl_cert: './auth/server.crt',
+    ca: './auth/ca.crt'
+};
+
+var httpServ = ( cfg.ssl ) ? require('https') : require('http');
+
+var app = null;
+
+// dummy request processing
+var processRequest = function (req, res) {
+
+    res.writeHead(200);
+    res.end("All glory to WebSockets!\n");
+};
+
+if (cfg.ssl) {
+
+    app = httpServ.createServer({
+        // providing server with  SSL key/cert
+        key: fs.readFileSync(cfg.ssl_key),
+        cert: fs.readFileSync(cfg.ssl_cert),
+        ca: [fs.readFileSync(cfg.ca)],
+        host: cfg.host,
+        requestCert: true,
+        rejectUnauthorized: true
+
+    }, processRequest).listen(cfg.port, function () {
+        logger.log('info', 'Https server bound !');
+    });
+
+} else {
+    app = httpServ.createServer(processRequest).listen(cfg.port);
+}
 
 // Websocket Server init
+//var wss = new WebSocketServer({server: app});
+
 var wss = new WebSocketServer({
     host: global.host,
     port: global.port
@@ -28,6 +72,7 @@ var wss = new WebSocketServer({
 
 // Connexion websocket
 wss.on('connection', function connection(client) {
+    logger.log('info', 'New client connected !');
 
     client.on('message', function incoming(msg) {
         var message = {};
@@ -51,8 +96,14 @@ wss.on('connection', function connection(client) {
 
         // 2 - Message has a messageType key
         if (message.messageType) {
-            // 3 - DISPATCHING THE MESSAGE TO THE RIGHT HANDLER
-            router.route(message, client);
+
+            if (message.error === undefined) {
+                // 3 - DISPATCHING THE MESSAGE TO THE RIGHT HANDLER
+                router.route(message, client);
+            } else {
+                // 3 BIS - THE MESSAGE IS IN FACT AN ERROR MESSAGE
+                router.error(message, client);
+            }
         }
         // 2 BIS - Message doesn't have a messageType key
         else {
@@ -95,24 +146,24 @@ wss.on('connection', function connection(client) {
 
 
 // ON LANCE UN CLIENT DE TEST EN MODE DEV
-if (!process.env.PRODUCTION || process.env.PRODUCTION == "false") {
-
-    logger.log('info', 'MODE DEV');
-    // Dependencies
-    var helperClient = require('./src/utils/test_helper.js');
-
-    // Client
-    var WebSocket = require('ws');
-    var ws = new WebSocket('ws://' + host + ':' + port);
-
-    ws.on('open', function open() {
-        var cap = JSON.stringify(helperClient.busConfigData());
-        //logger.log('info', 'client envoie capabilities '+cap);
-        ws.send(cap, errorHandler.onSendError);
-    });
-
-    ws.on('message', function (data, flags) {
-        logger.log('info', 'client reçoit: %s', data);
-    });
-}
+//if (!process.env.PRODUCTION || process.env.PRODUCTION == "false") {
+//
+//    logger.log('info', 'MODE DEV');
+//    // Dependencies
+//    var helperClient = require('./src/utils/test_helper.js');
+//
+//    // Client
+//    var WebSocket = require('ws');
+//    var ws = new WebSocket('wss://' + host + ':' + port);
+//
+//    ws.on('open', function open() {
+//        var cap = JSON.stringify(helperClient.busConfigData());
+//        //logger.log('info', 'client envoie capabilities '+cap);
+//        ws.send(cap, errorHandler.onSendError);
+//    });
+//
+//    ws.on('message', function (data, flags) {
+//        logger.log('info', 'client reçoit: %s', data);
+//    });
+//}
 

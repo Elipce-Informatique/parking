@@ -58,10 +58,18 @@ module.exports = {
     /**
      * Send a busConfigQuery to the controller
      */
-    sendBusConfigQuery: function () {
-        global.controllerClient.send(JSON.stringify({
-            "messageType": "busConfigQuery"
-        }), errorHandler.onSendError);
+    sendBusConfigQuery: function (client) {
+        // There is no controller yet
+        if (global.controllerClient == null) {
+            // Error message to the original client
+            client.send(JSON.stringify({
+                "messageType": "busConfigQuery"
+            }), errorHandler.onSendError);
+        } else {
+            global.controllerClient.send(JSON.stringify({
+                "messageType": "busConfigQuery"
+            }), errorHandler.onSendError);
+        }
     },
 
     /**
