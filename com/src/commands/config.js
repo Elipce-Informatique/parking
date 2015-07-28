@@ -11,7 +11,7 @@ module.exports = {
         global.controllerClient = client;
         client.isController = true;
         // Send capabilities back to the controller
-        this.sendCapabilities(port, client)
+        this.sendCapabilities(global.port, client)
     },
     /**
      * COM server capabilities
@@ -55,6 +55,27 @@ module.exports = {
     },
     // --------------------------------------------------------------------------------------------
     /**
+     * Sends a remoteControl command to the controller
+     *
+     * @param command : string -> the command to send on the remoteControl query
+     */
+    sendRemoteControl: function (command) {
+        // There is no controller yet
+        if (global.controllerClient !== null) {
+            // Error message to the original client
+            global.controllerClient.send(JSON.stringify({
+                "messageType": "remoteControl",
+                "data": {
+                    "command": command
+                }
+            }), errorHandler.onSendError);
+        } else {
+            // No controller connected yet
+            logger.log('error', 'sendConfigurationQuery : No controller connected to send this message');
+        }
+    },
+    // --------------------------------------------------------------------------------------------
+    /**
      * Send the configuration query (without params)
      * to fetch controller's configuration
      */
@@ -75,7 +96,7 @@ module.exports = {
      * to fetch controller's configuration
      */
     onConfigurationData: function (data) {
-        logger.log('info', 'Config data fron controller : %o', data);
+        logger.log('info', 'Config data from controller : %o', data);
     },
     /**
      * Send the configuration update (without data)

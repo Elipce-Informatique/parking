@@ -2,7 +2,6 @@
 global.modeDev = process.env.PRODUCTION && process.env.PRODUCTION != 'false';
 global.port = 26000; // TODO : configurer ça en paramètre de commande
 global.host = global.modeDev ? '85.14.137.12' : '127.0.0.1';
-//global.ssl = !global.modeDev; // TODO
 global.ssl = true;
 global.controllerClient = null;
 global.supervisionClients = [];
@@ -37,39 +36,39 @@ var app = null;
 
 // dummy request processing
 var processRequest = function (req, res) {
-
+    logger.log('info', 'Request on the https server !');
     res.writeHead(200);
     res.end("All glory to WebSockets!\n");
 };
 
-//if (cfg.ssl) {
-//
-//    app = httpServ.createServer({
-//        // providing server with  SSL key/cert
-//        key: fs.readFileSync(cfg.ssl_key),
-//        cert: fs.readFileSync(cfg.ssl_cert),
-//        ca: [fs.readFileSync(cfg.ca)],
-//        host: cfg.host,
-//        requestCert: true,
-//        rejectUnauthorized: true
-//
-//    }, processRequest).listen(cfg.port, function () {
-//        logger.log('info', 'Https server bound !');
-//    });
-//
-//} else {
-//    app = httpServ.createServer({
-//        host: cfg.host
-//    }, processRequest).listen(cfg.port);
-//}
+if (cfg.ssl) {
+
+    app = httpServ.createServer({
+        // providing server with  SSL key/cert
+        key: fs.readFileSync(cfg.ssl_key),
+        cert: fs.readFileSync(cfg.ssl_cert),
+        ca: [fs.readFileSync(cfg.ca)],
+        host: cfg.host,
+        requestCert: true,
+        rejectUnauthorized: true
+
+    }, processRequest).listen(cfg.port, function () {
+        logger.log('info', 'Https server bound !');
+    });
+
+    app.on('clientError', function (e, socket) {
+        logger.log('error', 'clientError on https server : %o', e);
+    });
+
+} else {
+    app = httpServ.createServer({
+        host: cfg.host
+    }, processRequest).listen(cfg.port);
+}
+
 
 // Websocket Server init
-//var wss = new WebSocketServer({server: app});
-
-var wss = new WebSocketServer({
-    host: global.host,
-    port: global.port
-});
+var wss = new WebSocketServer({server: app});
 
 
 // Connexion websocket
@@ -144,6 +143,11 @@ wss.on('connection', function connection(client) {
             }.bind(this));
         }
     });
+});
+
+// Error occured with the underlying server
+wss.on('error', function (error) {
+    logger.log('error', 'error on webService server ! : %o', error);
 });
 
 

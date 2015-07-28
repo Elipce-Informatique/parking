@@ -4,6 +4,7 @@
  * Handle what happend when the controller connects to the server
  */
 var config = require('../commands/config.js');
+var logger = require('../utils/logger.js');
 
 module.exports = {
     /**
@@ -15,10 +16,12 @@ module.exports = {
         // Displays controller's config in logs
         config.sendConfigurationQuery();
 
-        // TODO : launch the sequence on the prod server to try ssl
-        // Update server's url in the controller (1 time action)
-        config.sendConfigurationUpdate({
-            "serverURL" : "wss://85.14.137.12:26000/"
-        });
+        //logger.log('info', 'Update config on controller ?');
+
+        //// TODO : launch the sequence on the prod server to try ssl
+        //// Update server's url in the controller (1 time action)
+        //config.sendConfigurationUpdate({
+        //    "serverURL" : "wss://85.14.137.12:26000/"
+        //});
     }
 };
