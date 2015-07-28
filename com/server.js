@@ -86,13 +86,13 @@ wss.on('connection', function connection(client) {
             // No JSON format
         catch (e) {
             logger.log('error', 'Message is not a valid JSON : %o', e);
-            client.send(JSON.stringify({
-                messageType: 'error',
-                error: {
-                    action: "Message is not a valid JSON",
-                    text: ""
-                }
-            }), errorHandler.onSendError);
+            //client.send(JSON.stringify({
+            //    messageType: 'error',
+            //    error: {
+            //        action: "Message is not a valid JSON",
+            //        text: ""
+            //    }
+            //}), errorHandler.onSendError);
             return;
         }
 
