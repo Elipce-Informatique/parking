@@ -1,6 +1,6 @@
 // Variables
 global.modeDev = process.env.PRODUCTION && process.env.PRODUCTION != 'false';
-global.port = 26000; // TODO : configurer ça en paramètre de commande
+global.port = 26000; // TODO : configure this with command parameter
 global.host = global.modeDev ? '85.14.137.12' : '127.0.0.1';
 global.ssl = true;
 global.controllerClient = null;
@@ -15,12 +15,9 @@ var errorHandler = require('./src/utils/error_handler.js');
 // Dependencies
 var WebSocketServer = require('ws').Server;
 var _ = require('lodash');
-var express = require('express')
-    , app = express();
-
 var fs = require('fs');
 
-// you'll probably load configuration from config
+// We should load config from elsewhere...
 var cfg = {
     ssl: global.ssl,
     port: global.port,
@@ -31,9 +28,11 @@ var cfg = {
 };
 
 var httpServ = ( cfg.ssl ) ? require('https') : require('http');
-
 var app = null;
 
+// --------------------------------------------------------------
+// ------ HTTPS SERVER SETUP ------------------------------------
+// --------------------------------------------------------------
 // dummy request processing
 var processRequest = function (req, res) {
     logger.log('info', 'Request on the https server !');
@@ -66,11 +65,17 @@ if (cfg.ssl) {
     }, processRequest).listen(cfg.port);
 }
 
+// --------------------------------------------------------------
+// --------------------------------------------------------------
+// --------------------------------------------------------------
 
-// Websocket Server init
+// WEBSOCKET SERVER INIT
 var wss = new WebSocketServer({server: app});
 
 
+// --------------------------------------------------------------
+// ------- MANAGING CONNECTIONS ---------------------------------
+// --------------------------------------------------------------
 // Connexion websocket
 wss.on('connection', function connection(client) {
     logger.log('info', 'New client connected !');
@@ -143,33 +148,17 @@ wss.on('connection', function connection(client) {
             }.bind(this));
         }
     });
+
+    client.on('error', function (err) {
+        logger.log('error', 'An error occured with a websocket client : %o', err);
+    })
 });
+
+// --------------------------------------------------------------
+// --------------------------------------------------------------
+// --------------------------------------------------------------
 
 // Error occured with the underlying server
 wss.on('error', function (error) {
     logger.log('error', 'error on webService server ! : %o', error);
 });
-
-
-// ON LANCE UN CLIENT DE TEST EN MODE DEV
-//if (!process.env.PRODUCTION || process.env.PRODUCTION == "false") {
-//
-//    logger.log('info', 'MODE DEV');
-//    // Dependencies
-//    var helperClient = require('./src/utils/test_helper.js');
-//
-//    // Client
-//    var WebSocket = require('ws');
-//    var ws = new WebSocket('wss://' + host + ':' + port);
-//
-//    ws.on('open', function open() {
-//        var cap = JSON.stringify(helperClient.busConfigData());
-//        //logger.log('info', 'client envoie capabilities '+cap);
-//        ws.send(cap, errorHandler.onSendError);
-//    });
-//
-//    ws.on('message', function (data, flags) {
-//        logger.log('info', 'client reçoit: %s', data);
-//    });
-//}
-

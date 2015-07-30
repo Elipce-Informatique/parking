@@ -1,17 +1,23 @@
 // Dependencies
+var util = require('util');
+var EventEmitter = require('events').EventEmitter;
 var mysql = require('mysql');
+
 
 // Local modules
 var logger = require('../utils/logger.js');
 var errorHandler = require('../message_routes.js');
 var servModel = require('../models/server.js');
+var messenger = require('../utils/messenger.js');
 
-module.exports = {
+
+var config = {
     onCapabilities: function (data, client) {
         global.controllerClient = client;
         client.isController = true;
         // Send capabilities back to the controller
         this.sendCapabilities(global.port, client)
+        this.emit('capabilitiesData', data);
     },
     /**
      * COM server capabilities
@@ -31,23 +37,18 @@ module.exports = {
             if (err) {
                 // SQL error
                 logger.log('error', 'capabilities SQL error ' + err.message);
-                retour = {
-                    messageType: 'capabilities',
-                    error: {
-                        action: "SQL error",
-                        text: err.message
-                    }
-                }
+                messenger.send(client, 'capabilities', {}, {
+                    action: "SQL error",
+                    text: err.message
+                });
             }
             // No error
             else {
                 // Update result
-                retour.data = rows[0];
+                messenger.send(client, 'capabilities', rows[0]);
                 logger.log('info', 'capabilities answer OK : ' + retour.data);
-            }
 
-            // Send
-            client.send(JSON.stringify(retour), errorHandler.onSendError);
+            }
 
             // Close DB
             // connexion.end(); // Attention fait BUGGER ???
@@ -60,19 +61,9 @@ module.exports = {
      * @param command : string -> the command to send on the remoteControl query
      */
     sendRemoteControl: function (command) {
-        // There is no controller yet
-        if (global.controllerClient !== null) {
-            // Error message to the original client
-            global.controllerClient.send(JSON.stringify({
-                "messageType": "remoteControl",
-                "data": {
-                    "command": command
-                }
-            }), errorHandler.onSendError);
-        } else {
-            // No controller connected yet
-            logger.log('error', 'sendConfigurationQuery : No controller connected to send this message');
-        }
+        messenger.sendToController("remoteControl", {
+            "command": command
+        });
     },
     // --------------------------------------------------------------------------------------------
     /**
@@ -97,6 +88,7 @@ module.exports = {
      */
     onConfigurationData: function (data) {
         logger.log('info', 'Config data from controller : %o', data);
+        this.emit('configurationData', data);
     },
     /**
      * Send the configuration update (without data)
@@ -118,13 +110,17 @@ module.exports = {
     // --------------------------------------------------------------------------------------------
     /**
      * Send a busConfigQuery to the controller
+     * @param client : socket from which the initial query comes from
      */
     sendBusConfigQuery: function (client) {
         // There is no controller yet
         if (global.controllerClient == null) {
             // Error message to the original client
             client.send(JSON.stringify({
-                "messageType": "busConfigQuery"
+                "messageType": "busConfigQuery",
+                "error": {
+                    "text": "The client supplied for this message is null"
+                }
             }), errorHandler.onSendError);
         } else {
             global.controllerClient.send(JSON.stringify({
@@ -139,6 +135,7 @@ module.exports = {
      * @param data: data key from the response
      */
     onBusConfigData: function (port, data) {
+
         // At least 1 controller
         if (data.length > 0) {
             //Query structure
@@ -353,3 +350,7 @@ module.exports = {
     }
     // --------------------------------------------------------------------------------------------
 };
+
+util.inherits(config, EventEmitter);
+
+module.exports = config;

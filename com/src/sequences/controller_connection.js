@@ -5,6 +5,7 @@
  */
 var config = require('../commands/config.js');
 var logger = require('../utils/logger.js');
+var init = require('./init_parking.js');
 
 module.exports = {
     /**
@@ -13,15 +14,10 @@ module.exports = {
      * @param client
      */
     onNewController: function (client) {
-        // Displays controller's config in logs
+        // TEMP - Displays controller's config in logs
         config.sendConfigurationQuery();
 
-        //logger.log('info', 'Update config on controller ?');
-
-        //// TODO : launch the sequence on the prod server to try ssl
-        //// Update server's url in the controller (1 time action)
-        //config.sendConfigurationUpdate({
-        //    "serverURL" : "wss://85.14.137.12:26000/"
-        //});
+        // TODO - Check in the database if the parking has been initialized and launch the init sequence !
+        init.start();
     }
 };

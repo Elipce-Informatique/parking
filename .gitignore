@@ -25,6 +25,7 @@ composer.lock
 bower_components
 node_modules
 vendor
+com/log
 
 # OS or Editor folders
 ._*
