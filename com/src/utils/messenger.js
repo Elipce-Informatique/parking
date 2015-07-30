@@ -38,11 +38,18 @@ module.exports = {
             };
             socket.send(JSON.stringify(message), errorHandler.onSendError);
         }
-        // Let's go !
-        else {
+        // We have all we need, Let's go !
+        else if (Object.keys(data).length !== 0) {
             var message = {
                 "messageType": messageType,
                 "data": data
+            };
+            socket.send(JSON.stringify(message), errorHandler.onSendError);
+        }
+        // We don't have any data to send, just the messageType
+        else if (Object.keys(data).length !== 0) {
+            var message = {
+                "messageType": messageType
             };
             socket.send(JSON.stringify(message), errorHandler.onSendError);
         }

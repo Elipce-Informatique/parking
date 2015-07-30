@@ -71,16 +71,7 @@ var config = {
      * to fetch controller's configuration
      */
     sendConfigurationQuery: function () {
-        // There is no controller yet
-        if (global.controllerClient !== null) {
-            // Error message to the original client
-            global.controllerClient.send(JSON.stringify({
-                "messageType": "configuration"
-            }), errorHandler.onSendError);
-        } else {
-            // No controller connected yet
-            logger.log('error', 'sendConfigurationQuery : No controller connected to send this message');
-        }
+        messenger.sendToController("configuration", {});
     },
     /**
      * Get the configuration data
