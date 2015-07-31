@@ -1,3 +1,0 @@
-/**
- * Handle all events
- */

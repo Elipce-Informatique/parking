@@ -220,13 +220,10 @@ var config = {
     /**
      * Send a sensorConfigQuery to the controller
      */
-    sendSensorConfigQuery: function (busId) {
-        global.controllerClient.send(JSON.stringify({
-            "messageType": "sensorConfigQuery",
-            "data": {
-                "busID": busId
-            }
-        }), errorHandler.onSendError);
+    sendSensorConfigQuery: function (busId, client) {
+        messenger.sendToController("sensorConfigQuery", {
+            "busID": busId
+        }, {}, client);
     },
     /** TODO
      * insert the configuration of all the sensors for one bus in DB
@@ -253,13 +250,10 @@ var config = {
      * Send a displayConfigQuery to the controller
      * @param busId: bus id to get all displays config infos
      */
-    sendDisplayConfigQuery: function (busId) {
-        global.controllerClient.send(JSON.stringify({
-            "messageType": "displayConfigQuery",
-            "data": {
-                "busID": busId
-            }
-        }), errorHandler.onSendError);
+    sendDisplayConfigQuery: function (busId, client) {
+        messenger.sendToController("displayConfigQuery", {
+            "busID": busId
+        }, {}, client);
     },
     /** TODO
      * insert the configuration of all the displays for one bus in DB
@@ -285,10 +279,8 @@ var config = {
     /**
      * Send a counterConfigQuery to the controller
      */
-    sendCounterConfigQuery: function () {
-        global.controllerClient.send(JSON.stringify({
-            "messageType": "counterConfigQuery"
-        }), errorHandler.onSendError);
+    sendCounterConfigQuery: function (client) {
+        messenger.sendToController("counterConfigQuery", {}, {}, client);
     },
     /** TODO
      * insert the configuration of all the counters in DB
@@ -314,10 +306,8 @@ var config = {
     /**
      * Send a viewConfigQuery to the controller
      */
-    sendViewConfigQuery: function () {
-        global.controllerClient.send(JSON.stringify({
-            "messageType": "viewConfigQuery"
-        }), errorHandler.onSendError);
+    sendViewConfigQuery: function (client) {
+        messenger.sendToController("viewConfigQuery", {}, {}, client);
     },
     /** TODO
      * insert the configuration of all the views in DB

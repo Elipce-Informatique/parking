@@ -1,5 +1,6 @@
 // Local modules
 var config_controller = require('./commands/config.js');
+var events_controller = require('./commands/events.js');
 var logger = require('./utils/logger.js');
 var errorHandler = require('./utils/error_handler.js');
 var ctrlSequence = require('./sequences/controller_connection.js');
@@ -19,26 +20,70 @@ module.exports.route = function (message, client) {
     switch (message.messageType) {
         // Controller is connected
         case 'capabilities':
-            // Usher is speaking to us (Lol we're famous !)
+            // USHER IS SPEAKING TO US (LOL WE'RE FAMOUS !)
             config_controller.onCapabilities(message.data, client);
             ctrlSequence.onNewController(client);
             break;
         case 'configuration':
+            // THE CONTROLLER SENDS ITS CONFIGURATION
             config_controller.onConfigurationData(message.data);
             break;
         case 'supervisionConnection':
-            // A web browser is connected
+            // A WEB BROWSER IS CONNECTED
             client.isController = false;
             global.supervisionClients.push(client);
             break;
         case 'busConfigQuery':
-            // Relay the message that comes from supervision
+            // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
             config_controller.sendBusConfigQuery(client);
             break;
         case 'busConfigData':
-            // Insert the received data in database
+            // INSERT THE RECEIVED DATA IN DATABASE
             config_controller.onBusConfigData(global.port, message.data);
             break;
+        case 'sensorConfigQuery':
+            // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
+            config_controller.sendSensorConfigQuery(message.data.busId, client);
+            break;
+        case 'sensorConfigData':
+            // INSERT THE RECEIVED DATA IN DATABASE
+            config_controller.onSensorConfigData(message.data);
+            break;
+        case 'displayConfigQuery':
+            // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
+            config_controller.sendDisplayConfigQuery(message.data.busId, client);
+            break;
+        case 'displayConfigData':
+            // INSERT THE RECEIVED DATA IN DATABASE
+            config_controller.onDisplayConfigData(message.data);
+            break;
+        // TODO IN THE DATABASE -------------------------------------------
+        case 'counterConfigQuery':
+            // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
+            config_controller.sendCounterConfigQuery(client);
+            break;
+        case 'counterConfigData':
+            // INSERT THE RECEIVED DATA IN DATABASE
+            config_controller.onSensorConfigData(message.data);
+            break;
+        case 'viewConfigQuery':
+            // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
+            config_controller.sendViewConfigQuery(client);
+            break;
+        case 'viewConfigData':
+            // INSERT THE RECEIVED DATA IN DATABASE
+            config_controller.onSensorConfigData(message.data);
+            break;
+        // END TODO IN THE DATABASE ---------------------------------------
+        case 'eventQuery':
+            // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
+            events_controller.sendEventQuery();
+            break;
+        case 'eventData':
+            // INSERT THE RECEIVED DATA IN DATABASE
+            events_controller.onEventData(message.data);
+            break;
+        // FALLBACK, LOG THE UNKNOWN MESSAGE
         default:
             logger.log('info', 'MESSAGE TYPE ERROR -> messageType: ' + message.messageType);
             //var retour = {
@@ -59,5 +104,5 @@ module.exports.route = function (message, client) {
  * @param client
  */
 module.exports.error = function (message, client) {
-    logger.log('error', 'ERROR MESSAGE RECEIVED : %o', message)
+    logger.log('error', 'ERROR MESSAGE RECEIVED FROM CLIENT : %o', message)
 };

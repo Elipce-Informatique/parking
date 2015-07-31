@@ -1,4 +1,4 @@
-// Variables
+// TODO get all that config from elsewhere ?
 var connexionInfos = (process.env.PRODUCTION && process.env.PRODUCTION == 'true') ?  {
     host     : 'localhost',
     user     : 'parking',

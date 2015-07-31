@@ -31,7 +31,7 @@ module.exports = {
             logger.log('error', "The client socket supplied for this message is not opened.");
         }
         // This is an error message
-        else if (typeof error === 'object') {
+        else if (typeof error === 'object' && Object.keys(error).length !== 0) {
             var message = {
                 "messageType": messageType,
                 "error": error
