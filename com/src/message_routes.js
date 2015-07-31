@@ -39,7 +39,7 @@ module.exports.route = function (message, client) {
             break;
         case 'busConfigData':
             // INSERT THE RECEIVED DATA IN DATABASE
-            config_controller.onBusConfigData(global.port, message.data);
+            config_controller.onBusConfigData(message.data);
             break;
         case 'sensorConfigQuery':
             // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
@@ -72,12 +72,12 @@ module.exports.route = function (message, client) {
             break;
         case 'viewConfigData':
             // INSERT THE RECEIVED DATA IN DATABASE
-            config_controller.onSensorConfigData(message.data);
+            config_controller.onViewConfigData(message.data);
             break;
         // END TODO IN THE DATABASE ---------------------------------------
         case 'eventQuery':
             // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
-            events_controller.sendEventQuery();
+            events_controller.sendEventQuery(message.data.ackId);
             break;
         case 'eventData':
             // INSERT THE RECEIVED DATA IN DATABASE

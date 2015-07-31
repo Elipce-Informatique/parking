@@ -13,11 +13,12 @@ var messenger = require('../utils/messenger.js');
 
 var config = {
     onCapabilities: function (data, client) {
+        this.emit('capabilitiesData', data);
+
         global.controllerClient = client;
         client.isController = true;
         // Send capabilities back to the controller
         this.sendCapabilities(global.port, client)
-        this.emit('capabilitiesData', data);
     },
     /**
      * COM server capabilities
@@ -78,25 +79,16 @@ var config = {
      * to fetch controller's configuration
      */
     onConfigurationData: function (data) {
-        logger.log('info', 'Config data from controller : %o', data);
         this.emit('configurationData', data);
+
+        logger.log('info', 'Config data from controller : %o', data);
     },
     /**
      * Send the configuration update (without data)
      * to update controller's configuration
      */
     sendConfigurationUpdate: function (data) {
-        // There is no controller yet
-        if (global.controllerClient !== null) {
-            // Error message to the original client
-            global.controllerClient.send(JSON.stringify({
-                "messageType": "configuration",
-                "data": data
-            }), errorHandler.onSendError);
-        } else {
-            // No controller connected yet
-            logger.log('error', 'sendConfigurationQuery : No controller connected to send this message');
-        }
+        messenger.sendToController("configuration", data);
     },
     // --------------------------------------------------------------------------------------------
     /**
@@ -104,28 +96,15 @@ var config = {
      * @param client : socket from which the initial query comes from
      */
     sendBusConfigQuery: function (client) {
-        // There is no controller yet
-        if (global.controllerClient == null) {
-            // Error message to the original client
-            client.send(JSON.stringify({
-                "messageType": "busConfigQuery",
-                "error": {
-                    "text": "The client supplied for this message is null"
-                }
-            }), errorHandler.onSendError);
-        } else {
-            global.controllerClient.send(JSON.stringify({
-                "messageType": "busConfigQuery"
-            }), errorHandler.onSendError);
-        }
+        messenger.sendToController("busConfigQuery", {}, {}, client);
     },
 
     /**
      * insert the configuration of all the buses in DB
-     * @param port: port used to communicate
      * @param data: data key from the response
      */
-    onBusConfigData: function (port, data) {
+    onBusConfigData: function (data) {
+        this.emit('busConfigData', data);
 
         // At least 1 controller
         if (data.length > 0) {
@@ -148,7 +127,7 @@ var config = {
                         "WHERE s.protocol_port = ? " +
                         "AND c.v4_id = ? ";
 
-                    connection.query(sqlController, [port, controller.controllerID], function (err, rows) {
+                    connection.query(sqlController, [global.port, controller.controllerID], function (err, rows) {
                         if (err) {
                             return connection.rollback(function () {
                                 logger.log('error', 'busConfigData: SELECT controller transaction rollback: ' + sqlController);
@@ -214,6 +193,8 @@ var config = {
      * The last busConfigUpdate has been completed
      */
     onBusConfigUpdateDone: function (data) {
+        this.emit('busConfigUpdateDone', data);
+
         logger.log('info', 'onBusConfigUpdateDone received: %o', data);
     },
     // --------------------------------------------------------------------------------------------
@@ -230,6 +211,8 @@ var config = {
      * @param data: data key from the response
      */
     onSensorConfigData: function (data) {
+        this.emit('sensorConfigData', data);
+
         logger.log('info', 'onSensorConfigData received: %o', data);
     },
     /** TODO
@@ -243,6 +226,8 @@ var config = {
      * The last sensorConfigUpdate has been completed
      */
     onSensorConfigUpdateDone: function (data) {
+        this.emit('sensorConfigUpdateDone', data);
+
         logger.log('info', 'onBusConfigUpdateDone received: %o', data);
     },
     // --------------------------------------------------------------------------------------------
@@ -260,6 +245,8 @@ var config = {
      * @param data: data key from the response
      */
     onDisplayConfigData: function (data) {
+        this.emit('displayConfigData', data);
+
         logger.log('info', 'onDisplayConfigData received: %o', data);
     },
     /** TODO
@@ -273,6 +260,8 @@ var config = {
      * The last displayConfigUpdate has been completed
      */
     onDisplayConfigUpdateDone: function (data) {
+        this.emit('displayConfigUpdateDone', data);
+
         logger.log('info', 'onDisplayConfigUpdateDone received: %o', data);
     },
     // --------------------------------------------------------------------------------------------
@@ -287,6 +276,8 @@ var config = {
      * @param data: data key from the response
      */
     onCounterConfigData: function (data) {
+        this.emit('counterConfigData', data);
+
         logger.log('info', 'onCounterConfigData received: %o', data);
     },
     /** TODO
@@ -300,6 +291,8 @@ var config = {
      * The last counterConfigUpdate has been completed
      */
     onCounterConfigUpdateDone: function (data) {
+        this.emit('counterConfigUpdateDone', data);
+
         logger.log('info', 'onCounterConfigUpdateDone received: %o', data);
     },
     // --------------------------------------------------------------------------------------------
