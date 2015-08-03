@@ -356,6 +356,7 @@ Config.prototype.onViewConfigUpdateDone = function () {
 
 // --------------------------------------------------------------------------------------------
 
-util.inherits(config, EventEmitter);
+// Extend EventEmitter to use this.emit
+util.inherits(Config, EventEmitter);
 
-module.exports = config;
+module.exports = Config;
