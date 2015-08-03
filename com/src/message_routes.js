@@ -1,6 +1,6 @@
 // Local modules
-var config_controller = new require('./commands/config.js')();
-var events_controller = new require('./commands/events.js')();
+var config_controller = require('./commands/config.js'), config_controller = new config_controller();
+var events_controller = require('./commands/events.js'), events_controller = new events_controller();
 var logger = require('./utils/logger.js');
 var errorHandler = require('./utils/error_handler.js');
 var ctrlSequence = require('./sequences/controller_connection.js');

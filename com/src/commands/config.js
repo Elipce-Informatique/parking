@@ -11,18 +11,31 @@ var servModel = require('../models/server.js');
 var messenger = require('../utils/messenger.js');
 
 
-var Config = function () {
+// -----------------------------------------------------------------
+// Creates the Config class
+function Config() {
 
-};
+}
+
+// Extend EventEmitter to use this.emit
+util.inherits(Config, EventEmitter);
+// -----------------------------------------------------------------
 
 
+// Define the Config class
+// -----------------------------------------------------------------
+/**
+ * Capabilities message received from the controller
+ * @param data
+ * @param client
+ */
 Config.prototype.onCapabilities = function (data, client) {
     this.emit('capabilitiesData', data);
 
     global.controllerClient = client;
     client.isController = true;
     // Send capabilities back to the controller
-    this.sendCapabilities(global.port, client)
+    this.sendCapabilities();
 };
 
 
@@ -31,21 +44,15 @@ Config.prototype.onCapabilities = function (data, client) {
  * @param port: port used to communicate
  * @param client: websocket client
  */
-Config.prototype.sendCapabilities = function (port, client) {
+Config.prototype.sendCapabilities = function () {
 
-    servModel.getCapabilities(port, function (err, rows, fields) {
-        // Variables
-        var retour = {
-            messageType: 'capabilities',
-            data: {}
-        };
-
+    servModel.getCapabilities(global.port, function (err, rows, fields) {
 
         // Error
         if (err) {
             // SQL error
             logger.log('error', 'capabilities SQL error ' + err.message);
-            messenger.send(client, 'capabilities', {}, {
+            messenger.sendToController('capabilities', {}, {
                 action: "SQL error",
                 text: err.message
             });
@@ -53,8 +60,8 @@ Config.prototype.sendCapabilities = function (port, client) {
         // No error
         else {
             // Update result
-            messenger.send(client, 'capabilities', rows[0]);
-            logger.log('info', 'capabilities answer OK : ' + retour.data);
+            messenger.send(global.controllerClient, 'capabilities', rows[0]);
+            logger.log('info', 'capabilities answer OK : ');
 
         }
 
@@ -82,17 +89,16 @@ Config.prototype.sendRemoteControl = function (command) {
  */
 Config.prototype.sendConfigurationQuery = function () {
     messenger.sendToController("configuration", {});
-}
-    ,
+};
 /**
  * Get the configuration data
  * to fetch controller's configuration
  */
-    Config.prototype.onConfigurationData = function (data) {
-        this.emit('configurationData', data);
+Config.prototype.onConfigurationData = function (data) {
+    this.emit('configurationData', data);
 
-        logger.log('info', 'Config data from controller : %o', data);
-    };
+    logger.log('info', 'Config data from controller : %o', data);
+};
 
 /**
  * Send the configuration update (without data)
@@ -356,7 +362,5 @@ Config.prototype.onViewConfigUpdateDone = function () {
 
 // --------------------------------------------------------------------------------------------
 
-// Extend EventEmitter to use this.emit
-util.inherits(Config, EventEmitter);
 
 module.exports = Config;

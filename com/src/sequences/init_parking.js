@@ -1,7 +1,7 @@
 /**
  * Created by yann on 24/07/2015.
  */
-var config = require('../commands/config.js');
+var config = require('../commands/config.js'), config = new config();
 var logger = require('../utils/logger.js');
 
 module.exports = {
@@ -9,8 +9,9 @@ module.exports = {
      * Starts the initialisation procedure
      */
     start: function () {
+        this.bindEvents();
         // 1 - GET ALL THE CONFIGURATION FROM THE CONTROLLER
-        config.sendConfigurationQuery();
+        //config.sendConfigurationQuery();
     },
     bindEvents: function () {
         config.on('onCapabilitiesData', this.onCapabilitiesData);

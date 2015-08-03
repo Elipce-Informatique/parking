@@ -10,9 +10,13 @@ var messenger = require('../utils/messenger.js');
 /**
  * Handle all events
  */
-var Events = function () {
+function Events() {
 
-};
+}
+
+// Extend EventEmitter to use this.emit
+util.inherits(Events, EventEmitter);
+
 /**
  * Sends the eventQuery to the controller
  * If provided, AchId will be send in the data object.
@@ -30,8 +34,5 @@ Events.prototype.sendEventQuery = function (ackID) {
 Events.prototype.onEventData = function (data) {
 
 };
-
-// Extend EventEmitter to use this.emit
-util.inherits(Events, EventEmitter);
 
 module.exports = Events;

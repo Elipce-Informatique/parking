@@ -1,7 +1,10 @@
 /**
  * Created by yann on 29/07/2015.
  */
+var WebSocket = require('ws');
+
 var logger = require('./logger.js');
+var errorHandler = require('./error_handler.js');
 
 module.exports = {
     /**
@@ -68,9 +71,11 @@ module.exports = {
     sendToController: function (messageType, data, error, errorSocket) {
         // There is no controller yet
         if (global.controllerClient !== null) {
+            console.log('PASS CONTROLLER OK :' + messageType);
             // Error message to the original client
             this.send(global.controllerClient, messageType, data, error, errorSocket);
         } else {
+            console.log('PASS CONTROLLER PAS OK');
             // No controller connected yet
             this.send(errorSocket, messageType, {}, {
                 "text": "sendToController : No controller connected to send this message : " + messageType
