@@ -103,7 +103,7 @@ Config.prototype.sendConfigurationQuery = function () {
 Config.prototype.onConfigurationData = function (data) {
     this.emit('configurationData', data);
 
-    logger.log('info', 'Config data from controller : %o', data);
+    //logger.log('info', 'Config data from controller : %o', data);
 };
 
 /**
@@ -242,7 +242,7 @@ Config.prototype.sendSensorConfigQuery = function (busId, client) {
 Config.prototype.onSensorConfigData = function (data) {
     this.emit('sensorConfigData', data);
 
-    logger.log('info', 'onSensorConfigData received: %o', data);
+    //logger.log('info', 'onSensorConfigData received: %o', data);
 };
 
 /** TODO
@@ -280,7 +280,7 @@ Config.prototype.sendDisplayConfigQuery = function (busId, client) {
 Config.prototype.onDisplayConfigData = function (data) {
     this.emit('displayConfigData', data);
 
-    logger.log('info', 'onDisplayConfigData received: %o', data);
+    //logger.log('info', 'onDisplayConfigData received: %o', data);
 };
 
 /** TODO
@@ -315,7 +315,7 @@ Config.prototype.sendCounterConfigQuery = function (client) {
 Config.prototype.onCounterConfigData = function (data) {
     this.emit('counterConfigData', data);
 
-    logger.log('info', 'onCounterConfigData received: %o', data);
+    //logger.log('info', 'onCounterConfigData received: %o', data);
 };
 
 /** TODO
@@ -348,7 +348,8 @@ Config.prototype.sendViewConfigQuery = function (client) {
  * @param data: data key from the response
  */
 Config.prototype.onViewConfigData = function (data) {
-    logger.log('info', 'onViewConfigData received: %o', data);
+    this.emit('viewConfigUpdateDone', data);
+    //logger.log('info', 'onViewConfigData received: %o', data);
 };
 
 /** TODO

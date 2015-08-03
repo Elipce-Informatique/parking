@@ -131,7 +131,6 @@ wss.on('connection', function connection(client) {
      * Sur fermeture du socket, suppression du client de la liste de supervision
      * ou du controller
      */
-
     client.on('close', function (code, message) {
         logger.log('info', 'Client disconnected', message);
 
