@@ -133,6 +133,8 @@ wss.on('connection', function connection(client) {
      */
 
     client.on('close', function (code, message) {
+        logger.log('info', 'Client disconnected', message);
+
         // Controller closed
         if (_.isEqual(client, controllerClient)) {
             global.controllerClient = null;

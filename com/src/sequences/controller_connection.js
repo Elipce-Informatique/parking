@@ -14,6 +14,7 @@ module.exports = {
      * @param client
      */
     onNewController: function (client) {
+
         // TODO - Check in the database if the parking has been initialized and launch the init sequence !
         init.start();
     }

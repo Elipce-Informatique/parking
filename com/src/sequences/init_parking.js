@@ -11,7 +11,7 @@ module.exports = {
     start: function () {
         this.bindEvents();
         // 1 - GET ALL THE CONFIGURATION FROM THE CONTROLLER
-        //config.sendConfigurationQuery();
+        config.sendConfigurationQuery();
     },
     bindEvents: function () {
         config.on('onCapabilitiesData', this.onCapabilitiesData);

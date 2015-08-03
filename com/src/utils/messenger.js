@@ -2,6 +2,7 @@
  * Created by yann on 29/07/2015.
  */
 var WebSocket = require('ws');
+var _ = require('lodash');
 
 var logger = require('./logger.js');
 var errorHandler = require('./error_handler.js');
@@ -34,7 +35,7 @@ module.exports = {
             logger.log('error', "The client socket supplied for this message is not opened.");
         }
         // This is an error message
-        else if (typeof error === 'object' && Object.keys(error).length !== 0) {
+        else if (_.isObject(error) && !_.isEmpty(error)) {
             var message = {
                 "messageType": messageType,
                 "error": error
@@ -42,7 +43,7 @@ module.exports = {
             socket.send(JSON.stringify(message), errorHandler.onSendError);
         }
         // We have all we need, Let's go !
-        else if (Object.keys(data).length !== 0) {
+        else if (!_.isEmpty(data)) {
             var message = {
                 "messageType": messageType,
                 "data": data
@@ -50,7 +51,7 @@ module.exports = {
             socket.send(JSON.stringify(message), errorHandler.onSendError);
         }
         // We don't have any data to send, just the messageType
-        else if (Object.keys(data).length !== 0) {
+        else if (_.isEmpty(data)) {
             var message = {
                 "messageType": messageType
             };
@@ -71,11 +72,9 @@ module.exports = {
     sendToController: function (messageType, data, error, errorSocket) {
         // There is no controller yet
         if (global.controllerClient !== null) {
-            console.log('PASS CONTROLLER OK :' + messageType);
             // Error message to the original client
             this.send(global.controllerClient, messageType, data, error, errorSocket);
         } else {
-            console.log('PASS CONTROLLER PAS OK');
             // No controller connected yet
             this.send(errorSocket, messageType, {}, {
                 "text": "sendToController : No controller connected to send this message : " + messageType

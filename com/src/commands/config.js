@@ -34,8 +34,7 @@ Config.prototype.onCapabilities = function (data, client) {
 
     global.controllerClient = client;
     client.isController = true;
-    // Send capabilities back to the controller
-    this.sendCapabilities();
+    this.sendCapabilities(client);
 };
 
 
@@ -44,7 +43,7 @@ Config.prototype.onCapabilities = function (data, client) {
  * @param port: port used to communicate
  * @param client: websocket client
  */
-Config.prototype.sendCapabilities = function () {
+Config.prototype.sendCapabilities = function (client) {
 
     servModel.getCapabilities(global.port, function (err, rows, fields) {
 
@@ -52,7 +51,7 @@ Config.prototype.sendCapabilities = function () {
         if (err) {
             // SQL error
             logger.log('error', 'capabilities SQL error ' + err.message);
-            messenger.sendToController('capabilities', {}, {
+            messenger.send(client, 'capabilities', {}, {
                 action: "SQL error",
                 text: err.message
             });
@@ -60,8 +59,15 @@ Config.prototype.sendCapabilities = function () {
         // No error
         else {
             // Update result
-            messenger.send(global.controllerClient, 'capabilities', rows[0]);
-            logger.log('info', 'capabilities answer OK : ');
+            logger.log('info', 'Sending capabilities answer ! ');
+            messenger.send(client, 'capabilities', rows[0]);
+
+            //var message = {
+            //    "messageType": "capabilities",
+            //    "data": rows[0]
+            //};
+            //client.send(JSON.stringify(message), errorHandler.onSendError);
+            //logger.log('info', '2 - capabilities answer OK : ');
 
         }
 

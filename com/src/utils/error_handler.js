@@ -9,6 +9,10 @@ module.exports = {
      */
     onSendError: function (error) {
         // Logs the error into the console and a file.
-        logger.log('error', 'Websocket send error : ', error);
+        if (error) {
+            logger.log('error', 'Websocket send error : ', error);
+        } else {
+            logger.log('info', 'SEND OK !');
+        }
     }
 };
