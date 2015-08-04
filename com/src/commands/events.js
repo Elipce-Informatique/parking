@@ -11,7 +11,7 @@ var messenger = require('../utils/messenger.js');
  * Handle all events
  */
 function Events() {
-
+    EventEmitter.call(this);
 }
 
 // Extend EventEmitter to use this.emit

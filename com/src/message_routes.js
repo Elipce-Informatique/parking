@@ -13,8 +13,7 @@ var ctrlSequence = require('./sequences/controller_connection.js');
  */
 module.exports.route = function (message, client) {
     // Trace
-    logger.log('info', 'INCOMING QUERY: messageType: ' + message.messageType + '-------------------');
-    logger.log('info', 'INCOMING QUERY: Client type: ' + (client.isController != undefined ? (client.isController ? 'Controller' : 'Supervision') : 'unknown'));
+    logger.log('info', 'INCOMING QUERY: messageType: ' + message.messageType + ' - Client type: ' + (client.isController != undefined ? (client.isController ? 'Controller' : 'Supervision') : 'unknown'));
 
     // Dispatching the message to the right handler
     switch (message.messageType) {

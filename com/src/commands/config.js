@@ -65,18 +65,7 @@ Config.prototype.sendCapabilities = function (client) {
             // Update result
             logger.log('info', 'Sending capabilities answer ! ');
             messenger.send(client, 'capabilities', rows[0]);
-
-            //var message = {
-            //    "messageType": "capabilities",
-            //    "data": rows[0]
-            //};
-            //client.send(JSON.stringify(message), errorHandler.onSendError);
-            //logger.log('info', '2 - capabilities answer OK : ');
-
         }
-
-        // Close DB
-        // connexion.end(); // Attention fait BUGGER ???
     });
 };
 
@@ -106,8 +95,6 @@ Config.prototype.sendConfigurationQuery = function () {
  */
 Config.prototype.onConfigurationData = function (data) {
     this.emit('configurationData', data);
-
-    //logger.log('info', 'Config data from controller : %o', data);
 };
 
 /**
@@ -129,7 +116,7 @@ Config.prototype.sendBusConfigQuery = function (client) {
 
 
 /**
- * insert the configuration of all the buses in DB
+ * Insert the configuration of all the buses in DB
  * @param data: data key from the response
  */
 Config.prototype.onBusConfigData = function (data) {

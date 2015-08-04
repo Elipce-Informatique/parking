@@ -9,6 +9,10 @@ var mysql = require('mysql');
 var queues = require('mysql-queues');
 
 module.exports = {
+    /**
+     * Insert the buses provided by the controller
+     * @param data : list of all controllers with a bus property featuring an array of buses.
+     */
     insertBuses: function (data) {
 
         //Query structure
@@ -59,7 +63,7 @@ module.exports = {
                             trans.query(inst, function (err, result) {
                                 if (err && trans.rollback) {
                                     trans.rollback();
-                                    logger.log('error', 'TRANSACTION ROLLBACK' );
+                                    logger.log('error', 'TRANSACTION ROLLBACK');
                                     throw err;
                                 }
                             });
