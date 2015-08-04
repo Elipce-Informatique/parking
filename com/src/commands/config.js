@@ -25,13 +25,6 @@ function Config() {
 util.inherits(Config, EventEmitter);
 // -----------------------------------------------------------------
 
-// TODO TEST
-Config.prototype.testEvts = function (msg) {
-    this.emit('testEvt', msg);
-};
-// TODO TEST
-
-
 // Define the Config class
 // -----------------------------------------------------------------
 /**

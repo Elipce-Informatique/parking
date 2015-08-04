@@ -29,11 +29,6 @@ module.exports = {
         this.config.on('sensorConfigData', this.onSensorConfigData);
         this.config.on('displayConfigData', this.onDisplayConfigData);
         this.config.on('counterConfigData', this.onCounterConfigData);
-
-        // TODO TEST
-        this.config.on('testEvt', this.onTest);
-        this.config.testEvts('Hello world');
-        // TODO TEST
     },
 
     onTest: function (msg) {
