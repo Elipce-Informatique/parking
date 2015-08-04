@@ -9,7 +9,7 @@ module.exports = {
      */
     getCapabilities: function (port, callback) {
         // Dependencies
-        var connexion = require('../utils/mysql_helper.js');
+        var connexion = require('../utils/mysql_helper.js')();
 
         // Query
         var sql = "" +

@@ -8,8 +8,9 @@ var _ = require('lodash');
 // Local modules
 var logger = require('../utils/logger.js');
 var errorHandler = require('../message_routes.js');
-var servModel = require('../models/server.js');
 var messenger = require('../utils/messenger.js');
+var servModel = require('../models/server.js');
+var busModel = require('../models/bus.js');
 
 
 // -----------------------------------------------------------------
@@ -136,77 +137,7 @@ Config.prototype.onBusConfigData = function (data) {
 
     // At least 1 controller
     if (_.isArray(data) && data.length > 0) {
-        //Query structure
-        var sql = "INSERT IGNORE INTO bus(concentrateur_id, `type`, num, protocole, parameter, name, v4_id)" +
-            "VALUES (?,?,?,?,?,?,?)";
-        // Mysql connector
-        var connection = require('../utils/mysql_helper.js');
-        // Transaction
-        connection.beginTransaction(function (err) {
-
-            // Parse controllers
-            data.forEach(function (controller) {
-                // Parking and controller infos from port and controller ID
-                var sqlController = "" +
-                    "SELECT c.id " +
-                    "FROM server_com s " +
-                    "JOIN parking p ON p.id=s.parking_id " +
-                    "JOIN concentrateur c ON c.parking_id=p.id " +
-                    "WHERE s.protocol_port = ? " +
-                    "AND c.v4_id = ? ";
-
-                connection.query(sqlController, [global.port, controller.controllerID], function (err, rows) {
-                    if (err) {
-                        return connection.rollback(function () {
-                            logger.log('error', 'busConfigData: SELECT controller transaction rollback: ' + sqlController);
-                        });
-                    }
-                    else {
-
-                        // At least 1 bus
-                        if (controller.bus.length > 0) {
-                            var concentrateurId = rows[0]['id'];
-                            // Parse buses
-                            controller.bus.forEach(function (bus) {
-
-                                // Prepare sql
-                                var inst = mysql.format(sql, [
-                                    concentrateurId,
-                                    bus.busType,
-                                    bus.busNumber,
-                                    bus.protocol,
-                                    bus.parameter,
-                                    bus.name,
-                                    bus.ID]);
-
-                                // Insert bus
-                                connection.query(inst, function (err, result) {
-                                    if (err) {
-                                        return connection.rollback(function () {
-                                            logger.log('error', 'busConfigData: Transaction rollback: ' + inst);
-                                        });
-                                    } else {
-                                        logger.log('info', 'inserted query: ' + inst);
-                                    }
-                                });
-                            }, this);
-                        }
-                    }
-                });
-
-            }, this);
-            // COMMIT
-            connection.commit(function (err) {
-                if (err) {
-                    return connection.rollback(function () {
-                        logger.log('error', 'busConfigData: Transaction rollback: General');
-                    });
-                }
-                else {
-                    logger.log('info', 'busConfigData: Transaction commit');
-                }
-            });
-        });
+        busModel.insertBuses(data);
     }
 
 };
