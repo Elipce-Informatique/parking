@@ -12,6 +12,8 @@ var logger = require('./src/utils/logger.js');
 var router = require('./src/message_routes.js');
 var errorHandler = require('./src/utils/error_handler.js');
 
+//var test = require('./src/utils/crash_test.js');
+
 // Dependencies
 var WebSocketServer = require('ws').Server;
 var _ = require('lodash');

@@ -3,5 +3,6 @@
  */
 
 var toto;
-
-toto();
+setTimeout(function () {
+    toto();
+}, 1500);
