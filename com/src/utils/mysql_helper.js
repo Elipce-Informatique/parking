@@ -16,17 +16,6 @@ var connexionInfos = (process.env.PRODUCTION && process.env.PRODUCTION == 'true'
 var mysql = require('mysql');
 var logger = require('./logger.js');
 
-// DB connexion
-//logger.log('info', 'Infos de connexion : %o', connexionInfos)
-//var connection = mysql.createConnection(connexionInfos);
-//
-//// Try to connect
-//connection.connect(function (err) {
-//    if (err) {
-//        logger.log('error', 'SQL connexion error : %o', err.message);
-//    }
-//});
-
 function newConnection() {
     console.log('new mysql connection');
     var connection = mysql.createConnection(connexionInfos);
