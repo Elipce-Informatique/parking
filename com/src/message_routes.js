@@ -13,7 +13,7 @@ var ctrlSequence = require('./sequences/controller_connection.js');
  */
 module.exports.route = function (message, client) {
     // Trace
-    logger.log('info', 'INCOMING QUERY: messageType: ' + message.messageType);
+    logger.log('info', 'INCOMING QUERY: messageType: ' + message.messageType + '-------------------');
     logger.log('info', 'INCOMING QUERY: Client type: ' + (client.isController != undefined ? (client.isController ? 'Controller' : 'Supervision') : 'unknown'));
 
     // Dispatching the message to the right handler
@@ -22,7 +22,7 @@ module.exports.route = function (message, client) {
         case 'capabilities':
             // USHER IS SPEAKING TO US (LOL WE'RE FAMOUS !)
             config_controller.onCapabilities(message.data, client);
-            ctrlSequence.onNewController(client);
+            ctrlSequence.onNewController(client, config_controller);
             break;
         case 'configuration':
             // THE CONTROLLER SENDS ITS CONFIGURATION

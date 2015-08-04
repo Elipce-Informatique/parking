@@ -2,8 +2,8 @@
 var path = require('path');
 var winston = require('winston');
 
-var filename = path.join(__dirname, '../../log/event');
-var exceptFilename = path.join(__dirname, '../../log/exception');
+var filename = path.join(__dirname, '../../log/logs');
+var exceptFilename = path.join(__dirname, '../../log/exceptions');
 var logger = new (winston.Logger)({
     transports: [
         new (winston.transports.Console)(),

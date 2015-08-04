@@ -2,6 +2,7 @@
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
 var mysql = require('mysql');
+var _ = require('lodash');
 
 
 // Local modules
@@ -14,12 +15,21 @@ var messenger = require('../utils/messenger.js');
 // -----------------------------------------------------------------
 // Creates the Config class
 function Config() {
-
+    if (this instanceof Config === false) {
+        throw new TypeError("Classes can't be function-called");
+    }
+    EventEmitter.call(this);
 }
 
 // Extend EventEmitter to use this.emit
 util.inherits(Config, EventEmitter);
 // -----------------------------------------------------------------
+
+// TODO TEST
+Config.prototype.testEvts = function (msg) {
+    this.emit('testEvt', msg);
+};
+// TODO TEST
 
 
 // Define the Config class
@@ -132,7 +142,7 @@ Config.prototype.onBusConfigData = function (data) {
     this.emit('busConfigData', data);
 
     // At least 1 controller
-    if (data.length > 0) {
+    if (_.isArray(data) && data.length > 0) {
         //Query structure
         var sql = "INSERT IGNORE INTO bus(concentrateur_id, `type`, num, protocole, parameter, name, v4_id)" +
             "VALUES (?,?,?,?,?,?,?)";
