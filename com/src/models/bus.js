@@ -33,10 +33,9 @@ module.exports = {
                 "AND c.v4_id = ? ";
 
             trans.query(sqlController, [global.port, controller.controllerID], function (err, rows) {
-                if (err) {
-                    return trans.rollback(function () {
-                        logger.log('error', 'busConfigData: SELECT controller transaction rollback: ' + sqlController);
-                    });
+                if (err && trans.rollback) {
+                    trans.rollback();
+                    throw err;
                 }
                 else {
 
@@ -58,17 +57,23 @@ module.exports = {
 
                             // Insert bus
                             trans.query(inst, function (err, result) {
-                                if (err) {
-                                    return trans.rollback(function () {
-                                        logger.log('error', 'busConfigData: Transaction rollback: ' + inst);
-                                    });
+                                if (err && trans.rollback) {
+                                    trans.rollback();
+                                    logger.log('error', 'TRANSACTION ROLLBACK' );
+                                    throw err;
                                 }
                             });
                         }, this);
                     }
                 }
             });
-            trans.commit();
+            trans.commit(function (err, info) {
+                if (err) {
+                    logger.log('error', 'TRANSACTION COMMIT ERROR');
+                } else {
+                    logger.log('info', 'TRANSACTION COMMIT OK');
+                }
+            });
 
         }, this);
         //// COMMIT
