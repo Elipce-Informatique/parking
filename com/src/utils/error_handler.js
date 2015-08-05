@@ -11,8 +11,6 @@ module.exports = {
         // Logs the error into the console and a file.
         if (err) {
             logger.log('error', 'Websocket send error : ', err);
-        } else {
-            logger.log('info', 'SEND OK !');
         }
     },
     onMysqlEnd: function (err) {

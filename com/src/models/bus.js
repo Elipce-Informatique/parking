@@ -43,7 +43,6 @@ module.exports = {
                     throw err;
                 }
                 else {
-
                     // At least 1 bus
                     if (controller.bus.length > 0) {
                         var concentrateurId = rows[0]['id'];

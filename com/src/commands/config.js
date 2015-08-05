@@ -11,6 +11,7 @@ var errorHandler = require('../message_routes.js');
 var messenger = require('../utils/messenger.js');
 var servModel = require('../models/server.js');
 var busModel = require('../models/bus.js');
+var sensorModel = require('../models/sensor.js');
 
 
 // -----------------------------------------------------------------
@@ -162,8 +163,10 @@ Config.prototype.sendSensorConfigQuery = function (busId, client) {
  */
 Config.prototype.onSensorConfigData = function (data) {
     this.emit('sensorConfigData', data);
-
-    //logger.log('info', 'onSensorConfigData received: %o', data);
+    // At least 1 sensor
+    if (_.isArray(data.sensor) && data.sensor.length > 0) {
+        sensorModel.insertSensors(data.busID, data.sensor);
+    }
 };
 
 /** TODO
