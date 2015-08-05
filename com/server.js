@@ -54,7 +54,9 @@ if (cfg.ssl) {
         rejectUnauthorized: true
 
     }, processRequest).listen(cfg.port, function () {
-        logger.log('info', 'Https server bound !');
+        logger.log('info', '*********************************************************************');
+        logger.log('info', '******************* HTTPS SERVER BOUND ! ****************************');
+        logger.log('info', '*********************************************************************');
     });
 
     app.on('clientError', function (e, socket) {

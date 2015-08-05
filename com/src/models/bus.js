@@ -3,6 +3,7 @@
  */
 
 var logger = require('../utils/logger.js');
+var errorHandler = require('../utils/error_handler.js');
 
 var mysql = require('mysql');
 //Enable mysql-queues
@@ -71,25 +72,16 @@ module.exports = {
                     }
                 }
             });
-            trans.commit(function (err, info) {
-                if (err) {
-                    logger.log('error', 'TRANSACTION COMMIT ERROR');
-                } else {
-                    logger.log('info', 'TRANSACTION COMMIT OK');
-                }
-            });
-
         }, this);
-        //// COMMIT
-        //connection.commit(function (err) {
-        //    if (err) {
-        //        return connection.rollback(function () {
-        //            logger.log('error', 'busConfigData: Transaction rollback: General');
-        //        });
-        //    }
-        //    else {
-        //        logger.log('info', 'busConfigData: Transaction commit');
-        //    }
-        //});
+        trans.commit(function (err, info) {
+            if (err) {
+                logger.log('error', 'TRANSACTION COMMIT ERROR');
+            } else {
+                logger.log('info', 'TRANSACTION COMMIT OK');
+            }
+            // Ending mysql connection once all queries have been executed
+            connection.end(errorHandler.onMysqlEnd);
+        });
+
     }
 };

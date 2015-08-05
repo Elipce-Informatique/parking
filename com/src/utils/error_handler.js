@@ -5,14 +5,22 @@ module.exports = {
     /**
      * Callback to use in the "send" calls if you're not
      * handling the error by yourself
-     * @param error
+     * @param err
      */
-    onSendError: function (error) {
+    onSendError: function (err) {
         // Logs the error into the console and a file.
-        if (error) {
-            logger.log('error', 'Websocket send error : ', error);
+        if (err) {
+            logger.log('error', 'Websocket send error : ', err);
         } else {
             logger.log('info', 'SEND OK !');
+        }
+    },
+    onMysqlEnd: function (err) {
+        // The connection is terminated now
+        if (err) {
+            logger.log('error', 'Mysql end error : ', err);
+        } else {
+            logger.log('info', 'Mysql connection ended successfully');
         }
     }
 };
