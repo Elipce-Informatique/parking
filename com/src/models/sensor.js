@@ -40,8 +40,7 @@ module.exports = {
         var trans = connection.startTransaction();
 
         // Get bus infos in our DB
-        var sqlBus = "" +
-            "SELECT b.id " +
+        var sqlBus = "SELECT b.id " +
             "FROM server_com s " +
             "JOIN parking p ON p.id=s.parking_id " +
             "JOIN concentrateur c ON c.parking_id=p.id " +

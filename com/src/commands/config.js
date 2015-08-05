@@ -12,6 +12,7 @@ var messenger = require('../utils/messenger.js');
 var servModel = require('../models/server.js');
 var busModel = require('../models/bus.js');
 var sensorModel = require('../models/sensor.js');
+var displayModel = require('../models/display.js');
 
 
 // -----------------------------------------------------------------
@@ -203,8 +204,11 @@ Config.prototype.sendDisplayConfigQuery = function (busId, client) {
  */
 Config.prototype.onDisplayConfigData = function (data) {
     this.emit('displayConfigData', data);
-
-    //logger.log('info', 'onDisplayConfigData received: %o', data);
+    // At least 1 display
+    if (_.isArray(data.display) && data.display.length > 0) {
+        logger.log('info', 'onDisplayConfigData received: %o', data);
+        displayModel.insertDisplays(data.busID, data.display);
+    }
 };
 
 /** TODO
