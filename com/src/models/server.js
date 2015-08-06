@@ -24,6 +24,8 @@ module.exports = {
             "WHERE protocol_port = ?";
         connexion.query(sql, port, function (err, rows, fields) {
             callback(err, rows, fields);
+            // End the connection once the callback is done
+            // to avoid the fatal error due to the server timeout
             connexion.end();
         });
     }

@@ -84,15 +84,7 @@ module.exports.route = function (message, client) {
             break;
         // FALLBACK, LOG THE UNKNOWN MESSAGE
         default:
-            logger.log('info', 'MESSAGE TYPE ERROR -> messageType: ' + message.messageType);
-            //var retour = {
-            //    messageType: message.messageType,
-            //    error: {
-            //        action: "messageType error",
-            //        text: "Unexpected messageType: " + message.messageType
-            //    }
-            //};
-            //client.send(JSON.stringify(retour), errorHandler.onSendError);
+            logger.log('error', 'MESSAGE TYPE ERROR -> messageType: ' + message.messageType + ' unknown in the router');
             break;
 
     }

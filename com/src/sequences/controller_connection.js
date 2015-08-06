@@ -16,6 +16,6 @@ module.exports = {
         // On new controller connection, we send our capabilities
         ConfigHandler.sendCapabilities(client);
         // TODO - Check in the database if the parking has been initialized and launch the init sequence !
-        init.start(ConfigHandler);
+        //init.start(ConfigHandler);
     }
 };
