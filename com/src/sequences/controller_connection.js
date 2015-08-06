@@ -14,7 +14,8 @@ module.exports = {
      * @param client
      */
     onNewController: function (client, ConfigHandler) {
-
+        // On new controller connection, we send our capabilities
+        this.sendCapabilities(client);
         // TODO - Check in the database if the parking has been initialized and launch the init sequence !
         init.start(ConfigHandler);
     }

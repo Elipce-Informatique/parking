@@ -40,7 +40,6 @@ Config.prototype.onCapabilities = function (data, client) {
 
     global.controllerClient = client;
     client.isController = true;
-    this.sendCapabilities(client);
 };
 
 
