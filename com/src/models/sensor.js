@@ -47,7 +47,7 @@ module.exports = {
             "JOIN bus b ON b.concentrateur_id=c.id " +
             "WHERE s.protocol_port = ? " +
             "AND b.v4_id = ? ";
-        var sqlSensor = "INSERT INTO capteur (bus_id, adresse, libelle) " +
+        var sqlSensor = "INSERT IGNORE INTO capteur (bus_id, adresse, libelle, v4_id) " +
             "VALUES (?,?,?)";
         trans.query(sqlBus, [global.port, busV4Id], function (err, rows) {
             if (err && trans.rollback) {

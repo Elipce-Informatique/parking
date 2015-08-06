@@ -46,7 +46,7 @@ module.exports = {
             "WHERE s.protocol_port = ? " +
             "AND b.v4_id = ? ";
 
-        var sqlDisplay = "INSERT INTO afficheur (bus_id, adresse, reference) " +
+        var sqlDisplay = "INSERT IGNORE INTO afficheur (bus_id, adresse, reference, v4_id) " +
             "VALUES (?,?,?)";
         trans.query(sqlBus, [global.port, busV4Id], function (err, rows) {
             if (err && trans.rollback) {
