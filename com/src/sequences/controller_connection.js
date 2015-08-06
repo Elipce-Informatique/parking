@@ -3,7 +3,6 @@
  *
  * Handle what happend when the controller connects to the server
  */
-var config = require('../commands/config.js'), config = new config();
 var logger = require('../utils/logger.js');
 var init = require('./init_parking.js');
 
@@ -15,7 +14,7 @@ module.exports = {
      */
     onNewController: function (client, ConfigHandler) {
         // On new controller connection, we send our capabilities
-        this.sendCapabilities(client);
+        ConfigHandler.sendCapabilities(client);
         // TODO - Check in the database if the parking has been initialized and launch the init sequence !
         init.start(ConfigHandler);
     }

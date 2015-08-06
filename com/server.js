@@ -1,6 +1,6 @@
 // Variables
 global.modeDev = process.env.PRODUCTION && process.env.PRODUCTION != 'false';
-global.port = 26000; // TODO : configure this with command parameter
+global.port = getPort(26000);
 global.host = global.modeDev ? '85.14.137.12' : '127.0.0.1';
 global.ssl = true;
 global.controllerClient = null;
@@ -57,6 +57,7 @@ if (cfg.ssl) {
         logger.log('info', '*********************************************************************');
         logger.log('info', '******************* HTTPS SERVER BOUND ! ****************************');
         logger.log('info', '*********************************************************************');
+        logger.log('info', 'URL : ' + cfg.host + ':' + cfg.port);
     });
 
     app.on('clientError', function (e, socket) {
@@ -94,13 +95,6 @@ wss.on('connection', function connection(client) {
             // No JSON format
         catch (e) {
             logger.log('error', 'Message is not a valid JSON : %o', e);
-            //client.send(JSON.stringify({
-            //    messageType: 'error',
-            //    error: {
-            //        action: "Message is not a valid JSON",
-            //        text: ""
-            //    }
-            //}), errorHandler.onSendError);
             return;
         }
 
@@ -165,5 +159,24 @@ wss.on('connection', function connection(client) {
 
 // Error occured with the underlying server
 wss.on('error', function (error) {
-    logger.log('error', 'error on webService server ! : %o', error);
+    logger.log('error', 'error on webSocket server ! : %o', error);
 });
+
+/**
+ * Get the port for the server through the comand line argument.
+ * if no mort provided, default port is returned.
+ *
+ * @param args : ommand line arguments parsed by minimist.
+ * @param defaultPort
+ * @returns {*}
+ */
+function getPort(defaultPort) {
+    var _ = require('lodash');
+    var argv = require('minimist')(process.argv.slice(2));
+    if (typeof(argv['p']) != 'undefined' && !_.isNaN(parseInt(argv['p']))) {
+        return argv['p'];
+    } else if (typeof(argv['port']) != 'undefined' && !_.isNaN(parseInt(argv['port']))) {
+        return argv['port'];
+    }
+    return defaultPort;
+}
