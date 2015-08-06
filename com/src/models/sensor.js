@@ -48,7 +48,7 @@ module.exports = {
             "WHERE s.protocol_port = ? " +
             "AND b.v4_id = ? ";
         var sqlSensor = "INSERT IGNORE INTO capteur (bus_id, adresse, libelle, v4_id) " +
-            "VALUES (?,?,?)";
+            "VALUES (?,?,?,?)";
         trans.query(sqlBus, [global.port, busV4Id], function (err, rows) {
             if (err && trans.rollback) {
                 trans.rollback();
@@ -62,10 +62,13 @@ module.exports = {
                 var inst = mysql.format(sqlSensor, [
                     busId,
                     sensor.address,
-                    sensor.name]);
+                    sensor.name,
+                    sensor.ID
+                ]);
 
                 // Insert bus
                 trans.query(inst, function (err, result) {
+                    // ROLLBACK THE TRANSACTION
                     if (err && trans.rollback) {
                         trans.rollback();
                         logger.log('error', 'TRANSACTION ROLLBACK');

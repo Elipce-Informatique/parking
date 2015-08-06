@@ -47,7 +47,7 @@ module.exports = {
             "AND b.v4_id = ? ";
 
         var sqlDisplay = "INSERT IGNORE INTO afficheur (bus_id, adresse, reference, v4_id) " +
-            "VALUES (?,?,?)";
+            "VALUES (?,?,?,?)";
         trans.query(sqlBus, [global.port, busV4Id], function (err, rows) {
             if (err && trans.rollback) {
                 trans.rollback();
@@ -61,7 +61,9 @@ module.exports = {
                 var inst = mysql.format(sqlDisplay, [
                     busId,
                     display.address,
-                    display.name]);
+                    display.name,
+                    display.ID
+                ]);
 
                 // Insert bus
                 trans.query(inst, function (err, result) {
