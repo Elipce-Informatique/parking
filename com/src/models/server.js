@@ -22,6 +22,9 @@ module.exports = {
             "'" + Date.now() + "' AS `date` " +
             "FROM server_com " +
             "WHERE protocol_port = ?";
-        connexion.query(sql, port, callback);
+        connexion.query(sql, port, function (err, rows, fields) {
+            callback(err, rows, fields);
+            connexion.end();
+        });
     }
 };
