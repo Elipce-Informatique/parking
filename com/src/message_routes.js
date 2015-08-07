@@ -74,10 +74,6 @@ module.exports.route = function (message, client) {
             config_controller.onViewConfigData(message.data);
             break;
         // END TODO IN THE DATABASE ---------------------------------------
-        case 'eventQuery':
-            // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
-            events_controller.sendEventQuery(message.data.ackId);
-            break;
         case 'eventData':
             // INSERT THE RECEIVED DATA IN DATABASE
             events_controller.onEventData(message.data);

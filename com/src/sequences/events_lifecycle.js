@@ -12,13 +12,13 @@ var logger = require('../utils/logger.js');
 
 // -----------------------------------------------------------------
 // Creates the Events class
-function Events(events_controller) {
-    if (this instanceof Events === false) {
+function EventsLifeCycle(events_controller) {
+    if (this instanceof EventsLifeCycle === false) {
         throw new TypeError("Classes can't be function-called");
     }
 
     // ATTRIBUTES DECLARATION
-    this.ackId = 0;
+    this.ackID = 0;
     this.events_controller = events_controller;
 }
 
@@ -28,7 +28,8 @@ function Events(events_controller) {
  * Called once the controller is connected to start the events lifecycle.
  * Calls the event query without ackID
  */
-Events.prototype.startEventLoop = function () {
+EventsLifeCycle.prototype.startEventLoop = function () {
+    this.events_controller.on('eventData', this.onEventData);
     this.events_controller.sendInitialEventQuery();
 };
 
@@ -37,9 +38,52 @@ Events.prototype.startEventLoop = function () {
  * @param data
  * @param client
  */
-Events.prototype.onEventData = function (data) {
+EventsLifeCycle.prototype.onEventData = function (data) {
+    logger.log('info', '#2 onEventData : %o', data);
 
-    // TODO : handle events received.
+    // Update ackID to the new value
+    this.ackID = _.isNumber(data.ackID) ? data.ackID : this.ackID;
+
+    /*
+     * Possible events fields:
+     * - date
+     * - event
+     * - source
+     * - ID
+     * - state
+     * - hwstate
+     * - sense
+     * - supply
+     * - count
+     */
+    var cacheEvt = {};
+    var evts = data.list;
+    if (_.isArray(evts)) {
+        _.each(evts, function (evt) {
+            logger.log('info', 'Détail EVT : ', evt);
+            cacheEvt = _.assign(cacheEvt, evt);
+            switch (cacheEvt.event) {
+                case "startup":
+                    break;
+                case "init":
+                    break;
+                case "state":
+                    switch (cacheEvt.source) {
+                        case "bus":
+                            break;
+                        case "sensor":
+                            break;
+                        case "display":
+                            break;
+                        case "counter":
+                            break;
+                        default:
+                    }
+                    break;
+                default:
+            }
+        }, this);
+    }
 };
 
-module.exports = Events;
+module.exports = EventsLifeCycle;

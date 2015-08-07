@@ -7,7 +7,7 @@ var logger = require('../utils/logger.js');
 var messenger = require('../utils/messenger.js');
 
 /**
- * Handle all events
+ * Class that handle events messages.
  */
 function Events() {
     EventEmitter.call(this);
