@@ -61,6 +61,8 @@ EventsLifeCycle.prototype.onEventData = function (data) {
     if (_.isArray(evts)) {
         _.each(evts, function (evt) {
             logger.log('info', 'Détail EVT : ', evt);
+
+            // Filter evts on their type
             cacheEvt = _.assign(cacheEvt, evt);
             switch (cacheEvt.event) {
                 case "startup":
@@ -80,8 +82,12 @@ EventsLifeCycle.prototype.onEventData = function (data) {
                         default:
                     }
                     break;
+                case "firmwareUpdate":
+                    break;
                 default:
             }
+            logger.log('info', 'Détail EVT UNPACKED: ', cacheEvt);
+
         }, this);
     }
 };
