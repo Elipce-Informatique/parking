@@ -4,7 +4,6 @@ var EventEmitter = require('events').EventEmitter;
 
 // Local modules
 var logger = require('../utils/logger.js');
-var errorHandler = require('../message_routes.js');
 var messenger = require('../utils/messenger.js');
 
 /**
@@ -25,14 +24,26 @@ util.inherits(Events, EventEmitter);
  * received with the previous event report.
  */
 Events.prototype.sendEventQuery = function (ackID) {
-
+    messenger.sendToController('eventQuery', {
+        "ackID": ackID
+    });
 };
+
+/**
+ * Send the EventQuery without the ackID
+ * This is typically for initial query
+ */
+Events.prototype.sendInitialEventQuery = function () {
+    messenger.sendToController('eventQuery', {});
+};
+
+
 /**
  * Handle the events sent
  * @param data
  */
 Events.prototype.onEventData = function (data) {
-
+    this.emit('eventData', data);
 };
 
 module.exports = Events;

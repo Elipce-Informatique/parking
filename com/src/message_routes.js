@@ -19,9 +19,9 @@ module.exports.route = function (message, client) {
     switch (message.messageType) {
         // Controller is connected
         case 'capabilities':
-            // USHER IS SPEAKING TO US (LOL WE'RE FAMOUS !)
+            // USHER IS TALKING TO US (LOL WE'RE FAMOUS !)
             config_controller.onCapabilities(message.data, client);
-            ctrlSequence.onNewController(client, config_controller);
+            ctrlSequence.onNewController(client, config_controller, events_controller);
             break;
         case 'configuration':
             // THE CONTROLLER SENDS ITS CONFIGURATION
