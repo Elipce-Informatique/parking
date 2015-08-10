@@ -29,7 +29,7 @@ function EventsLifeCycle(events_controller) {
  * Calls the event query without ackID
  */
 EventsLifeCycle.prototype.startEventLoop = function () {
-    this.events_controller.on('eventData', this.onEventData);
+    this.events_controller.on('eventData', this.onEventData.bind(this));
     this.events_controller.sendInitialEventQuery();
 };
 
@@ -62,8 +62,26 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         _.each(evts, function (evt) {
             logger.log('info', 'Détail EVT : ', evt);
 
-            // Filter evts on their type
+            // Omit source key if the ID key is absent
+            if (typeof evt.ID === "undefined") {
+                cacheEvt = _.omit(cacheEvt, ['source']);
+            }
+
+            // If source changes reset all properties except the 3 commons
+            if (typeof evt.source !== "undefined") {
+                cacheEvt = _.pick(cacheEvt, ['date', 'event']);
+            }
+
+            // if the event key changes, reset
+            if (typeof evt.event !== "undefined") {
+                cacheEvt = _.pick(cacheEvt, ['date', 'source']);
+            }
+
+            // FILTER EVTS ON THEIR TYPE
             cacheEvt = _.assign(cacheEvt, evt);
+            logger.log('info', 'Détail EVT UNPACKED : ', cacheEvt);
+
+            // DISPATCHES THE EVENT
             switch (cacheEvt.event) {
                 case "startup":
                     break;
@@ -86,10 +104,12 @@ EventsLifeCycle.prototype.onEventData = function (data) {
                     break;
                 default:
             }
-            logger.log('info', 'Détail EVT UNPACKED: ', cacheEvt);
-
         }, this);
     }
+
+    // Send the next EventQuery
+    this.events_controller.sendEventQuery(this.ackID);
+
 };
 
 module.exports = EventsLifeCycle;
