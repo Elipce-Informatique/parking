@@ -3,7 +3,7 @@
 class Parking extends BaseModel
 {
     protected $table = 'parking';
-    protected $fillable = ['libelle', 'description', 'ip', 'v4_id'];
+    protected $fillable = ['libelle', 'description', 'v4_id'];
 
     /*****************************************************************************
      * RELATIONS DU MODELE *******************************************************

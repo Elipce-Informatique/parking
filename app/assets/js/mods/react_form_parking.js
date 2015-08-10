@@ -65,36 +65,6 @@ var FormParking = React.createClass({
                     editable={this.props.editable}
                     area = {true} />
 
-                <InputTextEditable
-                    attributes={{
-                        label: Lang.get('global.ip'),
-                        name: "ip",
-                        value: this.props.detailParking.ip,
-                        required: true,
-                        wrapperClassName: 'col-md-2',
-                        labelClassName: 'col-md-2 text-right',
-                        groupClassName: 'row',
-                        maxLength: 15
-                    }}
-                    editable={this.props.editable}
-                    validator= {function (val, props, state) {
-                        // Champ obligatoire vide
-                        if (val.length == 0 && typeof(props.attributes.required) != 'undefined' && props.attributes.required) {
-                            return {isValid: false, style: 'default', tooltip: ''};
-                        }
-                        // Champ facultatif vide
-                        else if (val.length == 0) {
-                            return {isValid: true, style: 'default', tooltip: ''};
-                        }
-                        // Champ non vide mail valide
-                        else if (Validator.isIP(val)) {
-                            return {isValid: true, style: 'success', tooltip: ''};
-                        }
-                        // Champ non vide mail invalide
-                        else {
-                            return {isValid: false, style: 'error', tooltip: Lang.get('global.validation_erreur_ip')};
-                        }
-                    }}/>
 
                 <InputNumberEditable
                     attributes={{

@@ -119,7 +119,7 @@ class ParkingsController extends \BaseController
             ->join('concentrateur', 'parking.id', '=', 'concentrateur.parking_id')
             ->join('bus', 'concentrateur.id', '=', 'bus.concentrateur_id')
             ->join('afficheur', 'bus.id', '=', 'afficheur.bus_id')
-            ->where('parking.id', '=' ,$parkingId)
+            ->where('parking.id', '=', $parkingId)
             ->whereNull('afficheur.lat')
             ->select('afficheur.*')
             ->get();
@@ -464,7 +464,6 @@ class ParkingsController extends \BaseController
                     'parking.id',
                     'parking.libelle',
                     'parking.description',
-                    'parking.ip',
                     'parking.v4_id'])
                 ->get();
 

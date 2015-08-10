@@ -147,7 +147,6 @@ var PageParking = React.createClass({
                     head: [
                         Lang.get('global.parking'),
                         Lang.get('global.description'),
-                        Lang.get('global.ip'),
                         Lang.get('global.v4id'),
                     ],
                     hide: ['id']
@@ -234,7 +233,7 @@ var storeParking = Reflux.createStore({
                 this.stateLocal.users = _.map(parkPlusUsers.users, function (user) {
                     // Données du niveau qui nous intéressent
                     return {
-                        label: user.nom+' '+user.prenom,
+                        label: user.nom + ' ' + user.prenom,
                         value: user.id.toString()
                     };
                 }.bind(this));
@@ -273,7 +272,7 @@ var storeParking = Reflux.createStore({
                 this.stateLocal.users = _.map(parkPlusUsers.users, function (user) {
                     // Données du niveau qui nous intéressent
                     return {
-                        label: user.nom+' '+user.prenom,
+                        label: user.nom + ' ' + user.prenom,
                         value: user.id.toString()
                     };
                 }.bind(this));
@@ -303,8 +302,8 @@ var storeParking = Reflux.createStore({
             async: true,
             success: function (data) {
                 // ID des utilsateurs associés au parking
-                data.utilisateurs = _.map(data.utilisateurs, function(user){
-                   return user.id.toString();
+                data.utilisateurs = _.map(data.utilisateurs, function (user) {
+                    return user.id.toString();
                 });
                 // Détail du jour + id
                 this.stateLocal.detailParking = data;
@@ -359,7 +358,7 @@ var storeParking = Reflux.createStore({
         this.stateLocal.detailParking = _.extend(this.stateLocal.detailParking, data);
 
         // Si on est sur une combo on trigger pour les selectedValue
-        if(e.name == 'utilisateurs'){
+        if (e.name == 'utilisateurs') {
             this.trigger(this.stateLocal);
         }
     },
@@ -453,7 +452,7 @@ var storeParking = Reflux.createStore({
 
 
                     // ID des utilsateurs associés au parking
-                    tab.model.utilisateurs = _.map(tab.model.utilisateurs, function(user){
+                    tab.model.utilisateurs = _.map(tab.model.utilisateurs, function (user) {
                         return user.id.toString();
                     });
 
