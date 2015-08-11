@@ -147,7 +147,7 @@ var PageParking = React.createClass({
                     head: [
                         Lang.get('global.parking'),
                         Lang.get('global.description'),
-                        Lang.get('global.v4id'),
+                        Lang.get('global.v4id')
                     ],
                     hide: ['id']
                 };
