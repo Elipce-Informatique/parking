@@ -9,6 +9,7 @@ var _ = require('lodash');
 
 // Local modules
 var logger = require('../utils/logger.js');
+var sensorModel = require('../models/sensor.js');
 
 // -----------------------------------------------------------------
 // Creates the Events class
@@ -60,7 +61,6 @@ EventsLifeCycle.prototype.onEventData = function (data) {
     var evts = data.list;
     if (_.isArray(evts)) {
         _.each(evts, function (evt) {
-            logger.log('info', 'Détail EVT : ', evt);
 
             // Omit source key if the ID key is absent
             if (typeof evt.ID === "undefined") {
@@ -79,7 +79,6 @@ EventsLifeCycle.prototype.onEventData = function (data) {
 
             // FILTER EVTS ON THEIR TYPE
             cacheEvt = _.assign(cacheEvt, evt);
-            logger.log('info', 'Détail EVT UNPACKED : ', cacheEvt);
 
             // DISPATCHES THE EVENT
             switch (cacheEvt.event) {
@@ -92,6 +91,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
                         case "bus":
                             break;
                         case "sensor":
+                            sensorModel.insertSensorEvent(cacheEvt);
                             break;
                         case "display":
                             break;

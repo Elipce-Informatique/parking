@@ -17,15 +17,16 @@ module.exports = {
     onNewController: function (client, ConfigHandler, EventHandler) {
 
         // Instance of Event Sequence with the event contoller
-        evtsSequence = new evtsSequence(EventHandler);
+        var eventsHandler = new evtsSequence(EventHandler);
 
         // On new controller connection, we send our capabilities
         ConfigHandler.sendCapabilities(client);
 
+        logger.log('info', 'Starting EVENT LOOP');
         // Launches the event lifecycle
-        evtsSequence.startEventLoop();
+        eventsHandler.startEventLoop();
 
         // TODO - Check in the database if the parking has been initialized and launch the init sequence !
-        //init.start(ConfigHandler);
+        init.start(ConfigHandler);
     }
 };

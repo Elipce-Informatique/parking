@@ -130,20 +130,20 @@ wss.on('connection', function connection(client) {
      * ou du controller
      */
     client.on('close', function (code, message) {
-        logger.log('info', 'Client disconnected', message);
+        logger.log('info', 'Client disconnected');
 
         // Controller closed
         if (_.isEqual(client, controllerClient)) {
+            logger.log('info', 'Client disconnected -> it was a controller');
             global.controllerClient = null;
         }
         // At least 1 webclient
         else if (supervisionClients.length > 0) {
+            logger.log('info', 'Client disconnected -> it was a supervision ?');
             // iterate over clients
-            global.supervisionClients = _.map(global.supervisionClients, function (cli) {
+            global.supervisionClients = _.filter(global.supervisionClients, function (cli) {
                 // Not this client closed
-                if (!_.isEqual(client, cli)) {
-                    return cli;
-                }
+                return !_.isEqual(client, cli);
             }.bind(this));
         }
     });
@@ -166,7 +166,7 @@ wss.on('error', function (error) {
  * Get the port for the server through the comand line argument.
  * if no mort provided, default port is returned.
  *
- * @param args : ommand line arguments parsed by minimist.
+ * @param args : Command line arguments parsed by minimist.
  * @param defaultPort
  * @returns {*}
  */

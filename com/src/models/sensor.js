@@ -88,5 +88,13 @@ module.exports = {
             // ENDING MYSQL CONNECTION ONCE ALL QUERIES HAVE BEEN EXECUTED
             connection.end(errorHandler.onMysqlEnd);
         });
+    },
+
+    /**
+     * Insert an event in the journal_equipment_plan table
+     * @param event
+     */
+    insertSensorEvent: function (event) {
+        logger.log('info', 'SENSOR EVENT to store : %o', event);
     }
 };

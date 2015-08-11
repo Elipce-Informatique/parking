@@ -39,7 +39,7 @@ module.exports = {
      * @param data : the data sent by the controller
      */
     onConfigurationData: function (data) {
-        logger.log('info', 'onConfigurationData');
+        logger.log('info', 'onConfigurationData', data);
     },
     /**
      * Handle BusConfig data for the parking initialization process.
@@ -59,20 +59,20 @@ module.exports = {
      * @param data : the data sent by the controller
      */
     onSensorConfigData: function (data) {
-        logger.log('info', 'onSensorConfigData : ');
+        logger.log('info', 'onSensorConfigData : ', data);
     },
     /**
      * Handle DisplayConfig data for the parking initialization process.
      * @param data : the data sent by the controller
      */
     onDisplayConfigData: function (data) {
-        logger.log('info', 'onDisplayConfigData : ');
+        logger.log('info', 'onDisplayConfigData : ', data);
     },
     /**
      * Handle CounterConfig data for the parking initialization process.
      * @param data : the data sent by the controller
      */
     onCounterConfigData: function (data) {
-        logger.log('info', 'onCounterConfigData');
+        logger.log('info', 'onCounterConfigData', data);
     }
 };
