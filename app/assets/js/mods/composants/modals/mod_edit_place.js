@@ -107,7 +107,7 @@ var ModalEditPlace = React.createClass({
                                 name: "type_place_id",
                                 selectCol: 6,
                                 labelCol: 3,
-                                required: true
+                                required: false
                             }}
                             data={this.state.selectTypes}
                             editable={true}
