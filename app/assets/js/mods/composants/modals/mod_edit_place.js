@@ -107,7 +107,7 @@ var ModalEditPlace = React.createClass({
                                 name: "type_place_id",
                                 selectCol: 6,
                                 labelCol: 3,
-                                required: false
+                                required: true
                             }}
                             data={this.state.selectTypes}
                             editable={true}
@@ -124,7 +124,7 @@ var ModalEditPlace = React.createClass({
                                 name: "capteur_id",
                                 selectCol: 6,
                                 labelCol: 3,
-                                required: true
+                                required: false
                             }}
                             data={this.state.selectCapteurs}
                             editable={true}
