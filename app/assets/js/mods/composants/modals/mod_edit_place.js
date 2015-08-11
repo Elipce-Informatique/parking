@@ -61,7 +61,7 @@ var ModalEditPlace = React.createClass({
         this.setState({
             selectTypes: data,
             type_place_id: this.props.dataItem.type_place_id,
-            capteur_id: this.props.dataItem.capteur_id == null ? 0 : this.props.dataItem.capteur_id
+            capteur_id: this.props.dataItem.capteur_id == null ? '' : this.props.dataItem.capteur_id
         });
     },
     componentDidMount: function () {
@@ -84,6 +84,13 @@ var ModalEditPlace = React.createClass({
     },
 
     render: function () {
+
+        // Fix bug data selected
+        var capteur_id = this.state.capteur_id;
+        if (this.state.selectCapteurs.length == 0) {
+            capteur_id = "";
+        }
+
         return (
             <Modal
                 bsStyle="primary"
@@ -117,13 +124,13 @@ var ModalEditPlace = React.createClass({
                                 name: "capteur_id",
                                 selectCol: 6,
                                 labelCol: 3,
-                                required: false
+                                required: true
                             }}
                             data={this.state.selectCapteurs}
                             editable={true}
                             placeholder={Lang.get('global.capteur')}
                             labelClass='text-right'
-                            selectedValue={this.state.capteur_id.toString()}
+                            selectedValue={capteur_id.toString()}
                         />
 
                     {/* LIBELLE input text */}
@@ -232,16 +239,17 @@ var store = Reflux.createStore({
         _.each(concentrateurs, function (c) {
             _.each(c.buses, function (b) {
                 _.each(b.capteurs, function (ca) {
-                    if (c.place == null || c.place.id == this._inst.place_id) {
+                    if (ca.place == null || ca.place.id == this._inst.place_id) {
+                        console.log('PASS clear capteur %o', ca);
                         // Capteur à ajouter
                         clearCapteurs.push({
                             label: c.v4_id.toString() + '.' + b.num.toString() + '.' + ca.adresse.toString(),
-                            value: ca.id
+                            value: ca.id.toString()
                         })
                     }
                 }, this);
             }, this);
-        });
+        }, this);
 
         this.trigger({
             selectCapteurs: clearCapteurs
