@@ -1180,7 +1180,7 @@ var store = Reflux.createStore({
                         var infos = mapHelper.generateInfosCapteurPlace(
                             this._inst.capteur_place.concentrateur.v4_id,
                             this._inst.capteur_place.bus.num,
-                            _.first(this._inst.capteur_place.capteursRestant).adresse,
+                            this._inst.capteur_place.capteursRestant.length ? _.first(this._inst.capteur_place.capteursRestant).adresse : '',
                             this._inst.capteur_place.capteursRestant.length
                         );
 
