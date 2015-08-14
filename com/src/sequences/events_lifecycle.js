@@ -9,7 +9,9 @@ var _ = require('lodash');
 
 // Local modules
 var logger = require('../utils/logger.js');
+var busModel = require('../models/bus.js');
 var sensorModel = require('../models/sensor.js');
+var displayModel = require('../models/display.js');
 
 // -----------------------------------------------------------------
 // Creates the Events class
