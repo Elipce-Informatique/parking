@@ -20,6 +20,7 @@ module.exports.refresh = {
     modeDev: false,
     host: '85.14.137.12',
     port: 26000,
+    client: {},
 
     init: function (planId, journalId, parkingId, journalAlerteId) {
         // INIT DATA
@@ -45,40 +46,49 @@ module.exports.refresh = {
         }
     },
 
+    /**
+     * Opens a secured websocket on the communication server.
+     */
     initWebSocket: function () {
-        // CONNEXION WEBSOCKET CLIENT
-        var client = new W3CWebSocket('ws://' + this.host + ':' + this.port);
 
-        // ERREUR
-        client.onerror = function () {
-            console.log('Connection Error');
-        };
+        $.get('https://' + this.host + ':' + this.port)
+            .always(function () {
+                console.log("Enter Always");
 
-        // CONNECTION OPEN
-        client.onopen = function () {
-            console.log('WebSocket Client Connected %o', client);
+                // CONNEXION WEBSOCKET CLIENT
+                var client = new W3CWebSocket('wss://' + this.host + ':' + this.port);
 
-            if (client.readyState === client.OPEN) {
-                console.log('send supervision_connection');
-                client.send(JSON.stringify(com_helper.supervisionConnection()));
-            }
-        };
+                // ERREUR
+                client.onerror = function () {
+                    console.log('Connection Error');
+                };
 
-        // CONNECTION CLOSE
-        client.onclose = function () {
-            console.log('echo-protocol Client Closed - Tentative reconnexion');
-            // reconnexion
-            client = new W3CWebSocket('ws://' + this.host + ':' + this.port);
-        }.bind(this);
+                // CONNECTION OPEN
+                client.onopen = function () {
+                    console.log('WebSocket Client Connected %o', client);
 
-        // MESSAGE REÇU
-        client.onmessage = function (e) {
-            if (typeof e.data === 'string') {
-                console.log("W3CWebSocket MESSAGE RECEIVED : '" + e.data + "'");
-                var message = JSON.parse(e.data);
-                console.log("W3CWebSocket MESSAGE PARSED : %o", data);
-            }
-        };
+                    if (client.readyState === client.OPEN) {
+                        console.log('send supervision_connection');
+                        client.send(JSON.stringify(com_helper.supervisionConnection()));
+                    }
+                };
+
+                // CONNECTION CLOSE
+                client.onclose = function () {
+                    console.log('echo-protocol Client Closed - Tentative reconnexion');
+                    // reconnexion
+
+                }.bind(this);
+
+                // MESSAGE REÇU
+                client.onmessage = function (e) {
+                    if (typeof e.data === 'string') {
+                        console.log("W3CWebSocket MESSAGE RECEIVED : '" + e.data + "'");
+                        var message = JSON.parse(e.data);
+                        console.log("W3CWebSocket MESSAGE PARSED : %o", data);
+                    }
+                };
+            }.bind(this));
     },
 
     /**

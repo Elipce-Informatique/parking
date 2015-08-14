@@ -12,7 +12,7 @@ var client = ({
         var retour = {
             messageType: 'supervisionConnection',
             data: {}
-        }
+        };
         return retour;
     },
 
@@ -57,10 +57,10 @@ var client = ({
      *************** DATABASE CONFIGURATION ************************
      ***************************************************************/
 
-    busConfigQuery: function () {
+    busConfigQuery: function (data) {
         return {
             messageType: "busConfigQuery",
-            data: {}
+            data: data
         }
     }
 
