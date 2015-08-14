@@ -56,14 +56,13 @@ module.exports.route = function (message, client) {
             // INSERT THE RECEIVED DATA IN DATABASE
             config_controller.onDisplayConfigData(message.data);
             break;
-        // TODO IN THE DATABASE -------------------------------------------
         case 'counterConfigQuery':
             // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
             config_controller.sendCounterConfigQuery(client);
             break;
         case 'counterConfigData':
             // INSERT THE RECEIVED DATA IN DATABASE
-            config_controller.onSensorConfigData(message.data);
+            config_controller.onCounterConfigData(message.data);
             break;
         case 'viewConfigQuery':
             // RELAY THE MESSAGE THAT COMES FROM SUPERVISION

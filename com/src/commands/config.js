@@ -13,6 +13,7 @@ var servModel = require('../models/server.js');
 var busModel = require('../models/bus.js');
 var sensorModel = require('../models/sensor.js');
 var displayModel = require('../models/display.js');
+var counterModel = require('../models/counter.js');
 
 
 // -----------------------------------------------------------------
@@ -243,6 +244,12 @@ Config.prototype.onCounterConfigData = function (data) {
     this.emit('counterConfigData', data);
 
     //logger.log('info', 'onCounterConfigData received: %o', data);
+
+    // At least 1 counter
+    if (_.isArray(data) && data.length > 0) {
+        logger.log('info', 'onCounterConfigData received: %o', data);
+        counterModel.insertCounters(data);
+    }
 };
 
 /** TODO

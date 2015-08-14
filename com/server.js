@@ -6,6 +6,8 @@ global.ssl = true;
 global.controllerClient = null;
 global.supervisionClients = [];
 
+
+
 // Local modules
 var logger = require('./src/utils/logger.js');
 
@@ -18,6 +20,8 @@ var errorHandler = require('./src/utils/error_handler.js');
 var WebSocketServer = require('ws').Server;
 var _ = require('lodash');
 var fs = require('fs');
+var EventEmitter = require("events").EventEmitter;
+global.events = new EventEmitter();
 
 // We should load config from elsewhere...
 var cfg = {
