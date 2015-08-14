@@ -6,7 +6,7 @@ var com_helper = require('../helpers/com_helper.js');
 var W3CWebSocket = require('websocket').w3cwebsocket;
 
 /**
- * Gère le rafraichissement des données de la supervision
+ * Gère le rafraichissement des données de la supervision.
  *
  */
 module.exports.refresh = {
@@ -51,44 +51,46 @@ module.exports.refresh = {
      */
     initWebSocket: function () {
 
-        $.get('https://' + this.host + ':' + this.port)
-            .always(function () {
-                console.log("Enter Always");
+        if (_.isEqual(this.client, {}) && !(this.client instanceof W3CWebSocket)) {
+            $.get('https://' + this.host + ':' + this.port)
+                .always(function () {
 
-                // CONNEXION WEBSOCKET CLIENT
-                var client = new W3CWebSocket('wss://' + this.host + ':' + this.port);
+                    // CONNEXION WEBSOCKET CLIENT
+                    this.client = new W3CWebSocket('wss://' + this.host + ':' + this.port);
 
-                // ERREUR
-                client.onerror = function () {
-                    console.log('Connection Error');
-                };
+                    // ERREUR
+                    this.client.onerror = function () {
+                        console.warn('Connection Error');
+                        this.client = {};
+                    }.bind(this);
 
-                // CONNECTION OPEN
-                client.onopen = function () {
-                    console.log('WebSocket Client Connected %o', client);
+                    // CONNECTION OPEN
+                    this.client.onopen = function () {
+                        console.log('WebSocket Client Connected %o', this.client);
 
-                    if (client.readyState === client.OPEN) {
-                        console.log('send supervision_connection');
-                        client.send(JSON.stringify(com_helper.supervisionConnection()));
-                    }
-                };
+                        if (this.client.readyState === this.client.OPEN) {
+                            console.log('send supervision_connection');
+                            this.client.send(JSON.stringify(com_helper.supervisionConnection()));
+                        }
+                    }.bind(this);
 
-                // CONNECTION CLOSE
-                client.onclose = function () {
-                    console.log('echo-protocol Client Closed - Tentative reconnexion');
-                    // reconnexion
+                    // CONNECTION CLOSE
+                    this.client.onclose = function () {
+                        this.client = {};
+                    }.bind(this);
 
-                }.bind(this);
-
-                // MESSAGE REÇU
-                client.onmessage = function (e) {
-                    if (typeof e.data === 'string') {
-                        console.log("W3CWebSocket MESSAGE RECEIVED : '" + e.data + "'");
-                        var message = JSON.parse(e.data);
-                        console.log("W3CWebSocket MESSAGE PARSED : %o", data);
-                    }
-                };
-            }.bind(this));
+                    // MESSAGE REÇU
+                    this.client.onmessage = function (e) {
+                        if (typeof e.data === 'string') {
+                            console.log("W3CWebSocket MESSAGE RECEIVED : '" + e.data + "'");
+                            var message = JSON.parse(e.data);
+                            console.log("W3CWebSocket MESSAGE PARSED : %o", data);
+                        }
+                    }.bind(this);
+                }.bind(this));
+        } else {
+            console.log('On a deja un websocket !!');
+        }
     },
 
     /**
