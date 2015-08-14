@@ -52,13 +52,15 @@ module.exports = {
                         if (counter.destination !== undefined) {
                             // Parse associations
                             counter.destination.forEach(function (counterFils) {
+                                logger.log('info', 'PUUUUUUUUUSH');
                                 assocs.push([result.insertId, counterFils]);
                             }, this);
                         }
                     }
                 });
             });
-
+// TODO attention le tableau est vide à ce moment à cause du query asynchrone
+            logger.log('info', 'ASSOC COUNTERS COUNTERS', assocs);
             // Assocs between counters
             if(assocs.length > 0){
                 assocs.forEach(function(assoc){
@@ -75,13 +77,16 @@ module.exports = {
                     });
                 });
             }
+            else{
+                logger.log('info', 'No associations between counters and counters');
+            }
         }
 
         trans.commit(function (err, info) {
             if (err) {
                 logger.log('error', 'TRANSACTION COMMIT ERROR');
             } else {
-                logger.log('info', 'TRANSACTION COMMIT OK');
+                logger.log('info', 'TRANSACTION COMMIT COUNTERS + ASSOCS OK');
             }
             // Ending mysql connection once all queries have been executed
             connection.end(errorHandler.onMysqlEnd);
