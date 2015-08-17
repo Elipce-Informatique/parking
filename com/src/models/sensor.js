@@ -190,7 +190,7 @@ module.exports = {
         var eventSql = "INSERT INTO event_capteur (capteur_id,date,state,sense,supply,dfu)" +
             "VALUES (?,?,?,?,?,?)";
 
-        // Fetch space and sensor data
+        // FETCH SPACE AND SENSOR DATA
         var getPlaceInfosSql = "SELECT c.id AS capteur_id, p.id AS place_id, tp.id AS type_place_id, eo.id AS etat_occupation_id, plan.id AS plan_id FROM capteur c" +
             " JOIN place p ON p.capteur_id=c.id" +
             " JOIN type_place tp ON p.type_place_id=tp.id" +
@@ -199,17 +199,9 @@ module.exports = {
             " JOIN zone z ON z.id=a.zone_id" +
             " JOIN plan ON plan.id=z.plan_id" +
 
-            " WHERE eo.is_occupe=? AND c.id=(" +
-            "   SELECT c.id FROM capteur c" +
-            "   JOIN place p ON p.capteur_id=c.id" +
-            "   JOIN allee a ON a.id=p.allee_id" +
-            "   JOIN zone z ON z.id=a.zone_id" +
-            "   JOIN plan ON plan.id=z.plan_id" +
-            "   JOIN niveau n ON n.id=plan.niveau_id" +
-            "   JOIN parking pa ON pa.id=n.parking_id" +
+            " WHERE eo.is_occupe=? AND c.id=?";
 
-            "   WHERE c.v4_id=? and pa.id=?" +
-            ")";
+        // FETCH SENSOR ID FROM SENSOR V4_ID. NEED TO GO THROUGH THE PARKING
         var getSensorIdSql = "SELECT c.id FROM capteur c" +
             "   JOIN place p ON p.capteur_id=c.id" +
             "   JOIN allee a ON a.id=p.allee_id" +
@@ -224,78 +216,70 @@ module.exports = {
             logger.log('info', 'V4 ID de cet envent sensor ID : ' + evt.ID);
 
 
-            var promise1 = Q.Promise(function (resolve, reject) {
-                // Preparing query
-                var inst = mysql.format(getSensorIdSql, [evt.ID]);
-                logger.log('error', 'INST QUERY sensor ID : ' + inst);
-                trans.query(inst, function (err, result) {
+            // Preparing query
+            var inst = mysql.format(getSensorIdSql, [evt.ID]);
+            trans.query(inst, function (err, result) {
 
-                    // ROLLBACK THE TRANSACTION
-                    if (err && trans.rollback) {
-                        reject(err);
+                // ROLLBACK THE TRANSACTION
+                if (err && trans.rollback) {
+                    reject(err);
+                }
+                else if (result.length == 0) {
+                    reject(new Error("The sensor with v4_id " + evt.ID + " is not attached to a space"));
+                }
+                // WE HAVE A SENSORID TO PERFORM ALL THE INSERTIONS !
+                else {
+                    var sensorId = result[0].id;
+                    logger.log('info', 'PASS promiose 2, sensor id: ' + sensorId);
+
+                    trans.query(eventSql, [sensorId, evt.date, evt.state, evt.sense, evt.supply, evt.dfu], function (err, result) {
+                        if (err && trans.rollback) {
+                            trans.rollback();
+                            logger.log('error', 'TRANSACTION ROLLBACK');
+                            throw err;
+                        }
+                    });
+
+                    // HANDLE EACH TYPE OF SENSE EVENT
+                    switch (events.sense) {
+                        case "undef":
+                            // We do not change the journal in database
+                            break;
+                        case "free":
+                            // Update journal AND etat d'occupation for the space
+                            trans.query(getPlaceInfosSql, ['0', sensorId], function (err, rows) {
+                                if (err) {
+                                    trans.rollback();
+                                    logger.log('error', 'TRANSACTION ROLLBACK');
+                                    throw err;
+                                } else {
+
+                                }
+                            });
+                            break;
+                        case "occupied":
+                            // Update journal AND etat d'occupation for the space
+                            trans.query(getPlaceInfosSql, ['1', sensorId], function (err, rows) {
+                                if (err) {
+                                    trans.rollback();
+                                    logger.log('error', 'TRANSACTION ROLLBACK');
+                                    throw err;
+                                } else {
+
+                                }
+                            });
+                            break;
+                        case "overstay":
+                            // Update journal BUT leave the same etat d'occupation
+                            break;
+                        case "error":
+                            // We do not change the journal in database
+                            break;
+                        default:
                     }
-                    else if (result.length == 0) {
-                        reject(new Error("The sensor with v4_id " + evt.ID + " is not attached to a space"));
-                    }
-                    else {
-                        logger.log('info', 'RESULT sensor ID : ' + result);
-                        var sensorId = result[0].id;
-                        logger.log('info', 'SENsor ID : ' + sensorId);
-                        resolve(sensorId);
 
-                    }
-                });
-            });
-
-            var promise2 = Q.promise(function (resolve, reject) {
-                logger.log('info', 'PASS promiose 2, sensor id: ' + sensorId);
-
-                trans.query(eventSql, [sensorId, evt.date, evt.state, evt.sense, evt.supply, evt.dfu], function (err, result) {
-                    if (err && trans.rollback) {
-                        trans.rollback();
-                        logger.log('error', 'TRANSACTION ROLLBACK');
-                        throw err;
-                    }
-                });
-
-                // HANDLE EACH TYPE OF SENSE EVENT
-                switch (events.sense) {
-                    case "undef":
-                        // We do not change the journal in database
-                        break;
-                    case "free":
-                        // Update journal AND etat d'occupation for the space
-                        trans.query(getPlaceInfosSql, ['0', evt.ID], function (err, rows) {
-
-                        });
-                        break;
-                    case "occupied":
-                        // Update journal AND etat d'occupation for the space
-                        trans.query(getPlaceInfosSql, ['1', evt.ID], function (err, rows) {
-
-                        });
-                        break;
-                    case "overstay":
-                        // Update journal BUT leave the same etat d'occupation
-                        break;
-                    case "error":
-                        // We do not change the journal in database
-                        break;
-                    default:
                 }
             });
-
-
-            Q.fcall(promise1)
-                .then(promise2);
-
-            //promise1.then(function resolve(result) {
-            //
-            //}.bind(this), function reject(err) {
-            //    trans.rollback();
-            //    logger.log('error', 'TRANSACTION ROLLBACK');
-            //    throw err;
-            //}.bind(this))
 
 
         });
