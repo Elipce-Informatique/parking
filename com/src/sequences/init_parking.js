@@ -95,6 +95,9 @@ module.exports = {
             _.each(ctrl.bus, function (bus) {
                 // Sensors query
                 this.config.sendSensorConfigQuery(bus.ID);
+                // Views query
+                // TODO loulou
+                //this.config.sendViewConfigQuery(bus.ID);
             }, this);
         }, this);
     }

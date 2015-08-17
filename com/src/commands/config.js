@@ -14,6 +14,8 @@ var busModel = require('../models/bus.js');
 var sensorModel = require('../models/sensor.js');
 var displayModel = require('../models/display.js');
 var counterModel = require('../models/counter.js');
+var viewModel = require('../models/view.js');
+var parkingModel = require('../models/parking.js');
 
 
 // -----------------------------------------------------------------
@@ -69,6 +71,24 @@ Config.prototype.sendCapabilities = function (client) {
             messenger.send(client, 'capabilities', rows[0]);
         }
     });
+};
+
+
+/**
+ * Parking ID
+ */
+Config.prototype.setParkingId = function () {
+
+    parkingModel.getInfos(global.port, function(err, result){
+
+        if(err){
+            logger.log('error', 'Model parking, function getInfos callback error');
+        }
+        else{
+            global.parkingId = result[0]['id'];
+        }
+    });
+
 };
 
 // --------------------------------------------------------------------------------------------
@@ -248,7 +268,7 @@ Config.prototype.onCounterConfigData = function (data) {
     // At least 1 counter
     if (_.isArray(data) && data.length > 0) {
         logger.log('info', 'onCounterConfigData received: %o', data);
-        counterModel.insertCounters(data);
+        counterModel.insertViews(data);
     }
 };
 
@@ -284,6 +304,11 @@ Config.prototype.sendViewConfigQuery = function (client) {
 Config.prototype.onViewConfigData = function (data) {
     this.emit('viewConfigUpdateDone', data);
     //logger.log('info', 'onViewConfigData received: %o', data);
+    // At least 1 view
+    if (_.isArray(data) && data.length > 0) {
+        logger.log('info', 'onViewConfigData received: %o', data);
+        viewModel.insertViews(data);
+    }
 };
 
 /** TODO

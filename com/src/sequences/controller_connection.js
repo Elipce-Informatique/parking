@@ -22,6 +22,9 @@ module.exports = {
         // On new controller connection, we send our capabilities
         ConfigHandler.sendCapabilities(client);
 
+        // Get the parking identifier
+        ConfigHandler.setParkingId();
+
         logger.log('info', 'Starting EVENT LOOP');
         // Launches the event lifecycle
         eventsHandler.startEventLoop();
