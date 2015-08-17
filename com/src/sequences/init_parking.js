@@ -9,6 +9,7 @@ var logger = require('../utils/logger.js');
 
 module.exports = {
     config: {},
+    controllers: [],
     /**
      * Starts the initialisation procedure
      */
@@ -32,6 +33,7 @@ module.exports = {
         this.config.on('sensorConfigData', this.onSensorConfigData.bind(this));
         this.config.on('displayConfigData', this.onDisplayConfigData.bind(this));
         this.config.on('counterConfigData', this.onCounterConfigData.bind(this));
+        global.events.on('countersInserted', this.onCountersInserted.bind(this));
     },
 
     /**
@@ -47,9 +49,15 @@ module.exports = {
      */
     onBusConfigData: function (data) {
         logger.log('info', 'TEST EVTS busConfigData: data -> ', data);
+
+        // Save controllers
+        this.controllers = data;
+
+        // Parse controllers
         _.each(data, function (ctrl) {
+            // Parse buses
             _.each(ctrl.bus, function (bus) {
-                this.config.sendSensorConfigQuery(bus.ID);
+                // Display query
                 this.config.sendDisplayConfigQuery(bus.ID);
             }, this);
         }, this);
@@ -74,5 +82,20 @@ module.exports = {
      */
     onCounterConfigData: function (data) {
         logger.log('info', 'onCounterConfigData', data);
+    },
+    /**
+     * Handle event when counters are inserted in our DB
+     * @param data : the data sent by the controller
+     */
+    onCountersInserted: function () {
+        logger.log('info', 'onCountersInserted');
+        // Parse controllers
+        _.each(this.controllers, function (ctrl) {
+            // Parse buses
+            _.each(ctrl.bus, function (bus) {
+                // Sensors query
+                this.config.sendSensorConfigQuery(bus.ID);
+            }, this);
+        }, this);
     }
 };
