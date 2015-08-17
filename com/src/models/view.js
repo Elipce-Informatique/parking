@@ -1,5 +1,5 @@
 /**
- * Created by vivian on 14/08/2015.
+ * Created by vivian on 17/08/2015.
  */
 
 var logger = require('../utils/logger.js');
@@ -8,7 +8,7 @@ var errorHandler = require('../utils/error_handler.js');
 var mysql = require('mysql');
 //Enable mysql-queues
 var queues = require('mysql-queues');
-var Q = require('q');
+var Promise = require('promise');
 
 module.exports = {
     /**
@@ -18,11 +18,18 @@ module.exports = {
     insertViews: function (data) {
 
         //Query structure
-        var sqlCpt = "INSERT IGNORE INTO compteur(libelle, v4_id)" +
-            "VALUES (?, ?)";
-        var sqlCptAssoc = "INSERT IGNORE INTO compteur_compteur(compteur_id, compteur_fils_id)" +
-            "VALUES (?, ?)";
-        var select = "SELECT id FROM compteur WHERE v4_id=?";
+        var sqlView =
+            "INSERT IGNORE INTO vue(libelle, compteur_id, afficheur_id, cellNr, total, " +
+            "offset, emptyLow, emptyHigh, fullLow, fullHigh, v4_id)" +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        var selectDisplay =
+            "SELECT a.id " +
+            "FROM afficheur a" +
+            "JOIN bus b ON b.id=a.bus_id" +
+            "JOIN concentrateur c ON c.id=b.concentrateur_id" +
+            "WHERE c.parking_id=?";
+
+        var selectCounter = "SELECT id FROM compteur WHERE v4_id=?";
 
         // MYSQL CONNECTOR AND QUEUES
         var connection = require('../utils/mysql_helper.js')();
@@ -30,14 +37,17 @@ module.exports = {
 
         // TRANSACTION
         var trans = connection.startTransaction();
-        // At least 1 counter
+        // At least 1 view
         if (data.length > 0) {
             var assocs = [];
             // Parse counters
             data.forEach(function (counter) {
 
+                // Get display ID and counter ID
+
+
                 // Prepare sql
-                var inst = mysql.format(sqlCpt, [
+                var inst = mysql.format(sqlView, [
                     counter.name,
                     counter.ID
                 ]);
@@ -63,7 +73,7 @@ module.exports = {
                 });
             });
             // Commit INSERT counters
-            var promise = Q.Promise(function (resolve, reject) {
+            var promise = new Promise(function (resolve, reject) {
                 trans.commit(function (err, info) {
                     if (err) {
                         reject(err);
@@ -87,7 +97,7 @@ module.exports = {
                 var transAssoc = connection.startTransaction();
                 assocs.forEach(function (assoc) {
                     // Promise
-                    var promiseIdCounter = Q.Promise(function (resolve, reject) {
+                    var promiseIdCounter = new Promise(function (resolve, reject) {
                         // SELECT id from v4_id
                         var sqlFormatted = mysql.format(select, assoc[1]);
                         transAssoc.query(sqlFormatted, function (err, result) {
@@ -95,14 +105,14 @@ module.exports = {
                                 reject(err);
                             }
                             else {
-                                //logger.log('info', 'ASSOC with [id, V4]', assoc);
+                                logger.log('info', 'ASSOC with [id, V4]', assoc);
                                 resolve([assoc[0], result[0]['id']]);
                             }
                         });
 
                     }.bind(this)).then(function resolve(cpts) {
                             // Prepare insertion
-                            var inst = mysql.format(sqlCptAssoc, cpts);
+                            var inst = mysql.format(sqlAssoc, cpts);
                             logger.log('info', 'ASSOC COUNTERS COUNTERS', inst);
                             // Insert bus
                             transAssoc.query(inst, function (err, result) {

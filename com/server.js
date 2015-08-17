@@ -5,6 +5,7 @@ global.host = global.modeDev ? '85.14.137.12' : '127.0.0.1';
 global.ssl = true;
 global.controllerClient = null;
 global.supervisionClients = [];
+global.parkingId = null;
 
 
 
