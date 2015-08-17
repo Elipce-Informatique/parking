@@ -177,9 +177,136 @@ module.exports = {
 
     /**
      * Insert an event in the journal_equipment_plan table
-     * @param event
+     * @param events : array of events to insert
      */
-    insertSensorEvent: function (event) {
-        logger.log('info', 'SENSOR EVENT to store : %o', event);
+    insertSensorEvents: function (events) {
+        logger.log('info', 'SENSOR EVENTS to store : %o', events);
+
+        var connection = require('../utils/mysql_helper.js')();
+        queues(connection);
+        var trans = connection.startTransaction();
+
+        // Insertion in the event table
+        var eventSql = "INSERT INTO event_capteur (capteur_id,date,state,sense,supply,dfu)" +
+            "VALUES (?,?,?,?,?,?)";
+
+        // FETCH SPACE AND SENSOR DATA
+        var getPlaceInfosSql = "SELECT c.id AS capteur_id, p.id AS place_id, tp.id AS type_place_id, eo.id AS etat_occupation_id, plan.id AS plan_id FROM capteur c" +
+            " JOIN place p ON p.capteur_id=c.id" +
+            " JOIN type_place tp ON p.type_place_id=tp.id" +
+            " JOIN etat_occupation eo ON eo.type_place_id=tp.id" +
+            " JOIN allee a ON a.id=p.allee_id" +
+            " JOIN zone z ON z.id=a.zone_id" +
+            " JOIN plan ON plan.id=z.plan_id" +
+
+            " WHERE eo.is_occupe=? AND c.id=?";
+
+        // FETCH SENSOR ID FROM SENSOR V4_ID. NEED TO GO THROUGH THE PARKING
+        var getSensorIdSql = "SELECT c.id FROM capteur c" +
+            "   JOIN place p ON p.capteur_id=c.id" +
+            "   JOIN allee a ON a.id=p.allee_id" +
+            "   JOIN zone z ON z.id=a.zone_id" +
+            "   JOIN plan ON plan.id=z.plan_id" +
+            "   JOIN niveau n ON n.id=plan.niveau_id" +
+            "   JOIN parking pa ON pa.id=n.parking_id" +
+
+            "   WHERE c.v4_id=?";
+        // LOOP OVER ALL EVENTS
+        _.each(events, function (evt) {
+            logger.log('info', 'V4 ID de cet envent sensor ID : ' + evt.ID);
+
+            var p1 = Q.promise(function (resolve, reject) {
+                logger.log('info', 'PASS promiose 1, : ');
+                var inst = mysql.format(getSensorIdSql, [evt.ID]);
+                trans.query(inst, function (err, result) {
+
+                    // ROLLBACK THE TRANSACTION
+                    if (err && trans.rollback) {
+                        reject(err);
+                    }
+                    else if (result.length == 0) {
+                        reject(new Error("The sensor with v4_id " + evt.ID + " is not attached to a space"));
+                    }
+                    // WE HAVE A SENSORID TO PERFORM ALL THE INSERTIONS !
+                    else {
+                        logger.log('info', 'PASS resolve promiose 1');
+                        resolve(result);
+                    }
+                });
+            }).then(function (result) {
+                logger.log('info', 'PASS promiose 2,', result);
+                return Q.promise(function (resolve, reject) {
+                    var sensorId = result[0].id;
+                    logger.log('info', 'PASS promiose 2, sensor id: ' + sensorId);
+
+                    // INSERT IN THE EVENT TABLE
+                    trans.query(eventSql, [sensorId, evt.date, evt.state, evt.sense, evt.supply, evt.dfu], function (err, result) {
+                        if (err && trans.rollback) {
+                            reject(err);
+                        }
+                    });
+
+                    // HANDLE EACH TYPE OF SENSE EVENT
+                    switch (evt.sense) {
+                        case "undef":
+                            // We do not change the journal in database
+                            break;
+                        case "free":
+                            // Update journal AND etat d'occupation for the space
+                            trans.query(getPlaceInfosSql, ['0', sensorId], function (err, rows) {
+                                if (err) {
+                                    trans.rollback();
+                                    logger.log('error', 'TRANSACTION ROLLBACK');
+                                    throw err;
+                                } else {
+                                    resolve({
+                                        sense: evt.sense,
+                                        data: rows
+                                    });
+                                }
+                            });
+                            break;
+                        case "occupied":
+                            // Update journal AND etat d'occupation for the space
+                            trans.query(getPlaceInfosSql, ['1', sensorId], function (err, rows) {
+                                if (err) {
+                                    trans.rollback();
+                                    logger.log('error', 'TRANSACTION ROLLBACK');
+                                    throw err;
+                                } else {
+                                    resolve({
+                                        sense: evt.sense,
+                                        data: rows
+                                    });
+                                }
+                            });
+                            break;
+                        case "overstay":
+                            // Update journal BUT leave the same etat d'occupation
+                            break;
+                        case "error":
+                            // We do not change the journal in database
+                            break;
+                        default:
+                    }
+                });
+            }).then(function (oData) {
+                // insertion event OK ?
+                logger.log('info', 'pass PROMIOSE 3: ', oData);
+            });
+
+        });
+
+        // TRANSACTION COMMIT IF NO ROLLBACK OCCURED
+        trans.commit(function (err, info) {
+            if (err) {
+                logger.log('error', 'TRANSACTION COMMIT ERROR');
+            } else {
+                logger.log('info', 'TRANSACTION COMMIT OK');
+            }
+            // ENDING MYSQL CONNECTION ONCE ALL QUERIES HAVE BEEN EXECUTED
+            connection.end(errorHandler.onMysqlEnd);
+        });
+
     }
 };

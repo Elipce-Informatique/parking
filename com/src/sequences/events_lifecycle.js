@@ -62,6 +62,13 @@ EventsLifeCycle.prototype.onEventData = function (data) {
     var cacheEvt = {};
     var evts = data.list;
     if (_.isArray(evts)) {
+        var aStartupEvt = [];
+        var aInitEvt = [];
+        var aBusEvt = [];
+        var aSensorEvt = [];
+        var aDisplayEvt = [];
+        var aCounterEvt = [];
+        var aFirmwareUpdateEvt = [];
         _.each(evts, function (evt) {
 
             // Omit source key if the ID key is absent
@@ -85,32 +92,41 @@ EventsLifeCycle.prototype.onEventData = function (data) {
             // DISPATCHES THE EVENT
             switch (cacheEvt.event) {
                 case "startup":
+                    aStartupEvt.push(cacheEvt);
                     break;
                 case "init":
+                    aInitEvt.push(cacheEvt);
                     break;
                 case "state":
                     switch (cacheEvt.source) {
                         case "bus":
+                            aBusEvt.push(cacheEvt);
                             break;
                         case "sensor":
-                            sensorModel.insertSensorEvent(cacheEvt);
+                            aSensorEvt.push(cacheEvt);
                             break;
                         case "display":
+                            aDisplayEvt.push(cacheEvt);
                             break;
                         case "counter":
+                            aCounterEvt.push(cacheEvt);
                             break;
                         default:
                     }
                     break;
                 case "firmwareUpdate":
+                    aFirmwareUpdateEvt.push(cacheEvt);
                     break;
                 default:
             }
         }, this);
+
+        // INSERT THE EVENTS GATHERED
+        sensorModel.insertSensorEvents(aSensorEvt);
     }
 
     // Send the next EventQuery
-    this.events_controller.sendEventQuery(this.ackID);
+    //this.events_controller.sendEventQuery(this.ackID);
 
 };
 
