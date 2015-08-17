@@ -8,7 +8,7 @@ var errorHandler = require('../utils/error_handler.js');
 var mysql = require('mysql');
 //Enable mysql-queues
 var queues = require('mysql-queues');
-var Promise = require('promise');
+var Q = require('q');
 
 module.exports = {
     /**
