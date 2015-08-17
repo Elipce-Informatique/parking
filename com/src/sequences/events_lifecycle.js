@@ -93,7 +93,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
                         case "bus":
                             break;
                         case "sensor":
-                            sensorModel.insertSensorEvent(cacheEvt);
+                            sensorModel.insertSensorEvents(cacheEvt);
                             break;
                         case "display":
                             break;

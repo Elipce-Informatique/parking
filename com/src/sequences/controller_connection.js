@@ -16,9 +16,11 @@ module.exports = {
      */
     onNewController: function (client, ConfigHandler, EventHandler) {
 
+        // TODO TEST FOR GENERATING NEW EVENTS
+        ConfigHandler.sendRemoteControl('reset');
+
         // Instance of Event Sequence with the event contoller
         var eventsHandler = new evtsSequence(EventHandler);
-
         // On new controller connection, we send our capabilities
         ConfigHandler.sendCapabilities(client);
 
@@ -27,6 +29,6 @@ module.exports = {
         eventsHandler.startEventLoop();
 
         // TODO - Check in the database if the parking has been initialized and launch the init sequence !
-        //init.start(ConfigHandler);
+        init.start(ConfigHandler);
     }
 };

@@ -94,7 +94,33 @@ module.exports = {
      * Insert an event in the journal_equipment_plan table
      * @param event
      */
-    insertSensorEvent: function (event) {
-        logger.log('info', 'SENSOR EVENT to store : %o', event);
+    insertSensorEvents: function (event) {
+        logger.log('info', 'SENSOR EVENTS to store : %o', event);
+
+        var connection = require('../utils/mysql_helper.js')();
+
+        // Insertion in the event table
+        var sqlEvent = "INSERT INTO event_capteur (capteur_id,date,state,sense,supply,dfu)" +
+            "VALUES (?,?,?,?,?,?)";
+
+        switch (event.sense) {
+            case "undef":
+                // We do not change the journal in database
+                break;
+            case "free":
+                // Update journal AND etat d'occupation for the space
+                break;
+            case "occupied":
+                // Update journal AND etat d'occupation for the space
+                break;
+            case "overstay":
+                // Update journal BUT leave the same etat d'occupation
+                break;
+            case "error":
+                // We do not change the journal in database
+                break;
+            default:
+
+        }
     }
 };
