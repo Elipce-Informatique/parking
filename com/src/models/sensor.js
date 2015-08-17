@@ -92,35 +92,110 @@ module.exports = {
 
     /**
      * Insert an event in the journal_equipment_plan table
-     * @param event
+     * @param events : array of events to insert
      */
-    insertSensorEvents: function (event) {
-        logger.log('info', 'SENSOR EVENTS to store : %o', event);
+    insertSensorEvents: function (events) {
+        logger.log('info', 'SENSOR EVENTS to store : %o', events);
 
         var connection = require('../utils/mysql_helper.js')();
+        queues(connection);
+        var trans = connection.startTransaction();
 
         // Insertion in the event table
-        var sqlEvent = "INSERT INTO event_capteur (capteur_id,date,state,sense,supply,dfu)" +
+        var eventSql = "INSERT INTO event_capteur (capteur_id,date,state,sense,supply,dfu)" +
             "VALUES (?,?,?,?,?,?)";
 
-        switch (event.sense) {
-            case "undef":
-                // We do not change the journal in database
-                break;
-            case "free":
-                // Update journal AND etat d'occupation for the space
-                break;
-            case "occupied":
-                // Update journal AND etat d'occupation for the space
-                break;
-            case "overstay":
-                // Update journal BUT leave the same etat d'occupation
-                break;
-            case "error":
-                // We do not change the journal in database
-                break;
-            default:
+        // Fetch space and sensor data
+        var getPlaceInfosSql = "SELECT c.id AS capteur_id, p.id AS place_id, tp.id AS type_place_id, eo.id AS etat_occupation_id, plan.id AS plan_id FROM capteur c" +
+            " JOIN place p ON p.capteur_id=c.id" +
+            " JOIN type_place tp ON p.type_place_id=tp.id" +
+            " JOIN etat_occupation eo ON eo.type_place_id=tp.id" +
+            " JOIN allee a ON a.id=p.allee_id" +
+            " JOIN zone z ON z.id=a.zone_id" +
+            " JOIN plan ON plan.id=z.plan_id" +
 
-        }
+            " WHERE eo.is_occupe=? AND c.id=(" +
+            "   SELECT c.id FROM capteur c" +
+            "   JOIN place p ON p.capteur_id=c.id" +
+            "   JOIN allee a ON a.id=p.allee_id" +
+            "   JOIN zone z ON z.id=a.zone_id" +
+            "   JOIN plan ON plan.id=z.plan_id" +
+            "   JOIN niveau n ON n.id=plan.niveau_id" +
+            "   JOIN parking pa ON pa.id=n.parking_id" +
+
+            "   WHERE c.v4_id=? and pa.id=?" +
+            ")";
+
+        // LOOP OVER ALL EVENTS
+        _.each(events, function (evt) {
+            var getSensorIdSql = "SELECT c.id FROM capteur c" +
+                "   JOIN place p ON p.capteur_id=c.id" +
+                "   JOIN allee a ON a.id=p.allee_id" +
+                "   JOIN zone z ON z.id=a.zone_id" +
+                "   JOIN plan ON plan.id=z.plan_id" +
+                "   JOIN niveau n ON n.id=plan.niveau_id" +
+                "   JOIN parking pa ON pa.id=n.parking_id" +
+
+                "   WHERE c.v4_id=?";
+
+            trans.query(getSensorIdSql, [evt.ID], function (err, result) {
+                // ROLLBACK THE TRANSACTION
+                if (err && trans.rollback) {
+                    trans.rollback();
+                    logger.log('error', 'TRANSACTION ROLLBACK');
+                    throw err;
+                } else {
+                    var sensorId = result[0].id;
+                    logger.log('error', 'SENsor ID : ' + sensorId);
+
+                    trans.query(eventSql, [sensorId, evt.date, evt.state, evt.sense, evt.supply, evt.dfu], function (err, result) {
+                        if (err && trans.rollback) {
+                            trans.rollback();
+                            logger.log('error', 'TRANSACTION ROLLBACK');
+                            throw err;
+                        }
+                    });
+
+                    // HANDLE EACH TYPE OF SENSE EVENT
+                    switch (events.sense) {
+                        case "undef":
+                            // We do not change the journal in database
+                            break;
+                        case "free":
+                            // Update journal AND etat d'occupation for the space
+                            trans.query(getPlaceInfosSql, ['0', evt.ID], function (err, rows) {
+
+                            });
+                            break;
+                        case "occupied":
+                            // Update journal AND etat d'occupation for the space
+                            trans.query(getPlaceInfosSql, ['1', evt.ID], function (err, rows) {
+
+                            });
+                            break;
+                        case "overstay":
+                            // Update journal BUT leave the same etat d'occupation
+                            break;
+                        case "error":
+                            // We do not change the journal in database
+                            break;
+                        default:
+                    }
+                }
+            });
+
+        });
+
+        // TRANSACTION COMMIT IF NO ROLLBACK OCCURED
+        trans.commit(function (err, info) {
+            if (err) {
+                logger.log('error', 'TRANSACTION COMMIT ERROR');
+            } else {
+                logger.log('info', 'TRANSACTION COMMIT OK');
+            }
+            // ENDING MYSQL CONNECTION ONCE ALL QUERIES HAVE BEEN EXECUTED
+            connection.end(errorHandler.onMysqlEnd);
+        });
+
     }
 };
