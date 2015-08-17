@@ -34,6 +34,7 @@ Events.prototype.sendEventQuery = function (ackID) {
  * This is typically for initial query
  */
 Events.prototype.sendInitialEventQuery = function () {
+    logger.log('info', 'sendInitialEventQuery');
     messenger.sendToController('eventQuery', {});
 };
 
