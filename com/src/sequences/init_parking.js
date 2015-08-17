@@ -96,8 +96,7 @@ module.exports = {
                 // Sensors query
                 this.config.sendSensorConfigQuery(bus.ID);
                 // Views query
-                // TODO loulou
-                //this.config.sendViewConfigQuery(bus.ID);
+                this.config.sendViewConfigQuery(bus.ID);
             }, this);
         }, this);
     }

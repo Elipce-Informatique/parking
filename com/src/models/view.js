@@ -41,15 +41,40 @@ module.exports = {
         if (data.length > 0) {
             var assocs = [];
             // Parse counters
-            data.forEach(function (counter) {
+            data.forEach(function (view) {
 
                 // Get display ID and counter ID
+                var p1 = Q.promise(function(resolve, reject){
+                    trans.query(mysql.format(selectDisplay, [view.displayID]), function (err, result) {
+                        if (err && trans.rollback) {
+                            reject(err);
+                        }
+                        else{
+                            resolve(result);
+                        }
+                    });
+                });
+
+                var p2 = Q.promise(function(resolve, reject){
+                    trans.query(mysql.format(selectCounter, [view.counterID]), function (err, result) {if (err && trans.rollback) {
+                        reject(err);
+                    }
+                    else{
+                        resolve(result);
+                    }
+                    });
+                });
+
+                Q.all([p1,p2]).then(function(data){
+                    logger.log('info', 'ALL data: ', data);
+                });
+
 
 
                 // Prepare sql
                 var inst = mysql.format(sqlView, [
-                    counter.name,
-                    counter.ID
+                    view.name,
+                    view.ID
                 ]);
 
                 // Insert bus
@@ -61,9 +86,9 @@ module.exports = {
                     }
                     else {
                         // Association between counters
-                        if (counter.destination !== undefined) {
+                        if (view.destination !== undefined) {
                             // Parse associations
-                            counter.destination.forEach(function (counterFils) {
+                            view.destination.forEach(function (counterFils) {
                                 if (result.insertId > 0) {
                                     assocs.push([result.insertId, counterFils]);
                                 }
