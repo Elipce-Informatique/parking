@@ -8,7 +8,6 @@ global.supervisionClients = [];
 global.parkingId = null;
 
 
-
 // Local modules
 var logger = require('./src/utils/logger.js');
 
@@ -144,12 +143,13 @@ wss.on('connection', function connection(client) {
         }
         // At least 1 webclient
         else if (supervisionClients.length > 0) {
-            logger.log('info', 'Client disconnected -> it was a supervision ?');
+            logger.log('info', 'Client disconnected -> it was a supervision. nb supervisions -> ' + supervisionClients.length);
             // iterate over clients
             global.supervisionClients = _.filter(global.supervisionClients, function (cli) {
                 // Not this client closed
                 return !_.isEqual(client, cli);
             }.bind(this));
+            logger.log('info', 'Supervision client deleted. nb supervisions -> ' + supervisionClients.length);
         }
     });
 
