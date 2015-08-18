@@ -184,7 +184,7 @@ module.exports = {
 
         var connection = require('../utils/mysql_helper.js')();
         queues(connection);
-        var oBDD = connection;
+        var queue = connection.createQueue();
 
         // Insertion in the event table
         var eventSql = "INSERT INTO event_capteur (capteur_id,date,state,sense,supply,dfu)" +
@@ -226,10 +226,10 @@ module.exports = {
             var p1 = Q.promise(function (resolve, reject) {
                 logger.log('info', 'PASS promiose 1, : ');
                 var inst = mysql.format(getSensorIdSql, [evt.ID]);
-                oBDD.query(inst, function (err, result) {
+                queue.query(inst, function (err, result) {
 
                     // ROLLBACK THE TRANSACTION
-                    if (err && oBDD.rollback) {
+                    if (err) {
                         logger.log('error', 'ERREUR SQL : ' + inst);
                         reject(err);
                     }
@@ -250,8 +250,8 @@ module.exports = {
 
                     // INSERT IN THE EVENT TABLE
                     var inst = mysql.format(eventSql, [sensorId, evt.date, evt.state, evt.sense, evt.supply, evt.dfu]);
-                    oBDD.query(inst, function (err, result) {
-                        if (err && oBDD.rollback) {
+                    queue.query(inst, function (err, result) {
+                        if (err) {
                             logger.log('error', 'ERREUR SQL : ' + inst);
                             reject(err);
                         }
@@ -265,7 +265,7 @@ module.exports = {
                         case "free":
                             // Update journal AND etat d'occupation for the space
                             var inst = mysql.format(getPlaceInfosSql, ['0', sensorId]);
-                            oBDD.query(inst, function (err, rows) {
+                            queue.query(inst, function (err, rows) {
                                 if (err) {
                                     logger.log('error', 'ERREUR SQL : ' + inst);
                                 } else if (rows.length) {
@@ -279,7 +279,7 @@ module.exports = {
                         case "occupied":
                             // Update journal AND etat d'occupation for the space
                             var inst = mysql.format(getPlaceInfosSql, ['1', sensorId]);
-                            oBDD.query(inst, function (err, rows) {
+                            queue.query(inst, function (err, rows) {
                                 if (err) {
                                     logger.log('error', 'ERREUR SQL : ' + inst);
                                 } else if (rows.length) {
@@ -293,7 +293,7 @@ module.exports = {
                         case "overstay":
                             // Update journal AND etat d'occupation for the space
                             var inst = mysql.format(getPlaceInfosSql, ['1', sensorId]);
-                            oBDD.query(inst, ['1', sensorId], function (err, rows) {
+                            queue.query(inst, ['1', sensorId], function (err, rows) {
                                 if (err) {
                                     logger.log('error', 'ERREUR SQL : ' + inst);
                                 } else if (rows.length) {
@@ -311,45 +311,48 @@ module.exports = {
                     }
                 });
             }).then(function (oData) {
-                // insertion event OK ?
-                logger.log('info', 'pass PROMIOSE 3: ', oData);
-                var sense = oData['sense'] == 'overstay' ? 1 : 0;
-                var evtData = oData['data'];
+                logger.log('info', 'PASS promiose 2,', result);
+                return Q.promise(function (resolve, reject) {
+                    // insertion event OK ?
+                    logger.log('info', 'pass PROMIOSE 3: ', oData);
+                    var sense = oData['sense'] == 'overstay' ? 1 : 0;
+                    var evtData = oData['data'];
 
-                // UPDATE JOURNAL (plan_id, place_id, etat_occupation_id, overstay, date_evt)
-                var inst = mysql.format(journalSql, [
-                    evtData.plan_id,
-                    evtData.place_id,
-                    evtData.etat_occupation_id,
-                    sense,
-                    evt.date
-                ]);
-                oBDD.query(inst, function (err, result) {
-                    if (err) {
-                        logger.log('error', 'ERREUR SQL : ' + inst);
-                    }
-                });
+                    // UPDATE JOURNAL (plan_id, place_id, etat_occupation_id, overstay, date_evt)
+                    var inst = mysql.format(journalSql, [
+                        evtData.plan_id,
+                        evtData.place_id,
+                        evtData.etat_occupation_id,
+                        sense,
+                        evt.date
+                    ]);
+                    queue.query(inst, function (err, result) {
+                        if (err) {
+                            logger.log('error', 'ERREUR SQL : ' + inst);
+                        }
+                    });
 
-                // UPDATE ETAT D'OCCUPATION FOR THE SPACE
-                var inst = mysql.format(updatePlaceSql, [
-                    evtData.etat_occupation_id,
-                    evtData.place_id
-                ]);
-                oBDD.query(inst, function (err, result) {
-                    if (err) {
-                        logger.log('error', 'ERREUR SQL : ' + inst);
-                    }
+                    // UPDATE ETAT D'OCCUPATION FOR THE SPACE
+                    var inst = mysql.format(updatePlaceSql, [
+                        evtData.etat_occupation_id,
+                        evtData.place_id
+                    ]);
+                    queue.query(inst, function (err, result) {
+                        if (err) {
+                            logger.log('error', 'ERREUR SQL : ' + inst);
+                        }
+                    });
                 });
             });
 
         });
 
         // TRANSACTION COMMIT IF NO ROLLBACK OCCURED
-        oBDD.commit(function (err, info) {
+        queue.execute(function (err, info) {
             if (err) {
-                logger.log('error', 'TRANSACTION COMMIT ERROR');
+                logger.log('error', 'SQL QUEUE ERROR');
             } else {
-                logger.log('info', 'TRANSACTION COMMIT OK');
+                logger.log('info', 'SQL QUEUE OK');
             }
             // ENDING MYSQL CONNECTION ONCE ALL QUERIES HAVE BEEN EXECUTED
             connection.end(errorHandler.onMysqlEnd);
