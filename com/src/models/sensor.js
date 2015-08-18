@@ -77,7 +77,7 @@ module.exports = {
                     // ROLLBACK THE TRANSACTION
                     if (err && trans.rollback) {
                         trans.rollback();
-                        logger.log('error', 'TRANSACTION ROLLBACK');
+                        logger.log('error', 'ERREUR SQL');
                         throw err;
                     }
                     else {
@@ -140,7 +140,7 @@ module.exports = {
                             transAssoc.query(inst, function (err, result) {
                                 if (err && trans.rollback) {
                                     trans.rollback();
-                                    logger.log('error', 'TRANSACTION ROLLBACK');
+                                    logger.log('error', 'ERREUR SQL');
                                     throw err;
                                 }
                             });
@@ -184,7 +184,7 @@ module.exports = {
 
         var connection = require('../utils/mysql_helper.js')();
         queues(connection);
-        var trans = connection.startTransaction();
+        var oBDD = connection;
 
         // Insertion in the event table
         var eventSql = "INSERT INTO event_capteur (capteur_id,date,state,sense,supply,dfu)" +
@@ -226,10 +226,11 @@ module.exports = {
             var p1 = Q.promise(function (resolve, reject) {
                 logger.log('info', 'PASS promiose 1, : ');
                 var inst = mysql.format(getSensorIdSql, [evt.ID]);
-                trans.query(inst, function (err, result) {
+                oBDD.query(inst, function (err, result) {
 
                     // ROLLBACK THE TRANSACTION
-                    if (err && trans.rollback) {
+                    if (err && oBDD.rollback) {
+                        logger.log('error', 'ERREUR SQL : ' + inst);
                         reject(err);
                     }
                     else if (result.length == 0) {
@@ -248,8 +249,10 @@ module.exports = {
                     logger.log('info', 'PASS promiose 2, sensor id: ' + sensorId);
 
                     // INSERT IN THE EVENT TABLE
-                    trans.query(eventSql, [sensorId, evt.date, evt.state, evt.sense, evt.supply, evt.dfu], function (err, result) {
-                        if (err && trans.rollback) {
+                    var inst = mysql.format(eventSql, [sensorId, evt.date, evt.state, evt.sense, evt.supply, evt.dfu]);
+                    oBDD.query(inst, function (err, result) {
+                        if (err && oBDD.rollback) {
+                            logger.log('error', 'ERREUR SQL : ' + inst);
                             reject(err);
                         }
                     });
@@ -261,11 +264,10 @@ module.exports = {
                             break;
                         case "free":
                             // Update journal AND etat d'occupation for the space
-                            trans.query(getPlaceInfosSql, ['0', sensorId], function (err, rows) {
+                            var inst = mysql.format(getPlaceInfosSql, ['0', sensorId]);
+                            oBDD.query(inst, function (err, rows) {
                                 if (err) {
-                                    trans.rollback();
-                                    logger.log('error', 'TRANSACTION ROLLBACK');
-                                    throw err;
+                                    logger.log('error', 'ERREUR SQL : ' + inst);
                                 } else if (rows.length) {
                                     resolve({
                                         sense: evt.sense,
@@ -276,11 +278,10 @@ module.exports = {
                             break;
                         case "occupied":
                             // Update journal AND etat d'occupation for the space
-                            trans.query(getPlaceInfosSql, ['1', sensorId], function (err, rows) {
+                            var inst = mysql.format(getPlaceInfosSql, ['1', sensorId]);
+                            oBDD.query(inst, function (err, rows) {
                                 if (err) {
-                                    trans.rollback();
-                                    logger.log('error', 'TRANSACTION ROLLBACK');
-                                    throw err;
+                                    logger.log('error', 'ERREUR SQL : ' + inst);
                                 } else if (rows.length) {
                                     resolve({
                                         sense: evt.sense,
@@ -290,13 +291,11 @@ module.exports = {
                             });
                             break;
                         case "overstay":
-                            // Update journal BUT leave the same etat d'occupation
                             // Update journal AND etat d'occupation for the space
-                            trans.query(getPlaceInfosSql, ['1', sensorId], function (err, rows) {
+                            var inst = mysql.format(getPlaceInfosSql, ['1', sensorId]);
+                            oBDD.query(inst, ['1', sensorId], function (err, rows) {
                                 if (err) {
-                                    trans.rollback();
-                                    logger.log('error', 'TRANSACTION ROLLBACK');
-                                    throw err;
+                                    logger.log('error', 'ERREUR SQL : ' + inst);
                                 } else if (rows.length) {
                                     resolve({
                                         sense: evt.sense,
@@ -325,11 +324,9 @@ module.exports = {
                     sense,
                     evt.date
                 ]);
-                trans.query(inst, function (err, result) {
+                oBDD.query(inst, function (err, result) {
                     if (err) {
-                        trans.rollback();
-                        logger.log('error', 'TRANSACTION ROLLBACK');
-                        throw err;
+                        logger.log('error', 'ERREUR SQL : ' + inst);
                     }
                 });
 
@@ -338,11 +335,9 @@ module.exports = {
                     evtData.etat_occupation_id,
                     evtData.place_id
                 ]);
-                trans.query(inst, function (err, result) {
+                oBDD.query(inst, function (err, result) {
                     if (err) {
-                        trans.rollback();
-                        logger.log('error', 'TRANSACTION ROLLBACK');
-                        throw err;
+                        logger.log('error', 'ERREUR SQL : ' + inst);
                     }
                 });
             });
@@ -350,7 +345,7 @@ module.exports = {
         });
 
         // TRANSACTION COMMIT IF NO ROLLBACK OCCURED
-        trans.commit(function (err, info) {
+        oBDD.commit(function (err, info) {
             if (err) {
                 logger.log('error', 'TRANSACTION COMMIT ERROR');
             } else {
