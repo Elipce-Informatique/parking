@@ -190,6 +190,17 @@ module.exports = {
         var eventSql = "INSERT INTO event_capteur (capteur_id,date,state,sense,supply,dfu)" +
             "VALUES (?,?,?,?,?,?)";
 
+        // FETCH SENSOR ID FROM SENSOR V4_ID. NEED TO GO THROUGH THE PARKING
+        var getSensorIdSql = "SELECT c.id FROM capteur c" +
+            "   JOIN place p ON p.capteur_id=c.id" +
+            "   JOIN allee a ON a.id=p.allee_id" +
+            "   JOIN zone z ON z.id=a.zone_id" +
+            "   JOIN plan ON plan.id=z.plan_id" +
+            "   JOIN niveau n ON n.id=plan.niveau_id" +
+            "   JOIN parking pa ON pa.id=n.parking_id" +
+
+            "   WHERE c.v4_id=?";
+
         // FETCH SPACE AND SENSOR DATA
         var getPlaceInfosSql = "SELECT c.id AS capteur_id, p.id AS place_id, tp.id AS type_place_id, eo.id AS etat_occupation_id, plan.id AS plan_id FROM capteur c" +
             " JOIN place p ON p.capteur_id=c.id" +
@@ -201,16 +212,13 @@ module.exports = {
 
             " WHERE eo.is_occupe=? AND c.id=?";
 
-        // FETCH SENSOR ID FROM SENSOR V4_ID. NEED TO GO THROUGH THE PARKING
-        var getSensorIdSql = "SELECT c.id FROM capteur c" +
-            "   JOIN place p ON p.capteur_id=c.id" +
-            "   JOIN allee a ON a.id=p.allee_id" +
-            "   JOIN zone z ON z.id=a.zone_id" +
-            "   JOIN plan ON plan.id=z.plan_id" +
-            "   JOIN niveau n ON n.id=plan.niveau_id" +
-            "   JOIN parking pa ON pa.id=n.parking_id" +
+        // INSERT THE JOURNAL EVENT
+        var journalSql = "INSERT INTO journal_equipement_plan (plan_id, place_id, etat_occupation_id, overstay, date_evt)" +
+            "VALUES (?,?,?,?,?)";
 
-            "   WHERE c.v4_id=?";
+        // UPDATE THE SPACE "ETAT D'OCCUPATION"
+        var updatePlaceSql = "UPDATE place SET etat_occupation_id=? WHERE id=?";
+
         // LOOP OVER ALL EVENTS
         _.each(events, function (evt) {
             logger.log('info', 'V4 ID de cet envent sensor ID : ' + evt.ID);
@@ -258,10 +266,10 @@ module.exports = {
                                     trans.rollback();
                                     logger.log('error', 'TRANSACTION ROLLBACK');
                                     throw err;
-                                } else {
+                                } else if (rows.length) {
                                     resolve({
                                         sense: evt.sense,
-                                        data: rows
+                                        data: rows[0]
                                     });
                                 }
                             });
@@ -273,16 +281,29 @@ module.exports = {
                                     trans.rollback();
                                     logger.log('error', 'TRANSACTION ROLLBACK');
                                     throw err;
-                                } else {
+                                } else if (rows.length) {
                                     resolve({
                                         sense: evt.sense,
-                                        data: rows
+                                        data: rows[0]
                                     });
                                 }
                             });
                             break;
                         case "overstay":
                             // Update journal BUT leave the same etat d'occupation
+                            // Update journal AND etat d'occupation for the space
+                            trans.query(getPlaceInfosSql, ['1', sensorId], function (err, rows) {
+                                if (err) {
+                                    trans.rollback();
+                                    logger.log('error', 'TRANSACTION ROLLBACK');
+                                    throw err;
+                                } else if (rows.length) {
+                                    resolve({
+                                        sense: evt.sense,
+                                        data: rows[0]
+                                    });
+                                }
+                            });
                             break;
                         case "error":
                             // We do not change the journal in database
@@ -293,6 +314,37 @@ module.exports = {
             }).then(function (oData) {
                 // insertion event OK ?
                 logger.log('info', 'pass PROMIOSE 3: ', oData);
+                var sense = oData['sense'] == 'overstay' ? 1 : 0;
+                var evtData = oData['data'];
+
+                // UPDATE JOURNAL (plan_id, place_id, etat_occupation_id, overstay, date_evt)
+                var inst = mysql.format(journalSql, [
+                    evtData.plan_id,
+                    evtData.place_id,
+                    evtData.etat_occupation_id,
+                    sense,
+                    evt.date
+                ]);
+                trans.query(inst, function (err, result) {
+                    if (err) {
+                        trans.rollback();
+                        logger.log('error', 'TRANSACTION ROLLBACK');
+                        throw err;
+                    }
+                });
+
+                // UPDATE ETAT D'OCCUPATION FOR THE SPACE
+                var inst = mysql.format(updatePlaceSql, [
+                    evtData.etat_occupation_id,
+                    evtData.place_id
+                ]);
+                trans.query(inst, function (err, result) {
+                    if (err) {
+                        trans.rollback();
+                        logger.log('error', 'TRANSACTION ROLLBACK');
+                        throw err;
+                    }
+                });
             });
 
         });
