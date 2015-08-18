@@ -297,7 +297,7 @@ Config.prototype.sendViewConfigQuery = function (client) {
     messenger.sendToController("viewConfigQuery", {}, {}, client);
 };
 
-/** TODO
+/**
  * insert the configuration of all the views in DB
  * @param data: data key from the response
  */
