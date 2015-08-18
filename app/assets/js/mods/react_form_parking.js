@@ -10,6 +10,9 @@ var Form = Field.Form;
 var InputNumberEditable = Field.InputNumberEditable;
 var Validator = require('validator');
 var Select = Field.InputSelectEditable;
+var com = require('./helpers/com_helper');
+var client = com.refresh;
+var messagesHelper = com.messages;
 
 /**
  * Formulaire de jours prédéfinis
@@ -25,7 +28,8 @@ var FormParking = React.createClass({
         detailParking: React.PropTypes.object,
         idParking: React.PropTypes.number,
         validationLibelle: React.PropTypes.object, // Permet de colorer le champ en fonction des vérifications métiers effectuées dans la page
-        users: React.PropTypes.array
+        users: React.PropTypes.array,
+        mode: React.PropTypes.string.isRequired
     },
     getDefaultProps: function () {
         return {
@@ -35,8 +39,59 @@ var FormParking = React.createClass({
         }
     },
 
+    componentWillMount: function(){
+        Actions.com.init_parking_finished.listen(this.onInitParkingFinished);
+    },
+
     render: function () {
-        //console.log('render form detail: %o',this.props.detailParking);
+        //console.log'render form detail: %o',this.props.detailParking);
+
+
+
+
+        var ligneInit = '';
+        if (this.props.mode == 'edition') {
+            var blocInit = "";
+            // Parking déjà init
+            if (this.props.detailParking.init == '1') {
+                blocInit = Lang.get('administration_parking.parking.txt')
+            }
+            // Parking non init
+            else {
+                var attr = {disabled: true};
+                // Mode edition
+                if (this.props.editable) {
+                    attr = {
+                        onClick: this.initParking,
+                        disabled: false
+                    }
+                }
+                blocInit = (
+                    <Button
+                {...attr}
+                        bsStyle='primary'>
+                        {Lang.get("administration_parking.parking.btn")}
+                    </Button>
+                );
+            }
+            ligneInit = (
+                <Row>
+                    <Col
+                        md={2}
+                        className="text-right">
+                        <label>
+                    {Lang.get('administration_parking.parking.init')}
+                        </label>
+                    </Col>
+                    <Col
+                        md={4}
+                        className="text-left">
+                    {blocInit}
+                    </Col>
+                </Row>
+            );
+        }
+
         return (
             <Form attributes={{id: "form_parking"}}>
                 <Row />
@@ -95,8 +150,41 @@ var FormParking = React.createClass({
                     key={Date.now()}
                     multi={true}/>
 
+            {ligneInit}
             </Form>
         );
+    },
+
+    initParking: function (e) {
+        // Connexion controller
+        client.init(0, 0, this.props.detailParking.id, 0, function (clientWs) {
+            // Envoie initialisazion
+            clientWs.send(JSON.stringify(messagesHelper.initParking()));
+            // Chargement
+            $.blockUI({
+                message: '<div class="alert alert-warning" role="alert" style="margin:0"><h1 style="margin:0"><div id="facebookG"><div id="blockG_1" class="facebook_blockG"></div><div id="blockG_2" class="facebook_blockG"></div><div id="blockG_3" class="facebook_blockG"></div></div>' + Lang.get('global.block_ui') + '</h1></div>',
+                baseZ: 9999, // POUR PASSER PAR DESSUS LES MODALES BOOTSTRAP
+                css: {
+                    'border-radius': '5px',
+                    'border-color': '#E7CC9D'
+                },
+                fadeOut: 50,
+                fadeIn: 100
+            });
+        }, function () {
+            // Impossible de se connecter au controller
+            console.log('callback err connexion');
+        });
+
+
+    },
+
+    /**
+     * Callback when parking init finished
+     */
+    onInitParkingFinished: function(){
+         // Fin chargement
+        $.unblockUI();
     }
 
 });

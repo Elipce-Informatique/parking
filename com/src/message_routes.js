@@ -4,6 +4,7 @@ var events_controller = require('./commands/events.js'), events_controller = new
 var logger = require('./utils/logger.js');
 var errorHandler = require('./utils/error_handler.js');
 var ctrlSequence = require('./sequences/controller_connection.js');
+var initSequence = require('./sequences/init_parking.js');
 
 /**
  * Dispatches the message received to the right handler
@@ -17,6 +18,9 @@ module.exports.route = function (message, client) {
 
     // Dispatching the message to the right handler
     switch (message.messageType) {
+        case 'init_parking':
+            initSequence.start(client, config_controller);
+            break;
         // Controller is connected
         case 'capabilities':
             // USHER IS TALKING TO US (LOL WE'RE FAMOUS !)

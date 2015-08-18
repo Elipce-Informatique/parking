@@ -97,6 +97,7 @@ var PageParking = React.createClass({
                             nbUpload={this.state.nbUpload}
                             users={this.state.users}
                             usersSelected={this.state.detailParking.utilisateurs}
+                            mode="edition"
                         />
                     </div>;
                 break;
@@ -118,7 +119,8 @@ var PageParking = React.createClass({
                             parkings={this.state.parkings}
                             nbUpload={this.state.nbUpload}
                             users={this.state.users}
-                            usersSelected={this.state.detailParking.utilisateurs}/>
+                            usersSelected={this.state.detailParking.utilisateurs}
+                            mode="creation"/>
                     </div>;
                 break;
             case pageState.edition:
@@ -139,7 +141,8 @@ var PageParking = React.createClass({
                             parkings={this.state.parkings}
                             nbUpload={this.state.nbUpload}
                             users={this.state.users}
-                            usersSelected={this.state.detailParking.utilisateurs}/>
+                            usersSelected={this.state.detailParking.utilisateurs}
+                            mode="edition"/>
                     </div>;
                 break;
             default:

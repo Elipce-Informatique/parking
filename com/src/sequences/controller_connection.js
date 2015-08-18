@@ -30,8 +30,5 @@ module.exports = {
         logger.log('info', 'Starting EVENT LOOP');
         // Launches the event lifecycle
         eventsHandler.startEventLoop();
-
-        // TODO - Check in the database if the parking has been initialized and launch the init sequence !
-        init.start(ConfigHandler);
     }
 };
