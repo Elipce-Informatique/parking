@@ -88,15 +88,17 @@ module.exports = {
      * @param data : the data sent by the controller
      */
     onCountersInserted: function () {
+
         logger.log('info', 'onCountersInserted');
+        // Views query
+        this.config.sendViewConfigQuery();
+
         // Parse controllers
         _.each(this.controllers, function (ctrl) {
             // Parse buses
             _.each(ctrl.bus, function (bus) {
                 // Sensors query
                 this.config.sendSensorConfigQuery(bus.ID);
-                // Views query
-                this.config.sendViewConfigQuery(bus.ID);
             }, this);
         }, this);
     }

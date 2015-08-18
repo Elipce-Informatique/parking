@@ -113,7 +113,7 @@ module.exports = {
             logger.log('info', 'TRANSACTION COMMIT SENSORS OK');
             // Assocs between counters
             if (assocs.length > 0) {
-                logger.log('info', 'ASSOCS', assocs);
+                //logger.log('info', 'ASSOCS', assocs);
                 // New queue
                 var transAssoc = connection.startTransaction();
                 assocs.forEach(function (assoc) {
@@ -135,7 +135,7 @@ module.exports = {
                         .then(function resolve(tab) {
                             // Prepare insertion
                             var inst = mysql.format(sqlAssoc, tab);
-                            logger.log('info', 'ASSOC SENSOR COUNTERS', inst);
+                            //logger.log('info', 'ASSOC SENSOR COUNTERS', inst);
                             // Insert bus
                             transAssoc.query(inst, function (err, result) {
                                 if (err && trans.rollback) {
