@@ -54,9 +54,9 @@ function createAfficheursMapFromAfficheursBDD(afficheursBDD, afficheursStyle) {
         _.each(a.vues, function (vue) {
             // On est sur la vue "générique" à afficher sur la supervision
             if (vue.type_place.defaut === "1") {
-                data.defaut = vue.total.toString();
+                data.defaut = vue.libres.toString();
             } else {
-                data.vues_bis[vue.cellNr.toString()] = vue.total;
+                data.vues_bis[vue.cellNr.toString()] = vue.libres;
             }
         });
 
