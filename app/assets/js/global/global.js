@@ -229,6 +229,7 @@ require('sweetalert');
     global.Actions.parking = Reflux.createActions([
         "display_all_parkings", // affiche tous les parkings
         "display_detail_parking", // affiche le détail du parking
+        "parking_initialized"
     ]);
 
     global.Actions.supervision = Reflux.createActions([

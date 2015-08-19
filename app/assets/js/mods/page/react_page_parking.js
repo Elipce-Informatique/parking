@@ -519,6 +519,57 @@ var storeParking = Reflux.createStore({
                 Actions.notif.error(Lang.get('global.notif_erreur'));
             }
         });
+    },
+
+
+
+    /**
+     * L'init du parking a été réalisée avec succes
+     */
+    onParking_initialized: function (idParking) {
+
+        // Requête
+        $.ajax({
+            url: BASE_URI + 'parking/gestion_parking/initialized/' + idParking,
+            type: 'POST',
+            data: form_data_helper('form_parking', 'POST'),
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            context: this,
+            success: function (tab) {
+                // Sauvegarde OK
+                if (tab.save) {
+                    // Notification
+                    Actions.notif.success(Lang.get('global.notif_success'));
+                    //// On passe en mode edition
+                    //this.stateLocal.etat = pageState.edition;
+                    //
+                    //
+                    //// ID des utilsateurs associés au parking
+                    //tab.model.utilisateurs = _.map(tab.model.utilisateurs, function (user) {
+                    //    return user.id.toString();
+                    //});
+
+                    // Maj State local + nouveau libellé
+                    //this.stateLocal.idParking = tab.model.id;
+                    this.stateLocal.detailParking = tab.model;
+                    //this.stateLocal.sousTitre = tab.model.libelle;
+
+                    // Maj state
+                    this.trigger(this.stateLocal);
+                }
+                // Erreur SQL
+                else {
+                    Actions.notif.error(Lang.get('global.notif_erreur'));
+                }
+            },
+
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+                Actions.notif.error('AJAX : ' + Lang.get('global.notif_erreur'));
+            }
+        });
     }
 });
 module.exports.store = storeParking;

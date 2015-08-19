@@ -1,10 +1,10 @@
 var W3CWebSocket = require('websocket').w3cwebsocket;
 var conf = require('../../config/config.js');
 /**
- * Gère le rafraichissement des données de la supervision.
+ * Gère la communication client webbrowser vers server
  *
  */
-module.exports.refresh = {
+module.exports.client = {
     _timer: false,
     _planId: 0,
     _journalId: 0,
@@ -17,37 +17,13 @@ module.exports.refresh = {
     client: {},
 
     /**
-     * Save parameters as data and try to connect to server
-     * @param planId
-     * @param journalId
-     * @param parkingId
-     * @param journalAlerteId
-     */
-    init: function (planId, journalId, parkingId, journalAlerteId, onConnexion, onError) {
-        // INIT DATA
-        this._planId = planId;
-        this._journalId = journalId;
-        this._parkingId = parkingId;
-        this._journalAlerteId = journalAlerteId;
-        this.host = conf[this._parkingId].host;
-        this.port = conf[this._parkingId].port;
-
-        //// MODE REEL
-        Actions.supervision.parking_event.listen(this._handleAjax.bind(this));
-        this.initWebSocket(onConnexion, onError);
-    },
-
-    destroyTimerPlaces: function () {
-        if (this._timer) {
-            clearInterval(this._timer);
-            this._timer = false;
-        }
-    },
-
-    /**
      * Opens a secured websocket on the communication server.
      */
-    initWebSocket: function (onConnexion, onError) {
+    initWebSocket: function (parkingId, onConnexion, onError) {
+
+        // Read and store confg
+        this.host = conf[parkingId].host;
+        this.port = conf[parkingId].port;
 
         if (clientWs === null && !(clientWs instanceof W3CWebSocket)) {
             $.get('https://' + this.host + ':' + this.port)
@@ -101,6 +77,7 @@ module.exports.refresh = {
                             if (message.messageType) {
                                 switch(message.messageType){
                                     case 'init_parking_finished':
+                                        console.log('ACTION init_parking_finished');
                                         Actions.com.init_parking_finished();
                                         break;
                                     default:
@@ -118,6 +95,34 @@ module.exports.refresh = {
                 }.bind(this));
         } else {
             console.log('On a deja un websocket !!');
+        }
+    },
+
+
+
+    /**
+     * Save parameters as data and try to connect to server
+     * @param planId
+     * @param journalId
+     * @param parkingId
+     * @param journalAlerteId
+     */
+    listenSupervision: function (planId, journalId, parkingId, journalAlerteId, onConnexion, onError) {
+        // INIT DATA
+        this._planId = planId;
+        this._journalId = journalId;
+        this._parkingId = parkingId;
+        this._journalAlerteId = journalAlerteId;
+
+        //// MODE REEL
+        Actions.supervision.parking_event.listen(this._handleAjax.bind(this));
+        this.initWebSocket(this._parkingId, onConnexion, onError);
+    },
+
+    destroyTimerPlaces: function () {
+        if (this._timer) {
+            clearInterval(this._timer);
+            this._timer = false;
         }
     },
 

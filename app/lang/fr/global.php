@@ -148,5 +148,10 @@ Voulez-vous vraiment quitter cette page ?',
             'sSortAscending' => '=> activer pour trier la colonne par ordre croissant',
             'sSortDescending' => '=> activer pour trier la colonne par ordre d&eacute;croissant'
         ]
+    ],
+
+
+    'com' => [
+        'errConnServer' => 'Erreur de connexion au serveur de communication'
     ]
 );

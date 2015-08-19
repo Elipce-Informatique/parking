@@ -184,9 +184,15 @@ Config.prototype.sendSensorConfigQuery = function (busId, client) {
  */
 Config.prototype.onSensorConfigData = function (data) {
     this.emit('sensorConfigData', data);
-    // At least 1 sensor
+    // At least 1 sensor on the current bus
     if (_.isArray(data.sensor) && data.sensor.length > 0) {
         sensorModel.insertSensors(data.busID, data.sensor);
+    }
+    // No more sensors on the bus : END scan
+    else{
+        // Send to init_parking: sensors inserted on the current controller
+        logger.log('info', '------NOTIFICATION onEmptyBus');
+        global.events.emit('emptyBus', data.busID);
     }
 };
 

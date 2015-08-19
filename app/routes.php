@@ -181,6 +181,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     // GESTION PARKING
     Route::get('gestion_parking/all', 'ParkingsController@all');
     Route::get('gestion_parking/libelle/{libelle}/{id?}', 'ParkingsController@verifLibelle');
+    Route::post('gestion_parking/initialized/{id}', 'ParkingsController@initialized');
 
     // ALERTES et RESERVATIONS
     Route::get('alerte/all/{id}', 'AlerteController@all');

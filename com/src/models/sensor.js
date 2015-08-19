@@ -62,7 +62,8 @@ module.exports = {
                 throw err;
             }
             var busId = rows[0]['id'];
-            controllerId = rows[0]['controllerId'];
+            controllerId = rows[0]['controllerID'];
+
             // LOOP OVER ALL SENSORS FOR INSERTION
             _.each(sensors, function (sensor) {
 
@@ -158,14 +159,10 @@ module.exports = {
                         logger.log('error', 'TRANSACTION ASSOC COMMIT ERROR');
                     } else {
                         logger.log('info', 'TRANSACTION COMMIT ASSOCS OK');
-
-                        // Send to init_parking: counters inserted
-                        logger.log('info', '------NOTIFICATION sensorsInserted');
-                        global.events.emit('sensorsInserted', controllerId, busV4Id);
                     }
                     // Ending mysql connection once all queries have been executed
                     connection.end(errorHandler.onMysqlEnd);
-                });
+                }.bind(this));
                 // Execute the queue INSERT assoc counters - counters
                 transAssoc.execute();
             }
@@ -174,13 +171,10 @@ module.exports = {
                 logger.log('info', 'No associations between sensors and counters');
                 // Ending mysql connection once all queries have been executed
                 connection.end(errorHandler.onMysqlEnd);
-                // Send to init_parking: counters inserted
-                logger.log('info', '------NOTIFICATION sensorsInserted');
-                global.events.emit('sensorsInserted', controllerId, busV4Id);
 
             }
 
-        }, function reject(err) {
+        }.bind(this), function reject(err) {
             logger.log('error', 'TRANSACTION COMMIT SENSORS ERROR');
         }.bind(this));
     },

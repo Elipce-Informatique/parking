@@ -11,7 +11,7 @@ var InputNumberEditable = Field.InputNumberEditable;
 var Validator = require('validator');
 var Select = Field.InputSelectEditable;
 var com = require('./helpers/com_helper');
-var client = com.refresh;
+var client = com.client;
 var messagesHelper = com.messages;
 
 /**
@@ -22,6 +22,7 @@ var messagesHelper = com.messages;
 var FormParking = React.createClass({
 
     mixins: [Reflux.ListenerMixin],
+    unscribe: {},
 
     propTypes: {
         editable: React.PropTypes.bool.isRequired,
@@ -40,7 +41,12 @@ var FormParking = React.createClass({
     },
 
     componentWillMount: function(){
-        Actions.com.init_parking_finished.listen(this.onInitParkingFinished);
+        this.unscribe = Actions.com.init_parking_finished.listen(this.onInitParkingFinished);
+    },
+
+    componentWillUnmount: function(){
+        this.unscribe();
+        console.log('unsuscribe');
     },
 
     render: function () {
@@ -157,9 +163,10 @@ var FormParking = React.createClass({
 
     initParking: function (e) {
         // Connexion controller
-        client.init(0, 0, this.props.detailParking.id, 0, function (clientWs) {
+        client.initWebSocket(this.props.detailParking.id, function (clientWs) {
             // Envoie initialisazion
             clientWs.send(JSON.stringify(messagesHelper.initParking()));
+            console.log('LMancer procédure init parking');
             // Chargement
             $.blockUI({
                 message: '<div class="alert alert-warning" role="alert" style="margin:0"><h1 style="margin:0"><div id="facebookG"><div id="blockG_1" class="facebook_blockG"></div><div id="blockG_2" class="facebook_blockG"></div><div id="blockG_3" class="facebook_blockG"></div></div>' + Lang.get('global.block_ui') + '</h1></div>',
@@ -172,19 +179,23 @@ var FormParking = React.createClass({
                 fadeIn: 100
             });
         }, function () {
-            // Impossible de se connecter au controller
+            // Impossible de se connecter au server
             console.log('callback err connexion');
+            swal(Lang.get('global.com.errConnServer'));
         });
-
-
     },
 
     /**
      * Callback when parking init finished
      */
     onInitParkingFinished: function(){
+        // TODO une seule callback au lieu de 10 (car 10 bus libres)
+        console.log('Callback finished');
          // Fin chargement
         $.unblockUI();
+        // Action enregistrement parking init
+        Actions.parking.parking_initialized(this.props.detailParking.id);
+
     }
 
 });

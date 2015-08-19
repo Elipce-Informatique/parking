@@ -485,5 +485,27 @@ class ParkingsController extends \BaseController
         return json_encode(Parking::isLibelleExists($libelle, $id));
     }
 
+    public function initialized($id){
+        // Variable de retour
+        $retour = [
+            'save' => true,
+            'errorBdd' => false,
+            'model' => null
+        ];
+
+        try{
+            $model = Parking::find($id);
+            $model->init = '1';
+            $model->save();
+            $retour['model'] = $model;
+        }
+        catch(Exception $e){
+            Log::error('Error set parking.init = 1');
+            $retour['errorBdd'] = true;
+            $retour['save'] = false;
+        }
+        return json_encode($retour);
+    }
+
 
 }

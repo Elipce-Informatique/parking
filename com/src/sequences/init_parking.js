@@ -23,11 +23,22 @@ module.exports = {
             throw new TypeError("Config instance expected");
         }
         this.clientConnected = client;
+        this.unBindEvents();
         this.bindEvents();
         // 1 - GET ALL THE CONFIGURATION FROM THE CONTROLLER
         this.config.sendConfigurationQuery();
         this.config.sendBusConfigQuery();
         this.config.sendCounterConfigQuery();
+    },
+    unBindEvents: function () {
+        // TODO ATTENTION code à améliorer: une seule instance de config, suppressio de tous les listeners
+        this.config.removeAllListeners('configurationData');
+        this.config.removeAllListeners('busConfigData');
+        this.config.removeAllListeners('sensorConfigData');
+        this.config.removeAllListeners('displayConfigData');
+        this.config.removeAllListeners('counterConfigData');
+        global.events.removeAllListeners('countersInserted');
+        global.events.removeAllListeners('emptyBus');
     },
     bindEvents: function () {
         logger.log('info', 'Binding events from the init procedure');
@@ -37,7 +48,7 @@ module.exports = {
         this.config.on('displayConfigData', this.onDisplayConfigData.bind(this));
         this.config.on('counterConfigData', this.onCounterConfigData.bind(this));
         global.events.on('countersInserted', this.onCountersInserted.bind(this));
-        global.events.on('sensorsInserted', this.onSensorsInserted.bind(this));
+        global.events.on('emptyBus', this.onEmptyBus.bind(this));
     },
 
     /**
@@ -108,17 +119,38 @@ module.exports = {
     },
 
     /**
-     * Handle event when sensors are inserted in our DB on a bus in parameter
-     * @param bus : Bus v4 ID
+     * Handle event when bus has no sensors
+     * @param busID: current bus scanned
      */
-    onSensorsInserted: function (controllerID, busID) {
+    onEmptyBus: function (busID) {
+        var initFinished = false;
+
         // Last controller
-        var lastCtrl = this.controllers.last();
-        // We work on the last controller AND last bus
-        if(lastCtrl.ID == controllerID && lastCtrl.bus.last().ID == bus){
+        if (typeof  this.controllers == 'object') {
+            var key = '0';
+            _.each(this.controllers, function (ctrl, key) {
+                key = key;
+            });
+            var lastCtrl = this.controllers[key];
+        }
+        // Array
+        else {
+            var lastCtrl = _.last(this.controllers);
+        }
+
+        // Current bus scanned on the last controller ?
+        _.each(lastCtrl.bus, function (bus) {
+            if (bus.ID == busID) {
+                initFinished = true;
+                return;
+            }
+        }, this);
+
+        // Init parking finished
+        if (initFinished) {
             // Send message to client
             logger.log('info', '---------NOTIFICATION sendNotificationInitFinished');
-            this.config.sendNotificationInitFinished(client);
+            this.config.sendNotificationInitFinished(this.clientConnected);
         }
     }
 };
