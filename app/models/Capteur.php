@@ -36,4 +36,13 @@ class Capteur extends BaseModel
     {
         return $this->belongsTo('EtatCapteur');
     }
+
+    /**
+     * Les compteurs dans lesquels est comptabilisé ce capteur
+     * @return mixed
+     */
+    public function compteurs()
+    {
+        return $this->belongsToMany('Compteur');
+    }
 }

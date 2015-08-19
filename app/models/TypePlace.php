@@ -28,6 +28,15 @@ class TypePlace extends BaseModel
         return $this->hasMany('EtatsDoccupation');
     }
 
+    /**
+     * Les vues comptabilisant les places de ce type.
+     * @return mixed
+     */
+    public function vues()
+    {
+        return $this->hasMany('Vue');
+    }
+
 
     /*
     |--------------------------------------------------------------------------
