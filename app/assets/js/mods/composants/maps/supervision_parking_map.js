@@ -269,10 +269,11 @@ var parkingMap = React.createClass({
     },
 
     /**
-     * Ajoute les AFFICHEURS
+     * Ajoute les AFFICHEURS à la carte
      * @param formes : [{data: {}, poly: {}}]
      */
     onAfficheursAdded: function (formes) {
+        // On sort les données du message
         var liste_data = formes.data;
         console.log('data a afficher : %o', liste_data);
         _.each(liste_data, function (afficheur) {
@@ -281,7 +282,7 @@ var parkingMap = React.createClass({
                 var marker = L.marker([afficheur.data.lat, afficheur.data.lng], {
                     icon: new mapOptions.iconInvisible(),
                     data: afficheur.data
-                }).bindLabel(afficheur.data.valeur, {
+                }).bindLabel(afficheur.data.defaut, {
                     noHide: true,
                     className: 'afficheur_label',
                     clickable: true

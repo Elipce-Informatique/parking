@@ -46,4 +46,14 @@ class Afficheur extends BaseModel
     {
         return $this->hasMany('JournalEquipementParking');
     }
+
+    /**
+     * Les vues qui affichées sur cet afficheur
+     * @return mixed
+     */
+    public function vues()
+    {
+        return $this->hasMany('Vue');
+    }
+
 }

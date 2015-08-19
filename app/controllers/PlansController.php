@@ -56,7 +56,7 @@ class PlansController extends \BaseController
     public function showWithPlaces($id)
     {
         return Plan::with([
-            'afficheurs',
+            'afficheurs.vues.type_place',
             'zones.allees.places.etat_occupation',
             'zones.allees.places.capteur.bus.concentrateur'
         ])->find($id);
