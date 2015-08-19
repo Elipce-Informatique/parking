@@ -236,7 +236,6 @@ var store = Reflux.createStore({
                 this._inst.allees = allees;
                 this._inst.zones = zones;
                 this._inst.afficheurs = data.afficheurs;
-                console.log('Afficheurs dans les data : %o', data.afficheurs);
                 // ---------------------------------------------------------------------
             },
             error: function (xhr, status, err) {

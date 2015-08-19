@@ -11,8 +11,15 @@ function getCoordAfficheurFromPolyline(poly) {
     return _.last(latlngs);
 }
 
+/**
+ * Génère les données nécessaire à l'affichage des afficheurs sur la carte
+ * @param afficheursBDD
+ * @param afficheursStyle
+ * @returns {*}
+ */
 function createAfficheursMapFromAfficheursBDD(afficheursBDD, afficheursStyle) {
 
+    // Loop over the displays and generate an array of polyline + data objects
     var afficheursMap = _.map(afficheursBDD, function (a) {
 
         console.log('Afficheur à traiter : %o', a);
@@ -32,9 +39,30 @@ function createAfficheursMapFromAfficheursBDD(afficheursBDD, afficheursStyle) {
                 fillColor: '#000000'
             });
         }
-        // 3 STRUCTURATION DU RETOUR
+
+        // 3 GÉNÉRATION DES DONNEES POUR L'AFFICHEUR
+        var data = {
+            libelle: a.reference,
+            lat: a.lat,
+            lng: a.lng,
+            defaut: "0000",
+            vues_bis: {},
+            id: a.id
+        };
+
+        // 4 EXTRACTION DES VALEURS PAR VUES (types de places)
+        _.each(a.vues, function (vue) {
+            // On est sur la vue "générique" à afficher sur la supervision
+            if (vue.type_place.defaut === "1") {
+                data.defaut = vue.total.toString();
+            } else {
+                data.vues_bis[vue.cellNr.toString()] = vue.total;
+            }
+        });
+
+        // 5 STRUCTURATION DU RETOUR
         return {
-            data: a,
+            data: data,
             polyline: polyline
         }
     });
