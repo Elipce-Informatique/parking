@@ -40,9 +40,10 @@ module.exports = {
         queues(connection);
         var trans = connection.startTransaction();
         var assocs = [];
+        var controllerId = '';
 
         // Get bus infos in our DB
-        var sqlBus = "SELECT b.id " +
+        var sqlBus = "SELECT b.id, c.v4_id AS controllerID " +
             "FROM server_com s " +
             "JOIN parking p ON p.id=s.parking_id " +
             "JOIN concentrateur c ON c.parking_id=p.id " +
@@ -61,6 +62,7 @@ module.exports = {
                 throw err;
             }
             var busId = rows[0]['id'];
+            controllerId = rows[0]['controllerId'];
             // LOOP OVER ALL SENSORS FOR INSERTION
             _.each(sensors, function (sensor) {
 
@@ -150,12 +152,16 @@ module.exports = {
                         });
 
                 });
-                // Commit INSERT counters
+                // Commit INSERT sensors
                 transAssoc.commit(function (err, info) {
                     if (err) {
                         logger.log('error', 'TRANSACTION ASSOC COMMIT ERROR');
                     } else {
                         logger.log('info', 'TRANSACTION COMMIT ASSOCS OK');
+
+                        // Send to init_parking: counters inserted
+                        logger.log('info', '------NOTIFICATION sensorsInserted');
+                        global.events.emit('sensorsInserted', controllerId, busV4Id);
                     }
                     // Ending mysql connection once all queries have been executed
                     connection.end(errorHandler.onMysqlEnd);
@@ -163,10 +169,14 @@ module.exports = {
                 // Execute the queue INSERT assoc counters - counters
                 transAssoc.execute();
             }
+            // No assoc between counters
             else {
                 logger.log('info', 'No associations between sensors and counters');
                 // Ending mysql connection once all queries have been executed
                 connection.end(errorHandler.onMysqlEnd);
+                // Send to init_parking: counters inserted
+                logger.log('info', '------NOTIFICATION sensorsInserted');
+                global.events.emit('sensorsInserted', controllerId, busV4Id);
 
             }
 

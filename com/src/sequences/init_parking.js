@@ -10,16 +10,19 @@ var logger = require('../utils/logger.js');
 module.exports = {
     config: {},
     controllers: [],
+    clientConnected: null,
     /**
      * Starts the initialisation procedure
      */
-    start: function (config) {
+    start: function (client, config) {
+        logger.log('info', 'START PARKING INIT');
         this.config = null;
         if (config instanceof Config) {
             this.config = config;
         } else {
             throw new TypeError("Config instance expected");
         }
+        this.clientConnected = client;
         this.bindEvents();
         // 1 - GET ALL THE CONFIGURATION FROM THE CONTROLLER
         this.config.sendConfigurationQuery();
@@ -34,6 +37,7 @@ module.exports = {
         this.config.on('displayConfigData', this.onDisplayConfigData.bind(this));
         this.config.on('counterConfigData', this.onCounterConfigData.bind(this));
         global.events.on('countersInserted', this.onCountersInserted.bind(this));
+        global.events.on('sensorsInserted', this.onSensorsInserted.bind(this));
     },
 
     /**
@@ -101,5 +105,20 @@ module.exports = {
                 this.config.sendSensorConfigQuery(bus.ID);
             }, this);
         }, this);
+    },
+
+    /**
+     * Handle event when sensors are inserted in our DB on a bus in parameter
+     * @param bus : Bus v4 ID
+     */
+    onSensorsInserted: function (controllerID, busID) {
+        // Last controller
+        var lastCtrl = this.controllers.last();
+        // We work on the last controller AND last bus
+        if(lastCtrl.ID == controllerID && lastCtrl.bus.last().ID == bus){
+            // Send message to client
+            logger.log('info', '---------NOTIFICATION sendNotificationInitFinished');
+            this.config.sendNotificationInitFinished(client);
+        }
     }
 };

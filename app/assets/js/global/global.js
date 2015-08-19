@@ -9,6 +9,12 @@ require('sweetalert');
 (function (global) {
     /*
      |--------------------------------------------------------------------------
+     | CLIENT WEBSOCKET
+     |--------------------------------------------------------------------------
+     */
+    global.clientWs = null;
+    /*
+     |--------------------------------------------------------------------------
      | INCLUSIONS DE MODULES GLOBAUX
      |--------------------------------------------------------------------------
      */
@@ -231,6 +237,15 @@ require('sweetalert');
         "temps_reel_update_journal", // Affichage temps réel BLOC JOURNAL basé sur le last id
         "temps_reel_update_alertes", // Affichage temps réel BLOC ALERTES basé sur le last id
         "parking_event"
+    ]);
+
+    /*
+     |--------------------------------------------------------------------------
+     | ACTIONS COMMUNICATION
+     |--------------------------------------------------------------------------
+     */
+    global.Actions.com = Reflux.createActions([
+        "init_parking_finished"
     ]);
 
 })(window);

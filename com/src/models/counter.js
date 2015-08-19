@@ -15,7 +15,7 @@ module.exports = {
      * Insert the counters provided by the controller
      * @param data : list of all counters
      */
-    insertViews: function (data) {
+    insertCounters: function (data) {
 
         //Query structure
         var sqlCpt = "INSERT IGNORE INTO compteur(libelle, v4_id)" +

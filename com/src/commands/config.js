@@ -268,7 +268,7 @@ Config.prototype.onCounterConfigData = function (data) {
     // At least 1 counter
     if (_.isArray(data) && data.length > 0) {
         logger.log('info', 'onCounterConfigData received: %o', data);
-        counterModel.insertViews(data);
+        counterModel.insertCounters(data);
     }
 };
 
@@ -327,6 +327,14 @@ Config.prototype.onViewConfigUpdateDone = function () {
 };
 
 // --------------------------------------------------------------------------------------------
+/**
+ * Send a notification to the client when parking initialization finished
+ * @param client
+ */
+Config.prototype.sendNotificationInitFinished = function (client) {
+    logger.log('info', '************** NOTIFICATION CLIENT init_parking_finished');
+    messenger.send(client, 'init_parking_finished', {});
+};
 
 
 module.exports = Config;
