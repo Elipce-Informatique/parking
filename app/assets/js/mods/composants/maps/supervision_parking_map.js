@@ -279,10 +279,17 @@ var parkingMap = React.createClass({
         _.each(liste_data, function (afficheur) {
 
             if (afficheur != undefined && afficheur.data.lat != null && afficheur.data.lng) {
+
+                console.log('Data détail : ' + JSON.stringify(afficheur.data.vues_bis));
+                var htmlAfficheur = '<span data-afficheur-wrapper data-toggle="tooltip" data-html="true"' +
+                    ' title="' +
+                    _.escape(JSON.stringify(afficheur.data.vues_bis)) +
+                    '">' + afficheur.data.defaut + '</span>';
+
                 var marker = L.marker([afficheur.data.lat, afficheur.data.lng], {
                     icon: new mapOptions.iconInvisible(),
                     data: afficheur.data
-                }).bindLabel(afficheur.data.defaut, {
+                }).bindLabel(htmlAfficheur, {
                     noHide: true,
                     className: 'afficheur_label',
                     clickable: true
@@ -293,6 +300,7 @@ var parkingMap = React.createClass({
                 // AJOUT DU MARKER AU GROUPE AFFICHEUR
                 if (!_.isEmpty(afficheur.polyline)) {
                     this._inst.afficheursGroup.addLayer(afficheur.polyline);
+                    $("[data-afficheur-wrapper]").tooltip({html:true})
                 }
             }
 

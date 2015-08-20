@@ -53,10 +53,14 @@ function createAfficheursMapFromAfficheursBDD(afficheursBDD, afficheursStyle) {
         // 4 EXTRACTION DES VALEURS PAR VUES (types de places)
         _.each(a.vues, function (vue) {
             // On est sur la vue "générique" à afficher sur la supervision
-            if (vue.type_place.defaut === "1") {
-                data.defaut = vue.libres.toString();
-            } else {
-                data.vues_bis[vue.cellNr.toString()] = vue.libres;
+            if (vue.type_place != null && vue.type_place.defaut === "1") {
+                data.defaut = _.padLeft(vue.libres.toString(), 4, '0');
+            } else if (vue.type_place != null) {
+                data.vues_bis[vue.cellNr.toString()] = {
+                    libres: vue.libres,
+                    libelle: vue.type_place.libelle,
+                    couleur: vue.type_place.couleur
+                };
             }
         });
 
