@@ -11,8 +11,8 @@ module.exports.client = {
 
     /**
      * Opens a secured websocket on the communication server.
-     * @param onConnexion : callback avec en paramètre le client de websocket connecté
-     * @param onError : callback appellée lors d'une erreur de connexion
+     * @param onConnexion : function avec en paramètre le client de websocket connecté
+     * @param onError : function appellée lors d'une erreur de connexion
      */
     initWebSocket: function (parkingId, onConnexion, onError) {
 

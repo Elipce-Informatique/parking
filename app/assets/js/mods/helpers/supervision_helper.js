@@ -12,6 +12,7 @@ module.exports = {
     _parkingId: 0,
     _journalAlerteId: 0,
     _ajaxInstances: {},
+    _unsubscribe: null,
 
 
     init: function (planId, journalId, parkingId, journalAlerteId) {
@@ -22,14 +23,33 @@ module.exports = {
         this._journalAlerteId = journalAlerteId;
         //this.destroyTimerPlaces();
 
-        // TODO : Lancer le webSocket
-        com_helper.initWebSocket(parkingId, function (client) {
+        // CONNEXION AU WEBSOCKET ET ÉCOUTE DES MESSAGES QUI NOUS INTÉRESSENT
+        com_helper.client.initWebSocket(parkingId, function (client) {
 
-        }, onError);
+            if (this._unsubscribe != null && typeof this._unsubscribe === "function") {
+                console.log('Unsubscribe le ws');
+                this._unsubscribe();
+            }
+            this._unsubscribe = Actions.com.message_controller.listen(this._onWSMessage);
+        }, function (err) {
+            console.warn('Erreur de connexion au WS : %o', err);
+            swal(Lang.get('global.com.errConnServer'));
+        });
         // MODE TEST AJAX
         //if (!this._timer) {
         //    this._timer = setInterval(this._handleAjax.bind(this), 5000);
         //}
+    },
+
+    /**
+     * TODO
+     * Fonction appellée lorsqu'un message est reçu dans la chaussette web
+     * @param message : object {messageType: '', data: {}}
+     */
+    _onWSMessage: function (message) {
+        if (message.messageType == "") {
+
+        }
     },
 
     /**
