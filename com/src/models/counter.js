@@ -103,7 +103,7 @@ module.exports = {
                     }.bind(this)).then(function resolve(cpts) {
                             // Prepare insertion
                             var inst = mysql.format(sqlCptAssoc, cpts);
-                            logger.log('info', 'ASSOC COUNTERS COUNTERS', inst);
+                            //logger.log('info', 'ASSOC COUNTERS COUNTERS', inst);
                             // Insert bus
                             transAssoc.query(inst, function (err, result) {
                                 if (err && trans.rollback) {

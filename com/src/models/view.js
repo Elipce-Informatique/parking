@@ -17,11 +17,14 @@ module.exports = {
      */
     insertViews: function (data) {
 
+
+        var subquerySpaceType = "SELECT id FROM type_place WHERE cell_nb=?";
         //Query structure
         var insertView =
             "INSERT IGNORE INTO vue(libelle, compteur_id, afficheur_id, cellNr, total, " +
-            "offset, emptyLow, emptyHigh, fullLow, fullHigh, v4_id)" +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            "offset, emptyLow, emptyHigh, fullLow, fullHigh, v4_id, type_place_id)" +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, (SELECT id FROM type_place WHERE cell_nb=?))";
+
         var selectDisplay =
             "SELECT a.id " +
             "FROM afficheur a " +
@@ -90,13 +93,14 @@ module.exports = {
                         view.emptyHigh,
                         view.fullLow,
                         view.fullHigh,
-                        view.ID
+                        view.ID,
+                        view.cellNr,
                     ]);
-                    //logger.log('info', 'Insert view', inst);
-
+                    logger.log('info', 'Insert view', inst);
+-
                     // Insert view
                     trans.query(inst, function (err, result) {
-                        if (err && trans.rollback) {
+                        if (err) {
                             logger.log('error', 'INSERT VIEW KO', err);
                         }
                         else {
