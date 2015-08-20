@@ -11,6 +11,8 @@ module.exports.client = {
 
     /**
      * Opens a secured websocket on the communication server.
+     * @param onConnexion : callback avec en paramètre le client de websocket connecté
+     * @param onError : callback appellée lors d'une erreur de connexion
      */
     initWebSocket: function (parkingId, onConnexion, onError) {
 
@@ -18,40 +20,43 @@ module.exports.client = {
         this.host = conf[parkingId].host;
         this.port = conf[parkingId].port;
 
-        if (clientWs === null && !(clientWs instanceof W3CWebSocket)) {
+        if (window.clientWs === null && !(window.clientWs instanceof W3CWebSocket)) {
             $.get('https://' + this.host + ':' + this.port)
                 .always(function () {
-
                     // CONNEXION WEBSOCKET CLIENT
-                    clientWs = new W3CWebSocket('wss://' + this.host + ':' + this.port);
+                    window.clientWs = new W3CWebSocket('wss://' + this.host + ':' + this.port);
 
                     // ERREUR
-                    clientWs.onerror = function () {
+                    window.clientWs.onerror = function (err) {
                         console.warn('Connection Error');
-                        clientWs = null;
+                        window.clientWs = null;
                         // Callback connexion error
-                        onError();
+                        onError(err);
                     }.bind(this);
 
                     // CONNECTION OPEN
-                    clientWs.onopen = function () {
-                        console.log('WebSocket Client Connected %o', clientWs);
+                    window.clientWs.onopen = function () {
+                        console.log('WebSocket Client Connected %o', window.clientWs);
 
-                        if (clientWs.readyState === clientWs.OPEN) {
+                        if (window.clientWs.readyState === window.clientWs.OPEN) {
                             // We say the server we are a webbrowser
-                            clientWs.send(JSON.stringify(messages.supervisionConnection()));
+                            window.clientWs.send(JSON.stringify(messages.supervisionConnection()));
                             // callback connexion OK
-                            onConnexion(clientWs);
+                            onConnexion(window.clientWs);
                         }
                     }.bind(this);
 
                     // CONNECTION CLOSE
-                    clientWs.onclose = function () {
-                        clientWs = null;
+                    window.clientWs.onclose = function () {
+                        window.clientWs = null;
                     }.bind(this);
 
                     // MESSAGE REÇU
-                    clientWs.onmessage = function (e) {
+                    /**
+                     *
+                     * @type {function(this:module.exports.client)|*}
+                     */
+                    window.clientWs.onmessage = function (e) {
                         if (typeof e.data === 'string') {
 
                             var message = {};
@@ -61,27 +66,19 @@ module.exports.client = {
                                 message = JSON.parse(e.data);
                             }
                                 // No JSON format
-                            catch (e) {
-                                console.log('error, Message is not a valid JSON : %o', e);
+                            catch (err) {
+                                console.warn('error, Message is not a valid JSON : %o', e);
                                 return;
                             }
 
                             // 2 - Message has a messageType key
                             if (message.messageType) {
-                                switch (message.messageType) {
-                                    case 'init_parking_finished':
-                                        console.log('ACTION init_parking_finished');
-                                        Actions.com.init_parking_finished();
-                                        break;
-                                    default:
-                                        console.log('No message type : ', message.messageType);
-                                        break;
-                                }
+                                Actions.com.message_controller(message);
                             }
                             // 2 BIS - Message doesn't have a messageType key
                             else {
                                 // Trace
-                                console.log('info, Query without messageType: ' + message);
+                                console.warn('info, Query without messageType: ' + message);
                             }
                         }
                     }.bind(this);

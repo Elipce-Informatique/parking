@@ -2,6 +2,7 @@
  * Created by yann on 20/08/2015.
  */
 
+var com_helper = require('./com_helper');
 
 module.exports = {
 
@@ -21,6 +22,10 @@ module.exports = {
         this._journalAlerteId = journalAlerteId;
         //this.destroyTimerPlaces();
 
+        // TODO : Lancer le webSocket
+        com_helper.initWebSocket(parkingId, function (client) {
+
+        }, onError);
         // MODE TEST AJAX
         //if (!this._timer) {
         //    this._timer = setInterval(this._handleAjax.bind(this), 5000);

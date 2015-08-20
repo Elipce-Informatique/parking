@@ -246,7 +246,7 @@ require('sweetalert');
      |--------------------------------------------------------------------------
      */
     global.Actions.com = Reflux.createActions([
-        "init_parking_finished"
+        "message_controller"
     ]);
 
 })(window);
