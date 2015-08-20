@@ -11,6 +11,7 @@ module.exports = {
     config: {},
     controllers: [],
     clientConnected: null,
+    parkingAlreadyInit : false,
     /**
      * Starts the initialisation procedure
      */
@@ -123,8 +124,8 @@ module.exports = {
      * @param busID: current bus scanned
      */
     onEmptyBus: function (busID) {
-        var initFinished = false;
 
+        var initFinished = false;
         // Last controller
         if (typeof  this.controllers == 'object') {
             var key = '0';
@@ -141,16 +142,18 @@ module.exports = {
         // Current bus scanned on the last controller ?
         _.each(lastCtrl.bus, function (bus) {
             if (bus.ID == busID) {
+                //logger.log('info', '++++++++++++COMPARE bus foreach ', bus.ID, 'bus scanned ', busID);
                 initFinished = true;
                 return;
             }
         }, this);
 
         // Init parking finished
-        if (initFinished) {
+        if (initFinished && !this.parkingAlreadyInit) {
             // Send message to client
-            logger.log('info', '---------NOTIFICATION sendNotificationInitFinished');
+            logger.log('info', 'NOTIFICATION sendNotificationInitFinished');
             this.config.sendNotificationInitFinished(this.clientConnected);
+            this.parkingAlreadyInit = true;
         }
     }
 };
