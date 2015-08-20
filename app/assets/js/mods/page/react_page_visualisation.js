@@ -2,7 +2,7 @@
 var React = require('react');
 var TreeView = require('react-bootstrap-treeview/dist/js/react-bootstrap-treeview');
 var Simulator = require('../simulator/react_simulator');
-var com_helper = require('../helpers/com_helper');
+var supervision_helper = require('../helpers/supervision_helper');
 
 // COMPOSANTS NÉCESSAIRES:
 var Collapse = require('../composants/react_collapse').Collapse;
@@ -279,8 +279,8 @@ var store = Reflux.createStore({
         if ($elt.data('is-plan')) {
             var data = $elt.data();
 
-            com_helper.client.destroyTimerPlaces();
-            com_helper.client.abortAjax();
+            supervision_helper.destroyTimerPlaces();
+            supervision_helper.abortAjax();
             //Simulator.init(data.id);
 
             this._inst = _.extend(this._inst, {
@@ -368,8 +368,8 @@ var store = Reflux.createStore({
         // ATTENTE DES DEUX REQUÊTES POUR ENVOYER LE PATHÉ EN CROUTE
         $.when($1, $2).done(function () {
             console.log('PASS FIN DES 2 REQUETES');
-            com_helper.client.destroyTimerPlaces();
-            com_helper.client.init(
+            supervision_helper.destroyTimerPlaces();
+            supervision_helper.init(
                 this._inst.planId,
                 this._inst.temps_reel.last_id,
                 this._inst.parkingId,
