@@ -11,7 +11,6 @@ module.exports = {
     config: {},
     controllers: [],
     clientConnected: null,
-    parkingAlreadyInit : false,
     /**
      * Starts the initialisation procedure
      */
@@ -149,11 +148,10 @@ module.exports = {
         }, this);
 
         // Init parking finished
-        if (initFinished && !this.parkingAlreadyInit) {
+        if (initFinished) {
             // Send message to client
             logger.log('info', 'NOTIFICATION sendNotificationInitFinished');
             this.config.sendNotificationInitFinished(this.clientConnected);
-            this.parkingAlreadyInit = true;
         }
     }
 };

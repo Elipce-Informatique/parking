@@ -40,19 +40,17 @@ var FormParking = React.createClass({
         }
     },
 
-    componentWillMount: function(){
-        this.unscribe = Actions.com.init_parking_finished.listen(this.onInitParkingFinished);
+    componentWillMount: function () {
+        this.unscribe = Actions.com.message_controller.listen(this.onInitParkingFinished);
     },
 
-    componentWillUnmount: function(){
+    componentWillUnmount: function () {
         this.unscribe();
-        console.log('unsuscribe');
+        //console.log('unsuscribe');
     },
 
     render: function () {
         //console.log'render form detail: %o',this.props.detailParking);
-
-
 
 
         var ligneInit = '';
@@ -185,17 +183,21 @@ var FormParking = React.createClass({
         });
     },
 
+    parkInitialized: false,
     /**
      * Callback when parking init finished
      */
-    onInitParkingFinished: function(){
-        // TODO une seule callback au lieu de 10 (car 10 bus libres)
-        console.log('Callback finished');
-         // Fin chargement
-        $.unblockUI();
-        // Action enregistrement parking init
-        Actions.parking.parking_initialized(this.props.detailParking.id);
-
+    onInitParkingFinished: function (message) {
+        if (message.messageType == 'init_parking_finished') {
+            console.log('Callback finished');
+            // Fin chargement
+            $.unblockUI();
+            if (!this.parkInitialized) {
+                // Action enregistrement parking init
+                Actions.parking.parking_initialized(this.props.detailParking.id);
+                this.parkInitialized = true;
+            }
+        }
     }
 
 });
