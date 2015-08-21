@@ -42,13 +42,15 @@ module.exports = {
     },
 
     /**
-     * TODO
      * Fonction appellée lorsqu'un message est reçu dans la chaussette web
      * @param message : object {messageType: '', data: {}}
      */
     _onWSMessage: function (message) {
-        if (message.messageType == "") {
+        if (message.messageType == "sensor_event") {
+            console.log('ON RECOI UN EVENT DU CONTROLLER, GO UPDATE LA SUPERVIION  !!!!!');
 
+            // UPDATE TOUT LE BAZAR
+            this._handleAjax();
         }
     },
 
