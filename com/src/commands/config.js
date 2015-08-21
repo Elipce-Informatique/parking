@@ -191,7 +191,7 @@ Config.prototype.onSensorConfigData = function (data) {
     // No more sensors on the bus : END scan
     else{
         // Send to init_parking: sensors inserted on the current controller
-        logger.log('info', '------NOTIFICATION onEmptyBus');
+        //logger.log('info', '------NOTIFICATION onEmptyBus');
         global.events.emit('emptyBus', data.busID);
     }
 };

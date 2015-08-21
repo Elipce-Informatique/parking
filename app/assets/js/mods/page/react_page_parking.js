@@ -524,7 +524,7 @@ var storeParking = Reflux.createStore({
 
 
     /**
-     * L'init du parking a été réalisée avec succes
+     * L'init du parking a été réalisée avec succes (GET buses, sensors, displays, counters, views)
      */
     onParking_initialized: function (idParking) {
 
@@ -542,20 +542,9 @@ var storeParking = Reflux.createStore({
                 if (tab.save) {
                     // Notification
                     Actions.notif.success(Lang.get('global.notif_success'));
-                    //// On passe en mode edition
-                    //this.stateLocal.etat = pageState.edition;
-                    //
-                    //
-                    //// ID des utilsateurs associés au parking
-                    //tab.model.utilisateurs = _.map(tab.model.utilisateurs, function (user) {
-                    //    return user.id.toString();
-                    //});
-
-                    // Maj State local + nouveau libellé
-                    //this.stateLocal.idParking = tab.model.id;
+                    // Maj State local
+                    tab.model.utilisateurs = this.stateLocal.detailParking.utilisateurs;
                     this.stateLocal.detailParking = tab.model;
-                    //this.stateLocal.sousTitre = tab.model.libelle;
-
                     // Maj state
                     this.trigger(this.stateLocal);
                 }
