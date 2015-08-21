@@ -280,12 +280,26 @@ var parkingMap = React.createClass({
 
             if (afficheur != undefined && afficheur.data.lat != null && afficheur.data.lng) {
 
-                console.log('Data détail : ' + JSON.stringify(afficheur.data.vues_bis));
+                console.log('Data détail : %o', afficheur.data.vues_bis);
+
+                // GÉNÉRATION DU TOOLTIP
+                var htmlTooltip = '<table>' + _.reduce(afficheur.data.vues_bis, function (str, vue) {
+                        return str + '<tr>' +
+                            '<td class="afficheur-libelle" style="color:#' + vue.couleur + ';text-align:left;margin-right:3px;">' +
+                            vue.libelle +
+                            '</td><td style="text-align:right;padding-left:5px"> ' +
+                            vue.libres +
+                            '</td>' +
+                            '</tr>';
+                    }, "", this) + '</table>';
+
+                // GÉNÉRATION DU CONTENU DU LABEL
                 var htmlAfficheur = '<span data-afficheur-wrapper data-toggle="tooltip" data-html="true"' +
                     ' title="' +
-                    _.escape(JSON.stringify(afficheur.data.vues_bis)) +
-                    '<br>toto">' + afficheur.data.defaut + '</span>';
+                    _.escape(htmlTooltip) +
+                    '">' + afficheur.data.defaut + '</span>';
 
+                // CRÉATION DU MARKER
                 var marker = L.marker([afficheur.data.lat, afficheur.data.lng], {
                     icon: new mapOptions.iconInvisible(),
                     data: afficheur.data
@@ -295,12 +309,13 @@ var parkingMap = React.createClass({
                     clickable: true
                 });
 
+                // AFFICHAGE DE L'AFFICHEUR
                 this._inst.afficheursGroup.addLayer(marker);
 
                 // AJOUT DU MARKER AU GROUPE AFFICHEUR
                 if (!_.isEmpty(afficheur.polyline)) {
                     this._inst.afficheursGroup.addLayer(afficheur.polyline);
-                    $("[data-afficheur-wrapper]").tooltip({html:true})
+                    $("[data-afficheur-wrapper]").tooltip({html: true})
                 }
             }
 
