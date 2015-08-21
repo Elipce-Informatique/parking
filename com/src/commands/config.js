@@ -329,7 +329,7 @@ Config.prototype.sendViewConfigUpdate = function (dataUpdate) {
  * The last viewConfigUpdate has been completed
  */
 Config.prototype.onViewConfigUpdateDone = function () {
-    logger.log('info', 'onViewConfigUpdateDone received: %o', data);
+    logger.log('info', 'onViewConfigUpdateDone received: ', data);
 };
 
 // --------------------------------------------------------------------------------------------
@@ -342,5 +342,43 @@ Config.prototype.sendNotificationInitFinished = function (client) {
     messenger.send(client, 'init_parking_finished', {});
 };
 
+// --------------------------------------------------------------------------------------------
+/**
+ * Send a settingsQuery to the controller
+ */
+Config.prototype.sendSettingsQuery = function (client) {
+    messenger.sendToController("settingsQuery", {}, {}, client);
+};
+
+/**
+ * insert the settings
+ * @param data: data key from the response
+ */
+Config.prototype.onSettingsData = function (data) {
+    this.emit('settingsData', data);
+
+    // At least 1 setting
+    if (_.isArray(data) && data.length > 0) {
+        logger.log('info', 'onSettingsData received: ', data);
+        settingModel.insertSettings(data);
+    }
+};
+
+/** TODO
+ * Send a counterConfigUpdate to the controller
+ * @param dataUpdate: data to send to the controller for the update
+ */
+Config.prototype.sendCounterConfigUpdate = function (dataUpdate) {
+
+};
+
+/** TODO
+ * The last counterConfigUpdate has been completed
+ */
+Config.prototype.onCounterConfigUpdateDone = function (data) {
+    this.emit('counterConfigUpdateDone', data);
+
+    logger.log('info', 'onCounterConfigUpdateDone received: %o', data);
+};
 
 module.exports = Config;

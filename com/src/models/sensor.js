@@ -39,7 +39,7 @@ module.exports = {
         var connection = require('../utils/mysql_helper.js')();
         queues(connection);
         var trans = connection.startTransaction();
-        var assocs = [];
+        var assocs = []; // Assocs counters and settings
         var controllerId = '';
 
         // Get bus infos in our DB
@@ -54,6 +54,8 @@ module.exports = {
             "VALUES (?,?,?,?)";
         var select = "SELECT id FROM compteur WHERE v4_id=?";
         var sqlAssoc = "INSERT IGNORE INTO capteur_compteur(capteur_id, compteur_id) " +
+            "VALUES(?, ?)";
+        var sqlSettings = "INSERT IGNORE INTO capteur_config(capteur_id, config_equipement_id) " +
             "VALUES(?, ?)";
 
         trans.query(sqlBus, [global.port, busV4Id], function (err, rows) {
@@ -85,11 +87,29 @@ module.exports = {
                     }
                     else {
                         // Associations with counters
-                        if (sensor.destination !== undefined) {
-                            // Parse counters
-                            sensor.destination.forEach(function (counterId) {
-                                assocs.push([result.insertId, counterId]);
-                            }, this);
+                        if (sensor.destination !== undefined || sensor.settings !== undefined) {
+
+                            var obj = {
+                                v4_id: result.insertId
+                            };
+                            // Couters
+                            if (sensor.destination !== undefined) {
+                                obj['counters'] = [];
+                                // Parse counters
+                                sensor.destination.forEach(function (counterId) {
+                                    obj.counters.push(counterId);
+                                }, this);
+                            }
+                            // Settings
+                            if (sensor.settings !== undefined) {
+                                obj['settings'] = [];
+                                // Parse settings
+                                sensor.settings.forEach(function (conf) {
+                                    obj.settings.push(conf);
+                                }, this);
+                            }
+                            // Add obj
+                            assocs.push(obj);
                         }
                     }
                 });
@@ -102,7 +122,6 @@ module.exports = {
                 if (err) {
                     reject(err);
                 } else {
-
                     resolve(assocs);
                 }
             });
@@ -114,39 +133,66 @@ module.exports = {
         promise.then(function resolve(assocs) {
 
             logger.log('info', 'TRANSACTION COMMIT SENSORS OK');
-            // Assocs between counters
+            // Assocs between counters OR/AND settings
             if (assocs.length > 0) {
                 //logger.log('info', 'ASSOCS', assocs);
-                // New queue
+                // New transaction
                 var transAssoc = connection.startTransaction();
+                // Parse all sensors associations
                 assocs.forEach(function (assoc) {
                     // Promise
                     var promiseIdSensor = Q.Promise(function (resolve, reject) {
                         // SELECT id from v4_id
-                        var sqlFormatted = mysql.format(select, assoc[1]);
+                        var sqlFormatted = mysql.format(select, assoc.v4_id);
                         transAssoc.query(sqlFormatted, function (err, result) {
-                            if (err && trans.rollback) {
+                            if (err) {
                                 reject(err);
                             }
                             else {
-                                //logger.log('info', 'ASSOC with [id, V4]', assoc);
-                                resolve([assoc[0], result[0]['id']]);
+                                logger.log('info', '****** ID sensor: ', result[0]['id']);
+                                // sensor supervision ID
+                                assoc['id'] = result[0]['id'];
+                                // Send object
+                                resolve(assoc);
                             }
-                        });
+                        }.bind(this));
 
                     }.bind(this))
-                        .then(function resolve(tab) {
-                            // Prepare insertion
-                            var inst = mysql.format(sqlAssoc, tab);
-                            //logger.log('info', 'ASSOC SENSOR COUNTERS', inst);
-                            // Insert bus
-                            transAssoc.query(inst, function (err, result) {
-                                if (err && trans.rollback) {
-                                    trans.rollback();
-                                    logger.log('error', 'ERREUR SQL');
-                                    throw err;
-                                }
-                            });
+                        // sensor supervision ID OK
+                        .then(function resolve(obj) {
+                            var inst = '';
+                            // Couters
+                            if (obj.counters !== undefined) {
+                                // Parse counters
+                                obj.counters.forEach(function (counterId) {
+                                    // Prepare insertion assoc counters
+                                    inst = mysql.format(sqlAssoc, counterId);
+                                    //logger.log('info', 'ASSOC SENSOR COUNTERS', inst);
+                                    // Insert Insert assoc sensor_counter
+                                    transAssoc.query(inst, function (err, result) {
+                                        if (err) {
+                                            transAssoc.rollback();
+                                            logger.log('error', 'ERREUR SQL INSERT capteur_compteur');
+                                        }
+                                    });
+                                }, this);
+                            }
+
+                            // Settings
+                            if (obj.settings !== undefined) {
+                                // Parse settings
+                                obj.settings.forEach(function (settingId) {
+                                    // Prepare insertion assoc counters
+                                    inst = mysql.format(sqlSettings, settingId);
+                                    // Insert Insert assoc sensor_setting
+                                    transAssoc.query(inst, function (err, result) {
+                                        if (err) {
+                                            transAssoc.rollback();
+                                            logger.log('error', 'ERREUR SQL INSERT capteur_config');
+                                        }
+                                    });
+                                }, this);
+                            }
                         }, function reject(err) {
                             trans.rollback();
                             logger.log('error', 'SELECT id FROM v4_id KO');
