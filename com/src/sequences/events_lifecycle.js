@@ -9,6 +9,7 @@ var _ = require('lodash');
 
 // Local modules
 var logger = require('../utils/logger.js');
+var messenger = require('../utils/messenger.js');
 var busModel = require('../models/bus.js');
 var sensorModel = require('../models/sensor.js');
 var displayModel = require('../models/display.js');
@@ -122,7 +123,10 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         }, this);
 
         // INSERT THE EVENTS GATHERED
-        sensorModel.insertSensorEvents(aSensorEvt);
+        sensorModel.insertSensorEvents(aSensorEvt, function () {
+            // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
+            messenger.supervisionBroadcast("sensor_event");
+        });
     }
 
     // Send the next EventQuery

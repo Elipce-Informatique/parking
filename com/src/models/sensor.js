@@ -182,8 +182,9 @@ module.exports = {
     /**
      * Insert an event in the journal_equipment_plan table
      * @param events : array of events to insert
+     * @param onFinished : function called when event insertion is done
      */
-    insertSensorEvents: function (events) {
+    insertSensorEvents: function (events, onFinished) {
         logger.log('info', 'SENSOR EVENTS to store : %o', events);
 
         var connection = require('../utils/mysql_helper.js')();
@@ -355,11 +356,16 @@ module.exports = {
 
         // TRANSACTION COMMIT IF NO ROLLBACK OCCURED
         queue.execute(function (err, info) {
+            // ERROR CHECK
             if (err) {
                 logger.log('error', 'SQL QUEUE ERROR');
             } else {
                 logger.log('info', 'SQL QUEUE OK');
             }
+
+            // NOTIFY CALLER THAT WE'RE DONE
+            onFinished();
+
             // ENDING MYSQL CONNECTION ONCE ALL QUERIES HAVE BEEN EXECUTED
             connection.end(errorHandler.onMysqlEnd);
         });
