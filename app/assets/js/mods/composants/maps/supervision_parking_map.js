@@ -284,7 +284,7 @@ var parkingMap = React.createClass({
                 var htmlAfficheur = '<span data-afficheur-wrapper data-toggle="tooltip" data-html="true"' +
                     ' title="' +
                     _.escape(JSON.stringify(afficheur.data.vues_bis)) +
-                    '">' + afficheur.data.defaut + '</span>';
+                    '<br>toto">' + afficheur.data.defaut + '</span>';
 
                 var marker = L.marker([afficheur.data.lat, afficheur.data.lng], {
                     icon: new mapOptions.iconInvisible(),
