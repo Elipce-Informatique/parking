@@ -51,7 +51,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
      * Possible events fields:
      * - date
      * - event
-     * - source
+     * - class
      * - ID
      * - state
      * - hwstate
@@ -71,13 +71,13 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         var aFirmwareUpdateEvt = [];
         _.each(evts, function (evt) {
 
-            // Omit source key if the ID key is absent
+            // Omit class key if the ID key is absent
             if (typeof evt.ID === "undefined") {
-                cacheEvt = _.omit(cacheEvt, ['source']);
+                cacheEvt = _.omit(cacheEvt, ['class']);
             }
 
             // If source changes reset all properties except the 3 commons
-            if (typeof evt.source !== "undefined") {
+            if (typeof evt.class !== "undefined") {
                 cacheEvt = _.pick(cacheEvt, ['date', 'event']);
             }
 
@@ -92,30 +92,30 @@ EventsLifeCycle.prototype.onEventData = function (data) {
             // DISPATCHES THE EVENT
             switch (cacheEvt.event) {
                 case "startup":
-                    aStartupEvt.push(cacheEvt);
+                    aStartupEvt.push(_.cloneDeep(cacheEvt));
                     break;
                 case "init":
-                    aInitEvt.push(cacheEvt);
+                    aInitEvt.push(_.cloneDeep(cacheEvt));
                     break;
                 case "state":
-                    switch (cacheEvt.source) {
+                    switch (cacheEvt.class) {
                         case "bus":
-                            aBusEvt.push(cacheEvt);
+                            aBusEvt.push(_.cloneDeep(cacheEvt));
                             break;
                         case "sensor":
-                            aSensorEvt.push(cacheEvt);
+                            aSensorEvt.push(_.cloneDeep(cacheEvt));
                             break;
                         case "display":
-                            aDisplayEvt.push(cacheEvt);
+                            aDisplayEvt.push(_.cloneDeep(cacheEvt));
                             break;
                         case "counter":
-                            aCounterEvt.push(cacheEvt);
+                            aCounterEvt.push(_.cloneDeep(cacheEvt));
                             break;
                         default:
                     }
                     break;
                 case "firmwareUpdate":
-                    aFirmwareUpdateEvt.push(cacheEvt);
+                    aFirmwareUpdateEvt.push(_.cloneDeep(cacheEvt));
                     break;
                 default:
             }

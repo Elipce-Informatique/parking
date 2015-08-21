@@ -276,6 +276,7 @@ module.exports = {
             var p1 = Q.promise(function (resolve, reject) {
                 logger.log('info', 'PASS promiose 1, : ');
                 var inst = mysql.format(getSensorIdSql, [evt.ID]);
+                logger.log('info', 'SQL sensor ID : ' + inst);
                 queue.query(inst, function (err, result) {
 
                     // ROLLBACK THE TRANSACTION
@@ -284,6 +285,7 @@ module.exports = {
                         reject(err);
                     }
                     else if (result.length == 0) {
+                        logger.log('error', 'LES PLACES NE SONT PROBABLEMENT PAS ASSOCIEES AUX CAPTEURS !');
                         reject(new Error("The sensor with v4_id " + evt.ID + " is not attached to a space"));
                     }
                     // WE HAVE A SENSORID TO PERFORM ALL THE INSERTIONS !
