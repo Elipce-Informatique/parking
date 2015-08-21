@@ -27,7 +27,7 @@
   },
   "name": "Parking",
   "description": "Application de gestion de parking intelligent basée sur notre workflow",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "gulpfile.js",
   "dependencies": {
     "async": "^0.9.0",
