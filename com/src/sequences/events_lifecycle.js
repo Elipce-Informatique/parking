@@ -76,14 +76,14 @@ EventsLifeCycle.prototype.onEventData = function (data) {
                 cacheEvt = _.omit(cacheEvt, ['class']);
             }
 
-            // If class changes reset all properties except the 3 commons
+            // If source changes reset all properties except the 3 commons
             if (typeof evt.class !== "undefined") {
                 cacheEvt = _.pick(cacheEvt, ['date', 'event']);
             }
 
             // if the event key changes, reset
             if (typeof evt.event !== "undefined") {
-                cacheEvt = _.pick(cacheEvt, ['date', 'class']);
+                cacheEvt = _.pick(cacheEvt, ['date', 'source']);
             }
 
             // FILTER EVTS ON THEIR TYPE
@@ -92,30 +92,30 @@ EventsLifeCycle.prototype.onEventData = function (data) {
             // DISPATCHES THE EVENT
             switch (cacheEvt.event) {
                 case "startup":
-                    aStartupEvt.push(cacheEvt);
+                    aStartupEvt.push(_.cloneDeep(cacheEvt));
                     break;
                 case "init":
-                    aInitEvt.push(cacheEvt);
+                    aInitEvt.push(_.cloneDeep(cacheEvt));
                     break;
                 case "state":
                     switch (cacheEvt.class) {
                         case "bus":
-                            aBusEvt.push(cacheEvt);
+                            aBusEvt.push(_.cloneDeep(cacheEvt));
                             break;
                         case "sensor":
-                            aSensorEvt.push(cacheEvt);
+                            aSensorEvt.push(_.cloneDeep(cacheEvt));
                             break;
                         case "display":
-                            aDisplayEvt.push(cacheEvt);
+                            aDisplayEvt.push(_.cloneDeep(cacheEvt));
                             break;
                         case "counter":
-                            aCounterEvt.push(cacheEvt);
+                            aCounterEvt.push(_.cloneDeep(cacheEvt));
                             break;
                         default:
                     }
                     break;
                 case "firmwareUpdate":
-                    aFirmwareUpdateEvt.push(cacheEvt);
+                    aFirmwareUpdateEvt.push(_.cloneDeep(cacheEvt));
                     break;
                 default:
             }
