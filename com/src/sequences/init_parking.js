@@ -27,8 +27,9 @@ module.exports = {
         this.bindEvents();
         // 1 - GET ALL THE CONFIGURATION FROM THE CONTROLLER
         this.config.sendConfigurationQuery();
-        this.config.sendBusConfigQuery();
+        this.config.sendBusConfigQuery(client);
         this.config.sendCounterConfigQuery();
+        this.config.sendSettingsQuery(client);
     },
     unBindEvents: function () {
         // TODO ATTENTION code à améliorer: une seule instance de config, suppressio de tous les listeners
@@ -37,6 +38,7 @@ module.exports = {
         this.config.removeAllListeners('sensorConfigData');
         this.config.removeAllListeners('displayConfigData');
         this.config.removeAllListeners('counterConfigData');
+        this.config.removeAllListeners('settingsData');
         global.events.removeAllListeners('countersInserted');
         global.events.removeAllListeners('emptyBus');
     },
@@ -47,6 +49,7 @@ module.exports = {
         this.config.on('sensorConfigData', this.onSensorConfigData.bind(this));
         this.config.on('displayConfigData', this.onDisplayConfigData.bind(this));
         this.config.on('counterConfigData', this.onCounterConfigData.bind(this));
+        this.config.on('settingsData', this.onSettingsData.bind(this));
         global.events.on('countersInserted', this.onCountersInserted.bind(this));
         global.events.on('emptyBus', this.onEmptyBus.bind(this));
     },
@@ -153,5 +156,13 @@ module.exports = {
             logger.log('info', 'NOTIFICATION sendNotificationInitFinished');
             this.config.sendNotificationInitFinished(this.clientConnected);
         }
+    },
+
+    /**
+     * Handle settings data for the parking initialization process.
+     * @param data : the data sent by the controller
+     */
+    onSettingsData: function (data) {
+        logger.log('info', 'onSettingsData', data);
     }
 };

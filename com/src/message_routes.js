@@ -76,6 +76,14 @@ module.exports.route = function (message, client) {
             // INSERT THE RECEIVED DATA IN DATABASE
             config_controller.onViewConfigData(message.data);
             break;
+        case 'settingsQuery':
+            // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
+            config_controller.sendSettingsQuery(client);
+            break;
+        case 'settingsData':
+            // INSERT THE RECEIVED DATA IN DATABASE
+            config_controller.onSettingsData(message.data);
+            break;
         // END TODO IN THE DATABASE ---------------------------------------
         case 'eventData':
             // INSERT THE RECEIVED DATA IN DATABASE

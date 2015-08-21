@@ -96,7 +96,7 @@ module.exports = {
                         view.ID,
                         view.cellNr,
                     ]);
-                    logger.log('info', 'Insert view', inst);
+                    //logger.log('info', 'Insert view', inst);
 -
                     // Insert view
                     trans.query(inst, function (err, result) {
@@ -104,7 +104,7 @@ module.exports = {
                             logger.log('error', 'INSERT VIEW KO', err);
                         }
                         else {
-                            logger.log('info', 'INSERT VIEW OK');
+                            //logger.log('info', 'INSERT VIEW OK');
                         }
                     });
 
