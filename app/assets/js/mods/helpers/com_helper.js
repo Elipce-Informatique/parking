@@ -159,8 +159,13 @@ var messages = ({
             messageType: "busConfigQuery",
             data: data
         }
-    }
+    },
 
+    settingsQuery: function () {
+        return {
+            messageType: "settingsQuery"
+        }
+    }
 
 });
 module.exports.messages = messages;

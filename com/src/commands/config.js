@@ -16,6 +16,7 @@ var displayModel = require('../models/display.js');
 var counterModel = require('../models/counter.js');
 var viewModel = require('../models/view.js');
 var parkingModel = require('../models/parking.js');
+var settingModel = require('../models/setting.js');
 
 
 // -----------------------------------------------------------------
@@ -334,16 +335,6 @@ Config.prototype.onViewConfigUpdateDone = function () {
 
 // --------------------------------------------------------------------------------------------
 /**
- * Send a notification to the client when parking initialization finished
- * @param client
- */
-Config.prototype.sendNotificationInitFinished = function (client) {
-    logger.log('info', '************** NOTIFICATION CLIENT init_parking_finished');
-    messenger.send(client, 'init_parking_finished', {});
-};
-
-// --------------------------------------------------------------------------------------------
-/**
  * Send a settingsQuery to the controller
  */
 Config.prototype.sendSettingsQuery = function (client) {
@@ -380,5 +371,18 @@ Config.prototype.onCounterConfigUpdateDone = function (data) {
 
     logger.log('info', 'onCounterConfigUpdateDone received: %o', data);
 };
+
+// --------------------------------------------------------------------------------------------
+/**
+ * Send a notification to the client when parking initialization finished
+ * @param client
+ */
+Config.prototype.sendNotificationInitFinished = function (client, busId) {
+    logger.log('info', '************** NOTIFICATION CLIENT init_parking_finished ON BUS ', busId);
+    messenger.send(client, 'init_parking_finished', {});
+
+};
+
+
 
 module.exports = Config;

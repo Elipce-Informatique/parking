@@ -48,12 +48,22 @@ var form_data_helper = require('../helpers/form_data_helper');
 var pageState = require('../helpers/page_helper').pageState;
 
 
+/******************************************************************
+ * *************** COM WEBSOCKET *********************************
+ ****************************************************************
+ */
+var com = require('../helpers/com_helper');
+var client = com.client;
+var messagesHelper = com.messages;
+
+
 /**************************************************
  * PAGE REACT
  */
 var ReactPageTest = React.createClass({
 
     mixins: [MixinGestMod, Reflux.ListenerMixin, ReactB.OverlayMixin],
+    clientWs: '',
     /**
      * État initial des données du composant
      * @returns object : les données de l'état initial
@@ -199,106 +209,131 @@ var ReactPageTest = React.createClass({
         /* FIN : Paramètres Select */
         /***************************/
         return (
-            <Form attributes={{id: "form_test"}}>
+            <div>
+                <Form attributes={{id: "form_com"}}>
+                    <h1>COMMUNICATION TOOL</h1>
+                    <Button
+                        onClick={function () {
+                            // Connexion controller
+                            client.initWebSocket(1, function OK(clientWs) {
+                                this.clientWs = clientWs;
+                            }, function KO() {
+                                // Impossible de se connecter au server
+                                console.log('callback err connexion');
+                                swal(Lang.get('global.com.errConnServer'));
+                            });
+                        }}>Connexion
+                    </Button>
+                    <Button
+                        onClick={function sendQuery(){
+                            this.clientWs.send(JSON.stringify(messagesHelper.settingsQuery()))
+                        }}>
+                        Send settingsQuery
+                    </Button>
+                </Form>
 
-                <InputTextEditable
-                    attributes={
-                    {
-                        label: 'InputTextEditable',
-                        name: "InputTextEditable",
-                        value: 'Vivian',
-                        wrapperClassName: 'col-md-4',
-                        labelClassName: 'col-md-2',
-                        groupClassName: 'row'
-                    }}
-                    editable={editable} />
+                <hr/>
 
-                <InputTextEditable
-                    area={true}
-                    attributes={{
-                        label: 'InputTextEditableArea',
-                        name: "InputTextEditableArea",
-                        value: 'InputTextEditableArea',
-                        wrapperClassName: 'col-md-4',
-                        labelClassName: 'col-md-2',
-                        groupClassName: 'row'
-                    }}
-                    editable={editable} />
+                <Form attributes={{id: "form_test"}}>
 
-                <InputMailEditable
-                    attributes={{
-                        label: 'InputMailEditable',
-                        name: "InputMailEditable",
-                        value: 'InputMailEditable@elipce.com',
-                        wrapperClassName: 'col-md-4',
-                        labelClassName: 'col-md-2',
-                        groupClassName: 'row'
-                    }}
-                    editable={editable} />
+                    <InputTextEditable
+                        attributes={
+                        {
+                            label: 'InputTextEditable',
+                            name: "InputTextEditable",
+                            value: 'Vivian',
+                            wrapperClassName: 'col-md-4',
+                            labelClassName: 'col-md-2',
+                            groupClassName: 'row'
+                        }}
+                        editable={editable} />
 
-                <InputPasswordEditable
-                    attributes={{
-                        label: 'InputPasswordEditable',
-                        name: "InputPasswordEditable",
-                        value: "",
-                        wrapperClassName: 'col-md-4',
-                        labelClassName: 'col-md-2',
-                        groupClassName: 'row'
-                    }}
-                    editable={editable} />
+                    <InputTextEditable
+                        area={true}
+                        attributes={{
+                            label: 'InputTextEditableArea',
+                            name: "InputTextEditableArea",
+                            value: 'InputTextEditableArea',
+                            wrapperClassName: 'col-md-4',
+                            labelClassName: 'col-md-2',
+                            groupClassName: 'row'
+                        }}
+                        editable={editable} />
 
+                    <InputMailEditable
+                        attributes={{
+                            label: 'InputMailEditable',
+                            name: "InputMailEditable",
+                            value: 'InputMailEditable@elipce.com',
+                            wrapperClassName: 'col-md-4',
+                            labelClassName: 'col-md-2',
+                            groupClassName: 'row'
+                        }}
+                        editable={editable} />
 
-                <ImageEditable
-                    src='./app/assets/images/cross.gif'
-                    evts={{onClick: clickImage}}
-                    name="InputImageEditable"
-                    attributes={{
-                        name: "InputImageEditable",
-                        imgCol: 4,
-                        labelCol: 2
-                    }}
-                    editable={editable} />
+                    <InputPasswordEditable
+                        attributes={{
+                            label: 'InputPasswordEditable',
+                            name: "InputPasswordEditable",
+                            value: "",
+                            wrapperClassName: 'col-md-4',
+                            labelClassName: 'col-md-2',
+                            groupClassName: 'row'
+                        }}
+                        editable={editable} />
 
 
-                <ColorPickerEditable
-                    evts={{
-                        onBlur: function (e) {
-                            console.log('blur color ' + $(e.currentTarget).val());
-                        }
-                    }}
-                    label="Couleur modifiable"
-                    mdColor={4}
-                    mdLabel={2}
-                    labelClass="text-right"
-                    gestMod={true}
-                    attributes={{name: "color", required: false, value: 'E2156B'}}
-                    editable={editable} />
+                    <ImageEditable
+                        src='./app/assets/images/cross.gif'
+                        evts={{onClick: clickImage}}
+                        name="InputImageEditable"
+                        attributes={{
+                            name: "InputImageEditable",
+                            imgCol: 4,
+                            labelCol: 2
+                        }}
+                        editable={editable} />
 
-                <InputSelectEditable
-                    multi={false}
-                    evts={{onChange: selectChange}}
-                    attributes={{
-                        label: 'Mes fruits',
-                        name: "Select",
-                        selectCol: 4,
-                        labelCol: 2,
-                        required: true
-                    }}
-                    data={this.state.options}
-                    editable={editable}
-                    placeholder={'PlaceHolder...'}
-                    labelClass='text-right'
-                    selectedValue={["5fraise", "3pomme"]}
-                />
-                <ColorPicker
-                    color="FF2800"
-                    label="Mon label"
-                    mdLabel={3}
-                    mdColor={2}
-                    height={10}
-                    width={20}
-                    labelClass="text-right"
-                />
+
+                    <ColorPickerEditable
+                        evts={{
+                            onBlur: function (e) {
+                                console.log('blur color ' + $(e.currentTarget).val());
+                            }
+                        }}
+                        label="Couleur modifiable"
+                        mdColor={4}
+                        mdLabel={2}
+                        labelClass="text-right"
+                        gestMod={true}
+                        attributes={{name: "color", required: false, value: 'E2156B'}}
+                        editable={editable} />
+
+                    <InputSelectEditable
+                        multi={false}
+                        evts={{onChange: selectChange}}
+                        attributes={{
+                            label: 'Mes fruits',
+                            name: "Select",
+                            selectCol: 4,
+                            labelCol: 2,
+                            required: true
+                        }}
+                        data={this.state.options}
+                        editable={editable}
+                        placeholder={'PlaceHolder...'}
+                        labelClass='text-right'
+                        selectedValue={["5fraise", "3pomme"]}
+                    />
+                    <ColorPicker
+                        color="FF2800"
+                        label="Mon label"
+                        mdLabel={3}
+                        mdColor={2}
+                        height={10}
+                        width={20}
+                        labelClass="text-right"
+                    />
 
             {{
                 /*
@@ -320,214 +355,223 @@ var ReactPageTest = React.createClass({
                  */
             }}
 
-                <InputSelectEditable
-                    multi={false}
-                    attributes={{name: "SelectSansLabel", selectCol: 4, required: true}}
-                    data={this.state.options}
-                    editable={editable}
-                    placeholder={'PlaceHolder...'}
-                    labelClass='text-right'
-                    selectedValue={"3pomme"}
-                />
-                <Select
-                    multi={false}
-                    placeholder="Select your favourite(s)"
-                    options={this.state.options}
-                />
-
-                <Button
-                    bsStyle="success"
-                    onClick={function () {
-                        var fData = form_data_helper('form_test', 'POST');
-                        //console.log('DATA: %o',fData);
-                        var f = $('#form_test').serializeArray();
-                        //console.log('DATA %o',f);
-                        // Vérif champ erronés
-                        Actions.validation.verify_form_save();
-                    }}
-                >Valider</Button>
-
-                <InputNumberEditable
-                    min={-10}
-                    max={10}
-                    step={0.1}
-                    attributes={{
-                        required: true,
-                        label: 'Input number',
-                        name: "InputNumber",
-                        wrapperClassName: 'col-md-4',
-                        labelClassName: 'col-md-2',
-                        groupClassName: 'row'
-                    }}
-                    editable={editable} />
-
-                <InputTelEditable
-                    attributes={{
-                        label: 'Input tel',
-                        name: "InputTel",
-                        htmlFor: 'form_test',
-                        value: '0475757575',
-                        wrapperClassName: 'col-md-4',
-                        labelClassName: 'col-md-2',
-                        groupClassName: 'row'
-                    }}
-                    editable={editable} />
-
-                <Row id="Champ_radioBoostrap">
-                    <Col md={2}>
-                        <label>Radio Boostrap NEW generation</label>
-                    </Col>
-                    <Col md={4}>
-                        <RadioGroup attributes={{name: "bootstrap"}} bootstrap={true}>
-                            <InputRadioBootstrapEditable
-                                key={'bt1'}
-                                editable={editable}
-                                attributes={{
-                                    checked: true,
-                                    value: 'btn1'
-                                }}
-                                evts={{onClick:function(){
-                                    console.log('CLICK');
-                                }}}
-                            >
-                                Btn 1
-                            </ InputRadioBootstrapEditable>
-                            <InputRadioBootstrapEditable
-                                key={'bt2'}
-                                editable={editable}
-                                attributes={{
-                                    value: 'btn2'
-                                }}
-                                evts={{onClick:function(){
-                                    console.log('CLICK');
-                                }}}
-                            >
-                                Btn 2
-                            </ InputRadioBootstrapEditable>
-                        </RadioGroup>
-                    </Col>
-                    <Col md={4}>
-                        <RadioGroup attributes={{name: "bootstrap"}} bootstrap={true}>
-                        </RadioGroup>
-                    </Col>
-                </Row>
-            {/* EXemple de radio inline*/}
-                <RadioGroup
-                    attributes={{
-                        name: "radio"
-                    }}>
-                    <InputRadioEditable
+                    <InputSelectEditable
+                        multi={false}
+                        attributes={{name: "SelectSansLabel", selectCol: 4, required: true}}
+                        data={this.state.options}
                         editable={editable}
-                        attributes={{
-                            label: 'InputRadioEditable 1',
-                            checked: true,
-                            name: "a_ecraser",
-                            value: 'un',
-                            groupClassName: 'col-md-2'
-                        }}
-                        evts={{onChange:function(){
-                            console.log('Change');
-                        }}}
-                        key = "zouzou"
+                        placeholder={'PlaceHolder...'}
+                        labelClass='text-right'
+                        selectedValue={"3pomme"}
                     />
-                    <InputRadioEditable
-                        editable={editable}
-                        attributes={{
-                            label: 'InputRadioEditable 2',
-                            checked: false,
-                            name: "a_ecraser",
-                            value: 'deux',
-                            groupClassName: 'col-md-2'
+                    <Select
+                        multi={false}
+                        placeholder="Select your favourite(s)"
+                        options={this.state.options}
+                    />
+
+                    <Button
+                        bsStyle="success"
+                        onClick={function () {
+                            var fData = form_data_helper('form_test', 'POST');
+                            //console.log('DATA: %o',fData);
+                            var f = $('#form_test').serializeArray();
+                            //console.log('DATA %o',f);
+                            // Vérif champ erronés
+                            Actions.validation.verify_form_save();
                         }}
-                        evts={{onChange:function(){
-                            console.log('Change');
-                        }}}
-                        key = "pitchoune"/>
-                </RadioGroup>
+                    >Valider</Button>
+
+                    <InputNumberEditable
+                        min={-10}
+                        max={10}
+                        step={0.1}
+                        attributes={{
+                            required: true,
+                            label: 'Input number',
+                            name: "InputNumber",
+                            wrapperClassName: 'col-md-4',
+                            labelClassName: 'col-md-2',
+                            groupClassName: 'row'
+                        }}
+                        editable={editable} />
+
+                    <InputTelEditable
+                        attributes={{
+                            label: 'Input tel',
+                            name: "InputTel",
+                            htmlFor: 'form_test',
+                            value: '0475757575',
+                            wrapperClassName: 'col-md-4',
+                            labelClassName: 'col-md-2',
+                            groupClassName: 'row'
+                        }}
+                        editable={editable} />
+
+                    <Row id="Champ_radioBoostrap">
+                        <Col md={2}>
+                            <label>Radio Boostrap NEW generation</label>
+                        </Col>
+                        <Col md={4}>
+                            <RadioGroup attributes={{name: "bootstrap"}} bootstrap={true}>
+                                <InputRadioBootstrapEditable
+                                    key={'bt1'}
+                                    editable={editable}
+                                    attributes={{
+                                        checked: true,
+                                        value: 'btn1'
+                                    }}
+                                    evts={{
+                                        onClick: function () {
+                                            console.log('CLICK');
+                                        }
+                                    }}
+                                >
+                                    Btn 1
+                                </ InputRadioBootstrapEditable>
+                                <InputRadioBootstrapEditable
+                                    key={'bt2'}
+                                    editable={editable}
+                                    attributes={{
+                                        value: 'btn2'
+                                    }}
+                                    evts={{
+                                        onClick: function () {
+                                            console.log('CLICK');
+                                        }
+                                    }}
+                                >
+                                    Btn 2
+                                </ InputRadioBootstrapEditable>
+                            </RadioGroup>
+                        </Col>
+                        <Col md={4}>
+                            <RadioGroup attributes={{name: "bootstrap"}} bootstrap={true}>
+                            </RadioGroup>
+                        </Col>
+                    </Row>
+            {/* EXemple de radio inline*/}
+                    <RadioGroup
+                        attributes={{
+                            name: "radio"
+                        }}>
+                        <InputRadioEditable
+                            editable={editable}
+                            attributes={{
+                                label: 'InputRadioEditable 1',
+                                checked: true,
+                                name: "a_ecraser",
+                                value: 'un',
+                                groupClassName: 'col-md-2'
+                            }}
+                            evts={{
+                                onChange: function () {
+                                    console.log('Change');
+                                }
+                            }}
+                            key = "zouzou"
+                        />
+                        <InputRadioEditable
+                            editable={editable}
+                            attributes={{
+                                label: 'InputRadioEditable 2',
+                                checked: false,
+                                name: "a_ecraser",
+                                value: 'deux',
+                                groupClassName: 'col-md-2'
+                            }}
+                            evts={{
+                                onChange: function () {
+                                    console.log('Change');
+                                }
+                            }}
+                            key = "pitchoune"/>
+                    </RadioGroup>
 
                  {/* EXemple de radio les uns sous les autres*/}
-                <RadioGroup
-                    editable={editable}
-                    attributes={{
-                        name: "ab"
-                    }}>
-                    <InputRadioEditable
+                    <RadioGroup
                         editable={editable}
                         attributes={{
-                            label: 'A',
-                            checked: true,
-                            name: "a_ecraser",
-                            value: 'A',
-                            groupClassName: 'col-md-12'
-                        }}
-                        key = "a"
-                    />
-                    <InputRadioEditable
-                        editable={editable}
-                        attributes={{
-                            label: 'B',
-                            checked: false,
-                            name: "a_ecraser",
-                            value: 'B',
-                            groupClassName: 'col-md-12'
-                        }}
-                        key = "b"/>
-                </RadioGroup>
+                            name: "ab"
+                        }}>
+                        <InputRadioEditable
+                            editable={editable}
+                            attributes={{
+                                label: 'A',
+                                checked: true,
+                                name: "a_ecraser",
+                                value: 'A',
+                                groupClassName: 'col-md-12'
+                            }}
+                            key = "a"
+                        />
+                        <InputRadioEditable
+                            editable={editable}
+                            attributes={{
+                                label: 'B',
+                                checked: false,
+                                name: "a_ecraser",
+                                value: 'B',
+                                groupClassName: 'col-md-12'
+                            }}
+                            key = "b"/>
+                    </RadioGroup>
 
-                <Row>
-                    <InputCheckboxEditable
-                        key={'bty'}
+                    <Row>
+                        <InputCheckboxEditable
+                            key={'bty'}
+                            attributes={{
+                                label: 'check1',
+                                name: "check[]",
+                                value: 'check1',
+                                checked: true,
+                                htmlFor: 'form_test',
+                                groupClassName: 'col-md-2'
+                            }}
+                            editable={editable} />
+
+                        <InputCheckboxEditable
+                            key={'btz'}
+                            attributes={{
+                                label: 'check2',
+                                name: "check[]",
+                                value: 'check2',
+                                checked: true,
+                                htmlFor: 'form_test',
+                                groupClassName: 'col-md-2'
+                            }}
+                            editable={editable} />
+                    </Row>
+                    <InputDateEditable
                         attributes={{
-                            label: 'check1',
-                            name: "check[]",
-                            value: 'check1',
-                            checked: true,
+                            label: 'Champ date editable',
+                            name: 'date',
+                            value: '2015-02-23',
                             htmlFor: 'form_test',
-                            groupClassName: 'col-md-2'
+                            required: true,
+                            wrapperClassName: 'col-md-4',
+                            labelClassName: 'col-md-2',
+                            groupClassName: 'row'
                         }}
                         editable={editable} />
 
-                    <InputCheckboxEditable
-                        key={'btz'}
+                    <InputTimeEditable
                         attributes={{
-                            label: 'check2',
-                            name: "check[]",
-                            value: 'check2',
-                            checked: true,
+                            label: 'Champ time editable',
+                            name: 'time_field',
+                            value: '10:00:25',
                             htmlFor: 'form_test',
-                            groupClassName: 'col-md-2'
+                            wrapperClassName: 'col-md-4',
+                            labelClassName: 'col-md-2',
+                            groupClassName: 'row'
                         }}
                         editable={editable} />
-                </Row>
-                <InputDateEditable
-                    attributes={{
-                        label: 'Champ date editable',
-                        name: 'date',
-                        value: '2015-02-23',
-                        htmlFor: 'form_test',
-                        required: true,
-                        wrapperClassName: 'col-md-4',
-                        labelClassName: 'col-md-2',
-                        groupClassName: 'row'
-                    }}
-                    editable={editable} />
 
-                <InputTimeEditable
-                    attributes={{
-                        label: 'Champ time editable',
-                        name: 'time_field',
-                        value: '10:00:25',
-                        htmlFor: 'form_test',
-                        wrapperClassName: 'col-md-4',
-                        labelClassName: 'col-md-2',
-                        groupClassName: 'row'
-                    }}
-                    editable={editable} />
+                    <Button bsStyle="primary" onClick={this.toggleModal1}>Modal 1</Button>
 
-                <Button bsStyle="primary" onClick={this.toggleModal1}>Modal 1</Button>
-
-                <Button bsStyle="success" onClick={this.toggleModal2}>Modal 2</Button>
-            </Form>
+                    <Button bsStyle="success" onClick={this.toggleModal2}>Modal 2</Button>
+                </Form>
+            </div>
         )
     }
 });

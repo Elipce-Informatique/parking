@@ -18,7 +18,7 @@ module.exports = {
     insertSettings: function (data) {
 
         //Query structure
-        var sqlSetting = "INSERT IGNORE INTO compteur(libelle, json, v4_id)" +
+        var sqlSetting = "INSERT IGNORE INTO config_equipement(libelle, json, v4_id)" +
             "VALUES (?, ?, ?)";
 
         // MYSQL CONNECTOR AND QUEUES
@@ -35,21 +35,26 @@ module.exports = {
                 // Prepare sql
                 var inst = mysql.format(sqlSetting, [
                     setting.name,
-                    setting.json,
+                    JSON.stringify(setting.json),
                     setting.ID
                 ]);
+                //logger.log('info', 'INSERT config', inst);
 
                 // Insert setting
                 trans.query(inst, function (err, result) {
-                    if (err) {
+                    if (err && trans.rollback) {
+                        //logger.log('error', '***********TRANS',trans);
                         trans.rollback();
                         logger.log('error', 'TRANSACTION ROLLBACK');
                     }
-                });
-            });
+                }.bind(this));
+            }, this);
             trans.commit(function (err, info) {
                 if (err) {
                     logger.log('error', 'TRANSACTION COMMIT ERROR');
+                }
+                else{
+                    logger.log('info', 'TRANSACTION COMMIT SETTINGS OK');
                 }
             });
         }

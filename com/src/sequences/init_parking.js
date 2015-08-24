@@ -153,8 +153,8 @@ module.exports = {
         // Init parking finished
         if (initFinished) {
             // Send message to client
-            logger.log('info', 'NOTIFICATION sendNotificationInitFinished');
-            this.config.sendNotificationInitFinished(this.clientConnected);
+            //logger.log('info', 'NOTIFICATION sendNotificationInitFinished');
+            this.config.sendNotificationInitFinished(this.clientConnected, busID);
         }
     },
 

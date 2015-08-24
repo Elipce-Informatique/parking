@@ -17,7 +17,7 @@ module.exports = {
      * [{
      *        "ID": < number > ,
      *        "address": < number > ,
-     *        "spaceType": < string > ,
+     *        "spaceType": < stringL > ,
      *        "overstay": < number > ,
      *        "destination": [ < number > , ...],
      *        "deviceInfo": {
@@ -52,11 +52,11 @@ module.exports = {
             "AND b.v4_id = ? ";
         var sqlSensor = "INSERT IGNORE INTO capteur (bus_id, adresse, libelle, v4_id) " +
             "VALUES (?,?,?,?)";
-        var select = "SELECT id FROM compteur WHERE v4_id=?";
+        //var selectSensorId = "SELECT id FROM capteur WHERE v4_id=?"; // capteur.id = result.insertId
         var sqlAssoc = "INSERT IGNORE INTO capteur_compteur(capteur_id, compteur_id) " +
-            "VALUES(?, ?)";
+            "VALUES(?, (SELECT id FROM compteur WHERE v4_id=?))";
         var sqlSettings = "INSERT IGNORE INTO capteur_config(capteur_id, config_equipement_id) " +
-            "VALUES(?, ?)";
+            "VALUES(?, (SELECT id FROM config_equipement WHERE v4_id=?))";
 
         trans.query(sqlBus, [global.port, busV4Id], function (err, rows) {
             if (err && trans.rollback) {
@@ -77,7 +77,7 @@ module.exports = {
                     sensor.ID
                 ]);
 
-                // Insert sensor
+                // Insert ONE sensor
                 trans.query(inst, function (err, result) {
                     // ROLLBACK THE TRANSACTION
                     if (err && trans.rollback) {
@@ -90,9 +90,9 @@ module.exports = {
                         if (sensor.destination !== undefined || sensor.settings !== undefined) {
 
                             var obj = {
-                                v4_id: result.insertId
+                                sensorId: result.insertId
                             };
-                            // Couters
+                            // Counters
                             if (sensor.destination !== undefined) {
                                 obj['counters'] = [];
                                 // Parse counters
@@ -119,8 +119,9 @@ module.exports = {
         // TRANSACTION COMMIT IF NO ROLLBACK OCCURED
         var promise = Q.Promise(function (resolve, reject) {
             trans.commit(function (err, info) {
-                if (err) {
-                    reject(err);
+                if (err && trans.rollback()) {
+                    logger.log('info', 'TRANSACTION COMMIT SENSORS REJECT');
+                    reject(err, trans);
                 } else {
                     resolve(assocs);
                 }
@@ -132,97 +133,82 @@ module.exports = {
         // Insert counters finished
         promise.then(function resolve(assocs) {
 
-            logger.log('info', 'TRANSACTION COMMIT SENSORS OK');
-            // Assocs between counters OR/AND settings
-            if (assocs.length > 0) {
-                //logger.log('info', 'ASSOCS', assocs);
-                // New transaction
-                var transAssoc = connection.startTransaction();
-                // Parse all sensors associations
-                assocs.forEach(function (assoc) {
-                    // Promise
-                    var promiseIdSensor = Q.Promise(function (resolve, reject) {
-                        // SELECT id from v4_id
-                        var sqlFormatted = mysql.format(select, assoc.v4_id);
-                        transAssoc.query(sqlFormatted, function (err, result) {
-                            if (err) {
-                                reject(err);
-                            }
-                            else {
-                                logger.log('info', '****** ID sensor: ', result[0]['id']);
-                                // sensor supervision ID
-                                assoc['id'] = result[0]['id'];
-                                // Send object
-                                resolve(assoc);
-                            }
-                        }.bind(this));
+                logger.log('info', 'TRANSACTION COMMIT SENSORS OK');
+                // Assocs between counters OR/AND settings
+                if (assocs.length > 0) {
+                    //logger.log('info', '++++++++++++ASSOCS', assocs);
+                    // New transaction
+                    var transAssoc = connection.startTransaction();
+                    //logger.log('info', 'DECLARATION TRANSACTION', assocs.length);
+                    // Parse all sensors associations
+                    assocs.forEach(function (assoc) {
+                        //logger.log('info', '****ASSOC', assocs);
+                        var inst = '';
+                        // Couters
+                        if (assoc.counters !== undefined) {
+                            //logger.log('info', '****COUNTERS', assoc.counters );
+                            // Parse counters
+                            assoc.counters.forEach(function (counterId) {
+                                // Prepare insertion assoc counters
+                                inst = mysql.format(sqlAssoc, [assoc.sensorId, counterId]);
+                                //logger.log('info', 'ASSOC SENSOR COUNTERS', inst);
+                                // Insert Insert assoc sensor_counter
+                                transAssoc.query(inst, function (err, result) {
+                                    if (err) {
+                                        //transAssoc.rollback();
+                                        logger.log('error', 'ERREUR SQL INSERT capteur_compteur', [sensorId, counterId]);
+                                    }
+                                });
+                            }, this);
+                        }
 
-                    }.bind(this))
-                        // sensor supervision ID OK
-                        .then(function resolve(obj) {
-                            var inst = '';
-                            // Couters
-                            if (obj.counters !== undefined) {
-                                // Parse counters
-                                obj.counters.forEach(function (counterId) {
-                                    // Prepare insertion assoc counters
-                                    inst = mysql.format(sqlAssoc, counterId);
-                                    //logger.log('info', 'ASSOC SENSOR COUNTERS', inst);
-                                    // Insert Insert assoc sensor_counter
-                                    transAssoc.query(inst, function (err, result) {
-                                        if (err) {
-                                            transAssoc.rollback();
-                                            logger.log('error', 'ERREUR SQL INSERT capteur_compteur');
-                                        }
-                                    });
-                                }, this);
-                            }
+                        // Settings
+                        if (assoc.settings !== undefined) {
+                            // Parse settings
+                            assoc.settings.forEach(function (settingId) {
+                                // Prepare insertion assoc counters
+                                inst = mysql.format(sqlSettings, [assoc.sensorId, settingId]);
+                                //logger.log('info', 'ASSOC SENSOR SETTING', inst);
+                                // Insert Insert assoc sensor_setting
+                                transAssoc.query(inst, function (err, result) {
+                                    if (err) {
+                                        //transAssoc.rollback();
+                                        logger.log('error', 'ERREUR SQL INSERT capteur_config', [sensorId, settingId]);
+                                    }
+                                });
+                            }, this);
+                        }
 
-                            // Settings
-                            if (obj.settings !== undefined) {
-                                // Parse settings
-                                obj.settings.forEach(function (settingId) {
-                                    // Prepare insertion assoc counters
-                                    inst = mysql.format(sqlSettings, settingId);
-                                    // Insert Insert assoc sensor_setting
-                                    transAssoc.query(inst, function (err, result) {
-                                        if (err) {
-                                            transAssoc.rollback();
-                                            logger.log('error', 'ERREUR SQL INSERT capteur_config');
-                                        }
-                                    });
-                                }, this);
-                            }
-                        }, function reject(err) {
-                            trans.rollback();
-                            logger.log('error', 'SELECT id FROM v4_id KO');
-                        });
 
-                });
-                // Commit INSERT sensors
-                transAssoc.commit(function (err, info) {
-                    if (err) {
-                        logger.log('error', 'TRANSACTION ASSOC COMMIT ERROR');
-                    } else {
-                        logger.log('info', 'TRANSACTION COMMIT ASSOCS OK');
-                    }
+                    }, this);
+                    // Commit INSERT sensors
+                    transAssoc.commit(function (err, info) {
+                        //logger.log('error', 'COMMITTTTTTTTTTTTTT');
+                        if (err) {
+                            logger.log('error', 'TRANSACTION ASSOC COMMIT ERROR');
+                        }
+                        else {
+                            logger.log('info', 'TRANSACTION COMMIT ASSOCS OK');
+                        }
+                        // Ending mysql connection once all queries have been executed
+                        connection.end(errorHandler.onMysqlEnd);
+                    }.bind(this));
+                    // Execute the queue INSERT assoc counters - counters
+                    transAssoc.execute();
+                }
+                // No assoc between counters OR settings
+                else {
+                    logger.log('info', 'No associations between sensors and (counters or settings)');
                     // Ending mysql connection once all queries have been executed
                     connection.end(errorHandler.onMysqlEnd);
-                }.bind(this));
-                // Execute the queue INSERT assoc counters - counters
-                transAssoc.execute();
-            }
-            // No assoc between counters
-            else {
-                logger.log('info', 'No associations between sensors and counters');
-                // Ending mysql connection once all queries have been executed
-                connection.end(errorHandler.onMysqlEnd);
 
-            }
+                }
 
-        }.bind(this), function reject(err) {
-            logger.log('error', 'TRANSACTION COMMIT SENSORS ERROR');
-        }.bind(this));
+            }.bind(this),
+            function reject(err, trans) {
+                trans.rollback();
+                logger.log('error', 'TRANSACTION COMMIT SENSORS ERROR');
+            }.bind(this));
     },
 
     /**

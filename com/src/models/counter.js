@@ -122,9 +122,10 @@ module.exports = {
                 transAssoc.commit(function (err, info) {
                     if (err) {
                         logger.log('error', 'TRANSACTION ASSOC COMMIT ERROR');
-                    } else {
-                        logger.log('info', 'TRANSACTION COMMIT ASSOCS COUNTERS OK');
                     }
+                    //else {
+                    //    logger.log('info', 'TRANSACTION COMMIT ASSOCS COUNTERS OK');
+                    //}
                     // Ending mysql connection once all queries have been executed
                     connection.end(errorHandler.onMysqlEnd);
                     // Send to init_parking: counters inserted

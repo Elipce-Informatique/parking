@@ -17,13 +17,13 @@ var mysql = require('mysql');
 var logger = require('./logger.js');
 
 function newConnection() {
-    console.log('new mysql connection');
+    //console.log('new mysql connection');
     var connection = mysql.createConnection(connexionInfos);
 
     // Try to connect
     connection.connect(function (err) {
         if (err) {
-            logger.log('error', 'SQL connexion error : %o', err.message);
+            logger.log('error', 'SQL connexion error ', err.message);
         }
     });
 
