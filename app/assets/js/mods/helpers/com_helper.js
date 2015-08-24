@@ -165,6 +165,15 @@ var messages = ({
         return {
             messageType: "settingsQuery"
         }
+    },
+
+    remoteControl: function(command) {
+        return {
+            messageType: "remoteControl",
+            data:{
+                command:command
+            }
+        }
     }
 
 });

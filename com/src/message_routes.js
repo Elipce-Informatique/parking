@@ -84,11 +84,17 @@ module.exports.route = function (message, client) {
             // INSERT THE RECEIVED DATA IN DATABASE
             config_controller.onSettingsData(message.data);
             break;
-        // END TODO IN THE DATABASE ---------------------------------------
+        case 'remoteControl':
+            config_controller.sendRemoteControl(message.data.command);
+            break;
+
+    /***** EVENT ******/
         case 'eventData':
             // INSERT THE RECEIVED DATA IN DATABASE
             events_controller.onEventData(message.data);
             break;
+
+
         // FALLBACK, LOG THE UNKNOWN MESSAGE
         default:
             logger.log('error', 'MESSAGE TYPE ERROR -> messageType: ' + message.messageType + ' unknown in the router');

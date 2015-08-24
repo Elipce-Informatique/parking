@@ -230,6 +230,13 @@ var ReactPageTest = React.createClass({
                         }}>
                         Send settingsQuery
                     </Button>
+                    <Button
+                        onClick={function sendReset(){
+                            this.clientWs.send(JSON.stringify(messagesHelper.remoteControl('reset')))
+                        }}>
+                        Reset
+                    </Button>
+
                 </Form>
 
                 <hr/>
