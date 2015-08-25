@@ -258,12 +258,12 @@ module.exports = {
 
         // LOOP OVER ALL EVENTS
         _.each(events, function (evt) {
-            logger.log('info', 'V4 ID de cet envent sensor ID : ' + evt.ID);
+            //logger.log('info', 'V4 ID de cet event sensor ID : ' + evt.ID);
 
             var p1 = Q.promise(function (resolve, reject) {
-                logger.log('info', 'PASS promiose 1, : ');
+                //logger.log('info', 'PASS promiose 1, : ');
                 var inst = mysql.format(getSensorIdSql, [evt.ID]);
-                logger.log('info', 'SQL sensor ID : ' + inst);
+                //logger.log('info', 'SQL sensor ID : ' + inst);
                 queue.query(inst, function (err, result) {
 
                     // ROLLBACK THE TRANSACTION
@@ -277,15 +277,15 @@ module.exports = {
                     }
                     // WE HAVE A SENSORID TO PERFORM ALL THE INSERTIONS !
                     else {
-                        logger.log('info', 'PASS resolve promiose 1');
+                        //logger.log('info', 'PASS resolve promiose 1');
                         resolve(result);
                     }
                 });
             }).then(function (result) {
-                logger.log('info', 'PASS promiose 2,', result);
+                //logger.log('info', 'PASS promiose 2,', result);
                 return Q.promise(function (resolve, reject) {
                     var sensorId = result[0].id;
-                    logger.log('info', 'PASS promiose 2, sensor id: ' + sensorId);
+                    //logger.log('info', 'PASS promiose 2, sensor id: ' + sensorId);
 
                     // INSERT IN THE EVENT TABLE
                     var inst = mysql.format(eventSql, [sensorId, evt.date, evt.state, evt.sense, evt.supply, evt.dfu]);
@@ -350,10 +350,10 @@ module.exports = {
                     }
                 });
             }).then(function (oData) {
-                logger.log('info', 'PASS promiose 2,', result);
+                //logger.log('info', 'PASS promiose 2,', result);
                 return Q.promise(function (resolve, reject) {
                     // insertion event OK ?
-                    logger.log('info', 'pass PROMIOSE 3: ', oData);
+                    //logger.log('info', 'pass PROMIOSE 3: ', oData);
                     var sense = oData['sense'] == 'overstay' ? 1 : 0;
                     var evtData = oData['data'];
 
@@ -400,6 +400,7 @@ module.exports = {
 
             // ENDING MYSQL CONNECTION ONCE ALL QUERIES HAVE BEEN EXECUTED
             connection.end(errorHandler.onMysqlEnd);
+            logger.log('info', '*********** CONNEXION END ***********');
         });
 
     }
