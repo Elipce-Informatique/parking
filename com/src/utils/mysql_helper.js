@@ -39,9 +39,8 @@ var mysqlClass = {
      * @returns {Function}
      */
     pool: function () {
-        var infos = _.extends(this.connexionInfos, {connectionLimit: 10});
-        mysql.createPool(infos);
-        return pool;
+        var infos = _.extend(this.connexionInfos, {connectionLimit: 10});
+        return mysql.createPool(infos);
     },
 
     /**

@@ -16,9 +16,6 @@ module.exports = {
      */
     onNewController: function (client, ConfigHandler, EventHandler) {
 
-        // TODO TEST FOR GENERATING NEW EVENTS
-        //ConfigHandler.sendRemoteControl('reset');
-
         // Instance of Event Sequence with the event contoller
         var eventsHandler = new evtsSequence(EventHandler);
         // On new controller connection, we send our capabilities

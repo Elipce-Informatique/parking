@@ -13,8 +13,6 @@ var initSequence = require('./sequences/init_parking.js');
  * @param client : object -> the client socket that sent the message
  */
 module.exports.route = function (message, client) {
-    // Trace
-    logger.log('info', 'INCOMING QUERY: messageType: ' + message.messageType + ' - Client type: ' + (client.isController != undefined ? (client.isController ? 'Controller' : 'Supervision') : 'unknown'));
 
     // Dispatching the message to the right handler
     switch (message.messageType) {
@@ -101,6 +99,9 @@ module.exports.route = function (message, client) {
             break;
 
     }
+    // Trace
+    logger.log('info', 'INCOMING QUERY: messageType: ' + message.messageType + ' - Client type: ' + (client.isController != undefined ? (client.isController ? 'Controller' : 'Supervision') : 'unknown'));
+
 };
 /**
  * Dispatches the errors sent by any client

@@ -65,7 +65,7 @@ if (cfg.ssl) {
     });
 
     app.on('clientError', function (e, socket) {
-        logger.log('error', 'clientError on https server : %o', e);
+        logger.log('error', 'clientError on https server', e);
     });
 
 } else {

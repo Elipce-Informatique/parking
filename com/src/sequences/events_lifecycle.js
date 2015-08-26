@@ -23,6 +23,7 @@ function EventsLifeCycle(events_controller) {
 
     // ATTRIBUTES DECLARATION
     this.ackID = 0;
+    this.pool = null;
     this.events_controller = events_controller;
 }
 
@@ -43,7 +44,12 @@ EventsLifeCycle.prototype.startEventLoop = function () {
  * @param client
  */
 EventsLifeCycle.prototype.onEventData = function (data) {
-    logger.log('info', '#2 onEventData : %o', data);
+    logger.log('info', '#2 onEventData', data);
+
+    // Mysql connexion with pool : only 1 connexion VERY IMORTANT
+    if (this.pool === null) {
+        this.pool = require('../utils/mysql_helper.js').pool();
+    }
 
     // Update ackID to the new value
     this.ackID = _.isNumber(data.ackID) ? data.ackID : this.ackID;
@@ -70,6 +76,8 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         var aDisplayEvt = [];
         var aCounterEvt = [];
         var aFirmwareUpdateEvt = [];
+
+        // Parse events
         _.each(evts, function (evt) {
 
             // Omit class key if the ID key is absent
@@ -123,16 +131,14 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         }, this);
 
         // INSERT THE EVENTS GATHERED
-        sensorModel.insertSensorEvents(aSensorEvt, function () {
-            // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
-            messenger.supervisionBroadcast("sensor_event");
-        });
+        //sensorModel.insertSensorEvents(this.pool, aSensorEvt, function () {
+        //    // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
+        //    messenger.supervisionBroadcast("sensor_event");
+        //});
     }
 
     // Send the next EventQuery
     this.events_controller.sendEventQuery(this.ackID);
-
-
 };
 
 module.exports = EventsLifeCycle;
