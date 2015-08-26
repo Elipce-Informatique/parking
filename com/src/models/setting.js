@@ -22,7 +22,7 @@ module.exports = {
             "VALUES (?, ?, ?)";
 
         // MYSQL CONNECTOR AND QUEUES
-        var connection = require('../utils/mysql_helper.js')();
+        var connection = require('../utils/mysql_helper.js').standardConnexion();
         queues(connection);
 
         // At least 1 setting

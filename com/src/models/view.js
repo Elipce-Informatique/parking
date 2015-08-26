@@ -36,7 +36,7 @@ module.exports = {
         var selectCounter = "SELECT id FROM compteur WHERE v4_id=?";
 
         // MYSQL CONNECTOR AND QUEUES
-        var connection = require('../utils/mysql_helper.js')();
+        var connection = require('../utils/mysql_helper.js').standardConnexion();
         queues(connection);
 
         // TRANSACTION

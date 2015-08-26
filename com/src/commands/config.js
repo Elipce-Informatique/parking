@@ -60,7 +60,7 @@ Config.prototype.sendCapabilities = function (client) {
         if (err) {
             // SQL error
             logger.log('error', 'capabilities SQL error ' + err.message);
-            messenger.send(client, 'capabilities', {}, {
+            messenger.sendToController('capabilities', {}, {
                 action: "SQL error",
                 text: err.message
             });
@@ -68,8 +68,8 @@ Config.prototype.sendCapabilities = function (client) {
         // No error
         else {
             // Update result
-            logger.log('info', 'Sending capabilities answer ! ');
-            messenger.send(client, 'capabilities', rows[0]);
+            logger.log('info', 'Sending capabilities answer ! ', rows[0]);
+            messenger.sendToController('capabilities', rows[0]);
         }
     });
 };
