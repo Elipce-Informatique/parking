@@ -11,6 +11,8 @@ module.exports = {
         // Dependencies
         var connexion = require('../utils/mysql_helper.js').standardConnexion();
 
+        var now = new Date();
+
         // Query
         var sql = "" +
             "SELECT protocol_version AS protocolVersion," +
@@ -19,7 +21,7 @@ module.exports = {
             "software_version AS softwareVersion," +
             "software_build_date AS softwareBuildDate," +
             "software_os AS softwareOs, " +
-            "'" + Date.now() + "' AS `date` " +
+            "'" + now.toISOString() + "' AS `date` " +
             "FROM server_com " +
             "WHERE protocol_port = ?";
         connexion.query(sql, port, function (err, rows, fields) {

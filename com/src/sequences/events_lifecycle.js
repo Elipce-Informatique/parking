@@ -25,6 +25,7 @@ function EventsLifeCycle(events_controller) {
     this.ackID = 0;
     this.pool = null;
     this.events_controller = events_controller;
+    this.eventsStored = [];
 }
 
 // -----------------------------------------------------------------
@@ -34,7 +35,11 @@ function EventsLifeCycle(events_controller) {
  * Calls the event query without ackID
  */
 EventsLifeCycle.prototype.startEventLoop = function () {
+    // UNBIND
+    this.events_controller.removeAllListeners('eventData');
+    // BIND
     this.events_controller.on('eventData', this.onEventData.bind(this));
+    // FIRST EVENT QUERY
     this.events_controller.sendInitialEventQuery();
 };
 
@@ -44,7 +49,7 @@ EventsLifeCycle.prototype.startEventLoop = function () {
  * @param client
  */
 EventsLifeCycle.prototype.onEventData = function (data) {
-    logger.log('info', '#2 onEventData', data);
+    logger.log('info', '#2 onEventData '+ data.ackID, data);
 
     // Mysql connexion with pool : only 1 connexion VERY IMORTANT
     if (this.pool === null) {
@@ -52,7 +57,14 @@ EventsLifeCycle.prototype.onEventData = function (data) {
     }
 
     // Update ackID to the new value
-    this.ackID = _.isNumber(data.ackID) ? data.ackID : this.ackID;
+    //this.ackID = _.isNumber(data.ackID) ? data.ackID : this.ackID;
+    if (_.isNumber(data.ackID)) {
+        this.ackID = data.ackID;
+    }
+    else {
+        logger.log('info', '############ ackID IS NOT A NUMBER ' + data.ackID);
+
+    }
 
     /*
      * Possible events fields:
@@ -68,6 +80,11 @@ EventsLifeCycle.prototype.onEventData = function (data) {
      */
     var cacheEvt = {};
     var evts = data.list;
+
+    // Maybe used when all events are sent
+    this.eventsStored = this.eventsStored.concat(evts);
+    //logger.log('info', '============= EVTS ', this.eventsStored);
+
     if (_.isArray(evts)) {
         var aStartupEvt = [];
         var aInitEvt = [];
@@ -131,14 +148,14 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         }, this);
 
         // INSERT THE EVENTS GATHERED
-        //sensorModel.insertSensorEvents(this.pool, aSensorEvt, function () {
-        //    // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
-        //    messenger.supervisionBroadcast("sensor_event");
-        //});
+        sensorModel.insertSensorEvents(this.pool, aSensorEvt, function () {
+            // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
+            messenger.supervisionBroadcast("sensor_event");
+        });
     }
 
     // Send the next EventQuery
-    this.events_controller.sendEventQuery(this.ackID);
+    this.events_controller.sendEventQuery(data.ackID);
 };
 
 module.exports = EventsLifeCycle;

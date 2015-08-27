@@ -233,8 +233,9 @@ module.exports = {
             "   JOIN plan ON plan.id=z.plan_id" +
             "   JOIN niveau n ON n.id=plan.niveau_id" +
             "   JOIN parking pa ON pa.id=n.parking_id" +
-
-            "   WHERE c.v4_id=?";
+            "   JOIN server_com s ON s.parking_id=pa.id" +
+            "   WHERE c.v4_id=?" +
+            "   AND s.protocol_port=?";
 
         // FETCH SPACE AND SENSOR DATA
         var getPlaceInfosSql = "SELECT c.id AS capteur_id, p.id AS place_id, tp.id AS type_place_id, eo.id AS etat_occupation_id, plan.id AS plan_id FROM capteur c" +
@@ -260,7 +261,7 @@ module.exports = {
             // SensorId from v4_id
             return Q.promise(function (resolve, reject) {
                 //logger.log('info', 'PASS promise 1 ');
-                mysqlHelper.execute(pool, getSensorIdSql, [evt.ID], function (err, result) {
+                mysqlHelper.execute(pool, getSensorIdSql, [evt.ID, global.port], function (err, result) {
                     //logger.log('info', 'QUERY SENSOR ID', result);
                     // ROLLBACK THE TRANSACTION
                     if (err) {
@@ -296,71 +297,78 @@ module.exports = {
                             }
                         });
 
-                    // HANDLE EACH TYPE OF SENSE EVENT
-                    switch (evt.sense) {
-                        case "undef":
-                            logger.log('error', 'UNDEF event.sense ');
-                            reject();
-                            // We do not change the journal in database
-                            break;
-                        case "free":
-                            //logger.log('info', 'FREE');
-                            // Update journal AND etat d'occupation for the space
-                            var instFree = mysql.format(getPlaceInfosSql, ['0', sensorId]);
-                            mysqlHelper.execute(pool, getPlaceInfosSql, ['0', sensorId], function (err, rows) {
-                                if (err || rows.length === 0) {
-                                    logger.log('error', 'ERREUR SQL GET INFOS PLACE: ' + instFree, err);
-                                    reject(err);
-                                } else {
-                                    //logger.log('info', 'RESOLVE FREE');
-                                    resolve({
-                                        sense: evt.sense,
-                                        data: rows[0]
-                                    });
-                                }
-                            });
-                            break;
-                        case "occupied":
-                            //logger.log('info', 'OCCUPIED');
-                            // Update journal AND etat d'occupation for the space
-                            var instOccupied = mysql.format(getPlaceInfosSql, ['1', sensorId]);
-                            mysqlHelper.execute(pool, getPlaceInfosSql, ['1', sensorId], function (err, rows) {
-                                if (err || rows.length === 0) {
-                                    logger.log('error', 'ERREUR SQL GET INFOS PLACE: ' + instOccupied, err);
-                                    reject(err);
-                                } else {
-                                    //logger.log('info', 'RESOLVE OCCUPIED');
-                                    resolve({
-                                        sense: evt.sense,
-                                        data: rows[0]
-                                    });
-                                }
-                            });
-                            break;
-                        case "overstay":
-                            // Update journal AND etat d'occupation for the space
-                            instOverstay = mysql.format(getPlaceInfosSql, ['1', sensorId]);
-                            mysqlHelper.execute(pool, getPlaceInfosSql, ['1', sensorId], function (err, rows) {
-                                if (err || rows.length === 0) {
-                                    logger.log('error', 'ERREUR SQL : ' + instOverstay);
-                                    reject(err);
-                                } else {
-                                    resolve({
-                                        sense: evt.sense,
-                                        data: rows[0]
-                                    });
-                                }
-                            });
-                            break;
-                        case "error":
-                            logger.log('error', 'event.sense = ERROR');
-                            reject();
-                            // We do not change the journal in database
-                            break;
-                        default:
-                            logger.log('error', 'UNKNOWN event.sense ', evt);
-                            reject();
-                            break;
+                    // ONLINE SENSORS
+                    if (evt.state == 'online') {
+                        // HANDLE EACH TYPE OF SENSE EVENT
+                        switch (evt.sense) {
+                            case "undef":
+                                logger.log('error', 'UNDEF event.sense ');
+                                reject();
+                                // We do not change the journal in database
+                                break;
+                            case "free":
+                                //logger.log('info', 'FREE');
+                                // Update journal AND etat d'occupation for the space
+                                var instFree = mysql.format(getPlaceInfosSql, ['0', sensorId]);
+                                mysqlHelper.execute(pool, getPlaceInfosSql, ['0', sensorId], function (err, rows) {
+                                    if (err || rows.length === 0) {
+                                        logger.log('error', 'ERREUR SQL GET INFOS PLACE: ' + instFree, err);
+                                        reject(err);
+                                    } else {
+                                        //logger.log('info', 'RESOLVE FREE');
+                                        resolve({
+                                            sense: evt.sense,
+                                            data: rows[0]
+                                        });
+                                    }
+                                });
+                                break;
+                            case "occupied":
+                                //logger.log('info', 'OCCUPIED');
+                                // Update journal AND etat d'occupation for the space
+                                var instOccupied = mysql.format(getPlaceInfosSql, ['1', sensorId]);
+                                mysqlHelper.execute(pool, getPlaceInfosSql, ['1', sensorId], function (err, rows) {
+                                    if (err || rows.length === 0) {
+                                        logger.log('error', 'ERREUR SQL GET INFOS PLACE: ' + instOccupied, err);
+                                        reject(err);
+                                    } else {
+                                        //logger.log('info', 'RESOLVE OCCUPIED');
+                                        resolve({
+                                            sense: evt.sense,
+                                            data: rows[0]
+                                        });
+                                    }
+                                });
+                                break;
+                            case "overstay":
+                                // Update journal AND etat d'occupation for the space
+                                instOverstay = mysql.format(getPlaceInfosSql, ['1', sensorId]);
+                                mysqlHelper.execute(pool, getPlaceInfosSql, ['1', sensorId], function (err, rows) {
+                                    if (err || rows.length === 0) {
+                                        logger.log('error', 'ERREUR SQL : ' + instOverstay);
+                                        reject(err);
+                                    } else {
+                                        resolve({
+                                            sense: evt.sense,
+                                            data: rows[0]
+                                        });
+                                    }
+                                });
+                                break;
+                            case "error":
+                                logger.log('error', 'event.sense = ERROR');
+                                reject();
+                                // We do not change the journal in database
+                                break;
+                            default:
+                                logger.log('error', 'UNKNOWN event.sense ', evt);
+                                reject();
+                                break;
+                        }
+                    }
+                    // State <> online
+                    else{
+                        reject();
                     }
                 });
             }, function reject1(err) {
