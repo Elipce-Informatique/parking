@@ -30,8 +30,10 @@ module.exports = {
                 console.log('Unsubscribe le ws');
                 this._unsubscribe();
             }
-            this._unsubscribe = Actions.com.message_controller.listen(this._onWSMessage);
-        }, function (err) {
+            this._unsubscribe = Actions.com.message_controller.listen(this._onWSMessage.bind(this));
+
+            //console.log('LISTEN MESSAGE CTRL');
+        }.bind(this), function (err) {
             console.warn('Erreur de connexion au WS : %o', err);
             swal(Lang.get('global.com.errConnServer'));
         });
@@ -47,7 +49,7 @@ module.exports = {
      */
     _onWSMessage: function (message) {
         if (message.messageType == "sensor_event") {
-            console.log('ON RECOI UN EVENT DU CONTROLLER, GO UPDATE LA SUPERVIION  !!!!!');
+            console.log('ON RECOIT UN EVENT DU CONTROLLER, GO UPDATE LA SUPERVIION  !!!!!');
 
             // UPDATE TOUT LE BAZAR
             this._handleAjax();
@@ -86,9 +88,12 @@ module.exports = {
                 }
             })
             .fail(function (xhr, type, exception) {
-                // if ajax fails display error alert
-                console.error("ajax error response error " + type);
-                console.error("ajax error response body " + xhr.responseText);
+                // Abort effectué par nos soins pour ne pas rafraichir tant que la précédent refresh n'est pas fini.
+                if(type !== 'abort') {
+                    // if ajax fails display error alert
+                    console.error("ajax error response error " + type);
+                    console.error("ajax error response body " + xhr.responseText);
+                }
             });
 
         // --------------------------------------------------------
@@ -113,9 +118,12 @@ module.exports = {
                 }
             })
             .fail(function (xhr, type, exception) {
-                // if ajax fails display error alert
-                console.error("ajax error response error " + type);
-                console.error("ajax error response body " + xhr.responsetext);
+                // Abort effectué par nos soins pour ne pas rafraichir tant que la précédent refresh n'est pas fini.
+                if(type !== 'abort') {
+                    // if ajax fails display error alert
+                    console.error("ajax error response error " + type);
+                    console.error("ajax error response body " + xhr.responsetext);
+                }
             });
     },
     destroyTimerPlaces: function () {
