@@ -135,6 +135,10 @@ var store = Reflux.createStore({
         }
     },
 
+    onRefresh_afficheurs: function(){
+
+    },
+
     /**
      * ---------------------------------------------------------------------------
      * VALIDATION DES FORMULAIRES ------------------------------------------------

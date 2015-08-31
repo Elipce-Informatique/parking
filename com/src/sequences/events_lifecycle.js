@@ -13,6 +13,7 @@ var messenger = require('../utils/messenger.js');
 var busModel = require('../models/bus.js');
 var sensorModel = require('../models/sensor.js');
 var displayModel = require('../models/display.js');
+var viewModel = require('../models/view.js');
 
 // -----------------------------------------------------------------
 // Creates the Events class
@@ -49,7 +50,7 @@ EventsLifeCycle.prototype.startEventLoop = function () {
  * @param client
  */
 EventsLifeCycle.prototype.onEventData = function (data) {
-    logger.log('info', '#2 onEventData '+ data.ackID, data);
+    logger.log('info', '#2 onEventData ' + data.ackID, data);
 
     // Mysql connexion with pool : only 1 connexion VERY IMORTANT
     if (this.pool === null) {
@@ -92,6 +93,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         var aSensorEvt = [];
         var aDisplayEvt = [];
         var aCounterEvt = [];
+        var aViewEvt = [];
         var aFirmwareUpdateEvt = [];
 
         // Parse events
@@ -137,6 +139,9 @@ EventsLifeCycle.prototype.onEventData = function (data) {
                         case "counter":
                             aCounterEvt.push(_.cloneDeep(cacheEvt));
                             break;
+                        case "view":
+                            aViewEvt.push(_.cloneDeep(cacheEvt));
+                            break;
                         default:
                     }
                     break;
@@ -147,11 +152,23 @@ EventsLifeCycle.prototype.onEventData = function (data) {
             }
         }, this);
 
-        // INSERT THE EVENTS GATHERED
-        sensorModel.insertSensorEvents(this.pool, aSensorEvt, function () {
-            // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
-            messenger.supervisionBroadcast("sensor_event");
-        });
+        // SENSOR
+        if(aSensorEvt.length > 0) {
+            // INSERT THE SENSOR EVENTS GATHERED
+            sensorModel.insertSensorEvents(this.pool, aSensorEvt, function () {
+                // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
+                messenger.supervisionBroadcast("sensor_event");
+            });
+        }
+
+        // VIEW
+        if (aViewEvt.length > 0) {
+            // INSERT THE VIEW EVENTS GATHERED
+            viewModel.insertViewEvents(this.pool, aViewEvt, function () {
+                // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
+                messenger.supervisionBroadcast("view_event");
+            });
+        }
     }
 
     // Send the next EventQuery

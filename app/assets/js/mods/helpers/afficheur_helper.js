@@ -22,7 +22,7 @@ function createAfficheursMapFromAfficheursBDD(afficheursBDD, afficheursStyle) {
     // Loop over the displays and generate an array of polyline + data objects
     var afficheursMap = _.map(afficheursBDD, function (a) {
 
-        console.log('Afficheur à traiter : %o', a);
+        //console.log('Afficheur à traiter : %o', a);
         // 1 CRÉATION DU MARKER
         // pas besoin, il est créé directement au niveau de la map
 
@@ -30,7 +30,7 @@ function createAfficheursMapFromAfficheursBDD(afficheursBDD, afficheursStyle) {
         var polyline = {};
         if (a.ligne != null && a.ligne != 'null') {
             var ligne = JSON.parse(a.ligne);
-            console.log('ligne : %o', ligne);
+            //console.log('ligne : %o', ligne);
             polyline = mapHelper.createPolylineFromCoordinates(ligne, a, {
                 color: '#000000',
                 weight: 1,
@@ -55,9 +55,16 @@ function createAfficheursMapFromAfficheursBDD(afficheursBDD, afficheursStyle) {
             // On est sur la vue "générique" à afficher sur la supervision
             if (vue.type_place != null && vue.type_place.defaut === "1") {
                 data.defaut = _.padLeft(vue.libres.toString(), 4, '0');
-            } else if (vue.type_place != null) {
+            }
+            // Vue type <> générique
+            else if (vue.type_place != null) {
+
+                // Complet, libre ou nombre
+                var libres = (isNaN(vue.libres) ? Lang.get('global.' + vue.libres).toUpperCase() : vue.libres);
+                console.log(libres);
+                // Construction de la ligne d'information
                 data.vues_bis[vue.cellNr.toString()] = {
-                    libres: vue.libres,
+                    libres: libres,
                     libelle: vue.type_place.libelle,
                     couleur: vue.type_place.couleur
                 };

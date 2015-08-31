@@ -367,7 +367,7 @@ var store = Reflux.createStore({
 
         // ATTENTE DES DEUX REQUÊTES POUR ENVOYER LE PATHÉ EN CROUTE
         $.when($1, $2).done(function () {
-            console.log('PASS FIN DES 2 REQUETES');
+            //console.log('PASS FIN DES 2 REQUETES');
             supervision_helper.destroyTimerPlaces();
             supervision_helper.init(
                 this._inst.planId,

@@ -275,12 +275,12 @@ var parkingMap = React.createClass({
     onAfficheursAdded: function (formes) {
         // On sort les données du message
         var liste_data = formes.data;
-        console.log('data a afficher : %o', liste_data);
+        //console.log('data a afficher : %o', liste_data);
         _.each(liste_data, function (afficheur) {
 
             if (afficheur != undefined && afficheur.data.lat != null && afficheur.data.lng) {
 
-                console.log('Data détail : %o', afficheur.data.vues_bis);
+                //console.log('Data détail : %o', afficheur.data.vues_bis);
 
                 // GÉNÉRATION DU TOOLTIP
                 var htmlTooltip = '<table>' + _.reduce(afficheur.data.vues_bis, function (str, vue) {
@@ -312,10 +312,12 @@ var parkingMap = React.createClass({
                 // AFFICHAGE DE L'AFFICHEUR
                 this._inst.afficheursGroup.addLayer(marker);
 
+                // AJOUT TOOLTIP
+                $("[data-afficheur-wrapper]").tooltip({html: true});
+
                 // AJOUT DU MARKER AU GROUPE AFFICHEUR
                 if (!_.isEmpty(afficheur.polyline)) {
                     this._inst.afficheursGroup.addLayer(afficheur.polyline);
-                    $("[data-afficheur-wrapper]").tooltip({html: true})
                 }
             }
 

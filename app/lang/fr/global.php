@@ -117,6 +117,8 @@ Voulez-vous vraiment quitter cette page ?',
     'v4id' => "ID réseau terrain",
     'bonne' => 'Bonne place',
     'type_place' => 'Type de place',
+    'empty' => 'Libre',
+    'full' => 'Complet',
 
     // ALERTES
     'alerte_full' => "",

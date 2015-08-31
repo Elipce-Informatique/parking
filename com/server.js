@@ -20,8 +20,18 @@ var errorHandler = require('./src/utils/error_handler.js');
 var WebSocketServer = require('ws').Server;
 var _ = require('lodash');
 var fs = require('fs');
+global.i18n = require('i18n');
+
+// Event Emitter
 var EventEmitter = require("events").EventEmitter;
 global.events = new EventEmitter();
+
+// Langugae traduction
+i18n.configure({
+    locales: ['fr', 'en'],
+    directory: './locales',
+    defaultLocale: 'fr'
+});
 
 // We should load config from elsewhere...
 var cfg = {
@@ -43,7 +53,14 @@ var app = null;
 var processRequest = function (req, res) {
     logger.log('info', 'Request on the https server !');
     res.writeHead(200);
-    res.end("All glory to WebSockets!\n");
+
+    // INIT language conversion
+    i18n.init(req, res);
+
+    // delay a response to simulate a long running process,
+    // while another request comes in with altered language settings
+    res.end(res.__('end'));
+
 };
 
 if (cfg.ssl) {
@@ -62,6 +79,7 @@ if (cfg.ssl) {
         logger.log('info', '******************* HTTPS SERVER BOUND ! ****************************');
         logger.log('info', '*********************************************************************');
         logger.log('info', 'URL : ' + cfg.host + ':' + cfg.port);
+
     });
 
     app.on('clientError', function (e, socket) {
@@ -90,6 +108,7 @@ wss.on('connection', function connection(client) {
     logger.log('info', 'New client connected !');
 
     client.on('message', function incoming(msg) {
+
         var message = {};
         // 1 - Parsing the JSON
         try {

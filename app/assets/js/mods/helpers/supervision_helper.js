@@ -13,6 +13,7 @@ module.exports = {
     _journalAlerteId: 0,
     _ajaxInstances: {},
     _unsubscribe: null,
+    //_viewsIdToUpdate:
 
 
     init: function (planId, journalId, parkingId, journalAlerteId) {
@@ -48,11 +49,18 @@ module.exports = {
      * @param message : object {messageType: '', data: {}}
      */
     _onWSMessage: function (message) {
-        if (message.messageType == "sensor_event") {
-            console.log('ON RECOIT UN EVENT DU CONTROLLER, GO UPDATE LA SUPERVIION  !!!!!');
 
+        console.log('ON RECOIT UN EVENT DU CONTROLLER, GO UPDATE LA SUPERVIION  !!!!! %o', message);
+        switch (message.messageType) {
+            case "sensor_event":
             // UPDATE TOUT LE BAZAR
             this._handleAjax();
+                break;
+            case "view_event":
+                this._handleViewEvent();
+                break;
+            default:
+                break;
         }
     },
 
@@ -139,5 +147,10 @@ module.exports = {
         _.each(this._ajaxInstances, function ($req) {
             $req.abort();
         });
+    },
+
+    _handleViewEvent: function(idViews){
+        Actions.map.refresh_afficheurs();
+
     }
 };

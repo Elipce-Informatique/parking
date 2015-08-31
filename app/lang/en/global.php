@@ -34,6 +34,10 @@ return array(
             "sortAscending"=>  "=> activate to sort column ascending",
             "sortDescending"=> "=> activate to sort column descending"
         ]
-    ]
+    ],
+
+    // PARKING
+    'empty' => 'Empty',
+    'full' => 'Full'
 
 );
