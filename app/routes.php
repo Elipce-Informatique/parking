@@ -177,6 +177,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::patch('place/update_places_geo', 'PlacesController@updatePlacesGeo');
     Route::patch('place/{id}', 'PlacesController@updatePlace');
     Route::post('afficheur/{id}/setGeometry', 'AfficheursController@setGeometry');
+    Route::get('afficheur/updateAfficheurs', 'AfficheursController@updateAfficheurs');
 
     // GESTION PARKING
     Route::get('gestion_parking/all', 'ParkingsController@all');

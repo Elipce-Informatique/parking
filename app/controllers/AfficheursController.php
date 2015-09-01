@@ -136,4 +136,15 @@ class AfficheursController extends \BaseController
     }
 
 
+    /**
+     * Receive an update display and get new information
+     * @return mixed
+     */
+    public function updateAfficheurs(){
+
+        $ids = Input::get('ids');
+//        Log::debug("IDS ".print_r($ids, true));
+        return json_encode(Afficheur::getInfosFromViewId($ids));
+    }
+
 }

@@ -313,19 +313,29 @@ var parkingMap = React.createClass({
                 this._inst.afficheursGroup.addLayer(marker);
 
                 // AJOUT TOOLTIP
-                $("[data-afficheur-wrapper]").tooltip({html: true});
 
                 // AJOUT DU MARKER AU GROUPE AFFICHEUR
                 if (!_.isEmpty(afficheur.polyline)) {
                     this._inst.afficheursGroup.addLayer(afficheur.polyline);
+                    console.log('############## TOOLTIP #############');
+                }
+                else{
+                    console.log('AFFICHEUR.polyline VIDE');
                 }
             }
+            //else{
+            //    console.log('Afficheur undefined');
+            //}
 
         }, this);
 
         this.setState({
             isModalOpen: false
         });
+    },
+
+    onAfficheursUpdated: function(){
+
     },
 
     /**
@@ -377,6 +387,9 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.type_messages.add_afficheurs:
                 this.onAfficheursAdded(data);
+                break;
+            case mapOptions.type_messages.update_afficheurs:
+                this.onAfficheursUpdated(data);
                 break;
 
             case mapOptions.type_messages.delete_forme:

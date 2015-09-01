@@ -33,6 +33,7 @@ module.exports.route = function (message, client) {
             // A WEB BROWSER IS CONNECTED
             client.isController = false;
             global.supervisionClients.push(client);
+            //logger.log('info', 'NB clients '+global.supervisionClients.length);
             break;
         case 'busConfigQuery':
             // RELAY THE MESSAGE THAT COMES FROM SUPERVISION

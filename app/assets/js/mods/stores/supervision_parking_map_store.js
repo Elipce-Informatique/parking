@@ -86,7 +86,7 @@ var store = Reflux.createStore({
         // Récupération en BDD des données du parking sélectionné
         var p1 = this.recupInfosParking(map, calibre, parkingInfos);
 
-        // Récupération en BDD des données du niveau sélectionné (zones, allées, places)
+        // Récupération en BDD des données du niveau sélectionné (zones, allées, places, afficheurs)
         var p2 = this.recupInfosPlan(map, calibre, parkingInfos);
 
         // Récupération en BDD des données de types de places
@@ -136,7 +136,10 @@ var store = Reflux.createStore({
     },
 
     onRefresh_afficheurs: function(){
-
+        //this.trigger({
+        //    type: mapOptions.type_messages.liberer_places,
+        //    data: suppression
+        //});
     },
 
     /**

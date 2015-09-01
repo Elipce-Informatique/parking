@@ -53,8 +53,8 @@ var pageState = require('../helpers/page_helper').pageState;
  ****************************************************************
  */
 var com = require('../helpers/com_helper');
-var client = com.client;
 var messagesHelper = com.messages;
+var supervision_helper = require('../helpers/supervision_helper');
 
 
 /**************************************************
@@ -62,285 +62,380 @@ var messagesHelper = com.messages;
  */
 var ReactPageTest = React.createClass({
 
-    mixins: [MixinGestMod, Reflux.ListenerMixin, ReactB.OverlayMixin],
-    clientWs: '',
-    /**
-     * État initial des données du composant
-     * @returns object : les données de l'état initial
-     */
-    getInitialState: function () {
-        return {
-            isModalOpen: false,
-            modalType: 1,
-            options: [],
-            select: ''
-        };
-    },
+        mixins: [MixinGestMod, Reflux.ListenerMixin, ReactB.OverlayMixin],
+        clientWs: '',
+        viewEvents: [
+            {
+                date: new Date().toISOString(),
+                event: "state",
+                class: "view",
+                ID: 2,
+                state: "normal",
+                count: 60,
+                occupied: 40,
+                free: 60
+            },
+            {
+                date: new Date().toISOString(),
+                event: "state",
+                class: "view",
+                ID: 3,
+                state: "normal",
+                count: 7,
+                occupied: 8,
+                free: 7
+            },
+            {
+                date: new Date().toISOString(),
+                event: "state",
+                class: "view",
+                ID: 4,
+                state: "normal",
+                count: 2,
+                occupied: 8,
+                free: 10
+            },
+            {
+                date: new Date().toISOString(),
+                event: "state",
+                class: "view",
+                ID: 2,
+                state: "normal",
+                count: 10,
+                occupied: 90,
+                free: 10
+            },
+            {
+                date: new Date().toISOString(),
+                event: "state",
+                class: "view",
+                ID: 3,
+                state: "normal",
+                count: 0,
+                occupied: 0,
+                free: "full"
+            },
+            {
+                date: new Date().toISOString(),
+                event: "state",
+                class: "view",
+                ID: 4,
+                state: "normal",
+                count: 0,
+                occupied: 0,
+                free: "empty"
+            }],
+        ackId: 0,
 
-    /**
-     * Avant le premier Render()
-     */
-    componentWillMount: function () {
-        this.listenTo(storeTest, this.update);
-    },
 
-    componentDidMount: function () {
-        this.setState({
-            options: [
-                {value: '1abricot', label: 'Abricot'},
-                {value: '2fambroise', label: 'Framboise'},
-                {value: '3pomme', label: 'Pomme'},
-                {value: '4poire', label: 'Poire'},
-                {value: '5fraise', label: 'Fraise'}
-            ]
-        })
-    },
+        updateView: function () {
 
-    /**
-     * Test si le composant doit être réaffiché avec les nouvelles données
-     * @param nextProps : Nouvelles propriétés
-     * @param nextState : Nouvel état
-     * @returns {boolean} : true ou false selon si le composant doit être mis à jour
-     */
-    shouldComponentUpdate: function (nextProps, nextState) {
-        return true;
-    },
+            var tab = _.cloneDeep(this.viewEvents);
+            tab.splice(this.ackId, 3);
+            this.ackId += 3;
+            // RAZ
+            if (this.ackId == 6) {
+                this.ackId = 0;
+            }
 
-    /**
-     * Appellé en retour du store test
-     * @param data
-     */
-    update: function (data) {
-        this.setState(data);
-    },
+            console.log('page test ' + this.ackId + ' list: %o', tab);
+            return {
+                "messageType": "eventData",
+                "data": {
+                    "ackID": this.ackId,
 
-
-    /**
-     * Appellé par le mixin MixinGestMod quand l'utilisateur a cliqué sur retour
-     * et a validé l'intention de perdre toutes les modifications en cours.
-     */
-    onRetour: function () {
-
-    },
-
-    /**
-     * Se base sur le state isModalOpen ET modalType
-     * pour afficher ou non un modal.
-     * Cette fonction est appellée au render initial et lors de toutes les updates du composant.
-     * Le code retourné est ajouté à la fin du <body> de la page.
-     */
-    renderOverlay: function () {
-        //console.log('Pass renderOverlay');
-        var retour = {};
-        switch (this.state.modalType) {
-            case 1:
-                if (!this.state.isModalOpen) {
-                    return <span key="modal-test"/>;
-                } else {
-                    return <ModalUn key="modal-test" onToggle={this.toggleModal} />;
+                    "list": tab
                 }
-                break;
+            }
+        },
 
-            default:
-                if (!this.state.isModalOpen) {
-                    return <span key="modal-test"/>;
-                } else {
-                    return <Modal2 key="modal-test" onToggle={this.toggleModal} />;
-                }
-                break;
-        }
-        //console.log('retour : %o', retour);
-        return retour;
-    },
+        sendEventsView: function () {
 
-    /**
-     * Inverse le booléen correspondant à l'état d'affichage de la modale
-     */
-    toggleModal: function () {
-        this.setState({
-            isModalOpen: !this.state.isModalOpen
-        });
-    },
+            var msg = JSON.stringify(this.updateView());
+            //console.log('message: %o', msg);
+            //console.log('client: %o', this.clientWs);
+            this.clientWs.send(msg);
 
-    /**
-     * Affiche le modal 1
-     */
-    toggleModal1: function () {
-        this.setState({
-            isModalOpen: true,
-            modalType: 1
-        });
-    },
+        },
+        /**
+         * État initial des données du composant
+         * @returns object : les données de l'état initial
+         */
+        getInitialState: function () {
+            return {
+                isModalOpen: false,
+                modalType: 1,
+                options: [],
+                select: ''
+            };
+        },
 
-    /**
-     * Affiche le modal 2
-     */
-    toggleModal2: function () {
-        this.setState({
-            isModalOpen: true,
-            modalType: 2
-        });
-    },
+        /**
+         * Avant le premier Render()
+         */
+        componentWillMount: function () {
+            this.listenTo(storeTest, this.update);
+        },
 
-    /**
-     * Méthode appellée pour construire le composant.
-     * A chaque fois que son contenu est mis à jour.
-     * @returns {XML}
-     */
-    render: function () {
-        var editable = true;
-        var indice = 0;
+        componentDidMount: function () {
+            this.setState({
+                options: [
+                    {value: '1abricot', label: 'Abricot'},
+                    {value: '2fambroise', label: 'Framboise'},
+                    {value: '3pomme', label: 'Pomme'},
+                    {value: '4poire', label: 'Poire'},
+                    {value: '5fraise', label: 'Fraise'}
+                ]
+            })
+        },
 
-        /*********************/
-        /* Paramètres Select */
+        /**
+         * Test si le composant doit être réaffiché avec les nouvelles données
+         * @param nextProps : Nouvelles propriétés
+         * @param nextState : Nouvel état
+         * @returns {boolean} : true ou false selon si le composant doit être mis à jour
+         */
+        shouldComponentUpdate: function (nextProps, nextState) {
+            return true;
+        },
+
+        /**
+         * Appellé en retour du store test
+         * @param data
+         */
+        update: function (data) {
+            this.setState(data);
+        },
 
 
-        function selectChange(value, aData) {
+        /**
+         * Appellé par le mixin MixinGestMod quand l'utilisateur a cliqué sur retour
+         * et a validé l'intention de perdre toutes les modifications en cours.
+         */
+        onRetour: function () {
 
-            _.each(aData, function (val, key) {
-                indice++;
+        },
+
+        /**
+         * Se base sur le state isModalOpen ET modalType
+         * pour afficher ou non un modal.
+         * Cette fonction est appellée au render initial et lors de toutes les updates du composant.
+         * Le code retourné est ajouté à la fin du <body> de la page.
+         */
+        renderOverlay: function () {
+            //console.log('Pass renderOverlay');
+            var retour = {};
+            switch (this.state.modalType) {
+                case 1:
+                    if (!this.state.isModalOpen) {
+                        return <span key="modal-test"/>;
+                    } else {
+                        return <ModalUn key="modal-test" onToggle={this.toggleModal} />;
+                    }
+                    break;
+
+                default:
+                    if (!this.state.isModalOpen) {
+                        return <span key="modal-test"/>;
+                    } else {
+                        return <Modal2 key="modal-test" onToggle={this.toggleModal} />;
+                    }
+                    break;
+            }
+            //console.log('retour : %o', retour);
+            return retour;
+        },
+
+        /**
+         * Inverse le booléen correspondant à l'état d'affichage de la modale
+         */
+        toggleModal: function () {
+            this.setState({
+                isModalOpen: !this.state.isModalOpen
             });
-        }
+        },
 
-        function clickImage(evt) {
-            var copie = _.clone(evt);
-        }
+        /**
+         * Affiche le modal 1
+         */
+        toggleModal1: function () {
+            this.setState({
+                isModalOpen: true,
+                modalType: 1
+            });
+        },
 
-        /* FIN : Paramètres Select */
-        /***************************/
-        return (
-            <div>
-                <Form attributes={{id: "form_com"}}>
-                    <h1>COMMUNICATION TOOL</h1>
-                    <Button
-                        onClick={function () {
-                            // Connexion controller
-                            client.initWebSocket(1, function OK(clientWs) {
-                                this.clientWs = clientWs;
-                            }, function KO() {
-                                // Impossible de se connecter au server
-                                console.log('callback err connexion');
-                                swal(Lang.get('global.com.errConnServer'));
-                            });
-                        }}>Connexion
-                    </Button>
-                    <Button
-                        onClick={function sendQuery(){
-                            this.clientWs.send(JSON.stringify(messagesHelper.settingsQuery()))
-                        }}>
-                        Send settingsQuery
-                    </Button>
-                    <Button
-                        onClick={function sendReset(){
-                            this.clientWs.send(JSON.stringify(messagesHelper.remoteControl('reset')))
-                        }}>
-                        Reset
-                    </Button>
+        /**
+         * Affiche le modal 2
+         */
+        toggleModal2: function () {
+            this.setState({
+                isModalOpen: true,
+                modalType: 2
+            });
+        },
 
-                </Form>
+        /**
+         * Méthode appellée pour construire le composant.
+         * A chaque fois que son contenu est mis à jour.
+         * @returns {XML}
+         */
+        render: function () {
+            var editable = true;
+            var indice = 0;
 
-                <hr/>
-
-                <Form attributes={{id: "form_test"}}>
-
-                    <InputTextEditable
-                        attributes={
-                        {
-                            label: 'InputTextEditable',
-                            name: "InputTextEditable",
-                            value: 'Vivian',
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-2',
-                            groupClassName: 'row'
-                        }}
-                        editable={editable} />
-
-                    <InputTextEditable
-                        area={true}
-                        attributes={{
-                            label: 'InputTextEditableArea',
-                            name: "InputTextEditableArea",
-                            value: 'InputTextEditableArea',
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-2',
-                            groupClassName: 'row'
-                        }}
-                        editable={editable} />
-
-                    <InputMailEditable
-                        attributes={{
-                            label: 'InputMailEditable',
-                            name: "InputMailEditable",
-                            value: 'InputMailEditable@elipce.com',
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-2',
-                            groupClassName: 'row'
-                        }}
-                        editable={editable} />
-
-                    <InputPasswordEditable
-                        attributes={{
-                            label: 'InputPasswordEditable',
-                            name: "InputPasswordEditable",
-                            value: "",
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-2',
-                            groupClassName: 'row'
-                        }}
-                        editable={editable} />
+            /*********************/
+            /* Paramètres Select */
 
 
-                    <ImageEditable
-                        src='./app/assets/images/cross.gif'
-                        evts={{onClick: clickImage}}
-                        name="InputImageEditable"
-                        attributes={{
-                            name: "InputImageEditable",
-                            imgCol: 4,
-                            labelCol: 2
-                        }}
-                        editable={editable} />
+            function selectChange(value, aData) {
+
+                _.each(aData, function (val, key) {
+                    indice++;
+                });
+            }
+
+            function clickImage(evt) {
+                var copie = _.clone(evt);
+            }
+
+            /* FIN : Paramètres Select */
+            /***************************/
+            return (
+                <div>
+                    <Form attributes={{id: "form_com"}}>
+                        <h1>COMMUNICATION TOOL</h1>
+                        <Button
+                            onClick={function () {
+                                // Connexion controller
+                                supervision_helper.init(0, 0, 1, 0, function OK(clientWs) {
+                                    this.clientWs = clientWs;
+                                    console.log('Connecté');
+                                }.bind(this));
+                            }.bind(this)}>
+                            Connexion
+                        </Button>
+                        <Button
+                            onClick={function sendQuery() {
+                                this.clientWs.send(JSON.stringify(messagesHelper.settingsQuery()))
+                            }}>
+                            Send settingsQuery
+                        </Button>
+                        <Button
+                            onClick={function sendReset() {
+                                this.clientWs.send(JSON.stringify(messagesHelper.remoteControl('reset')))
+                            }}>
+                            Reset
+                        </Button>
+
+                        <Button
+                            onClick={this.sendEventsView.bind(this)}>
+                            View events
+                        </Button>
+                    </Form>
+
+                    <hr/>
+
+                    <Form attributes={{id: "form_test"}}>
+
+                        <InputTextEditable
+                            attributes={
+                            {
+                                label: 'InputTextEditable',
+                                name: "InputTextEditable",
+                                value: 'Vivian',
+                                wrapperClassName: 'col-md-4',
+                                labelClassName: 'col-md-2',
+                                groupClassName: 'row'
+                            }}
+                            editable={editable} />
+
+                        <InputTextEditable
+                            area={true}
+                            attributes={{
+                                label: 'InputTextEditableArea',
+                                name: "InputTextEditableArea",
+                                value: 'InputTextEditableArea',
+                                wrapperClassName: 'col-md-4',
+                                labelClassName: 'col-md-2',
+                                groupClassName: 'row'
+                            }}
+                            editable={editable} />
+
+                        <InputMailEditable
+                            attributes={{
+                                label: 'InputMailEditable',
+                                name: "InputMailEditable",
+                                value: 'InputMailEditable@elipce.com',
+                                wrapperClassName: 'col-md-4',
+                                labelClassName: 'col-md-2',
+                                groupClassName: 'row'
+                            }}
+                            editable={editable} />
+
+                        <InputPasswordEditable
+                            attributes={{
+                                label: 'InputPasswordEditable',
+                                name: "InputPasswordEditable",
+                                value: "",
+                                wrapperClassName: 'col-md-4',
+                                labelClassName: 'col-md-2',
+                                groupClassName: 'row'
+                            }}
+                            editable={editable} />
 
 
-                    <ColorPickerEditable
-                        evts={{
-                            onBlur: function (e) {
-                                console.log('blur color ' + $(e.currentTarget).val());
-                            }
-                        }}
-                        label="Couleur modifiable"
-                        mdColor={4}
-                        mdLabel={2}
-                        labelClass="text-right"
-                        gestMod={true}
-                        attributes={{name: "color", required: false, value: 'E2156B'}}
-                        editable={editable} />
+                        <ImageEditable
+                            src='./app/assets/images/cross.gif'
+                            evts={{onClick: clickImage}}
+                            name="InputImageEditable"
+                            attributes={{
+                                name: "InputImageEditable",
+                                imgCol: 4,
+                                labelCol: 2
+                            }}
+                            editable={editable} />
 
-                    <InputSelectEditable
-                        multi={false}
-                        evts={{onChange: selectChange}}
-                        attributes={{
-                            label: 'Mes fruits',
-                            name: "Select",
-                            selectCol: 4,
-                            labelCol: 2,
-                            required: true
-                        }}
-                        data={this.state.options}
-                        editable={editable}
-                        placeholder={'PlaceHolder...'}
-                        labelClass='text-right'
-                        selectedValue={["5fraise", "3pomme"]}
-                    />
-                    <ColorPicker
-                        color="FF2800"
-                        label="Mon label"
-                        mdLabel={3}
-                        mdColor={2}
-                        height={10}
-                        width={20}
-                        labelClass="text-right"
-                    />
+
+                        <ColorPickerEditable
+                            evts={{
+                                onBlur: function (e) {
+                                    console.log('blur color ' + $(e.currentTarget).val());
+                                }
+                            }}
+                            label="Couleur modifiable"
+                            mdColor={4}
+                            mdLabel={2}
+                            labelClass="text-right"
+                            gestMod={true}
+                            attributes={{name: "color", required: false, value: 'E2156B'}}
+                            editable={editable} />
+
+                        <InputSelectEditable
+                            multi={false}
+                            evts={{onChange: selectChange}}
+                            attributes={{
+                                label: 'Mes fruits',
+                                name: "Select",
+                                selectCol: 4,
+                                labelCol: 2,
+                                required: true
+                            }}
+                            data={this.state.options}
+                            editable={editable}
+                            placeholder={'PlaceHolder...'}
+                            labelClass='text-right'
+                            selectedValue={["5fraise", "3pomme"]}
+                        />
+                        <ColorPicker
+                            color="FF2800"
+                            label="Mon label"
+                            mdLabel={3}
+                            mdColor={2}
+                            height={10}
+                            width={20}
+                            labelClass="text-right"
+                        />
 
             {{
                 /*
@@ -362,226 +457,227 @@ var ReactPageTest = React.createClass({
                  */
             }}
 
-                    <InputSelectEditable
-                        multi={false}
-                        attributes={{name: "SelectSansLabel", selectCol: 4, required: true}}
-                        data={this.state.options}
-                        editable={editable}
-                        placeholder={'PlaceHolder...'}
-                        labelClass='text-right'
-                        selectedValue={"3pomme"}
-                    />
-                    <Select
-                        multi={false}
-                        placeholder="Select your favourite(s)"
-                        options={this.state.options}
-                    />
-
-                    <Button
-                        bsStyle="success"
-                        onClick={function () {
-                            var fData = form_data_helper('form_test', 'POST');
-                            //console.log('DATA: %o',fData);
-                            var f = $('#form_test').serializeArray();
-                            //console.log('DATA %o',f);
-                            // Vérif champ erronés
-                            Actions.validation.verify_form_save();
-                        }}
-                    >Valider</Button>
-
-                    <InputNumberEditable
-                        min={-10}
-                        max={10}
-                        step={0.1}
-                        attributes={{
-                            required: true,
-                            label: 'Input number',
-                            name: "InputNumber",
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-2',
-                            groupClassName: 'row'
-                        }}
-                        editable={editable} />
-
-                    <InputTelEditable
-                        attributes={{
-                            label: 'Input tel',
-                            name: "InputTel",
-                            htmlFor: 'form_test',
-                            value: '0475757575',
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-2',
-                            groupClassName: 'row'
-                        }}
-                        editable={editable} />
-
-                    <Row id="Champ_radioBoostrap">
-                        <Col md={2}>
-                            <label>Radio Boostrap NEW generation</label>
-                        </Col>
-                        <Col md={4}>
-                            <RadioGroup attributes={{name: "bootstrap"}} bootstrap={true}>
-                                <InputRadioBootstrapEditable
-                                    key={'bt1'}
-                                    editable={editable}
-                                    attributes={{
-                                        checked: true,
-                                        value: 'btn1'
-                                    }}
-                                    evts={{
-                                        onClick: function () {
-                                            console.log('CLICK');
-                                        }
-                                    }}
-                                >
-                                    Btn 1
-                                </ InputRadioBootstrapEditable>
-                                <InputRadioBootstrapEditable
-                                    key={'bt2'}
-                                    editable={editable}
-                                    attributes={{
-                                        value: 'btn2'
-                                    }}
-                                    evts={{
-                                        onClick: function () {
-                                            console.log('CLICK');
-                                        }
-                                    }}
-                                >
-                                    Btn 2
-                                </ InputRadioBootstrapEditable>
-                            </RadioGroup>
-                        </Col>
-                        <Col md={4}>
-                            <RadioGroup attributes={{name: "bootstrap"}} bootstrap={true}>
-                            </RadioGroup>
-                        </Col>
-                    </Row>
-            {/* EXemple de radio inline*/}
-                    <RadioGroup
-                        attributes={{
-                            name: "radio"
-                        }}>
-                        <InputRadioEditable
+                        <InputSelectEditable
+                            multi={false}
+                            attributes={{name: "SelectSansLabel", selectCol: 4, required: true}}
+                            data={this.state.options}
                             editable={editable}
-                            attributes={{
-                                label: 'InputRadioEditable 1',
-                                checked: true,
-                                name: "a_ecraser",
-                                value: 'un',
-                                groupClassName: 'col-md-2'
-                            }}
-                            evts={{
-                                onChange: function () {
-                                    console.log('Change');
-                                }
-                            }}
-                            key = "zouzou"
+                            placeholder={'PlaceHolder...'}
+                            labelClass='text-right'
+                            selectedValue={"3pomme"}
                         />
-                        <InputRadioEditable
-                            editable={editable}
+                        <Select
+                            multi={false}
+                            placeholder="Select your favourite(s)"
+                            options={this.state.options}
+                        />
+
+                        <Button
+                            bsStyle="success"
+                            onClick={function () {
+                                var fData = form_data_helper('form_test', 'POST');
+                                //console.log('DATA: %o',fData);
+                                var f = $('#form_test').serializeArray();
+                                //console.log('DATA %o',f);
+                                // Vérif champ erronés
+                                Actions.validation.verify_form_save();
+                            }}
+                        >Valider</Button>
+
+                        <InputNumberEditable
+                            min={-10}
+                            max={10}
+                            step={0.1}
                             attributes={{
-                                label: 'InputRadioEditable 2',
-                                checked: false,
-                                name: "a_ecraser",
-                                value: 'deux',
-                                groupClassName: 'col-md-2'
+                                required: true,
+                                label: 'Input number',
+                                name: "InputNumber",
+                                wrapperClassName: 'col-md-4',
+                                labelClassName: 'col-md-2',
+                                groupClassName: 'row'
                             }}
-                            evts={{
-                                onChange: function () {
-                                    console.log('Change');
-                                }
+                            editable={editable} />
+
+                        <InputTelEditable
+                            attributes={{
+                                label: 'Input tel',
+                                name: "InputTel",
+                                htmlFor: 'form_test',
+                                value: '0475757575',
+                                wrapperClassName: 'col-md-4',
+                                labelClassName: 'col-md-2',
+                                groupClassName: 'row'
                             }}
-                            key = "pitchoune"/>
-                    </RadioGroup>
+                            editable={editable} />
+
+                        <Row id="Champ_radioBoostrap">
+                            <Col md={2}>
+                                <label>Radio Boostrap NEW generation</label>
+                            </Col>
+                            <Col md={4}>
+                                <RadioGroup attributes={{name: "bootstrap"}} bootstrap={true}>
+                                    <InputRadioBootstrapEditable
+                                        key={'bt1'}
+                                        editable={editable}
+                                        attributes={{
+                                            checked: true,
+                                            value: 'btn1'
+                                        }}
+                                        evts={{
+                                            onClick: function () {
+                                                console.log('CLICK');
+                                            }
+                                        }}
+                                    >
+                                        Btn 1
+                                    </ InputRadioBootstrapEditable>
+                                    <InputRadioBootstrapEditable
+                                        key={'bt2'}
+                                        editable={editable}
+                                        attributes={{
+                                            value: 'btn2'
+                                        }}
+                                        evts={{
+                                            onClick: function () {
+                                                console.log('CLICK');
+                                            }
+                                        }}
+                                    >
+                                        Btn 2
+                                    </ InputRadioBootstrapEditable>
+                                </RadioGroup>
+                            </Col>
+                            <Col md={4}>
+                                <RadioGroup attributes={{name: "bootstrap"}} bootstrap={true}>
+                                </RadioGroup>
+                            </Col>
+                        </Row>
+            {/* EXemple de radio inline*/}
+                        <RadioGroup
+                            attributes={{
+                                name: "radio"
+                            }}>
+                            <InputRadioEditable
+                                editable={editable}
+                                attributes={{
+                                    label: 'InputRadioEditable 1',
+                                    checked: true,
+                                    name: "a_ecraser",
+                                    value: 'un',
+                                    groupClassName: 'col-md-2'
+                                }}
+                                evts={{
+                                    onChange: function () {
+                                        console.log('Change');
+                                    }
+                                }}
+                                key = "zouzou"
+                            />
+                            <InputRadioEditable
+                                editable={editable}
+                                attributes={{
+                                    label: 'InputRadioEditable 2',
+                                    checked: false,
+                                    name: "a_ecraser",
+                                    value: 'deux',
+                                    groupClassName: 'col-md-2'
+                                }}
+                                evts={{
+                                    onChange: function () {
+                                        console.log('Change');
+                                    }
+                                }}
+                                key = "pitchoune"/>
+                        </RadioGroup>
 
                  {/* EXemple de radio les uns sous les autres*/}
-                    <RadioGroup
-                        editable={editable}
-                        attributes={{
-                            name: "ab"
-                        }}>
-                        <InputRadioEditable
+                        <RadioGroup
                             editable={editable}
                             attributes={{
-                                label: 'A',
-                                checked: true,
-                                name: "a_ecraser",
-                                value: 'A',
-                                groupClassName: 'col-md-12'
-                            }}
-                            key = "a"
-                        />
-                        <InputRadioEditable
-                            editable={editable}
-                            attributes={{
-                                label: 'B',
-                                checked: false,
-                                name: "a_ecraser",
-                                value: 'B',
-                                groupClassName: 'col-md-12'
-                            }}
-                            key = "b"/>
-                    </RadioGroup>
+                                name: "ab"
+                            }}>
+                            <InputRadioEditable
+                                editable={editable}
+                                attributes={{
+                                    label: 'A',
+                                    checked: true,
+                                    name: "a_ecraser",
+                                    value: 'A',
+                                    groupClassName: 'col-md-12'
+                                }}
+                                key = "a"
+                            />
+                            <InputRadioEditable
+                                editable={editable}
+                                attributes={{
+                                    label: 'B',
+                                    checked: false,
+                                    name: "a_ecraser",
+                                    value: 'B',
+                                    groupClassName: 'col-md-12'
+                                }}
+                                key = "b"/>
+                        </RadioGroup>
 
-                    <Row>
-                        <InputCheckboxEditable
-                            key={'bty'}
+                        <Row>
+                            <InputCheckboxEditable
+                                key={'bty'}
+                                attributes={{
+                                    label: 'check1',
+                                    name: "check[]",
+                                    value: 'check1',
+                                    checked: true,
+                                    htmlFor: 'form_test',
+                                    groupClassName: 'col-md-2'
+                                }}
+                                editable={editable} />
+
+                            <InputCheckboxEditable
+                                key={'btz'}
+                                attributes={{
+                                    label: 'check2',
+                                    name: "check[]",
+                                    value: 'check2',
+                                    checked: true,
+                                    htmlFor: 'form_test',
+                                    groupClassName: 'col-md-2'
+                                }}
+                                editable={editable} />
+                        </Row>
+                        <InputDateEditable
                             attributes={{
-                                label: 'check1',
-                                name: "check[]",
-                                value: 'check1',
-                                checked: true,
+                                label: 'Champ date editable',
+                                name: 'date',
+                                value: '2015-02-23',
                                 htmlFor: 'form_test',
-                                groupClassName: 'col-md-2'
+                                required: true,
+                                wrapperClassName: 'col-md-4',
+                                labelClassName: 'col-md-2',
+                                groupClassName: 'row'
                             }}
                             editable={editable} />
 
-                        <InputCheckboxEditable
-                            key={'btz'}
+                        <InputTimeEditable
                             attributes={{
-                                label: 'check2',
-                                name: "check[]",
-                                value: 'check2',
-                                checked: true,
+                                label: 'Champ time editable',
+                                name: 'time_field',
+                                value: '10:00:25',
                                 htmlFor: 'form_test',
-                                groupClassName: 'col-md-2'
+                                wrapperClassName: 'col-md-4',
+                                labelClassName: 'col-md-2',
+                                groupClassName: 'row'
                             }}
                             editable={editable} />
-                    </Row>
-                    <InputDateEditable
-                        attributes={{
-                            label: 'Champ date editable',
-                            name: 'date',
-                            value: '2015-02-23',
-                            htmlFor: 'form_test',
-                            required: true,
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-2',
-                            groupClassName: 'row'
-                        }}
-                        editable={editable} />
 
-                    <InputTimeEditable
-                        attributes={{
-                            label: 'Champ time editable',
-                            name: 'time_field',
-                            value: '10:00:25',
-                            htmlFor: 'form_test',
-                            wrapperClassName: 'col-md-4',
-                            labelClassName: 'col-md-2',
-                            groupClassName: 'row'
-                        }}
-                        editable={editable} />
+                        <Button bsStyle="primary" onClick={this.toggleModal1}>Modal 1</Button>
 
-                    <Button bsStyle="primary" onClick={this.toggleModal1}>Modal 1</Button>
-
-                    <Button bsStyle="success" onClick={this.toggleModal2}>Modal 2</Button>
-                </Form>
-            </div>
-        )
-    }
-});
+                        <Button bsStyle="success" onClick={this.toggleModal2}>Modal 2</Button>
+                    </Form>
+                </div>
+            )
+        }
+    })
+    ;
 module.exports = ReactPageTest;
 
 // Creates a DataStore

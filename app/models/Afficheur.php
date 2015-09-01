@@ -56,4 +56,22 @@ class Afficheur extends BaseModel
         return $this->hasMany('Vue');
     }
 
+    /**
+     * Retourne les infos afficheurs en fonction d'un tableau ID afficheur
+     * @param array $aId : tableau ID afficheurs
+     * @return mixed
+     */
+    public static function getInfosFromViewId(array $aId)
+    {
+        return Afficheur::with('vues.type_place')
+            ->whereIn('id', function ($query) use ($aId) {
+                $query->from('afficheur')
+                    ->join('vue', 'vue.afficheur_id','=','afficheur.id' )
+                    ->whereIn('vue.id', $aId)
+                    ->select('afficheur.id');
+            })
+            ->get();
+
+    }
+
 }

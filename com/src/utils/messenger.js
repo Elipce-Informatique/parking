@@ -18,20 +18,20 @@ module.exports = {
      * If an error is provided, the data argument is ignored.
      * @param errorSocket : optional -> the socket to send potential errors to.
      */
-    send: function (socket, messageType, data, error, errorSocket) {
+    send: function (socket, messageType, data, error, errorSocket, callback) {
         // The target socket is null
         if (socket == null || typeof socket === 'undefined') {
             // Error message to the error client
             this.send(errorSocket, messageType, {}, {
                 "text": "The client socket supplied for this message is null or undefined."
-            });
+            }, {}, callback);
             logger.log('error', "The client socket supplied for this message is null or undefined.");
         }
         // The socket is not open
         else if (socket.readyState !== WebSocket.OPEN) {
             this.send(errorSocket, messageType, {}, {
                 "text": "The client socket supplied for this message is not opened."
-            });
+            }, {}, callback);
             logger.log('error', "The client socket supplied for this message is not opened.");
         }
         // This is an error message
@@ -40,7 +40,7 @@ module.exports = {
                 "messageType": messageType,
                 "error": error
             };
-            socket.send(JSON.stringify(message), errorHandler.onSendError);
+            socket.send(JSON.stringify(message), callback == undefined ? errorHandler.onSendError : callback);
         }
         // We have all we need, Let's go !
         else if (!_.isEmpty(data)) {
@@ -48,14 +48,14 @@ module.exports = {
                 "messageType": messageType,
                 "data": data
             };
-            socket.send(JSON.stringify(message), errorHandler.onSendError);
+            socket.send(JSON.stringify(message), callback == undefined ? errorHandler.onSendError : callback);
         }
         // We don't have any data to send, just the messageType
         else if (_.isEmpty(data)) {
             var message = {
                 "messageType": messageType
             };
-            socket.send(JSON.stringify(message), errorHandler.onSendError);
+            socket.send(JSON.stringify(message), callback == undefined ? errorHandler.onSendError : callback);
         }
     },
 
@@ -93,9 +93,10 @@ module.exports = {
      * @param error
      * @param errorSocket
      */
-    supervisionBroadcast: function (messageType, data, error, errorSocket) {
-        global.supervisionClients.forEach(function (socket) {
-            this.send(socket, messageType, data, error, errorSocket);
+    supervisionBroadcast: function (messageType, data, error, errorSocket, callback) {
+        //logger.log('info', 'BROADCAST NB ' + global.supervisionClients.length);
+        global.supervisionClients.forEach(function (socket, index) {
+            this.send(socket, messageType, data, error, errorSocket, callback);
         }, this);
     }
 };

@@ -3,6 +3,7 @@
  */
 
 var com_helper = require('./com_helper');
+var form_data_helper = require('./form_data_helper');
 
 module.exports = {
 
@@ -13,10 +14,11 @@ module.exports = {
     _journalAlerteId: 0,
     _ajaxInstances: {},
     _unsubscribe: null,
-    //_viewsIdToUpdate:
+    _viewsIdToUpdate: [],
+    _ajaxViewInstances: {},
 
 
-    init: function (planId, journalId, parkingId, journalAlerteId) {
+    init: function (planId, journalId, parkingId, journalAlerteId, onConnexion, onError) {
         // INIT DATA
         this._planId = planId;
         this._journalId = journalId;
@@ -33,10 +35,14 @@ module.exports = {
             }
             this._unsubscribe = Actions.com.message_controller.listen(this._onWSMessage.bind(this));
 
+            // Give the client in a callback
+            onConnexion(client);
+
             //console.log('LISTEN MESSAGE CTRL');
         }.bind(this), function (err) {
             console.warn('Erreur de connexion au WS : %o', err);
             swal(Lang.get('global.com.errConnServer'));
+            onError(err);
         });
         // MODE TEST AJAX
         //if (!this._timer) {
@@ -53,11 +59,11 @@ module.exports = {
         console.log('ON RECOIT UN EVENT DU CONTROLLER, GO UPDATE LA SUPERVIION  !!!!! %o', message);
         switch (message.messageType) {
             case "sensor_event":
-            // UPDATE TOUT LE BAZAR
-            this._handleAjax();
+                // UPDATE TOUT LE BAZAR
+                this._handleAjax();
                 break;
             case "view_event":
-                this._handleViewEvent();
+                this._handleViewEvent(message.data);
                 break;
             default:
                 break;
@@ -97,7 +103,7 @@ module.exports = {
             })
             .fail(function (xhr, type, exception) {
                 // Abort effectué par nos soins pour ne pas rafraichir tant que la précédent refresh n'est pas fini.
-                if(type !== 'abort') {
+                if (type !== 'abort') {
                     // if ajax fails display error alert
                     console.error("ajax error response error " + type);
                     console.error("ajax error response body " + xhr.responseText);
@@ -127,7 +133,7 @@ module.exports = {
             })
             .fail(function (xhr, type, exception) {
                 // Abort effectué par nos soins pour ne pas rafraichir tant que la précédent refresh n'est pas fini.
-                if(type !== 'abort') {
+                if (type !== 'abort') {
                     // if ajax fails display error alert
                     console.error("ajax error response error " + type);
                     console.error("ajax error response body " + xhr.responsetext);
@@ -141,7 +147,7 @@ module.exports = {
         }
     },
     /**
-     * Annule toutes les requêtes ajax en cours
+     * Annule toutes les requêtes ajax en cours de type sensor
      */
     abortAjax: function () {
         _.each(this._ajaxInstances, function ($req) {
@@ -149,8 +155,58 @@ module.exports = {
         });
     },
 
-    _handleViewEvent: function(idViews){
-        Actions.map.refresh_afficheurs();
+    /**
+     * Events view from controller
+     * @param idViews: array ID vue
+     * @returns {*}
+     * @private
+     */
+    _handleViewEvent: function (idViews) {
+        //console.log('ID views %o', idViews);
+        // Merge array views to update
+        this._viewsIdToUpdate = this._viewsIdToUpdate.concat(idViews);
 
+        // Refresh View en cours
+        this.abortViewAjax();
+
+        // Data ajax
+        var data = {
+            ids : this._viewsIdToUpdate
+        }
+
+        // Get displays infos
+        this._ajaxViewInstances['0'] = $.ajax({
+            method: 'GET',
+            url: BASE_URI + 'parking/afficheur/updateAfficheurs',
+            dataType: 'json',
+            context: this,
+            data: data
+        })
+            .done(function (data) {
+                console.log('ANSWER DISPLAYS  %o', data);
+                // Refresh afficheurs on the map
+                // TODO traiter l'action refresh_afficheurs
+                Actions.map.refresh_afficheurs(data);
+                // Views to update processed
+                this._viewsIdToUpdate = [];
+            })
+            .fail(function (xhr, type, exception) {
+                // Abort effectué par nos soins pour ne pas rafraichir tant que la précédent refresh n'est pas fini.
+                if (type !== 'abort') {
+                    // if ajax fails display error alert
+                    console.error("ajax error response error " + type);
+                    console.error("ajax error response body " + xhr.responsetext);
+                }
+            });
+    },
+
+    /**
+     * Annule toutes les requêtes ajax en cours de type view
+     */
+    abortViewAjax: function () {
+        // Parse instances
+        _.each(this._ajaxViewInstances, function ($req) {
+            $req.abort();
+        });
     }
 };

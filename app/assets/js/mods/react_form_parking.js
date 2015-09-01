@@ -164,7 +164,7 @@ var FormParking = React.createClass({
         client.initWebSocket(this.props.detailParking.id, function (clientWs) {
             // Envoie initialisazion
             clientWs.send(JSON.stringify(messagesHelper.initParking()));
-            console.log('LMancer procédure init parking');
+            console.log('Lancer procédure init parking');
             // Chargement
             $.blockUI({
                 message: '<div class="alert alert-warning" role="alert" style="margin:0"><h1 style="margin:0"><div id="facebookG"><div id="blockG_1" class="facebook_blockG"></div><div id="blockG_2" class="facebook_blockG"></div><div id="blockG_3" class="facebook_blockG"></div></div>' + Lang.get('global.block_ui') + '</h1></div>',

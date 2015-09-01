@@ -153,7 +153,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         }, this);
 
         // SENSOR
-        if(aSensorEvt.length > 0) {
+        if (aSensorEvt.length > 0) {
             // INSERT THE SENSOR EVENTS GATHERED
             sensorModel.insertSensorEvents(this.pool, aSensorEvt, function () {
                 // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
@@ -164,15 +164,16 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         // VIEW
         if (aViewEvt.length > 0) {
             // INSERT THE VIEW EVENTS GATHERED
-            viewModel.insertViewEvents(this.pool, aViewEvt, function () {
+            viewModel.insertViewEvents(this.pool, aViewEvt, function (viewsId) {
                 // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
-                messenger.supervisionBroadcast("view_event");
+                messenger.supervisionBroadcast("view_event", viewsId);
+
             });
         }
-    }
 
-    // Send the next EventQuery
-    this.events_controller.sendEventQuery(data.ackID);
-};
+        // Send the next EventQuery
+        this.events_controller.sendEventQuery(data.ackID);
+    }
+}
 
 module.exports = EventsLifeCycle;

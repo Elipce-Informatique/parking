@@ -96,7 +96,8 @@ module.exports.type_messages = {
     edit_place: 23,
     edit_allee: 24,
     edit_zone: 25,
-    edit_afficheur: 26
+    edit_afficheur: 26,
+    update_afficheurs: 27
 };
 
 /**

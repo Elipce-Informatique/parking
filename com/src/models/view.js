@@ -133,6 +133,7 @@ module.exports = {
         logger.log('info', 'VIEWS EVENTS to store ', events);
 
         var mysqlHelper = require('../utils/mysql_helper.js');
+        var viewsId = [];
 
         // Insertion in the event table
         var eventSql = "INSERT INTO event_vue(vue_id,date,occupied,free,count,state)" +
@@ -179,6 +180,7 @@ module.exports = {
             }).then(function resolve1(result) {
 
                 var viewId = result[0].id;
+                viewsId.push(viewId);
 
                 var p1 = Q.promise(function (resolve, reject) {
                     // INSERT IN THE EVENT TABLE
@@ -230,7 +232,7 @@ module.exports = {
                 if (index == (events.length - 1)) {
                     logger.log('info', 'NOTIFICATION VIEW EVENTS OK ');
                     // NOTIFY CALLER THAT WE'RE DONE
-                    onFinished();
+                    onFinished(viewsId);
                 }
             });
 

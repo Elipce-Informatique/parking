@@ -40,6 +40,7 @@ module.exports.client = {
 
                         if (window.clientWs.readyState === window.clientWs.OPEN) {
                             // We say the server we are a webbrowser
+                            //console.log('SUPERVISION CONNECTION');
                             window.clientWs.send(JSON.stringify(messages.supervisionConnection()));
                             // callback connexion OK
                             onConnexion(window.clientWs);
