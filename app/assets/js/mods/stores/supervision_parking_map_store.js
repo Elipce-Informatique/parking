@@ -135,11 +135,15 @@ var store = Reflux.createStore({
         }
     },
 
-    onRefresh_afficheurs: function(){
-        //this.trigger({
-        //    type: mapOptions.type_messages.liberer_places,
-        //    data: suppression
-        //});
+    /**
+     * Refresh displays from events
+     * @param data
+     */
+    onRefresh_afficheurs: function(data){
+        this.trigger({
+            type: mapOptions.type_messages.update_afficheurs,
+            data: data
+        });
     },
 
     /**

@@ -313,6 +313,7 @@ var parkingMap = React.createClass({
                 this._inst.afficheursGroup.addLayer(marker);
 
                 // AJOUT TOOLTIP
+                $("[data-afficheur-wrapper]").tooltip({html: true});
 
                 // AJOUT DU MARKER AU GROUPE AFFICHEUR
                 if (!_.isEmpty(afficheur.polyline)) {
@@ -334,8 +335,8 @@ var parkingMap = React.createClass({
         });
     },
 
-    onAfficheursUpdated: function(){
-
+    onAfficheursUpdated: function(data){
+        console.log('PROCESS DATA %o', data);
     },
 
     /**
