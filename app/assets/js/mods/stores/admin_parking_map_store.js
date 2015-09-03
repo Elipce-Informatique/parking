@@ -1461,7 +1461,7 @@ var store = Reflux.createStore({
         this.trigger(message);
 
         // LES AFFICHEURS À AFFICHER SUR LA MAP ----------------------------------------------------
-        var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD(this._inst.afficheurs, afficheurHelper.style);
+        var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD(this._inst.afficheurs);
 
         message = {
             type: mapOptions.type_messages.add_afficheurs,
@@ -1508,7 +1508,7 @@ var store = Reflux.createStore({
      * Affiche un afficheur sur la carte
      */
     onAfficheur_created: function (afficheur) {
-        var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD([afficheur], afficheurHelper.style);
+        var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD([afficheur]);
 
         var message = {
             type: mapOptions.type_messages.add_afficheurs,

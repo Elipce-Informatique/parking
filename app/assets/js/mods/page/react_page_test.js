@@ -109,6 +109,16 @@ var ReactPageTest = React.createClass({
                 date: new Date().toISOString(),
                 event: "state",
                 class: "view",
+                ID: 6,
+                state: "normal",
+                count: 0,
+                occupied: 0,
+                free: "30"
+            },
+            {
+                date: new Date().toISOString(),
+                event: "state",
+                class: "view",
                 ID: 3,
                 state: "normal",
                 count: 0,
@@ -124,17 +134,42 @@ var ReactPageTest = React.createClass({
                 count: 0,
                 occupied: 0,
                 free: "empty"
+            },
+            // AFFICHEUR 2
+            {
+                date: new Date().toISOString(),
+                event: "state",
+                class: "view",
+                ID: 5,
+                state: "normal",
+                count: 10,
+                occupied: 90,
+                free: 38
+            },
+            {
+                date: new Date().toISOString(),
+                event: "state",
+                class: "view",
+                ID: 6,
+                state: "normal",
+                count: 0,
+                occupied: 0,
+                free: "full"
             }],
         ackId: 0,
 
 
+        /**
+         * Prépare le message pour mettre des vues à jour
+         * @returns {{messageType: string, data: {ackID: number, list: *}}}
+         */
         updateView: function () {
 
             var tab = _.cloneDeep(this.viewEvents);
             tab.splice(this.ackId, 3);
             this.ackId += 3;
             // RAZ
-            if (this.ackId == 6) {
+            if (this.ackId >= this.viewEvents.length) {
                 this.ackId = 0;
             }
 
@@ -143,12 +178,14 @@ var ReactPageTest = React.createClass({
                 "messageType": "eventData",
                 "data": {
                     "ackID": this.ackId,
-
                     "list": tab
                 }
             }
         },
 
+        /**
+         * Envoie le message pour mettre des vues à jour
+         */
         sendEventsView: function () {
 
             var msg = JSON.stringify(this.updateView());

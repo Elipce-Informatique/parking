@@ -2,6 +2,7 @@ var React = require('react/addons');
 // Options pour paramétrer la carte
 var mapOptions = require('../../helpers/map_options');
 var mapHelper = require('../../helpers/map_helper');
+var afficheurHelper = require('../../helpers/afficheur_helper');
 // STORE DE LA CARTE
 var supervisionStore = require('../../stores/supervision_parking_map_store');
 
@@ -282,22 +283,7 @@ var parkingMap = React.createClass({
 
                 //console.log('Data détail : %o', afficheur.data.vues_bis);
 
-                // GÉNÉRATION DU TOOLTIP
-                var htmlTooltip = '<table>' + _.reduce(afficheur.data.vues_bis, function (str, vue) {
-                        return str + '<tr>' +
-                            '<td class="afficheur-libelle" style="color:#' + vue.couleur + ';text-align:left;margin-right:3px;">' +
-                            vue.libelle +
-                            '</td><td style="text-align:right;padding-left:5px"> ' +
-                            vue.libres +
-                            '</td>' +
-                            '</tr>';
-                    }, "", this) + '</table>';
-
-                // GÉNÉRATION DU CONTENU DU LABEL
-                var htmlAfficheur = '<span data-afficheur-wrapper data-toggle="tooltip" data-html="true"' +
-                    ' title="' +
-                    _.escape(htmlTooltip) +
-                    '">' + afficheur.data.defaut + '</span>';
+                var htmlAfficheur = afficheurHelper.generateAfficheurLabel(afficheur);
 
                 // CRÉATION DU MARKER
                 var marker = L.marker([afficheur.data.lat, afficheur.data.lng], {
@@ -309,18 +295,14 @@ var parkingMap = React.createClass({
                     clickable: true
                 });
 
-                // AFFICHAGE DE L'AFFICHEUR
+                // AJOUT DU MARKER AU GROUPE AFFICHEUR (Affichage)
                 this._inst.afficheursGroup.addLayer(marker);
 
-                // AJOUT TOOLTIP
-                $("[data-afficheur-wrapper]").tooltip({html: true});
-
-                // AJOUT DU MARKER AU GROUPE AFFICHEUR
+                // AJOUT DU POLYLINE AU GROUPE AFFICHEUR
                 if (!_.isEmpty(afficheur.polyline)) {
                     this._inst.afficheursGroup.addLayer(afficheur.polyline);
-                    console.log('############## TOOLTIP #############');
                 }
-                else{
+                else {
                     console.log('AFFICHEUR.polyline VIDE');
                 }
             }
@@ -330,13 +312,50 @@ var parkingMap = React.createClass({
 
         }, this);
 
+        // AJOUT TOOLTIP UNE FOIS LA BOUCLE PASSEE
+        $("[data-afficheur-wrapper]").tooltip({html: true});
+
         this.setState({
             isModalOpen: false
         });
     },
 
-    onAfficheursUpdated: function(data){
+    /**
+     *
+     * @param data
+     */
+    onAfficheursUpdated: function (data) {
         console.log('PROCESS DATA %o', data);
+        console.log('AFFICHEURS MAP %o', this._inst.afficheursGroup);
+        var afficheurs = afficheurHelper.createAfficheursMapFromAfficheursBDD(data.data);
+
+        // Parcours les afficheurs impactés et les chercher dans les markers
+        _.each(afficheurs, function (affModif) {
+            console.log('affModif : %o', affModif);
+            var idModif = affModif.data.id;
+            var aff = {};
+            _.each(this._inst.afficheursGroup._layers, function (affMap) {
+
+                // CE N'EST PAS UN POLYLINE, ON EST SUR UN MARKER
+                if (typeof affMap._path === 'undefined' && affMap.options.data.id == idModif) {
+                    console.log('Unbinding label ... %o', affMap);
+                    affMap.unbindLabel();
+                    aff = affMap;
+                }
+            }, this);
+
+            // ATTACHEMENT DU NOUVEAU LABEL
+            aff.bindLabel(afficheurHelper.generateAfficheurLabel(affModif), {
+                noHide: true,
+                className: 'afficheur_label',
+                clickable: true
+            });
+            // AFFICHAGE DU NOUVEAU LABEL
+            aff.showLabel();
+        }, this);
+
+        // MISE EN PLACE DES TOOLTIPS jQuery
+        $("[data-afficheur-wrapper]").tooltip({html: true});
     },
 
     /**

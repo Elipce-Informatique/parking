@@ -17,7 +17,7 @@ function getCoordAfficheurFromPolyline(poly) {
  * @param afficheursStyle
  * @returns {*}
  */
-function createAfficheursMapFromAfficheursBDD(afficheursBDD, afficheursStyle) {
+function createAfficheursMapFromAfficheursBDD(afficheursBDD) {
 
     // Loop over the displays and generate an array of polyline + data objects
     var afficheursMap = _.map(afficheursBDD, function (a) {
@@ -54,7 +54,8 @@ function createAfficheursMapFromAfficheursBDD(afficheursBDD, afficheursStyle) {
         _.each(a.vues, function (vue) {
             // On est sur la vue "générique" à afficher sur la supervision
             if (vue.type_place != null && vue.type_place.defaut === "1") {
-                data.defaut = _.padLeft(vue.libres.toString(), 4, '0');
+                var libres = (isNaN(vue.libres) ? Lang.get('global.' + vue.libres).toUpperCase() : vue.libres);
+                data.defaut = _.padLeft(libres.toString(), 4, '0');
             }
             // Vue type <> générique
             else if (vue.type_place != null) {
@@ -81,10 +82,39 @@ function createAfficheursMapFromAfficheursBDD(afficheursBDD, afficheursStyle) {
     return afficheursMap;
 }
 
+/**
+ * Génère le html nécessaire à l'affichage d'un afficheur
+ * et de son tooltip en superbvision.
+ *
+ * @param afficheur : Afficheur à générer, c'est un objet avec la clé data
+ *                      (récupéré dans le store supervision)
+ * @returns {string} : le html à mettre dans le label du marker
+ */
+function generateAfficheurLabel(afficheur) {
+    // GÉNÉRATION DU TOOLTIP
+    var htmlTooltip = '<table>' + _.reduce(afficheur.data.vues_bis, function (str, vue) {
+            return str + '<tr>' +
+                '<td class="afficheur-libelle" style="color:#' + vue.couleur + ';text-align:left;margin-right:3px;">' +
+                vue.libelle +
+                '</td><td style="text-align:right;padding-left:5px"> ' +
+                vue.libres +
+                '</td>' +
+                '</tr>';
+        }, "", this) + '</table>';
+
+    // GÉNÉRATION DU CONTENU DU LABEL
+    var htmlAfficheur = '<span data-afficheur-wrapper data-toggle="tooltip" data-html="true"' +
+        ' title="' +
+        _.escape(htmlTooltip) +
+        '">' + afficheur.data.defaut + '</span>';
+    return htmlAfficheur;
+}
+
 
 module.exports = {
     getCoordAfficheurFromPolyline: getCoordAfficheurFromPolyline,
     createAfficheursMapFromAfficheursBDD: createAfficheursMapFromAfficheursBDD,
+    generateAfficheurLabel: generateAfficheurLabel,
     style: {
         color: '#000000',
         weight: 1,
