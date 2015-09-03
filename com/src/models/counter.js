@@ -101,21 +101,21 @@ module.exports = {
                         });
 
                     }.bind(this)).then(function resolve(cpts) {
-                            // Prepare insertion
-                            var inst = mysql.format(sqlCptAssoc, cpts);
-                            //logger.log('info', 'ASSOC COUNTERS COUNTERS', inst);
-                            // Insert bus
-                            transAssoc.query(inst, function (err, result) {
-                                if (err && trans.rollback) {
-                                    trans.rollback();
-                                    logger.log('error', 'TRANSACTION ROLLBACK');
-                                    throw err;
-                                }
-                            });
-                        }, function reject(err) {
-                            trans.rollback();
-                            logger.log('error', 'SELECT id FROM v4_id KO');
+                        // Prepare insertion
+                        var inst = mysql.format(sqlCptAssoc, cpts);
+                        //logger.log('info', 'ASSOC COUNTERS COUNTERS', inst);
+                        // Insert bus
+                        transAssoc.query(inst, function (err, result) {
+                            if (err && trans.rollback) {
+                                trans.rollback();
+                                logger.log('error', 'TRANSACTION ROLLBACK');
+                                throw err;
+                            }
                         });
+                    }, function reject(err) {
+                        trans.rollback();
+                        logger.log('error', 'SELECT id FROM v4_id KO');
+                    });
 
                 });
                 // Commit INSERT counters
@@ -143,5 +143,86 @@ module.exports = {
             }
 
         });
+    },
+
+    /**
+     * Insert an event in the event_compteur table
+     * @param pool : Mysql connection
+     * @param events : array of events to insert
+     * @param onFinished : function called when event insertion is done
+     */
+    insertCounterEvents: function (pool, events, onFinished) {
+        logger.log('info', 'COUNTER EVENTS to store ', events);
+
+        var mysqlHelper = require('../utils/mysql_helper.js');
+        var countersId = [];
+
+        // Insertion in the event table
+        var eventSql = "INSERT INTO event_compteur(compteur_id,date,count)" +
+            "VALUES (?,?,?)";
+
+        // FETCH COUNTER ID FROM V4_ID. NEED TO GO THROUGH THE PARKING
+        var sqlCounterId = "SELECT c.id " +
+            "   FROM compteur c" +
+            "   JOIN vue v ON v.compteur_id=c.id" +
+            "   JOIN afficheur a ON a.id=v.afficheur_id" +
+            "   JOIN plan ON plan.id=a.plan_id" +
+            "   JOIN niveau n ON n.id=plan.niveau_id" +
+            "   JOIN parking pa ON pa.id=n.parking_id" +
+            "   JOIN server_com s ON s.parking_id=pa.id" +
+            "   WHERE c.v4_id=?" +
+            "   AND s.protocol_port=?";
+
+        // LOOP OVER ALL EVENTS
+        _.each(events, function (evt, index) {
+            // Promise 1
+            return Q.promise(function (resolve, reject) {
+                //logger.log('info', 'PASS promise 1 ');
+                mysqlHelper.execute(pool, sqlCounterId, [evt.ID, global.port], function (err, result) {
+
+                    // ROLLBACK THE TRANSACTION
+                    if (err) {
+                        logger.log('error', 'ERREUR SQL GET COUNTER ID', err);
+                        reject(err);
+                    }
+                    else if (result.length == 0) {
+                        logger.log('error', 'NO V4 ID COUNTER ' + evt.ID);
+                        reject(err);
+                    }
+                    else {
+                        resolve(result);
+                    }
+                });
+            }).then(function resolve1(result) {
+
+                var counterId = result[0].id;
+                countersId.push(counterId);
+
+                return Q.promise(function (resolve, reject) {
+                    // INSERT IN THE EVENT TABLE
+                    mysqlHelper.execute(pool, eventSql, [counterId, evt.date, evt.occupied, evt.free, evt.count, evt.state],
+                        function (err, result) {
+                            if (err) {
+                                logger.log('error', 'ERREUR SQL INSERT event_vue : ', err);
+                            }
+                            resolve();
+                        });
+                });
+
+
+            }, function reject1(err) {
+                logger.log('error', 'REJECT promise 1', err);
+            }).then(function resolveEventCompteur() {
+
+                // FINAL COUNTER EVENT
+                if (index == (events.length - 1)) {
+                    logger.log('info', 'NOTIFICATION COUNTER EVENTS OK ');
+                    // NOTIFY CALLER THAT WE'RE DONE
+                    onFinished(countersId);
+                }
+            });
+
+        });// fin _.each
+
     }
 };
