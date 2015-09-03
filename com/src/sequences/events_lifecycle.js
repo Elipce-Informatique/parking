@@ -27,6 +27,7 @@ function EventsLifeCycle(events_controller) {
     this.pool = null;
     this.events_controller = events_controller;
     this.eventsStored = [];
+    this.ackIDStored = [];
 }
 
 // -----------------------------------------------------------------
@@ -83,8 +84,10 @@ EventsLifeCycle.prototype.onEventData = function (data) {
     var evts = data.list;
 
     // Maybe used when all events are sent
-    this.eventsStored = this.eventsStored.concat(evts);
-    //logger.log('info', '============= EVTS ', this.eventsStored);
+    //this.eventsStored = this.eventsStored.concat(evts);
+    //this.ackIDStored = this.ackIDStored.concat([data.ackID]);
+    //logger.log('info', '============= EVTS ', this.eventsStored, JSON.stringify(this.eventsStored));
+    //logger.log('info', '+++++++++++++ ackID ', this.ackIDStored);
 
     if (_.isArray(evts)) {
         var aStartupEvt = [];
