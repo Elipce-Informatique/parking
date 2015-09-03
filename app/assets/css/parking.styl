@@ -1,8 +1,10 @@
 @font-face {
-font-family: '7segment';
-src: url('fonts/DSEG7Modern-Bold.ttf') format('embedded-opentype'),
-url('fonts/DSEG7Modern-Bold.ttf') format('truetype'),
-url('fonts/DSEG7Modern-Bold.woff') format('woff')
+  font-family: 'Digital-7';
+  src: url('./fonts/digital-7 (mono).eot');
+  src: url('./fonts/digital-7 (mono).eot?#iefix') format('embedded-opentype'),
+  url('./fonts/digital-7 (mono).woff') format('woff'),
+  url('./fonts/digital-7 (mono).ttf') format('truetype'),
+  url('./fonts/digital-7 (mono).svg#Digital-7') format('svg');
 }
 
 @import 'variables.styl'
@@ -67,13 +69,12 @@ url('fonts/DSEG7Modern-Bold.woff') format('woff')
   padding-top: 0px;
 }
 
-
 .afficheur_label {
   background-color: #000000;
   color: red;
-  font-family: '7segment', sans-serif;
+  font-family: 'Digital-7', sans-serif;
   font-weight: bolder;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .afficheur-libelle {

@@ -162,7 +162,7 @@ module.exports = {
      * @private
      */
     _handleViewEvent: function (idViews) {
-        //console.log('ID views %o', idViews);
+        // console.log('ID views %o', idViews);
         // Merge array views to update
         this._viewsIdToUpdate = this._viewsIdToUpdate.concat(idViews);
 
@@ -171,8 +171,8 @@ module.exports = {
 
         // Data ajax
         var data = {
-            ids : this._viewsIdToUpdate
-        }
+            ids: this._viewsIdToUpdate
+        };
 
         // Get displays infos
         this._ajaxViewInstances['0'] = $.ajax({
@@ -180,12 +180,12 @@ module.exports = {
             url: BASE_URI + 'parking/afficheur/updateAfficheurs',
             dataType: 'json',
             context: this,
-            data: data
+            data: data,
+            global: false
         })
             .done(function (data) {
                 console.log('ANSWER DISPLAYS  %o', data);
                 // Refresh afficheurs on the map
-                // TODO traiter l'action refresh_afficheurs
                 Actions.map.refresh_afficheurs(data);
                 // Views to update processed
                 this._viewsIdToUpdate = [];

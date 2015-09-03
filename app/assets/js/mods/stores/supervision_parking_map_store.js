@@ -325,7 +325,7 @@ var store = Reflux.createStore({
         this.trigger(message);
 
         // LES AFFICHEURS À AFFICHER SUR LA MAP ----------------------------------------------------
-        var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD(this._inst.afficheurs, afficheurHelper.style);
+        var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD(this._inst.afficheurs);
         message = {
             type: mapOptions.type_messages.add_afficheurs,
             data: afficheursMap
