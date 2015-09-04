@@ -49,6 +49,6 @@ return array(
         'changer_compteur' => 'Changer compteur',
         'toggle_ouverture' => "Ouvrir / fermer Parking",
         'toggle_veille' => "Activer / desact Veille Eco",
-        'placeholder' => "Non implémenté."
+        'placeholder' => "En attente de la communication..."
     ]
 );
