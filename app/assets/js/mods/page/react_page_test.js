@@ -156,6 +156,23 @@ var ReactPageTest = React.createClass({
                 occupied: 0,
                 free: "full"
             }],
+
+        sensorEvents : [
+            {
+                "class": "sensor",
+                "date": "2015-09-03T12:24:17",
+                "event": "state",
+                "ID": 93,
+                "state": "online",
+                "sense": "free"
+            },
+            {
+                "date": "2015-09-03T12:25:45",
+                "ID": 93,
+                "sense": "occupied"
+            }
+        ],
+
         events: [{
             "dfu": false,
             "class": "sensor",
@@ -1228,6 +1245,7 @@ var ReactPageTest = React.createClass({
             200,
             233
         ],
+        // TODO AFTER EVENTS
         ackIdPointer: 0,
         ackId: 0,
         eventLoopStarted: false,
@@ -1285,12 +1303,42 @@ var ReactPageTest = React.createClass({
             }
         },
 
+
+        /**
+         * Prépare le message pour mettre des sensor à jour
+         * @returns {{messageType: string, data: {ackID: number, list: *}}}
+         */
+        updateSensor: function () {
+
+            var tab = _.cloneDeep(this.sensorEvents);
+
+            return {
+                "messageType": "eventData",
+                "data": {
+                    "ackID": tab.length,
+                    "list": tab
+                }
+            }
+        },
+
         /**
          * Envoie le message pour mettre des vues à jour
          */
         sendEventsView: function () {
 
             var msg = JSON.stringify(this.updateView());
+            //console.log('message: %o', msg);
+            //console.log('client: %o', this.clientWs);
+            this.clientWs.send(msg);
+
+        },
+
+        /**
+         * Envoie le message pour mettre des sensors à jour
+         */
+        sendEventsSensor: function () {
+
+            var msg = JSON.stringify(this.updateSensor());
             //console.log('message: %o', msg);
             //console.log('client: %o', this.clientWs);
             this.clientWs.send(msg);
@@ -1474,6 +1522,11 @@ var ReactPageTest = React.createClass({
                         <Button
                             onClick={this.startEventLoop}>
                             EventsLoop
+                        </Button>
+
+                        <Button
+                            onClick={this.sendEventsSensor}>
+                            Sensor events
                         </Button>
 
                     </Form>

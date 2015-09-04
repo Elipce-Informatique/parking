@@ -9,6 +9,7 @@ var mysql = require('mysql');
 //Enable mysql-queues
 var queues = require('mysql-queues');
 var Q = require('q');
+var _ = require('lodash');
 
 module.exports = {
     /**
@@ -186,7 +187,7 @@ module.exports = {
                         reject(err);
                     }
                     else if (result.length == 0) {
-                        logger.log('error', 'NO V4 ID COUNTER ' + evt.ID);
+                        logger.log('error', 'NO V4 ID COUNTER ' + evt.ID + ". Les compteurs ne sont probablement pas associés à une vue");
                         reject(err);
                     }
                     else {
@@ -200,10 +201,10 @@ module.exports = {
 
                 return Q.promise(function (resolve, reject) {
                     // INSERT IN THE EVENT TABLE
-                    mysqlHelper.execute(pool, eventSql, [counterId, evt.date, evt.occupied, evt.free, evt.count, evt.state],
+                    mysqlHelper.execute(pool, eventSql, [counterId, evt.date, evt.count],
                         function (err, result) {
                             if (err) {
-                                logger.log('error', 'ERREUR SQL INSERT event_vue : ', err);
+                                logger.log('error', 'ERREUR SQL INSERT event_compteur: ', err);
                             }
                             resolve();
                         });

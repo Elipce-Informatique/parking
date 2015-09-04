@@ -164,13 +164,13 @@ module.exports = {
                 mysqlHelper.execute(pool, sqlViewId, [evt.ID, global.port], function (err, result) {
 
                     // ROLLBACK THE TRANSACTION
-                    if (err ) {
+                    if (err) {
                         logger.log('error', 'ERREUR SQL GET VIEW ID', err);
                         reject(err);
                     }
-                    else if(result.length == 0){
+                    else if (result.length == 0) {
 
-                        logger.log('error', 'NO V4 ID VIEW '+evt.ID+". Les afficheurs ne sont probablement pas créés sur le plan");
+                        logger.log('error', 'NO V4 ID VIEW ' + evt.ID + ". Les afficheurs ne sont probablement pas créés sur le plan");
                         reject(err);
                     }
                     else {
