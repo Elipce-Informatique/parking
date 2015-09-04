@@ -14,6 +14,7 @@ var busModel = require('../models/bus.js');
 var sensorModel = require('../models/sensor.js');
 var displayModel = require('../models/display.js');
 var viewModel = require('../models/view.js');
+var counterModel = require('../models/counter.js');
 
 // -----------------------------------------------------------------
 // Creates the Events class
@@ -172,6 +173,12 @@ EventsLifeCycle.prototype.onEventData = function (data) {
                 messenger.supervisionBroadcast("view_event", viewsId);
 
             });
+        }
+
+        // COUNTER
+        if (aCounterEvt.length > 0) {
+            // INSERT THE COUNTER EVENTS GATHERED
+            counterModel.insertCounterEvents(this.pool, aCounterEvt);
         }
 
         // Send the next EventQuery

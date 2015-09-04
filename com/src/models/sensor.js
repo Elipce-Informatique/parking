@@ -262,6 +262,13 @@ module.exports = {
             "           FROM event_capteur e2 " +
             "           WHERE e2.capteur_id=e.capteur_id) ";
 
+        var selectLastState = "SELECT e.state " +
+            "FROM event_capteur e " +
+            "WHERE capteur_id=? " +
+            "AND e.id=(SELECT MAX(e2.id) " +
+            "           FROM event_capteur e2 " +
+            "           WHERE e2.capteur_id=e.capteur_id) ";
+
         // UPDATE THE SPACE "ETAT D'OCCUPATION"
         var updatePlaceSql = "UPDATE place SET etat_occupation_id=? WHERE id=?";
 
@@ -289,10 +296,11 @@ module.exports = {
                 });
             }).then(function resolve1(result) {
 
-                // Promise 2
-                return Q.promise(function (resolve, reject) {
-                    //logger.log('info', 'PASS promise 2,' + result);
-                    var sensorId = result[0].id;
+                //logger.log('info', 'PASS promise 2,' + result);
+                var sensorId = result[0].id;
+
+                // Promise 2 Composée de 2 promises
+                var p1 = Q.promise(function (resolve, reject) {
                     //logger.log('info', 'PASS promiose 2, sensor id: ' + sensorId);
 
 
@@ -305,7 +313,7 @@ module.exports = {
                                 logger.log('error', 'ERREUR SQL GET LAST SENSE ', err);
                                 reject(err);
                             }
-                            else{
+                            else {
 
                                 resolve({
                                     sense: rows[0]['sense'],
@@ -315,38 +323,71 @@ module.exports = {
                         });
                     }
                     // Sense key OK in the message
-                    else{
+                    else {
                         resolve({
                             sense: sense,
                             sensorId: sensorId
                         });
                     }
-
                 });
+
+                var p2 = Q.promise(function (resolve, reject) {
+                    var state = evt.state;
+                    // No state key
+                    if (evt.state === undefined) {
+                        // Last state of the sensor
+                        mysqlHelper.execute(pool, selectLastState, [sensorId], function (err, rows) {
+                            if (err || rows.length === 0) {
+                                logger.log('error', 'ERREUR SQL GET LAST STATE ', err);
+                                reject(err);
+                            }
+                            else {
+
+                                resolve({
+                                    state: rows[0]['state'],
+                                    sensorId: sensorId
+                                });
+                            }
+                        });
+                    }
+                    // Sense key OK in the message
+                    else {
+                        resolve({
+                            state: state,
+                            sensorId: sensorId
+                        });
+                    }
+                });
+
+                return Q.all([p1, p2]);
+
             }, function reject1(err) {
                 logger.log('error', 'REJECT promise 1', err);
             }).then(function resolve2(obj) {
-
+                //logger.log('info', "++++++++++++++ OBJET Q.ALL", obj);
                 // Promise 3
                 return Q.promise(function (resolve, reject) {
-                    var sensorId = obj.sensorId;
-                    var sense = obj.sense;
+                    var objSense = obj[0];
+                    var objState = obj[1];
+                    var sensorId = objSense.sensorId;
+                    var sense = objSense.sense;
+                    var state = objState.state;
 
                     // INSERT IN THE EVENT TABLE
-                    mysqlHelper.execute(pool, eventSql, [sensorId, evt.date, evt.state, sense, evt.supply, evt.dfu],
+                    mysqlHelper.execute(pool, eventSql, [sensorId, evt.date, state, sense, evt.supply, evt.dfu],
                         function (err, result) {
                             if (err) {
-                                logger.log('error', 'ERREUR SQL INSERT event_table ', err);
+                                logger.log('error', 'ERREUR SQL INSERT event_sensor ', err);
                             }
                             else {
-                                //logger.log('info', 'INSERTED event_table OK');
+                                //logger.log('info', 'INSERTED event_sensor OK');
                             }
                         });
 
                     // ONLINE SENSORS
-                    if (evt.state == 'online') {
+                    if (state == 'online') {
                         // HANDLE EACH TYPE OF SENSE EVENT
-                        switch (evt.sense) {
+                        switch (sense) {
                             case "undef":
                                 logger.log('error', 'UNDEF event.sense ');
                                 reject();
@@ -407,29 +448,9 @@ module.exports = {
                                 // We do not change the journal in database
                                 break;
                             default:
-                                // Last sense of the sensor
-                                mysqlHelper.execute(pool, selectLastSense, [sensorId], function (err, rows) {
-                                    if (err || rows.length === 0) {
-                                        logger.log('error', 'ERREUR SQL GET LAST SENSE ', err);
-                                        reject(err);
-                                    } else {
 
-                                        var sense = rows[0]['sense'];
-                                        // GET place infos
-                                        mysqlHelper.execute(pool, getPlaceInfosSql, [(sense == 'occupied' ? '1' : '0'), sensorId], function (err, rows) {
-                                            if (err || rows.length === 0) {
-                                                logger.log('error', 'ERREUR SQL GET INFOS place sense UNKNOW ', err);
-                                                reject(err);
-                                            } else {
-                                                resolve({
-                                                    sense: sense,
-                                                    data: rows[0]
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-
+                                logger.log('error', "default event.sense " + sense + ". Last sense is getting from BDD in precedent promise, so we don't have to pas here");
+                                reject();
                                 break;
                         }
                     }
@@ -441,69 +462,69 @@ module.exports = {
             }, function reject2(err) {
                 logger.log('error', 'REJECT promise 2', err);
             }).then(function resolve3(oData) {
-                    //logger.log('info', 'promise 3 OK ');
-                    // oData = car space free / occupied + infos
-                    //logger.log('info', 'pass PROMIOSE 3: ', oData);
-                    var sense = oData.sense == 'overstay' ? 1 : 0;
-                    var evtData = oData.data;
-                    // UPDATE JOURNAL (plan_id, place_id, etat_occupation_id, overstay, date_evt)
-                    var inst = mysql.format(journalSql, [
-                        evtData.plan_id,
-                        evtData.place_id,
-                        evtData.etat_occupation_id,
-                        sense,
-                        evt.date
-                    ]);
+                //logger.log('info', 'promise 3 OK ');
+                // oData = car space free / occupied + infos
+                //logger.log('info', 'pass PROMIOSE 3: ', oData);
+                var sense = oData.sense == 'overstay' ? 1 : 0;
+                var evtData = oData.data;
+                // UPDATE JOURNAL (plan_id, place_id, etat_occupation_id, overstay, date_evt)
+                var inst = mysql.format(journalSql, [
+                    evtData.plan_id,
+                    evtData.place_id,
+                    evtData.etat_occupation_id,
+                    sense,
+                    evt.date
+                ]);
 
-                    var p1 = Q.promise(function (resolve, reject) {
-                        mysqlHelper.execute(pool, journalSql, [
-                                evtData.plan_id,
-                                evtData.place_id,
-                                evtData.etat_occupation_id,
-                                sense,
-                                evt.date
-                            ],
-                            function (err, result) {
-                                if (err) {
-                                    logger.log('error', 'ERREUR INSERT journal_equipement_plan SQL : ' + inst, err);
-                                }
-                                resolve();
-                            });
-                    });
-
-                    // UPDATE ETAT D'OCCUPATION FOR THE SPACE
-                    var p2 = Q.promise(function (resolve, reject) {
-                        mysqlHelper.execute(pool, updatePlaceSql, [
-                                evtData.etat_occupation_id,
-                                evtData.place_id
-                            ],
-                            function (err, result) {
-                                if (err) {
-                                    logger.log('error', 'ERREUR UPDATE place SQL', err);
-                                }
-                                else {
-                                    //logger.log('info', 'UPDATE PLACE  ' + evtData.place_id + ' etat_occupation: ' + evtData.etat_occupation_id, err);
-                                }
-                                resolve();
-
-                            });
-                    });
-
-                    return Q.all([p1, p2]);
-
-                }, function reject3(err) {
-                    if (err != 'NO ONLINE') {
-                        logger.log('error', 'REJECT promise 3');
-                    }
-                }).then(function resolveAll() {
-
-                    // FINAL SENSOR EVENT
-                    if (index == (events.length - 1)) {
-                        logger.log('info', 'NOTIFICATION SENSOR EVENTS OK ');
-                        // NOTIFY CALLER THAT WE'RE DONE
-                        onFinished();
-                    }
+                var p1 = Q.promise(function (resolve, reject) {
+                    mysqlHelper.execute(pool, journalSql, [
+                            evtData.plan_id,
+                            evtData.place_id,
+                            evtData.etat_occupation_id,
+                            sense,
+                            evt.date
+                        ],
+                        function (err, result) {
+                            if (err) {
+                                logger.log('error', 'ERREUR INSERT journal_equipement_plan SQL : ' + inst, err);
+                            }
+                            resolve();
+                        });
                 });
+
+                // UPDATE ETAT D'OCCUPATION FOR THE SPACE
+                var p2 = Q.promise(function (resolve, reject) {
+                    mysqlHelper.execute(pool, updatePlaceSql, [
+                            evtData.etat_occupation_id,
+                            evtData.place_id
+                        ],
+                        function (err, result) {
+                            if (err) {
+                                logger.log('error', 'ERREUR UPDATE place SQL', err);
+                            }
+                            else {
+                                //logger.log('info', 'UPDATE PLACE  ' + evtData.place_id + ' etat_occupation: ' + evtData.etat_occupation_id, err);
+                            }
+                            resolve();
+
+                        });
+                });
+
+                return Q.all([p1, p2]);
+
+            }, function reject3(err) {
+                if (err != 'NO ONLINE') {
+                    logger.log('error', 'REJECT promise 3');
+                }
+            }).then(function resolveAll() {
+
+                // FINAL SENSOR EVENT
+                if (index == (events.length - 1)) {
+                    logger.log('info', 'NOTIFICATION SENSOR EVENTS OK ');
+                    // NOTIFY CALLER THAT WE'RE DONE
+                    onFinished();
+                }
+            });
 
         });// fin _.each
 
