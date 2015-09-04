@@ -184,7 +184,7 @@ module.exports = {
             global: false
         })
             .done(function (data) {
-                console.log('ANSWER DISPLAYS  %o', data);
+                //console.log('ANSWER DISPLAYS  %o', data);
                 // Refresh afficheurs on the map
                 Actions.map.refresh_afficheurs(data);
                 // Views to update processed

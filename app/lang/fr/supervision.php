@@ -41,5 +41,14 @@ return array(
         'change' => 'Alerte changement état place',
         'reservation' => 'Réserver des places',
         'msg_full' => "Les places ... à ... sont occupées"
+    ],
+    'commandes' => [
+        'forcer_etat' => 'Forcer état',
+        'faire_clignoter' => 'Faire clignoter',
+        'changer_signalisation' => 'Changer signalisation',
+        'changer_compteur' => 'Changer compteur',
+        'toggle_ouverture' => "Ouvrir / fermer Parking",
+        'toggle_veille' => "Activer / desact Veille Eco",
+        'placeholder' => "Non implémenté."
     ]
 );

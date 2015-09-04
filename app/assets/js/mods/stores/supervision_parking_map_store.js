@@ -68,6 +68,144 @@ var store = Reflux.createStore({
     init: function () {
     },
 
+    /**
+     * ---------------------------------------------------------------------------
+     * AJOUT D'UNE FEATURE À LA CARTE --------------------------------------------
+     * ---------------------------------------------------------------------------
+     */
+    onFeature_place_add: function (e) {
+        console.log('feature PLACE add : %o', e);
+        e.layer.bindContextMenu({
+            contextmenu: true,
+            contextmenuItems: [
+                // NOM PLACE
+                {
+                    text: '<b>' + e.layer.options.data.libelle + '</b>',
+                    index: 0
+                },
+                // SÉPARATEUR
+                {
+                    separator: true,
+                    index: 1
+                },
+                // FORCER L'ÉTAT
+                {
+                    text: Lang.get('supervision.commandes.forcer_etat'),
+                    index: 2,
+                    callback: function (evt) {
+                        swal(Lang.get('supervision.commandes.placeholder'));
+                    }.bind({
+                            e: e,
+                            storeContext: this
+                        })
+                },
+                // CLIGNOTER CAPTEUR
+                {
+                    text: Lang.get('supervision.commandes.faire_clignoter'),
+                    index: 2,
+                    callback: function (evt) {
+                        swal(Lang.get('supervision.commandes.placeholder'));
+                    }.bind({
+                            e: e,
+                            storeContext: this
+                        })
+                }]
+        });
+    },
+    onFeature_allee_add: function (e) {
+        console.log('feature allee add : %o', e);
+        e.layer.bindContextMenu({
+            contextmenu: true,
+            contextmenuItems: [{
+                text: '<b>' + e.layer.options.data.libelle + '</b>',
+                index: 0
+            }, {
+                separator: true,
+                index: 1
+            }, {
+                text: Lang.get('global.modifier'),
+                index: 2,
+                callback: function (evt) {
+                    console.log('callback place : %o', this);
+                    // LANCEMENT DU MODAL DE MODIF DE ALLEES
+                    var data = {
+                        layer: this.layer
+                    };
+                    var retour = {
+                        type: mapOptions.type_messages.edit_allee,
+                        data: data
+                    };
+                    this.storeContext.trigger(retour);
+                }.bind({
+                        e: e,
+                        storeContext: this
+                    })
+            }]
+        });
+    },
+    onFeature_zone_add: function (e) {
+        console.log('feature zone add : %o', e);
+        e.layer.bindContextMenu({
+            contextmenu: true,
+            contextmenuItems: [{
+                text: '<b>' + e.layer.options.data.libelle + '</b>',
+                index: 0
+            }, {
+                separator: true,
+                index: 1
+            }, {
+                text: Lang.get('global.modifier'),
+                index: 2,
+                callback: function (evt) {
+                    console.log('callback place : %o', this);
+                    // LANCEMENT DU MODAL DE MODIF DE ZONES
+                    var data = {
+                        layer: this.layer
+                    };
+                    var retour = {
+                        type: mapOptions.type_messages.edit_zone,
+                        data: data
+                    };
+                    this.storeContext.trigger(retour);
+                }.bind({
+                        e: e,
+                        storeContext: this
+                    })
+            }]
+        });
+    },
+    onFeature_afficheur_add: function (e) {
+        console.log('feature afficheur add : %o', e);
+        e.layer.bindContextMenu({
+            contextmenu: true,
+            contextmenuItems: [{
+                text: '<b>' + e.layer.options.data.libelle + '</b>',
+                index: 0
+            }, {
+                separator: true,
+                index: 1
+            }, {
+                text: Lang.get('global.modifier'),
+                index: 2,
+                callback: function (evt) {
+                    console.log('callback place : %o', this);
+                    // LANCEMENT DU MODAL DE MODIF DE AFFICHEURS
+                    var data = {
+                        layer: this.layer
+                    };
+                    var retour = {
+                        type: mapOptions.type_messages.edit_afficheur,
+                        data: data
+                    };
+                    this.storeContext.trigger(retour);
+                }.bind({
+                        e: e,
+                        storeContext: this
+                    })
+            }]
+        });
+    },
+
 
     /**
      * Appellé lors de l'initialisation de la map pour renseigner le calibre initial
@@ -139,7 +277,7 @@ var store = Reflux.createStore({
      * Refresh displays from events
      * @param data
      */
-    onRefresh_afficheurs: function(data){
+    onRefresh_afficheurs: function (data) {
         this.trigger({
             type: mapOptions.type_messages.update_afficheurs,
             data: data

@@ -101,7 +101,8 @@ var parkingMap = React.createClass({
         this._inst.map = new L.Map(this.props.divId, {
             crs: mapHelper.customZoomCRS,
             layers: [baseLayer],
-            maxZoom: 12
+            maxZoom: 12,
+            contextmenu: true
         }).setView([0, 0], 0);
 
         // GESTION RÉORGANISATION DES LAYERS
@@ -141,6 +142,13 @@ var parkingMap = React.createClass({
         if (this.props.parkingLogo != '') {
             this.showLogo(this.props.parkingLogo);
         }
+
+        // INIT EVENTS LAERS POUR EVENTUELLEMENT CONTEXT MENU
+        this._inst.placesGroup.on('layeradd', Actions.map.feature_place_add);
+        //this._inst.placesMarkersGroup.on('layeradd', Actions.map.feature_place_add);
+        this._inst.alleesGroup.on('layeradd', Actions.map.feature_allee_add);
+        this._inst.zonesGroup.on('layeradd', Actions.map.feature_zone_add);
+        this._inst.afficheursGroup.on('layeradd', Actions.map.feature_afficheur_add);
     },
 
     /**
@@ -325,8 +333,8 @@ var parkingMap = React.createClass({
      * @param data
      */
     onAfficheursUpdated: function (data) {
-        console.log('PROCESS DATA %o', data);
-        console.log('AFFICHEURS MAP %o', this._inst.afficheursGroup);
+        //console.log('PROCESS DATA %o', data);
+        //console.log('AFFICHEURS MAP %o', this._inst.afficheursGroup);
         var afficheurs = afficheurHelper.createAfficheursMapFromAfficheursBDD(data.data);
 
         // Parcours les afficheurs impactés et les chercher dans les markers

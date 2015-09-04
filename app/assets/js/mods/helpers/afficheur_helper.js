@@ -62,7 +62,7 @@ function createAfficheursMapFromAfficheursBDD(afficheursBDD) {
 
                 // Complet, libre ou nombre
                 var libres = (isNaN(vue.libres) ? Lang.get('global.' + vue.libres).toUpperCase() : vue.libres);
-                console.log(libres);
+
                 // Construction de la ligne d'information
                 data.vues_bis[vue.cellNr.toString()] = {
                     libres: libres,

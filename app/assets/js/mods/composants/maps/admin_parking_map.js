@@ -153,7 +153,7 @@ var parkingMap = React.createClass({
         this._inst.calibreGroup = new L.FeatureGroup();
         this._inst.map.addLayer(this._inst.calibreGroup);
 
-        // INIT EVENTS LAERS
+        // INIT EVENTS LAERS POUR EVENTUELLEMENT CONTEXT MENU
         this._inst.placesGroup.on('layeradd', Actions.map.feature_place_add);
         this._inst.alleesGroup.on('layeradd', Actions.map.feature_allee_add);
         this._inst.zonesGroup.on('layeradd', Actions.map.feature_zone_add);
