@@ -181,6 +181,18 @@ EventsLifeCycle.prototype.onEventData = function (data) {
             counterModel.insertCounterEvents(this.pool, aCounterEvt);
         }
 
+        // DISPLAY
+        if (aDisplayEvt.length > 0) {
+            // INSERT THE DISPLAY EVENTS GATHERED
+            displayModel.insertDisplayEvents(this.pool, aDisplayEvt);
+        }
+
+        // BUS
+        if (aBusEvt.length > 0) {
+            // INSERT THE BUS EVENTS GATHERED
+            busModel.insertBusEvents(this.pool, aBusEvt);
+        }
+
         // Send the next EventQuery
         this.events_controller.sendEventQuery(data.ackID);
     }

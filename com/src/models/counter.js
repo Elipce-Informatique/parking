@@ -217,7 +217,7 @@ module.exports = {
 
                 // FINAL COUNTER EVENT
                 if (index == (events.length - 1)) {
-                    logger.log('info', 'NOTIFICATION COUNTER EVENTS OK ');
+                    //logger.log('info', 'NOTIFICATION COUNTER EVENTS OK ');
                     // NOTIFY CALLER THAT WE'RE DONE
                     onFinished(countersId);
                 }
