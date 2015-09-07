@@ -74,7 +74,7 @@ var store = Reflux.createStore({
      * ---------------------------------------------------------------------------
      */
     onFeature_place_add: function (e) {
-        console.log('feature PLACE add : %o', e);
+        //console.log('feature PLACE add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
             contextmenuItems: [
@@ -93,7 +93,14 @@ var store = Reflux.createStore({
                     text: Lang.get('supervision.commandes.forcer_etat'),
                     index: 2,
                     callback: function (evt) {
-                        swal(Lang.get('supervision.commandes.placeholder'));
+                        swal({
+                            html: true,
+                            showCancelButton: true,
+                            showConfirmButton: false,
+                            cancelButtonText: Lang.get('global.annuler'),
+                            title: Lang.get('supervision.commandes.placeholder'),
+                            text: '<div id="circularG"> <div id="circularG_1" class="circularG"></div><div id="circularG_2" class="circularG"></div><div id="circularG_3" class="circularG"></div><div id="circularG_4" class="circularG"></div><div id="circularG_5" class="circularG"></div><div id="circularG_6" class="circularG"></div><div id="circularG_7" class="circularG"></div><div id="circularG_8" class="circularG"></div></div>'
+                        });
                     }.bind({
                             e: e,
                             storeContext: this
@@ -104,7 +111,14 @@ var store = Reflux.createStore({
                     text: Lang.get('supervision.commandes.faire_clignoter'),
                     index: 2,
                     callback: function (evt) {
-                        swal(Lang.get('supervision.commandes.placeholder'));
+                        swal({
+                            html: true,
+                            showCancelButton: true,
+                            showConfirmButton: false,
+                            cancelButtonText: Lang.get('global.annuler'),
+                            title: Lang.get('supervision.commandes.placeholder'),
+                            text: '<div id="circularG"> <div id="circularG_1" class="circularG"></div><div id="circularG_2" class="circularG"></div><div id="circularG_3" class="circularG"></div><div id="circularG_4" class="circularG"></div><div id="circularG_5" class="circularG"></div><div id="circularG_6" class="circularG"></div><div id="circularG_7" class="circularG"></div><div id="circularG_8" class="circularG"></div></div>'
+                        });
                     }.bind({
                             e: e,
                             storeContext: this
