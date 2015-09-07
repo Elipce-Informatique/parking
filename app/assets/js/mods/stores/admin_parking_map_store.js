@@ -401,68 +401,17 @@ var store = Reflux.createStore({
      * ---------------------------------------------------------------------------
      */
     onFeature_place_add: function (e) {
+        console.log('ADD PLACE');
         e.layer.bindContextMenu({
             contextmenu: true,
-            contextmenuItems: [{
-                text: '<b>' + e.layer.options.data.libelle + '</b>',
-                index: 0
-            }, {
-                separator: true,
-                index: 1
-            }, {
-                text: Lang.get('global.modifier'),
-                index: 2,
-                callback: function (evt) {
-                    this.storeContext._inst.contextMenuTarget = this.e.layer;
-                    // LANCEMENT DU MODAL DE MODIF DE PLACES
-                    var data = {
-                        layer: this.e.layer,
-                        modalParams: {
-                            typesPlaces: this.storeContext._inst.types_places,
-                            dataItem: this.e.layer.options.data
-                        }
-                    };
-                    var retour = {
-                        type: mapOptions.type_messages.edit_place,
-                        data: data
-                    };
-                    this.storeContext.trigger(retour);
-                }.bind({
-                        e: e,
-                        storeContext: this
-                    })
-            }]
+            contextmenuItems: placeHelper.administrationContextMenu(e, this)
         });
     },
     onFeature_allee_add: function (e) {
         console.log('feature allee add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
-            contextmenuItems: [{
-                text: '<b>' + e.layer.options.data.libelle + '</b>',
-                index: 0
-            }, {
-                separator: true,
-                index: 1
-            }, {
-                text: Lang.get('global.modifier'),
-                index: 2,
-                callback: function (evt) {
-                    console.log('callback place : %o', this);
-                    // LANCEMENT DU MODAL DE MODIF DE ALLEES
-                    var data = {
-                        layer: this.layer
-                    };
-                    var retour = {
-                        type: mapOptions.type_messages.edit_allee,
-                        data: data
-                    };
-                    this.storeContext.trigger(retour);
-                }.bind({
-                        e: e,
-                        storeContext: this
-                    })
-            }]
+            contextmenuItems: alleeHelper.administrationContextMenu(e, this)
         });
     },
     onFeature_zone_add: function (e) {

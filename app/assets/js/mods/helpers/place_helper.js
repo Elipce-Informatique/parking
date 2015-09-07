@@ -397,11 +397,103 @@ function editPlacesGeometry(entities, zones, allees, alleeDefault) {
         });
 }
 
+/**
+ * Retourne les options de contextMenu pour les places en mode supervision
+ * @returns {*[]}
+ */
+function supervisionContextMenu(e, context) {
+    return [
+        // NOM PLACE
+        {
+            text: '<b>' + e.layer.options.data.libelle + '</b>',
+            index: 0
+        },
+        // SÉPARATEUR
+        {
+            separator: true,
+            index: 1
+        },
+        // FORCER L'ÉTAT
+        {
+            text: Lang.get('supervision.commandes.forcer_etat'),
+            index: 2,
+            callback: function (evt) {
+                swal({
+                    html: true,
+                    showCancelButton: true,
+                    showConfirmButton: false,
+                    cancelButtonText: Lang.get('global.annuler'),
+                    title: Lang.get('supervision.commandes.placeholder'),
+                    text: '<div id="circularG"> <div id="circularG_1" class="circularG"></div><div id="circularG_2" class="circularG"></div><div id="circularG_3" class="circularG"></div><div id="circularG_4" class="circularG"></div><div id="circularG_5" class="circularG"></div><div id="circularG_6" class="circularG"></div><div id="circularG_7" class="circularG"></div><div id="circularG_8" class="circularG"></div></div>'
+                });
+            }.bind({
+                    e: e,
+                    storeContext: context
+                })
+        },
+        // CLIGNOTER CAPTEUR
+        {
+            text: Lang.get('supervision.commandes.faire_clignoter'),
+            index: 2,
+            callback: function (evt) {
+                swal({
+                    html: true,
+                    showCancelButton: true,
+                    showConfirmButton: false,
+                    cancelButtonText: Lang.get('global.annuler'),
+                    title: Lang.get('supervision.commandes.placeholder'),
+                    text: '<div id="circularG"> <div id="circularG_1" class="circularG"></div><div id="circularG_2" class="circularG"></div><div id="circularG_3" class="circularG"></div><div id="circularG_4" class="circularG"></div><div id="circularG_5" class="circularG"></div><div id="circularG_6" class="circularG"></div><div id="circularG_7" class="circularG"></div><div id="circularG_8" class="circularG"></div></div>'
+                });
+            }.bind({
+                    e: e,
+                    storeContext: context
+                })
+        }];
+}
+
+/**
+ * Retourne les options de contextMenu pour les places en mode administration
+ * @returns {*[]}
+ */
+function administrationContextMenu(e, context) {
+    return [{
+        text: '<b>' + e.layer.options.data.libelle + '</b>',
+        index: 0
+    }, {
+        separator: true,
+        index: 1
+    }, {
+        text: Lang.get('global.modifier'),
+        index: 2,
+        callback: function (evt) {
+            this.storeContext._inst.thisMenuTarget = this.e.layer;
+            // LANCEMENT DU MODAL DE MODIF DE PLACES
+            var data = {
+                layer: this.e.layer,
+                modalParams: {
+                    typesPlaces: this.storeContext._inst.types_places,
+                    dataItem: this.e.layer.options.data
+                }
+            };
+            var retour = {
+                type: mapOptions.type_messages.edit_place,
+                data: data
+            };
+            this.storeContext.trigger(retour);
+        }.bind({
+                e: e,
+                storeContext: context
+            })
+    }];
+}
+
 module.exports = {
     createPlacesFromParallelogramme: createPlacesFromParallelogramme,
     createPlaceMarker: createPlaceMarker,
     createPlaceParallelogramme: createPlaceParallelogramme,
     createPlaceParallelogrammeFromCoordinates: createPlaceParallelogrammeFromCoordinates,
     createPlaceFromData: createPlaceFromData,
-    editPlacesGeometry: editPlacesGeometry
+    editPlacesGeometry: editPlacesGeometry,
+    supervisionContextMenu: supervisionContextMenu,
+    administrationContextMenu: administrationContextMenu
 };

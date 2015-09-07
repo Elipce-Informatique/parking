@@ -168,6 +168,69 @@ function createAlleesMapFromAlleesBDD(alleesBDD, alleeStyle) {
     }, this);
 }
 
+/**
+ * Retourne les options de contextMenu pour les allées en mode supervision
+ * @returns {*[]}
+ */
+function supervisionContextMenu(e, context) {
+    return [{
+        text: '<b>' + e.layer.options.data.libelle + '</b>',
+        index: 0
+    }, {
+        separator: true,
+        index: 1
+    }, {
+        text: Lang.get('global.modifier'),
+        index: 2,
+        callback: function (evt) {
+            console.log('callback place : %o', this);
+            // LANCEMENT DU MODAL DE MODIF DE ALLEES
+            var data = {
+                layer: this.e.layer
+            };
+            var retour = {
+                type: mapOptions.type_messages.edit_allee,
+                data: data
+            };
+            this.storeContext.trigger(retour);
+        }.bind({
+                e: e,
+                storeContext: context
+            })
+    }];
+}
+
+/**
+ * Retourne les options de contextMenu pour les allées en mode administration
+ * @returns {*[]}
+ */
+function administrationContextMenu(e, context) {
+    return [{
+        text: '<b>' + e.layer.options.data.libelle + '</b>',
+        index: 0
+    }, {
+        separator: true,
+        index: 1
+    }, {
+        text: Lang.get('global.modifier'),
+        index: 2,
+        callback: function (evt) {
+            console.log('callback place : %o', this);
+            // LANCEMENT DU MODAL DE MODIF DE ALLEES
+            var data = {
+                layer: this.e.layer
+            };
+            var retour = {
+                type: mapOptions.type_messages.edit_allee,
+                data: data
+            };
+            this.storeContext.trigger(retour);
+        }.bind({
+                e: e,
+                storeContext: context
+            })
+    }];
+}
 
 
 /**
@@ -177,6 +240,8 @@ module.exports = {
     geometryCheck: geometryCheck,
     createAllee: createAllee,
     createAlleesMapFromAlleesBDD: createAlleesMapFromAlleesBDD,
+    supervisionContextMenu: supervisionContextMenu,
+    administrationContextMenu: administrationContextMenu,
     style: {
         color: '#1e90ff',
         weight: 2,
