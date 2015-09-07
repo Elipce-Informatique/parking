@@ -1,5 +1,8 @@
 /********************************************/
 var React = require('react');
+var ContextMenu = require('react-contextmenu').ContextMenu;
+var MenuItem = require('react-contextmenu').MenuItem;
+var ContextMenuLayer = require('react-contextmenu').ContextMenuLayer;
 var TreeView = require('react-bootstrap-treeview/dist/js/react-bootstrap-treeview');
 var Simulator = require('../simulator/react_simulator');
 var supervision_helper = require('../helpers/supervision_helper');
@@ -98,6 +101,22 @@ var Page = React.createClass({
      * @returns {XML}
      */
     modeCarte: function () {
+
+        // CONTEXT MENU
+        var menu = (
+            <ContextMenu identifier="some_unique_identifier" currentItem={this.currentItem}>
+                <MenuItem data={"some_data"} onSelect={this.handleSelect}>
+                    ContextMenu Item 1
+                </MenuItem>
+                <MenuItem data={"some_data"} onSelect={this.handleSelect}>
+                    ContextMenu Item 2
+                </MenuItem>
+                <MenuItem divider />
+                <MenuItem data={"some_data"} onSelect={this.handleSelect}>
+                    ContextMenu Item 3
+                </MenuItem>
+            </ContextMenu>
+        );
 
         // CRÉATION TREEVIEW
         var treeView = '';

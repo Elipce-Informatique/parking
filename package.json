@@ -46,6 +46,7 @@
     "react-bootstrap": "^0.23.0",
     "react-bootstrap-treeview": "git://github.com/Elipce-Informatique/react-bootstrap-treeview.git",
     "react-calendar": "git://github.com/Elipce-Informatique/react-calendar.git",
+    "react-contextmenu": "^0.2.1",
     "react-select": "^0.4.0",
     "reflux": "^0.2.0",
     "robust-point-in-polygon": "^1.0.0",
