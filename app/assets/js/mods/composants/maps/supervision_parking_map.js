@@ -313,6 +313,8 @@ var parkingMap = React.createClass({
                 else {
                     console.log('AFFICHEUR.polyline VIDE');
                 }
+
+                // TODO ATTACHER LE CONTEXTMENU
             }
             //else{
             //    console.log('Afficheur undefined');
@@ -360,6 +362,8 @@ var parkingMap = React.createClass({
             });
             // AFFICHAGE DU NOUVEAU LABEL
             aff.showLabel();
+
+            // TODO ATTACHER LE CONTEXTMENU
         }, this);
 
         // MISE EN PLACE DES TOOLTIPS jQuery

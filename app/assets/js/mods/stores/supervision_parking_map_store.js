@@ -74,87 +74,17 @@ var store = Reflux.createStore({
      * ---------------------------------------------------------------------------
      */
     onFeature_place_add: function (e) {
-        //console.log('feature PLACE add : %o', e);
+        console.log('feature PLACE add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
-            contextmenuItems: [
-                // NOM PLACE
-                {
-                    text: '<b>' + e.layer.options.data.libelle + '</b>',
-                    index: 0
-                },
-                // SÉPARATEUR
-                {
-                    separator: true,
-                    index: 1
-                },
-                // FORCER L'ÉTAT
-                {
-                    text: Lang.get('supervision.commandes.forcer_etat'),
-                    index: 2,
-                    callback: function (evt) {
-                        swal({
-                            html: true,
-                            showCancelButton: true,
-                            showConfirmButton: false,
-                            cancelButtonText: Lang.get('global.annuler'),
-                            title: Lang.get('supervision.commandes.placeholder'),
-                            text: '<div id="circularG"> <div id="circularG_1" class="circularG"></div><div id="circularG_2" class="circularG"></div><div id="circularG_3" class="circularG"></div><div id="circularG_4" class="circularG"></div><div id="circularG_5" class="circularG"></div><div id="circularG_6" class="circularG"></div><div id="circularG_7" class="circularG"></div><div id="circularG_8" class="circularG"></div></div>'
-                        });
-                    }.bind({
-                            e: e,
-                            storeContext: this
-                        })
-                },
-                // CLIGNOTER CAPTEUR
-                {
-                    text: Lang.get('supervision.commandes.faire_clignoter'),
-                    index: 2,
-                    callback: function (evt) {
-                        swal({
-                            html: true,
-                            showCancelButton: true,
-                            showConfirmButton: false,
-                            cancelButtonText: Lang.get('global.annuler'),
-                            title: Lang.get('supervision.commandes.placeholder'),
-                            text: '<div id="circularG"> <div id="circularG_1" class="circularG"></div><div id="circularG_2" class="circularG"></div><div id="circularG_3" class="circularG"></div><div id="circularG_4" class="circularG"></div><div id="circularG_5" class="circularG"></div><div id="circularG_6" class="circularG"></div><div id="circularG_7" class="circularG"></div><div id="circularG_8" class="circularG"></div></div>'
-                        });
-                    }.bind({
-                            e: e,
-                            storeContext: this
-                        })
-                }]
+            contextmenuItems: placeHelper.supervisionContextMenu(e, this)
         });
     },
     onFeature_allee_add: function (e) {
         console.log('feature allee add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
-            contextmenuItems: [{
-                text: '<b>' + e.layer.options.data.libelle + '</b>',
-                index: 0
-            }, {
-                separator: true,
-                index: 1
-            }, {
-                text: Lang.get('global.modifier'),
-                index: 2,
-                callback: function (evt) {
-                    console.log('callback place : %o', this);
-                    // LANCEMENT DU MODAL DE MODIF DE ALLEES
-                    var data = {
-                        layer: this.layer
-                    };
-                    var retour = {
-                        type: mapOptions.type_messages.edit_allee,
-                        data: data
-                    };
-                    this.storeContext.trigger(retour);
-                }.bind({
-                        e: e,
-                        storeContext: this
-                    })
-            }]
+            contextmenuItems: alleeHelper.supervisionContextMenu(e, this)
         });
     },
     onFeature_zone_add: function (e) {
