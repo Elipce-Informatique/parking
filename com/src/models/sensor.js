@@ -520,7 +520,7 @@ module.exports = {
 
                 // FINAL SENSOR EVENT
                 if (index == (events.length - 1)) {
-                    logger.log('info', 'NOTIFICATION SENSOR EVENTS OK ');
+                    //logger.log('info', 'NOTIFICATION SENSOR EVENTS OK ');
                     // NOTIFY CALLER THAT WE'RE DONE
                     onFinished();
                 }

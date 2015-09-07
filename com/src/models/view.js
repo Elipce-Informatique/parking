@@ -230,7 +230,7 @@ module.exports = {
 
                 // FINAL VIEW EVENT
                 if (index == (events.length - 1)) {
-                    logger.log('info', 'NOTIFICATION VIEW EVENTS OK ');
+                    //logger.log('info', 'NOTIFICATION VIEW EVENTS OK ');
                     // NOTIFY CALLER THAT WE'RE DONE
                     onFinished(viewsId);
                 }

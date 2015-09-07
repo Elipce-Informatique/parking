@@ -54,7 +54,7 @@ module.exports = {
                     logger.log('error', 'TRANSACTION COMMIT ERROR');
                 }
                 else{
-                    logger.log('info', 'TRANSACTION COMMIT SETTINGS OK');
+                    //logger.log('info', 'TRANSACTION COMMIT SETTINGS OK');
                 }
             });
         }
