@@ -92,6 +92,7 @@ require('sweetalert');
         "feature_allee_add",
         "feature_zone_add",
         "feature_afficheur_add",
+        "label_afficheurs_add",
         // ACTIONS DE DESSIN
         "draw_created",
         "draw_edited",

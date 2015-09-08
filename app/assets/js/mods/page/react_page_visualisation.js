@@ -394,7 +394,14 @@ var store = Reflux.createStore({
                 this._inst.planId,
                 this._inst.temps_reel.last_id,
                 this._inst.parkingId,
-                this._inst.temps_reel.last_alerte_id);
+                this._inst.temps_reel.last_alerte_id,
+                function OK(clientWs) {
+                    console.log('Connecté');
+                }.bind(this),
+                function KO(err) {
+                    console.error('ERREUR WS : %o', err);
+                }.bind(this)
+            );
         }.bind(this));
     },
 
