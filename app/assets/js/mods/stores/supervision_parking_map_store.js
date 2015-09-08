@@ -113,6 +113,9 @@ var store = Reflux.createStore({
         var htmlClass = 'afficheur_label';
         var menu = new BootstrapMenu('.' + htmlClass, {
             menuEvent: 'click',
+            fetchElementData: function ($afficheur) {
+                console.log('Afficheur cliqué: %o', $afficheur);
+            },
             actions: afficheurHelper.supervisionContextMenu()
         });
     },

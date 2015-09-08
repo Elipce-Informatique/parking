@@ -113,6 +113,7 @@ function generateAfficheurLabel(afficheur) {
 
 /**
  * Retourne les options de contextMenu pour les afficheurs en mode supervision
+ *
  * @returns {*[]}
  */
 function supervisionContextMenu() {
