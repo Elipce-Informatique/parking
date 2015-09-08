@@ -314,7 +314,6 @@ var parkingMap = React.createClass({
                     console.log('AFFICHEUR.polyline VIDE');
                 }
 
-                // TODO ATTACHER LE CONTEXTMENU
             }
             //else{
             //    console.log('Afficheur undefined');
@@ -322,8 +321,8 @@ var parkingMap = React.createClass({
 
         }, this);
 
-        // AJOUT TOOLTIP UNE FOIS LA BOUCLE PASSEE
-        $("[data-afficheur-wrapper]").tooltip({html: true});
+        // ATTACHE LE CONTEXTMENU
+        Actions.map.label_afficheurs_add();
 
         this.setState({
             isModalOpen: false
@@ -363,11 +362,10 @@ var parkingMap = React.createClass({
             // AFFICHAGE DU NOUVEAU LABEL
             aff.showLabel();
 
-            // TODO ATTACHER LE CONTEXTMENU
         }, this);
 
-        // MISE EN PLACE DES TOOLTIPS jQuery
-        $("[data-afficheur-wrapper]").tooltip({html: true});
+        // ATTACHE LE CONTEXTMENU
+        Actions.map.label_afficheurs_add();
     },
 
     /**

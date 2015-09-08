@@ -1,3 +1,4 @@
+var BootstrapMenu = require('bootstrap-menu');
 var mapOptions = require('../helpers/map_options');
 var mapHelper = require('../helpers/map_helper');
 var zoneHelper = require('../helpers/zone_helper');
@@ -81,75 +82,40 @@ var store = Reflux.createStore({
         });
     },
     onFeature_allee_add: function (e) {
-        console.log('feature allee add : %o', e);
+        console.log('feature ALLEE add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
             contextmenuItems: alleeHelper.supervisionContextMenu(e, this)
         });
     },
     onFeature_zone_add: function (e) {
-        console.log('feature zone add : %o', e);
+        console.log('feature ZONE add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
-            contextmenuItems: [{
-                text: '<b>' + e.layer.options.data.libelle + '</b>',
-                index: 0
-            }, {
-                separator: true,
-                index: 1
-            }, {
-                text: Lang.get('global.modifier'),
-                index: 2,
-                callback: function (evt) {
-                    console.log('callback place : %o', this);
-                    // LANCEMENT DU MODAL DE MODIF DE ZONES
-                    var data = {
-                        layer: this.layer
-                    };
-                    var retour = {
-                        type: mapOptions.type_messages.edit_zone,
-                        data: data
-                    };
-                    this.storeContext.trigger(retour);
-                }.bind({
-                        e: e,
-                        storeContext: this
-                    })
-            }]
+            contextmenuItems: zoneHelper.supervisionContextMenu(e, this)
         });
     },
     onFeature_afficheur_add: function (e) {
-        console.log('feature afficheur add : %o', e);
-        e.layer.bindContextMenu({
-            contextmenu: true,
-            contextmenuItems: [{
-                text: '<b>' + e.layer.options.data.libelle + '</b>',
-                index: 0
-            }, {
-                separator: true,
-                index: 1
-            }, {
-                text: Lang.get('global.modifier'),
-                index: 2,
-                callback: function (evt) {
-                    console.log('callback place : %o', this);
-                    // LANCEMENT DU MODAL DE MODIF DE AFFICHEURS
-                    var data = {
-                        layer: this.layer
-                    };
-                    var retour = {
-                        type: mapOptions.type_messages.edit_afficheur,
-                        data: data
-                    };
-                    this.storeContext.trigger(retour);
-                }.bind({
-                        e: e,
-                        storeContext: this
-                    })
-            }]
-        });
+        console.log('feature AFFICHEUR add : %o', e);
+        // Rien à faire sur l'ajout des afficheurs à proprement parlé.
     },
 
+    /**
+     * Appellée lorsu'un label est attaché à un afficheur via
+     * afficheur.bindLabel
+     * @param e
+     */
+    onLabel_afficheurs_add: function (e) {
+        // AJOUT TOOLTIP UNE FOIS LA BOUCLE PASSEE
+        $("[data-afficheur-wrapper]").tooltip({html: true});
+
+        // ATTACHE LE MENU AU LABEL
+        var htmlClass = 'afficheur_label';
+        var menu = new BootstrapMenu('.' + htmlClass, {
+            menuEvent: 'click',
+            actions: afficheurHelper.supervisionContextMenu()
+        });
+    },
 
     /**
      * Appellé lors de l'initialisation de la map pour renseigner le calibre initial

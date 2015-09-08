@@ -232,27 +232,6 @@ function supervisionContextMenu(e, context) {
     return [{
         text: '<b>' + e.layer.options.data.libelle + '</b>',
         index: 0
-    }, {
-        separator: true,
-        index: 1
-    }, {
-        text: Lang.get('global.modifier'),
-        index: 2,
-        callback: function (evt) {
-            console.log('callback place : %o', this);
-            // LANCEMENT DU MODAL DE MODIF DE ALLEES
-            var data = {
-                layer: this.e.layer
-            };
-            var retour = {
-                type: mapOptions.type_messages.edit_allee,
-                data: data
-            };
-            this.storeContext.trigger(retour);
-        }.bind({
-                e: e,
-                storeContext: context
-            })
     }];
 }
 

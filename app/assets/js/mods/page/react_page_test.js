@@ -1,5 +1,6 @@
 /***********************/
 var React = require('react/addons');
+var BootstrapMenu = require('bootstrap-menu');
 /* Composants Boostrap */
 var Row = ReactB.Row;
 var Col = ReactB.Col;
@@ -157,7 +158,7 @@ var ReactPageTest = React.createClass({
                 free: "full"
             }],
 
-        sensorEvents : [
+        sensorEvents: [
             {
                 "class": "sensor",
                 "date": "2015-09-03T12:24:17",
@@ -1365,6 +1366,25 @@ var ReactPageTest = React.createClass({
         },
 
         componentDidMount: function () {
+            var menu = new BootstrapMenu('.testContext', {
+                //menuEvent: 'click',
+                actions: [{
+                    name: 'Action',
+                    onClick: function () {
+                        // run when the action is clicked
+                    }
+                }, {
+                    name: 'Another action',
+                    onClick: function () {
+                        // run when the action is clicked
+                    }
+                }, {
+                    name: 'A third action',
+                    onClick: function () {
+                        // run when the action is clicked
+                    }
+                }]
+            });
             this.setState({
                 options: [
                     {value: '1abricot', label: 'Abricot'},
@@ -1491,14 +1511,21 @@ var ReactPageTest = React.createClass({
             return (
                 <div>
                     <Form attributes={{id: "form_com"}}>
+                        <span className="testContext">
+                            Test contextMenu
+                        </span>
                         <h1>COMMUNICATION TOOL</h1>
                         <Button
                             onClick={function () {
                                 // Connexion controller
                                 supervision_helper.init(0, 0, 1, 0, function OK(clientWs) {
-                                    this.clientWs = clientWs;
-                                    console.log('Connecté');
-                                }.bind(this));
+                                        this.clientWs = clientWs;
+                                        console.log('Connecté');
+                                    }.bind(this),
+                                    function KO(err) {
+                                        console.error('ERREUR WS');
+                                    }.bind(this)
+                                );
                             }.bind(this)}>
                             Connexion
                         </Button>

@@ -232,21 +232,6 @@ var store = Reflux.createStore({
     },
     getInitialState: function () {
         var retour = {};
-
-        $.ajax({
-            type: 'GET',
-            url: BASE_URI + 'parking/plan/1',
-            async: false
-        })
-            .done(function (data) {
-                retour = {niveau: data};
-            })
-            .fail(function (xhr, type, exception) {
-                // if ajax fails display error alert
-                console.error("ajax error response error " + type);
-                console.error("ajax error response body " + xhr.responseText);
-            });
-
         return retour;
     },
     // Initial setup
@@ -373,7 +358,14 @@ var store = Reflux.createStore({
                 this._inst.planId,
                 this._inst.temps_reel.last_id,
                 this._inst.parkingId,
-                this._inst.temps_reel.last_alerte_id);
+                this._inst.temps_reel.last_alerte_id,
+                function OK(clientWs) {
+                    console.log('Connecté');
+                }.bind(this),
+                function KO(err) {
+                    console.error('ERREUR WS : %o', err);
+                }.bind(this)
+            );
         }.bind(this));
     },
 

@@ -1,5 +1,4 @@
 var mapHelper = require('./map_helper');
-var BootstrapMenu = require('bootstrap-menu');
 /**
  * Retourne le dernier point du polyline tracé.
  * Ce point servira à placer le marker de l'afficheur.
@@ -113,20 +112,34 @@ function generateAfficheurLabel(afficheur) {
 
 
 /**
- * Attache le contexte menu au label des afficheurs
- * @param htmlClass : classe des labels
+ * Retourne les options de contextMenu pour les afficheurs en mode supervision
+ * @returns {*[]}
  */
-function attachSupervisionAfficheurContextMenu(htmlClass) {
-    htmlClass = htmlClass ? htmlClass : 'html-afficheur';
+function supervisionContextMenu() {
 
-
+    return [{
+        name: 'Action',
+        onClick: function () {
+            // run when the action is clicked
+        }
+    }, {
+        name: 'Another action',
+        onClick: function () {
+            // run when the action is clicked
+        }
+    }, {
+        name: 'A third action',
+        onClick: function () {
+            // run when the action is clicked
+        }
+    }];
 }
 
 module.exports = {
     getCoordAfficheurFromPolyline: getCoordAfficheurFromPolyline,
     createAfficheursMapFromAfficheursBDD: createAfficheursMapFromAfficheursBDD,
     generateAfficheurLabel: generateAfficheurLabel,
-    attachSupervisionAfficheurContextMenu: attachSupervisionAfficheurContextMenu,
+    supervisionContextMenu: supervisionContextMenu,
     style: {
         color: '#000000',
         weight: 1,
