@@ -1,11 +1,9 @@
 /********************************************/
 var React = require('react');
-var ContextMenu = require('react-contextmenu').ContextMenu;
-var MenuItem = require('react-contextmenu').MenuItem;
-var ContextMenuLayer = require('react-contextmenu').ContextMenuLayer;
 var TreeView = require('react-bootstrap-treeview/dist/js/react-bootstrap-treeview');
 var Simulator = require('../simulator/react_simulator');
 var supervision_helper = require('../helpers/supervision_helper');
+var BootstrapMenu = require('bootstrap-menu');
 
 // COMPOSANTS NÉCESSAIRES:
 var Collapse = require('../composants/react_collapse').Collapse;
@@ -69,14 +67,44 @@ var Page = React.createClass({
     },
 
     componentWillMount: function () {
-        // TODO ligne a supprimer
-        //Simulator.init(3);
-
+        // Listen page store
         this.listenTo(store, this.updateState, this.updateState);
     },
 
-    componentDidMount: function () {
+    componentWillUpdate: function (np, ns) {
+        // TreeView update
+        if (!_.isEqual(ns.treeView, this.state.treeView)) {
 
+            // Variables langue
+            var txtOuverture = Lang.get('supervision.commandes.ouverture_parking');
+            var txtVeille = Lang.get('supervision.commandes.veille_parking');
+
+            // Parcours 1er étage du treeview
+            ns.treeView.forEach(function (item, index) {
+                // Menu click droit
+                new BootstrapMenu('[data-id='+item.id+']:not([data-parking-id])', {
+                    fetchElementData: function ($rowElem) {
+                        return {
+                            id: $rowElem.data('id'),
+                            etat: $rowElem.data('etat')
+                        };
+                    },
+                    actions: [{
+                        name: txtOuverture,
+                        onClick: function (data) {
+                            // run when the action is clicked
+                            console.log('click ouverture parking ', data);
+                        }
+                    }, {
+                        name: txtVeille,
+                        onClick: function (data) {
+                            // run when the action is clicked
+                            console.log('click veille parking ' + data);
+                        }
+                    }]
+                });
+            }, this);
+        }
     },
 
     shouldComponentUpdate: function (nextProps, nextState) {
@@ -101,22 +129,6 @@ var Page = React.createClass({
      * @returns {XML}
      */
     modeCarte: function () {
-
-        // CONTEXT MENU
-        var menu = (
-            <ContextMenu identifier="some_unique_identifier" currentItem={this.currentItem}>
-                <MenuItem data={"some_data"} onSelect={this.handleSelect}>
-                    ContextMenu Item 1
-                </MenuItem>
-                <MenuItem data={"some_data"} onSelect={this.handleSelect}>
-                    ContextMenu Item 2
-                </MenuItem>
-                <MenuItem divider />
-                <MenuItem data={"some_data"} onSelect={this.handleSelect}>
-                    ContextMenu Item 3
-                </MenuItem>
-            </ContextMenu>
-        );
 
         // CRÉATION TREEVIEW
         var treeView = '';
@@ -214,6 +226,10 @@ var Page = React.createClass({
         );
     },
 
+    getLibelleFromEtatParking: function(){
+
+    },
+
     render: function () {
         var retour = '';
 
@@ -251,21 +267,6 @@ var store = Reflux.createStore({
     },
     getInitialState: function () {
         var retour = {};
-
-        $.ajax({
-            type: 'GET',
-            url: BASE_URI + 'parking/plan/1',
-            async: false
-        })
-            .done(function (data) {
-                retour = {niveau: data};
-            })
-            .fail(function (xhr, type, exception) {
-                // if ajax fails display error alert
-                console.error("ajax error response error " + type);
-                console.error("ajax error response body " + xhr.responseText);
-            });
-
         return retour;
     },
     // Initial setup
@@ -282,6 +283,7 @@ var store = Reflux.createStore({
         // Init du treeView
         mapHelper.initTreeviewParkingAjax(function (data) {
             var dataTableau = mapHelper.recursiveTreeViewParking(data, 0);
+            //console.log('treeview: %o', dataTableau);
             this.trigger({treeView: dataTableau});
         }, this);
     },

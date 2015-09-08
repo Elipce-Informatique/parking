@@ -608,7 +608,12 @@ function initTreeviewParkingAjax(onSuccess, context) {
 function recursiveTreeViewParking(data, parkingId, logo) {
     var retour = _.map(data, function (d, i) {
 
-        var elt = {text: d.libelle, id: d.id, icon: ''};
+        var elt = {
+            text: d.libelle,
+            id: d.id,
+            icon: '',
+            etat: d.etat
+        };
         //var elt = {text: d.libelle, id: d.id, icon: 'glyphicon glyphicon-chevron-right'};
 
         // On est actuellement sur un parking
