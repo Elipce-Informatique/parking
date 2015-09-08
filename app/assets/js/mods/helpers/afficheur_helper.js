@@ -103,8 +103,8 @@ function generateAfficheurLabel(afficheur) {
         }, "", this) + '</table>';
 
     // GÉNÉRATION DU CONTENU DU LABEL
-    var htmlAfficheur = '<span class="html-afficheur" data-afficheur-wrapper data-toggle="tooltip" data-html="true"' +
-        ' title="' +
+    var htmlAfficheur = '<span class="html-afficheur" data-afficheur-wrapper data-afficheur="' + _.escape(JSON.stringify(afficheur.data)) +
+        '" data-toggle="tooltip" data-html="true" title="' +
         _.escape(htmlTooltip) +
         '">' + afficheur.data.defaut + '</span>';
     return htmlAfficheur;
@@ -113,24 +113,34 @@ function generateAfficheurLabel(afficheur) {
 
 /**
  * Retourne les options de contextMenu pour les afficheurs en mode supervision
- * @returns {*[]}
+ * @returns {*[]} un tableau d'options de menu
  */
 function supervisionContextMenu() {
-
     return [{
-        name: 'Action',
-        onClick: function () {
+        name: Lang.get('supervision.commandes.changer_signalisation'),
+        onClick: function (data) {
             // run when the action is clicked
+            swal({
+                html: true,
+                showCancelButton: true,
+                showConfirmButton: false,
+                cancelButtonText: Lang.get('global.annuler'),
+                title: Lang.get('supervision.commandes.placeholder'),
+                text: '<div id="circularG"> <div id="circularG_1" class="circularG"></div><div id="circularG_2" class="circularG"></div><div id="circularG_3" class="circularG"></div><div id="circularG_4" class="circularG"></div><div id="circularG_5" class="circularG"></div><div id="circularG_6" class="circularG"></div><div id="circularG_7" class="circularG"></div><div id="circularG_8" class="circularG"></div></div>'
+            });
         }
     }, {
-        name: 'Another action',
-        onClick: function () {
+        name: Lang.get('supervision.commandes.changer_compteur'),
+        onClick: function (data) {
             // run when the action is clicked
-        }
-    }, {
-        name: 'A third action',
-        onClick: function () {
-            // run when the action is clicked
+            swal({
+                html: true,
+                showCancelButton: true,
+                showConfirmButton: false,
+                cancelButtonText: Lang.get('global.annuler'),
+                title: Lang.get('supervision.commandes.placeholder'),
+                text: '<div id="circularG"> <div id="circularG_1" class="circularG"></div><div id="circularG_2" class="circularG"></div><div id="circularG_3" class="circularG"></div><div id="circularG_4" class="circularG"></div><div id="circularG_5" class="circularG"></div><div id="circularG_6" class="circularG"></div><div id="circularG_7" class="circularG"></div><div id="circularG_8" class="circularG"></div></div>'
+            });
         }
     }];
 }

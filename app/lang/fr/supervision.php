@@ -47,8 +47,6 @@ return array(
         'faire_clignoter' => 'Faire clignoter',
         'changer_signalisation' => 'Changer signalisation',
         'changer_compteur' => 'Changer compteur',
-        'ouverture_parking' => "Ouverture du parking",
-        'fermeture_parking' => "Fermeture du parking",
         'veille_parking' => "Activer le mode veille éco",
         'eveil_parking' => "Désactiver le mode veille éco",
         'placeholder' => "En attente de la communication..."

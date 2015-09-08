@@ -75,37 +75,36 @@ var store = Reflux.createStore({
      * ---------------------------------------------------------------------------
      */
     onFeature_place_add: function (e) {
-        console.log('feature PLACE add : %o', e);
+        //console.log('feature PLACE add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
             contextmenuItems: placeHelper.supervisionContextMenu(e, this)
         });
     },
     onFeature_allee_add: function (e) {
-        console.log('feature ALLEE add : %o', e);
+        //console.log('feature ALLEE add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
             contextmenuItems: alleeHelper.supervisionContextMenu(e, this)
         });
     },
     onFeature_zone_add: function (e) {
-        console.log('feature ZONE add : %o', e);
+        //console.log('feature ZONE add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
             contextmenuItems: zoneHelper.supervisionContextMenu(e, this)
         });
     },
     onFeature_afficheur_add: function (e) {
-        console.log('feature AFFICHEUR add : %o', e);
+        //console.log('feature AFFICHEUR add : %o', e);
         // Rien à faire sur l'ajout des afficheurs à proprement parlé.
     },
 
     /**
      * Appellée lorsu'un label est attaché à un afficheur via
      * afficheur.bindLabel
-     * @param e
      */
-    onLabel_afficheurs_add: function (e) {
+    onLabel_afficheurs_add: function () {
         // AJOUT TOOLTIP UNE FOIS LA BOUCLE PASSEE
         $("[data-afficheur-wrapper]").tooltip({html: true});
 
@@ -113,6 +112,11 @@ var store = Reflux.createStore({
         var htmlClass = 'afficheur_label';
         var menu = new BootstrapMenu('.' + htmlClass, {
             menuEvent: 'click',
+            fetchElementData: function (afficheur) {
+                var data = $(afficheur[0]).find('span').data('afficheur');
+                console.log('Data Afficheur cliqué: %o', data);
+                return data;
+            },
             actions: afficheurHelper.supervisionContextMenu()
         });
     },
