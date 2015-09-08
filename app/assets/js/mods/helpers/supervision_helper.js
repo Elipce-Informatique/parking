@@ -65,6 +65,9 @@ module.exports = {
             case "view_event":
                 this._handleViewEvent(message.data);
                 break;
+            case "parking_state":
+                this._handleParkingState(message.data);
+                break;
             default:
                 break;
         }
@@ -207,6 +210,33 @@ module.exports = {
         // Parse instances
         _.each(this._ajaxViewInstances, function ($req) {
             $req.abort();
+        });
+    },
+
+    handleParkingState: function(data){
+        // FormData
+        var fData = form_data_helper('', 'PUT');
+        fData.append('etat', data.etat)
+
+        // Requête
+        $.ajax({
+            url:  BASE_URI + 'parking/gestion_parking/' + data.id,
+            type: 'POST',
+            data: fData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            context: this,
+            success: function (data) {
+                // Send information to supervision page
+                Actions.supervision.parking_state_update(data);
+
+            },
+
+            error: function (xhr, status, err) {
+                console.error(status, err.toString());
+                Actions.notif.error('AJAX : ' + Lang.get('global.notif_erreur'));
+            }
         });
     }
 };
