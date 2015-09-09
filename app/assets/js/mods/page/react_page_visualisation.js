@@ -30,6 +30,7 @@ var MixinGestMod = require('../mixins/gestion_modif');
 var pageState = require('../helpers/page_helper').pageState;
 var mapHelper = require('../helpers/map_helper');
 
+
 /************************************************************************************************/
 /*                                                                                              */
 /*                               COMPOSANT REACT PAGE                                           */
@@ -74,15 +75,15 @@ var Page = React.createClass({
     componentWillUpdate: function (np, ns) {
         // TreeView update
         if (!_.isEqual(ns.treeView, this.state.treeView)) {
-
-            // Variables langue
-            var txtOuverture = Lang.get('supervision.commandes.ouverture_parking');
-            var txtVeille = Lang.get('supervision.commandes.veille_parking');
+            var libs = {};
 
             // Parcours 1er étage du treeview
             ns.treeView.forEach(function (item, index) {
+                // Libellé des items
+                libs = this.getLibelleFromEtatParking(item.etat);
+
                 // Menu click droit
-                new BootstrapMenu('[data-id='+item.id+']:not([data-parking-id])', {
+                new BootstrapMenu('[data-id=' + item.id + ']:not([data-parking-id])', {
                     fetchElementData: function ($rowElem) {
                         return {
                             id: $rowElem.data('id'),
@@ -90,16 +91,70 @@ var Page = React.createClass({
                         };
                     },
                     actions: [{
-                        name: txtOuverture,
+                        name: libs.item1,
                         onClick: function (data) {
                             // run when the action is clicked
-                            console.log('click ouverture parking ', data);
+                            console.log('click item 1 ', data);
+
+                            switch (data.etat) {
+                                case '0': // Etat actuel ouvert
+                                case '2': // etat actuel: veille
+                                    // TODO send message fermeture parking (ID parking= data.id)
+                                    // En attendant simulation d'une action
+                                    Actions.com.message_controller({
+                                        messageType: "parking_state",
+                                        data:{
+                                            id: data.id,
+                                            etat: '1'
+                                        }
+                                    });
+                                    break;
+                                case '1': // etat actuel fermé
+                                    // TODO send message ouverture parking (ID parking= data.id)
+                                    Actions.com.message_controller({
+                                        messageType: "parking_state",
+                                        data:{
+                                            id: data.id,
+                                            etat: '0'
+                                        }
+                                    });
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                     }, {
-                        name: txtVeille,
+                        name: libs.item2,
                         onClick: function (data) {
                             // run when the action is clicked
-                            console.log('click veille parking ' + data);
+                            console.log('click item 2 ', data);
+
+                            switch (data.etat) {
+                                case '0': // Etat actuel ouvert
+                                case '1': // etat actuel: fermé
+                                    // TODO send message veille parking (ID parking= data.id)
+                                    // En attendant simulation d'une action
+                                    Actions.com.message_controller({
+                                        messageType: "parking_state",
+                                        data:{
+                                            id: data.id,
+                                            etat: '2'
+                                        }
+                                    });
+                                    break;
+                                case '2': // etat actuel veille
+                                    // TODO send message ouverture parking (ID parking= data.id)
+                                    Actions.com.message_controller({
+                                        messageType: "parking_state",
+                                        data:{
+                                            id: data.id,
+                                            etat: '0'
+                                        }
+                                    });
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                     }]
                 });
@@ -150,7 +205,8 @@ var Page = React.createClass({
                     'data-plan-id': 'plan-id',
                     'data-parking-id': 'parking-id',
                     'data-url': 'url',
-                    'data-logo': 'logo'
+                    'data-logo': 'logo',
+                    'data-etat': 'etat'
                 }}
                 nodeIcon= "glyphicon glyphicon-eye-close small"
                 nodeIconSelected= "glyphicon glyphicon-eye-open small"
@@ -226,8 +282,36 @@ var Page = React.createClass({
         );
     },
 
-    getLibelleFromEtatParking: function(){
+    /**
+     * Change le libellé des items de menu clic droit en fonction de l'état du parking
+     * @param etat: 0,1,2 champ parking.etat
+     */
+    getLibelleFromEtatParking: function (etat) {
 
+        var retour = {};
+        switch (etat) {
+            case '0': // Ouvert
+                retour = {
+                    item1: Lang.get('supervision.commandes.fermeture_parking'),
+                    item2: Lang.get('supervision.commandes.veille_parking')
+                }
+                break;
+            case '1': // Fermé
+                retour = {
+                    item1: Lang.get('supervision.commandes.ouverture_parking'),
+                    item2: Lang.get('supervision.commandes.veille_parking')
+                }
+                break;
+            case '2': // Veille éco
+                retour = {
+                    item1: Lang.get('supervision.commandes.fermeture_parking'),
+                    item2: Lang.get('supervision.commandes.eveil_parking')
+                }
+                break;
+            default:
+                break;
+        }
+        return retour;
     },
 
     render: function () {
@@ -254,6 +338,7 @@ module.exports = Page;
 /************************************************************************************************/
 var store = Reflux.createStore({
     _inst: {
+        treeView: [],
         planId: 0,
         url: '',
         parkingId: 0,
@@ -271,19 +356,17 @@ var store = Reflux.createStore({
     },
     // Initial setup
     init: function () {
-        this.listenTo(Actions.bandeau.creer, this._create);
-        this.listenTo(Actions.bandeau.editer, this._edit);
-        this.listenTo(Actions.bandeau.supprimer, this._suppr);
-        this.listenTo(Actions.validation.submit_form, this._save);
         this.listenTo(Actions.map.plan_selected, this._plan_selected);
 
         this.listenTo(Actions.supervision.temps_reel_update_journal, this._update_temps_reel_journal);
         this.listenTo(Actions.supervision.temps_reel_update_alertes, this._update_temps_reel_alertes);
+        this.listenTo(Actions.supervision.parking_state_update, this._parking_state_update);
 
         // Init du treeView
         mapHelper.initTreeviewParkingAjax(function (data) {
             var dataTableau = mapHelper.recursiveTreeViewParking(data, 0);
             //console.log('treeview: %o', dataTableau);
+            this._inst.treeView = dataTableau;
             this.trigger({treeView: dataTableau});
         }, this);
     },
@@ -441,23 +524,21 @@ var store = Reflux.createStore({
         this.trigger(this._inst);
     },
 
-    // Action create du bandeau
-    _create: function () {
+    /**
+     * Action clic droit sur le treeview
+     * @param data {save, errorBdd, model}
+     * @private
+     */
+    _parking_state_update: function (data) {
+        // Parse treeview
+        this._inst.treeView.forEach(function(item){
+            // Parking updated
+            if(item.id == data.model.id){
+                item.etat = data.model.etat
+            }
+        }, this);
 
-    },
-
-// Action edit du bandeau
-    _edit: function () {
-
-    },
-
-// Action suppr du bandeau
-    _suppr: function () {
-
-    },
-
-// Action save du bandeau
-    _save: function () {
-
+        // MAJ affichage
+        this.trigger(this._inst);
     }
 });
