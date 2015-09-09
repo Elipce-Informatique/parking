@@ -61,7 +61,7 @@ module.exports = {
                 onError(err);
             }
         });
-        // MODE TEST AJAX
+
         if (!this._timer) {
             this._timer = setInterval(this.timerUpdate.bind(this), 3000);
         }
