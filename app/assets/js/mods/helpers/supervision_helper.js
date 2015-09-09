@@ -9,6 +9,8 @@ var W3CWebSocket = require('websocket').w3cwebsocket;
 module.exports = {
 
     _timer: false,
+    _displayDFU: false,
+    _sensorDFU: false,
     _planId: 0,
     _journalId: 0,
     _parkingId: 0,
@@ -35,7 +37,7 @@ module.exports = {
         this._journalId = journalId;
         this._parkingId = parkingId;
         this._journalAlerteId = journalAlerteId;
-        //this.destroyTimerPlaces();
+        this.destroyTimerPlaces();
 
         // CONNEXION AU WEBSOCKET ET ÉCOUTE DES MESSAGES QUI NOUS INTÉRESSENT
         com_helper.client.initWebSocket(parkingId, function (client) {
@@ -59,6 +61,10 @@ module.exports = {
                 onError(err);
             }
         });
+        // MODE TEST AJAX
+        if (!this._timer) {
+            this._timer = setInterval(this.timerUpdate.bind(this), 3000);
+        }
     },
 
     /**
@@ -71,7 +77,7 @@ module.exports = {
         switch (message.messageType) {
             case "sensor_event":
                 // UPDATE TOUT LE BAZAR
-                this._handleAjax();
+                this._sensorDFU = true;
                 break;
             case "view_event":
                 // UPDATE DISPLAYS in the data
@@ -79,6 +85,22 @@ module.exports = {
                 break;
             default:
                 break;
+        }
+    },
+
+    timerUpdate: function () {
+        // Abord AJAX si on doit en relancer
+        this._displayDFU || this._sensorDFU ? this.abortViewAjax() : null;
+
+        if (this._sensorDFU) {
+            this._sensorDFU = false;
+            console.log('PASS sensor updates');
+            this._handleAjax();
+        }
+        if (this._displayDFU) {
+            console.log('PASS display updates');
+            this._displayDFU = false;
+            this._handleViewAJAX();
         }
     },
 
@@ -141,7 +163,6 @@ module.exports = {
      */
     _handleAjax: function () {
         // 1 - UPDATE TABLEAU DE BORD EN PARALLÈLE
-        this.abortAjax();
         Actions.supervision.tableau_bord_update(this._parkingId);
 
         // --------------------------------------
@@ -230,12 +251,14 @@ module.exports = {
         // console.log('ID views %o', idViews);
         // Merge array views to update
         this._viewsIdToUpdate = this._viewsIdToUpdate.concat(idViews);
+        this._displayDFU = true;
+    },
 
         // Refresh View en cours
         this._abortViewAjax();
 
         // Data ajax
-        var data = {
+        var dataAjax = {
             ids: this._viewsIdToUpdate
         };
 
@@ -245,7 +268,7 @@ module.exports = {
             url: BASE_URI + 'parking/afficheur/updateAfficheurs',
             dataType: 'json',
             context: this,
-            data: data,
+            data: dataAjax,
             global: false
         })
             .done(function (data) {
@@ -253,7 +276,7 @@ module.exports = {
                 // Refresh afficheurs on the map
                 Actions.map.refresh_afficheurs(data);
                 // Views to update processed
-                this._viewsIdToUpdate = [];
+                this._viewsIdToUpdate = _.difference(this._viewsIdToUpdate, dataAjax.ids);
             })
             .fail(function (xhr, type, exception) {
                 // Abort effectué par nos soins pour ne pas rafraichir tant que la précédent refresh n'est pas fini.

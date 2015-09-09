@@ -22,6 +22,8 @@ function EventsLifeCycle(events_controller) {
     if (this instanceof EventsLifeCycle === false) {
         throw new TypeError("Classes can't be function-called");
     }
+    logger.log('info', 'UUUUUUUUUUUUUUUUUUUUUUU PASS constructeur Events');
+
 
     // ATTRIBUTES DECLARATION
     this.ackID = 0;
@@ -29,6 +31,11 @@ function EventsLifeCycle(events_controller) {
     this.events_controller = events_controller;
     this.eventsStored = [];
     this.ackIDStored = [];
+
+    // Mysql connexion with pool : only 1 connexion VERY IMORTANT
+    if (this.pool === null) {
+        this.pool = require('../utils/mysql_helper.js').pool();
+    }
 }
 
 // -----------------------------------------------------------------
@@ -53,11 +60,6 @@ EventsLifeCycle.prototype.startEventLoop = function () {
  */
 EventsLifeCycle.prototype.onEventData = function (data) {
     logger.log('info', '#2 onEventData ' + data.ackID, data);
-
-    // Mysql connexion with pool : only 1 connexion VERY IMORTANT
-    if (this.pool === null) {
-        this.pool = require('../utils/mysql_helper.js').pool();
-    }
 
     // Update ackID to the new value
     //this.ackID = _.isNumber(data.ackID) ? data.ackID : this.ackID;

@@ -1,7 +1,9 @@
+// CONFIG
+var conf = require('./config/config.js');
 // Variables
 global.modeDev = process.env.PRODUCTION && process.env.PRODUCTION != 'false';
-global.port = getPort(26000);
-global.host = global.modeDev ? '85.14.137.12' : '127.0.0.1';
+global.port = getPort(global.modeDev ? conf.prod.port : conf.dev.port);
+global.host = global.modeDev ? conf.prod.host : conf.dev.host;
 global.ssl = true;
 global.controllerClient = null;
 global.supervisionClients = [];
@@ -20,18 +22,11 @@ var errorHandler = require('./src/utils/error_handler.js');
 var WebSocketServer = require('ws').Server;
 var _ = require('lodash');
 var fs = require('fs');
-global.i18n = require('i18n');
 
 // Event Emitter
 var EventEmitter = require("events").EventEmitter;
 global.events = new EventEmitter();
 
-// Langugae traduction
-i18n.configure({
-    locales: ['fr', 'en'],
-    directory: './locales',
-    defaultLocale: 'fr'
-});
 
 // We should load config from elsewhere...
 var cfg = {
@@ -54,13 +49,9 @@ var processRequest = function (req, res) {
     logger.log('info', 'Request on the https server !');
     res.writeHead(200);
 
-    // INIT language conversion
-    i18n.init(req, res);
-
     // delay a response to simulate a long running process,
     // while another request comes in with altered language settings
-    res.end(res.__('end'));
-
+    res.end('All glory to WebSockets!');
 };
 
 if (cfg.ssl) {

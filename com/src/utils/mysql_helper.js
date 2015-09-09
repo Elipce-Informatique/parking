@@ -2,22 +2,13 @@
 var mysql = require('mysql');
 var logger = require('./logger.js');
 var _ = require('lodash');
+var conf = require('../../config/config.js');
 
 // TODO get all that config from elsewhere ?
 var mysqlClass = {
 
-    connexionInfos: (process.env.PRODUCTION && process.env.PRODUCTION == 'true') ? {
-        host: 'localhost',
-        user: 'parking',
-        password: 'bruno2015',
-        database: 'parking'
-    } :
-    {
-        host: '192.168.1.220',
-        user: 'root',
-        password: 'elipce',
-        database: 'parking'
-    },
+    connexionInfos: (process.env.PRODUCTION && process.env.PRODUCTION == 'true') ? conf.prod.database :
+        conf.dev.database,
 
 
     standardConnexion: function () {
