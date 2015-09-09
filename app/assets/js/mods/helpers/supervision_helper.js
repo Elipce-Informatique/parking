@@ -76,7 +76,6 @@ module.exports = {
     },
 
     timerUpdate: function () {
-        console.log('PASS timer update');
         // Abord AJAX si on doit en relancer
         this._displayDFU || this._sensorDFU ? this.abortViewAjax() : null;
 
