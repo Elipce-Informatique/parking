@@ -90,7 +90,8 @@ module.exports = {
 
     timerUpdate: function () {
         // Abord AJAX si on doit en relancer
-        this._displayDFU || this._sensorDFU ? this.abortViewAjax() : null;
+        this._displayDFU ? this._abortViewAjax() : null;
+        this._sensorDFU ? this._abortAjax() : null;
 
         if (this._sensorDFU) {
             this._sensorDFU = false;
@@ -235,7 +236,7 @@ module.exports = {
     /**
      * Annule toutes les requêtes ajax en cours de type sensor
      */
-    abortAjax: function () {
+    _abortAjax: function () {
         _.each(this._ajaxInstances, function ($req) {
             $req.abort();
         });
@@ -254,9 +255,7 @@ module.exports = {
         this._displayDFU = true;
     },
 
-        // Refresh View en cours
-        this._abortViewAjax();
-
+    _handleViewAJAX: function () {
         // Data ajax
         var dataAjax = {
             ids: this._viewsIdToUpdate

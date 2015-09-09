@@ -435,7 +435,7 @@ var store = Reflux.createStore({
             var data = $elt.data();
 
             supervision_helper.destroyTimerPlaces();
-            supervision_helper.abortAjax();
+            supervision_helper._abortAjax();
             //Simulator.init(data.id);
 
             this._inst = _.extend(this._inst, {
