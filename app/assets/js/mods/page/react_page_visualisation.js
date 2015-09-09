@@ -73,97 +73,147 @@ var Page = React.createClass({
     },
 
     componentWillUpdate: function (np, ns) {
-        // TreeView update
-        if (!_.isEqual(ns.treeView, this.state.treeView)) {
-            var libs = {};
 
-            // Parcours 1er étage du treeview
-            ns.treeView.forEach(function (item, index) {
-                // Libellé des items
-                libs = this.getLibelleFromEtatParking(item.etat);
-
-                // Menu click droit
-                new BootstrapMenu('[data-id=' + item.id + ']:not([data-parking-id])', {
-                    fetchElementData: function ($rowElem) {
-                        return {
-                            id: $rowElem.data('id'),
-                            etat: $rowElem.data('etat')
-                        };
-                    },
-                    actions: [{
-                        name: libs.item1,
-                        onClick: function (data) {
-                            // run when the action is clicked
-                            console.log('click item 1 ', data);
-
-                            switch (data.etat) {
-                                case '0': // Etat actuel ouvert
-                                case '2': // etat actuel: veille
-                                    // TODO send message fermeture parking (ID parking= data.id)
-                                    // En attendant simulation d'une action
-                                    Actions.com.message_controller({
-                                        messageType: "parking_state",
-                                        data:{
-                                            id: data.id,
-                                            etat: '1'
-                                        }
-                                    });
-                                    break;
-                                case '1': // etat actuel fermé
-                                    // TODO send message ouverture parking (ID parking= data.id)
-                                    Actions.com.message_controller({
-                                        messageType: "parking_state",
-                                        data:{
-                                            id: data.id,
-                                            etat: '0'
-                                        }
-                                    });
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                    }, {
-                        name: libs.item2,
-                        onClick: function (data) {
-                            // run when the action is clicked
-                            console.log('click item 2 ', data);
-
-                            switch (data.etat) {
-                                case '0': // Etat actuel ouvert
-                                case '1': // etat actuel: fermé
-                                    // TODO send message veille parking (ID parking= data.id)
-                                    // En attendant simulation d'une action
-                                    Actions.com.message_controller({
-                                        messageType: "parking_state",
-                                        data:{
-                                            id: data.id,
-                                            etat: '2'
-                                        }
-                                    });
-                                    break;
-                                case '2': // etat actuel veille
-                                    // TODO send message ouverture parking (ID parking= data.id)
-                                    Actions.com.message_controller({
-                                        messageType: "parking_state",
-                                        data:{
-                                            id: data.id,
-                                            etat: '0'
-                                        }
-                                    });
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                    }]
-                });
-            }, this);
-        }
     },
 
-    shouldComponentUpdate: function (nextProps, nextState) {
-        return true;
+    componentDidUpdate: function (pp, ps) {
+
+        //console.log('DidUpdate %o, %o', _.cloneDeep(ps.treeView), _.cloneDeep(this.state.treeView));
+        // TreeView update
+        //if (!_.isEqual(ps.treeView, this.state.treeView)) { // ATTENTION ne fonctionne pas les state sont identiques, laissez commenté
+        var libs = {};
+        //console.log('treeview modifié');
+        // Parcours 1er étage du treeview
+        this.state.treeView.forEach(function (item, index) {
+            // Libellé des items
+            libs = this.getLibelleFromEtatParking(item.etat);
+
+            // Menu click droit
+            new BootstrapMenu('[data-id=' + item.id + ']:not([data-parking-id])', {
+                fetchElementData: function ($rowElem) {
+                    //console.log('dans fetch : %o, %o',$('[data-id=' + item.id + ']:not([data-parking-id])').data('etat'), $rowElem.data('etat'));
+                    return {
+                        id: $rowElem.data('id'),
+                        //etat: $rowElem.data('etat') // Les modifications du DOM par le state sont BIEN pas prises en compte. Ce pendant la fonction .data() renvoie la 1ere valeur du DOM
+                        etat: parseInt($rowElem.attr('data-etat'))
+                    };
+                },
+                actions: [{
+                    name: libs.item1,
+                    onClick: function (data) {
+                        //console.log('click item 1 ', data);
+                        // Connexion websocket
+                        supervision_helper.initParkingState(data.id);
+
+                        // Envoi un message au controller en fonction de l'état actuel du parking
+                        switch (data.etat) {
+                            case 0: // Etat actuel ouvert
+                            case 2: // etat actuel: veille
+                                // TODO send message fermeture parking (ID parking= data.id)
+                                if (window.modeDev) {
+                                    // En attendant simulation d'une action, on attend que le listen soit fait
+                                    window.setTimeout(function () {
+                                        Actions.com.message_controller({
+                                            messageType: "parking_state",
+                                            data: {
+                                                id: data.id,
+                                                etat: '1'
+                                            }
+                                        });
+                                    }, 2000);
+                                }
+                                // Mode production
+                                else {
+                                    this.swalNoCom();
+                                }
+                                break;
+                            case 1: // etat actuel fermé
+                                // TODO send message ouverture parking (ID parking= data.id)
+                                if (window.modeDev) {
+                                    window.setTimeout(function () {
+                                        Actions.com.message_controller({
+                                            messageType: "parking_state",
+                                            data: {
+                                                id: data.id,
+                                                etat: '0'
+                                            }
+                                        });
+                                    }, 2000);
+                                }
+                                // Mode production
+                                else {
+                                    this.swalNoCom();
+                                }
+                                break;
+                            default:
+                                console.log('etat default ' + data.etat);
+                                break;
+                        }
+                    }.bind(this)
+                }, {
+                    name: libs.item2,
+                    onClick: function (data) {
+                        // run when the action is clicked
+                        //console.log('click item 2 ', data);
+
+                        switch (data.etat) {
+                            case 0: // Etat actuel ouvert
+                            case 1: // etat actuel: fermé
+                                // TODO send message veille parking (ID parking= data.id)
+                                if (window.modeDev) {
+                                    window.setTimeout(function () {
+                                        // En attendant simulation d'une action
+                                        Actions.com.message_controller({
+                                            messageType: "parking_state",
+                                            data: {
+                                                id: data.id,
+                                                etat: '2'
+                                            }
+                                        });
+                                    }, 2000);
+                                }
+                                // Mode production
+                                else {
+                                    this.swalNoCom();
+                                }
+                                break;
+                            case 2: // etat actuel veille
+                                // TODO send message ouverture parking (ID parking= data.id)
+                                if (window.modeDev) {
+                                    window.setTimeout(function () {
+                                        Actions.com.message_controller({
+                                            messageType: "parking_state",
+                                            data: {
+                                                id: data.id,
+                                                etat: '0'
+                                            }
+                                        });
+                                    }, 2000);
+                                }
+                                // Mode production
+                                else {
+                                    this.swalNoCom();
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }]
+            });
+        }, this);
+        //}
+    },
+
+    swalNoCom: function () {
+        swal({
+            html: true,
+            showCancelButton: true,
+            showConfirmButton: false,
+            cancelButtonText: Lang.get('global.annuler'),
+            title: Lang.get('supervision.commandes.placeholder'),
+            text: '<div id="circularG"> <div id="circularG_1" class="circularG"></div><div id="circularG_2" class="circularG"></div><div id="circularG_3" class="circularG"></div><div id="circularG_4" class="circularG"></div><div id="circularG_5" class="circularG"></div><div id="circularG_6" class="circularG"></div><div id="circularG_7" class="circularG"></div><div id="circularG_8" class="circularG"></div></div>'
+        });
     },
 
     /**
@@ -172,6 +222,7 @@ var Page = React.createClass({
      */
     updateState: function (data) {
         // MAJ data automatique, lifecycle "UPDATE"
+        //console.log('UPDATE STATE %o', _.cloneDeep(data));
         this.setState(data);
     },
 
@@ -531,14 +582,17 @@ var store = Reflux.createStore({
      */
     _parking_state_update: function (data) {
         // Parse treeview
-        this._inst.treeView.forEach(function(item){
+        this._inst.treeView.forEach(function (item, index) {
+            //console.log('item %o',item);
+            //console.log('model %o',data.model);
             // Parking updated
-            if(item.id == data.model.id){
-                item.etat = data.model.etat
+            if (item.id == data.model.id) {
+                this._inst.treeView[index]['etat'] = data.model.etat
             }
         }, this);
 
         // MAJ affichage
+        //console.log('TRIGGER %o', this._inst);
         this.trigger(this._inst);
     }
 });

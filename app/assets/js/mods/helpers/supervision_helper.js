@@ -4,6 +4,7 @@
 
 var com_helper = require('./com_helper');
 var form_data_helper = require('./form_data_helper');
+var W3CWebSocket = require('websocket').w3cwebsocket;
 
 module.exports = {
 
@@ -14,10 +15,20 @@ module.exports = {
     _journalAlerteId: 0,
     _ajaxInstances: {},
     _unsubscribe: null,
+    _unsubscribeParkingState: null,
     _viewsIdToUpdate: [],
     _ajaxViewInstances: {},
 
 
+    /**
+     * Init supervision lors de la sélection d'un plan + Ecoute des actions du serveur WS
+     * @param planId
+     * @param journalId
+     * @param parkingId
+     * @param journalAlerteId
+     * @param onConnexion
+     * @param onError
+     */
     init: function (planId, journalId, parkingId, journalAlerteId, onConnexion, onError) {
         // INIT DATA
         this._planId = planId;
@@ -36,18 +47,18 @@ module.exports = {
             this._unsubscribe = Actions.com.message_controller.listen(this._onWSMessage.bind(this));
 
             // Give the client in a callback
-            onConnexion(client);
+            if(onConnexion !== undefined) {
+                onConnexion(client);
+            }
 
             //console.log('LISTEN MESSAGE CTRL');
         }.bind(this), function (err) {
             console.warn('Erreur de connexion au WS : %o', err);
             swal(Lang.get('global.com.errConnServer'));
-            onError(err);
+            if(onError!== undefined) {
+                onError(err);
+            }
         });
-        // MODE TEST AJAX
-        //if (!this._timer) {
-        //    this._timer = setInterval(this._handleAjax.bind(this), 5000);
-        //}
     },
 
     /**
@@ -63,14 +74,65 @@ module.exports = {
                 this._handleAjax();
                 break;
             case "view_event":
+                // UPDATE DISPLAYS in the data
                 this._handleViewEvent(message.data);
-                break;
-            case "parking_state":
-                this._handleParkingState(message.data);
                 break;
             default:
                 break;
         }
+    },
+
+    /**
+     * Connexion au serveur de WS + Ecoute de l'action parking_state du serveur WS
+     * @param parkingId
+     * @param onConnexion
+     * @param onError
+     */
+    initParkingState: function(parkingId, onConnexion, onError){
+        // WS déjà connecté
+        if(window.clientWs instanceof W3CWebSocket){
+            // Listen parking events
+            this._listenParkingState();
+            console.log('Listen parking state');
+        }
+        else{
+            // CONNEXION AU WEBSOCKET ET ÉCOUTE DES MESSAGES QUI NOUS INTÉRESSENT
+            com_helper.client.initWebSocket(parkingId, function (client) {
+
+                // Listen parking events
+                this._listenParkingState();
+                console.log('Listen parking state');
+
+                // Give the client in a callback
+                if(onConnexion !== undefined) {
+                    onConnexion(client);
+                }
+
+                //console.log('LISTEN MESSAGE CTRL');
+            }.bind(this), function (err) {
+                console.warn('Erreur de connexion au WS : %o', err);
+                swal(Lang.get('global.com.errConnServer'));
+                if(onError!== undefined) {
+                    onError(err);
+                }
+            });
+        }
+    },
+
+    /**
+     * Listen parking state messages from controller +
+     * @private
+     */
+    _listenParkingState: function(){
+        if (this._unsubscribeParkingState != null && typeof this._unsubscribeParkingState === "function") {
+            this._unsubscribeParkingState();
+        }
+        this._unsubscribeParkingState = Actions.com.message_controller.listen(function(message){
+            // Parking state
+            if(message.messageType == "parking_state"){
+                this._handleParkingState(message.data);
+            }
+        }.bind(this));
     },
 
     /**
@@ -170,7 +232,7 @@ module.exports = {
         this._viewsIdToUpdate = this._viewsIdToUpdate.concat(idViews);
 
         // Refresh View en cours
-        this.abortViewAjax();
+        this._abortViewAjax();
 
         // Data ajax
         var data = {
@@ -206,21 +268,28 @@ module.exports = {
     /**
      * Annule toutes les requêtes ajax en cours de type view
      */
-    abortViewAjax: function () {
+    _abortViewAjax: function () {
         // Parse instances
         _.each(this._ajaxViewInstances, function ($req) {
             $req.abort();
         });
     },
 
-    handleParkingState: function(data){
+    /**
+     * Met à jour le state dans la BDD et informe la supervision
+     * @param data
+     * @private
+     */
+    _handleParkingState: function(data){
+        //console.log('_handleParkingState() %o', data);
         // FormData
         var fData = form_data_helper('', 'PUT');
         fData.append('etat', data.etat)
 
         // Requête
+        // TODO creer route update etat
         $.ajax({
-            url:  BASE_URI + 'parking/gestion_parking/' + data.id,
+            url:  BASE_URI + 'parking/gestion_parking/update_state/' + data.id,
             type: 'POST',
             data: fData,
             processData: false,
@@ -228,6 +297,7 @@ module.exports = {
             dataType: 'json',
             context: this,
             success: function (data) {
+                //console.log('retour ajax %o',data);
                 // Send information to supervision page
                 Actions.supervision.parking_state_update(data);
 

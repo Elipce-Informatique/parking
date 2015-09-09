@@ -485,7 +485,8 @@ class ParkingsController extends \BaseController
         return json_encode(Parking::isLibelleExists($libelle, $id));
     }
 
-    public function initialized($id){
+    public function initialized($id)
+    {
         // Variable de retour
         $retour = [
             'save' => true,
@@ -493,13 +494,12 @@ class ParkingsController extends \BaseController
             'model' => null
         ];
 
-        try{
+        try {
             $model = Parking::find($id);
             $model->init = '1';
             $model->save();
             $retour['model'] = $model;
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             Log::error('Error set parking.init = 1');
             $retour['errorBdd'] = true;
             $retour['save'] = false;
@@ -507,5 +507,41 @@ class ParkingsController extends \BaseController
         return json_encode($retour);
     }
 
+    /**
+     * Met à jour le state du parking sans controle
+     * @param $id
+     * @return array
+     */
+    public function updateState($id)
+    {
+        // TODO insert joutrnal_parking
+        // Variable de retour
+        $retour = [
+            'save' => true,
+            'errorBdd' => false,
+            'model' => null
+        ];
+
+        // Les données passées en PUT
+        $fields = Input::all();
+
+        try {
+            // Parking à modifier
+            $model = Parking::find($id);
+
+            // Update parking
+            $model->update($fields);
+
+            // Le model complet
+            $retour['model'] = $model;
+
+        } catch (Exception $e) {
+            Log::error("Erreur updateState parking. " . $e->getMessage());
+            $retour['errorBdd'] = true;
+            $retour['save'] = false;
+        }
+
+        return $retour;
+    }
 
 }
