@@ -51,7 +51,7 @@ var processRequest = function (req, res) {
 
     // delay a response to simulate a long running process,
     // while another request comes in with altered language settings
-    res.end(res.__('end'));
+    res.end('All glory to WebSockets!');
 };
 
 if (cfg.ssl) {
