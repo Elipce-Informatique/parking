@@ -32,7 +32,7 @@ module.exports = {
         this.config.sendSettingsQuery(client);
     },
     unBindEvents: function () {
-        // TODO ATTENTION code à améliorer: une seule instance de config, suppressio de tous les listeners
+        // TODO ATTENTION code à améliorer: une seule instance de config, suppression de tous les listeners
         this.config.removeAllListeners('configurationData');
         this.config.removeAllListeners('busConfigData');
         this.config.removeAllListeners('sensorConfigData');
