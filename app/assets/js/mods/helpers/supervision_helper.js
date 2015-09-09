@@ -185,6 +185,7 @@ module.exports = {
         // console.log('ID views %o', idViews);
         // Merge array views to update
         this._viewsIdToUpdate = this._viewsIdToUpdate.concat(idViews);
+        this._displayDFU = true;
     },
 
     _handleViewAJAX: function () {
