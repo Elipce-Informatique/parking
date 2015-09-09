@@ -46,7 +46,7 @@ module.exports = {
             swal(Lang.get('global.com.errConnServer'));
             onError(err);
         });
-        // MODE TEST AJAX
+
         if (!this._timer) {
             this._timer = setInterval(this.timerUpdate.bind(this), 3000);
         }
