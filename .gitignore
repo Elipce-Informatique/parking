@@ -26,6 +26,7 @@ bower_components
 node_modules
 vendor
 com/log
+app/storage
 
 # OS or Editor folders
 ._*
