@@ -41,3 +41,8 @@ com/log
 *.sublime-workspace
 nbproject
 Thumbs.db
+
+# Global config for parkings
+app/assets/js/config
+app/config
+com/config
