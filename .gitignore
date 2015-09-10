@@ -46,3 +46,4 @@ Thumbs.db
 #app/assets/js/config
 #app/config
 #com/config
+deploy.sh
