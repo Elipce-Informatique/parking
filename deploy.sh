@@ -1,3 +1,3 @@
 #!/bin/sh
 
-git pull origin p00-test --ff-only
+git pull --ff-only origin p00-test
