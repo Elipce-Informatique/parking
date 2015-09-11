@@ -76,7 +76,10 @@ gulp.task('deploy', ['clean'], function () {
     gulp.start('deploy-task');
 });
 gulp.task('deploy-task', ['css', 'js', 'images'], function () {
-    notify({message: 'CALLBACK deploy task end process should stop'});
+    console.log('CALLBACK deploy task end process should stop');
+    process.nextTick(function () {
+        process.exit(0);
+    });
 });
 
 /*
