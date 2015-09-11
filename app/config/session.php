@@ -29,7 +29,7 @@ return array(
     |
     */
 
-    'lifetime' => 525948,
+    'lifetime' => 525948, // 1an
 
     'expire_on_close' => true,
 

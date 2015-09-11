@@ -18,13 +18,13 @@ module.exports = {
         }
     },
     prod: {
-        host: '85.14.137.12',
-        port: 26000,
+        host: '185.24.155.69',
+        port: 26023,
         database: {
             host: 'localhost',
-            user: 'parking',
-            password: 'bruno2015',
-            database: 'parking'
+            user: 'p023',
+            password: 'p023',
+            database: 'p023'
         }
     }
 };

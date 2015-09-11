@@ -54,24 +54,14 @@ return array(
 
         'mysql' => array(
             'driver'    => 'mysql',
-            'host'      => '85.14.137.12',
-            'database'  => 'parking',
-            'username'  => 'parking_distant',
-            'password'  => 'bruno2015',
+            'host'      => 'localhost',
+            'database'  => 'p023',
+            'username'  => 'p023',
+            'password'  => 'p023',
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
         ),
-//        'mysql' => array(
-//            'driver'    => 'mysql',
-//            'host'      => '192.168.1.220',
-//            'database'  => 'parking',
-//            'username'  => 'root',
-//            'password'  => 'elipce',
-//            'charset'   => 'utf8',
-//            'collation' => 'utf8_unicode_ci',
-//            'prefix'    => '',
-//        ),
 
 		'pgsql' => array(
 			'driver'   => 'pgsql',
