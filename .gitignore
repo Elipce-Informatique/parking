@@ -26,6 +26,7 @@ bower_components
 node_modules
 vendor
 com/log
+app/storage
 
 # OS or Editor folders
 ._*
@@ -41,3 +42,8 @@ com/log
 *.sublime-workspace
 nbproject
 Thumbs.db
+
+# Global config for parkings
+app/assets/js/config
+app/config
+com/config

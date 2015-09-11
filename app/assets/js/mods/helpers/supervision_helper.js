@@ -129,14 +129,14 @@ module.exports = {
      * @param onConnexion
      * @param onError
      */
-    initParkingState: function(parkingId, onConnexion, onError){
+    initParkingState: function (parkingId, onConnexion, onError) {
         // WS déjà connecté
         if(window.clientWs !== null){
             // Listen parking events
             this._listenParkingState();
             console.log('Listen parking state');
         }
-        else{
+        else {
             // CONNEXION AU WEBSOCKET ET ÉCOUTE DES MESSAGES QUI NOUS INTÉRESSENT
             com_helper.client.initWebSocket(parkingId, function (client) {
 
@@ -145,7 +145,7 @@ module.exports = {
                 console.log('Listen parking state');
 
                 // Give the client in a callback
-                if(onConnexion !== undefined) {
+                if (onConnexion !== undefined) {
                     onConnexion(client);
                 }
 
@@ -153,7 +153,7 @@ module.exports = {
             }.bind(this), function (err) {
                 console.warn('Erreur de connexion au WS : %o', err);
                 swal(Lang.get('global.com.errConnServer'));
-                if(onError!== undefined) {
+                if (onError !== undefined) {
                     onError(err);
                 }
             });
@@ -164,13 +164,13 @@ module.exports = {
      * Listen parking state messages from controller +
      * @private
      */
-    _listenParkingState: function(){
+    _listenParkingState: function () {
         if (this._unsubscribeParkingState != null && typeof this._unsubscribeParkingState === "function") {
             this._unsubscribeParkingState();
         }
-        this._unsubscribeParkingState = Actions.com.message_controller.listen(function(message){
+        this._unsubscribeParkingState = Actions.com.message_controller.listen(function (message) {
             // Parking state
-            if(message.messageType == "parking_state"){
+            if (message.messageType == "parking_state") {
                 this._handleParkingState(message.data);
             }
         }.bind(this));
@@ -320,7 +320,7 @@ module.exports = {
      * @param data
      * @private
      */
-    _handleParkingState: function(data){
+    _handleParkingState: function (data) {
         //console.log('_handleParkingState() %o', data);
         // FormData
         var fData = form_data_helper('', 'PUT');
@@ -329,7 +329,7 @@ module.exports = {
         // Requête
         // TODO creer route update etat
         $.ajax({
-            url:  BASE_URI + 'parking/gestion_parking/update_state/' + data.id,
+            url: BASE_URI + 'parking/gestion_parking/update_state/' + data.id,
             type: 'POST',
             data: fData,
             processData: false,
