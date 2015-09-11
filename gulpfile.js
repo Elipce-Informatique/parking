@@ -70,6 +70,8 @@ gulp.task('default', ['clean'], function () {
 });
 gulp.task('build', ['watch', 'css', 'js', 'images']);
 
+gulp.task('deploy', ['css', 'js', 'images']);
+
 /*
  |--------------------------------------------------------------------------
  | SETUP DES WATCHERS
