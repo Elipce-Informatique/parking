@@ -70,7 +70,14 @@ gulp.task('default', ['clean'], function () {
 });
 gulp.task('build', ['watch', 'css', 'js', 'images']);
 
-gulp.task('deploy', ['css', 'js', 'images']);
+
+// Déploiement en mode réel, tout sauf le watch
+gulp.task('deploy', ['clean'], function () {
+    gulp.start('deploy-task');
+});
+gulp.task('deploy-task', ['css', 'js', 'images'], function () {
+    notify({message: 'CALLBACK deploy task end process should stop'});
+});
 
 /*
  |--------------------------------------------------------------------------
