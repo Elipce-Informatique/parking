@@ -401,7 +401,6 @@ var store = Reflux.createStore({
      * ---------------------------------------------------------------------------
      */
     onFeature_place_add: function (e) {
-        console.log('ADD PLACE');
         e.layer.bindContextMenu({
             contextmenu: true,
             contextmenuItems: placeHelper.administrationContextMenu(e, this)
@@ -601,6 +600,9 @@ var store = Reflux.createStore({
             case "form_mod_edit_place":
                 this.handleUpdatePlace(formId, formDom);
                 break;
+            case "form_mod_afficheur":
+                this.handleAfficheur(formId, formDom);
+                break;
 
             default:
                 break;
@@ -698,6 +700,14 @@ var store = Reflux.createStore({
             // NOMBRE DE POTEAUX INCORRECT
             swal(Lang.get('administration_parking.carte.swal_interval_incorrect'));
         }
+    },
+
+    /**
+     * Insert l'afficheur saisi dans le form
+     */
+    handleAfficheur: function (formId, formDom) {
+        console.log('Afficheur saisi !');
+        var fData = formDataHelper(formId, 'POST');
     },
 
     handleUpdatePlace: function (formId, formDom) {
