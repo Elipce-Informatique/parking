@@ -527,7 +527,89 @@ module.exports = {
             });
 
         });// fin _.each
+    },
+
+    /**
+     * Insert sensors in supervision DB
+     * @param pool: mysql connexion
+     * @param busId: bus.id
+     * @param sensors: sensors array
+     */
+    insertSensorsFromBusEnum: function (pool, busId, sensors) {
+        logger.log('info', 'SENSORS FROM BUS ENUM TO INSERT ', sensors);
+
+        var params = [];
+        var adresse = 1;
+        var mysqlHelper = require('../utils/mysql_helper.js');
+        var sensorsInserted = [];
+        var libelle = '';
+
+        var sqlBus = "SELECT b.id " +
+            "FROM server_com s " +
+            "JOIN parking p ON p.id=s.parking_id " +
+            "JOIN concentrateur c ON c.parking_id=p.id " +
+            "JOIN bus b ON b.concentrateur_id=c.id " +
+            "WHERE s.protocol_port =" + global.port + " " +
+            "AND b.v4_id = ? ";
+
+        var sqlSensor = "INSERT IGNORE INTO capteur (bus_id, adresse, libelle, sn) " +
+            "VALUES ((" + sqlBus + "), ?, ?, ?)";
+
+        // TRANSACTION
+        var trans = pool.startTransaction();
+        // Parse sensors
+        sensors.forEach(function (sensor) {
+            // Adress
+            adresse = parseInt(sensor.param.leg) * parseInt(sensor.param.index);
+            libelle = 'Sensor #' + busId + '#' + adresse;
+            // Prepare sql
+            params = [
+                busId,
+                adresse,
+                libelle,
+                sensor.ssn
+            ];
+
+            // Insert bus
+            mysqlHelper.execute(pool, sqlSensor, params, function (err, result) {
+                // INSERT KO
+                if (err && trans.rollback) {
+                    trans.rollback();
+                    logger.log('error', 'TRANSACTION ROLLBACK', err);
+                    throw err;
+                }
+                // INSERT OK
+                else {
+                    sensorsInserted.push({
+                        ID: result.insertId,
+                        busId: busId,
+                        address: adresse,
+                        spaceType: "generic"
+                    })
 
 
+                }
+            });
+        }, this);
+        // Commit INSERT counters
+        var promise = Q.Promise(function (resolve, reject) {
+            trans.commit(function (err, info) {
+                if (err) {
+                    reject(err);
+                    logger.log('error', 'TRANSACTION COMMIT ERROR');
+                } else {
+                    resolve(assocs);
+                    logger.log('info', 'TRANSACTION COMMIT COUNTERS OK');
+                }
+            });
+        })
+
+        // Execute the queue INSERT counters
+        trans.execute();
+
+        // Insert counters finished
+        promise.then(function (assocs) {
+
+        });
     }
 };
