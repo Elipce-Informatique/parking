@@ -48,12 +48,12 @@ var ModalAfficheur = React.createClass({
             listBuses: [],
             concentrateur_id: '',
             bus_id: '',
-            reference: '',
-            manufacturer: '',
-            model_name: '',
-            serial_number: '',
-            software_version: '',
-            hardware_version: ''
+            reference: 'test',
+            manufacturer: 'tesst',
+            model_name: 'tessst',
+            serial_number: 'tet',
+            software_version: 'tesssst',
+            hardware_version: 'tessssst'
         };
     },
     componentWillMount: function () {
@@ -83,6 +83,7 @@ var ModalAfficheur = React.createClass({
     },
 
     render: function () {
+        console.log('state dans le render: %o', this.state);
         return (
             <Modal
                 title={Lang.get('administration_parking.carte.titre_afficheur')}
@@ -254,11 +255,9 @@ var store = Reflux.createStore({
      * @param data
      */
     updateForm: function (data) {
-        console.log('This %o', this);
         var dat = {};
         // MAJ du state STORE
         dat[data.name] = data.value;
-        //console.log('data %o',data);
         this.localState = _.extend(this.localState, dat);
 
         switch (data.name) {
@@ -266,7 +265,6 @@ var store = Reflux.createStore({
             case 'concentrateur_id':
                 this.localState.bus_id = "";
                 this.localState.listBuses = this.getBusCombo(data.value);
-                console.log('listBuses: %o', this.localState.listBuses);
                 this.trigger(this.localState);
                 break;
             // Bus selected
@@ -280,7 +278,6 @@ var store = Reflux.createStore({
      * @param parkId : id du parking
      */
     loadInitData: function (parkId) {
-        //console.log('PASS INIT DATA avec id : %o', parkId);
 
         $.ajax({
             type: 'GET',
@@ -293,9 +290,7 @@ var store = Reflux.createStore({
             .done(function (data) {
                 this.handleAjaxResult(data);
                 var concentrateursData = this.getConcentrateurCombo();
-                console.log('PASS LOAD INIT');
                 this.localState.listConcentrateurs = concentrateursData;
-                console.log('this INIT : %o', this);
                 this.trigger(this.localState);
             })
             .fail(function (xhr, type, exception) {

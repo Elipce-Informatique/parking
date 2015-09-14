@@ -708,6 +708,7 @@ var store = Reflux.createStore({
     handleAfficheur: function (formId, formDom) {
         console.log('Afficheur saisi !');
         var fData = formDataHelper(formId, 'POST');
+
     },
 
     handleUpdatePlace: function (formId, formDom) {
