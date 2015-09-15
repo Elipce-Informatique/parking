@@ -48,12 +48,18 @@ var ModalAfficheur = React.createClass({
             listBuses: [],
             concentrateur_id: '',
             bus_id: '',
-            reference: 'test',
-            manufacturer: 'tesst',
-            model_name: 'tessst',
-            serial_number: 'tet',
-            software_version: 'tesssst',
-            hardware_version: 'tessssst'
+            reference: '',
+            manufacturer: '',
+            model_name: '',
+            serial_number: '',
+            software_version: '',
+            hardware_version: ''
+            //reference: 'test',
+            //manufacturer: 'tesst',
+            //model_name: 'tessst',
+            //serial_number: 'tet',
+            //software_version: 'tesssst',
+            //hardware_version: 'tessssst'
         };
     },
     componentWillMount: function () {
