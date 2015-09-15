@@ -706,9 +706,54 @@ var store = Reflux.createStore({
      * Insert l'afficheur saisi dans le form
      */
     handleAfficheur: function (formId, formDom) {
-        console.log('Afficheur saisi !');
-        var fData = formDataHelper(formId, 'POST');
+        var forme = this._inst.lastDraw.e;
+        var lat, lng, ligne;
 
+        // RÉCUPÉRATION DES DONNÉES À ENVOYER :
+        var fData = formDataHelper(formId, 'POST');
+        fData.append('plan_id', this._inst.planInfos.id);
+        switch (forme.layerType) {
+            case "marker":
+                fData.append('lat', forme.layer._latlng.lat);
+                fData.append('lng', forme.layer._latlng.lng);
+                break;
+            case "polyline":
+                var coords = _.last(forme.layer._latlngs);
+                fData.append('ligne', JSON.stringify(forme.layer._latlngs));
+                fData.append('lat', coords.lat);
+                fData.append('lng', coords.lng);
+                break;
+            default:
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: BASE_URI + 'parking/afficheur',
+            processData: false,
+            contentType: false,
+            context: this,
+            data: fData
+        })
+            .done(function (data) {
+                console.log('Ajax afficheur DONE : %o', data);
+                if (typeof data == 'object') {
+                    Actions.notif.success();
+                    var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD([data]);
+
+                    var message = {
+                        type: mapOptions.type_messages.add_afficheurs,
+                        data: afficheursMap
+                    };
+                    this.trigger(message);
+                } else {
+                    Actions.notif.error();
+                }
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
     },
 
     handleUpdatePlace: function (formId, formDom) {

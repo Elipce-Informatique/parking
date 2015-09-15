@@ -32,7 +32,7 @@ return array(
     'carte' => [
         'erreur_polygon' => 'Les lignes d\'un polygon ne peuvent pas se croiser',
         'titre_places_multiples' => 'Configuration de la série de places',
-        'titre_afficheur' => 'Localisation d\'un afficheur',
+        'titre_afficheur' => 'Création d\'un afficheur',
         'titre_calibre' => 'Configuration du calibre',
         'titre_capteur' => 'Capteurs de place',
         'titre_zone' => 'Création d\'une zone',

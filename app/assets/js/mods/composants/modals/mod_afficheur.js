@@ -59,7 +59,6 @@ var ModalAfficheur = React.createClass({
     componentWillMount: function () {
         this.listenTo(store, this.updateData);
         initModale(this.props.parkingId, this.props.planId, this.props.drawData);
-        console.log('Plan WILLMOUNT Id : %o', this.props.planId);
     },
 
     componentDidMount: function () {
@@ -83,7 +82,6 @@ var ModalAfficheur = React.createClass({
     },
 
     render: function () {
-        console.log('state dans le render: %o', this.state);
         return (
             <Modal
                 title={Lang.get('administration_parking.carte.titre_afficheur')}
