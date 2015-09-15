@@ -162,5 +162,31 @@ module.exports = {
 
         });// fin _.each
 
+    },
+
+    /**
+     * Get all parking buses
+     * @param port: listening parking port
+     * @param callback: callback function with result parameter
+     */
+    getBuses: function(port, callback){
+        var connexion = require('../utils/mysql_helper.js').standardConnexion();
+
+        var sql = "" +
+            "SELECT b.id, b.concentrateur_id AS controllerID, b.type AS busType, b.num AS busNumber, " +
+            "b.protocole AS protocol, b.parameter, b.name " +
+            "FROM bus b " +
+            "JOIN concentrateur c ON c.id=b.concentrateur_id " +
+            "JOIN parking p ON p.id=c.parking_id " +
+            "JOIN server_com s ON s.parking_id=p.id " +
+            "WHERE s.protocol_port = ? " ;
+
+        mysqlHelper.execute(pool, sql, [global.port], function(err, result){
+
+            callback(err, result);
+            // End the connection once the callback is done
+            // to avoid the fatal error due to the server timeout
+            connexion.end();
+        });
     }
 };

@@ -4,20 +4,99 @@
 // Dependencies
 var util = require('util');
 var EventEmitter = require('events').EventEmitter;
+var Q = require('q');
 
 // Local modules
 var logger = require('../utils/logger.js');
 var messenger = require('../utils/messenger.js');
+var sensorModel = require('../models/sensor.js');
+var displayModel = require('../models/display.js');
 
 /**
- * Class that handle events messages.
+ * Class that handle bus enum messages.
  */
 function BusEnumeration() {
     EventEmitter.call(this);
+
+    // VARIABLES
+    this.sensors = {};
+    this.displays = {};
+    this.pool = null;
+    // Mysql connexion with pool : only 1 connexion VERY IMORTANT
+    if (this.pool === null) {
+        this.pool = require('../utils/mysql_helper.js').pool();
+    }
 }
 
 // Extend EventEmitter to use this.emit
 util.inherits(BusEnumeration, EventEmitter);
+
+/**
+ * Start a background bus enumeration job on controller
+ * @param bus: bus infos
+ */
+BusEnumeration.prototype.startJobBusEnum = function (bus) {
+
+    messenger.sendToController("startJob", {
+        job: "busEnum",
+        class: "bus",
+        ID: bus.id
+    })
+}
+
+/**
+ * Controller answer a bus enum start job
+ * @param data: see usherJSON
+ */
+BusEnumeration.prototype.onBusEnum = function (data) {
+    // State "start" just an information
+    switch (data.state) {
+        case "update":
+            // Store equipment in DB
+            switch (data.param.class) {
+                case "sensor": // sensor to insert
+                    if (this.sensors[data.ID] === undefined) {
+                        this.sensors[data.ID] = [];
+                    }
+                    this.sensors[data.ID].push(data.param);
+                    break;
+                case "display": // display to insert
+                    if (this.displays[data.ID] === undefined) {
+                        this.displays[data.ID] = [];
+                    }
+                    this.displays[data.ID].push(data.param);
+                    break;
+                default:
+                    logger.log('error', 'onBusEnum equipment ' + data.param.class + ' does not exist');
+                    break;
+            }
+            break;
+        case "done":
+            // Process sensors inserts on the bus
+            if(this.sensors[data.ID] !== undefined && this.sensors[data.ID].length > 0) {
+                sensorModel.insertSensorsFromBusEnum(this.pool, data.ID, this.sensors[data.ID])
+                    .then(function ok(sensorsInserted){
+                        // Mode prod
+                        if(!this.modeDev){
+                            // TODO send to controller
+
+                        }
+                }, function ko(){
+
+                    });
+            }
+            // Displays inserts
+            if(this.displays[data.ID] !== undefined && this.displays[data.ID].length > 0) {
+                displayModel.insertDisplaysFromBusEnum(data.ID, this.displays[data.ID]);
+            }
+            break;
+        case "failed":
+            break;
+        default:
+            break;
+    }
+
+}
 
 
 module.exports = BusEnumeration;
