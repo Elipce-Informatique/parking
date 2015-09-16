@@ -114,6 +114,7 @@ require('sweetalert');
         "mode_alerte_full",
         "mode_alerte_change",
         "mode_reservation",
+        "mode_capteur_afficheur",
         // ACTIONS POUR LES MODALES
         "pm_creer", // places multiples
         // ACTIONS DE RAFRAICHISSEMENT

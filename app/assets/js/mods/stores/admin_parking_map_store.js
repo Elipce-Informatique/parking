@@ -570,6 +570,19 @@ var store = Reflux.createStore({
         }
     },
 
+    onMode_capteur_afficheur: function (data) {
+        this._inst.currentMode = mapOptions.dessin.capteur_afficheur;
+
+        var retour = {
+            type: mapOptions.type_messages.mode_change,
+            data: {
+                mode: mapOptions.dessin.capteur_afficheur
+            }
+        };
+
+        this.trigger(retour);
+    },
+
     /**
      * ---------------------------------------------------------------------------
      * VALIDATION DES FORMULAIRES ------------------------------------------------

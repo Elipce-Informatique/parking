@@ -59,6 +59,7 @@ var parkingMap = React.createClass({
             alleesGroup: {},                      // Layer group contenant toutes les allées
             zonesGroup: {},                       // Layer group contenant toutes les zones
             afficheursGroup: {},                  // Layer group contenant tous les afficheurs
+            capteurAfficheursGroup: {},           // Layer group contenant tous les afficheurs
             calibreGroup: {},                     // Juste pour l'init du calibre
             drawControl: {},                      // Barre d'outils de dessin active sur la carte
             infosControl: undefined,              // Cadre d'informations en bas à droite de la carte
@@ -150,6 +151,8 @@ var parkingMap = React.createClass({
         this._inst.map.addLayer(this._inst.zonesGroup);
         this._inst.afficheursGroup = new L.FeatureGroup();
         this._inst.map.addLayer(this._inst.afficheursGroup);
+        this._inst.capteurAfficheursGroup = new L.FeatureGroup();
+        this._inst.map.addLayer(this._inst.capteurAfficheursGroup);
         this._inst.calibreGroup = new L.FeatureGroup();
         this._inst.map.addLayer(this._inst.calibreGroup);
 
@@ -231,6 +234,15 @@ var parkingMap = React.createClass({
      * Paramètre les boutons perso ajoutés à la carte
      */
     initCustomButtons: function () {
+        // CALIBRE
+        L.easyButton(
+            mapOptions.icon.calibre,
+            function () {
+                Actions.map.mode_calibre();
+            },
+            Lang.get('administration_parking.carte.calibrer'),
+            this._inst.map
+        );
 
         // PLACE DE PARKING
         L.easyButton(
@@ -272,16 +284,6 @@ var parkingMap = React.createClass({
             this._inst.map
         );
 
-        // AFFICHEUR
-        L.easyButton(
-            mapOptions.icon.afficheur,
-            function () {
-                Actions.map.mode_afficheur();
-            },
-            Lang.get('administration_parking.carte.ajouter_afficheur'),
-            this._inst.map
-        );
-
         // CAPTEUR
         L.easyButton(
             mapOptions.icon.capteur,
@@ -292,15 +294,26 @@ var parkingMap = React.createClass({
             this._inst.map
         );
 
-        // CALIBRE
+        // AFFICHEUR
         L.easyButton(
-            mapOptions.icon.calibre,
+            mapOptions.icon.afficheur,
             function () {
-                Actions.map.mode_calibre();
+                Actions.map.mode_afficheur();
             },
-            Lang.get('administration_parking.carte.calibrer'),
+            Lang.get('administration_parking.carte.ajouter_afficheur'),
             this._inst.map
         );
+
+        // CAPTEUR - AFFICHEUR
+        L.easyButton(
+            mapOptions.icon.capteur_afficheur,
+            function () {
+                Actions.map.mode_capteur_afficheur();
+            },
+            Lang.get('administration_parking.carte.lier_capteur_afficheur'),
+            this._inst.map
+        );
+
 
         // ---------------------------------------------------------
         // LANCEMENT DE L'ACTION POUR SÉLECTIONNER LE BOUTON "PLACE":
@@ -326,13 +339,22 @@ var parkingMap = React.createClass({
 
             // 2 CONSTRUCTION DES OPTIONS
             // ------- LES POLYLINES ----------
-            var polyline = (this._inst.currentMode == mapOptions.dessin.calibre || this._inst.currentMode == mapOptions.dessin.afficheur) ? {
+            var polyline = (
+            this._inst.currentMode == mapOptions.dessin.calibre ||
+            this._inst.currentMode == mapOptions.dessin.afficheur
+            ) ? {
                 shapeOptions: {
                     color: mapOptions.control.draw.colors[this._inst.currentMode]
                 }
             } : false;
             // ------- LES POLYGONS ----------
-            var polygon = (this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone || this._inst.currentMode == mapOptions.dessin.place_auto || this._inst.currentMode == mapOptions.dessin.place) ? {
+            var polygon = (
+            this._inst.currentMode == mapOptions.dessin.allee ||
+            this._inst.currentMode == mapOptions.dessin.zone ||
+            this._inst.currentMode == mapOptions.dessin.place_auto ||
+            this._inst.currentMode == mapOptions.dessin.place ||
+            this._inst.currentMode == mapOptions.dessin.capteur_afficheur
+            ) ? {
                 allowIntersection: false, // Restricts shapes to simple polygons
                 drawError: {
                     color: '#e1e100', // Color the shape will turn when intersects
@@ -346,7 +368,11 @@ var parkingMap = React.createClass({
             // ------- LES CERCLES ----------
             var circle = false;
             // ------- LES RECTANGLES ----------
-            var rectangle = (this._inst.currentMode == mapOptions.dessin.allee || this._inst.currentMode == mapOptions.dessin.zone || this._inst.currentMode == mapOptions.dessin.place) ? {
+            var rectangle = (
+            this._inst.currentMode == mapOptions.dessin.allee ||
+            this._inst.currentMode == mapOptions.dessin.zone ||
+            this._inst.currentMode == mapOptions.dessin.place
+            ) ? {
                 shapeOptions: {
                     color: mapOptions.control.draw.colors[this._inst.currentMode]
                 },
@@ -383,7 +409,8 @@ var parkingMap = React.createClass({
                     this._inst.currentMode == mapOptions.dessin.zone ||
                     this._inst.currentMode == mapOptions.dessin.place_auto ||
                     this._inst.currentMode == mapOptions.dessin.place ||
-                    this._inst.currentMode == mapOptions.dessin.afficheur
+                    this._inst.currentMode == mapOptions.dessin.afficheur ||
+                    this._inst.currentMode == mapOptions.dessin.capteur_afficheur
                     )
                 }
             };
@@ -597,6 +624,10 @@ var parkingMap = React.createClass({
             case mapOptions.dessin.calibre:
                 this.changeDrawToolbar(data.data.mode);
                 selectButton(mapOptions.icon.calibre);
+                break;
+            case mapOptions.dessin.capteur_afficheur:
+                this.changeDrawToolbar(data.data.mode);
+                selectButton(mapOptions.icon.capteur_afficheur);
                 break;
 
             default:

@@ -46,6 +46,7 @@ return array(
         'ajouter_allee' => 'Ajouter une allée',
         'ajouter_zone' => 'Ajouter une zone',
         'ajouter_afficheur' => 'Ajouter un afficheur',
+        'lier_capteur_afficheur' => 'Assoc Afficheur / Capteur',
         'calibrer' => 'Calibrer le plan',
         'capteur_place' => 'Capteur de place',
         'nb_places' => 'Nombre de places',
