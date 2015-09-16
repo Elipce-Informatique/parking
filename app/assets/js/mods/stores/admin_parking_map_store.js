@@ -227,6 +227,11 @@ var store = Reflux.createStore({
                 };
                 this.trigger(retour);
                 break;
+            case mapOptions.dessin.capteur_afficheur:
+                console.log('PASS FORME CAPTEUR_AFFICHEUR DESSINEE : %o', data);
+                afficheurHelper.getPlacesInAfficheur(data, this._inst);
+
+                break;
             // -------------------------------------------------------------
             // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
             default:
