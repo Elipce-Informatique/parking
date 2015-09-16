@@ -137,6 +137,7 @@ Config.prototype.getSupervisionBuses = function () {
         if (err) {
             logger.log('error', 'Model bus, function getBuses callback error');
         }
+        // Get busses OK
         else {
             this.emit('onGetSupervisionBuses', result);
         }

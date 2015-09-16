@@ -159,6 +159,11 @@ var FormParking = React.createClass({
         );
     },
 
+    /**
+     * Lance la procédure d'initialisation du parking en fonction du mode d'init
+     * TODO ajouter le mode
+     * @param e
+     */
     initParking: function (e) {
         // Connexion controller
         client.initWebSocket(this.props.detailParking.id, function (clientWs) {

@@ -15,7 +15,7 @@ module.exports = {
      * Starts the initialisation procedure
      */
     start: function (client, config) {
-        logger.log('info', 'START PARKING INIT');
+        logger.log('info', 'START PARKING INIT 0');
         this.config = null;
         if (config instanceof Config) {
             this.config = config;
