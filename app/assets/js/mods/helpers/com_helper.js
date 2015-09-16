@@ -100,10 +100,12 @@ var messages = ({
      *************** CONTROLLER CONFIGURATION ************************
      ***************************************************************/
 
-    initParking: function () {
+    initParking: function (mode) {
         return {
             messageType: 'init_parking',
-            data: {}
+            data: {
+                mode: mode
+            }
         };
     },
     /**

@@ -23,7 +23,7 @@ module.exports = {
      * @param busEnum: bus_enumeration controller instance (commands/bus_enumeration.js)
      */
     start: function (client, config, busEnum) {
-        logger.log('info', 'START PARKING INIT V1');
+        logger.log('info', 'START PARKING INIT 2');
         // Init config controller
         if (config instanceof Config) {
             this.config = config;

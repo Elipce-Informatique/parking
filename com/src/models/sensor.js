@@ -559,8 +559,8 @@ module.exports = {
         var trans = pool.startTransaction();
         // Parse sensors
         sensors.forEach(function (sensor) {
-            // Adress
-            adresse = parseInt(sensor.param.leg) * parseInt(sensor.param.index);
+            // Address
+            adresse = parseInt(sensor.param.leg) == 2 ? parseInt(sensor.param.index) + 127: parseInt(sensor.param.index);
             libelle = 'Sensor #' + busId + '#' + adresse;
             // Prepare sql
             params = [
@@ -584,10 +584,9 @@ module.exports = {
                         ID: result.insertId,
                         busId: busId,
                         address: adresse,
-                        spaceType: "generic"
+                        spaceType: "generic",
+                        serialNumber: sensor.ssn
                     })
-
-
                 }
             });
         }, this);
@@ -598,7 +597,7 @@ module.exports = {
                     reject(err);
                     logger.log('error', 'TRANSACTION COMMIT ERROR');
                 } else {
-                    resolve(assocs);
+                    resolve(sensorsInserted);
                     logger.log('info', 'TRANSACTION COMMIT COUNTERS OK');
                 }
             });
@@ -607,9 +606,6 @@ module.exports = {
         // Execute the queue INSERT counters
         trans.execute();
 
-        // Insert counters finished
-        promise.then(function (assocs) {
-
-        });
+       return promise;
     }
 };

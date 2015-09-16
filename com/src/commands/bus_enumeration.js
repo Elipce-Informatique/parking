@@ -11,6 +11,7 @@ var logger = require('../utils/logger.js');
 var messenger = require('../utils/messenger.js');
 var sensorModel = require('../models/sensor.js');
 var displayModel = require('../models/display.js');
+var helper = require('../utils/general_helper.js');
 
 /**
  * Class that handle bus enum messages.
@@ -41,7 +42,7 @@ BusEnumeration.prototype.startJobBusEnum = function (bus) {
         job: "busEnum",
         class: "bus",
         ID: bus.id
-    })
+    });
 }
 
 /**
@@ -54,7 +55,7 @@ BusEnumeration.prototype.onBusEnum = function (data) {
         case "update":
             // Store equipment in DB
             switch (data.param.class) {
-                case "sensor": // sensor to insert
+                case "sensor": // sensor to insert on the bus data.ID
                     if (this.sensors[data.ID] === undefined) {
                         this.sensors[data.ID] = [];
                     }
@@ -73,24 +74,36 @@ BusEnumeration.prototype.onBusEnum = function (data) {
             break;
         case "done":
             // Process sensors inserts on the bus
-            if(this.sensors[data.ID] !== undefined && this.sensors[data.ID].length > 0) {
+            if (this.sensors[data.ID] !== undefined && this.sensors[data.ID].length > 0) {
                 sensorModel.insertSensorsFromBusEnum(this.pool, data.ID, this.sensors[data.ID])
-                    .then(function ok(sensorsInserted){
-                        // Mode prod
-                        if(!this.modeDev){
-                            // TODO send to controller
+                    .then(function ok(sensorsInserted) {
+                        // Send sensors to controller DB
+                        messenger.sendToController("sensorConfigUpdate", {
+                            sensor: sensorsInserted
+                        });
+                        logger.log('info', 'sensorConfigUpdate ',sensorsInserted);
 
-                        }
-                }, function ko(){
+                        // Update network address
+                        var busEnumJson = helper.dbSensorsToBusEnum(sensorsInserted);
+                        messenger.sendToController("startJob", {
+                            job: "busEnum",
+                            class: "bus",
+                            ID: data.ID,
+                            param: busEnumJson
+                        });
+                        logger.log('info', 'busEnumUpdate ',busEnumJson);
 
+                    }, function ko(err) {
+                        logger.log('error', 'Supervision SB error : sensors not inserted from BusEnum ',err);
                     });
             }
             // Displays inserts
-            if(this.displays[data.ID] !== undefined && this.displays[data.ID].length > 0) {
+            if (this.displays[data.ID] !== undefined && this.displays[data.ID].length > 0) {
                 displayModel.insertDisplaysFromBusEnum(data.ID, this.displays[data.ID]);
             }
             break;
         case "failed":
+            logger.log('error', 'BusEnum failed on bus '+data.ID);
             break;
         default:
             break;

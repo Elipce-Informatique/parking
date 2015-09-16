@@ -33,6 +33,7 @@ function BusEnumerationSequence(busenum_controller) {
  * @param buses: buses list from supervision DB
  */
 BusEnumerationSequence.prototype.start = function (buses) {
+
     // Send bus enum on each semi bus
     buses.forEach(function(bus,index){
         // Send a startJobBusEnum to controller

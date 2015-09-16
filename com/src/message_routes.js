@@ -5,7 +5,9 @@ var busenum_controller = require('./commands/bus_enumeration.js'), busenum_contr
 var logger = require('./utils/logger.js');
 var errorHandler = require('./utils/error_handler.js');
 var ctrlSequence = require('./sequences/controller_connection.js');
-var initSequence = require('./sequences/init_parking.js');
+var initSequence0 = require('./sequences/init_parking_0.js');
+var initSequence1 = require('./sequences/init_parking_1.js');
+var initSequence2 = require('./sequences/init_parking_2.js');
 
 /**
  * Dispatches the message received to the right handler
@@ -18,16 +20,33 @@ module.exports.route = function (message, client) {
     // Dispatching the message to the right handler
     switch (message.messageType) {
         case 'init_parking':
-            initSequence.start(client, config_controller);
+            switch (data.mode) {
+                case 0: // GET init mode  (controller DB is full, supervision read it)
+                    initSequence0.start(client, config_controller);
+                    break
+                case 1: // SET mode with busEnum
+                    initSequence1.start(client, config_controller);
+                    break;
+                case 2: // SET mode with busEnum + virtual sensors
+                    initSequence2.start(client, config_controller);
+                    break;
+            }
+
             break;
         case 'job' : // Query the physical network
-            switch (message.data.job) {
-                case 'busEnum':
-                    busenum_controller.onBusEnum(message.data);
-                    break;
-                default:
-                    logger.log('error', 'DATA.JOB ERROR -> job: ' + message.data.job + ' unknown in the router');
-                    break;
+            if (message.error === undefined) {
+                switch (message.data.job) {
+                    case 'busEnum':
+                        busenum_controller.onBusEnum(message.data);
+                        break;
+                    default:
+                        logger.log('error', 'DATA.JOB ERROR -> job: ' + message.data.job + ' unknown in the router');
+                        break;
+                }
+            }
+            // Error bus enum
+            else {
+                logger.log('error', 'JOB START ERROR', message.error);
             }
             break;
         // Controller is connected
