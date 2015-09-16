@@ -72,10 +72,6 @@ var Page = React.createClass({
         this.listenTo(store, this.updateState, this.updateState);
     },
 
-    componentWillUpdate: function (np, ns) {
-
-    },
-
     componentDidUpdate: function (pp, ps) {
 
         //console.log('DidUpdate %o, %o', _.cloneDeep(ps.treeView), _.cloneDeep(this.state.treeView));
@@ -101,8 +97,8 @@ var Page = React.createClass({
                 actions: [{
                     name: libs.item1,
                     onClick: function (data) {
-                        //console.log('click item 1 ', data);
-                        // Connexion websocket
+                        console.log('click item 1 ', data);
+                        // Connexion websocket + ecoute parking state controller
                         supervision_helper.initParkingState(data.id);
 
                         // Envoi un message au controller en fonction de l'état actuel du parking
@@ -153,8 +149,9 @@ var Page = React.createClass({
                 }, {
                     name: libs.item2,
                     onClick: function (data) {
-                        // run when the action is clicked
-                        //console.log('click item 2 ', data);
+                        console.log('click item 2 ', data);
+                        // Connexion websocket + ecoute parking state controller
+                        supervision_helper.initParkingState(data.id);
 
                         switch (data.etat) {
                             case 0: // Etat actuel ouvert

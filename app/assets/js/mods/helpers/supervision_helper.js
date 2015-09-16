@@ -39,32 +39,50 @@ module.exports = {
         this._journalAlerteId = journalAlerteId;
         this.destroyTimerPlaces();
 
-        // CONNEXION AU WEBSOCKET ET ÉCOUTE DES MESSAGES QUI NOUS INTÉRESSENT
-        com_helper.client.initWebSocket(parkingId, function (client) {
 
-            if (this._unsubscribe != null && typeof this._unsubscribe === "function") {
-                console.log('Unsubscribe le ws');
-                this._unsubscribe();
-            }
-            this._unsubscribe = Actions.com.message_controller.listen(this._onWSMessage.bind(this));
+        // WS déjà connecté
+        if(window.clientWs !== null){
+            // Listen equipment events
+            this._listenEquipmentEvents();
+        }
+        else {
+            // CONNEXION AU WEBSOCKET ET ÉCOUTE DES MESSAGES QUI NOUS INTÉRESSENT
+            com_helper.client.initWebSocket(parkingId, function (client) {
+                // Listen equipment events
+                this._listenEquipmentEvents();
 
-            // Give the client in a callback
-            if (onConnexion !== undefined) {
-                onConnexion(client);
-            }
+                // Give the client in a callback
+                if (onConnexion !== undefined) {
+                    onConnexion(client);
+                }
 
-            //console.log('LISTEN MESSAGE CTRL');
-        }.bind(this), function (err) {
-            console.warn('Erreur de connexion au WS : %o', err);
-            swal(Lang.get('global.com.errConnServer'));
-            if (onError !== undefined) {
-                onError(err);
-            }
-        });
+                //console.log('LISTEN MESSAGE CTRL');
+            }.bind(this), function (err) {
+                console.warn('Erreur de connexion au WS : %o', err);
+                swal(Lang.get('global.com.errConnServer'));
+                if (onError !== undefined) {
+                    onError(err);
+                }
+            });
+        }
 
+        // Mises à jour de la supervision toutes les 3sec si on a reçu un message du controller
         if (!this._timer) {
             this._timer = setInterval(this.timerUpdate.bind(this), 3000);
         }
+    },
+
+    /**
+     * Ecoute les évènements capteur et afficheur envoyés par le controller
+     * @private
+     */
+    _listenEquipmentEvents: function(){
+
+        if (this._unsubscribe != null && typeof this._unsubscribe === "function") {
+            console.log('Unsubscribe le ws');
+            this._unsubscribe();
+        }
+        this._unsubscribe = Actions.com.message_controller.listen(this._onWSMessage.bind(this));
     },
 
     /**
@@ -113,7 +131,7 @@ module.exports = {
      */
     initParkingState: function (parkingId, onConnexion, onError) {
         // WS déjà connecté
-        if (window.clientWs instanceof W3CWebSocket) {
+        if(window.clientWs !== null){
             // Listen parking events
             this._listenParkingState();
             console.log('Listen parking state');

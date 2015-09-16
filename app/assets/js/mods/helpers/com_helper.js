@@ -20,11 +20,15 @@ module.exports.client = {
         this.host = conf[parkingId].host;
         this.port = conf[parkingId].port;
 
+        // ATTENTION window.clientWs instanceof W3CWebSocket return false tout le temps !!
         if (window.clientWs === null && !(window.clientWs instanceof W3CWebSocket)) {
             $.get('https://' + this.host + ':' + this.port)
                 .always(function () {
                     // CONNEXION WEBSOCKET CLIENT
                     window.clientWs = new W3CWebSocket('wss://' + this.host + ':' + this.port);
+
+                    //console.log('instance of %o', window.clientWs instanceof W3CWebSocket );
+                    //console.log('%o VS %o', Object.getPrototypeOf(window.clientWs), W3CWebSocket.prototype);// WebSosocket VS W3CWebSocket
 
                     // ERREUR
                     window.clientWs.onerror = function (err) {
@@ -96,10 +100,12 @@ var messages = ({
      *************** CONTROLLER CONFIGURATION ************************
      ***************************************************************/
 
-    initParking: function () {
+    initParking: function (mode) {
         return {
             messageType: 'init_parking',
-            data: {}
+            data: {
+                mode: mode
+            }
         };
     },
     /**

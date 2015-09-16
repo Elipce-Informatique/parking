@@ -22,7 +22,7 @@ function EventsLifeCycle(events_controller) {
     if (this instanceof EventsLifeCycle === false) {
         throw new TypeError("Classes can't be function-called");
     }
-    logger.log('info', 'UUUUUUUUUUUUUUUUUUUUUUU PASS constructeur Events');
+    //logger.log('info', 'UUUUUUUUUUUUUUUUUUUUUUU PASS constructeur Events');
 
 
     // ATTRIBUTES DECLARATION

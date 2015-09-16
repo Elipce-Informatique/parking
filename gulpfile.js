@@ -70,6 +70,18 @@ gulp.task('default', ['clean'], function () {
 });
 gulp.task('build', ['watch', 'css', 'js', 'images']);
 
+
+// Déploiement en mode réel, tout sauf le watch
+gulp.task('deploy', ['clean'], function () {
+    gulp.start('deploy-task');
+});
+gulp.task('deploy-task', ['css', 'js', 'images'], function () {
+    console.log('CALLBACK deploy task end process should stop');
+    process.nextTick(function () {
+        process.exit(0);
+    });
+});
+
 /*
  |--------------------------------------------------------------------------
  | SETUP DES WATCHERS

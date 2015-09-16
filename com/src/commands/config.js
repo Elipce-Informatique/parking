@@ -80,12 +80,12 @@ Config.prototype.sendCapabilities = function (client) {
  */
 Config.prototype.setParkingId = function () {
 
-    parkingModel.getInfos(global.port, function(err, result){
+    parkingModel.getInfos(global.port, function (err, result) {
 
-        if(err){
+        if (err) {
             logger.log('error', 'Model parking, function getInfos callback error');
         }
-        else{
+        else {
             global.parkingId = result[0]['id'];
         }
     });
@@ -130,6 +130,21 @@ Config.prototype.sendConfigurationUpdate = function (data) {
 
 // --------------------------------------------------------------------------------------------
 /**
+ * Get all parking buses
+ */
+Config.prototype.getSupervisionBuses = function () {
+    busModel.getBuses(global.port, function (err, result) {
+        if (err) {
+            logger.log('error', 'Model bus, function getBuses callback error');
+        }
+        // Get busses OK
+        else {
+            this.emit('onGetSupervisionBuses', result);
+        }
+    })
+};
+
+/**
  * Send a busConfigQuery to the controller
  * @param client : socket from which the initial query comes from
  */
@@ -152,15 +167,15 @@ Config.prototype.onBusConfigData = function (data) {
 
 };
 
-/** TODO
+/**
  * Send a busConfigUpdate to the controller
  * @param dataUpdate: data to send to the controller for the update
  */
 Config.prototype.sendBusConfigUpdate = function (dataUpdate) {
-
+    messenger.sendToController("busConfigUpdate" ,{ 'bus' : dataUpdate} , {}, client);
 };
 
-/** TODO
+/**
  * The last busConfigUpdate has been completed
  */
 Config.prototype.onBusConfigUpdateDone = function (data) {
@@ -190,7 +205,7 @@ Config.prototype.onSensorConfigData = function (data) {
         sensorModel.insertSensors(data.busID, data.sensor);
     }
     // No more sensors on the bus : END scan
-    else{
+    else {
         // Send to init_parking: sensors inserted on the current controller
         //logger.log('info', '------NOTIFICATION onEmptyBus');
         global.events.emit('emptyBus', data.busID);
@@ -382,7 +397,6 @@ Config.prototype.sendNotificationInitFinished = function (client, busId) {
     messenger.send(client, 'init_parking_finished', {});
 
 };
-
 
 
 module.exports = Config;

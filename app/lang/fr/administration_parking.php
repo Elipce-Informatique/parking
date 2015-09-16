@@ -32,7 +32,7 @@ return array(
     'carte' => [
         'erreur_polygon' => 'Les lignes d\'un polygon ne peuvent pas se croiser',
         'titre_places_multiples' => 'Configuration de la série de places',
-        'titre_afficheur' => 'Localisation d\'un afficheur',
+        'titre_afficheur' => 'Création d\'un afficheur',
         'titre_calibre' => 'Configuration du calibre',
         'titre_capteur' => 'Capteurs de place',
         'titre_zone' => 'Création d\'une zone',
@@ -74,6 +74,15 @@ return array(
         'err_zone_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une allée.',
         'err_allee_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une autre allée.',
         'err_parking_non_init' => 'Erreur : Le parking n\'a pas encore été initialisé.',
+        // MODALE AFFICHEURS
+        'reference' => 'Nom',
+        'type_afficheur' => 'Type d\'afficheur',
+        'bus' => 'Bus',
+        'manufacturer' => 'Manufacturer',
+        'model_name' => 'Model name',
+        'serial_number' => 'Serial Number',
+        'software_version' => 'Software version',
+        'hardware_version' => 'Hardware version',
         // MESSAGE D'INFOS CAPTEUR (Cadre bas droite map)
         'infos_capteur_titre' => 'Capteur de place',
         'infos_capteur_adresse' => 'Adresse : ',

@@ -163,7 +163,7 @@ var store = Reflux.createStore({
     // Initial setup
     init: function () {
         // REGISTER STATUSUPDATE ACTION
-        this.listenTo(Actions.validation.form_field_changed, this.updateCombos);
+        this.listenTo(Actions.validation.form_field_changed, this.updateForm);
         this.listenTo(Actions.validation.submit_form, this.onSubmit_form);
         this.listenTo(initModale, this.loadInitData); // Appellé à l'affichage de la modale
 
@@ -216,7 +216,7 @@ var store = Reflux.createStore({
      * passant les tests de vérification auto.
      * @param data
      */
-    updateCombos: function (data) {
+    updateForm: function (data) {
 
         var retour = {};
         // update selected value de la combo actuelle

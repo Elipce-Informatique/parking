@@ -4,7 +4,7 @@
  * Handle what happend when the controller connects to the server
  */
 var logger = require('../utils/logger.js');
-var init = require('./init_parking.js');
+var init = require('./init_parking_0.js');
 
 var evtsSequence = require('./events_lifecycle.js');
 
