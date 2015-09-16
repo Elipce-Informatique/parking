@@ -54,12 +54,17 @@ var ModalAfficheur = React.createClass({
             serial_number: '',
             software_version: '',
             hardware_version: ''
+            //reference: 'test',
+            //manufacturer: 'tesst',
+            //model_name: 'tessst',
+            //serial_number: 'tet',
+            //software_version: 'tesssst',
+            //hardware_version: 'tessssst'
         };
     },
     componentWillMount: function () {
         this.listenTo(store, this.updateData);
         initModale(this.props.parkingId, this.props.planId, this.props.drawData);
-        console.log('Plan WILLMOUNT Id : %o', this.props.planId);
     },
 
     componentDidMount: function () {
@@ -254,11 +259,9 @@ var store = Reflux.createStore({
      * @param data
      */
     updateForm: function (data) {
-        console.log('This %o', this);
         var dat = {};
         // MAJ du state STORE
         dat[data.name] = data.value;
-        //console.log('data %o',data);
         this.localState = _.extend(this.localState, dat);
 
         switch (data.name) {
@@ -266,7 +269,6 @@ var store = Reflux.createStore({
             case 'concentrateur_id':
                 this.localState.bus_id = "";
                 this.localState.listBuses = this.getBusCombo(data.value);
-                console.log('listBuses: %o', this.localState.listBuses);
                 this.trigger(this.localState);
                 break;
             // Bus selected
@@ -280,7 +282,6 @@ var store = Reflux.createStore({
      * @param parkId : id du parking
      */
     loadInitData: function (parkId) {
-        //console.log('PASS INIT DATA avec id : %o', parkId);
 
         $.ajax({
             type: 'GET',
@@ -293,9 +294,7 @@ var store = Reflux.createStore({
             .done(function (data) {
                 this.handleAjaxResult(data);
                 var concentrateursData = this.getConcentrateurCombo();
-                console.log('PASS LOAD INIT');
                 this.localState.listConcentrateurs = concentrateursData;
-                console.log('this INIT : %o', this);
                 this.trigger(this.localState);
             })
             .fail(function (xhr, type, exception) {

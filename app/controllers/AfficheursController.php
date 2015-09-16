@@ -32,7 +32,21 @@ class AfficheursController extends \BaseController
      */
     public function store()
     {
-        //
+        $input = Input::only(
+            'reference',
+            'bus_id',
+            'manufacturer',
+            'model_name',
+            'serial_number',
+            'software_version',
+            'hardware_version',
+            'plan_id',
+            'ligne',
+            'lat',
+            'lng');
+        Log::debug('Données de l\'afficheur à insérer : ' . print_r($input, true));
+        $afficheur = Afficheur::create($input);
+        return $afficheur;
     }
 
 
@@ -120,12 +134,15 @@ class AfficheursController extends \BaseController
         Log::debug('locateMany, avec ces données : ' . print_r(Input::all(), true));
         $ids = explode(',', Input::get('ids'));
         $action = Afficheur::whereIn('id', $ids)
-            ->update([
-                'plan_id' => null,
-                'ligne' => null,
-                'lat' => null,
-                'lng' => null
-            ]);
+            ->delete();
+
+//        $action = Afficheur::whereIn('id', $ids)
+//            ->update([
+//                'plan_id' => null,
+//                'ligne' => null,
+//                'lat' => null,
+//                'lng' => null
+//            ]);
         $retour = [
             'save' => $action,
             'errorBdd' => !$action,
@@ -140,7 +157,8 @@ class AfficheursController extends \BaseController
      * Receive an update display and get new information
      * @return mixed
      */
-    public function updateAfficheurs(){
+    public function updateAfficheurs()
+    {
 
         $ids = Input::get('ids');
 //        Log::debug("IDS ".print_r($ids, true));
