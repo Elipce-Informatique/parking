@@ -181,7 +181,7 @@ module.exports = {
             "JOIN server_com s ON s.parking_id=p.id " +
             "WHERE s.protocol_port = ? " ;
 
-        mysqlHelper.execute(pool, sql, [global.port], function(err, result){
+        connexion.query(sql, [global.port], function(err, result){
 
             callback(err, result);
             // End the connection once the callback is done

@@ -37,7 +37,7 @@ util.inherits(BusEnumeration, EventEmitter);
  * @param bus: bus infos
  */
 BusEnumeration.prototype.startJobBusEnum = function (bus) {
-
+    logger.log('info', 'START JOB : BUS ENUM on bus ' + bus.id)
     messenger.sendToController("startJob", {
         job: "busEnum",
         class: "bus",
@@ -81,7 +81,7 @@ BusEnumeration.prototype.onBusEnum = function (data) {
                         messenger.sendToController("sensorConfigUpdate", {
                             sensor: sensorsInserted
                         });
-                        logger.log('info', 'sensorConfigUpdate ',sensorsInserted);
+                        logger.log('info', 'sensorConfigUpdate ', sensorsInserted);
 
                         // Update network address
                         var busEnumJson = helper.dbSensorsToBusEnum(sensorsInserted);
@@ -91,10 +91,10 @@ BusEnumeration.prototype.onBusEnum = function (data) {
                             ID: data.ID,
                             param: busEnumJson
                         });
-                        logger.log('info', 'busEnumUpdate ',busEnumJson);
+                        logger.log('info', 'busEnumUpdate ', busEnumJson);
 
                     }, function ko(err) {
-                        logger.log('error', 'Supervision SB error : sensors not inserted from BusEnum ',err);
+                        logger.log('error', 'Supervision SB error : sensors not inserted from BusEnum ', err);
                     });
             }
             // Displays inserts
@@ -103,7 +103,7 @@ BusEnumeration.prototype.onBusEnum = function (data) {
             }
             break;
         case "failed":
-            logger.log('error', 'BusEnum failed on bus '+data.ID);
+            logger.log('error', 'BusEnum failed on bus ' + data.ID);
             break;
         default:
             break;

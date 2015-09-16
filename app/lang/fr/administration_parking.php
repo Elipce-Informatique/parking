@@ -121,7 +121,9 @@ return array(
         'users' => "Utilisateurs associés au parking",
         'init' => "Initialisation",
         'btn' => "Lancer",
-        'txt' => "Parking déjà initialisé"
+        'txt' => "Parking déjà initialisé",
+        "protocol_version" => "Version du protocole",
+        "port" => "Port"
     ]
 );
 

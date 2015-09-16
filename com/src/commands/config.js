@@ -132,16 +132,16 @@ Config.prototype.sendConfigurationUpdate = function (data) {
 /**
  * Get all parking buses
  */
-Config.prototype.getSupervisionBuses = function () {
+Config.prototype.getSupervisionBuses = function (client) {
     busModel.getBuses(global.port, function (err, result) {
         if (err) {
             logger.log('error', 'Model bus, function getBuses callback error');
         }
         // Get busses OK
         else {
-            this.emit('onGetSupervisionBuses', result);
+            this.emit('onGetSupervisionBuses', result, client);
         }
-    })
+    }.bind(this))
 };
 
 /**
@@ -170,9 +170,10 @@ Config.prototype.onBusConfigData = function (data) {
 /**
  * Send a busConfigUpdate to the controller
  * @param dataUpdate: data to send to the controller for the update
+ * @param client: WS client which send busConfigUpdate
  */
-Config.prototype.sendBusConfigUpdate = function (dataUpdate) {
-    messenger.sendToController("busConfigUpdate" ,{ 'bus' : dataUpdate} , {}, client);
+Config.prototype.sendBusConfigUpdate = function (dataUpdate, client) {
+    messenger.sendToController("busConfigUpdate" ,{ 'bus' : dataUpdate}, {}, client );
 };
 
 /**

@@ -20,15 +20,18 @@ module.exports.route = function (message, client) {
     // Dispatching the message to the right handler
     switch (message.messageType) {
         case 'init_parking':
-            switch (data.mode) {
+            switch (parseInt(message.data.mode)) {
                 case 0: // GET init mode  (controller DB is full, supervision read it)
                     initSequence0.start(client, config_controller);
                     break
                 case 1: // SET mode with busEnum
-                    initSequence1.start(client, config_controller);
+                    initSequence1.start(client, config_controller, busenum_controller);
                     break;
                 case 2: // SET mode with busEnum + virtual sensors
-                    initSequence2.start(client, config_controller);
+                    initSequence2.start(client, config_controller, busenum_controller);
+                    break;
+                default:
+                    logger.log('error', 'ROUTE init_parking MODE inconnu: ' + message.data.mode);
                     break;
             }
 
