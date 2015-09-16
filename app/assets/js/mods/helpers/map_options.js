@@ -42,6 +42,7 @@ colors[module.exports.dessin.allee] = '#5478da';
 colors[module.exports.dessin.zone] = '#da5454';
 colors[module.exports.dessin.calibre] = '#2C75FF';
 colors[module.exports.dessin.afficheur] = '#000000';
+colors[module.exports.dessin.capteur_afficheur] = '#000000';
 
 // PRÉPARATION DE L'OBJET GROUPS:
 var groups = {};
