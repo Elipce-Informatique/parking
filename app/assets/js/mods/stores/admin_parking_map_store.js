@@ -227,6 +227,11 @@ var store = Reflux.createStore({
                 };
                 this.trigger(retour);
                 break;
+            case mapOptions.dessin.capteur_afficheur:
+                console.log('PASS FORME CAPTEUR_AFFICHEUR DESSINEE : %o', data);
+                afficheurHelper.getPlacesInAfficheur(data, this._inst);
+
+                break;
             // -------------------------------------------------------------
             // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
             default:
@@ -568,6 +573,19 @@ var store = Reflux.createStore({
             swal(Lang.get('administration_parking.carte.err_parking_non_init'));
 
         }
+    },
+
+    onMode_capteur_afficheur: function (data) {
+        this._inst.currentMode = mapOptions.dessin.capteur_afficheur;
+
+        var retour = {
+            type: mapOptions.type_messages.mode_change,
+            data: {
+                mode: mapOptions.dessin.capteur_afficheur
+            }
+        };
+
+        this.trigger(retour);
     },
 
     /**

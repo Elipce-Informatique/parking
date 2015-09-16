@@ -83,6 +83,36 @@ function createAfficheursMapFromAfficheursBDD(afficheursBDD) {
 }
 
 /**
+ * retourne le tableau des places contenues dans la zone par leur centre (Marker)
+ *
+ *
+ * @param zone : zone dessinnée par l'utilisateur (format layer Leaflet)
+ * @param _inst : données d'instance du store
+ *
+ * @return: false si pas de capteur dans la sélection, {
+            allPlaces: places,
+            capteurPlaces: capteurPlaces
+        } sinon
+ */
+function getPlacesInAfficheur(zone, _inst) {
+    var places = mapHelper.getPlacesInZone(zone, _inst);
+
+    var capteurPlaces = _.filter(places, function (p) {
+        return p.capteur != null;
+    });
+
+    if (capteurPlaces.length) {
+        return {
+            allPlaces: places,
+            capteurPlaces: capteurPlaces
+        };
+    } else {
+        swal(Lang.get('administration_parking.carte.err_places_sans_capteur'));
+        return false;
+    }
+}
+
+/**
  * Génère le html nécessaire à l'affichage d'un afficheur
  * et de son tooltip en superbvision.
  *
@@ -148,6 +178,7 @@ function supervisionContextMenu() {
 module.exports = {
     getCoordAfficheurFromPolyline: getCoordAfficheurFromPolyline,
     createAfficheursMapFromAfficheursBDD: createAfficheursMapFromAfficheursBDD,
+    getPlacesInAfficheur: getPlacesInAfficheur,
     generateAfficheurLabel: generateAfficheurLabel,
     supervisionContextMenu: supervisionContextMenu,
     style: {

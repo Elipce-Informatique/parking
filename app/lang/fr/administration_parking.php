@@ -46,6 +46,7 @@ return array(
         'ajouter_allee' => 'Ajouter une allée',
         'ajouter_zone' => 'Ajouter une zone',
         'ajouter_afficheur' => 'Ajouter un afficheur',
+        'lier_capteur_afficheur' => 'Assoc Afficheur / Capteur',
         'calibrer' => 'Calibrer le plan',
         'capteur_place' => 'Capteur de place',
         'nb_places' => 'Nombre de places',
@@ -74,6 +75,7 @@ return array(
         'err_zone_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une allée.',
         'err_allee_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une autre allée.',
         'err_parking_non_init' => 'Erreur : Le parking n\'a pas encore été initialisé.',
+        'err_places_sans_capteur' => 'Erreur: aucune des places sélectionnées n\'est attachée à un capteur.' ,
         // MODALE AFFICHEURS
         'reference' => 'Nom',
         'type_afficheur' => 'Type d\'afficheur',
