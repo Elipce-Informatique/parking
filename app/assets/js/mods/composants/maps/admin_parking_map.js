@@ -677,7 +677,7 @@ var parkingMap = React.createClass({
                 var marker = L.marker([afficheur.data.lat, afficheur.data.lng], {
                     icon: new mapOptions.iconAfficheur(),
                     data: afficheur.data
-                }).bindLabel(afficheur.data.reference);
+                }).bindLabel(afficheur.data.libelle);
 
                 this._inst.afficheursGroup.addLayer(marker);
 
