@@ -155,7 +155,7 @@ var store = Reflux.createStore({
 
         $.ajax({
             type: 'GET',
-            url: BASE_URI + 'parking/' + parkId + '/afficheurs',
+            url: BASE_URI + 'parking/' + parkId + '/afficheurs_libres',
             processData: false,
             contentType: false,
             data: {},

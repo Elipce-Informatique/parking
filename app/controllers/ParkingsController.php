@@ -114,7 +114,7 @@ class ParkingsController extends \BaseController
      * @param $parkingId : id du parking
      * @return reponse
      */
-    public function getAfficheurs($parkingId)
+    public function getAfficheursLibre($parkingId)
     {
         $afficheurs = DB::table('parking')
             ->join('concentrateur', 'parking.id', '=', 'concentrateur.parking_id')
