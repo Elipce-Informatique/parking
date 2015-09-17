@@ -127,10 +127,11 @@ var FormParking = React.createClass({
 
                 <InputNumberEditable
                     attributes={{
-                        label: Lang.get('global.v4id'),
-                        name: "v4_id",
-                        value: this.props.detailParking.v4_id,
+                        label: Lang.get('administration_parking.parking.protocol_version'),
+                        name: "protocol_version",
+                        value: this.props.detailParking.server_com.protocol_version,
                         required: true,
+                        placeholder: '1',
                         wrapperClassName: 'col-md-2',
                         labelClassName: 'col-md-2 text-right',
                         groupClassName: 'row'
@@ -159,12 +160,16 @@ var FormParking = React.createClass({
         );
     },
 
+    /**
+     * Lance la procédure d'initialisation du parking en fonction du mode d'init
+     * @param e: evt
+     */
     initParking: function (e) {
         // Connexion controller
         client.initWebSocket(this.props.detailParking.id, function (clientWs) {
             // Envoie initialisazion
-            clientWs.send(JSON.stringify(messagesHelper.initParking()));
-            console.log('Lancer procédure init parking');
+            clientWs.send(JSON.stringify(messagesHelper.initParking(this.props.detailParking.init_mode)));
+            console.log('Lancer procédure init parking ' + this.props.detailParking.init_mode);
             // Chargement
             $.blockUI({
                 message: '<div class="alert alert-warning" role="alert" style="margin:0"><h1 style="margin:0"><div id="facebookG"><div id="blockG_1" class="facebook_blockG"></div><div id="blockG_2" class="facebook_blockG"></div><div id="blockG_3" class="facebook_blockG"></div></div>' + Lang.get('global.block_ui') + '</h1></div>',
@@ -176,7 +181,7 @@ var FormParking = React.createClass({
                 fadeOut: 50,
                 fadeIn: 100
             });
-        }, function () {
+        }.bind(this), function () {
             // Impossible de se connecter au server
             console.log('callback err connexion');
             swal(Lang.get('global.com.errConnServer'));

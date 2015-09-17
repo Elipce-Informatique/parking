@@ -32,7 +32,7 @@ return array(
     'carte' => [
         'erreur_polygon' => 'Les lignes d\'un polygon ne peuvent pas se croiser',
         'titre_places_multiples' => 'Configuration de la série de places',
-        'titre_afficheur' => 'Localisation d\'un afficheur',
+        'titre_afficheur' => 'Création d\'un afficheur',
         'titre_calibre' => 'Configuration du calibre',
         'titre_capteur' => 'Capteurs de place',
         'titre_zone' => 'Création d\'une zone',
@@ -46,6 +46,7 @@ return array(
         'ajouter_allee' => 'Ajouter une allée',
         'ajouter_zone' => 'Ajouter une zone',
         'ajouter_afficheur' => 'Ajouter un afficheur',
+        'lier_capteur_afficheur' => 'Assoc Afficheur / Capteur',
         'calibrer' => 'Calibrer le plan',
         'capteur_place' => 'Capteur de place',
         'nb_places' => 'Nombre de places',
@@ -74,6 +75,16 @@ return array(
         'err_zone_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une allée.',
         'err_allee_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une autre allée.',
         'err_parking_non_init' => 'Erreur : Le parking n\'a pas encore été initialisé.',
+        'err_places_sans_capteur' => 'Erreur: aucune des places sélectionnées n\'est attachée à un capteur.' ,
+        // MODALE AFFICHEURS
+        'reference' => 'Nom',
+        'type_afficheur' => 'Type d\'afficheur',
+        'bus' => 'Bus',
+        'manufacturer' => 'Manufacturer',
+        'model_name' => 'Model name',
+        'serial_number' => 'Serial Number',
+        'software_version' => 'Software version',
+        'hardware_version' => 'Hardware version',
         // MESSAGE D'INFOS CAPTEUR (Cadre bas droite map)
         'infos_capteur_titre' => 'Capteur de place',
         'infos_capteur_adresse' => 'Adresse : ',
@@ -112,7 +123,9 @@ return array(
         'users' => "Utilisateurs associés au parking",
         'init' => "Initialisation",
         'btn' => "Lancer",
-        'txt' => "Parking déjà initialisé"
+        'txt' => "Parking déjà initialisé",
+        "protocol_version" => "Version du protocole",
+        "port" => "Port"
     ]
 );
 

@@ -466,7 +466,6 @@ function getAllPlaces(_inst) {
  * retourne le tableau des places contenues dans l'allée par leur centre (Marker)
  * Le tableau de retour contient la propriété options.data du marker pour éviter
  * la redondance circulaire lié à la map quand on le transforme en JSON.
- * @param formDom : DOM du formulaire
  * @param allee : allee à tester (format layer Leaflet)
  * @param _inst : données d'instance du store
  */

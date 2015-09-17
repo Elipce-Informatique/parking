@@ -66,7 +66,7 @@ class Afficheur extends BaseModel
         return Afficheur::with('vues.type_place')
             ->whereIn('id', function ($query) use ($aId) {
                 $query->from('afficheur')
-                    ->join('vue', 'vue.afficheur_id','=','afficheur.id' )
+                    ->join('vue', 'vue.afficheur_id', '=', 'afficheur.id')
                     ->whereIn('vue.id', $aId)
                     ->select('afficheur.id');
             })
