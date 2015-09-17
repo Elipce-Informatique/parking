@@ -101,7 +101,8 @@ module.exports.type_messages = {
     edit_allee: 24,
     edit_zone: 25,
     edit_afficheur: 26,
-    update_afficheurs: 27
+    update_afficheurs: 27,
+    capteur_afficheur: 28
 };
 
 /**

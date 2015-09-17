@@ -3,7 +3,7 @@
 class Parking extends BaseModel
 {
     protected $table = 'parking';
-    protected $fillable = ['libelle', 'description', 'v4_id', 'etat'];
+    protected $fillable = ['libelle', 'description', 'etat', 'init_mode'];
 
     /*****************************************************************************
      * RELATIONS DU MODELE *******************************************************
@@ -42,6 +42,15 @@ class Parking extends BaseModel
     public function concentrateurs()
     {
         return $this->hasMany('Concentrateur');
+    }
+
+    /**
+     * server de com
+     * @return mixed
+     */
+    public function server_com()
+    {
+        return $this->hasOne('ServerCom');
     }
 
     /*****************************************************************************

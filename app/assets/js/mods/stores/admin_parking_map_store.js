@@ -229,7 +229,17 @@ var store = Reflux.createStore({
                 break;
             case mapOptions.dessin.capteur_afficheur:
                 console.log('PASS FORME CAPTEUR_AFFICHEUR DESSINEE : %o', data);
-                afficheurHelper.getPlacesInAfficheur(data, this._inst);
+                var places = afficheurHelper.getPlacesInAfficheur(data, this._inst);
+
+                if (places != false) {
+                    var retour = {
+                        type: mapOptions.type_messages.capteur_afficheur,
+                        data: {
+                            places: places
+                        }
+                    };
+                    this.trigger(retour);
+                }
 
                 break;
             // -------------------------------------------------------------

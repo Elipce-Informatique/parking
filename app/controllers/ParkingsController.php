@@ -45,6 +45,7 @@ class ParkingsController extends \BaseController
     public function show($id)
     {
         return json_encode(Parking::with('utilisateurs')
+            ->with('server_com')
             ->where('parking.id', '=', $id)
             ->first());
     }
@@ -460,11 +461,12 @@ class ParkingsController extends \BaseController
         $parks =
             Auth::user()
                 ->parkings()
+                ->join('server_com', 'server_com.parking_id', '=', 'parking.id')
                 ->select([
                     'parking.id',
                     'parking.libelle',
                     'parking.description',
-                    'parking.v4_id'])
+                    'server_com.protocol_port'])
                 ->get();
 
         return json_encode([
