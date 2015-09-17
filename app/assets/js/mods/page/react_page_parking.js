@@ -150,7 +150,7 @@ var PageParking = React.createClass({
                     head: [
                         Lang.get('global.parking'),
                         Lang.get('global.description'),
-                        Lang.get('global.v4id')
+                        Lang.get('administration_parking.parking.port')
                     ],
                     hide: ['id']
                 };
@@ -332,7 +332,14 @@ var storeParking = Reflux.createStore({
                 libelle: '',
                 description: '',
                 ip: '',
-                v4_id: 0
+                server_com: {
+                    protocol_version: '1',
+                    protocol_port: '',
+                    software_name: 'Guidance COM server',
+                    software_version: '1.0.0',
+                    software_os: 'Linux',
+                    sofware_version: '2015-09-17 11:11:00'
+                }
             }
         };
         this.trigger(this.stateLocal);
@@ -475,6 +482,7 @@ var storeParking = Reflux.createStore({
                 // Erreur SQL
                 else {
                     Actions.notif.error(Lang.get('global.notif_erreur'));
+                    console.log('errorBDD %o',tab);
                 }
             },
 

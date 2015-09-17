@@ -12,7 +12,8 @@ module.exports.dessin = {
     capteur: 7, // Pas vraiment un mode de dessin, c'est pour savoir qu'on est en mode capteur
     alerte_full: 8,
     alerte_change: 9,
-    reservation: 10
+    reservation: 10,
+    capteur_afficheur: 11
 };
 
 /**
@@ -27,6 +28,7 @@ module.exports.icon = {
     place_auto: "fa-magic",
     calibre: "fa-arrows",
     capteur: "fa-wifi",
+    capteur_afficheur: "fa-link",
     alerte_full: 'fa-stop',
     alerte_change: 'fa-exchange',
     reservation: 'fa-ticket'
@@ -40,6 +42,7 @@ colors[module.exports.dessin.allee] = '#5478da';
 colors[module.exports.dessin.zone] = '#da5454';
 colors[module.exports.dessin.calibre] = '#2C75FF';
 colors[module.exports.dessin.afficheur] = '#000000';
+colors[module.exports.dessin.capteur_afficheur] = '#000000';
 
 // PRÉPARATION DE L'OBJET GROUPS:
 var groups = {};
@@ -48,6 +51,7 @@ groups[module.exports.dessin.place_auto] = 'placesGroup';
 groups[module.exports.dessin.allee] = 'alleesGroup';
 groups[module.exports.dessin.zone] = 'zonesGroup';
 groups[module.exports.dessin.afficheur] = 'afficheursGroup';
+groups[module.exports.dessin.capteur_afficheur] = 'capteurAfficheursGroup';
 groups[module.exports.dessin.calibre] = 'calibreGroup';
 groups[module.exports.dessin.alerte_full] = 'alerteFullGroup';
 groups[module.exports.dessin.alerte_change] = 'alerteChangeGroup';
@@ -97,7 +101,8 @@ module.exports.type_messages = {
     edit_allee: 24,
     edit_zone: 25,
     edit_afficheur: 26,
-    update_afficheurs: 27
+    update_afficheurs: 27,
+    capteur_afficheur: 28
 };
 
 /**
@@ -234,5 +239,6 @@ module.exports.modal_type = {
     edit_place: 9,
     edit_allee: 10,
     edit_zone: 11,
-    edit_afficheur: 12
+    edit_afficheur: 12,
+    capteur_afficheur: 13
 };

@@ -3,7 +3,7 @@
 class Parking extends BaseModel
 {
     protected $table = 'parking';
-    protected $fillable = ['libelle', 'description', 'v4_id', 'etat'];
+    protected $fillable = ['libelle', 'description', 'etat', 'init_mode'];
 
     /*****************************************************************************
      * RELATIONS DU MODELE *******************************************************
@@ -42,6 +42,15 @@ class Parking extends BaseModel
     public function concentrateurs()
     {
         return $this->hasMany('Concentrateur');
+    }
+
+    /**
+     * server de com
+     * @return mixed
+     */
+    public function server_com()
+    {
+        return $this->hasOne('ServerCom');
     }
 
     /*****************************************************************************
@@ -386,6 +395,9 @@ class Parking extends BaseModel
             'model' => null,
         ];
 
+        // Début transaction
+        DB::beginTransaction();
+
         // Le jour n'existe pas en BDD
         if (!Parking::isLibelleExists($fields['libelle'])) {
 
@@ -401,20 +413,45 @@ class Parking extends BaseModel
                 else {
                     $model->utilisateurs()->attach(Auth::user());
                 }
+                // CRéation server_com
+//                Log::debug('FIELDS ' . print_r($fields, true));
+                $keysServCom = [
+                    'protocol_version' => '',
+                    'protocol_port' => '',
+                    'software_name' => '',
+                    'software_version' => '',
+                    'software_build_date' => '',
+                    'software_os' => ''
+                ];
+                $fieldsServCom = array_intersect_key($fields, $keysServCom);
+                $fieldsServCom['parking_id'] = $model->id;
+//                Log::debug('FIELDS SERV COM ' . print_r($fieldsServCom, true));
+                ServerCom::create($fieldsServCom);
 
                 // Le model complet
                 $retour['model'] = Parking::with('utilisateurs')
+                    ->with('server_com')
                     ->where('parking.id', '=', $model->id)
                     ->first();
 
             } catch (Exception $e) {
+                Log::debug($e->getMessage());
                 $retour['save'] = false;
                 $retour['errorBdd'] = true;
             }
-        } // Le jour existe déjà en BDD
+        } // Le parking existe déjà en BDD
         else {
             $retour['save'] = false;
         }
+
+        // Enregistrement BDD
+        if ($retour['save']) {
+            DB::commit();
+        } // Enregistrement KO
+        else {
+            DB::rollBack();
+        }
+
         return $retour;
     }
 
@@ -436,6 +473,7 @@ class Parking extends BaseModel
 
         // Les données passées en PUT
         $fields = Input::all();
+        Log::debug("UPDATE FIELDS ".print_r($fields, true));
 
         // Début transaction
         DB::beginTransaction();
@@ -451,7 +489,9 @@ class Parking extends BaseModel
                 // Parcours de tous les champs
                 foreach ($model->getFillable() as $key) {
                     // On ne garde que les clés qui nous interessent
-                    $filteredFields[$key] = $fields[$key];
+                    if(isset($fields[$key])) {
+                        $filteredFields[$key] = $fields[$key];
+                    }
                 }
 
                 // Update parking
@@ -491,8 +531,24 @@ class Parking extends BaseModel
                     $model->utilisateurs()->attach(Auth::user());
                 }
 
+                // Serveur com
+                $modelServCom = ServerCom::where('parking_id','=',$model->id)
+                    ->first();
+
+                $filteredFields = [];
+                foreach ($modelServCom->getFillable() as $key) {
+                    // On ne garde que les clés qui nous interessent
+                    if(isset($fields[$key])) {
+                        $filteredFields[$key] = $fields[$key];
+                    }
+                }
+                if(count($filteredFields) > 0){
+                    $modelServCom->update($filteredFields);
+                }
+
                 // Le model complet
                 $retour['model'] = Parking::with('utilisateurs')
+                    ->with('server_com')
                     ->where('parking.id', '=', $id)
                     ->first();
             } // Le parking existe

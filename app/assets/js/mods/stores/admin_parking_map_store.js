@@ -69,7 +69,8 @@ var store = Reflux.createStore({
         lastParallelogramme: {},
         lastCalibre: {},
         contextMenuTarget: {}, // Cible du dernier context menu
-        mapInst: {}
+        mapInst: {},
+        placesToAssociateToAfficheur: []
     },
 
     /**
@@ -226,6 +227,22 @@ var store = Reflux.createStore({
                     }
                 };
                 this.trigger(retour);
+                break;
+            case mapOptions.dessin.capteur_afficheur:
+                console.log('PASS FORME CAPTEUR_AFFICHEUR DESSINEE : %o', data);
+                var places = afficheurHelper.getPlacesInAfficheur(data, this._inst);
+                this._inst.placesToAssociateToAfficheur = places;
+
+                if (places != false) {
+                    var retour = {
+                        type: mapOptions.type_messages.capteur_afficheur,
+                        data: {
+                            places: places
+                        }
+                    };
+                    this.trigger(retour);
+                }
+
                 break;
             // -------------------------------------------------------------
             // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
@@ -401,7 +418,6 @@ var store = Reflux.createStore({
      * ---------------------------------------------------------------------------
      */
     onFeature_place_add: function (e) {
-        console.log('ADD PLACE');
         e.layer.bindContextMenu({
             contextmenu: true,
             contextmenuItems: placeHelper.administrationContextMenu(e, this)
@@ -571,6 +587,19 @@ var store = Reflux.createStore({
         }
     },
 
+    onMode_capteur_afficheur: function (data) {
+        this._inst.currentMode = mapOptions.dessin.capteur_afficheur;
+
+        var retour = {
+            type: mapOptions.type_messages.mode_change,
+            data: {
+                mode: mapOptions.dessin.capteur_afficheur
+            }
+        };
+
+        this.trigger(retour);
+    },
+
     /**
      * ---------------------------------------------------------------------------
      * VALIDATION DES FORMULAIRES ------------------------------------------------
@@ -600,6 +629,9 @@ var store = Reflux.createStore({
                 break;
             case "form_mod_edit_place":
                 this.handleUpdatePlace(formId, formDom);
+                break;
+            case "form_mod_afficheur":
+                this.handleAfficheur(formId, formDom);
                 break;
 
             default:
@@ -698,6 +730,60 @@ var store = Reflux.createStore({
             // NOMBRE DE POTEAUX INCORRECT
             swal(Lang.get('administration_parking.carte.swal_interval_incorrect'));
         }
+    },
+
+    /**
+     * Insert l'afficheur saisi dans le form
+     */
+    handleAfficheur: function (formId, formDom) {
+        var forme = this._inst.lastDraw.e;
+        var lat, lng, ligne;
+
+        // RÉCUPÉRATION DES DONNÉES À ENVOYER :
+        var fData = formDataHelper(formId, 'POST');
+        fData.append('plan_id', this._inst.planInfos.id);
+        switch (forme.layerType) {
+            case "marker":
+                fData.append('lat', forme.layer._latlng.lat);
+                fData.append('lng', forme.layer._latlng.lng);
+                break;
+            case "polyline":
+                var coords = _.last(forme.layer._latlngs);
+                fData.append('ligne', JSON.stringify(forme.layer._latlngs));
+                fData.append('lat', coords.lat);
+                fData.append('lng', coords.lng);
+                break;
+            default:
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: BASE_URI + 'parking/afficheur',
+            processData: false,
+            contentType: false,
+            context: this,
+            data: fData
+        })
+            .done(function (data) {
+                console.log('Ajax afficheur DONE : %o', data);
+                if (typeof data == 'object') {
+                    Actions.notif.success();
+                    var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD([data]);
+
+                    var message = {
+                        type: mapOptions.type_messages.add_afficheurs,
+                        data: afficheursMap
+                    };
+                    this.trigger(message);
+                } else {
+                    Actions.notif.error();
+                }
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
     },
 
     handleUpdatePlace: function (formId, formDom) {

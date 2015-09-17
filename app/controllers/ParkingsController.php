@@ -45,6 +45,7 @@ class ParkingsController extends \BaseController
     public function show($id)
     {
         return json_encode(Parking::with('utilisateurs')
+            ->with('server_com')
             ->where('parking.id', '=', $id)
             ->first());
     }
@@ -84,6 +85,9 @@ class ParkingsController extends \BaseController
     {
         // Suppression parking
         try {
+            ServerCom::where('parking_id', '=', $id)
+                ->first()
+                ->delete();
             Parking::find($id)->delete();
             $retour = true;
         } catch (Exception $e) {
@@ -109,8 +113,8 @@ class ParkingsController extends \BaseController
     }
 
     /**
-     * Récupère la liste des concentrateurs du parking avec toutes les données sous-jacentes (bus et capteurs)
-     * @param $id : id du parking
+     * Récupère la liste des afficheurs du parking.
+     * @param $parkingId : id du parking
      * @return reponse
      */
     public function getAfficheurs($parkingId)
@@ -120,7 +124,6 @@ class ParkingsController extends \BaseController
             ->join('bus', 'concentrateur.id', '=', 'bus.concentrateur_id')
             ->join('afficheur', 'bus.id', '=', 'afficheur.bus_id')
             ->where('parking.id', '=', $parkingId)
-            ->whereNull('afficheur.lat')
             ->select('afficheur.*')
             ->get();
         return $afficheurs;
@@ -460,11 +463,12 @@ class ParkingsController extends \BaseController
         $parks =
             Auth::user()
                 ->parkings()
+                ->join('server_com', 'server_com.parking_id', '=', 'parking.id')
                 ->select([
                     'parking.id',
                     'parking.libelle',
                     'parking.description',
-                    'parking.v4_id'])
+                    'server_com.protocol_port'])
                 ->get();
 
         return json_encode([

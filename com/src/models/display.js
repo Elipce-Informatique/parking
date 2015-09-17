@@ -206,6 +206,14 @@ module.exports = {
             });
 
         });// fin _.each
+    },
+
+    /**
+     * Insert displays in supervision DB
+     * @param busId
+     * @param sensors
+     */
+    insertDisplaysFromBusEnum: function(busId, sensors){
 
     }
 };

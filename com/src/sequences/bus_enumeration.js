@@ -10,15 +10,37 @@ var _ = require('lodash');
 var logger = require('../utils/logger.js');
 
 // -----------------------------------------------------------------
-// Creates the Events class
-function BusEnumerationSequence(events_controller) {
-    if (this instanceof EventsLifeCycle === false) {
+// Creates the BusEnumeration class
+function BusEnumerationSequence(busenum_controller) {
+    if (this instanceof BusEnumerationSequence === false) {
         throw new TypeError("Classes can't be function-called");
     }
 
     // ATTRIBUTES DECLARATION
+    this.busenum_controller = busenum_controller;
+    this.pool = null
+
+    // Mysql connexion with pool : only 1 connexion VERY IMORTANT
+    if (this.pool === null) {
+        this.pool = require('../utils/mysql_helper.js').pool();
+    }
 }
 
 // -----------------------------------------------------------------
+
+/**
+ * Launch the bus enum for each bus
+ * @param buses: buses list from supervision DB
+ */
+BusEnumerationSequence.prototype.start = function (buses) {
+    logger.log('info', 'START BUS ENUM');
+    // Send bus enum on each semi bus
+    buses.forEach(function (bus, index) {
+        logger.log('info', 'startJobBusEnum on bus ',bus);
+        // Send a startJobBusEnum to controller
+        this.busenum_controller.startJobBusEnum(bus);
+    }, this);
+
+}
 
 module.exports = BusEnumerationSequence;

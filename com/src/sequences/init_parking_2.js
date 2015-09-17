@@ -1,66 +1,99 @@
 /**
- * Created by yann on 24/07/2015.
+ * Created by vivian on 14/09/2015.
  */
 
 var _ = require('lodash');
 
 var Config = require('../commands/config.js');
+var BusEnum = require('../commands/bus_enumeration.js');
 var logger = require('../utils/logger.js');
+var BusEnumSequence = require('./bus_enumeration.js');
 
 module.exports = {
-    config: {},
+    config: null,
+    busEnum: null,
     controllers: [],
     clientConnected: null,
+    busEnumSequence: null,
+
     /**
      * Starts the initialisation procedure
+     * @param client: client WS connected
+     * @param config: config controller instance (commands/config.js)
+     * @param busEnum: bus_enumeration controller instance (commands/bus_enumeration.js)
      */
-    start: function (client, config) {
-        logger.log('info', 'START PARKING INIT');
-        this.config = null;
+    start: function (client, config, busEnum) {
+        logger.log('info', 'START PARKING INIT 2');
+        // Init config controller
         if (config instanceof Config) {
             this.config = config;
         } else {
             throw new TypeError("Config instance expected");
         }
+
+        // Init bus enumerate controller
+        if (busEnum instanceof BusEnum) {
+            this.busEnum = busEnum;
+        } else {
+            throw new TypeError("BusEnum instance expected");
+        }
+        // Client connected
         this.clientConnected = client;
+        // Listen events
         this.unBindEvents();
         this.bindEvents();
-        // 1 - GET ALL THE CONFIGURATION FROM THE CONTROLLER
-        this.config.sendConfigurationQuery();
-        this.config.sendBusConfigQuery(client);
-        this.config.sendCounterConfigQuery();
-        this.config.sendSettingsQuery(client);
+
+        // Instance of bus enumeration Sequence with the busEnum controller
+        this.busEnumSequence = new BusEnumSequence(this.busEnum);
+
+        // BUSES are stored in the supervision DB, send buses to controller
+        this.config.getSupervisionBuses()
+
     },
+
     unBindEvents: function () {
+
+
         // TODO ATTENTION code à améliorer: une seule instance de config, suppression de tous les listeners
-        this.config.removeAllListeners('configurationData');
-        this.config.removeAllListeners('busConfigData');
-        this.config.removeAllListeners('sensorConfigData');
-        this.config.removeAllListeners('displayConfigData');
-        this.config.removeAllListeners('counterConfigData');
-        this.config.removeAllListeners('settingsData');
-        global.events.removeAllListeners('countersInserted');
-        global.events.removeAllListeners('emptyBus');
+        //this.config.removeAllListeners('configurationData');
+        //this.config.removeAllListeners('busConfigData');
+        //this.config.removeAllListeners('sensorConfigData');
+        //this.config.removeAllListeners('displayConfigData');
+        //this.config.removeAllListeners('counterConfigData');
+        //this.config.removeAllListeners('settingsData');
+        //global.events.removeAllListeners('countersInserted');
+        //global.events.removeAllListeners('emptyBus');
     },
     bindEvents: function () {
         logger.log('info', 'Binding events from the init procedure');
-        this.config.on('configurationData', this.onConfigurationData.bind(this));
-        this.config.on('busConfigData', this.onBusConfigData.bind(this));
-        this.config.on('sensorConfigData', this.onSensorConfigData.bind(this));
-        this.config.on('displayConfigData', this.onDisplayConfigData.bind(this));
-        this.config.on('counterConfigData', this.onCounterConfigData.bind(this));
-        this.config.on('settingsData', this.onSettingsData.bind(this));
-        global.events.on('countersInserted', this.onCountersInserted.bind(this));
-        global.events.on('emptyBus', this.onEmptyBus.bind(this));
+        this.config.on('onGetSupervisionBuses', this.onGetSupervisionBuses.bind(this));
+
+        //this.config.on('configurationData', this.onConfigurationData.bind(this));
+        //this.config.on('busConfigData', this.onBusConfigData.bind(this));
+        //this.config.on('sensorConfigData', this.onSensorConfigData.bind(this));
+        //this.config.on('displayConfigData', this.onDisplayConfigData.bind(this));
+        //this.config.on('counterConfigData', this.onCounterConfigData.bind(this));
+        //this.config.on('settingsData', this.onSettingsData.bind(this));
+        //global.events.on('countersInserted', this.onCountersInserted.bind(this));
+        //global.events.on('emptyBus', this.onEmptyBus.bind(this));
     },
 
     /**
-     * Handle Configuration data for the parking initialization process.
-     * @param data : the data sent by the controller
+     * Handle buses data for the parking initialization process.
+     * @param data : buses
      */
-    onConfigurationData: function (data) {
-        logger.log('info', 'onConfigurationData', data);
+    onGetSupervisionBuses: function (data) {
+        logger.log('info', 'onGetSupervisionBuses', data);
+        // init buses controller DB
+        this.config.sendBusConfigUpdate(data);
+        // Send bus enum sequence
+        this.busEnumSequence.start(data);
     },
+
+
+    /*******************************
+     * ************ OLD *************
+     */
     /**
      * Handle BusConfig data for the parking initialization process.
      * @param data : the data sent by the controller

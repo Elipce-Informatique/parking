@@ -14,6 +14,7 @@ var Form = Field.Form;
 var BtnSave = Field.BtnSave;
 var InputNumberEditable = Field.InputNumberEditable;
 var InputSelectEditable = Field.InputSelectEditable;
+var InputTextEditable = Field.InputTextEditable;
 var Modal = ReactB.Modal;
 var Row = ReactB.Row;
 var Col = ReactB.Col;
@@ -43,14 +44,27 @@ var ModalAfficheur = React.createClass({
 
     getInitialState: function () {
         return {
-            listAfficheurs: [],
-            afficheur_id: ''
+            listConcentrateurs: [],
+            listBuses: [],
+            concentrateur_id: '',
+            bus_id: '',
+            reference: '',
+            manufacturer: '',
+            model_name: '',
+            serial_number: '',
+            software_version: '',
+            hardware_version: ''
+            //reference: 'test',
+            //manufacturer: 'tesst',
+            //model_name: 'tessst',
+            //serial_number: 'tet',
+            //software_version: 'tesssst',
+            //hardware_version: 'tessssst'
         };
     },
     componentWillMount: function () {
         this.listenTo(store, this.updateData);
         initModale(this.props.parkingId, this.props.planId, this.props.drawData);
-        console.log('Plan WILLMOUNT Id : %o', this.props.planId);
     },
 
     componentDidMount: function () {
@@ -82,21 +96,122 @@ var ModalAfficheur = React.createClass({
                 <div className="modal-body">
                     <Form attributes={{id: "form_mod_afficheur"}}>
 
+                        <InputTextEditable
+                            editable={true}
+                            attributes={{
+                                label: Lang.get('administration_parking.carte.reference'),
+                                name: "reference",
+                                placeholder: Lang.get('administration_parking.carte.reference'),
+                                value: this.state.reference,
+                                wrapperClassName: 'col-md-6',
+                                labelClassName: 'col-md-4 text-right',
+                                groupClassName: 'row',
+                                required: true
+                            }}
+                        />
+
                         <InputSelectEditable
                             editable={true}
-                            data={this.state.combo}
-                            selectedValue={this.state.afficheur_id}
-                            placeholder={Lang.get('global.afficheur')}
+                            data={this.state.listConcentrateurs}
+                            selectedValue={this.state.concentrateur_id}
+                            placeholder={Lang.get('global.concentrateur')}
                             attributes={{
-                                name: 'afficheur_id',
-                                label: Lang.get('global.afficheur'),
+                                name: 'concentrateur_id',
+                                label: Lang.get('global.concentrateur'),
                                 labelCol: 4,
                                 selectCol: 6,
-                                htmlFor: 'form_mod_afficheur',
+                                htmlFor: 'form_mod_capteur',
                                 required: true
                             }}
                             labelClass='text-right'
                         />
+
+                        <InputSelectEditable
+                            editable={true}
+                            data={this.state.listBuses}
+                            selectedValue={this.state.bus_id}
+                            placeholder={Lang.get('global.bus')}
+                            attributes={{
+                                name: 'bus_id',
+                                label: Lang.get('global.bus'),
+                                labelCol: 4,
+                                selectCol: 6,
+                                htmlFor: 'form_mod_capteur',
+                                required: true
+                            }}
+                            labelClass='text-right'
+                        />
+
+                        <InputTextEditable
+                            editable={true}
+                            attributes={{
+                                label: Lang.get('administration_parking.carte.manufacturer'),
+                                name: "manufacturer",
+                                placeholder: Lang.get('administration_parking.carte.manufacturer'),
+                                value: this.state.manufacturer,
+                                wrapperClassName: 'col-md-6',
+                                labelClassName: 'col-md-4 text-right',
+                                groupClassName: 'row',
+                                required: true
+                            }}
+                        />
+
+                        <InputTextEditable
+                            editable={true}
+                            attributes={{
+                                label: Lang.get('administration_parking.carte.model_name'),
+                                name: "model_name",
+                                placeholder: Lang.get('administration_parking.carte.model_name'),
+                                value: this.state.model_name,
+                                wrapperClassName: 'col-md-6',
+                                labelClassName: 'col-md-4 text-right',
+                                groupClassName: 'row',
+                                required: true
+                            }}
+                        />
+
+                        <InputTextEditable
+                            editable={true}
+                            attributes={{
+                                label: Lang.get('administration_parking.carte.serial_number'),
+                                name: "serial_number",
+                                placeholder: Lang.get('administration_parking.carte.serial_number'),
+                                value: this.state.serial_number,
+                                wrapperClassName: 'col-md-6',
+                                labelClassName: 'col-md-4 text-right',
+                                groupClassName: 'row',
+                                required: true
+                            }}
+                        />
+
+                        <InputTextEditable
+                            editable={true}
+                            attributes={{
+                                label: Lang.get('administration_parking.carte.software_version'),
+                                name: "software_version",
+                                placeholder: Lang.get('administration_parking.carte.software_version'),
+                                value: this.state.software_version,
+                                wrapperClassName: 'col-md-6',
+                                labelClassName: 'col-md-4 text-right',
+                                groupClassName: 'row',
+                                required: true
+                            }}
+                        />
+
+                        <InputTextEditable
+                            editable={true}
+                            attributes={{
+                                label: Lang.get('administration_parking.carte.hardware_version'),
+                                name: "hardware_version",
+                                placeholder: Lang.get('administration_parking.carte.hardware_version'),
+                                value: this.state.hardware_version,
+                                wrapperClassName: 'col-md-6',
+                                labelClassName: 'col-md-4 text-right',
+                                groupClassName: 'row',
+                                required: true
+                            }}
+                        />
+
                     </Form>
                 </div>
 
@@ -119,78 +234,23 @@ var ModalAfficheur = React.createClass({
  */
 var store = Reflux.createStore({
     _inst: {
-        afficheurs: [],       // Les données brutes reçues en AJAX (liste des afficheurs)
-        comboAfficheurs: [],
-        dataForme: {},
-        planId: '',
-        parkingId: ''
+        ajax_data: [],      // Les données brutes reçues en AJAX
+        concentrateurs: [], // La liste de tous les concentrateurs du parking
+        buses: []           // La liste de tous les buses du parking
     },
+    localState: {},
     getInitialState: function () {
         return {};
     },
     // Initial setup
     init: function () {
         // REGISTER STATUSUPDATE ACTION
-        this.listenTo(Actions.validation.form_field_changed, this.updateCombos);
+        this.listenTo(Actions.validation.form_field_changed, this.updateForm);
         this.listenTo(Actions.validation.submit_form, this.onSubmit_form);
         this.listenTo(initModale, this.loadInitData); // Appellé à l'affichage de la modale
-    },
 
-    /**
-     * Appellée quand un formulaire a été validé syntaxiquement et métierment parlent.
-     * @param formDom : noeud racine contenant le formulaire
-     * @param formId : id du formulaire
-     */
-    onSubmit_form: function (formDom, formId) {
-        // OBLIGÉ DE TRAITER ÇA ICI PLUTOT QUE DANS LE STORE DE LA MAP
-        // POUR AVOIR ACCÈS AUX DONNÉES DES AFFICHEURS.
-        switch (formId) {
-            case "form_mod_afficheur":
-                this.handleAfficheur(formDom);
-                break;
-        }
-    },
-
-    /**
-     * Gère la validation de la modale afficheurs.
-     * - Remplis le cadre d'infos de la carte
-     *
-     * @param formDom : le DOM du formulaire
-     */
-    handleAfficheur: function (formDom) {
-
-        var fData = formDataHeler('', 'POST');
-        fData.append('lat', this._inst.dataForme.coords.lat);
-        fData.append('lng', this._inst.dataForme.coords.lng);
-        fData.append('ligne', (this._inst.dataForme.polyline != null) ? JSON.stringify(this._inst.dataForme.polyline._latlngs) : null);
-        fData.append('plan_id', this._inst.planId);
-
-        var $form = $(formDom);
-        var id = $form.find('[name=afficheur_id]').val();
-
-        $.ajax({
-            type: 'POST',
-            url: BASE_URI + 'parking/afficheur/' + id + '/setGeometry',
-            processData: false,
-            contentType: false,
-            data: fData
-        })
-            .done(function (retour) {
-                // on success use return data here
-                console.log('Retour insertion AJAX: %o', retour);
-                if (retour.save) {
-                    Actions.notif.success();
-                    Actions.map.hide_modale();
-                    Actions.map.afficheur_created(retour.model);
-                } else {
-                    Actions.notif.error(Lang.get('administration_parking.carte.insert_places_fail'));
-                }
-            })
-            .fail(function (xhr, type, exception) {
-                // if ajax fails display error alert
-                console.error("ajax error response error " + type);
-                console.error("ajax error response body " + xhr.responseText);
-            });
+        this.listenTo(Actions.map.liste_concentrateurs, this.getConcentrateurCombo);
+        this.listenTo(Actions.map.liste_buses, this.getBusCombo);
     },
 
     /**
@@ -198,34 +258,44 @@ var store = Reflux.createStore({
      * passant les tests de vérification auto.
      * @param data
      */
-    updateCombos: function (data) {
-        if (data.name == "afficheur_id") {
-            var retour = {afficheur_id: data.value};
-            this.trigger(retour);
+    updateForm: function (data) {
+        var dat = {};
+        // MAJ du state STORE
+        dat[data.name] = data.value;
+        this.localState = _.extend(this.localState, dat);
+
+        switch (data.name) {
+            // Concentrateur selected
+            case 'concentrateur_id':
+                this.localState.bus_id = "";
+                this.localState.listBuses = this.getBusCombo(data.value);
+                this.trigger(this.localState);
+                break;
+            // Bus selected
+            case 'bus_id':
+                this.trigger(this.localState);
+                break;
         }
     },
     /**
      * Charge les données du réseau du parking en fonction de l'ID du parking
      * @param parkId : id du parking
      */
-    loadInitData: function (parkId, planId, dataForme) {
-        this._inst.dataForme = dataForme;
-        this._inst.parkingId = parkId;
-        this._inst.planId = planId;
+    loadInitData: function (parkId) {
 
         $.ajax({
             type: 'GET',
-            url: BASE_URI + 'parking/' + parkId + '/afficheurs',
+            url: BASE_URI + 'parking/' + parkId + '/concentrateurs',
             processData: false,
             contentType: false,
             data: {},
             context: this
         })
             .done(function (data) {
-                console.log('Data init chargées : %o', data);
-                this._inst.afficheurs = data;
-                this._inst.comboAfficheurs = this.getComboAfficheurs(data);
-                this.trigger({combo: this._inst.comboAfficheurs});
+                this.handleAjaxResult(data);
+                var concentrateursData = this.getConcentrateurCombo();
+                this.localState.listConcentrateurs = concentrateursData;
+                this.trigger(this.localState);
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert
@@ -233,21 +303,94 @@ var store = Reflux.createStore({
                 console.error("ajax error response body " + xhr.responseText);
             });
     },
+    /**
+     * Traite le retour de la requête AJAX ci-dessus
+     * @param data
+     */
+    handleAjaxResult: function (data) {
+        this._inst.ajax_data = data;
+
+        var concentrateurs = data;
+        var buses = [];
+
+        // I - PARCOURT DES CONCENTRATEURS POUR SORTIR TOUS LES BUSES
+        _.each(concentrateurs, function (c) {
+            Array.prototype.push.apply(buses, c.buses);
+        });
+
+        this._inst.concentrateurs = concentrateurs;
+        this._inst.buses = buses;
+    },
 
     /*****************************************************************************
      * UPDATE COMBOBOXES *********************************************************
      *****************************************************************************/
-    getComboAfficheurs: function (data) {
-        var combo = _.map(data, function (d) {
+
+    /**
+     * Retourne la liste des concentrateurs pour la combo
+     *
+     * @return retourne les données au format attendu par le composant select:
+     * [
+     *   {label:'Framboise', value:'0', ce que l'on veut...},
+     *   {label:'Pomme', value:'1', ce que l'on veut...}
+     * ]
+     */
+    getConcentrateurCombo: function () {
+        return _.map(this._inst.concentrateurs, function (c) {
             return {
-                label: d.reference,
-                value: d.id.toString()
+                label: c.v4_id,
+                value: c.id.toString()
             };
         });
+    },
+    /**
+     * Retourne la liste des buses pour la combo en fonction du concentrateur sélected
+     *
+     * @return retourne les données au format attendu par le composant select:
+     * [
+     *   {label:'Framboise', value:'0', ce que l'on veut...},
+     *   {label:'Pomme', value:'1', ce que l'on veut...}
+     * ]
+     */
+    getBusCombo: function (concentrateurId) {
+        var buses = _.filter(this._inst.buses, function (b) {
+            return b.concentrateur_id == concentrateurId;
+        });
+        return _.map(buses, function (b) {
+            return {
+                label: b.num.toString(),
+                value: b.id.toString()
+            }
+        });
 
-        console.log('combo : %o', combo);
+    },
 
-        return combo
+
+    /**
+     * Retourne le concentrateur en fonction de son id
+     * @param concentrateurId : id du concentrateur
+     */
+    getConcentrateurFromId: function (concentrateurId) {
+        return _.reduce(this._inst.concentrateurs, function (retour, c) {
+            if (c.id == concentrateurId) {
+                return c;
+            } else {
+                return retour;
+            }
+        }, null);
+    },
+    /**
+     * Retourne le bus en fonction de son id
+     * @param busId : id du bus
+     */
+    getBusFromId: function (busId) {
+        return _.reduce(this._inst.buses, function (retour, b) {
+            if (b.id == busId) {
+                return b;
+            } else {
+                return retour;
+            }
+        }, null);
     }
 
 });
