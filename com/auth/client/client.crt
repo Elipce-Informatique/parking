@@ -1,0 +1,57 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 5 (0x5)
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN=K0
+        Validity
+            Not Before: Aug 12 10:29:47 2015 GMT
+            Not After : Aug 12 10:29:47 2112 GMT
+        Subject: CN=Guidance Client
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (1024 bit)
+                Modulus:
+                    00:a6:08:78:18:a4:16:86:30:16:03:85:57:55:bb:
+                    81:80:34:fc:de:be:c6:f6:61:65:e9:79:26:46:27:
+                    6e:d4:7c:7c:d5:9a:5a:7d:77:41:4e:51:dc:c7:29:
+                    46:ad:40:6c:19:b0:6d:be:ba:90:d4:d9:f5:96:95:
+                    4a:3c:5f:1b:d6:6e:15:5e:ae:9c:bb:ee:e5:ce:09:
+                    3e:c7:f5:67:6e:4c:84:23:ad:a2:c7:a8:4e:73:97:
+                    6e:f5:5d:c5:34:3b:b6:50:df:3e:30:90:39:89:de:
+                    c4:6d:7e:af:b3:ee:64:06:02:68:b4:06:b3:6f:33:
+                    76:9d:e9:5e:50:cc:52:0a:f3
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Comment: 
+                OpenSSL Generated Certificate
+            X509v3 Subject Key Identifier: 
+                07:DF:79:1B:0D:77:34:BC:C5:BF:63:DF:CB:EF:52:57:6E:FA:E9:3B
+            X509v3 Authority Key Identifier: 
+                keyid:5A:B4:BA:A9:4F:B6:AE:C4:75:9C:06:C2:84:7D:71:B1:20:87:9E:27
+
+    Signature Algorithm: sha256WithRSAEncryption
+         6d:51:e8:65:35:92:3f:59:95:6d:b7:49:3c:9a:91:6b:cf:d3:
+         49:2f:3f:55:d3:22:73:b6:c6:59:3e:01:ee:75:42:6f:e8:27:
+         8d:15:c6:b8:75:48:2f:ae:11:4b:1d:60:65:a8:c8:9f:e5:a1:
+         ba:ed:3e:a6:65:a7:22:e2:a6:8d:5d:5b:55:f8:39:97:38:5b:
+         5b:cc:f6:64:78:e1:5b:58:13:74:64:3e:4f:02:1d:73:ae:c2:
+         86:db:b6:87:70:ee:c9:15:e4:e8:de:21:22:57:7a:0d:3d:dd:
+         ca:5d:aa:db:4b:82:07:ae:17:bb:05:77:d2:16:04:4f:ea:e1:
+         0b:63
+-----BEGIN CERTIFICATE-----
+MIICGjCCAYOgAwIBAgIBBTANBgkqhkiG9w0BAQsFADANMQswCQYDVQQDDAJLMDAg
+Fw0xNTA4MTIxMDI5NDdaGA8yMTEyMDgxMjEwMjk0N1owGjEYMBYGA1UEAwwPR3Vp
+ZGFuY2UgQ2xpZW50MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCmCHgYpBaG
+MBYDhVdVu4GANPzevsb2YWXpeSZGJ27UfHzVmlp9d0FOUdzHKUatQGwZsG2+upDU
+2fWWlUo8XxvWbhVerpy77uXOCT7H9WduTIQjraLHqE5zl271XcU0O7ZQ3z4wkDmJ
+3sRtfq+z7mQGAmi0BrNvM3ad6V5QzFIK8wIDAQABo3sweTAJBgNVHRMEAjAAMCwG
+CWCGSAGG+EIBDQQfFh1PcGVuU1NMIEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTAdBgNV
+HQ4EFgQUB995Gw13NLzFv2Pfy+9SV2766TswHwYDVR0jBBgwFoAUWrS6qU+2rsR1
+nAbChH1xsSCHnicwDQYJKoZIhvcNAQELBQADgYEAbVHoZTWSP1mVbbdJPJqRa8/T
+SS8/VdMic7bGWT4B7nVCb+gnjRXGuHVIL64RSx1gZajIn+Whuu0+pmWnIuKmjV1b
+Vfg5lzhbW8z2ZHjhW1gTdGQ+TwIdc67Chtu2h3DuyRXk6N4hIld6DT3dyl2q20uC
+B64XuwV30hYET+rhC2M=
+-----END CERTIFICATE-----

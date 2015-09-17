@@ -4,7 +4,15 @@ class ServerCom extends \Eloquent
 {
 
     protected $table = 'server_com';
-    protected $guarded = ['id'];
+    protected $fillable = [
+        'parking_id',
+        'protocol_version',
+        'protocol_port',
+        'software_name',
+        'software_version',
+        'software_build_date',
+        'software_os'
+    ];
 
     /*****************************************************************************
      * RELATIONS DU MODELE *******************************************************
