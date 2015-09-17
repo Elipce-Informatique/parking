@@ -139,6 +139,20 @@ var FormParking = React.createClass({
                     editable={this.props.editable}
                     min={0}/>
 
+                <InputNumberEditable
+                    attributes={{
+                        label: Lang.get('administration_parking.parking.port'),
+                        name: "protocol_port",
+                        value: this.props.detailParking.server_com.protocol_port,
+                        required: true,
+                        placeholder: 'ex: 26000',
+                        wrapperClassName: 'col-md-2',
+                        labelClassName: 'col-md-2 text-right',
+                        groupClassName: 'row'
+                    }}
+                    editable={this.props.editable}
+                    min={0}/>
+
                 <Select
                     attributes={{
                         label: Lang.get('administration_parking.parking.users'),
