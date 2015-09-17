@@ -32,7 +32,6 @@ var ModalAfficheur = React.createClass({
         onToggle: React.PropTypes.func.isRequired,
         parkingId: React.PropTypes.number.isRequired,
         planId: React.PropTypes.number.isRequired,
-        drawData: React.PropTypes.object.isRequired
     },
 
     getDefaultProps: function () {
@@ -49,7 +48,7 @@ var ModalAfficheur = React.createClass({
     },
     componentWillMount: function () {
         this.listenTo(store, this.updateData);
-        initModale(this.props.parkingId, this.props.planId, this.props.drawData);
+        initModale(this.props.parkingId, this.props.planId);
         console.log('Plan WILLMOUNT Id : %o', this.props.planId);
     },
 
@@ -80,7 +79,7 @@ var ModalAfficheur = React.createClass({
                 onHide={this.props.onToggle}>
 
                 <div className="modal-body">
-                    <Form attributes={{id: "form_mod_afficheur"}}>
+                    <Form attributes={{id: "form_mod_select_afficheur"}}>
 
                         <InputSelectEditable
                             editable={true}
@@ -106,7 +105,7 @@ var ModalAfficheur = React.createClass({
                             {Lang.get('global.annuler')}
                     </Button>
                     <BtnSave
-                        form_id="form_mod_afficheur"
+                        form_id="form_mod_select_afficheur"
                         libelle={Lang.get('global.create')} />
                 </div>
             </Modal>
@@ -121,7 +120,6 @@ var store = Reflux.createStore({
     _inst: {
         afficheurs: [],       // Les données brutes reçues en AJAX (liste des afficheurs)
         comboAfficheurs: [],
-        dataForme: {},
         planId: '',
         parkingId: ''
     },
@@ -134,63 +132,6 @@ var store = Reflux.createStore({
         this.listenTo(Actions.validation.form_field_changed, this.updateCombos);
         this.listenTo(Actions.validation.submit_form, this.onSubmit_form);
         this.listenTo(initModale, this.loadInitData); // Appellé à l'affichage de la modale
-    },
-
-    /**
-     * Appellée quand un formulaire a été validé syntaxiquement et métierment parlent.
-     * @param formDom : noeud racine contenant le formulaire
-     * @param formId : id du formulaire
-     */
-    onSubmit_form: function (formDom, formId) {
-        // OBLIGÉ DE TRAITER ÇA ICI PLUTOT QUE DANS LE STORE DE LA MAP
-        // POUR AVOIR ACCÈS AUX DONNÉES DES AFFICHEURS.
-        switch (formId) {
-            case "form_mod_afficheur":
-                this.handleAfficheur(formDom);
-                break;
-        }
-    },
-
-    /**
-     * Gère la validation de la modale afficheurs.
-     * - Remplis le cadre d'infos de la carte
-     *
-     * @param formDom : le DOM du formulaire
-     */
-    handleAfficheur: function (formDom) {
-
-        var fData = formDataHeler('', 'POST');
-        fData.append('lat', this._inst.dataForme.coords.lat);
-        fData.append('lng', this._inst.dataForme.coords.lng);
-        fData.append('ligne', (this._inst.dataForme.polyline != null) ? JSON.stringify(this._inst.dataForme.polyline._latlngs) : null);
-        fData.append('plan_id', this._inst.planId);
-
-        var $form = $(formDom);
-        var id = $form.find('[name=afficheur_id]').val();
-
-        $.ajax({
-            type: 'POST',
-            url: BASE_URI + 'parking/afficheur/' + id + '/setGeometry',
-            processData: false,
-            contentType: false,
-            data: fData
-        })
-            .done(function (retour) {
-                // on success use return data here
-                console.log('Retour insertion AJAX: %o', retour);
-                if (retour.save) {
-                    Actions.notif.success();
-                    Actions.map.hide_modale();
-                    Actions.map.afficheur_created(retour.model);
-                } else {
-                    Actions.notif.error(Lang.get('administration_parking.carte.insert_places_fail'));
-                }
-            })
-            .fail(function (xhr, type, exception) {
-                // if ajax fails display error alert
-                console.error("ajax error response error " + type);
-                console.error("ajax error response body " + xhr.responseText);
-            });
     },
 
     /**
@@ -208,8 +149,7 @@ var store = Reflux.createStore({
      * Charge les données du réseau du parking en fonction de l'ID du parking
      * @param parkId : id du parking
      */
-    loadInitData: function (parkId, planId, dataForme) {
-        this._inst.dataForme = dataForme;
+    loadInitData: function (parkId, planId) {
         this._inst.parkingId = parkId;
         this._inst.planId = planId;
 

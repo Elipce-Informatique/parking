@@ -113,8 +113,8 @@ class ParkingsController extends \BaseController
     }
 
     /**
-     * Récupère la liste des concentrateurs du parking avec toutes les données sous-jacentes (bus et capteurs)
-     * @param $id : id du parking
+     * Récupère la liste des afficheurs du parking.
+     * @param $parkingId : id du parking
      * @return reponse
      */
     public function getAfficheurs($parkingId)
@@ -124,7 +124,6 @@ class ParkingsController extends \BaseController
             ->join('bus', 'concentrateur.id', '=', 'bus.concentrateur_id')
             ->join('afficheur', 'bus.id', '=', 'afficheur.bus_id')
             ->where('parking.id', '=', $parkingId)
-            ->whereNull('afficheur.lat')
             ->select('afficheur.*')
             ->get();
         return $afficheurs;

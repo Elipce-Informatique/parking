@@ -239,5 +239,6 @@ module.exports.modal_type = {
     edit_place: 9,
     edit_allee: 10,
     edit_zone: 11,
-    edit_afficheur: 12
+    edit_afficheur: 12,
+    capteur_afficheur: 13
 };

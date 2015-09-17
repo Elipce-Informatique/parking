@@ -12,6 +12,7 @@ var ModalAllee = require('../modals/mod_allee');
 var ModalCapteur = require('../modals/mod_capteur');
 var ModalAfficheur = require('../modals/mod_afficheur');
 var ModalEditPlace = require('../modals/mod_edit_place');
+var ModalCapteurAfficheur = require('../modals/mod_afficheur_select');
 var Field = require('../formulaire/react_form_fields');
 var InputTextEditable = Field.InputTextEditable;
 var InputNumberEditable = Field.InputNumberEditable;
@@ -565,6 +566,9 @@ var parkingMap = React.createClass({
             case mapOptions.type_messages.edit_afficheur:
                 this._onEditAfficheur(data.data);
                 break;
+            case mapOptions.type_messages.capteur_afficheur:
+                this._onCapteurAfficheur(data.data);
+                break;
             default:
                 break;
         }
@@ -913,6 +917,18 @@ var parkingMap = React.createClass({
         });
     },
 
+    /**
+     * Lance l'affichage de la modale capteur_afficheur
+     * @private
+     */
+    _onCapteurAfficheur: function (data) {
+        this.setState({
+            modalType: mapOptions.modal_type.capteur_afficheur,
+            isModalOpen: true,
+            editData: data.places
+        });
+    },
+
     /*******************************************************************/
     /*******************************************************************/
     /*******************************************************************/
@@ -1141,6 +1157,24 @@ var parkingMap = React.createClass({
     },
 
     /**
+     * @returns {XML}
+     * @private
+     */
+    _modalCapteurAfficheur: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        } else {
+            return (
+                <ModalCapteurAfficheur
+                    onToggle={this.handleToggle}
+                    parkingId={this.props.parkingId}
+                    planId={this.props.planId}
+                />
+            );
+        }
+    },
+
+    /**
      * Méthode appellée par le "OverlayMixin", au moment du montage initial et de chaque update.
      * La valeur retournée est ajoutée au body de la page.
      * @returns {XML}
@@ -1172,7 +1206,6 @@ var parkingMap = React.createClass({
             case mapOptions.modal_type.calibre:
                 retour = this._modalCalibre();
                 break;
-
             case mapOptions.modal_type.edit_place:
                 retour = this._modalEditPlace();
                 break;
@@ -1185,6 +1218,10 @@ var parkingMap = React.createClass({
             case mapOptions.modal_type.edit_afficheur:
                 retour = this._modalEditAfficheur();
                 break;
+            case mapOptions.modal_type.capteur_afficheur:
+                retour = this._modalCapteurAfficheur();
+                break;
+
             default:
                 retour = <span/>;
                 break;
