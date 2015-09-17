@@ -69,7 +69,8 @@ var store = Reflux.createStore({
         lastParallelogramme: {},
         lastCalibre: {},
         contextMenuTarget: {}, // Cible du dernier context menu
-        mapInst: {}
+        mapInst: {},
+        placesToAssociateToAfficheur: []
     },
 
     /**
@@ -230,6 +231,7 @@ var store = Reflux.createStore({
             case mapOptions.dessin.capteur_afficheur:
                 console.log('PASS FORME CAPTEUR_AFFICHEUR DESSINEE : %o', data);
                 var places = afficheurHelper.getPlacesInAfficheur(data, this._inst);
+                this._inst.placesToAssociateToAfficheur = places;
 
                 if (places != false) {
                     var retour = {
