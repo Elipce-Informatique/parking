@@ -85,6 +85,9 @@ class ParkingsController extends \BaseController
     {
         // Suppression parking
         try {
+            ServerCom::where('parking_id', '=', $id)
+                ->first()
+                ->delete();
             Parking::find($id)->delete();
             $retour = true;
         } catch (Exception $e) {
