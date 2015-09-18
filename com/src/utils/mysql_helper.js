@@ -4,7 +4,6 @@ var logger = require('./logger.js');
 var _ = require('lodash');
 var conf = require('../../config/config.js');
 
-// TODO get all that config from elsewhere ?
 var mysqlClass = {
 
     connexionInfos: (process.env.PRODUCTION && process.env.PRODUCTION == 'true') ? conf.prod.database :

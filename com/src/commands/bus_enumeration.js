@@ -37,11 +37,11 @@ util.inherits(BusEnumeration, EventEmitter);
  * @param bus: bus infos
  */
 BusEnumeration.prototype.startJobBusEnum = function (bus) {
-    logger.log('info', 'START JOB : BUS ENUM on bus ' + bus.id)
+    logger.log('info', 'START JOB : BUS ENUM on bus ' + bus.ID)
     messenger.sendToController("startJob", {
         job: "busEnum",
         class: "bus",
-        ID: bus.id
+        ID: bus.ID
     });
 }
 
