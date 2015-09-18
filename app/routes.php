@@ -224,7 +224,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
 // RESSOURCE PARKING SÉPARÉE DU GROUPE AVEC PRÉFIXE PARKING POUR DES RAISONS LOGIQUES
 Route::group(['before' => 'auth|auth.canaccess|auth.parking'], function () {
     Route::get('parking/{id}/concentrateurs', 'ParkingsController@getConcentrateurs');
-    Route::get('parking/{id}/afficheurs', 'ParkingsController@getAfficheurs');
+    Route::get('parking/{id}/afficheurs_libres', 'ParkingsController@getAfficheursLibre');
     Route::get('parking/{id}/tableau_bord', 'ParkingsController@getTableauBordData');
     Route::resource('parking', 'ParkingsController');
 });

@@ -633,6 +633,9 @@ var store = Reflux.createStore({
             case "form_mod_afficheur":
                 this.handleAfficheur(formId, formDom);
                 break;
+            case 'form_mod_select_afficheur':
+                this.handleCapteurAfficheur(formId, formDom);
+                break;
 
             default:
                 break;
@@ -784,6 +787,16 @@ var store = Reflux.createStore({
                 console.error("ajax error response error " + type);
                 console.error("ajax error response body " + xhr.responseText);
             });
+    },
+
+    /**
+     *
+     * @param formId : Id du form
+     * @param formDom : dom du form
+     */
+    handleCapteurAfficheur: function (formId, formDom) {
+        console.log('PASS liste capteurs : %o', this._inst.placesToAssociateToAfficheur);
+
     },
 
     handleUpdatePlace: function (formId, formDom) {
