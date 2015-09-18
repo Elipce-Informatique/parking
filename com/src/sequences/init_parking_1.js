@@ -46,21 +46,22 @@ module.exports = {
         // Instance of bus enumeration Sequence with the busEnum controller
         this.busEnumSequence = new BusEnumSequence(this.busEnum);
 
-        // BUSES are stored in the supervision DB, send buses to controller
-        this.config.getSupervisionBuses(client)
-
+        // BUSES are stored in the controller DB, get buses from controller
+        //this.config.getSupervisionBuses(client)
+        this.config.sendBusConfigQuery(client);
     },
 
     unBindEvents: function () {
 
-        this.config.removeAllListeners('onGetSupervisionBuses');
+        this.config.removeAllListeners('busConfigData');
     },
     bindEvents: function () {
         logger.log('info', 'Binding events from the init procedure');
-        this.config.on('onGetSupervisionBuses', this.onGetSupervisionBuses.bind(this));
+        this.config.on('busConfigData', this.onBusConfigData.bind(this));
     },
 
     /**
+     * NE SERT PLUS, LUS BUS EXISTENTY DANS LE CONTROLLER, CE N'EST PAS LA SUPERVISION QUI INIT LES BUS
      * Handle buses data for the parking initialization process.
      * @param data : buses
      * @param client: WS client which send busConfigUpdate
@@ -71,5 +72,24 @@ module.exports = {
         this.config.sendBusConfigUpdate(data, client);
         // Send bus enum sequence
         this.busEnumSequence.start(data);
+    },
+
+    /**
+     * Busses inserted in supervision DB => send bus enumerate
+     * @param data: buses []
+     */
+    onBusConfigData: function (data) {
+        //logger.log('info', 'TEST EVTS busConfigData: data -> ', data);
+
+        // Save controllers
+        this.controllers = data;
+
+        // Parse controllers
+        _.each(data, function (ctrl) {
+
+            // Send bus enum sequence
+            // TODO activer
+            //this.busEnumSequence.start(ctrl.bus);
+        }, this);
     }
 };

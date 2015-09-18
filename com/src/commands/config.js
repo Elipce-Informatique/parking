@@ -139,6 +139,7 @@ Config.prototype.getSupervisionBuses = function (client) {
         }
         // Get busses OK
         else {
+            logger.log('info', 'getSupervisionBuses',result);
             this.emit('onGetSupervisionBuses', result, client);
         }
     }.bind(this))
@@ -164,7 +165,6 @@ Config.prototype.onBusConfigData = function (data) {
     if (_.isArray(data) && data.length > 0) {
         busModel.insertBuses(data);
     }
-
 };
 
 /**
