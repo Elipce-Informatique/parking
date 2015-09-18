@@ -144,16 +144,32 @@ function generateAfficheurLabel(afficheur) {
  * Prépare les données à envoyer au serveur
  * @param places : object - Les places au format comme renvoyées par la fonction getPlacesInAfficheur.
  */
-function prepareCounterViewData(places) {
+function prepareCountersData(places, afficheur) {
     var placesWithCapteur = places.capteurPlaces;
     var groupedByTypePlace = {};
-    
+
     _.each(placesWithCapteur, function (p) {
         typeof groupedByTypePlace[p.type_place_id] === 'undefined' ? groupedByTypePlace[p.type_place_id] = [] : null;
         groupedByTypePlace[p.type_place_id].push(p.capteur);
     }, this);
 
     console.log('Groupé par type : %o', groupedByTypePlace);
+    // CRÉATION DES COUNTERS (type_place, libelle afficheur, capteurs)
+    var counters = _.map(groupedByTypePlace, function (capteurGroup, type_place) {
+
+        // Séparation des ids
+        var capteurs_ids = _.map(capteurGroup, function (capteur) {
+            // Parcourt des places pour retourner les id
+            return capteur.id;
+        }, this);
+
+        return {
+            libelle: afficheur.reference,
+            type_place: type_place,
+            capteurs_ids: capteurs_ids
+        };
+    }, this);
+    return counters;
 }
 
 
@@ -197,7 +213,7 @@ module.exports = {
     getPlacesInAfficheur: getPlacesInAfficheur,
     generateAfficheurLabel: generateAfficheurLabel,
     supervisionContextMenu: supervisionContextMenu,
-    prepareCounterViewData: prepareCounterViewData,
+    prepareCounterViewData: prepareCountersData,
     style: {
         color: '#000000',
         weight: 1,

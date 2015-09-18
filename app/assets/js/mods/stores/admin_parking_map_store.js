@@ -796,7 +796,25 @@ var store = Reflux.createStore({
      */
     handleCapteurAfficheur: function (formId, formDom) {
         console.log('PASS liste capteurs : %o', this._inst.placesToAssociateToAfficheur);
-        var data = afficheurHelper.prepareCounterViewData(this._inst.placesToAssociateToAfficheur);
+        // EXTRACTION DE L'ID DE L'AFFICHEUR SÉLECTIONNÉ
+        var affId = $(formDom).find('[name=afficheur_id]').val();
+
+        // RECHERCHE DE L'AFFICHEUR SÉLECTIONNÉ
+        var afficheur = _.reduce(this._inst.afficheurs, function (result, a) {
+            if (a.id == affId) {
+                return a;
+            }
+            else {
+                return result;
+            }
+        }, {}, this);
+        console.log('Afficheur trouvé : %o', afficheur);
+
+        // GÉNÉRATION DES DONNÉE DE RETOUR
+        var dataCounters = afficheurHelper.prepareCountersData(this._inst.placesToAssociateToAfficheur, afficheur);
+
+        // TODO : Requete ajax pour envoyer balancer papa vers el PHP
+
     },
 
     handleUpdatePlace: function (formId, formDom) {
