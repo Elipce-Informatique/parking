@@ -140,6 +140,22 @@ function generateAfficheurLabel(afficheur) {
     return htmlAfficheur;
 }
 
+/**
+ * Prépare les données à envoyer au serveur
+ * @param places : object - Les places au format comme renvoyées par la fonction getPlacesInAfficheur.
+ */
+function prepareCounterViewData(places) {
+    var placesWithCapteur = places.capteurPlaces;
+    var groupedByTypePlace = {};
+    
+    _.each(placesWithCapteur, function (p) {
+        typeof groupedByTypePlace[p.type_place_id] === 'undefined' ? groupedByTypePlace[p.type_place_id] = [] : null;
+        groupedByTypePlace[p.type_place_id].push(p.capteur);
+    }, this);
+
+    console.log('Groupé par type : %o', groupedByTypePlace);
+}
+
 
 /**
  * Retourne les options de contextMenu pour les afficheurs en mode supervision
@@ -181,6 +197,7 @@ module.exports = {
     getPlacesInAfficheur: getPlacesInAfficheur,
     generateAfficheurLabel: generateAfficheurLabel,
     supervisionContextMenu: supervisionContextMenu,
+    prepareCounterViewData: prepareCounterViewData,
     style: {
         color: '#000000',
         weight: 1,

@@ -796,7 +796,7 @@ var store = Reflux.createStore({
      */
     handleCapteurAfficheur: function (formId, formDom) {
         console.log('PASS liste capteurs : %o', this._inst.placesToAssociateToAfficheur);
-
+        var data = afficheurHelper.prepareCounterViewData(this._inst.placesToAssociateToAfficheur);
     },
 
     handleUpdatePlace: function (formId, formDom) {
