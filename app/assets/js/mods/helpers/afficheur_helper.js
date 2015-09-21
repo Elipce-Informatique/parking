@@ -164,7 +164,7 @@ function prepareCountersData(places, afficheur) {
         }, this);
 
         return {
-            libelle: afficheur.reference,
+            aff_libelle: afficheur.reference,
             type_place: type_place,
             capteurs_ids: capteurs_ids
         };

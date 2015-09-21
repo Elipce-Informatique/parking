@@ -169,15 +169,16 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::get('niveau/libelle/{libelle}/{id?}', 'NiveauxController@verifLibelle');
 
     // GESTION ZONES ALLEES PLACES, AFFICHEURS
-    Route::delete('zone/delete_many', 'ZonesController@destroyMany');
+    Route::delete('afficheur/delocate_many', 'AfficheursController@delocateMany');
+    Route::post('afficheur/{id}/setGeometry', 'AfficheursController@setGeometry');
+    Route::post('afficheur/{id}/set_counters_views', 'AfficheursController@setCountersViews');
+    Route::get('afficheur/updateAfficheurs', 'AfficheursController@updateAfficheurs');
     Route::delete('allee/delete_many', 'AlleesController@destroyMany');
     Route::delete('place/delete_many', 'PlacesController@destroyMany');
-    Route::delete('afficheur/delocate_many', 'AfficheursController@delocateMany');
     Route::post('place/{id}/setCapteur', 'PlacesController@setCapteur');
     Route::patch('place/update_places_geo', 'PlacesController@updatePlacesGeo');
     Route::patch('place/{id}', 'PlacesController@updatePlace');
-    Route::post('afficheur/{id}/setGeometry', 'AfficheursController@setGeometry');
-    Route::get('afficheur/updateAfficheurs', 'AfficheursController@updateAfficheurs');
+    Route::delete('zone/delete_many', 'ZonesController@destroyMany');
 
     // GESTION PARKING
     Route::get('gestion_parking/all', 'ParkingsController@all');
@@ -199,7 +200,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::resource('capteur', 'CapteursController');
     Route::resource('gestion_parking', 'ParkingsController');
 
-    // Type place
+    // TYPE PLACE
     Route::get('type_place/all', 'TypesPlacesController@showAll');
     Route::resource('type_place', 'TypesPlacesController');
 
