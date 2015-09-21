@@ -813,7 +813,27 @@ var store = Reflux.createStore({
         // GÉNÉRATION DES DONNÉE DE RETOUR
         var dataCounters = afficheurHelper.prepareCountersData(this._inst.placesToAssociateToAfficheur, afficheur);
 
-        // TODO : Requete ajax pour envoyer balancer papa vers el PHP
+        console.log('Data généré pour insertion compteurs : %o', dataCounters);
+
+        var fData = formDataHelper('', 'POST');
+        fData.append('data', JSON.stringify(dataCounters));
+
+        $.ajax({
+            type: 'POST',
+            url: BASE_URI + 'parking/afficheur/' + affId + '/set_counters_views ',
+            processData: false,
+            contentType: false,
+            data: fData
+        })
+            .done(function (data) {
+                // On success use return data here
+                console.log('AJAX compteurs OK, data : %o', data);
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
 
     },
 

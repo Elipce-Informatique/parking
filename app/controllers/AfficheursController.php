@@ -165,4 +165,68 @@ class AfficheursController extends \BaseController
         return json_encode(Afficheur::getInfosFromViewId($ids));
     }
 
+    /**
+     * Crée les compteurs et les vues pour cet afficheur.
+     *
+     * @param $id : id de l'afficheur à initialiser
+     */
+    public function setCountersViews($id)
+    {
+        $data = json_decode(Input::get('data'), true);
+
+        Log::debug('Voici les données de l\'afficheur : ' . print_r($data, true));
+
+
+        DB::beginTransaction();
+
+        try {
+            $afficheur = Afficheur::find($id);
+            // Parcours des compteurs à afficher
+            foreach ($data AS $counter) {
+                $typePlace = TypePlace::find($counter['type_place']);
+
+                // 1 - CRÉATION DES COMPTEURS
+                $compteur = Compteur::create([
+                    'libelle' => $counter['aff_libelle'] . '_compteur_' . $typePlace->libelle
+                ]);
+
+                // 2 - ASSOCIATION COMPTEURS - CAPTEURS
+                $compteur->capteurs()->attach($counter['capteurs_ids']);
+
+                // 3 - AJOUT DU v4_id DU COMPTEUR
+                $compteur->v4_id = $compteur->id;
+                $compteur->save();
+
+                // 4 - CRÉATION VUE ATTACHÉE AUX COMPTEURS
+                $vue = Vue::create([
+                    'libelle' => $counter['aff_libelle'] . '_vue_' . $typePlace->libelle,
+                    'compteur_id' => $compteur->id,
+                    'afficheur_id' => $afficheur->id,
+                    'cellNr' => $typePlace->cell_nb,
+                    'total' => count($counter['capteurs_ids']),
+                    'occupees' => 0,
+                    'libres' => count($counter['capteurs_ids']),
+                    'offset' => 0,
+                    'emptyLow' => 0,
+                    'emptyHigh' => 0,
+                    'fullLow' => 0,
+                    'fullHigh' => 0,
+                    'type_place_id' => $counter['type_place']
+                ]);
+
+                // 5 - AJOUT DU v4_id DE LA VUE
+                $vue->v4_id = $vue->id;
+                $vue->save();
+                DB::commit();
+            }
+        } catch (Exception $e) {
+            Log::error('ERREUR D INSERTION COMPTEURS VUES :');
+            Log::error($e);
+            DB::rollBack();
+            return json_encode(false);
+        }
+
+
+    }
+
 }
