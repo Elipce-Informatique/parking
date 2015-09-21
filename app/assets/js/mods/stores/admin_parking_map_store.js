@@ -813,7 +813,8 @@ var store = Reflux.createStore({
         // GÉNÉRATION DES DONNÉE DE RETOUR
         var dataCounters = afficheurHelper.prepareCountersData(this._inst.placesToAssociateToAfficheur, afficheur);
 
-        // TODO : Requete ajax pour envoyer balancer papa vers el PHP
+        console.log('Data généré pour insertion compteurs : %o', dataCounters);
+        // TODO : Requete ajax pour envoyer balancer papa vers le PHP
 
     },
 

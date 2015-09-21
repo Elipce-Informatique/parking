@@ -213,7 +213,7 @@ module.exports = {
     getPlacesInAfficheur: getPlacesInAfficheur,
     generateAfficheurLabel: generateAfficheurLabel,
     supervisionContextMenu: supervisionContextMenu,
-    prepareCounterViewData: prepareCountersData,
+    prepareCountersData: prepareCountersData,
     style: {
         color: '#000000',
         weight: 1,
