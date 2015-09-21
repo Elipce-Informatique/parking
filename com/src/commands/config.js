@@ -139,7 +139,7 @@ Config.prototype.getSupervisionBuses = function (client) {
         }
         // Get busses OK
         else {
-            logger.log('info', 'getSupervisionBuses',result);
+            logger.log('info', 'getSupervisionBuses', result);
             this.emit('onGetSupervisionBuses', result, client);
         }
     }.bind(this))
@@ -159,11 +159,21 @@ Config.prototype.sendBusConfigQuery = function (client) {
  * @param data: data key from the response
  */
 Config.prototype.onBusConfigData = function (data) {
-    this.emit('busConfigData', data);
 
     // At least 1 controller
     if (_.isArray(data) && data.length > 0) {
-        busModel.insertBuses(data);
+        // Insert buses and controllers
+        busModel.insertBuses(data, function (bool) {
+            // Busses inserted OK
+            if (bool) {
+                logger.log('info','BUSSES inserted EMIT busConfigData');
+                this.emit('busConfigData', data);
+            }
+            // Busses NOT inserted
+            else {
+                logger.log('error', 'BUSSES NOT INSERTED, BUS ENUM NOT LAUNCHED')
+            }
+        }.bind(this));
     }
 };
 
@@ -173,7 +183,7 @@ Config.prototype.onBusConfigData = function (data) {
  * @param client: WS client which send busConfigUpdate
  */
 Config.prototype.sendBusConfigUpdate = function (dataUpdate, client) {
-    messenger.sendToController("busConfigUpdate" ,{ 'bus' : dataUpdate}, {}, client );
+    messenger.sendToController("busConfigUpdate", {'bus': dataUpdate}, {}, client);
 };
 
 /**

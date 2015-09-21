@@ -72,10 +72,13 @@ BusEnumeration.prototype.onBusEnum = function (data) {
                     break;
             }
             break;
+        case "test":
+            // Sensors on this bus
+            this.sensors[data.ID] = data.param;
         case "done":
             // Process sensors inserts on the bus
             if (this.sensors[data.ID] !== undefined && this.sensors[data.ID].length > 0) {
-                sensorModel.insertSensorsFromBusEnum(this.pool, data.ID, this.sensors[data.ID])
+                sensorModel.insertSensorsFromBusEnum(data.ID, this.sensors[data.ID])
                     .then(function ok(sensorsInserted) {
                         // Send sensors to controller DB
                         messenger.sendToController("sensorConfigUpdate", {

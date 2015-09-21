@@ -8,6 +8,7 @@ global.ssl = true;
 global.controllerClient = null;
 global.supervisionClients = [];
 global.parkingId = null;
+global.legLength = 62;
 
 
 // Local modules

@@ -531,16 +531,20 @@ module.exports = {
 
     /**
      * Insert sensors in supervision DB
-     * @param pool: mysql connexion
      * @param busId: bus.id
      * @param sensors: sensors array
      */
-    insertSensorsFromBusEnum: function (pool, busId, sensors) {
+    insertSensorsFromBusEnum: function (busId, sensors) {
         logger.log('info', 'SENSORS FROM BUS ENUM TO INSERT ', sensors);
 
+        // MYSQL CONNECTOR AND QUEUES
+        var connection = require('../utils/mysql_helper.js').standardConnexion();
+        queues(connection);
+        var trans = connection.startTransaction();
+
+        // Variables
         var params = [];
         var adresse = 1;
-        var mysqlHelper = require('../utils/mysql_helper.js');
         var sensorsInserted = [];
         var libelle = '';
 
@@ -552,26 +556,27 @@ module.exports = {
             "WHERE s.protocol_port =" + global.port + " " +
             "AND b.v4_id = ? ";
 
-        var sqlSensor = "INSERT IGNORE INTO capteur (bus_id, adresse, libelle, sn) " +
-            "VALUES ((" + sqlBus + "), ?, ?, ?)";
+        var sqlSensor = "INSERT IGNORE INTO capteur (bus_id, adresse, libelle, sn, num_noeud, leg, software_version) " +
+            "VALUES ((" + sqlBus + "), ?, ?, ?, ?, ?, ?)";
 
-        // TRANSACTION
-        var trans = pool.startTransaction();
         // Parse sensors
         sensors.forEach(function (sensor) {
             // Address
-            adresse = parseInt(sensor.param.leg) == 2 ? parseInt(sensor.param.index) + 127: parseInt(sensor.param.index);
-            libelle = 'Sensor #' + busId + '#' + adresse;
+            adresse = parseInt(sensor.leg) == 2 ? parseInt(sensor.index) + global.legLength : parseInt(sensor.index);
+            libelle = sensor.modelName+' #' + busId + '#' + adresse;
             // Prepare sql
             params = [
                 busId,
                 adresse,
                 libelle,
-                sensor.ssn
+                sensor.ssn,
+                sensor.index,
+                sensor.leg,
+                sensor.softwareVersion
             ];
 
             // Insert bus
-            mysqlHelper.execute(pool, sqlSensor, params, function (err, result) {
+            trans.query(sqlSensor, params, function (err, result) {
                 // INSERT KO
                 if (err && trans.rollback) {
                     trans.rollback();
@@ -595,17 +600,19 @@ module.exports = {
             trans.commit(function (err, info) {
                 if (err) {
                     reject(err);
-                    logger.log('error', 'TRANSACTION COMMIT ERROR');
+                    logger.log('error', 'TRANSACTION COMMIT SENSORS ERROR');
                 } else {
                     resolve(sensorsInserted);
-                    logger.log('info', 'TRANSACTION COMMIT COUNTERS OK');
+                    logger.log('info', 'TRANSACTION COMMIT SENSORS OK');
                 }
+                // END MySQL connexion
+                connection.end(errorHandler.onMysqlEnd);
             });
         })
 
         // Execute the queue INSERT counters
         trans.execute();
 
-       return promise;
+        return promise;
     }
 };
