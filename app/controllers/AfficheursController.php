@@ -131,18 +131,13 @@ class AfficheursController extends \BaseController
      */
     public function delocateMany()
     {
-        Log::debug('locateMany, avec ces données : ' . print_r(Input::all(), true));
         $ids = explode(',', Input::get('ids'));
+        foreach ($ids as $id) {
+            $this->reset($id);
+        }
         $action = Afficheur::whereIn('id', $ids)
             ->delete();
 
-//        $action = Afficheur::whereIn('id', $ids)
-//            ->update([
-//                'plan_id' => null,
-//                'ligne' => null,
-//                'lat' => null,
-//                'lng' => null
-//            ]);
         $retour = [
             'save' => $action,
             'errorBdd' => !$action,
@@ -217,16 +212,40 @@ class AfficheursController extends \BaseController
                 // 5 - AJOUT DU v4_id DE LA VUE
                 $vue->v4_id = $vue->id;
                 $vue->save();
-                DB::commit();
             }
+            DB::commit();
+            return json_encode("OK");
+
         } catch (Exception $e) {
             Log::error('ERREUR D INSERTION COMPTEURS VUES :');
             Log::error($e);
             DB::rollBack();
             return json_encode(false);
         }
+    }
 
+    /**
+     * Reset l'afficheur désigné par l'id passé en params
+     * @param $id : id de l'afficheur à reset
+     */
+    public function reset($id)
+    {
+        DB::beginTransaction();
+        try {
+            Vue::where('afficheur_id', '=', $id)->get()->each(function ($vue) {
+                $vue->delete();
+            });
 
+            DB::commit();
+            return json_encode("OK");
+
+        } catch (Exception $e) {
+
+            Log::error('ERREUR DE SUPPRESSION COMPTEURS VUES :');
+            Log::error($e);
+            DB::rollBack();
+            return json_encode(false);
+        }
     }
 
 }

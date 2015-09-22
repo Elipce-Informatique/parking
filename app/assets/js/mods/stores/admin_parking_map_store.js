@@ -489,7 +489,34 @@ var store = Reflux.createStore({
                         e: e,
                         storeContext: this
                     })
-            }]
+            },
+                {
+                    text: Lang.get('global.reset'),
+                    index: 2,
+                    callback: function (evt) {
+                        var context = this;
+                        // LANCEMENT SWAL CONFIRMATION RESET AFFICHEUR
+                        swal({
+                            title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                            text: Lang.get('administration_parking.carte.swal_msg_confirm_reset_afficheur'),
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#DD6B55",
+                            confirmButtonText: Lang.get('global.reset'),
+                            cancelButtonText: Lang.get('global.annuler'),
+                            closeOnConfirm: true,
+                            closeOnCancel: true
+                        }, function (isConfirm) {
+                            if (isConfirm) {
+                                context.storeContext.resetAfficheur(context.e);
+                            }
+                        });
+
+                    }.bind({
+                            e: e,
+                            storeContext: this
+                        })
+                }]
         });
     },
 
@@ -823,11 +850,25 @@ var store = Reflux.createStore({
             url: BASE_URI + 'parking/afficheur/' + affId + '/set_counters_views ',
             processData: false,
             contentType: false,
+            dataType: 'json',
+            context: this,
             data: fData
         })
             .done(function (data) {
+                console.log('TEMP RETOUR AJAX : %o', data);
                 // On success use return data here
-                console.log('AJAX compteurs OK, data : %o', data);
+                if (data != false) {
+                    console.log('AJAX compteurs OK, data : %o', data);
+                    Actions.notif.success();
+                } else {
+                    console.error('AJAX compteurs KO');
+                    Actions.notif.error();
+                }
+                var retour = {
+                    type: mapOptions.type_messages.hide_modal,
+                    data: {}
+                };
+                this.trigger(retour);
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert
@@ -1127,6 +1168,32 @@ var store = Reflux.createStore({
             data: afficheursMap
         };
         this.trigger(message);
+    },
+
+    /**
+     * Lance le reset de l'afficheur passé en paramètre
+     * @param e : l'obhet carte de l'afficheur
+     */
+    resetAfficheur: function (e) {
+        var aff = e.layer.options.data;
+        console.log('Afficheur à reset : %o', aff);
+        var fdata = formDataHelper('', 'PATCH');
+        $.ajax({
+            type: 'POST',
+            url: BASE_URI + 'parking/afficheur/' + aff.id + '/reset',
+            processData: false,
+            contentType: false,
+            data: fdata
+        })
+            .done(function (data) {
+                // on success use return data here
+                console.log('data retour reset afficheur : %o', data);
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
     },
 
     /**

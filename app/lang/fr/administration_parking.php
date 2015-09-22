@@ -75,7 +75,7 @@ return array(
         'err_zone_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une allée.',
         'err_allee_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une autre allée.',
         'err_parking_non_init' => 'Erreur : Le parking n\'a pas encore été initialisé.',
-        'err_places_sans_capteur' => 'Erreur: aucune des places sélectionnées n\'est attachée à un capteur.' ,
+        'err_places_sans_capteur' => 'Erreur: aucune des places sélectionnées n\'est attachée à un capteur.',
         // MODALE AFFICHEURS
         'reference' => 'Nom',
         'type_afficheur' => 'Type d\'afficheur',
@@ -95,6 +95,7 @@ return array(
         'swal_msg_confirm_allee' => "ATTENTION supprimer une allée est une action irréversible.",
         'swal_msg_confirm_place' => "ATTENTION supprimer une place est une action irréversible.",
         'swal_msg_confirm_afficheur' => "ATTENTION supprimer un afficheur est une action irréversible.",
+        'swal_msg_confirm_reset_afficheur' => "ATTENTION remettre un afficheur à zéro est une action irréversible. Cela va supprimer les vues et les compteurs associés à ce dernier. Cela peut impacter d'autres afficheurs si ils se basent sur ce dernier pour leurs compteurs.",
 
     ],
 

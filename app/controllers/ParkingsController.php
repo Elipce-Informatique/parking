@@ -123,7 +123,9 @@ class ParkingsController extends \BaseController
             ->join('concentrateur', 'parking.id', '=', 'concentrateur.parking_id')
             ->join('bus', 'concentrateur.id', '=', 'bus.concentrateur_id')
             ->join('afficheur', 'bus.id', '=', 'afficheur.bus_id')
+            ->leftJoin('vue', 'afficheur.id', '=', 'vue.afficheur_id')
             ->where('parking.id', '=', $parkingId)
+            ->whereNull('vue.id')
             ->select('afficheur.*')
             ->get();
         return $afficheurs;
