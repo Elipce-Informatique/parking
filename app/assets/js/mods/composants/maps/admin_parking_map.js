@@ -372,7 +372,8 @@ var parkingMap = React.createClass({
             var rectangle = (
             this._inst.currentMode == mapOptions.dessin.allee ||
             this._inst.currentMode == mapOptions.dessin.zone ||
-            this._inst.currentMode == mapOptions.dessin.place
+            this._inst.currentMode == mapOptions.dessin.place ||
+            this._inst.currentMode == mapOptions.dessin.capteur_afficheur
             ) ? {
                 shapeOptions: {
                     color: mapOptions.control.draw.colors[this._inst.currentMode]

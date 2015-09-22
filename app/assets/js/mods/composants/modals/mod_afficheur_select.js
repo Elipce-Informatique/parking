@@ -106,7 +106,7 @@ var ModalAfficheur = React.createClass({
                     </Button>
                     <BtnSave
                         form_id="form_mod_select_afficheur"
-                        libelle={Lang.get('global.create')} />
+                        libelle={Lang.get('global.associer')} />
                 </div>
             </Modal>
         );

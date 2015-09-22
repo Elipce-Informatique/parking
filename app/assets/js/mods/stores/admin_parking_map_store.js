@@ -823,11 +823,25 @@ var store = Reflux.createStore({
             url: BASE_URI + 'parking/afficheur/' + affId + '/set_counters_views ',
             processData: false,
             contentType: false,
+            dataType: 'json',
+            context: this,
             data: fData
         })
             .done(function (data) {
+                console.log('TEMP RETOUR AJAX : %o', data);
                 // On success use return data here
-                console.log('AJAX compteurs OK, data : %o', data);
+                if (data != false) {
+                    console.log('AJAX compteurs OK, data : %o', data);
+                    Actions.notif.success();
+                } else {
+                    console.error('AJAX compteurs KO');
+                    Actions.notif.error();
+                }
+                var retour = {
+                    type: mapOptions.type_messages.hide_modal,
+                    data: {}
+                };
+                this.trigger(retour);
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert

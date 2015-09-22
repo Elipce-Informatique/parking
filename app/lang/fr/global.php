@@ -101,6 +101,7 @@ Voulez-vous vraiment quitter cette page ?',
     'saisieNumberBis' => ' entre %1 et %2',
     'inputTelError' => 'Numéro incorrect',
     'erreurFileInput' => "Seules les extensions suivantes sont prises en compte :\n [extensions]",
+    'associer' => 'Associer',
 
     // PARKING
     'occupee' => 'Occupée',

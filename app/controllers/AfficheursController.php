@@ -217,8 +217,10 @@ class AfficheursController extends \BaseController
                 // 5 - AJOUT DU v4_id DE LA VUE
                 $vue->v4_id = $vue->id;
                 $vue->save();
-                DB::commit();
             }
+            DB::commit();
+            return json_encode("OK");
+
         } catch (Exception $e) {
             Log::error('ERREUR D INSERTION COMPTEURS VUES :');
             Log::error($e);
