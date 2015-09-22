@@ -16,6 +16,7 @@ module.exports = {
     clientConnected: null,
     busEnumSequence: null,
 
+
     /**
      * Starts the initialisation procedure
      * @param client: client WS connected
@@ -88,8 +89,7 @@ module.exports = {
         _.each(data, function (ctrl) {
 
             // Send bus enum sequence
-            // TODO activer
-            //this.busEnumSequence.start(ctrl.bus);
+            this.busEnumSequence.start(ctrl.bus);
         }, this);
     }
 };
