@@ -6,6 +6,22 @@ class Afficheur extends BaseModel
     protected $guarded = ['id'];
     protected $table = 'afficheur';
 
+    /**
+     * Setup des évènements du model
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        // Attach event handler, on deleting of the user
+        Afficheur::deleting(function ($aff) {
+            // Delete all tricks that belong to this user
+            foreach ($aff->vues as $vue) {
+                $vue->delete();
+            }
+        });
+    }
+
     /*****************************************************************************
      * RELATIONS DU MODELE *******************************************************
      *****************************************************************************/

@@ -94,6 +94,7 @@ Voulez-vous vraiment quitter cette page ?',
     'description' => 'Description',
     'defaut' => 'Défaut',
     'message' => "Message",
+    'reset' => 'Reset',
 
     // FORMULAIRE
     'select' => 'Sélection...',
