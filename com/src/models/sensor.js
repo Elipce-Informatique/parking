@@ -535,7 +535,7 @@ module.exports = {
      * @param sensors: sensors array
      */
     insertSensorsFromBusEnum: function (busId, sensors) {
-        logger.log('info', 'SENSORS FROM BUS ENUM TO INSERT ', sensors);
+        logger.log('info', 'SENSORS FROM BUS ENUM TO INSERT ' + busId, sensors);
 
         // MYSQL CONNECTOR AND QUEUES
         var connection = require('../utils/mysql_helper.js').standardConnexion();
@@ -544,7 +544,7 @@ module.exports = {
 
         // Variables
         var params = [];
-        var adresse = 1;
+        var instSql = '';
         var sensorsInserted = [];
         var libelle = '';
 
@@ -559,24 +559,28 @@ module.exports = {
         var sqlSensor = "INSERT IGNORE INTO capteur (bus_id, adresse, libelle, sn, num_noeud, leg, software_version) " +
             "VALUES ((" + sqlBus + "), ?, ?, ?, ?, ?, ?)";
 
+        var updateV4 = "UPDATE capteur SET v4_id=? WHERE id=?";
+
         // Parse sensors
         sensors.forEach(function (sensor) {
             // Address
-            adresse = parseInt(sensor.leg) == 2 ? parseInt(sensor.index) + global.legLength : parseInt(sensor.index);
-            libelle = sensor.modelName+' #' + busId + '#' + adresse;
+            var adresse = parseInt(sensor.leg) == 2 ? (parseInt(sensor.index) + global.legLength) : parseInt(sensor.index);// "var" important pour le passage de adresse dans la callback qui suit
+            //logger.log('info', '+++++++ adresse ', parseInt(sensor.leg), parseInt(sensor.index), adresse);
+            libelle = sensor.modelName + ' #' + busId + '#' + adresse;
             // Prepare sql
             params = [
                 busId,
                 adresse,
                 libelle,
                 sensor.ssn,
-                sensor.index,
-                sensor.leg,
+                parseInt(sensor.index),
+                parseInt(sensor.leg),
                 sensor.softwareVersion
             ];
-
+            instSql = mysql.format(sqlSensor, params);
+            //logger.log('info', '###### SQL', instSql);
             // Insert bus
-            trans.query(sqlSensor, params, function (err, result) {
+            trans.query(instSql, function (err, result) {
                 // INSERT KO
                 if (err && trans.rollback) {
                     trans.rollback();
@@ -585,17 +589,30 @@ module.exports = {
                 }
                 // INSERT OK
                 else {
-                    sensorsInserted.push({
-                        ID: result.insertId,
-                        busId: busId,
-                        address: adresse,
-                        spaceType: "generic",
-                        serialNumber: sensor.ssn
-                    })
+                    var sensorId = result.insertId;
+                    instSql = mysql.format(updateV4, [sensorId, sensorId]);
+                    //logger.log('info', '###### ', instSql);
+                    // UPDATE v4_id
+                    trans.query(instSql);
+
+                    // ELSE -> Sensor already exists
+                    if (sensorId > 0) {
+                        // Strore sensor
+                        sensorsInserted.push({
+                            ID: sensorId,
+                            address: adresse,
+                            spaceType: "generic",
+                            deviceInfo: {
+                                serialNumber: sensor.ssn,
+                                modelName: sensor.modelName,
+                                softwareVersion: sensor.softwareVersion
+                            }
+                        })
+                    }
                 }
             });
         }, this);
-        // Commit INSERT counters
+        // Commit INSERT sensors
         var promise = Q.Promise(function (resolve, reject) {
             trans.commit(function (err, info) {
                 if (err) {
