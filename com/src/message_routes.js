@@ -2,6 +2,7 @@
 var config_controller = require('./commands/config.js'), config_controller = new config_controller();
 var events_controller = require('./commands/events.js'), events_controller = new events_controller();
 var busenum_controller = require('./commands/bus_enumeration.js'), busenum_controller = new busenum_controller();
+var error_controller = require('./commands/error.js'), error_controller = new error_controller();
 var logger = require('./utils/logger.js');
 var errorHandler = require('./utils/error_handler.js');
 var ctrlSequence = require('./sequences/controller_connection.js');
@@ -96,6 +97,10 @@ module.exports.route = function (message, client) {
             // INSERT THE RECEIVED DATA IN DATABASE
             config_controller.onDisplayConfigData(message.data);
             break;
+        case 'displayConfigUpdateDone':
+            // INSERT THE RECEIVED DATA IN DATABASE
+            config_controller.onDisplayConfigUpdateDone(message.data);
+            break;
         case 'counterConfigQuery':
             // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
             config_controller.sendCounterConfigQuery(client);
@@ -103,6 +108,10 @@ module.exports.route = function (message, client) {
         case 'counterConfigData':
             // INSERT THE RECEIVED DATA IN DATABASE
             config_controller.onCounterConfigData(message.data);
+            break;
+        case 'counterConfigUpdateDone':
+            // INSERT THE RECEIVED DATA IN DATABASE
+            config_controller.onCounterConfigUpdateDone(message.data);
             break;
         case 'viewConfigQuery':
             // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
@@ -112,6 +121,10 @@ module.exports.route = function (message, client) {
             // INSERT THE RECEIVED DATA IN DATABASE
             config_controller.onViewConfigData(message.data);
             break;
+        case 'viewConfigUpdateDone':
+            // INSERT THE RECEIVED DATA IN DATABASE
+            config_controller.onViewConfigUpdateDone(message.data);
+            break;
         case 'settingsQuery':
             // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
             config_controller.sendSettingsQuery(client);
@@ -119,6 +132,10 @@ module.exports.route = function (message, client) {
         case 'settingsData':
             // INSERT THE RECEIVED DATA IN DATABASE
             config_controller.onSettingsData(message.data);
+            break;
+        case 'settingsUpdateDone':
+            // INSERT THE RECEIVED DATA IN DATABASE
+            config_controller.onSettingsUpdateDone(message.data);
             break;
         case 'remoteControl':
             config_controller.sendRemoteControl(message.data.command);
@@ -147,5 +164,29 @@ module.exports.route = function (message, client) {
  * @param client
  */
 module.exports.error = function (message, client) {
-    logger.log('error', 'ERROR MESSAGE RECEIVED FROM CLIENT : ', message)
+
+    logger.log('error', 'INCOMING QUERY ERROR  messageType: ' + message.messageType + ' - Client type: ' + (client.isController != undefined ? (client.isController ? 'Controller' : 'Supervision') : 'unknown'));
+
+    switch(message.messageType){
+
+        case 'sensorConfigUpdateDone':
+            error_controller.onSensorConfigUpdateDone(message.error, client);
+            break;
+        case 'displayConfigUpdateDone':
+            error_controller.onDisplayConfigUpdateDone(message.error, client);
+            break;
+        case 'counterConfigUpdateDone':
+            error_controller.onCounterConfigUpdateDone(message.error, client);
+            break;
+        case 'viewConfigUpdateDone':
+            error_controller.onViewConfigUpdateDone(message.error, client);
+            break;
+        case 'settingsUpdateDone':
+            error_controller.onSettingsUpdateDone(message.error, client);
+            break;
+        default:
+            logger.log('error', 'MESSAGE TYPE ERROR -> messageType: ' + message.messageType + ' unknown in the error router');
+            break;
+    }
+
 };

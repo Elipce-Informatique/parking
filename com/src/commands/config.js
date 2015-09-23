@@ -230,7 +230,7 @@ Config.prototype.sendSensorConfigUpdate = function (dataUpdate) {
 
 };
 
-/** TODO
+/**
  * The last sensorConfigUpdate has been completed
  */
 Config.prototype.onSensorConfigUpdateDone = function (data) {
@@ -318,7 +318,7 @@ Config.prototype.sendCounterConfigUpdate = function (dataUpdate) {
 Config.prototype.onCounterConfigUpdateDone = function (data) {
     this.emit('counterConfigUpdateDone', data);
 
-    logger.log('info', 'onCounterConfigUpdateDone received: %o', data);
+    logger.log('info', 'onCounterConfigUpdateDone received:', data);
 };
 
 // --------------------------------------------------------------------------------------------
@@ -351,7 +351,7 @@ Config.prototype.sendViewConfigUpdate = function (dataUpdate) {
 
 };
 
-/** TODO
+/**
  * The last viewConfigUpdate has been completed
  */
 Config.prototype.onViewConfigUpdateDone = function () {
@@ -379,22 +379,13 @@ Config.prototype.onSettingsData = function (data) {
         settingModel.insertSettings(data);
     }
 };
-
-/** TODO
- * Send a counterConfigUpdate to the controller
- * @param dataUpdate: data to send to the controller for the update
+/**
+ * The last sensorConfigUpdate has been completed
  */
-Config.prototype.sendCounterConfigUpdate = function (dataUpdate) {
+Config.prototype.onSettingsUpdateDone = function (data) {
+    this.emit('settingsUpdateDone', data);
 
-};
-
-/** TODO
- * The last counterConfigUpdate has been completed
- */
-Config.prototype.onCounterConfigUpdateDone = function (data) {
-    this.emit('counterConfigUpdateDone', data);
-
-    logger.log('info', 'onCounterConfigUpdateDone received: %o', data);
+    logger.log('info', 'onSettingsUpdateDone received:', data);
 };
 
 // --------------------------------------------------------------------------------------------
