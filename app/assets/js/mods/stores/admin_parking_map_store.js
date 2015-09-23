@@ -795,7 +795,6 @@ var store = Reflux.createStore({
             data: fData
         })
             .done(function (data) {
-                console.log('Ajax afficheur DONE : %o', data);
                 if (typeof data == 'object') {
                     Actions.notif.success();
                     var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD([data]);
