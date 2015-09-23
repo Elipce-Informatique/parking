@@ -46,6 +46,8 @@ class AfficheursController extends \BaseController
             'lng');
         Log::debug('Données de l\'afficheur à insérer : ' . print_r($input, true));
         $afficheur = Afficheur::create($input);
+        $afficheur->v4_id = $afficheur->id;
+        $afficheur->save();
         return $afficheur;
     }
 

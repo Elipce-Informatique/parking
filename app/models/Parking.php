@@ -56,6 +56,25 @@ class Parking extends BaseModel
     /*****************************************************************************
      * UTILITAIRES DU MODELE *****************************************************
      *****************************************************************************/
+
+    /**
+     * Update le timestamp d'update afficheur
+     */
+    public function touchAffUpdate()
+    {
+        $this->last_aff_update = $this->freshTimestamp();
+        return $this->save();
+    }
+
+    /**
+     * Update le timestamp de synchro OK.
+     */
+    public function touchSynchroOk()
+    {
+        $this->last_synchro_ok = $this->freshTimestamp();
+        return $this->save();
+    }
+
     /**
      * Les places du parking
      * @param $id : ID parking
@@ -473,7 +492,7 @@ class Parking extends BaseModel
 
         // Les données passées en PUT
         $fields = Input::all();
-        Log::debug("UPDATE FIELDS ".print_r($fields, true));
+        Log::debug("UPDATE FIELDS " . print_r($fields, true));
 
         // Début transaction
         DB::beginTransaction();
@@ -489,7 +508,7 @@ class Parking extends BaseModel
                 // Parcours de tous les champs
                 foreach ($model->getFillable() as $key) {
                     // On ne garde que les clés qui nous interessent
-                    if(isset($fields[$key])) {
+                    if (isset($fields[$key])) {
                         $filteredFields[$key] = $fields[$key];
                     }
                 }
@@ -532,17 +551,17 @@ class Parking extends BaseModel
                 }
 
                 // Serveur com
-                $modelServCom = ServerCom::where('parking_id','=',$model->id)
+                $modelServCom = ServerCom::where('parking_id', '=', $model->id)
                     ->first();
 
                 $filteredFields = [];
                 foreach ($modelServCom->getFillable() as $key) {
                     // On ne garde que les clés qui nous interessent
-                    if(isset($fields[$key])) {
+                    if (isset($fields[$key])) {
                         $filteredFields[$key] = $fields[$key];
                     }
                 }
-                if(count($filteredFields) > 0){
+                if (count($filteredFields) > 0) {
                     $modelServCom->update($filteredFields);
                 }
 
