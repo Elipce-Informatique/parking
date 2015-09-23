@@ -76,28 +76,37 @@ BusEnumeration.prototype.onBusEnum = function (data) {
             // Sensors on this bus
             this.sensors[data.ID] = data.param;
         case "done":
-            // Process sensors inserts on the bus
+            // Process sensors inserts on the bus data.ID
             if (this.sensors[data.ID] !== undefined && this.sensors[data.ID].length > 0) {
                 sensorModel.insertSensorsFromBusEnum(data.ID, this.sensors[data.ID])
                     .then(function ok(sensorsInserted) {
-                        // Send sensors to controller DB
-                        messenger.sendToController("sensorConfigUpdate", {
-                            sensor: sensorsInserted
-                        });
-                        logger.log('info', 'sensorConfigUpdate ', sensorsInserted);
+                        // At least 1 sensor to insert
+                        if (sensorsInserted.length > 0) {
+                            // Send sensors to controller DB
+                            messenger.sendToController("sensorConfigUpdate", {
+                                busID: data.ID,
+                                sensor: sensorsInserted
+                            });
+                            logger.log('info', 'sensorConfigUpdate ', sensorsInserted);
 
-                        // Update network address
-                        var busEnumJson = helper.dbSensorsToBusEnum(sensorsInserted);
-                        messenger.sendToController("startJob", {
-                            job: "busEnum",
-                            class: "bus",
-                            ID: data.ID,
-                            param: busEnumJson
-                        });
-                        logger.log('info', 'busEnumUpdate ', busEnumJson);
+                            // Update network address
+                            var busEnumJson = helper.dbSensorsToBusEnum(sensorsInserted);
+                            messenger.sendToController("startJob", {
+                                job: "busEnum",
+                                class: "bus",
+                                ID: data.ID,
+                                param: busEnumJson
+                            });
+                            logger.log('info', 'busEnumUpdate ', busEnumJson);
+                            // RAZ sensors to insert
+                            this.sensors[data.ID] = [];
+                        }
+                        else {
+                            logger.log('info', 'BUSENUM DONE, NO SENSORS TO INSERT ');
+                        }
 
                     }, function ko(err) {
-                        logger.log('error', 'Supervision SB error : sensors not inserted from BusEnum ', err);
+                        logger.log('error', 'Supervision DB error : sensors not inserted from BusEnum ', err);
                     });
             }
             // Displays inserts

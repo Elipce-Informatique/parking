@@ -26,5 +26,6 @@ module.exports = {
             password: 'bruno2015',
             database: 'parking'
         }
-    }
+    },
+    legLength: 62
 };

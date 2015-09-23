@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AlterCapteur extends Migration {
+class AlterUniqueCapteur extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -13,9 +13,9 @@ class AlterCapteur extends Migration {
 	public function up()
 	{
         Schema::table('capteur', function ($t) {
-
-            $t->integer('leg')->after('sn');
-            $t->char('software_version',20)->after('leg');
+            $t->dropUnique('v4_id');
+//            $t->dropUnique('capteur_bus_id_v4_id_unique'); // Si rollback alors ce nom
+            $t->unique(['bus_id','adresse']);
         });
 	}
 
@@ -27,10 +27,9 @@ class AlterCapteur extends Migration {
 	public function down()
 	{
         Schema::table('capteur', function ($t) {
-
-            $t->dropColumn('leg');
-            $t->dropColumn('software_version');
+            $t->dropUnique('capteur_bus_id_adresse_unique');
+            $t->unique(['bus_id','v4_id']);
         });
-	}
+    }
 
 }
