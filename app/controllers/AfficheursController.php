@@ -134,11 +134,25 @@ class AfficheursController extends \BaseController
     public function delocateMany()
     {
         $ids = explode(',', Input::get('ids'));
-        foreach ($ids as $id) {
-            $this->reset($id);
+        try {
+            // Ce code permet la suppression réelle de l'afficheur et de ses vues
+//        foreach ($ids as $id) {
+//            $this->reset($id);
+//        }
+//        $action = Afficheur::whereIn('id', $ids)
+//            ->delete();
+            foreach ($ids as $id) {
+                $aff = Afficheur::find($id);
+                $aff->a_supprimer = '1';
+                $aff->save();
+            }
+            $action = true;
+        } catch (Exception $e) {
+            Log::error('Erreur SQL : ');
+            Log::error($e);
+            $action = false;
         }
-        $action = Afficheur::whereIn('id', $ids)
-            ->delete();
+
 
         $retour = [
             'save' => $action,
