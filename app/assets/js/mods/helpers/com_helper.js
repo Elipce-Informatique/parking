@@ -110,7 +110,7 @@ var messages = ({
     },
     /**
      * Client send hello
-     * @returns {{messageType: string, data: {toto: string}}}
+     * @returns {{messageType: string, data: {}}}
      */
     supervisionConnection: function () {
         var retour = {
@@ -150,7 +150,7 @@ var messages = ({
     remoteControl: function (command) {
         return {
             messageType: "remoteControl",
-            "data": {
+            data: {
                 command: command
             }
         }
@@ -171,15 +171,6 @@ var messages = ({
     settingsQuery: function () {
         return {
             messageType: "settingsQuery"
-        }
-    },
-
-    remoteControl: function(command) {
-        return {
-            messageType: "remoteControl",
-            data:{
-                command:command
-            }
         }
     }
 

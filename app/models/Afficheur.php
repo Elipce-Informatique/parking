@@ -20,6 +20,16 @@ class Afficheur extends BaseModel
                 $vue->delete();
             }
         });
+
+        // Attach event handler, on deleting of the user
+        Afficheur::created(function ($aff) {
+            $aff->getParking()->touchAffUpdate();
+        });
+
+        // Attach event handler, on deleting of the user
+        Afficheur::updated(function ($aff) {
+            $aff->getParking()->touchAffUpdate();
+        });
     }
 
     /*****************************************************************************
@@ -30,9 +40,9 @@ class Afficheur extends BaseModel
      * Le niveau de l'afficheur
      * @return mixed
      */
-    public function niveau()
+    public function plan()
     {
-        return $this->belongsTo('Niveau');
+        return $this->belongsTo('Plan');
     }
 
     /**
@@ -72,6 +82,10 @@ class Afficheur extends BaseModel
         return $this->hasMany('Vue');
     }
 
+    /*****************************************************************************
+     * UTILITAIRES DU MODELE *****************************************************
+     *****************************************************************************/
+
     /**
      * Retourne les infos afficheurs en fonction d'un tableau ID afficheur
      * @param array $aId : tableau ID afficheurs
@@ -87,7 +101,15 @@ class Afficheur extends BaseModel
                     ->select('afficheur.id');
             })
             ->get();
+    }
 
+    /**
+     * Retourne le parking parent de cet afficheur
+     * @return mixed : le parking de l'afficheur
+     */
+    public function getParking()
+    {
+        return $this->plan->niveau->parking;
     }
 
 }

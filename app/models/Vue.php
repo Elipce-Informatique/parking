@@ -18,6 +18,18 @@ class Vue extends \Eloquent
             // Delete all tricks that belong to this user
             $vue->compteur->delete();
         });
+
+        // Attach event handler, on deleting of the user
+        Vue::created(function ($vue) {
+            // Delete all tricks that belong to this user
+            $vue->getParking()->touchAffUpdate();
+        });
+
+        // Attach event handler, on deleting of the user
+        Vue::updated(function ($vue) {
+            // Delete all tricks that belong to this user
+            $vue->getParking()->touchAffUpdate();
+        });
     }
 
     /*****************************************************************************
@@ -51,4 +63,16 @@ class Vue extends \Eloquent
         return $this->belongsTo('TypePlace');
     }
 
+    /*****************************************************************************
+     * UTILITAIRES DU MODELE *****************************************************
+     *****************************************************************************/
+
+    /**
+     * Retourne le parking parent de cette vue
+     * @return mixed : le parking de la vue
+     */
+    public function getParking()
+    {
+        return $this->afficheur->getParking();
+    }
 }
