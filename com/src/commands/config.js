@@ -159,7 +159,6 @@ Config.prototype.sendBusConfigQuery = function (client) {
  * @param data: data key from the response
  */
 Config.prototype.onBusConfigData = function (data) {
-
     // At least 1 controller
     if (_.isArray(data) && data.length > 0) {
         // Insert buses and controllers
@@ -237,7 +236,7 @@ Config.prototype.sendSensorConfigUpdate = function (dataUpdate) {
 Config.prototype.onSensorConfigUpdateDone = function (data) {
     this.emit('sensorConfigUpdateDone', data);
 
-    logger.log('info', 'onBusConfigUpdateDone received: %o', data);
+    logger.log('info', 'onBusConfigUpdateDone received:', data);
 };
 
 // --------------------------------------------------------------------------------------------

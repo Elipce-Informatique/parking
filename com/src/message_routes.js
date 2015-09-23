@@ -84,6 +84,10 @@ module.exports.route = function (message, client) {
             // INSERT THE RECEIVED DATA IN DATABASE
             config_controller.onSensorConfigData(message.data);
             break;
+        case 'sensorConfigUpdateDone':
+            // INSERT THE RECEIVED DATA IN DATABASE
+            config_controller.onSensorConfigUpdateDone(message.data);
+            break;
         case 'displayConfigQuery':
             // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
             config_controller.sendDisplayConfigQuery(message.data.busId, client);
@@ -143,5 +147,5 @@ module.exports.route = function (message, client) {
  * @param client
  */
 module.exports.error = function (message, client) {
-    logger.log('error', 'ERROR MESSAGE RECEIVED FROM CLIENT : %o', message)
+    logger.log('error', 'ERROR MESSAGE RECEIVED FROM CLIENT : ', message)
 };

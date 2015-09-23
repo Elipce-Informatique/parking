@@ -19,7 +19,7 @@ module.exports = {
            return {
                device: "sensor",
                ssn: sensor.serialNumber,
-               address: sensor.address
+               address: sensor.deviceInfo.address
            }
         });
     }

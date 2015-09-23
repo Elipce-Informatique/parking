@@ -14,7 +14,7 @@ module.exports.client = {
      * @param onConnexion : function avec en paramètre le client de websocket connecté
      * @param onError : function appellée lors d'une erreur de connexion
      */
-    initWebSocket: function (parkingId, onConnexion, onError) {
+    initWebSocket: function (parkingId, onConnexion) {
 
         // Read and store confg
         this.host = conf[parkingId].host;

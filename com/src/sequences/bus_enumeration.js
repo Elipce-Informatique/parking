@@ -38,6 +38,7 @@ BusEnumerationSequence.prototype.start = function (buses) {
     buses.forEach(function (bus, index) {
         // Send a startJobBusEnum to controller
         this.busenum_controller.startJobBusEnum(bus);
+
     }, this);
 
 }

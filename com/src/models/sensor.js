@@ -606,7 +606,7 @@ module.exports = {
                                 serialNumber: sensor.ssn,
                                 modelName: sensor.modelName,
                                 softwareVersion: sensor.softwareVersion
-                            }
+                            } // Si suppression de deviceInfo alors aller modifier general_helper.dbSensorsToBusEnum
                         })
                     }
                 }
