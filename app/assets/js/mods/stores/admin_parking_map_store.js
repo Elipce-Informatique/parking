@@ -7,6 +7,8 @@ var alleeHelper = require('../helpers/allee_helper');
 var placeHelper = require('../helpers/place_helper');
 var afficheurHelper = require('../helpers/afficheur_helper');
 var formDataHelper = require('../helpers/form_data_helper');
+var moment = require('moment');
+
 /**
  * Created by yann on 27/01/2015.
  *
@@ -42,7 +44,9 @@ var store = Reflux.createStore({
             id: 0,
             libelle: '',
             description: '',
-            init: 0
+            init: 0,
+            last_aff_update: '',
+            last_synchro_ok: ''
         },
         planInfos: {
             id: 0,
@@ -1451,6 +1455,10 @@ var store = Reflux.createStore({
                 this._inst.parkingInfos.libelle = data.libelle;
                 this._inst.parkingInfos.description = data.description;
                 this._inst.parkingInfos.init = data.init;
+                this._inst.parkingInfos.last_aff_update = moment(data.last_aff_update).utc();
+                this._inst.parkingInfos.last_synchro_ok = moment(data.last_synchro_ok).utc();
+                this._inst.parkingInfos.up_to_date = this._inst.parkingInfos.last_synchro_ok.isAfter(this._inst.parkingInfos.last_aff_update);
+                this._inst.parkingInfos.up_to_date ? null : this.trigger_notif_synchro();
             },
             error: function (xhr, status, err) {
                 console.error(status, err);
@@ -1686,6 +1694,17 @@ var store = Reflux.createStore({
     onHide_modale: function () {
         var retour = {
             type: mapOptions.type_messages.hide_modal,
+            data: {}
+        };
+        this.trigger(retour);
+    },
+    /**
+     * Lance l'affichage de la notification pour commencer la synchro
+     */
+    trigger_notif_synchro: function () {
+        // startSynchroDisplay
+        var retour = {
+            type: mapOptions.type_messages.synchro_notif,
             data: {}
         };
         this.trigger(retour);

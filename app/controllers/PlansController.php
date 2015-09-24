@@ -73,7 +73,6 @@ class PlansController extends \BaseController
         $plan->calibre = Input::get('calibre');
         $retour = $plan->save();
         return ['retour' => $retour];
-
     }
 
 

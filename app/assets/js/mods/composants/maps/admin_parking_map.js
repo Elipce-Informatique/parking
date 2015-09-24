@@ -94,6 +94,7 @@ var parkingMap = React.createClass({
         this.initMap();
         this.initDrawPlugin();
         this.initCustomButtons();
+        this.initNotifSynchro();
 
         this.listenTo(mapStore, this.onStoreTrigger);
     },
@@ -320,6 +321,33 @@ var parkingMap = React.createClass({
         // LANCEMENT DE L'ACTION POUR SÉLECTIONNER LE BOUTON "PLACE":
         Actions.map.mode_place();
 
+    },
+    initNotifSynchro: function () {
+        //add a new style 'synchro'
+        $.notify.addStyle('synchro', {
+            html: "<div>" +
+            "<div class='clearfix'>" +
+            "<div class='title' data-notify-html='title'/>" +
+            "<div class='buttons'>" +
+            "<button class='no'>" + Lang.get('global.annuler') + "</button>" +
+            "<button class='yes' data-notify-text='button'></button>" +
+            "</div>" +
+            "</div>" +
+            "</div>"
+        });
+
+        //listen for click events from this style
+        $(document).on('click', '.notifyjs-synchro-base .no', function () {
+            //programmatically trigger propogating hide event
+            $(this).trigger('notify-hide');
+        });
+
+        $(document).on('click', '.notifyjs-synchro-base .yes', function () {
+            // TODO Lance action synchro
+
+            //hide notification
+            $(this).trigger('notify-hide');
+        });
     },
     /**
      * Supprime et remet le drawControl pour utiliser le bon layer
@@ -569,6 +597,9 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.type_messages.capteur_afficheur:
                 this._onCapteurAfficheur(data.data);
+                break;
+            case mapOptions.type_messages.synchro_notif:
+                this._onNotifSynchro();
                 break;
             default:
                 break;
@@ -927,6 +958,23 @@ var parkingMap = React.createClass({
             modalType: mapOptions.modal_type.capteur_afficheur,
             isModalOpen: true,
             editData: data.places
+        });
+    },
+
+    /**
+     * Affiche la notification de synchro du parking
+     * @private
+     */
+    _onNotifSynchro: function () {
+        $.notify({
+            title: Lang.get('administration_parking.carte.notif_synchro'),
+            button: Lang.get('administration_parking.carte.notif_synchro_btn')
+        }, {
+            stclassNameyle: 'warn',
+            style: 'synchro',
+            autoHide: false,
+            clickToHide: false,
+            position: 'bottom-left'
         });
     },
 

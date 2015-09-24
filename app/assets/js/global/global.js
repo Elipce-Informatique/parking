@@ -66,7 +66,8 @@ require('sweetalert');
         "success",
         "warning",
         "error",
-        "default"
+        "default",
+        "custom"
     ]);
 
     /*
@@ -267,7 +268,7 @@ $(function () {
     $(document).bind('keydown', function (e) {
         if (e.ctrlKey && (e.which == 83)) {
             e.preventDefault();
-            swal('Raté ! Si tu veux vraiment sauvegarder la page, utilise le menu de ton navigateur.');
+            swal('Raté ! Si vous voulez vraiment sauvegarder la page, utilisez le menu du navigateur.');
         }
     });
 
