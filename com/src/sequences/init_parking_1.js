@@ -55,10 +55,12 @@ module.exports = {
     unBindEvents: function () {
 
         this.config.removeAllListeners('busConfigData');
+        this.busEnum.removeAllListeners('init_parking_finished');
     },
     bindEvents: function () {
         logger.log('info', 'Binding events from the init procedure');
         this.config.on('busConfigData', this.onBusConfigData.bind(this));
+        this.busEnum.on('init_parking_finished', this.onInitParkingFinished.bind(this));
     },
 
     /**
@@ -82,6 +84,9 @@ module.exports = {
     onBusConfigData: function (data) {
         //logger.log('info', 'TEST EVTS busConfigData: data -> ', data);
 
+        // Set controllers to bus_enum controller
+        this.busEnum.setControllers(data);
+
         // Save controllers
         this.controllers = data;
 
@@ -91,5 +96,12 @@ module.exports = {
             // Send bus enum sequence
             this.busEnumSequence.start(ctrl.bus);
         }, this);
+    },
+
+    /**
+     * Init parking finished => send to supervision
+     */
+    onInitParkingFinished: function(){
+        this.config.sendNotificationInitFinished(this.clientConnected);
     }
 };

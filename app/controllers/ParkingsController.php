@@ -492,6 +492,11 @@ class ParkingsController extends \BaseController
         return json_encode(Parking::isLibelleExists($libelle, $id));
     }
 
+    /**
+     * Parking initialized from controller
+     * @param $id : ID parking
+     * @return string
+     */
     public function initialized($id)
     {
         // Variable de retour
@@ -505,7 +510,9 @@ class ParkingsController extends \BaseController
             $model = Parking::find($id);
             $model->init = '1';
             $model->save();
-            $retour['model'] = $model;
+            $retour['model'] = Parking::with('server_com')
+                ->where('parking.id', '=', $id)
+                ->first();
         } catch (Exception $e) {
             Log::error('Error set parking.init = 1');
             $retour['errorBdd'] = true;
