@@ -2,6 +2,7 @@
 
 @section('css')
     <link href="{{URL::asset('public/css/leaflet_plugins.css')}}" rel="stylesheet">
+    <link rel="stylesheet" href="{{URL::asset('public/css/parking.css')}}">
 @stop
 
 @section('content')

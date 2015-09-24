@@ -96,7 +96,8 @@ return array(
         'swal_msg_confirm_place' => "ATTENTION supprimer une place est une action irréversible.",
         'swal_msg_confirm_afficheur' => "ATTENTION supprimer un afficheur est une action irréversible.",
         'swal_msg_confirm_reset_afficheur' => "ATTENTION remettre un afficheur à zéro est une action irréversible. Cela va supprimer les vues et les compteurs associés à ce dernier. Cela peut impacter d'autres afficheurs si ils se basent sur ce dernier pour leurs compteurs.",
-
+        'notif_synchro' => 'Le parking n\'est pas synchronisé avec le controller.',
+        'notif_synchro_btn' => 'Synchroniser',
     ],
 
     // MODULE TEMPS REEL
