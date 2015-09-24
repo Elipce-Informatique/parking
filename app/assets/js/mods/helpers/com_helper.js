@@ -34,6 +34,7 @@ module.exports.client = {
                     window.clientWs.onerror = function (err) {
                         console.warn('Connection Error');
                         window.clientWs = null;
+                        Actions.com.red();
                         // Callback connexion error
                         onError(err);
                     }.bind(this);
@@ -43,6 +44,7 @@ module.exports.client = {
                         console.log('WebSocket Client Connected %o', window.clientWs);
 
                         if (window.clientWs.readyState === window.clientWs.OPEN) {
+                            Actions.com.orange();
                             // We say the server we are a webbrowser
                             //console.log('SUPERVISION CONNECTION');
                             window.clientWs.send(JSON.stringify(messages.supervisionConnection()));
@@ -54,6 +56,7 @@ module.exports.client = {
                     // CONNECTION CLOSE
                     window.clientWs.onclose = function () {
                         window.clientWs = null;
+                        Actions.com.red();
                     }.bind(this);
 
                     // MESSAGE REÇU
@@ -78,6 +81,12 @@ module.exports.client = {
 
                             // 2 - Message has a messageType key
                             if (message.messageType) {
+                                if (message.messageType == "controllerStatus" && message.data.controller == true) {
+                                    Actions.com.green();
+                                }
+                                else if (message.messageType == "controllerStatus" && message.data.controller == false) {
+                                    Actions.com.orange();
+                                }
                                 Actions.com.message_controller(message);
                             }
                             // 2 BIS - Message doesn't have a messageType key

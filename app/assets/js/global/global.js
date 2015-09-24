@@ -249,7 +249,10 @@ require('sweetalert');
      |--------------------------------------------------------------------------
      */
     global.Actions.com = Reflux.createActions([
-        "message_controller"
+        "message_controller",
+        "green",
+        "orange",
+        "red"
     ]);
 
 })(window);

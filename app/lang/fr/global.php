@@ -95,6 +95,7 @@ Voulez-vous vraiment quitter cette page ?',
     'defaut' => 'Défaut',
     'message' => "Message",
     'reset' => 'Reset',
+    'etat_reseau' => "Communication",
 
     // FORMULAIRE
     'select' => 'Sélection...',
