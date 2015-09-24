@@ -966,6 +966,7 @@ var parkingMap = React.createClass({
      * @private
      */
     _onNotifSynchro: function () {
+        $('.notifyjs-synchro-base').trigger('notify-hide')
         $.notify({
             title: Lang.get('administration_parking.carte.notif_synchro'),
             button: Lang.get('administration_parking.carte.notif_synchro_btn')
