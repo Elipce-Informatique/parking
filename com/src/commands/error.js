@@ -8,15 +8,6 @@ var _ = require('lodash');
 // Local modules
 var logger = require('../utils/logger.js');
 var errorHandler = require('../message_routes.js');
-var messenger = require('../utils/messenger.js');
-var servModel = require('../models/server.js');
-var busModel = require('../models/bus.js');
-var sensorModel = require('../models/sensor.js');
-var displayModel = require('../models/display.js');
-var counterModel = require('../models/counter.js');
-var viewModel = require('../models/view.js');
-var parkingModel = require('../models/parking.js');
-var settingModel = require('../models/setting.js');
 
 
 // -----------------------------------------------------------------
@@ -40,7 +31,7 @@ util.inherits(Error, EventEmitter);
  * @param client: WS client
  */
 Error.prototype.onSensorConfigUpdateDone = function (error, client) {
-
+    logger.log('error', 'onSensorConfigUpdateDone ERROR', error);
 };
 
 /**
@@ -49,7 +40,7 @@ Error.prototype.onSensorConfigUpdateDone = function (error, client) {
  * @param client: WS client
  */
 Error.prototype.onDisplayConfigUpdateDone = function (error, client) {
-
+    logger.log('error', 'onDisplayConfigUpdateDone ERROR', error);
 };
 
 /**
@@ -58,7 +49,7 @@ Error.prototype.onDisplayConfigUpdateDone = function (error, client) {
  * @param client: WS client
  */
 Error.prototype.onCounterConfigUpdateDone = function (error, client) {
-
+    logger.log('error', 'onCounterConfigUpdateDone ERROR', error);
 };
 
 /**
@@ -67,7 +58,7 @@ Error.prototype.onCounterConfigUpdateDone = function (error, client) {
  * @param client: WS client
  */
 Error.prototype.onViewConfigUpdateDone = function (error, client) {
-
+    logger.log('error', 'onViewConfigUpdateDone ERROR', error);
 };
 
 /**
@@ -76,10 +67,8 @@ Error.prototype.onViewConfigUpdateDone = function (error, client) {
  * @param client: WS client
  */
 Error.prototype.onSettingsUpdateDone = function (error, client) {
-
+    logger.log('error', 'onSettingsConfigUpdateDone ERROR', error);
 };
-
-
 
 
 module.exports = Error;

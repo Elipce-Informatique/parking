@@ -151,6 +151,11 @@ wss.on('connection', function connection(client) {
         if (_.isEqual(client, controllerClient)) {
             logger.log('info', 'Client disconnected -> it was a controller');
             global.controllerClient = null;
+            client.send(JSON.stringify( {
+                messageType: 'controllerStatus',
+                data: {
+                    controller: false
+                }}), errorHandler.onSendError);
         }
         // At least 1 webclient
         else if (supervisionClients.length > 0) {
