@@ -300,102 +300,105 @@ var store = Reflux.createStore({
     onDraw_deleted: function (data) {
         console.log('Pass onDraw_deleted %o', data);
         var deletedEntities = _.values(data.e.layers._layers);
-        switch (this._inst.currentMode) {
-            // -------------------------------------------------------------
-            // SUPPRESSION D'UNE OU PLUSIEURS PLACES
-            case mapOptions.dessin.place:
-            case mapOptions.dessin.place_auto:
-                var context = this;
-                swal({
-                    title: Lang.get('administration_parking.carte.swal_titre_confirm'),
-                    text: Lang.get('administration_parking.carte.swal_msg_confirm_place'),
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: Lang.get('global.del'),
-                    cancelButtonText: Lang.get('global.annuler'),
-                    closeOnConfirm: true,
-                    closeOnCancel: true
-                }, function (isConfirm) {
-                    if (isConfirm) {
-                        context.deletePlaces(deletedEntities)
-                    } else {
-                        context.cancelDeletePlaces(deletedEntities);
-                    }
-                });
-                break;
-            // -------------------------------------------------------------
-            // SUPPRESSION D'UNE OU PLUSIEURS ZONES
-            case mapOptions.dessin.zone:
-                var context = this;
-                swal({
-                    title: Lang.get('administration_parking.carte.swal_titre_confirm'),
-                    text: Lang.get('administration_parking.carte.swal_msg_confirm_zone'),
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: Lang.get('global.del'),
-                    cancelButtonText: Lang.get('global.annuler'),
-                    closeOnConfirm: true,
-                    closeOnCancel: true
-                }, function (isConfirm) {
-                    if (isConfirm) {
-                        context.deleteZones(deletedEntities)
-                    } else {
-                        context.cancelDeleteZones(deletedEntities);
-                    }
-
-                });
-                break;
-            // -------------------------------------------------------------
-            // SUPPRESSION D'UNE OU PLUSIEURS ALLÉES
-            case mapOptions.dessin.allee:
-                var context = this;
-                swal({
-                    title: Lang.get('administration_parking.carte.swal_titre_confirm'),
-                    text: Lang.get('administration_parking.carte.swal_msg_confirm_allee'),
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: Lang.get('global.del'),
-                    cancelButtonText: Lang.get('global.annuler'),
-                    closeOnConfirm: true,
-                    closeOnCancel: true
-                }, function (isConfirm) {
-                    if (isConfirm) {
-                        context.deleteAllees(deletedEntities)
-                    } else {
-                        context.cancelDeleteAllees(deletedEntities);
-                    }
-                });
-                break;
-            // -------------------------------------------------------------
-            // SUPPRESSION D'UN OU PLISIEURS AFFICHEURS
-            case mapOptions.dessin.afficheur:
-                var context = this;
-                swal({
-                    title: Lang.get('administration_parking.carte.swal_titre_confirm'),
-                    text: Lang.get('administration_parking.carte.swal_msg_confirm_afficheur'),
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: Lang.get('global.del'),
-                    cancelButtonText: Lang.get('global.annuler'),
-                    closeOnConfirm: true,
-                    closeOnCancel: true
-                }, function (isConfirm) {
-                    if (isConfirm) {
-                        context.deleteAfficheurs(deletedEntities)
-                    } else {
-                        context.cancelDeleteAfficheurs(deletedEntities);
-                    }
-                });
-                break;
-            // -------------------------------------------------------------
-            // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
-            default:
-                //
-                break;
+        if (deletedEntities.length > 0) {
+            switch (this._inst.currentMode) {
+                // -------------------------------------------------------------
+                // SUPPRESSION D'UNE OU PLUSIEURS PLACES
+                case mapOptions.dessin.place:
+                case mapOptions.dessin.place_auto:
+                    var context = this;
+                    swal({
+                        title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                        text: Lang.get('administration_parking.carte.swal_msg_confirm_place'),
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: Lang.get('global.del'),
+                        cancelButtonText: Lang.get('global.annuler'),
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            context.deletePlaces(deletedEntities)
+                        } else {
+                            context.cancelDeletePlaces(deletedEntities);
+                        }
+                    });
+                    break;
+                // -------------------------------------------------------------
+                // SUPPRESSION D'UNE OU PLUSIEURS ZONES
+                case mapOptions.dessin.zone:
+                    var context = this;
+                    swal({
+                        title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                        text: Lang.get('administration_parking.carte.swal_msg_confirm_zone'),
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: Lang.get('global.del'),
+                        cancelButtonText: Lang.get('global.annuler'),
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            context.deleteZones(deletedEntities)
+                        } else {
+                            context.cancelDeleteZones(deletedEntities);
+                        }
+                    });
+                    break;
+                // -------------------------------------------------------------
+                // SUPPRESSION D'UNE OU PLUSIEURS ALLÉES
+                case mapOptions.dessin.allee:
+                    var context = this;
+                    swal({
+                        title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                        text: Lang.get('administration_parking.carte.swal_msg_confirm_allee'),
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: Lang.get('global.del'),
+                        cancelButtonText: Lang.get('global.annuler'),
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            context.deleteAllees(deletedEntities)
+                        } else {
+                            context.cancelDeleteAllees(deletedEntities);
+                        }
+                    });
+                    break;
+                // -------------------------------------------------------------
+                // SUPPRESSION D'UN OU PLISIEURS AFFICHEURS
+                case mapOptions.dessin.afficheur:
+                    var context = this;
+                    swal({
+                        title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                        text: Lang.get('administration_parking.carte.swal_msg_confirm_afficheur'),
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: Lang.get('global.del'),
+                        cancelButtonText: Lang.get('global.annuler'),
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            context.deleteAfficheurs(deletedEntities)
+                        } else {
+                            context.cancelDeleteAfficheurs(deletedEntities);
+                        }
+                    });
+                    break;
+                // -------------------------------------------------------------
+                // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
+                default:
+                    //
+                    break;
+            }
+        } else {
+            swal(Lang.get('administration_parking.carte.err_aucun_forme_select'));
         }
     },
     onDraw_drawstart: function (data) {
@@ -1183,19 +1186,16 @@ var store = Reflux.createStore({
      */
     deleteAfficheurs: function (data) {
 
-        /**/
         // INIT des données de retour
         var fData = formDataHelper('', 'DELETE');
         var ids = _.map(data, function (d) {
             return d.options.data.id;
         });
-        console.log('Ids à délocaliser : %o', ids);
+
+        // SI ON A DES AFFICHEURS À VIRER...
         fData.append('ids', ids);
-
         var url = BASE_URI + 'parking/afficheur/delocate_many';
-
         this.deleteFromIds(url, fData);
-        /**/
     },
     /**
      * Annule la suppression visuelle des allées
