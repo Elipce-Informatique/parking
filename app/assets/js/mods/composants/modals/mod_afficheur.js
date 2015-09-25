@@ -54,12 +54,6 @@ var ModalAfficheur = React.createClass({
             serial_number: '',
             software_version: '',
             hardware_version: ''
-            //reference: 'test',
-            //manufacturer: 'tesst',
-            //model_name: 'tessst',
-            //serial_number: 'tet',
-            //software_version: 'tesssst',
-            //hardware_version: 'tessssst'
         };
     },
     componentWillMount: function () {
@@ -277,11 +271,28 @@ var store = Reflux.createStore({
                 break;
         }
     },
+
+    initLocalState: function () {
+        this.localState = {
+            listConcentrateurs: [],
+            listBuses: [],
+            concentrateur_id: '',
+            bus_id: '',
+            reference: '',
+            manufacturer: '',
+            model_name: '',
+            serial_number: '',
+            software_version: '',
+            hardware_version: ''
+        };
+    },
     /**
      * Charge les données du réseau du parking en fonction de l'ID du parking
      * @param parkId : id du parking
      */
     loadInitData: function (parkId) {
+        console.log('PASS load init');
+        this.initLocalState();
 
         $.ajax({
             type: 'GET',
