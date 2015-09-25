@@ -336,6 +336,9 @@ var parkingMap = React.createClass({
             "</div>"
         });
 
+        $(document).off('click', '.notifyjs-synchro-base .no');
+        $(document).off('click', '.notifyjs-synchro-base .yes');
+
         //listen for click events from this style
         $(document).on('click', '.notifyjs-synchro-base .no', function () {
             //programmatically trigger propogating hide event
@@ -343,7 +346,8 @@ var parkingMap = React.createClass({
         });
 
         $(document).on('click', '.notifyjs-synchro-base .yes', function () {
-            // TODO Lance action synchro
+            // Lance action synchro
+            Actions.com.start_synchro();
 
             //hide notification
             $(this).trigger('notify-hide');
@@ -665,6 +669,17 @@ var parkingMap = React.createClass({
                 this.changeDrawToolbar(data.data.mode);
                 selectButton(mapOptions.icon.capteur_afficheur);
                 break;
+            case mapOptions.dessin.capteur_virtuel:
+                this.changeDrawToolbar(null);
+                selectButton(mapOptions.icon.capteur);
+                // TRAITEMENT CHANGEMENT MODE À LA MAIN ICI
+                // CAR PAS PRIS EN COMPTE DANS changeDrawToolbar(null)
+                this._inst.currentMode = mapOptions.dessin.capteur_virtuel;
+                this.setState({
+                    modalType: mapOptions.modal_type.capteur_virtuel,
+                    isModalOpen: true
+                });
+                break;
 
             default:
                 this.changeDrawToolbar(mapOptions.dessin.place);
@@ -737,7 +752,7 @@ var parkingMap = React.createClass({
      */
     onAfficheursAdded: function (formes) {
         var liste_data = formes.data;
-        console.log('data a afficher : %o', liste_data);
+        //console.log('data a afficher : %o', liste_data);
         _.each(liste_data, function (afficheur) {
             // MARKER DANS TOUS LES CAS
             if (afficheur.data.lat != null && afficheur.data.lng) {
@@ -749,8 +764,8 @@ var parkingMap = React.createClass({
                 this._inst.afficheursGroup.addLayer(marker);
 
                 // AJOUT DU POLYLINE AU GROUPE AFFICHEUR
-                console.log('Afficheur : %o', afficheur);
-                console.log('Afficheur polygon : %o', afficheur.polyline);
+                //console.log('Afficheur : %o', afficheur);
+                //console.log('Afficheur polygon : %o', afficheur.polyline);
                 if (!_.isEmpty(afficheur.polyline)) {
                     this._inst.afficheursGroup.addLayer(afficheur.polyline);
                 }
@@ -892,7 +907,7 @@ var parkingMap = React.createClass({
      * @private
      */
     _onNewAfficheur: function (data) {
-        console.log('_onNewAfficheur : %o', data);
+        //console.log('_onNewAfficheur : %o', data);
         this.setState({
             modalType: mapOptions.modal_type.afficheur,
             isModalOpen: true,
@@ -1224,6 +1239,17 @@ var parkingMap = React.createClass({
         }
     },
 
+    _modalCapteurVirtuel: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        } else {
+            return (<ModalCapteur
+                onToggle={this.handleToggle}
+                parkingId={this.props.parkingId}
+            />);
+        }
+    },
+
     /**
      * Méthode appellée par le "OverlayMixin", au moment du montage initial et de chaque update.
      * La valeur retournée est ajoutée au body de la page.
@@ -1270,6 +1296,9 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.modal_type.capteur_afficheur:
                 retour = this._modalCapteurAfficheur();
+                break;
+            case mapOptions.modal_type.capteur_virtuel:
+                retour = this._modalCapteurVirtuel();
                 break;
 
             default:

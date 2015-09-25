@@ -7,6 +7,7 @@ var alleeHelper = require('../helpers/allee_helper');
 var placeHelper = require('../helpers/place_helper');
 var afficheurHelper = require('../helpers/afficheur_helper');
 var formDataHelper = require('../helpers/form_data_helper');
+var comHelper = require('../helpers/com_helper');
 var moment = require('moment');
 
 /**
@@ -80,7 +81,7 @@ var store = Reflux.createStore({
     /**
      * GROUPES D'ACTIONS À ÉCOUTER
      */
-    listenables: [Actions.map, Actions.validation],
+    listenables: [Actions.map, Actions.validation, Actions.com],
 
     getInitialState: function () {
         return {};
@@ -115,6 +116,7 @@ var store = Reflux.createStore({
         $.when(p1, p2, p3).done(function () {
             // Affichage des places du niveau
             this.affichageDataInitial();
+            this.connectWs(this._inst.parkingInfos.id);
         }.bind(this));
     }
     ,
@@ -200,7 +202,7 @@ var store = Reflux.createStore({
             // -------------------------------------------------------------
             // PROCÉDURE DE CRÉATION D'AFFICHEUR
             case mapOptions.dessin.afficheur:
-                console.log('PASS ADD AFFICHEUR : %o', data);
+                //console.log('PASS ADD AFFICHEUR : %o', data);
                 var dessin = data.e.layer;
 
                 // INIT DES VARIABLES NÉCESSAIRES À LA CRÉATION
@@ -466,7 +468,7 @@ var store = Reflux.createStore({
         });
     },
     onFeature_afficheur_add: function (e) {
-        console.log('feature afficheur add : %o', e);
+        //console.log('feature afficheur add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
             contextmenuItems: [{
@@ -599,19 +601,49 @@ var store = Reflux.createStore({
 
     onMode_capteur: function (data) {
         if (this._inst.parkingInfos.init != 0) {
-            this._inst.currentMode = mapOptions.dessin.capteur;
 
-            var retour = {
-                type: mapOptions.type_messages.mode_change,
-                data: {
-                    mode: mapOptions.dessin.capteur
+            switch (this._inst.parkingInfos.init_mode) {
+                case '0':
+                    console.log('PASS ICICICICICI#0');
+                case '1':
+                {
+                    console.log('PASS ICICICICICI#1');
+                    this._inst.currentMode = mapOptions.dessin.capteur;
+
+                    var retour = {
+                        type: mapOptions.type_messages.mode_change,
+                        data: {
+                            mode: mapOptions.dessin.capteur
+                        }
+                    };
+
+                    this.trigger(retour);
+
+                    // Pour éviter d'éventuels glitch du à une utilisation bizarre
+                    this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
+                    break;
                 }
-            };
+                case '2':
+                {
+                    console.log('PASS ICICICICICI#2');
+                    this._inst.currentMode = mapOptions.dessin.capteur;
 
-            this.trigger(retour);
+                    var retour = {
+                        type: mapOptions.type_messages.mode_change,
+                        data: {
+                            mode: mapOptions.dessin.capteur_virtuel
+                        }
+                    };
 
-            // Pour éviter d'éventuels glitch du à une utilisation bizarre
-            this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
+                    this.trigger(retour);
+
+                    // Pour éviter d'éventuels glitch du à une utilisation bizarre
+                    this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
+                    break;
+                }
+                default:
+            }
+
         } else {
             swal(Lang.get('administration_parking.carte.err_parking_non_init'));
 
@@ -670,6 +702,17 @@ var store = Reflux.createStore({
 
             default:
                 break;
+        }
+    },
+
+
+    /**
+     * Lance le message de synchro
+     */
+    onStart_synchro: function () {
+        if (window.clientWs != null) {
+            console.log('Lance la synchro');
+            window.clientWs.send(JSON.stringify(comHelper.messages.startSynchroDisplays()));
         }
     },
 
@@ -1190,7 +1233,7 @@ var store = Reflux.createStore({
         })
             .done(function (data) {
                 // on success use return data here
-                console.log('data retour reset afficheur : %o', data);
+                //console.log('data retour reset afficheur : %o', data);
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert
@@ -1455,9 +1498,12 @@ var store = Reflux.createStore({
                 this._inst.parkingInfos.libelle = data.libelle;
                 this._inst.parkingInfos.description = data.description;
                 this._inst.parkingInfos.init = data.init;
+                this._inst.parkingInfos.init_mode = data.init_mode;
                 this._inst.parkingInfos.last_aff_update = moment(data.last_aff_update).utc();
                 this._inst.parkingInfos.last_synchro_ok = moment(data.last_synchro_ok).utc();
                 this._inst.parkingInfos.up_to_date = this._inst.parkingInfos.last_synchro_ok.isAfter(this._inst.parkingInfos.last_aff_update);
+
+                // DÉCLENCHEMENT DE LA NOTIF SI BESOIN
                 this._inst.parkingInfos.up_to_date ? null : this.trigger_notif_synchro();
             },
             error: function (xhr, status, err) {
@@ -1629,6 +1675,14 @@ var store = Reflux.createStore({
         };
         this.trigger(message);
 
+    },
+
+    /**
+     * Lance la connexion au WS avec l'id du parking
+     * @param parkingId
+     */
+    connectWs: function (parkingId) {
+        comHelper.client.initWebSocket(parkingId);
     },
 
     /**

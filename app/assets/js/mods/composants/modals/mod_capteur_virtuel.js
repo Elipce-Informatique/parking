@@ -21,7 +21,7 @@ var Button = ReactB.Button;
  *
  * Modal pour configurer les capteurs de places
  */
-var ModalCapteur = React.createClass({
+var ModalCapteurVirtuel = React.createClass({
 
     mixins: [Reflux.ListenerMixin, ComponentAccessMixins, MixinGestMod],
 
@@ -75,7 +75,7 @@ var ModalCapteur = React.createClass({
     render: function () {
         return (
             <Modal
-                title={Lang.get('administration_parking.carte.titre_capteur')}
+                title={Lang.get('administration_parking.carte.titre_capteur_virtuel')}
                 onHide={this.props.onToggle}>
 
                 <div className="modal-body">
@@ -423,4 +423,4 @@ var store = Reflux.createStore({
 
 });
 
-module.exports = ModalCapteur;
+module.exports = ModalCapteurVirtuel;

@@ -13,7 +13,8 @@ module.exports.dessin = {
     alerte_full: 8,
     alerte_change: 9,
     reservation: 10,
-    capteur_afficheur: 11
+    capteur_afficheur: 11,
+    capteur_virtuel: 12 // Pas vraiment un mode de dessin, c'est pour savoir qu'on est en mode capteur_virtuel
 };
 
 /**
@@ -241,5 +242,6 @@ module.exports.modal_type = {
     edit_allee: 10,
     edit_zone: 11,
     edit_afficheur: 12,
-    capteur_afficheur: 13
+    capteur_afficheur: 13,
+    capteur_virtuel: 14
 };
