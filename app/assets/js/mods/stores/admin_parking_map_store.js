@@ -7,6 +7,7 @@ var alleeHelper = require('../helpers/allee_helper');
 var placeHelper = require('../helpers/place_helper');
 var afficheurHelper = require('../helpers/afficheur_helper');
 var formDataHelper = require('../helpers/form_data_helper');
+var comHelper = require('../helpers/com_helper');
 var moment = require('moment');
 
 /**
@@ -80,7 +81,7 @@ var store = Reflux.createStore({
     /**
      * GROUPES D'ACTIONS À ÉCOUTER
      */
-    listenables: [Actions.map, Actions.validation],
+    listenables: [Actions.map, Actions.validation, Actions.com],
 
     getInitialState: function () {
         return {};
@@ -115,6 +116,7 @@ var store = Reflux.createStore({
         $.when(p1, p2, p3).done(function () {
             // Affichage des places du niveau
             this.affichageDataInitial();
+            this.connectWs(this._inst.parkingInfos.id);
         }.bind(this));
     }
     ,
@@ -670,6 +672,17 @@ var store = Reflux.createStore({
 
             default:
                 break;
+        }
+    },
+
+
+    /**
+     * Lance le message de synchro
+     */
+    onStart_synchro: function () {
+        if (window.clientWs != null) {
+            console.log('Lance la synchro');
+            window.clientWs.send(JSON.stringify(comHelper.messages.startSynchroDisplays()));
         }
     },
 
@@ -1629,6 +1642,14 @@ var store = Reflux.createStore({
         };
         this.trigger(message);
 
+    },
+
+    /**
+     * Lance la connexion au WS avec l'id du parking
+     * @param parkingId
+     */
+    connectWs: function (parkingId) {
+        comHelper.client.initWebSocket(parkingId);
     },
 
     /**

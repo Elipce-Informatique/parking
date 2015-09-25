@@ -250,6 +250,7 @@ require('sweetalert');
      */
     global.Actions.com = Reflux.createActions([
         "message_controller",
+        "start_synchro",
         "green",
         "orange",
         "red"

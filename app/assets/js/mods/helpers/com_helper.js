@@ -14,7 +14,7 @@ module.exports.client = {
      * @param onConnexion : function avec en paramètre le client de websocket connecté
      * @param onError : function appellée lors d'une erreur de connexion
      */
-    initWebSocket: function (parkingId, onConnexion) {
+    initWebSocket: function (parkingId, onConnexion, onError) {
 
         // Read and store confg
         this.host = conf[parkingId].host;
@@ -124,6 +124,18 @@ var messages = ({
     supervisionConnection: function () {
         var retour = {
             messageType: 'supervisionConnection',
+            data: {}
+        };
+        return retour;
+    },
+
+    /**
+     * Client send hello
+     * @returns {{messageType: string, data: {}}}
+     */
+    startSynchroDisplays: function () {
+        var retour = {
+            messageType: 'startSynchroDisplays',
             data: {}
         };
         return retour;

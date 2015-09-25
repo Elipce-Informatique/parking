@@ -343,7 +343,8 @@ var parkingMap = React.createClass({
         });
 
         $(document).on('click', '.notifyjs-synchro-base .yes', function () {
-            // TODO Lance action synchro
+            // Lance action synchro
+            Actions.com.start_synchro();
 
             //hide notification
             $(this).trigger('notify-hide');
