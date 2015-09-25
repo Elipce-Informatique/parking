@@ -36,6 +36,7 @@ module.exports = {
             display: []
         }];
         var indBus = 0;
+        var viewsToDelete = [];
 
         // Parse displays
         dbDisplays.forEach(function (display, index) {
@@ -48,7 +49,7 @@ module.exports = {
                     display: []
                 })
             }
-            retour[indBus].display.push({
+            var obj = {
                 ID: display.ID,
                 address: display.address,
                 name: display.name,
@@ -59,15 +60,25 @@ module.exports = {
                     softwareVersion: display.softwareVersion,
                     hardwareVersion: display.hardwareVersion
                 }
-            });
+            };
+            // DELETE
+            if(display.a_supprimer == '1'){
+                obj.DELETE = true;
+                // Views
+                viewsToDelete.push(display.ID);
+            }
+            retour[indBus].display.push(obj);
         }, this);
 
-        return retour;
+        return {
+            update: retour,
+            delete: viewsToDelete
+        };
     },
 
     /**
-     * Convert DB sensors array to bus enumerate update message array
-     * @param dbSensors: [{
+     * Convert DB counters array to bus enumerate update message array
+     * @param dbCounters: [{
                         ID: result.insertId,
                         busId: busId,
                         address: adresse,
@@ -75,14 +86,39 @@ module.exports = {
                     }]
      */
     dbCountersToConfigUpdate: function (dbCounters) {
-// TODO a terminer
         // Parse sensors
         return _.map(dbCounters, function (counter) {
-            return {
+            var obj = {
                 ID: counter.ID,
-                destination: [],
                 name: counter.name
             }
+            // Destinations ?
+            if (counter.destination !== null) {
+                obj.destination = counter.destination.split(',');
+            }
+            return obj;
         });
     },
-};
+
+    /**
+     * Convert DB assoc sensors array to bus enumerate update message array
+     * @param dbAssoc: [{
+                        ID: result.insertId,
+                        busId: busId,
+                        address: adresse,
+                        spaceType: "generic"
+                    }]
+     */
+    dbAssocCountersSensorsToConfigUpdate: function (dbAssoc) {
+        // Parse assoc
+        return _.map(dbAssoc, function (assoc) {
+            if (assoc.destination !== null) {
+                return {
+                    ID: assoc.ID,
+                    destination: assoc.destination.split(',')
+                }
+            }
+        });
+    }
+}
+;

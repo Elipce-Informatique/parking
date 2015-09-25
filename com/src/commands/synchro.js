@@ -10,6 +10,7 @@ var Q = require('q');
 var logger = require('../utils/logger.js');
 var messenger = require('../utils/messenger.js');
 var parking = require('../models/parking.js');
+var display = require('../models/display.js');
 var helper = require('../utils/general_helper.js');
 
 /**
@@ -64,14 +65,31 @@ Synchro.prototype.onStartSynchro = function () {
         }
         else {
             // Convert data
-            var data = helper.dbDisplaysToConfigUpdate(result)
+            var obj = helper.dbDisplaysToConfigUpdate(result)
+            var data = obj.update;
             logger.log('info', "DISPLAY UPDATES", result);
             // Parse busses
             data.forEach(function (obj) {
                 // Send update to controller
+                //logger.log('info','######### ',obj);
                 messenger.sendToController("displayConfigUpdate", obj);
             }, this)
 
+            // Views to delete
+            data.delete.forEach(function (displayId) {
+                display.getViews(pool, displayId, function (err, result) {
+                    if (err) {
+                        logger.log('error', "ERROR GET VIEWS FROM DISPLAY "+ displayId, err);
+                    }
+                    else {
+                        // DELETE view
+                        messenger.sendToController("viewConfigUpdate", {
+                            ID: result.ID,
+                            DELETE: true
+                        });
+                    }
+                });
+            }, this);
         }
     });
 
@@ -88,18 +106,30 @@ Synchro.prototype.onStartSynchro = function () {
     });
 
     // GET + send counters
-    parking.getAllViews(this.pool, function onGetCounters(err, result) {
+    parking.getAllCounters(this.pool, function onGetCounters(err, result) {
         if (err) {
             logger.log('error', "ERROR GET ALL COUNTERS", err);
         }
         else {
             logger.log('info', "COUNTER UPDATES", result);
+            var counters = helper.dbCountersToConfigUpdate(result);
             // Send update to controller
-            messenger.sendToController("counterConfigUpdate", result);
+            messenger.sendToController("counterConfigUpdate", counters);
         }
     });
 
-
+    // GET assoc counters/sensors + send update sensor
+    parking.getAllAssocCountersSensors(this.pool, function onGetAssoc(err, result) {
+        if (err) {
+            logger.log('error', "ERROR GET ALL ASSOC COUNTERS/SENSORS", err);
+        }
+        else {
+            logger.log('info', "ASSOC COUNTER/SENSOR UPDATES", result);
+            var sensors = helper.dbAssocCountersSensorsToConfigUpdate(result);
+            // Send update to controller
+            messenger.sendToController("sensorConfigUpdate", sensors);
+        }
+    });
 }
 
 /**
@@ -113,7 +143,7 @@ Synchro.prototype.onConfigUpdateDone = function (equipment, isInserted) {
     // Synchro finished
     if (this.checkSynchroFinished()) {
         // Update table parking
-        parking.updateSynchro(pool, function onUpdate(err, result) {
+        parking.updateSynchro(this.pool, function onUpdate(err, result) {
             if (err) {
                 logger.log('error', "ERROR UPDATE LAST SYNCHRO", err);
             }
@@ -143,3 +173,32 @@ Synchro.prototype.checkSynchroFinished = function () {
 }
 
 module.exports = Synchro;
+
+var toto =
+
+{
+    "busID": 11,
+    "display": [{
+        "ID": 19,
+        "address": 1,
+        "name": "test",
+        "deviceInfo": {
+            "manufacturer": "test",
+            "modelName": "test",
+            "serialNumber": "test",
+            "softwareVersion": "test",
+            "hardwareVersion": "test"
+        }
+    }, {
+        "ID": 21,
+        "address": 2,
+        "name": "vivian 2",
+        "deviceInfo": {
+            "manufacturer": "vivian 2",
+            "modelName": "vivian 2",
+            "serialNumber": "vivian 2",
+            "softwareVersion": "vivian 2",
+            "hardwareVersion": "vivian 2"
+        }
+    }]
+}

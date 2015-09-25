@@ -233,10 +233,10 @@ Config.prototype.sendSensorConfigUpdate = function (dataUpdate) {
 /**
  * The last sensorConfigUpdate has been completed
  */
-Config.prototype.onSensorConfigUpdateDone = function (data) {
-    this.emit('sensorConfigUpdateDone', data);
+Config.prototype.onSensorConfigUpdateDone = function () {
+    this.emit('sensorConfigUpdateDone');
 
-    logger.log('info', 'onBusConfigUpdateDone received:', data);
+    logger.log('info', 'onBusConfigUpdateDone');
 };
 
 // --------------------------------------------------------------------------------------------
@@ -250,7 +250,7 @@ Config.prototype.sendDisplayConfigQuery = function (busId, client) {
     }, {}, client);
 };
 
-/** TODO
+/**
  * insert the configuration of all the displays for one bus in DB
  * @param data: data key from the response
  */
@@ -271,13 +271,13 @@ Config.prototype.sendDisplayConfigUpdate = function (dataUpdate) {
 
 };
 
-/** TODO
+/**
  * The last displayConfigUpdate has been completed
  */
-Config.prototype.onDisplayConfigUpdateDone = function (data) {
-    this.emit('displayConfigUpdateDone', data);
+Config.prototype.onDisplayConfigUpdateDone = function () {
+    this.emit('displayConfigUpdateDone');
 
-    logger.log('info', 'onDisplayConfigUpdateDone received: %o', data);
+    logger.log('info', 'onDisplayConfigUpdateDone');
 };
 
 // --------------------------------------------------------------------------------------------
@@ -288,7 +288,7 @@ Config.prototype.sendCounterConfigQuery = function (client) {
     messenger.sendToController("counterConfigQuery", {}, {}, client);
 };
 
-/** TODO
+/**
  * insert the configuration of all the counters in DB
  * @param data: data key from the response
  */
@@ -312,13 +312,13 @@ Config.prototype.sendCounterConfigUpdate = function (dataUpdate) {
 
 };
 
-/** TODO
+/**
  * The last counterConfigUpdate has been completed
  */
-Config.prototype.onCounterConfigUpdateDone = function (data) {
-    this.emit('counterConfigUpdateDone', data);
+Config.prototype.onCounterConfigUpdateDone = function () {
+    this.emit('counterConfigUpdateDone');
 
-    logger.log('info', 'onCounterConfigUpdateDone received:', data);
+    logger.log('info', 'onCounterConfigUpdateDone');
 };
 
 // --------------------------------------------------------------------------------------------
@@ -355,7 +355,7 @@ Config.prototype.sendViewConfigUpdate = function (dataUpdate) {
  * The last viewConfigUpdate has been completed
  */
 Config.prototype.onViewConfigUpdateDone = function () {
-    logger.log('info', 'onViewConfigUpdateDone received: ', data);
+    logger.log('info', 'onViewConfigUpdateDone');
 };
 
 // --------------------------------------------------------------------------------------------
@@ -382,10 +382,10 @@ Config.prototype.onSettingsData = function (data) {
 /**
  * The last sensorConfigUpdate has been completed
  */
-Config.prototype.onSettingsUpdateDone = function (data) {
-    this.emit('settingsUpdateDone', data);
+Config.prototype.onSettingsUpdateDone = function () {
+    this.emit('settingsUpdateDone');
 
-    logger.log('info', 'onSettingsUpdateDone received:', data);
+    logger.log('info', 'onSettingsUpdateDone');
 };
 
 // --------------------------------------------------------------------------------------------

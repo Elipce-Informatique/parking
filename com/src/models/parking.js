@@ -1,6 +1,9 @@
 /**
  * Created by vivian on 17/08/2015.
  */
+var mysql = require('mysql');
+var logger = require('../utils/logger.js');
+
 module.exports = {
     /**
      * Get parking information
@@ -35,7 +38,7 @@ module.exports = {
 
         var update = "" +
             "UPDATE parking " +
-            "SET last_synchro_ok=CURRENT_TIMESTAMP " +
+            "SET last_synchro_ok=UTC_TIMESTAMP() " +
             "WHERE id=?";
 
         mysqlHelper.execute(pool, update, [global.parkingId], function (err, result) {
@@ -54,7 +57,7 @@ module.exports = {
 
         var sql = "" +
             "SELECT b.v4_id AS busID, a.v4_id AS ID, a.adresse AS address, a.manufacturer, a.model_name AS modelName, a.reference AS name, " +
-            "a.serial_number AS serialNumber, a.software_version AS softwareVersion, a.hardware_version AS hardwareVersion " +
+            "a.serial_number AS serialNumber, a.software_version AS softwareVersion, a.hardware_version AS hardwareVersion, a.a_supprimer " +
             "FROM parking p " +
             "JOIN concentrateur c ON c.parking_id=p.id " +
             "JOIN bus b ON b.concentrateur_id=c.id " +
@@ -83,11 +86,13 @@ module.exports = {
             "JOIN concentrateur c ON c.parking_id=p.id " +
             "JOIN bus b ON b.concentrateur_id=c.id " +
             "JOIN afficheur a ON b.id=a.bus_id " +
-            "JOIN vue v ON v.afficheur_id=a.id" +
+            "JOIN vue v ON v.afficheur_id=a.id " +
             "JOIN compteur co ON co.id=v.compteur_id " +
             "WHERE p.id = ? ";
 
-        mysqlHelper.execute(pool, sql, [global.parkingId], function (err, result) {
+        var inst = mysql.format(sql, [global.parkingId]);
+        //logger.log('info','getAllViews: '+inst);
+        mysqlHelper.execute(pool, inst, function (err, result) {
             onGetViews(err, result);
         });
     },
@@ -114,8 +119,39 @@ module.exports = {
             "WHERE p.id = ? " +
             "GROUP BY co.id";
 
-        mysqlHelper.execute(pool, sql, [global.parkingId], function (err, result) {
-            onGetViews(err, result);
+        var inst = mysql.format(sql, [global.parkingId]);
+        //logger.log('info','getAllCounters: '+inst);
+        mysqlHelper.execute(pool, inst, function (err, result) {
+            onGetCounters(err, result);
+        });
+    },
+
+    /**
+     * Get all counter/sensor of the parking
+     * @param pool: MySQL connexion
+     * @param onGetAssocCountersSensors: callback function
+     */
+    getAllAssocCountersSensors: function(pool, onGetAssocCountersSensors){
+
+        var mysqlHelper = require('../utils/mysql_helper.js');
+
+        var sql = "" +
+            "SELECT ca.v4_id AS ID, GROUP_CONCAT(co.v4_id SEPARATOR ',')AS destination " +
+            "FROM parking p " +
+            "JOIN concentrateur c ON c.parking_id=p.id " +
+            "JOIN bus b ON b.concentrateur_id=c.id " +
+            "JOIN afficheur a ON b.id=a.bus_id " +
+            "JOIN vue v ON v.afficheur_id=a.id " +
+            "JOIN compteur co ON co.id=v.compteur_id " +
+            "JOIN capteur_compteur cc ON cc.compteur_id=co.id " +
+            "JOIN capteur ca ON ca.id=cc.capteur_id " +
+            "WHERE p.id = ? " +
+            "GROUP BY ca.id";
+
+        var inst = mysql.format(sql, [global.parkingId]);
+        //logger.log('info','getAllAssocs: '+inst);
+        mysqlHelper.execute(pool, inst, function (err, result) {
+            onGetAssocCountersSensors(err, result);
         });
     }
 }

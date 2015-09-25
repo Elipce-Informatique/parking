@@ -384,7 +384,7 @@ var ReactPageTest = React.createClass({
                             onClick={function () {
                                 // Parking id 1=> beauvais, 3 => annecy
                                 // Connexion controller
-                                supervision_helper.init(0, 0, 3, 0, function OK(clientWs) {
+                                supervision_helper.init(0, 0, 1, 0, function OK(clientWs) {
                                         this.clientWs = clientWs;
                                         console.log('Connecté');
                                     }.bind(this),
@@ -425,6 +425,12 @@ var ReactPageTest = React.createClass({
                         <Button
                             onClick={this.sendBusEnumTest}>
                             Simulate bus enum
+                        </Button>
+                        <Button
+                            onClick={function sendSynchro() {
+                                this.clientWs.send(JSON.stringify(messagesHelper.startSynchroDisplays()))
+                            }}>
+                            Synchro displays
                         </Button>
 
                     </Form>

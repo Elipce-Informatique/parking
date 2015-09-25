@@ -215,5 +215,26 @@ module.exports = {
      */
     insertDisplaysFromBusEnum: function(busId, sensors){
 
+    },
+
+    getViews: function(pool, displayId, onGetViews){
+        var mysqlHelper = require('../utils/mysql_helper.js');
+
+        var sql = "" +
+            "SELECT v.v4_id AS ID " +
+            "FROM parking p " +
+            "JOIN concentrateur c ON c.parking_id=p.id " +
+            "JOIN bus b ON b.concentrateur_id=c.id " +
+            "JOIN afficheur a ON b.id=a.bus_id " +
+            "JOIN vue v ON v.afficheur_id=a.id " +
+            "JOIN compteur co ON co.id=v.compteur_id " +
+            "WHERE p.id = ? " +
+            "AND a.v4_id=? ";
+
+        var inst = mysql.format(sql, [global.parkingId, displayId]);
+        //logger.log('info','getAllViews: '+inst);
+        mysqlHelper.execute(pool, inst, function (err, result) {
+            onGetViews(err, result);
+        });
     }
 };

@@ -47,7 +47,7 @@ var mysqlClass = {
                 callback(err, true);
                 return;
             }
-            queues(connection);
+
             var query = connection.query(sql, params, callback);
             query.on('error', function (err) {
                 logger.error('Mysql query error: ' + err);

@@ -6,12 +6,14 @@ var _ = require('lodash');
 
 var Config = require('../commands/config.js');
 var BusEnum = require('../commands/bus_enumeration.js');
+var Synchro = require('../commands/synchro.js');
 var logger = require('../utils/logger.js');
 var BusEnumSequence = require('./bus_enumeration.js');
 
 module.exports = {
     config: null,
     busEnum: null,
+    synchro: null,
     controllers: [],
     clientConnected: null,
     busEnumSequence: null,
@@ -22,8 +24,9 @@ module.exports = {
      * @param client: client WS connected
      * @param config: config controller instance (commands/config.js)
      * @param busEnum: bus_enumeration controller instance (commands/bus_enumeration.js)
+     * @param synchro: synchro controller instance (commands/synchro.js)
      */
-    start: function (client, config, busEnum) {
+    start: function (client, config, busEnum, synchro) {
         logger.log('info', 'START PARKING INIT 1');
         // Init config controller
         if (config instanceof Config) {
@@ -31,12 +34,17 @@ module.exports = {
         } else {
             throw new TypeError("Config instance expected");
         }
-
         // Init bus enumerate controller
         if (busEnum instanceof BusEnum) {
             this.busEnum = busEnum;
         } else {
             throw new TypeError("BusEnum instance expected");
+        }
+        // Init synchro controller
+        if (synchro instanceof Synchro) {
+            this.synchro = synchro;
+        } else {
+            throw new TypeError("Synchro instance expected");
         }
         // Client connected
         this.clientConnected = client;
@@ -78,7 +86,7 @@ module.exports = {
     },
 
     /**
-     * Busses inserted in supervision DB => send bus enumerate
+     * Busses inserted in supervision DB => send bus enumerate and displays syncho
      * @param data: buses []
      */
     onBusConfigData: function (data) {
@@ -96,6 +104,9 @@ module.exports = {
             // Send bus enum sequence
             this.busEnumSequence.start(ctrl.bus);
         }, this);
+
+        // Start display synchro
+        this.synchro.onStartSynchro();
     },
 
     /**

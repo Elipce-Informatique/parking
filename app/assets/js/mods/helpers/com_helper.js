@@ -181,7 +181,14 @@ var messages = ({
         return {
             messageType: "settingsQuery"
         }
+    },
+
+    startSynchroDisplays: function () {
+        return {
+            messageType: "startSynchroDisplays"
+        }
     }
+
 
 });
 module.exports.messages = messages;

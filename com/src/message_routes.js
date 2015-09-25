@@ -27,10 +27,10 @@ module.exports.route = function (message, client) {
                     initSequence0.start(client, config_controller);
                     break
                 case 1: // SET mode with busEnum
-                    initSequence1.start(client, config_controller, busenum_controller);
+                    initSequence1.start(client, config_controller, busenum_controller, synchro_controller);
                     break;
                 case 2: // SET mode with busEnum + virtual sensors
-                    initSequence2.start(client, config_controller, busenum_controller);
+                    initSequence2.start(client, config_controller, busenum_controller, synchro_controller);
                     break;
                 default:
                     logger.log('error', 'ROUTE init_parking MODE inconnu: ' + message.data.mode);
@@ -90,7 +90,7 @@ module.exports.route = function (message, client) {
             break;
         case 'sensorConfigUpdateDone':
             // INSERT THE RECEIVED DATA IN DATABASE
-            config_controller.onSensorConfigUpdateDone(message.data);
+            config_controller.onSensorConfigUpdateDone();
             break;
         case 'displayConfigQuery':
             // RELAY THE MESSAGE THAT COMES FROM SUPERVISION
@@ -102,7 +102,7 @@ module.exports.route = function (message, client) {
             break;
         case 'displayConfigUpdateDone':
             // INSERT THE RECEIVED DATA IN DATABASE
-            config_controller.onDisplayConfigUpdateDone(message.data);
+            config_controller.onDisplayConfigUpdateDone();
             synchro_controller.onConfigUpdateDone('display', true);
             break;
         case 'counterConfigQuery':
@@ -115,7 +115,7 @@ module.exports.route = function (message, client) {
             break;
         case 'counterConfigUpdateDone':
             // INSERT THE RECEIVED DATA IN DATABASE
-            config_controller.onCounterConfigUpdateDone(message.data);
+            config_controller.onCounterConfigUpdateDone();
             synchro_controller.onConfigUpdateDone('counter', true);
             break;
         case 'viewConfigQuery':
@@ -128,7 +128,7 @@ module.exports.route = function (message, client) {
             break;
         case 'viewConfigUpdateDone':
             // INSERT THE RECEIVED DATA IN DATABASE
-            config_controller.onViewConfigUpdateDone(message.data);
+            config_controller.onViewConfigUpdateDone();
             synchro_controller.onConfigUpdateDone('view', true);
             break;
         case 'settingsQuery':
@@ -141,13 +141,13 @@ module.exports.route = function (message, client) {
             break;
         case 'settingsUpdateDone':
             // INSERT THE RECEIVED DATA IN DATABASE
-            config_controller.onSettingsUpdateDone(message.data);
+            config_controller.onSettingsUpdateDone();
             break;
         case 'remoteControl':
             config_controller.sendRemoteControl(message.data.command);
             break;
-        case 'startSynchroDisplay':
-            config_controller.sendRemoteControl(message.data.command);
+        case 'startSynchroDisplays':
+            synchro_controller.onStartSynchro();
             break;
 
     /***** EVENT ******/
