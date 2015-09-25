@@ -131,7 +131,8 @@ require('sweetalert');
         "liste_buses",
         "liste_capteurs",
         "start_affectation_capteurs",
-        "stop_affectation_capteurs"
+        "stop_affectation_capteurs",
+        "delete_afficheur_line"
     ]);
 
     /*

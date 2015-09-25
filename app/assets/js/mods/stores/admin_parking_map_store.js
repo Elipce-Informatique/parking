@@ -1190,8 +1190,10 @@ var store = Reflux.createStore({
         // INIT des données de retour
         var fData = formDataHelper('', 'DELETE');
         var ids = _.map(data, function (d) {
+            Actions.map.delete_afficheur_line(d.options.data.id);
             return d.options.data.id;
         });
+
 
         // SI ON A DES AFFICHEURS À VIRER...
         fData.append('ids', ids);
