@@ -848,6 +848,7 @@ var store = Reflux.createStore({
                 if (typeof data == 'object') {
                     Actions.notif.success();
                     this._inst.afficheurs.push(data);
+                    this.trigger_notif_synchro();
                     var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD([data]);
 
                     var message = {
@@ -1223,18 +1224,21 @@ var store = Reflux.createStore({
      */
     resetAfficheur: function (e) {
         var aff = e.layer.options.data;
-        console.log('Afficheur à reset : %o', aff);
         var fdata = formDataHelper('', 'PATCH');
         $.ajax({
             type: 'POST',
             url: BASE_URI + 'parking/afficheur/' + aff.id + '/reset',
             processData: false,
             contentType: false,
+            dataType: 'json',
+            context: this,
             data: fdata
         })
             .done(function (data) {
                 // on success use return data here
-                //console.log('data retour reset afficheur : %o', data);
+                if (data == "OK") {
+                    this.trigger_notif_synchro();
+                }
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert
