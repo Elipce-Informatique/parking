@@ -601,19 +601,49 @@ var store = Reflux.createStore({
 
     onMode_capteur: function (data) {
         if (this._inst.parkingInfos.init != 0) {
-            this._inst.currentMode = mapOptions.dessin.capteur;
 
-            var retour = {
-                type: mapOptions.type_messages.mode_change,
-                data: {
-                    mode: mapOptions.dessin.capteur
+            switch (this._inst.parkingInfos.init_mode) {
+                case '0':
+                    console.log('PASS ICICICICICI#0');
+                case '1':
+                {
+                    console.log('PASS ICICICICICI#1');
+                    this._inst.currentMode = mapOptions.dessin.capteur;
+
+                    var retour = {
+                        type: mapOptions.type_messages.mode_change,
+                        data: {
+                            mode: mapOptions.dessin.capteur
+                        }
+                    };
+
+                    this.trigger(retour);
+
+                    // Pour éviter d'éventuels glitch du à une utilisation bizarre
+                    this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
+                    break;
                 }
-            };
+                case '2':
+                {
+                    console.log('PASS ICICICICICI#2');
+                    this._inst.currentMode = mapOptions.dessin.capteur;
 
-            this.trigger(retour);
+                    var retour = {
+                        type: mapOptions.type_messages.mode_change,
+                        data: {
+                            mode: mapOptions.dessin.capteur_virtuel
+                        }
+                    };
 
-            // Pour éviter d'éventuels glitch du à une utilisation bizarre
-            this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
+                    this.trigger(retour);
+
+                    // Pour éviter d'éventuels glitch du à une utilisation bizarre
+                    this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
+                    break;
+                }
+                default:
+            }
+
         } else {
             swal(Lang.get('administration_parking.carte.err_parking_non_init'));
 
@@ -1468,9 +1498,12 @@ var store = Reflux.createStore({
                 this._inst.parkingInfos.libelle = data.libelle;
                 this._inst.parkingInfos.description = data.description;
                 this._inst.parkingInfos.init = data.init;
+                this._inst.parkingInfos.init_mode = data.init_mode;
                 this._inst.parkingInfos.last_aff_update = moment(data.last_aff_update).utc();
                 this._inst.parkingInfos.last_synchro_ok = moment(data.last_synchro_ok).utc();
                 this._inst.parkingInfos.up_to_date = this._inst.parkingInfos.last_synchro_ok.isAfter(this._inst.parkingInfos.last_aff_update);
+
+                // DÉCLENCHEMENT DE LA NOTIF SI BESOIN
                 this._inst.parkingInfos.up_to_date ? null : this.trigger_notif_synchro();
             },
             error: function (xhr, status, err) {

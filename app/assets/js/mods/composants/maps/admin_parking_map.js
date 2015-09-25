@@ -336,6 +336,9 @@ var parkingMap = React.createClass({
             "</div>"
         });
 
+        $(document).off('click', '.notifyjs-synchro-base .no');
+        $(document).off('click', '.notifyjs-synchro-base .yes');
+
         //listen for click events from this style
         $(document).on('click', '.notifyjs-synchro-base .no', function () {
             //programmatically trigger propogating hide event
@@ -665,6 +668,17 @@ var parkingMap = React.createClass({
             case mapOptions.dessin.capteur_afficheur:
                 this.changeDrawToolbar(data.data.mode);
                 selectButton(mapOptions.icon.capteur_afficheur);
+                break;
+            case mapOptions.dessin.capteur_virtuel:
+                his.changeDrawToolbar(null);
+                selectButton(mapOptions.icon.capteur);
+                // TRAITEMENT CHANGEMENT MODE À LA MAIN ICI
+                // CAR PAS PRIS EN COMPTE DANS changeDrawToolbar(null)
+                this._inst.currentMode = mapOptions.dessin.capteur_virtuel;
+                this.setState({
+                    modalType: mapOptions.modal_type.capteur_virtuel,
+                    isModalOpen: true
+                });
                 break;
 
             default:
@@ -1225,6 +1239,17 @@ var parkingMap = React.createClass({
         }
     },
 
+    _modalCapteurVirtuel: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        } else {
+            return (<ModalCapteur
+                onToggle={this.handleToggle}
+                parkingId={this.props.parkingId}
+            />);
+        }
+    },
+
     /**
      * Méthode appellée par le "OverlayMixin", au moment du montage initial et de chaque update.
      * La valeur retournée est ajoutée au body de la page.
@@ -1271,6 +1296,9 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.modal_type.capteur_afficheur:
                 retour = this._modalCapteurAfficheur();
+                break;
+            case mapOptions.modal_type.capteur_virtuel:
+                retour = this._modalCapteurVirtuel();
                 break;
 
             default:

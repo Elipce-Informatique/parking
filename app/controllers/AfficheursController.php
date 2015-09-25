@@ -47,6 +47,11 @@ class AfficheursController extends \BaseController
         Log::debug('Données de l\'afficheur à insérer : ' . print_r($input, true));
         $afficheur = Afficheur::create($input);
         $afficheur->v4_id = $afficheur->id;
+
+        $adresse = DB::table('afficheur')->where('bus_id', '=', $input['bus_id'])->max('adresse');
+        $adresse = $adresse != null ? $adresse + 1 : 1;
+        $afficheur->adresse = $adresse;
+
         $afficheur->save();
         return $afficheur;
     }
