@@ -202,7 +202,7 @@ var store = Reflux.createStore({
             // -------------------------------------------------------------
             // PROCÉDURE DE CRÉATION D'AFFICHEUR
             case mapOptions.dessin.afficheur:
-                console.log('PASS ADD AFFICHEUR : %o', data);
+                //console.log('PASS ADD AFFICHEUR : %o', data);
                 var dessin = data.e.layer;
 
                 // INIT DES VARIABLES NÉCESSAIRES À LA CRÉATION
@@ -468,7 +468,7 @@ var store = Reflux.createStore({
         });
     },
     onFeature_afficheur_add: function (e) {
-        console.log('feature afficheur add : %o', e);
+        //console.log('feature afficheur add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
             contextmenuItems: [{
@@ -1203,7 +1203,7 @@ var store = Reflux.createStore({
         })
             .done(function (data) {
                 // on success use return data here
-                console.log('data retour reset afficheur : %o', data);
+                //console.log('data retour reset afficheur : %o', data);
             })
             .fail(function (xhr, type, exception) {
                 // if ajax fails display error alert

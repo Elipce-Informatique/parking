@@ -738,7 +738,7 @@ var parkingMap = React.createClass({
      */
     onAfficheursAdded: function (formes) {
         var liste_data = formes.data;
-        console.log('data a afficher : %o', liste_data);
+        //console.log('data a afficher : %o', liste_data);
         _.each(liste_data, function (afficheur) {
             // MARKER DANS TOUS LES CAS
             if (afficheur.data.lat != null && afficheur.data.lng) {
@@ -750,8 +750,8 @@ var parkingMap = React.createClass({
                 this._inst.afficheursGroup.addLayer(marker);
 
                 // AJOUT DU POLYLINE AU GROUPE AFFICHEUR
-                console.log('Afficheur : %o', afficheur);
-                console.log('Afficheur polygon : %o', afficheur.polyline);
+                //console.log('Afficheur : %o', afficheur);
+                //console.log('Afficheur polygon : %o', afficheur.polyline);
                 if (!_.isEmpty(afficheur.polyline)) {
                     this._inst.afficheursGroup.addLayer(afficheur.polyline);
                 }
@@ -893,7 +893,7 @@ var parkingMap = React.createClass({
      * @private
      */
     _onNewAfficheur: function (data) {
-        console.log('_onNewAfficheur : %o', data);
+        //console.log('_onNewAfficheur : %o', data);
         this.setState({
             modalType: mapOptions.modal_type.afficheur,
             isModalOpen: true,

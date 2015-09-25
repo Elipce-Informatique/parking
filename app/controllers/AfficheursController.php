@@ -185,9 +185,7 @@ class AfficheursController extends \BaseController
     {
         $data = json_decode(Input::get('data'), true);
 
-        Log::debug('Voici les données de l\'afficheur : ' . print_r($data, true));
-
-
+//        Log::debug('Voici les données de l\'afficheur : ' . print_r($data, true));
         DB::beginTransaction();
 
         try {
