@@ -75,7 +75,7 @@ var ModalCapteurVirtuel = React.createClass({
     render: function () {
         return (
             <Modal
-                title={Lang.get('administration_parking.carte.titre_capteur')}
+                title={Lang.get('administration_parking.carte.titre_capteur_virtuel')}
                 onHide={this.props.onToggle}>
 
                 <div className="modal-body">
@@ -341,7 +341,7 @@ var store = Reflux.createStore({
         });
         return _.map(buses, function (b) {
             return {
-                label: b.num.toString(),
+                label: b.name.toString(),
                 value: b.id.toString()
             }
         });

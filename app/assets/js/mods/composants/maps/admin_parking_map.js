@@ -670,7 +670,7 @@ var parkingMap = React.createClass({
                 selectButton(mapOptions.icon.capteur_afficheur);
                 break;
             case mapOptions.dessin.capteur_virtuel:
-                his.changeDrawToolbar(null);
+                this.changeDrawToolbar(null);
                 selectButton(mapOptions.icon.capteur);
                 // TRAITEMENT CHANGEMENT MODE À LA MAIN ICI
                 // CAR PAS PRIS EN COMPTE DANS changeDrawToolbar(null)
