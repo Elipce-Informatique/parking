@@ -152,7 +152,7 @@ var ModalAfficheur = React.createClass({
                                 wrapperClassName: 'col-md-6',
                                 labelClassName: 'col-md-4 text-right',
                                 groupClassName: 'row',
-                                required: true
+                                required: false
                             }}
                         />
 
@@ -166,7 +166,7 @@ var ModalAfficheur = React.createClass({
                                 wrapperClassName: 'col-md-6',
                                 labelClassName: 'col-md-4 text-right',
                                 groupClassName: 'row',
-                                required: true
+                                required: false
                             }}
                         />
 
@@ -180,7 +180,7 @@ var ModalAfficheur = React.createClass({
                                 wrapperClassName: 'col-md-6',
                                 labelClassName: 'col-md-4 text-right',
                                 groupClassName: 'row',
-                                required: true
+                                required: false
                             }}
                         />
 
@@ -194,7 +194,7 @@ var ModalAfficheur = React.createClass({
                                 wrapperClassName: 'col-md-6',
                                 labelClassName: 'col-md-4 text-right',
                                 groupClassName: 'row',
-                                required: true
+                                required: false
                             }}
                         />
 
@@ -208,7 +208,7 @@ var ModalAfficheur = React.createClass({
                                 wrapperClassName: 'col-md-6',
                                 labelClassName: 'col-md-4 text-right',
                                 groupClassName: 'row',
-                                required: true
+                                required: false
                             }}
                         />
 
@@ -358,7 +358,7 @@ var store = Reflux.createStore({
         });
         return _.map(buses, function (b) {
             return {
-                label: b.num.toString(),
+                label: b.name.toString(),
                 value: b.id.toString()
             }
         });

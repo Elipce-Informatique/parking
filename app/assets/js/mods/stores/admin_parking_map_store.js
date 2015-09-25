@@ -844,6 +844,7 @@ var store = Reflux.createStore({
             .done(function (data) {
                 if (typeof data == 'object') {
                     Actions.notif.success();
+                    this._inst.afficheurs.push(data);
                     var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD([data]);
 
                     var message = {
