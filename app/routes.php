@@ -163,6 +163,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::post('plan/{id}/calibre', 'PlansController@updateCalibre');
     Route::get('niveau/{id}/places', 'NiveauxController@showWithPlaces');
     Route::get('niveau/{id}/afficheurs', 'NiveauxController@getAfficheurs');
+    Route::get('bus/{busId}/{legNum}/max_noeud', 'BusController@maxNoeudOnLeg');
 
     // SEULEMENT DES DATA, jamais du HTML (créer d'autres routes pour les pages d'adiministration des niveaux, zones, allées)
     Route::get('niveau/all', 'NiveauxController@all');

@@ -40,10 +40,10 @@ var ModalCapteurVirtuel = React.createClass({
         return {
             listConcentrateurs: [],
             listBuses: [],
-            listAdress: [],
+            listLegs: [],
             concentrateur_id: '',
             bus_id: '',
-            capteur_id: ''
+            leg_num: ''
         };
     },
     componentWillMount: function () {
@@ -79,7 +79,7 @@ var ModalCapteurVirtuel = React.createClass({
                 onHide={this.props.onToggle}>
 
                 <div className="modal-body">
-                    <Form attributes={{id: "form_mod_capteur"}}>
+                    <Form attributes={{id: "form_mod_capteur_virtuel"}}>
 
                         <InputSelectEditable
                             editable={true}
@@ -91,7 +91,7 @@ var ModalCapteurVirtuel = React.createClass({
                                 label: Lang.get('global.concentrateur'),
                                 labelCol: 4,
                                 selectCol: 6,
-                                htmlFor: 'form_mod_capteur',
+                                htmlFor: 'form_mod_capteur_virtuel',
                                 required: true
                             }}
                             labelClass='text-right'
@@ -107,7 +107,7 @@ var ModalCapteurVirtuel = React.createClass({
                                 label: Lang.get('global.bus'),
                                 labelCol: 4,
                                 selectCol: 6,
-                                htmlFor: 'form_mod_capteur',
+                                htmlFor: 'form_mod_capteur_virtuel',
                                 required: true
                             }}
                             labelClass='text-right'
@@ -115,15 +115,15 @@ var ModalCapteurVirtuel = React.createClass({
 
                         <InputSelectEditable
                             editable={true}
-                            data={this.state.listAdress}
-                            selectedValue={this.state.capteur_id}
-                            placeholder={Lang.get('global.adresse')}
+                            data={this.state.listLegs}
+                            selectedValue={this.state.leg_num}
+                            placeholder={Lang.get('global.leg')}
                             attributes={{
-                                name: 'capteur_id',
-                                label: Lang.get('global.adresse'),
+                                name: 'leg_num',
+                                label: Lang.get('global.leg'),
                                 labelCol: 4,
                                 selectCol: 6,
-                                htmlFor: 'form_mod_capteur',
+                                htmlFor: 'form_mod_capteur_virtuel',
                                 required: true
                             }}
                             labelClass='text-right'
@@ -138,7 +138,7 @@ var ModalCapteurVirtuel = React.createClass({
                             {Lang.get('global.annuler')}
                     </Button>
                     <BtnSave
-                        form_id="form_mod_capteur"
+                        form_id="form_mod_capteur_virtuel"
                         libelle={Lang.get('global.create')} />
                 </div>
             </Modal>
@@ -155,7 +155,8 @@ var store = Reflux.createStore({
         concentrateurs: [], // La liste de tous les concentrateurs du parking
         buses: [],          // La liste de tous les buses du parking
         allCapteurs: [],    // La liste de tous les capteurs du parking
-        clearCapteurs: []   // La liste des capteurs sans place du parking
+        clearCapteurs: [],   // La liste des capteurs sans place du parking
+        legs: []            // La liste des legs
     },
     getInitialState: function () {
         return {};
@@ -169,7 +170,6 @@ var store = Reflux.createStore({
 
         this.listenTo(Actions.map.liste_concentrateurs, this.getConcentrateurCombo);
         this.listenTo(Actions.map.liste_buses, this.getBusCombo);
-        this.listenTo(Actions.map.liste_capteurs, this.getAdresseCombo);
     },
 
     /**
@@ -178,11 +178,12 @@ var store = Reflux.createStore({
      * @param formId : id du formulaire
      */
     onSubmit_form: function (formDom, formId) {
+        console.log('PASS SUBMIT FORM form id : ' + formId);
         // OBLIGÉ DE TRAITER ÇA ICI PLUTOT QUE DANS LE STORE DE LA MAP
         // POUR AVOIR ACCÈS AUX DONNÉES DES CAPTEURS.
         // LA SUITE SE PASSE DANS LE STORE MAP UNE FOIS QUE LES DONNÉES ONT ÉTÉ RÉCUPÉRÉES.
         switch (formId) {
-            case "form_mod_capteur":
+            case "form_mod_capteur_virtuel":
                 this.handleCapteur(formDom);
                 break;
         }
@@ -196,19 +197,17 @@ var store = Reflux.createStore({
      * @param formDom : le DOM du formulaire
      */
     handleCapteur: function (formDom) {
-
-        var concentrateurId, busId, capteurId, $dom = $(formDom);
+        // TODO adapter ça aux legs etc...
+        var concentrateurId, busId, legNum, $dom = $(formDom);
         concentrateurId = $dom.find('[name=concentrateur_id]').val();
         busId = $dom.find('[name=bus_id]').val();
-        capteurId = $dom.find('[name=capteur_id]').val();
+        legNum = $dom.find('[name=leg_num]').val();
 
         var concentrateur = this.getConcentrateurFromId(concentrateurId);
         var bus = this.getBusFromId(busId);
-        var capteurInit = this.getCapteurFromId(capteurId);
-        var capteurs = this.getRemainingClearCapteursFromBus(busId, capteurInit);
 
         // LANCEMENT DE LA PROCÉDURE D'AFFECTATION DANS LE STORE PARKING MAP
-        Actions.map.start_affectation_capteurs(concentrateur, bus, capteurInit, capteurs);
+        this.getMaxAdressOnLeg(concentrateur, bus, legNum);
     },
 
     /**
@@ -226,13 +225,9 @@ var store = Reflux.createStore({
             case 'concentrateur_id':
                 retour.bus_id = "";
                 retour.listBuses = this.getBusCombo(data.value);
-                retour.capteur_id = "";
-                retour.listAdress = this.getAdresseCombo("");
                 break;
             // Bus selected
             case 'bus_id':
-                retour.capteur_id = "";
-                retour.listAdress = this.getAdresseCombo(data.value);
                 break;
         }
 
@@ -256,8 +251,10 @@ var store = Reflux.createStore({
             .done(function (data) {
                 this.handleAjaxResult(data);
                 var concentrateursData = this.getConcentrateurCombo();
+                var legData = this.getLegCombo();
                 this.trigger({
-                    listConcentrateurs: concentrateursData
+                    listConcentrateurs: concentrateursData,
+                    listLegs: legData
                 });
             })
             .fail(function (xhr, type, exception) {
@@ -305,6 +302,33 @@ var store = Reflux.createStore({
         this._inst.clearCapteurs = clearCapteurs;
     },
 
+    /**
+     *
+     * @param concentrateurId
+     * @param busId
+     * @param legNum
+     */
+    getMaxAdressOnLeg: function (concentrateur, bus, legNum) {
+        $.ajax({
+            type: 'GET',
+            url: BASE_URI + 'parking/bus/' + bus.id + '/' + legNum + '/max_noeud',
+            processData: false,
+            contentType: false,
+            context: this
+        })
+            .done(function (data) {
+                if (!_.isNaN(parseInt(data))) {
+                    console.log('Data max adresse : %o', data);
+                    Actions.map.start_affectation_capteurs_virtuels(concentrateur, bus, legNum, data);
+                }
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
+    },
+
     /*****************************************************************************
      * UPDATE COMBOBOXES *********************************************************
      *****************************************************************************/
@@ -341,12 +365,13 @@ var store = Reflux.createStore({
         });
         return _.map(buses, function (b) {
             return {
-                label: b.name.toString(),
+                label: b.name.toString() + ' - ' + b.num.toString(),
                 value: b.id.toString()
             }
         });
 
     },
+
     /**
      * Retourne la liste des adresses pour la combo en fonction du bus choisi
      *
@@ -356,17 +381,16 @@ var store = Reflux.createStore({
      *   {label:'Pomme', value:'1', ce que l'on veut...}
      * ]
      */
-    getAdresseCombo: function (busId) {
-        var capteurs = _.filter(this._inst.clearCapteurs, function (c) {
-            return c.bus_id == busId;
-        });
+    getLegCombo: function () {
+        var legs = [];
+        for (var i = 1; i <= 2; i++) {
+            legs.push({
+                label: 'Leg ' + i,
+                value: i
+            });
+        }
 
-        return _.map(capteurs, function (c) {
-            return {
-                label: c.adresse,
-                value: c.id.toString()
-            }
-        });
+        return legs;
     },
 
     /**
@@ -377,6 +401,18 @@ var store = Reflux.createStore({
      */
     getRemainingClearCapteursFromBus: function (busId, capteurInit) {
         return _.filter(this._inst.clearCapteurs, function (c) {
+            return (c.bus_id == busId) && (c.adresse >= capteurInit.adresse);
+        });
+    },
+
+    /**
+     * Retourne la liste des capteurs non affectés du bus
+     * à partir de l'adresse passée en params
+     *
+     * @return retourne la liste des capteurs clears du bus à partir du capteur passé en param
+     */
+    getLastAdresseFromBusLeg: function (busId, capteurInit) {
+        return _.reduce(this._inst.clearCapteurs, function (total, c) {
             return (c.bus_id == busId) && (c.adresse >= capteurInit.adresse);
         });
     },

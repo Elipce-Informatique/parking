@@ -10,6 +10,7 @@ var ModalCalibre = require('../modals/mod_calibre');
 var ModalZone = require('../modals/mod_zone');
 var ModalAllee = require('../modals/mod_allee');
 var ModalCapteur = require('../modals/mod_capteur');
+var ModalCapteurVirtuel = require('../modals/mod_capteur_virtuel');
 var ModalAfficheur = require('../modals/mod_afficheur');
 var ModalEditPlace = require('../modals/mod_edit_place');
 var ModalCapteurAfficheur = require('../modals/mod_afficheur_select');
@@ -651,6 +652,14 @@ var parkingMap = React.createClass({
                 this.changeDrawToolbar(data.data.mode);
                 selectButton(mapOptions.icon.afficheur);
                 break;
+            case mapOptions.dessin.calibre:
+                this.changeDrawToolbar(data.data.mode);
+                selectButton(mapOptions.icon.calibre);
+                break;
+            case mapOptions.dessin.capteur_afficheur:
+                this.changeDrawToolbar(data.data.mode);
+                selectButton(mapOptions.icon.capteur_afficheur);
+                break;
             case mapOptions.dessin.capteur:
                 this.changeDrawToolbar(null);
                 selectButton(mapOptions.icon.capteur);
@@ -661,14 +670,6 @@ var parkingMap = React.createClass({
                     modalType: mapOptions.modal_type.capteur,
                     isModalOpen: true
                 });
-                break;
-            case mapOptions.dessin.calibre:
-                this.changeDrawToolbar(data.data.mode);
-                selectButton(mapOptions.icon.calibre);
-                break;
-            case mapOptions.dessin.capteur_afficheur:
-                this.changeDrawToolbar(data.data.mode);
-                selectButton(mapOptions.icon.capteur_afficheur);
                 break;
             case mapOptions.dessin.capteur_virtuel:
                 this.changeDrawToolbar(null);
@@ -982,7 +983,7 @@ var parkingMap = React.createClass({
      * @private
      */
     _onNotifSynchro: function () {
-        $('.notifyjs-synchro-base').trigger('notify-hide')
+        $('.notifyjs-synchro-base').trigger('notify-hide');
         $.notify({
             title: Lang.get('administration_parking.carte.notif_synchro'),
             button: Lang.get('administration_parking.carte.notif_synchro_btn')
@@ -1256,7 +1257,7 @@ var parkingMap = React.createClass({
         if (!this.state.isModalOpen) {
             return <span/>;
         } else {
-            return (<ModalCapteur
+            return (<ModalCapteurVirtuel
                 onToggle={this.handleToggle}
                 parkingId={this.props.parkingId}
             />);
