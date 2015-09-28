@@ -619,7 +619,6 @@ var store = Reflux.createStore({
                             mode: mapOptions.dessin.capteur
                         }
                     };
-
                     this.trigger(retour);
 
                     // Pour éviter d'éventuels glitch du à une utilisation bizarre
@@ -637,7 +636,6 @@ var store = Reflux.createStore({
                             mode: mapOptions.dessin.capteur_virtuel
                         }
                     };
-
                     this.trigger(retour);
 
                     // Pour éviter d'éventuels glitch du à une utilisation bizarre
@@ -1198,7 +1196,9 @@ var store = Reflux.createStore({
         // SI ON A DES AFFICHEURS À VIRER...
         fData.append('ids', ids);
         var url = BASE_URI + 'parking/afficheur/delocate_many';
-        this.deleteFromIds(url, fData);
+        this.deleteFromIds(url, fData, function () {
+            this.trigger_notif_synchro();
+        });
     },
     /**
      * Annule la suppression visuelle des allées
@@ -1255,7 +1255,7 @@ var store = Reflux.createStore({
      * @param url => url à appeller
      * @param fData => données à passer dans la requête
      */
-    deleteFromIds: function (url, fData) {
+    deleteFromIds: function (url, fData, onSuccess) {
         $.ajax({
             type: 'POST',
             url: url,
@@ -1266,6 +1266,7 @@ var store = Reflux.createStore({
             .done(function (result) {
                 if (result.save) {
                     Actions.notif.success();
+                    onSuccess = !undefined ? onSuccess() : null;
                 } else {
                     Actions.notif.error();
                 }

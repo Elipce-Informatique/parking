@@ -341,7 +341,7 @@ var store = Reflux.createStore({
         });
         return _.map(buses, function (b) {
             return {
-                label: b.name.toString(),
+                label: b.name.toString() + ' - ' + b.num.toString(),
                 value: b.id.toString()
             }
         });
