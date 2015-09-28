@@ -238,5 +238,47 @@ module.exports = {
 
         });// fin _.each
 
+    },
+
+    /**
+     * Delete all views in the array
+     * @param viewsId: views ID array
+     */
+    deleteViews: function (viewsId) {
+
+        // MYSQL CONNECTOR AND QUEUES
+        var connection = require('../utils/mysql_helper.js').standardConnexion();
+        queues(connection);
+        var trans = connection.startTransaction();
+
+        var sqlDelete = "" +
+            "DELETE FROM vue " +
+            "WHERE id=? ";
+
+        // Parse views id
+        viewsId.forEach(function (viewId) {
+            trans.query(sqlDelete, [viewId], function (err, result) {
+                // DELETE KO
+                if (err && trans.rollback) {
+                    trans.rollback();
+                    logger.log('error', 'TRANSACTION ROLLBACK DELETE VIEW', err);
+                    throw err;
+                }
+            });
+        }, this);
+
+        // Commit DELETE views
+        trans.commit(function (err, info) {
+            if (err) {
+                logger.log('error', 'TRANSACTION COMMIT VIEWS ERROR', err);
+            }
+            // END MySQL connexion
+            connection.end(errorHandler.onMysqlEnd);
+        });
+
+
+        // Execute the queue DELETE views
+        trans.execute();
+
     }
 }

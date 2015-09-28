@@ -22,7 +22,10 @@ module.exports.route = function (message, client) {
     // Dispatching the message to the right handler
     switch (message.messageType) {
         case 'init_parking':
-            switch (parseInt(message.data.mode)) {
+            // SET init mode
+            global.initMode = parseInt(message.data.mode);
+            // Send sequence / mode
+            switch (global.initMode) {
                 case 0: // GET init mode  (controller DB is full, supervision read it)
                     initSequence0.start(client, config_controller);
                     break
@@ -39,19 +42,13 @@ module.exports.route = function (message, client) {
 
             break;
         case 'job' : // Query the physical network
-            if (message.error === undefined) {
-                switch (message.data.job) {
-                    case 'busEnum':
-                        busenum_controller.onBusEnum(message.data);
-                        break;
-                    default:
-                        logger.log('error', 'DATA.JOB ERROR -> job: ' + message.data.job + ' unknown in the router');
-                        break;
-                }
-            }
-            // Error bus enum
-            else {
-                logger.log('error', 'JOB START ERROR', message.error);
+            switch (message.data.job) {
+                case 'busEnum':
+                    busenum_controller.onBusEnum(message.data);
+                    break;
+                default:
+                    logger.log('error', 'DATA.JOB ERROR -> job: ' + message.data.job + ' unknown in the router');
+                    break;
             }
             break;
         // Controller is connected
@@ -176,7 +173,7 @@ module.exports.error = function (message, client) {
 
     logger.log('error', 'INCOMING QUERY ERROR  messageType: ' + message.messageType + ' - Client type: ' + (client.isController != undefined ? (client.isController ? 'Controller' : 'Supervision') : 'unknown'));
 
-    switch(message.messageType){
+    switch (message.messageType) {
 
         case 'sensorConfigUpdateDone':
             error_controller.onSensorConfigUpdateDone(message.error, client);
@@ -195,6 +192,9 @@ module.exports.error = function (message, client) {
             break;
         case 'settingsUpdateDone':
             error_controller.onSettingsUpdateDone(message.error, client);
+            break;
+        case 'job' :
+            logger.log('error', 'JOB START ERROR', message.error);
             break;
         default:
             logger.log('error', 'MESSAGE TYPE ERROR -> messageType: ' + message.messageType + ' unknown in the error router');

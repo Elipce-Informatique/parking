@@ -208,13 +208,21 @@ var FormParking = React.createClass({
      */
     onInitParkingFinished: function (message) {
         if (message.messageType == 'init_parking_finished') {
+
             console.log('Callback finished');
             // Fin chargement
             $.unblockUI();
             if (!this.parkInitialized) {
-                // Action enregistrement parking init
-                Actions.parking.parking_initialized(this.props.detailParking.id);
-                this.parkInitialized = true;
+
+                // TODO process data DELTA
+                if(message.data.delta !== undefined){
+                    // SWAL
+                }
+                else {
+                    // Action enregistrement parking init
+                    Actions.parking.parking_initialized(this.props.detailParking.id);
+                    this.parkInitialized = true;
+                }
             }
         }
     }
