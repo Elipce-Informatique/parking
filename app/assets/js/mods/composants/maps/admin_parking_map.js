@@ -60,7 +60,7 @@ var parkingMap = React.createClass({
             alleesGroup: {},                      // Layer group contenant toutes les allées
             zonesGroup: {},                       // Layer group contenant toutes les zones
             afficheursGroup: {},                  // Layer group contenant tous les afficheurs
-            capteurAfficheursGroup: {},           // Layer group contenant tous les afficheurs
+            capteurAfficheursGroup: {},           // Layer group juste pour le mode sélection capteurs
             calibreGroup: {},                     // Juste pour l'init du calibre
             drawControl: {},                      // Barre d'outils de dessin active sur la carte
             infosControl: undefined,              // Cadre d'informations en bas à droite de la carte
@@ -97,6 +97,7 @@ var parkingMap = React.createClass({
         this.initNotifSynchro();
 
         this.listenTo(mapStore, this.onStoreTrigger);
+        this.listenTo(Actions.map.delete_afficheur_line, this.onDeleteLine);
     },
 
     /**
@@ -992,6 +993,18 @@ var parkingMap = React.createClass({
             clickToHide: false,
             position: 'bottom-left'
         });
+    },
+
+    /**
+     * Suprime la ligne de l'afficheur id en param
+     * @param id
+     */
+    onDeleteLine: function (id) {
+        _.each(this._inst.afficheursGroup._layers, function (line) {
+            if (line.options.data.id == id) {
+                this._inst.afficheursGroup.removeLayer(line);
+            }
+        }, this);
     },
 
     /*******************************************************************/

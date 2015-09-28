@@ -77,6 +77,7 @@ return array(
         'err_allee_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une autre allée.',
         'err_parking_non_init' => 'Erreur : Le parking n\'a pas encore été initialisé.',
         'err_places_sans_capteur' => 'Erreur: aucune des places sélectionnées n\'est attachée à un capteur.',
+        'err_aucun_forme_select' => 'Erreur: aucun entité n\'a été sélectionné pour être supprimé.',
         // MODALE AFFICHEURS
         'reference' => 'Nom',
         'type_afficheur' => 'Type d\'afficheur',
