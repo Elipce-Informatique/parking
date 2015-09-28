@@ -51,6 +51,8 @@ Synchro.prototype.onNewSupervision = function (client) {
  */
 Synchro.prototype.onStartSynchro = function () {
 
+    logger.log('info', "START SYNCHRO DISPLAYS");
+
     // RAZ synchro variable
     this.displaySynchro = {
         display: null,
@@ -73,25 +75,28 @@ Synchro.prototype.onStartSynchro = function () {
                 // Send update to controller
                 //logger.log('info','######### ',obj);
                 messenger.sendToController("displayConfigUpdate", obj);
-            }, this)
-
-            // Views to delete
-            data.delete.forEach(function (displayId) {
-                display.getViews(pool, displayId, function (err, result) {
-                    if (err) {
-                        logger.log('error', "ERROR GET VIEWS FROM DISPLAY "+ displayId, err);
-                    }
-                    else {
-                        // DELETE view
-                        messenger.sendToController("viewConfigUpdate", {
-                            ID: result.ID,
-                            DELETE: true
-                        });
-                    }
-                });
             }, this);
+
+            if (obj.delete.length > 0) {
+                // Views to delete
+                obj.delete.forEach(function (displayId) {
+                    display.getViews(this.pool, displayId, function (err, result) {
+                        if (err) {
+                            logger.log('error', "ERROR GET VIEWS FROM DISPLAY " + displayId, err);
+                        }
+                        else {
+                            logger.log('info', "###########DELETE VIEW "+result.ID);
+                            // DELETE view
+                            messenger.sendToController("viewConfigUpdate", {
+                                ID: result.ID,
+                                DELETE: true
+                            });
+                        }
+                    });
+                }, this);
+            }
         }
-    });
+    }.bind(this));
 
     // GET + send views
     parking.getAllViews(this.pool, function onGetViews(err, result) {
@@ -148,7 +153,7 @@ Synchro.prototype.onConfigUpdateDone = function (equipment, isInserted) {
                 logger.log('error', "ERROR UPDATE LAST SYNCHRO", err);
             }
             else {
-                logger.log('info', "LAST SYNCHRO", result);
+                //logger.log('info', "LAST SYNCHRO", result);
             }
             // RAZ synchro variable
             this.displaySynchro = {
