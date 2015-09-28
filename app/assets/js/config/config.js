@@ -15,5 +15,9 @@ module.exports = {
     '3': {
         host: '85.14.137.12',
         port: 26001
+    },
+    legLength: {
+        1: 62,
+        2: 63
     }
 };

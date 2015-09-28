@@ -123,6 +123,7 @@ Voulez-vous vraiment quitter cette page ?',
     'type_place' => 'Type de place',
     'empty' => 'Libre',
     'full' => 'Complet',
+    'leg' => 'Leg',
 
     // ALERTES
     'alerte_full' => "",

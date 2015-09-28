@@ -89,6 +89,7 @@ return array(
         'hardware_version' => 'Hardware version',
         // MESSAGE D'INFOS CAPTEUR (Cadre bas droite map)
         'infos_capteur_titre' => 'Capteur de place',
+        'infos_capteur_virtuel_titre' => 'Capteur de place virtuel',
         'infos_capteur_adresse' => 'Adresse : ',
         'infos_capteur_restant' => 'Capteurs restant sur le bus : ',
         'infos_capteur_bouton' => 'Terminer l\'affectation',

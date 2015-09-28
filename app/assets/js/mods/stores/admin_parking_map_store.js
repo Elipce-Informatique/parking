@@ -9,6 +9,7 @@ var afficheurHelper = require('../helpers/afficheur_helper');
 var formDataHelper = require('../helpers/form_data_helper');
 var comHelper = require('../helpers/com_helper');
 var moment = require('moment');
+var config = require('../../config/config.js');
 
 /**
  * Created by yann on 27/01/2015.
@@ -63,6 +64,14 @@ var store = Reflux.createStore({
             capteurInit: {},    // Capteur initial pour l'affectation
             capteursTotaux: [], // Liste des capteurs totaux à affecter
             capteursRestant: [] // Liste des capteurs restant à affecter sur le bus
+        },
+        capteur_place_virtuel: {
+            concentrateur: {},
+            bus: {},
+            bus_id: 0,
+            leg_num: 0,
+            last_noeud: 0,
+            capteurs_a_envoyer: []
         },
         types_places: [], // Types de places de la BDD
         currentMode: mapOptions.dessin.place,
@@ -1198,7 +1207,7 @@ var store = Reflux.createStore({
         var url = BASE_URI + 'parking/afficheur/delocate_many';
         this.deleteFromIds(url, fData, function () {
             this.trigger_notif_synchro();
-        });
+        }.bind(this));
     },
     /**
      * Annule la suppression visuelle des allées
@@ -1222,7 +1231,7 @@ var store = Reflux.createStore({
 
     /**
      * Lance le reset de l'afficheur passé en paramètre
-     * @param e : l'obhet carte de l'afficheur
+     * @param e : l'objet leaflet de l'afficheur
      */
     resetAfficheur: function (e) {
         var aff = e.layer.options.data;
@@ -1317,7 +1326,48 @@ var store = Reflux.createStore({
         this.trigger(retour);
 
         // ATTACHEMENT DES ÉVÈNEMENTS SUR LES PLACES
+        this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
         this._inst.mapInst.placesGroup.on('click', this.onPlaceCapteurClick, this);
+    },
+
+    /**
+     * Commence la procédure de création de capteurs
+     * @param concentrateurId
+     * @param busId
+     * @param legNum
+     * @param maxNumNoeudBdd
+     */
+    onStart_affectation_capteurs_virtuels: function (concentrateur, bus, legNum, maxNumNoeudBdd) {
+        this._inst.capteur_place_virtuel.concentrateur = concentrateur;
+        this._inst.capteur_place_virtuel.bus = bus;
+        this._inst.capteur_place_virtuel.bus_id = bus.id;
+        this._inst.capteur_place_virtuel.leg_num = legNum;
+        this._inst.capteur_place_virtuel.last_noeud = maxNumNoeudBdd;
+
+        var infos = mapHelper.generateInfosCapteurPlaceVirtuel(
+            concentrateur.v4_id,
+            bus.num,
+            maxNumNoeudBdd,
+            config.legLength[legNum] - maxNumNoeudBdd
+        );
+
+        // Cachage de la modale
+        var retour = {
+            type: mapOptions.type_messages.hide_modal,
+            data: {}
+        };
+        this.trigger(retour);
+
+        // INIT MESSAGE D'INFO
+        retour = {
+            type: mapOptions.type_messages.show_infos,
+            data: infos
+        };
+        this.trigger(retour);
+
+        // ATTACHEMENT DES ÉVÈNEMENTS SUR LES PLACES
+        this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurVirtuelClick, this);
+        this._inst.mapInst.placesGroup.on('click', this.onPlaceCapteurVirtuelClick, this);
     },
 
     /**
@@ -1430,6 +1480,62 @@ var store = Reflux.createStore({
         else {
             // Petite notif selon vérif JS
             Actions.notif.error(Lang.get('administration_parking.carte.place_deja_affectee'));
+        }
+    },
+
+    /**
+     * Event listener sur click d'une place quand on est en mode capteur virtuel.
+     * #- Récupère la place cliquée
+     * #- Test si place libre en JS
+     * #- Crée le capteur à insérer
+     * #- Met le capteur à insérer dans la liste
+     *
+     * @param evt : evt click sur place leaflet
+     */
+    onPlaceCapteurVirtuelClick: function (evt) {
+        console.log('this._inst.capteur_place_virtuel : %o', this._inst.capteur_place_virtuel);
+        // RÉCUPÉRATION PLACE CLIQUÉE
+        var place = _.cloneDeep(evt.layer.options.data);
+
+        // PLACE NON AFFECTÉE
+        if (place.capteur_id == null) {
+            console.log('PASS création capteur');
+            // CRÉATION DU CAPTEUR
+            var capteur = {
+                bus_id: this._inst.capteur_place_virtuel.bus_id,
+                num_noeud: this._inst.capteur_place_virtuel.last_noeud + 1,
+                adresse: this._inst.capteur_place_virtuel.last_noeud + 1,
+                leg: this._inst.capteur_place_virtuel.leg_num,
+                software_version: ''
+            };
+
+            this._inst.capteur_place_virtuel.capteurs_a_envoyer.push(capteur);
+
+            // INCRÉMENT DU LAST NOEUD
+            this._inst.capteur_place_virtuel.last_noeud++;
+
+            // MODIFICATION MESSAGE INFOS
+            var infos = mapHelper.generateInfosCapteurPlace(
+                this._inst.capteur_place_virtuel.concentrateur.v4_id,
+                this._inst.capteur_place_virtuel.bus.num,
+                this._inst.capteur_place_virtuel.last_noeud,
+                config.legLength[this._inst.capteur_place_virtuel.leg_num] - this._inst.capteur_place_virtuel.last_noeud
+            );
+
+            var retourTrigger = {
+                type: mapOptions.type_messages.update_infos,
+                data: infos
+            };
+            this.trigger(retourTrigger);
+
+            // TODO : Remettre la place avec un capteur id pour éviter de réassocier
+            // Mettre le capteur d'une couleur différente des capteurs "réels" (avec ou sans v4id) (virtual dans la popup)
+            // ça commence à 1
+            // Implémebnter l'action sur le bouton fini
+            // Click droit supprimer (attention, ça supprime tous les capteurs suivants)
+
+
+            console.log('PASS création capteur : %o', capteur);
         }
     },
 

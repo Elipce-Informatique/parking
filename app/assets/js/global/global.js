@@ -132,6 +132,8 @@ require('sweetalert');
         "liste_capteurs",
         "start_affectation_capteurs",
         "stop_affectation_capteurs",
+        "start_affectation_capteurs_virtuels",
+        "stop_affectation_capteurs_virtuels",
         "delete_afficheur_line"
     ]);
 
