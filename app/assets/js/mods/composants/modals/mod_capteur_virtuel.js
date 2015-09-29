@@ -3,6 +3,7 @@ var React = require('react/addons');
 var ComponentAccessMixins = require('../../mixins/component_access');
 /* Pour le listenTo */
 var MixinGestMod = require('../../mixins/gestion_modif');
+var config = require('../../../config/config.js');
 
 var initModale = Reflux.createAction();
 
@@ -317,9 +318,19 @@ var store = Reflux.createStore({
             context: this
         })
             .done(function (data) {
-                if (!_.isNaN(parseInt(data))) {
-                    console.log('Data max adresse : %o', data);
-                    Actions.map.start_affectation_capteurs_virtuels(concentrateur, bus, legNum, data);
+                var maxAdr = parseInt(data);
+                var maxNoeud = parseInt(data);
+
+                // C'est bien un chiffre
+                if (!_.isNaN(maxAdr)) {
+                    if (legNum == 2) {
+                        maxAdr = maxAdr + config.legLength[1];
+                    }
+                    console.log('Data max adresse : %o', maxAdr);
+                    console.log('Data max noeud : %o', maxNoeud);
+                    Actions.map.start_affectation_capteurs_virtuels(concentrateur, bus, legNum, maxAdr, maxNoeud);
+                } else {
+                    // TODO : traiter l'erreur ?
                 }
             })
             .fail(function (xhr, type, exception) {
@@ -401,18 +412,6 @@ var store = Reflux.createStore({
      */
     getRemainingClearCapteursFromBus: function (busId, capteurInit) {
         return _.filter(this._inst.clearCapteurs, function (c) {
-            return (c.bus_id == busId) && (c.adresse >= capteurInit.adresse);
-        });
-    },
-
-    /**
-     * Retourne la liste des capteurs non affectés du bus
-     * à partir de l'adresse passée en params
-     *
-     * @return retourne la liste des capteurs clears du bus à partir du capteur passé en param
-     */
-    getLastAdresseFromBusLeg: function (busId, capteurInit) {
-        return _.reduce(this._inst.clearCapteurs, function (total, c) {
             return (c.bus_id == busId) && (c.adresse >= capteurInit.adresse);
         });
     },

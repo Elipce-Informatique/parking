@@ -76,6 +76,7 @@ return array(
         'err_zone_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une allée.',
         'err_allee_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une autre allée.',
         'err_parking_non_init' => 'Erreur : Le parking n\'a pas encore été initialisé.',
+        'err_affectation_non_finie' => 'Merci de terminer l\'affectation en cours.',
         'err_places_sans_capteur' => 'Erreur: aucune des places sélectionnées n\'est attachée à un capteur.',
         'err_aucun_forme_select' => 'Erreur: aucun entité n\'a été sélectionné pour être supprimé.',
         // MODALE AFFICHEURS
@@ -91,6 +92,7 @@ return array(
         'infos_capteur_titre' => 'Capteur de place',
         'infos_capteur_virtuel_titre' => 'Capteur de place virtuel',
         'infos_capteur_adresse' => 'Adresse : ',
+        'infos_capteur_num' => 'Numéro physique du capteur : ',
         'infos_capteur_restant' => 'Capteurs restant sur le bus : ',
         'infos_capteur_bouton' => 'Terminer l\'affectation',
         'swal_titre_confirm' => "Êtes-vous sûr ?",

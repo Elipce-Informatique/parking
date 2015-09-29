@@ -124,6 +124,7 @@ Voulez-vous vraiment quitter cette page ?',
     'empty' => 'Libre',
     'full' => 'Complet',
     'leg' => 'Leg',
+    'virtuel' => 'Virtuel',
 
     // ALERTES
     'alerte_full' => "",
