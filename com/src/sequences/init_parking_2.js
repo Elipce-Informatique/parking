@@ -111,12 +111,14 @@ module.exports = {
 
     /**
      * Init parking finished => send to supervision
-     * @param obj: {
-     *          delta : array => ID sensors in busEnum and not in virtual in supervision DB
-     *          bus: v4 id bus
-     *      }
+     * @param delta: [{
+     *              delta : array => ID sensors in busEnum and not in virtual in supervision DB
+     *              bus: v4 id bus
+     *          },
+     *      ...
+     *      ]
      */
-    onInitParkingFinished: function(obj){
-        this.config.sendNotificationInitFinished(this.clientConnected, obj.bus, obj);
+    onInitParkingFinished: function(delta){
+        this.config.sendNotificationInitFinished(this.clientConnected, 'all', delta);
     }
 };

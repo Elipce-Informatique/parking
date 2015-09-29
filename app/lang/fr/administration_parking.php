@@ -130,7 +130,8 @@ return array(
         'btn' => "Lancer",
         'txt' => "Parking déjà initialisé",
         "protocol_version" => "Version du protocole",
-        "port" => "Port"
+        "port" => "Port",
+        "delta" => "Les capteurs suivants existent sur le réseau terrain mais pas dans la supervision. Veuillez les ajouter et recommencer l'initialisation SVP."
     ]
 );
 

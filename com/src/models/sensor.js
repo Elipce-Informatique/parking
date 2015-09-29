@@ -639,7 +639,7 @@ module.exports = {
      * @param busId: bus.id
      * @param sensors: sensors array
      */
-    synchroSensors: function (pool, busId, sensors) {
+    synchroSensors: function (pool, busId, sensors, onSynchroFinished, onError) {
         logger.log('info', 'SENSORS FROM BUS ENUM TO SYNCHRO ' + busId, sensors);
 
         // MYSQL CONNECTOR AND QUEUES
@@ -655,10 +655,10 @@ module.exports = {
         var sqlSensor = "SELECT c.*, tp.v4_type_place " +
             "FROM parking p " +
             "JOIN concentrateur con ON con.parking_id=p.id " +
-            "JOIN bus b ON b.concentrateur_id=c.id " +
+            "JOIN bus b ON b.concentrateur_id=con.id " +
             "JOIN capteur c ON c.bus_id=b.id " +
-            "LEFT JOIN place p ON p.capteur_id=c.id " +
-            "LEFT JOIN type_place tp ON tp.id=p.type_place_id" +
+            "LEFT JOIN place pl ON pl.capteur_id=c.id " +
+            "LEFT JOIN type_place tp ON tp.id=pl.type_place_id " +
             "WHERE p.id =" + global.parkingId + " " +
             "AND b.v4_id = ? " +
             "AND c.leg = ? " +
@@ -668,100 +668,127 @@ module.exports = {
             "UPDATE capteur SET libelle=?, sn=?, software_version=?, v4_id=? " +
             "WHERE id=? ";
 
-        // Parse sensors
-        sensors.forEach(function (sensor) {
+        Q.promise(function (resolve, reject) {
+            // Parse sensors
+            sensors.forEach(function (sensor, index) {
 
-            Q.promise(function (resolve, reject) {
-                // Get virtual sensor
-                mysqlHelper.execute(pool, sqlSensor, [busId, sensor.leg, sensor.index], function (err, result) {
-                    if (err) {
-                        logger.log('error', 'ERROR GET VIRTUAL SENSOR', err);
-                        reject(sensor);
-                    }
-                    else {
-                        // No virtual sensor for the unicity bus-leg-index
-                        if (result.length === 0) {
-                            logger.log('error', 'NO VIRTUAL SENSOR IN SUPERVISION DB', sensor);
+                Q.promise(function (resolve, reject) {
+                    // Get virtual sensor
+                    mysqlHelper.execute(pool, sqlSensor, [busId, sensor.leg, sensor.index], function (err, result) {
+                        //logger.log('info', 'EXEC');
+                        if (err) {
+                            logger.log('error', 'ERROR GET VIRTUAL SENSOR', err);
                             reject(sensor);
-
                         }
                         else {
-                            resolve({
-                                busEnum: sensor,
-                                db: result[0]
-                            })
+                            // No virtual sensor for the unicity bus-leg-index
+                            if (result.length === 0) {
+                                logger.log('error', 'NO VIRTUAL SENSOR IN SUPERVISION DB', sensor);
+                                reject(sensor);
+
+                            }
+                            else {
+                                resolve({
+                                    busEnum: sensor,
+                                    db: result[0]
+                                })
+                            }
                         }
+
+                    });
+                }).then(function onVirtualSensorExists(obj) {
+                    //logger.log('info', 'YOUHOU');
+                    // Variables
+                    var sensor = obj.busEnum;// Sensor from busEnum
+                    var dbSensor = obj.db; // Sensor from supervision DB
+
+                    // Sensor unique name
+                    var libelle = sensor.modelName + ' #' + busId + '#' + dbSensor['adresse'];
+
+                    return Q.promise(function (resolve, reject) {
+
+                        // Update sensor
+                        trans.query(updateCapteur, [
+                            libelle,
+                            sensor.ssn,
+                            sensor.softwareVersion,
+                            dbSensor.id,
+                            dbSensor.id
+                        ], function (err, result) {
+                            // INSERT KO
+                            if (err && trans.rollback) {
+                                reject(err)
+                                throw err;
+                            }
+                            else {
+                                // New sensor => match now
+                                if (dbSensor.v4_id === null) {
+                                    // Store sensor
+                                    resolve({
+                                        ID: dbSensor.id,
+                                        address: dbSensor.adresse,
+                                        spaceType: dbSensor.v4_type_place == null ? "generic" : dbSensor.v4_type_place,
+                                        deviceInfo: {
+                                            serialNumber: sensor.ssn,
+                                            modelName: sensor.modelName,
+                                            softwareVersion: sensor.softwareVersion
+                                        } // Si suppression de deviceInfo alors aller modifier general_helper.dbSensorsToBusEnum
+                                    });
+                                }
+                                else {
+                                    resolve();
+                                }
+                            }
+
+                        });
+                    });
+                }, function onVirtualSensorKo(sensor) {
+                    // Sensor in busEnum and not in virtuals
+                    sensorsDelta.push(sensor);
+
+                }).then(function onUpdateSensorOk(newSensor) {
+
+                    //logger.log('info', 'NEW SENSOR', newSensor);
+                    if (newSensor !== undefined) {
+                        sensorsInserted.push(newSensor);
                     }
 
+                    // Last sensor in the foreach => COMMIT
+                    if (index == (sensors.length - 1)) {
+                        resolve(sensorsInserted);
+                    }
+                }, function onUpdateSensorKo(err){
+
+                    trans.rollback();
+                    logger.log('error', 'TRANSACTION UPDATE VIRTUAL SENSOR ROLLBACK', err);
+                    // Callback synchro finished KO
+                    onError(err);
+
+                    // END MySQL connexion
+                    connection.end(errorHandler.onMysqlEnd);
                 });
-            }).then(function ok(obj) {
-                // Variables
-                var sensor = obj.busEnum;// Sensor from busEnum
-                var dbSensor = obj.db; // Sensor from supervision DB
 
-                // Sensor unique name
-                var libelle = sensor.modelName + ' #' + busId + '#' + dbSensor['adresse'];
 
-                // Update sensor
-                trans.query(updateCapteur, [
-                    libelle,
-                    sensor.ssn,
-                    sensor.softwareVersion,
-                    dbSensor.id,
-                    dbSensor.id
-                ], function (err, result) {
-                    // INSERT KO
-                    if (err && trans.rollback) {
-                        trans.rollback();
-                        logger.log('error', 'TRANSACTION UPDATE VIRTUAL SENSOR ROLLBACK', err);
-                        throw err;
-                    }
-                    else {
-                        // New sensor
-                        if(dbSensor.v4_id === null) {
-                            // Store sensor
-                            sensorsInserted.push({
-                                ID: dbSensor.id,
-                                address: dbSensor.adresse,
-                                spaceType: dbSensor.v4_type_place == null ? "generic" : dbSensor.v4_type_place,
-                                deviceInfo: {
-                                    serialNumber: sensor.ssn,
-                                    modelName: sensor.modelName,
-                                    softwareVersion: sensor.softwareVersion
-                                } // Si suppression de deviceInfo alors aller modifier general_helper.dbSensorsToBusEnum
-                            });
-                        }
-                    }
-                });
-            }, function ko(sensor) {
-                // Sensor in busEnum and not in virtuals
-                sensorsDelta.push(sensor);
-            });
+            }, this);
+        }).then(function ok(si) {
 
-        }, this);
-
-        // Commit UPDATE sensors
-        var promise = Q.Promise(function (resolve, reject) {
             trans.commit(function (err, info) {
                 if (err) {
-                    reject(err);
                     logger.log('error', 'TRANSACTION COMMIT VIRTUAL SENSORS ERROR');
+                    // Callback synchro finished KO
+                    onError(err);
                 } else {
-                    resolve({
+                    // Callback synchro finished ok
+                    onSynchroFinished({
                         delta: sensorsDelta,
-                        sensors: sensorsInserted
+                        sensors: si
                     });
                     logger.log('info', 'TRANSACTION COMMIT SENSORS OK');
                 }
                 // END MySQL connexion
                 connection.end(errorHandler.onMysqlEnd);
             });
-        })
-
-        // Execute the queue INSERT counters
-        trans.execute();
-
-        return promise;
+        });
     }
 
 };

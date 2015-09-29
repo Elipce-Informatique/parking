@@ -392,10 +392,18 @@ Config.prototype.onSettingsUpdateDone = function () {
 /**
  * Send a notification to the client when parking initialization finished
  * @param client
+ * @param busID: bus ID
+ * @param data: {
+ *      bus: valeur
+ *      delta: [
+ *         { sensor1 (data from busEnum.param)},
+ *         ...
+ *      ]
+ * }
  */
 Config.prototype.sendNotificationInitFinished = function (client, busId, data) {
 
-    logger.log('info', '************** NOTIFICATION CLIENT init_parking_finished ON BUS ', busId);
+    logger.log('info', '************** NOTIFICATION CLIENT init_parking_finished ON BUS ', busId, data);
     messenger.send(client, 'init_parking_finished', data);
 
 };

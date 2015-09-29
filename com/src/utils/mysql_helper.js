@@ -43,14 +43,14 @@ var mysqlClass = {
     execute: function (pool, sql, params, callback) {
         pool.getConnection(function (err, connection) {
             if (err) {
-                logger.error('Mysql connection error: ' + err);
+                logger.log('error','Mysql connection error: ' + err);
                 callback(err, true);
                 return;
             }
 
             var query = connection.query(sql, params, callback);
             query.on('error', function (err) {
-                logger.error('Mysql query error: ' + err);
+                logger.log('error','Mysql query error: ' + err);
                 callback(err, true);
             });
             query.on('result', function (rows) {
