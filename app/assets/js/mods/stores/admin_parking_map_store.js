@@ -71,6 +71,8 @@ var store = Reflux.createStore({
             bus_id: 0,
             leg_num: 0,
             last_noeud: 0,
+            last_adresse: 0,
+            nb_restant: 0,
             capteurs_a_envoyer: []
         },
         types_places: [], // Types de places de la BDD
@@ -99,6 +101,26 @@ var store = Reflux.createStore({
     init: function () {
     },
 
+    resetLocalState: function () {
+        this._inst.capteur_place_virtuel = {
+            concentrateur: {},
+            bus: {},
+            bus_id: 0,
+            leg_num: 0,
+            last_noeud: 0,
+            last_adresse: 0,
+            nb_restant: 0,
+            capteurs_a_envoyer: []
+        };
+        this._inst.capteur_place = { // Dernier capteur placé
+            concentrateur: {},  // Concentrateur concerné
+            bus: {},            // Bus concerné
+            capteurInit: {},    // Capteur initial pour l'affectation
+            capteursTotaux: [], // Liste des capteurs totaux à affecter
+            capteursRestant: [] // Liste des capteurs restant à affecter sur le bus
+        };
+    },
+
 
     /**
      * Appellé lors de l'initialisation de la map pour renseigner le calibre initial
@@ -109,6 +131,8 @@ var store = Reflux.createStore({
      * @param parkingInfos : object avec deux clés parkingId et planId
      */
     onMap_initialized: function (map, calibre, parkingInfos, mapInst) {
+
+        this.resetLocalState();
 
         // Récupération de l'instance de la map
         this._inst.mapInst = mapInst;
@@ -612,14 +636,12 @@ var store = Reflux.createStore({
     },
 
     onMode_capteur: function (data) {
-        if (this._inst.parkingInfos.init != 0) {
-
-            switch (this._inst.parkingInfos.init_mode) {
-                case '0':
-                    console.log('PASS ICICICICICI#0');
-                case '1':
-                {
-                    console.log('PASS ICICICICICI#1');
+        switch (this._inst.parkingInfos.init_mode) {
+            // MODE REEL
+            case '0':
+            case '1':
+            {
+                if (this._inst.parkingInfos.init != 0) {
                     this._inst.currentMode = mapOptions.dessin.capteur;
 
                     var retour = {
@@ -632,11 +654,15 @@ var store = Reflux.createStore({
 
                     // Pour éviter d'éventuels glitch du à une utilisation bizarre
                     this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
-                    break;
+                } else {
+                    swal(Lang.get('administration_parking.carte.err_parking_non_init'));
                 }
-                case '2':
-                {
-                    console.log('PASS ICICICICICI#2');
+                break;
+            }
+            // MODE VIRTUEL
+            case '2':
+            {
+                if (this._inst.capteur_place_virtuel.capteurs_a_envoyer.length == 0) {
                     this._inst.currentMode = mapOptions.dessin.capteur;
 
                     var retour = {
@@ -649,15 +675,16 @@ var store = Reflux.createStore({
 
                     // Pour éviter d'éventuels glitch du à une utilisation bizarre
                     this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
-                    break;
                 }
-                default:
+                else {
+                    swal(Lang.get('administration_parking.carte.err_affectation_non_finie'));
+                }
+                break;
             }
-
-        } else {
-            swal(Lang.get('administration_parking.carte.err_parking_non_init'));
-
+            default:
         }
+
+
     },
 
     onMode_capteur_afficheur: function (data) {
@@ -1335,20 +1362,22 @@ var store = Reflux.createStore({
      * @param concentrateurId
      * @param busId
      * @param legNum
-     * @param maxNumNoeudBdd
+     * @param maxAdresse
      */
-    onStart_affectation_capteurs_virtuels: function (concentrateur, bus, legNum, maxNumNoeudBdd) {
+    onStart_affectation_capteurs_virtuels: function (concentrateur, bus, legNum, maxAdresse, maxNumNoeud) {
         this._inst.capteur_place_virtuel.concentrateur = concentrateur;
         this._inst.capteur_place_virtuel.bus = bus;
         this._inst.capteur_place_virtuel.bus_id = bus.id;
-        this._inst.capteur_place_virtuel.leg_num = legNum;
-        this._inst.capteur_place_virtuel.last_noeud = maxNumNoeudBdd;
+        this._inst.capteur_place_virtuel.leg_num = parseInt(legNum);
+        this._inst.capteur_place_virtuel.last_noeud = parseInt(maxNumNoeud);
+        this._inst.capteur_place_virtuel.last_adresse = parseInt(maxAdresse);
+        this._inst.capteur_place_virtuel.nb_restant = config.legLength[legNum] - maxNumNoeud;
 
         var infos = mapHelper.generateInfosCapteurPlaceVirtuel(
             concentrateur.v4_id,
             bus.num,
-            maxNumNoeudBdd,
-            config.legLength[legNum] - maxNumNoeudBdd
+            maxAdresse,
+            this._inst.capteur_place_virtuel.nb_restant
         );
 
         // Cachage de la modale
@@ -1493,33 +1522,38 @@ var store = Reflux.createStore({
      * @param evt : evt click sur place leaflet
      */
     onPlaceCapteurVirtuelClick: function (evt) {
-        console.log('this._inst.capteur_place_virtuel : %o', this._inst.capteur_place_virtuel);
         // RÉCUPÉRATION PLACE CLIQUÉE
         var place = _.cloneDeep(evt.layer.options.data);
 
+        // TODO : Vérifier le nombre restant avant de continuer
+
         // PLACE NON AFFECTÉE
-        if (place.capteur_id == null) {
-            console.log('PASS création capteur');
+        if (place.capteur_id == null && this._inst.capteur_place_virtuel.nb_restant > 0) {
             // CRÉATION DU CAPTEUR
             var capteur = {
+                bus: this._inst.capteur_place_virtuel.bus,
+                place_id: place.id,
                 bus_id: this._inst.capteur_place_virtuel.bus_id,
                 num_noeud: this._inst.capteur_place_virtuel.last_noeud + 1,
-                adresse: this._inst.capteur_place_virtuel.last_noeud + 1,
+                adresse: this._inst.capteur_place_virtuel.last_adresse + 1,
                 leg: this._inst.capteur_place_virtuel.leg_num,
-                software_version: ''
+                software_version: '',
+                v4_id: 0
             };
 
             this._inst.capteur_place_virtuel.capteurs_a_envoyer.push(capteur);
 
             // INCRÉMENT DU LAST NOEUD
             this._inst.capteur_place_virtuel.last_noeud++;
+            this._inst.capteur_place_virtuel.last_adresse++;
+            this._inst.capteur_place_virtuel.nb_restant--;
 
             // MODIFICATION MESSAGE INFOS
-            var infos = mapHelper.generateInfosCapteurPlace(
+            var infos = mapHelper.generateInfosCapteurPlaceVirtuel(
                 this._inst.capteur_place_virtuel.concentrateur.v4_id,
                 this._inst.capteur_place_virtuel.bus.num,
-                this._inst.capteur_place_virtuel.last_noeud,
-                config.legLength[this._inst.capteur_place_virtuel.leg_num] - this._inst.capteur_place_virtuel.last_noeud
+                this._inst.capteur_place_virtuel.last_adresse,
+                this._inst.capteur_place_virtuel.nb_restant
             );
 
             var retourTrigger = {
@@ -1528,14 +1562,30 @@ var store = Reflux.createStore({
             };
             this.trigger(retourTrigger);
 
-            // TODO : Remettre la place avec un capteur id pour éviter de réassocier
-            // Mettre le capteur d'une couleur différente des capteurs "réels" (avec ou sans v4id) (virtual dans la popup)
-            // ça commence à 1
+            // SUPPRESSION PLACE MAP
+            var retourTrigger = {
+                type: mapOptions.type_messages.delete_place,
+                data: {
+                    place_id: place.id
+                }
+            };
+            this.trigger(retourTrigger);
+
+            // REMETTRE LA PLACE AVEC UN CAPTEUR ID POUR ÉVITER DE RÉASSOCIER
+            var newPlace = place;
+            newPlace.capteur_id = 0;
+            newPlace.capteur = capteur;
+            retourTrigger = {
+                type: mapOptions.type_messages.add_places,
+                data: this.createPlacesMapFromPlacesBDD([newPlace])
+            };
+            this.trigger(retourTrigger);
+
+            // TODO :
             // Implémebnter l'action sur le bouton fini
             // Click droit supprimer (attention, ça supprime tous les capteurs suivants)
+        } else {
 
-
-            console.log('PASS création capteur : %o', capteur);
         }
     },
 
@@ -1555,6 +1605,47 @@ var store = Reflux.createStore({
 
         // DÉTACHEMENT DES ÉVÈNEMENTS SUR LES PLACES
         this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
+    },
+    /**
+     * Arrête l'affectation:
+     * - Supprime les events listeners sur les places
+     * - Vide les données du store en rapport avec l'affectation
+     */
+    onStop_affectation_capteurs_virtuels: function () {
+        console.log('PASS stop affectation capteurs virtuels');
+        // DÉTACHEMENT DES ÉVÈNEMENTS SUR LES PLACES
+        this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurVirtuelClick, this);
+
+        var fData = formDataHelper('', 'POST');
+        fData.append('capteurs', JSON.stringify(this._inst.capteur_place_virtuel.capteurs_a_envoyer));
+        $.ajax({
+            type: 'POST',
+            url: BASE_URI + 'parking/capteur/create_virtuels',
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            context: this,
+            data: fData
+        })
+            .done(function (data) {
+                console.log('Retour insertion capteurs : %o', data);
+                if (data) {
+                    this._inst.capteur_place_virtuel.capteurs_a_envoyer = [];
+                    Actions.notif.success();
+                    var retourTrigger = {
+                        type: mapOptions.type_messages.hide_infos,
+                        data: ''
+                    };
+                    this.trigger(retourTrigger);
+                } else {
+                    Actions.notif.error();
+                }
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
     },
 
     /**
@@ -1879,4 +1970,4 @@ var store = Reflux.createStore({
     }
 });
 
-module.exports = store;
+module.exports = store

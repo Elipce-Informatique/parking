@@ -720,14 +720,26 @@ var parkingMap = React.createClass({
         _.each(liste_data, function (place) {
             this._inst.lastNum = Math.max(this._inst.lastNum, place.data.num);
             this._inst.placesGroup.addLayer(place.polygon);
-            // MARKER SI CAPTEUR
-            if (place.data.capteur_id != null) {
+            // MARKER SI CAPTEUR REEL
+            if (place.data.capteur_id != null && place.data.capteur.v4_id != null && place.data.capteur.v4_id != 0) {
                 var marker = L.marker([place.data.lat, place.data.lng], {
                     icon: new mapOptions.pastilleCapteur(),
                     data: place.data
                 }).bindLabel(
                     place.data.capteur.bus.concentrateur.v4_id + '.' +
                     place.data.capteur.bus.num + '.' +
+                    place.data.capteur.adresse
+                );
+                this._inst.placesMarkersGroup.addLayer(marker);
+            }
+            // MARKER SI CAPTEUR VIRTUEL
+            else if (place.data.capteur != null && (place.data.capteur.v4_id == null || place.data.capteur.v4_id == 0)) {
+                var marker = L.marker([place.data.lat, place.data.lng], {
+                    icon: new mapOptions.pastilleCapteurVirtuel(),
+                    data: place.data
+                }).bindLabel(
+                    Lang.get('global.virtuel') + ' ' +
+                    place.data.capteur.bus.name + '.' +
                     place.data.capteur.adresse
                 );
                 this._inst.placesMarkersGroup.addLayer(marker);
