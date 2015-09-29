@@ -84,49 +84,18 @@ BusEnumeration.prototype.onBusEnum = function (data) {
             // Sensors on this bus
             this.sensors[data.ID].data = data.param;
         case "done":
-            // Process sensors inserts on the bus data.ID
-            if (this.sensors[data.ID] !== undefined && this.sensors[data.ID].data.length > 0) {
-                sensorModel.insertSensorsFromBusEnum(data.ID, this.sensors[data.ID].data)
-                    .then(function ok(sensorsInserted) {
-                        // At least 1 sensor to insert
-                        if (sensorsInserted.length > 0) {
-                            // Send sensors to controller DB
-                            messenger.sendToController("sensorConfigUpdate", {
-                                busID: data.ID,
-                                sensor: sensorsInserted
-                            });
-                            logger.log('info', 'sensorConfigUpdate ', sensorsInserted);
-
-                            // Update network address
-                            var busEnumJson = helper.dbSensorsToBusEnum(sensorsInserted);
-                            messenger.sendToController("startJob", {
-                                job: "busEnum",
-                                class: "bus",
-                                ID: data.ID,
-                                param: busEnumJson
-                            });
-                            logger.log('info', 'busEnumUpdate on bus ' + data.ID, busEnumJson);
-                        }
-                        else {
-                            logger.log('info', 'BUSENUM DONE, NO SENSORS TO INSERT ');
-                        }
-                        // Sensors on this bus inserted or already inserted
-                        this.sensors[data.ID].inserted = true;
-
-                        // Bus enum finished
-                        if (this.checkInitFinished()) {
-                            logger.log('info', 'EMIT init_parking_finished');
-                            this.emit('init_parking_finished');
-                        }
-
-                    }.bind(this), function ko(err) {
-                        logger.log('error', 'Supervision DB error : sensors not inserted from BusEnum ', err);
-                    });
+            //logger.log('info', "BUSENUM DONE. INIT MODE "+global.initMode);
+            // Classic busEnum init mode
+            if (global.initMode == 1 ) {
+                //logger.log('info', "PROCESS INIT 1");
+                this.processInit1(data);
             }
-            // Displays inserts
-            if (this.displays[data.ID] !== undefined && this.displays[data.ID].length > 0) {
-                displayModel.insertDisplaysFromBusEnum(data.ID, this.displays[data.ID]);
+            // Virtual sensors init mode
+            if (global.initMode == 2 ) {
+                //logger.log('info', "PROCESS INIT 1");
+                this.processInit2(data);
             }
+
             break;
         case "failed":
             logger.log('error', 'BusEnum failed on bus ' + data.ID);
@@ -172,5 +141,132 @@ BusEnumeration.prototype.checkInitFinished = function () {
 
     return true;
 }
+
+/**
+ * On a DONE busEnum, process data when we are in init 1
+ * @param data: data from busEnum
+ * @constructor
+ */
+BusEnumeration.prototype.processInit1 = function (data) {
+    // Process sensors inserts on the bus data.ID
+    if (this.sensors[data.ID] !== undefined && this.sensors[data.ID].data.length > 0) {
+        //logger.log('info', "BUSSSSSS");
+        sensorModel.insertSensorsFromBusEnum(data.ID, this.sensors[data.ID].data)
+            .then(function ok(sensorsInserted) {
+                // At least 1 sensor to insert
+                if (sensorsInserted.length > 0) {
+                    // Send sensors to controller DB
+                    messenger.sendToController("sensorConfigUpdate", {
+                        busID: data.ID,
+                        sensor: sensorsInserted
+                    });
+                    logger.log('info', 'sensorConfigUpdate ', sensorsInserted);
+
+                    // Update network address
+                    var busEnumJson = helper.dbSensorsToBusEnum(sensorsInserted);
+                    messenger.sendToController("startJob", {
+                        job: "busEnum",
+                        class: "bus",
+                        ID: data.ID,
+                        param: busEnumJson
+                    });
+                    logger.log('info', 'busEnumUpdate on bus ' + data.ID, busEnumJson);
+                }
+                else {
+                    logger.log('info', 'BUSENUM DONE, NO SENSORS TO INSERT ');
+                }
+                // Sensors on this bus inserted or already inserted
+                this.sensors[data.ID].inserted = true;
+
+                // Bus enum finished
+                if (this.checkInitFinished()) {
+                    logger.log('info', 'EMIT init_parking_finished');
+                    this.emit('init_parking_finished');
+                }
+
+            }.bind(this), function ko(err) {
+                logger.log('error', 'Supervision DB error : sensors not inserted from BusEnum ', err);
+            });
+    }
+    // Displays inserts
+    if (this.displays[data.ID] !== undefined && this.displays[data.ID].length > 0) {
+        displayModel.insertDisplaysFromBusEnum(data.ID, this.displays[data.ID]);
+    }
+}
+
+/**
+ * On a DONE busEnum, process data when we are in init 2
+ * @param data: data from busEnum
+ * @constructor
+ */
+BusEnumeration.prototype.processInit2 = function (data) {
+    // Process sensors inserts on the bus data.ID
+    if (this.sensors[data.ID] !== undefined && this.sensors[data.ID].data.length > 0) {
+        //logger.log('info', "BUSSSSSS");
+        sensorModel.synchroSensors(this.pool, data.ID, this.sensors[data.ID].data)
+            .then(function ok(obj) {
+                var sensorsDelta = obj.delta;
+                var sensorsInserted = obj.sensors;
+                var emitObj = {
+                    bus: data.ID
+                };
+
+                // At least 1 sensor to insert in controllerDB
+                if(sensorsInserted.length > 0){
+                    // Send sensors to controller DB
+                    messenger.sendToController("sensorConfigUpdate", {
+                        busID: data.ID,
+                        sensor: sensorsInserted
+                    });
+                    logger.log('info', 'sensorConfigUpdate ', sensorsInserted);
+
+                    // Update network address
+                    var busEnumJson = helper.dbSensorsToBusEnum(sensorsInserted);
+                    messenger.sendToController("startJob", {
+                        job: "busEnum",
+                        class: "bus",
+                        ID: data.ID,
+                        param: busEnumJson
+                    });
+                    logger.log('info', 'busEnumUpdate on bus ' + data.ID, busEnumJson);
+                }
+                else {
+                    logger.log('info', 'BUSENUM DONE, NO SENSORS TO INSERT IN CONTROLLER DB AND TO ADDRESS ');
+                }
+
+                // At least 1 sensor In bus Enum and not in supervision DB
+                if (sensorsDelta.length > 0) {
+                    logger.log('error', 'SENSORS FROM BUSENUM NOT IN SUPERVISION DB', sensorsDelta);
+                    emitObj.delta = sensorsDelta;
+                }
+                // All sensors are OK
+                else{
+                   // Open bus
+                    messenger.sendToController("remoteControl", {
+                        command: "start",
+                        class: "bus",
+                        ID: data.ID
+                    });
+                }
+
+                // Sensors on this bus inserted or already inserted
+                this.sensors[data.ID].inserted = true;
+
+                // Bus enum finished
+                if (this.checkInitFinished()) {
+                    logger.log('info', 'EMIT init_parking_finished', emitObj);
+                    this.emit('init_parking_finished', emitObj);
+                }
+
+            }.bind(this), function ko(err) {
+                logger.log('error', 'Supervision DB error : sensors not synchro from BusEnum ', err);
+            });
+    }
+    // Displays inserts
+    if (this.displays[data.ID] !== undefined && this.displays[data.ID].length > 0) {
+        displayModel.insertDisplaysFromBusEnum(data.ID, this.displays[data.ID]);
+    }
+}
+
 
 module.exports = BusEnumeration;

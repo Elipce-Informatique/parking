@@ -11,6 +11,7 @@ var logger = require('../utils/logger.js');
 var messenger = require('../utils/messenger.js');
 var parking = require('../models/parking.js');
 var display = require('../models/display.js');
+var viewModel = require('../models/view.js');
 var helper = require('../utils/general_helper.js');
 
 /**
@@ -51,6 +52,8 @@ Synchro.prototype.onNewSupervision = function (client) {
  */
 Synchro.prototype.onStartSynchro = function () {
 
+    logger.log('info', "START SYNCHRO DISPLAYS");
+
     // RAZ synchro variable
     this.displaySynchro = {
         display: null,
@@ -73,25 +76,44 @@ Synchro.prototype.onStartSynchro = function () {
                 // Send update to controller
                 //logger.log('info','######### ',obj);
                 messenger.sendToController("displayConfigUpdate", obj);
-            }, this)
 
-            // Views to delete
-            data.delete.forEach(function (displayId) {
-                display.getViews(pool, displayId, function (err, result) {
-                    if (err) {
-                        logger.log('error', "ERROR GET VIEWS FROM DISPLAY "+ displayId, err);
-                    }
-                    else {
-                        // DELETE view
-                        messenger.sendToController("viewConfigUpdate", {
-                            ID: result.ID,
-                            DELETE: true
-                        });
-                    }
-                });
             }, this);
+
+            // Displays and views to delete
+            if (obj.delete.length > 0) {
+                // Views to delete
+                obj.delete.forEach(function (displayId) {
+                    // Get all views from display ID
+                    display.getViews(this.pool, displayId, function (err, result) {
+                        if (err) {
+                            logger.log('error', "ERROR GET VIEWS FROM DISPLAY " + displayId, err);
+                        }
+                        else {
+                            if (result.length > 0) {
+                                var supervisionViewsId = [];
+                                // Parse result
+                                result.forEach(function (view) {
+                                    //logger.log('info', "###########DELETE VIEW "+view.ID);
+                                    // DELETE view in controller DB
+                                    messenger.sendToController("viewConfigUpdate", {
+                                        ID: view.ID,
+                                        DELETE: true
+                                    });
+                                    // Views to delete in supervision DB
+                                    supervisionViewsId.push(view.supervision_id);
+                                }, this);
+                                // DELETE views in supervision DB
+                                viewModel.deleteViews(supervisionViewsId);
+                            }
+
+                        }
+                    });
+                }, this);
+                // DELETE display in supervision DB
+                display.deleteDisplays(obj.delete);
+            }
         }
-    });
+    }.bind(this));
 
     // GET + send views
     parking.getAllViews(this.pool, function onGetViews(err, result) {
@@ -148,7 +170,7 @@ Synchro.prototype.onConfigUpdateDone = function (equipment, isInserted) {
                 logger.log('error', "ERROR UPDATE LAST SYNCHRO", err);
             }
             else {
-                logger.log('info', "LAST SYNCHRO", result);
+                //logger.log('info', "LAST SYNCHRO", result);
             }
             // RAZ synchro variable
             this.displaySynchro = {

@@ -165,7 +165,7 @@ Config.prototype.onBusConfigData = function (data) {
         busModel.insertBuses(data, function (bool) {
             // Busses inserted OK
             if (bool) {
-                logger.log('info','BUSSES inserted EMIT busConfigData');
+                logger.log('info', 'BUSSES inserted EMIT busConfigData');
                 this.emit('busConfigData', data);
             }
             // Busses NOT inserted
@@ -393,9 +393,10 @@ Config.prototype.onSettingsUpdateDone = function () {
  * Send a notification to the client when parking initialization finished
  * @param client
  */
-Config.prototype.sendNotificationInitFinished = function (client, busId) {
+Config.prototype.sendNotificationInitFinished = function (client, busId, data) {
+
     logger.log('info', '************** NOTIFICATION CLIENT init_parking_finished ON BUS ', busId);
-    messenger.send(client, 'init_parking_finished', {});
+    messenger.send(client, 'init_parking_finished', data);
 
 };
 

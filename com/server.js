@@ -9,6 +9,7 @@ global.controllerClient = null;
 global.supervisionClients = [];
 global.parkingId = null;
 global.legLength = conf.legLength;
+global.initMode = 2;
 
 
 // Local modules

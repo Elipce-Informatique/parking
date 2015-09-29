@@ -217,11 +217,17 @@ module.exports = {
 
     },
 
+    /**
+     * Get views of displayID
+     * @param pool: MySQL connexion
+     * @param displayId: afficheur.id
+     * @param onGetViews: callback function
+     */
     getViews: function(pool, displayId, onGetViews){
         var mysqlHelper = require('../utils/mysql_helper.js');
 
         var sql = "" +
-            "SELECT v.v4_id AS ID " +
+            "SELECT v.v4_id AS ID, v.id AS supervision_id " +
             "FROM parking p " +
             "JOIN concentrateur c ON c.parking_id=p.id " +
             "JOIN bus b ON b.concentrateur_id=c.id " +
@@ -236,5 +242,45 @@ module.exports = {
         mysqlHelper.execute(pool, inst, function (err, result) {
             onGetViews(err, result);
         });
+    },
+
+    /**
+     * Delete all displays in the array
+     * @param displaysId: displays ID array
+     */
+    deleteDisplays: function (displaysId) {
+
+        // MYSQL CONNECTOR AND QUEUES
+        var connection = require('../utils/mysql_helper.js').standardConnexion();
+        queues(connection);
+        var trans = connection.startTransaction();
+
+        var sqlDelete = "" +
+            "DELETE FROM afficheur " +
+            "WHERE id=? ";
+
+        // Parse displays id
+        displaysId.forEach(function (displayId) {
+            trans.query(sqlDelete, [displayId], function (err, result) {
+                // DELETE KO
+                if (err && trans.rollback) {
+                    trans.rollback();
+                    logger.log('error', 'TRANSACTION ROLLBACK DELETE DISPLAY', err);
+                    throw err;
+                }
+            });
+        }, this);
+
+        // Commit DELETE displays
+        trans.commit(function (err, info) {
+            if (err) {
+                logger.log('error', 'TRANSACTION COMMIT DISPLAYS ERROR', err);
+            }
+            // END MySQL connexion
+            connection.end(errorHandler.onMysqlEnd);
+        });
+
+        // Execute the queue DELETE views
+        trans.execute();
     }
 };
