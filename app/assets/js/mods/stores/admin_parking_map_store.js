@@ -60,6 +60,7 @@ var store = Reflux.createStore({
         },
         capteur_place: { // Dernier capteur placé
             concentrateur: {},  // Concentrateur concerné
+            configs_ids: [],
             bus: {},            // Bus concerné
             capteurInit: {},    // Capteur initial pour l'affectation
             capteursTotaux: [], // Liste des capteurs totaux à affecter
@@ -67,6 +68,7 @@ var store = Reflux.createStore({
         },
         capteur_place_virtuel: {
             concentrateur: {},
+            configs_ids: [],
             bus: {},
             bus_id: 0,
             leg_num: 0,
@@ -104,6 +106,7 @@ var store = Reflux.createStore({
     resetLocalState: function () {
         this._inst.capteur_place_virtuel = {
             concentrateur: {},
+            configs_ids: [],
             bus: {},
             bus_id: 0,
             leg_num: 0,
@@ -113,11 +116,12 @@ var store = Reflux.createStore({
             capteurs_a_envoyer: []
         };
         this._inst.capteur_place = { // Dernier capteur placé
-            concentrateur: {},  // Concentrateur concerné
-            bus: {},            // Bus concerné
-            capteurInit: {},    // Capteur initial pour l'affectation
-            capteursTotaux: [], // Liste des capteurs totaux à affecter
-            capteursRestant: [] // Liste des capteurs restant à affecter sur le bus
+            concentrateur: {},       // Concentrateur concerné
+            configs_ids: [],
+            bus: {},                 // Bus concerné
+            capteurInit: {},         // Capteur initial pour l'affectation
+            capteursTotaux: [],      // Liste des capteurs totaux à affecter
+            capteursRestant: []      // Liste des capteurs restant à affecter sur le bus
         };
     },
 
@@ -1363,9 +1367,11 @@ var store = Reflux.createStore({
      * @param busId
      * @param legNum
      * @param maxAdresse
+     * @param configs_ids
      */
-    onStart_affectation_capteurs_virtuels: function (concentrateur, bus, legNum, maxAdresse, maxNumNoeud) {
+    onStart_affectation_capteurs_virtuels: function (concentrateur, bus, legNum, maxAdresse, maxNumNoeud, configs_ids) {
         this._inst.capteur_place_virtuel.concentrateur = concentrateur;
+        this._inst.capteur_place_virtuel.configs_ids = configs_ids;
         this._inst.capteur_place_virtuel.bus = bus;
         this._inst.capteur_place_virtuel.bus_id = bus.id;
         this._inst.capteur_place_virtuel.leg_num = parseInt(legNum);
@@ -1525,8 +1531,6 @@ var store = Reflux.createStore({
         // RÉCUPÉRATION PLACE CLIQUÉE
         var place = _.cloneDeep(evt.layer.options.data);
 
-        // TODO : Vérifier le nombre restant avant de continuer
-
         // PLACE NON AFFECTÉE
         if (place.capteur_id == null && this._inst.capteur_place_virtuel.nb_restant > 0) {
             // CRÉATION DU CAPTEUR
@@ -1580,10 +1584,6 @@ var store = Reflux.createStore({
                 data: this.createPlacesMapFromPlacesBDD([newPlace])
             };
             this.trigger(retourTrigger);
-
-            // TODO :
-            // Implémebnter l'action sur le bouton fini
-            // Click droit supprimer (attention, ça supprime tous les capteurs suivants)
         } else {
 
         }
@@ -1618,6 +1618,8 @@ var store = Reflux.createStore({
 
         var fData = formDataHelper('', 'POST');
         fData.append('capteurs', JSON.stringify(this._inst.capteur_place_virtuel.capteurs_a_envoyer));
+        fData.append('configs_ids', JSON.stringify(this._inst.capteur_place_virtuel.configs_ids));
+
         $.ajax({
             type: 'POST',
             url: BASE_URI + 'parking/capteur/create_virtuels',

@@ -82,6 +82,15 @@ class Afficheur extends BaseModel
         return $this->hasMany('Vue');
     }
 
+    /**
+     * Les configurations de cet afficheur
+     * @return mixed
+     */
+    public function configs()
+    {
+        return $this->belongsToMany('ConfigEquipement', 'afficheur_config');
+    }
+
     /*****************************************************************************
      * UTILITAIRES DU MODELE *****************************************************
      *****************************************************************************/

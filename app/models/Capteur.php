@@ -45,4 +45,13 @@ class Capteur extends BaseModel
     {
         return $this->belongsToMany('Compteur');
     }
+
+    /**
+     * Les configurations de ce capteur
+     * @return mixed
+     */
+    public function configs()
+    {
+        return $this->belongsToMany('ConfigEquipement', 'capteur_config');
+    }
 }

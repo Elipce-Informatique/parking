@@ -89,7 +89,7 @@ class CapteursController extends \BaseController
     public function create_virtuels()
     {
         $capteurs = json_decode(Input::get('capteurs'));
-        Log::debug('Capteurs à créer : ' . print_r($capteurs, true));
+        $configs_ids = json_decode(Input::get('configs_ids'));
 
         // INSERTION DES CAPTEURS EN BDD
         DB::beginTransaction();
@@ -102,6 +102,8 @@ class CapteursController extends \BaseController
                     'leg' => $capteur->leg,
                     'software_version' => $capteur->software_version
                 ]);
+
+                $capteurBDD->configs()->attach($configs_ids);
 
                 $place = Place::find($capteur->place_id);
                 $place->capteur()->associate($capteurBDD);

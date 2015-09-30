@@ -125,6 +125,7 @@ Voulez-vous vraiment quitter cette page ?',
     'full' => 'Complet',
     'leg' => 'Leg',
     'virtuel' => 'Virtuel',
+    'config' => 'Configuration',
 
     // ALERTES
     'alerte_full' => "",
