@@ -113,11 +113,11 @@ var store = Reflux.createStore({
             capteurs_a_envoyer: []
         };
         this._inst.capteur_place = { // Dernier capteur placé
-            concentrateur: {},  // Concentrateur concerné
-            bus: {},            // Bus concerné
-            capteurInit: {},    // Capteur initial pour l'affectation
-            capteursTotaux: [], // Liste des capteurs totaux à affecter
-            capteursRestant: [] // Liste des capteurs restant à affecter sur le bus
+            concentrateur: {},       // Concentrateur concerné
+            bus: {},                 // Bus concerné
+            capteurInit: {},         // Capteur initial pour l'affectation
+            capteursTotaux: [],      // Liste des capteurs totaux à affecter
+            capteursRestant: []      // Liste des capteurs restant à affecter sur le bus
         };
     },
 
