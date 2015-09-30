@@ -57,12 +57,16 @@ module.exports = {
 
         var sql = "" +
             "SELECT b.v4_id AS busID, a.v4_id AS ID, a.adresse AS address, a.manufacturer, a.model_name AS modelName, a.reference AS name, " +
-            "a.serial_number AS serialNumber, a.software_version AS softwareVersion, a.hardware_version AS hardwareVersion, a.a_supprimer " +
+            "a.serial_number AS serialNumber, a.software_version AS softwareVersion, a.hardware_version AS hardwareVersion, a.a_supprimer, " +
+            "GROUP_CONCAT(ce.id SEPARATOR ',')AS settings " +
             "FROM parking p " +
             "JOIN concentrateur c ON c.parking_id=p.id " +
             "JOIN bus b ON b.concentrateur_id=c.id " +
             "JOIN afficheur a ON b.id=a.bus_id " +
+            "LEFT JOIN afficheur_config ac ON ac.afficheur_id=a.id " +
+            "LEFT JOIN config_equipement ce ON ce .id=ac.config_equipement_id " +
             "WHERE p.id = ? " +
+            "GROUP BY a.id " +
             "ORDER BY b.id, a.adresse";
 
         mysqlHelper.execute(pool, sql, [global.parkingId], function (err, result) {

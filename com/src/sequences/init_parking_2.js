@@ -58,21 +58,25 @@ module.exports = {
         // BUSES are stored in the controller DB, get buses from controller
         //this.config.getSupervisionBuses(client)
         this.config.sendBusConfigQuery(client);
+        // Get settings from supervision DB
+        this.config.getSupervisionSettings(client);
     },
 
     unBindEvents: function () {
 
         this.config.removeAllListeners('busConfigData');
         this.busEnum.removeAllListeners('init_parking_finished');
+        this.config.removeAllListeners('onGetSupervisionSettings');
     },
     bindEvents: function () {
         logger.log('info', 'Binding events from the init procedure');
         this.config.on('busConfigData', this.onBusConfigData.bind(this));
         this.busEnum.on('init_parking_finished', this.onInitParkingFinished.bind(this));
+        this.config.on('onGetSupervisionSettings', this.onGetSupervisionSettings.bind(this));
     },
 
     /**
-     * NE SERT PLUS, LUS BUS EXISTENTY DANS LE CONTROLLER, CE N'EST PAS LA SUPERVISION QUI INIT LES BUS
+     * NE SERT PLUS, PLUS BUS EXISTENTY DANS LE CONTROLLER, CE N'EST PAS LA SUPERVISION QUI INIT LES BUS
      * Handle buses data for the parking initialization process.
      * @param data : buses
      * @param client: WS client which send busConfigUpdate
@@ -120,5 +124,12 @@ module.exports = {
      */
     onInitParkingFinished: function(delta){
         this.config.sendNotificationInitFinished(this.clientConnected, 'all', delta);
+    },
+
+    onGetSupervisionSettings: function(settings, client){
+
+        //logger.log('info', 'onGetSupervisionSettings', settings);
+        // init settings controller DB
+        this.config.sendSettingsUpdate(settings, client);
     }
 };

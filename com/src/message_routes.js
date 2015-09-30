@@ -41,6 +41,9 @@ module.exports.route = function (message, client) {
             }
 
             break;
+        case 'startSynchroDisplays':
+            synchro_controller.onStartSynchro();
+            break;
         case 'job' : // Query the physical network
             switch (message.data.job) {
                 case 'busEnum':
@@ -142,9 +145,6 @@ module.exports.route = function (message, client) {
             break;
         case 'remoteControl':
             config_controller.sendRemoteControl(message.data.command);
-            break;
-        case 'startSynchroDisplays':
-            synchro_controller.onStartSynchro();
             break;
 
     /***** EVENT ******/

@@ -652,17 +652,21 @@ module.exports = {
         var sensorsDelta = [];
         var sensorsInserted = [];
 
-        var sqlSensor = "SELECT c.*, tp.v4_type_place " +
+        var sqlSensor = "" +
+            "SELECT c.*, tp.v4_type_place, GROUP_CONCAT(ce.v4_id SEPARATOR ',')AS settings " +
             "FROM parking p " +
             "JOIN concentrateur con ON con.parking_id=p.id " +
             "JOIN bus b ON b.concentrateur_id=con.id " +
             "JOIN capteur c ON c.bus_id=b.id " +
             "LEFT JOIN place pl ON pl.capteur_id=c.id " +
             "LEFT JOIN type_place tp ON tp.id=pl.type_place_id " +
+            "LEFT JOIN capteur_config cc ON cc.capteur_id=c.id " +
+            "LEFT JOIN config_equipement ce ON ce.id=cc.config_equipement_id " +
             "WHERE p.id =" + global.parkingId + " " +
             "AND b.v4_id = ? " +
             "AND c.leg = ? " +
-            "AND c.num_noeud = ? ";
+            "AND c.num_noeud = ? " +
+            "GROUP BY c.id ";
 
         var updateCapteur = "" +
             "UPDATE capteur SET libelle=?, sn=?, software_version=?, v4_id=? " +
@@ -723,8 +727,8 @@ module.exports = {
                             else {
                                 // New sensor => match now
                                 if (dbSensor.v4_id === null) {
-                                    // Store sensor
-                                    resolve({
+                                    // New controller DB sensor
+                                    var temp = {
                                         ID: dbSensor.id,
                                         address: dbSensor.adresse,
                                         spaceType: dbSensor.v4_type_place == null ? "generic" : dbSensor.v4_type_place,
@@ -733,7 +737,15 @@ module.exports = {
                                             modelName: sensor.modelName,
                                             softwareVersion: sensor.softwareVersion
                                         } // Si suppression de deviceInfo alors aller modifier general_helper.dbSensorsToBusEnum
-                                    });
+                                    }
+                                    // Setting key
+                                    var settings = dbSensor.settings == null ? {} : {
+                                        settings: dbSensor.settings.split(',')
+                                    };
+                                    // Add settings key
+                                    temp = _.extend(temp, settings);
+                                    // Store sensor
+                                    resolve(temp);
                                 }
                                 else {
                                     resolve();
