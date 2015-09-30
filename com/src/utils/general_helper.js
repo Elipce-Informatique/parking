@@ -61,7 +61,9 @@ module.exports = {
                     hardwareVersion: display.hardwareVersion
                 }
             };
-            var settings = display.settings !== null ? display.settings.split(',') : {};
+            var settings = display.settings !== null ? {
+                settings: display.settings.split(',')
+            } : {};
             // Add settings to display
             obj = _.extend(obj, settings);
 
