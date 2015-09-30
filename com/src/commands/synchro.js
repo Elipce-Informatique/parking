@@ -74,7 +74,7 @@ Synchro.prototype.onStartSynchro = function () {
             // Parse busses
             data.forEach(function (obj) {
                 // Send update to controller
-                //logger.log('info','######### ',obj);
+                logger.log('info','######### ',obj);
                 messenger.sendToController("displayConfigUpdate", obj);
 
             }, this);

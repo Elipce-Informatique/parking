@@ -61,6 +61,10 @@ module.exports = {
                     hardwareVersion: display.hardwareVersion
                 }
             };
+            var settings = display.settings !== null ? display.settings.split(',') : {};
+            // Add settings to display
+            obj = _.extend(obj, settings);
+
             // DELETE
             if(display.a_supprimer == '1'){
                 obj.DELETE = true;

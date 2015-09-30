@@ -129,6 +129,7 @@ return array(
         'libelleExists' => "Le nom du parking existe déjà",
         'users' => "Utilisateurs associés au parking",
         'init' => "Initialisation",
+        'synchro' => "Synchronisation",
         'btn' => "Lancer",
         'txt' => "Parking déjà initialisé",
         "protocol_version" => "Version du protocole",

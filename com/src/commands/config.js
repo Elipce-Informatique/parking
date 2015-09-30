@@ -204,7 +204,7 @@ Config.prototype.sendSensorConfigQuery = function (busId, client) {
     }, {}, client);
 };
 
-/** TODO
+/**
  * insert the configuration of all the sensors for one bus in DB
  * @param data: data key from the response
  */
@@ -379,6 +379,33 @@ Config.prototype.onSettingsData = function (data) {
         settingModel.insertSettings(data);
     }
 };
+
+/**
+ * Update settings in controller DB
+ * @param settings: array of settings objects
+ * @param client: WS client
+ */
+Config.prototype.sendSettingsUpdate = function (settings, client) {
+    this.emit('settingsUpdate');
+    try {
+        logger.log('info', 'sendSettingsUpdate', settings);
+        // Parse settings
+        var _settings = _.map(settings, function(setting){
+            // Decode settings json
+            setting.json = JSON.parse(setting.json );
+            return setting;
+        });
+
+        logger.log('info', 'sendSettingsUpdate JSON PARSE', _settings);
+        // Send to controller
+        messenger.sendToController("settingsUpdate", _settings, {}, client);
+    }
+    catch (e)
+    {
+        logger.log('error', 'JSON PARSE SETTINGS KO',e);
+    }
+};
+
 /**
  * The last sensorConfigUpdate has been completed
  */
@@ -386,6 +413,23 @@ Config.prototype.onSettingsUpdateDone = function () {
     this.emit('settingsUpdateDone');
 
     logger.log('info', 'onSettingsUpdateDone');
+};
+
+/**
+ * Get all settings
+ */
+Config.prototype.getSupervisionSettings = function (client) {
+    // Get settings
+    settingModel.getSettings(function (err, result) {
+        if (err) {
+            logger.log('error', 'Model setting, function getSettings callback error', err);
+        }
+        // Get settings OK
+        else {
+            //logger.log('info', 'getSupervisionSettings', result);
+            this.emit('onGetSupervisionSettings', result, client);
+        }
+    }.bind(this))
 };
 
 // --------------------------------------------------------------------------------------------
