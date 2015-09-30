@@ -23,6 +23,7 @@ function BusEnumeration() {
     this.sensors = {};
     this.displays = {};
     this.controllers = [];// Controllers from busConfigQuery
+    this.emitDelta = []; // delta between busEnum and supervision
     this.pool = null;
     // Mysql connexion with pool : only 1 connexion VERY IMORTANT
     if (this.pool === null) {
@@ -62,18 +63,20 @@ BusEnumeration.prototype.onBusEnum = function (data) {
                 case "sensor": // sensor to insert on the bus data.ID
                     if (this.sensors[data.ID] === undefined) {
                         this.sensors[data.ID] = {
-                            data: [data.param],
+                            data: [],
                             inserted: false
                         };
                     }
+                    this.sensors[data.ID].data.push(data.param);
                     break;
                 case "display": // display to insert
                     if (this.displays[data.ID] === undefined) {
                         this.displays[data.ID] = {
-                            data: [data.param],
+                            data: [],
                             inserted: false
                         };
                     }
+                    this.displays[data.ID].data.push(data.param);
                     break;
                 default:
                     logger.log('error', 'onBusEnum equipment ' + data.param.class + ' does not exist');
@@ -81,17 +84,22 @@ BusEnumeration.prototype.onBusEnum = function (data) {
             }
             break;
         case "test": // Test from page test with sensors on bus 1 (en dur)
+            // Init
+            this.sensors[data.ID] = {
+                data: [],
+                inserted: false
+            };
             // Sensors on this bus
             this.sensors[data.ID].data = data.param;
         case "done":
             //logger.log('info', "BUSENUM DONE. INIT MODE "+global.initMode);
             // Classic busEnum init mode
-            if (global.initMode == 1 ) {
+            if (global.initMode == 1) {
                 //logger.log('info', "PROCESS INIT 1");
                 this.processInit1(data);
             }
             // Virtual sensors init mode
-            if (global.initMode == 2 ) {
+            if (global.initMode == 2) {
                 //logger.log('info', "PROCESS INIT 1");
                 this.processInit2(data);
             }
@@ -122,12 +130,11 @@ BusEnumeration.prototype.setControllers = function (data) {
 }
 
 /**
- * Set this.controllers variable
- * @param data: controllers and buses from busConfigQuery
+ * Check if all busses are init
  */
 BusEnumeration.prototype.checkInitFinished = function () {
 
-    logger.log('info', 'controllers: ',this.controllers);
+    //logger.log('info', 'controllers: ',this.controllers);
     // Parse controllers
     this.controllers.forEach(function (controller) {
         // Parse busses
@@ -202,17 +209,19 @@ BusEnumeration.prototype.processInit1 = function (data) {
 BusEnumeration.prototype.processInit2 = function (data) {
     // Process sensors inserts on the bus data.ID
     if (this.sensors[data.ID] !== undefined && this.sensors[data.ID].data.length > 0) {
-        //logger.log('info', "BUSSSSSS");
-        sensorModel.synchroSensors(this.pool, data.ID, this.sensors[data.ID].data)
-            .then(function ok(obj) {
+        // Init bus
+        var emitObj = {
+            bus: data.ID
+        };
+
+        // Start sensors synchro between virtuals and busEnum
+        sensorModel.synchroSensors(this.pool, data.ID, this.sensors[data.ID].data, function ok(obj) {
+                //logger.log('info', "SYNCHRO RESULT",obj)
                 var sensorsDelta = obj.delta;
                 var sensorsInserted = obj.sensors;
-                var emitObj = {
-                    bus: data.ID
-                };
 
                 // At least 1 sensor to insert in controllerDB
-                if(sensorsInserted.length > 0){
+                if (sensorsInserted.length > 0) {
                     // Send sensors to controller DB
                     messenger.sendToController("sensorConfigUpdate", {
                         busID: data.ID,
@@ -238,10 +247,12 @@ BusEnumeration.prototype.processInit2 = function (data) {
                 if (sensorsDelta.length > 0) {
                     logger.log('error', 'SENSORS FROM BUSENUM NOT IN SUPERVISION DB', sensorsDelta);
                     emitObj.delta = sensorsDelta;
+                    // Push to global variable
+                    this.emitDelta.push(emitObj);
                 }
                 // All sensors are OK
-                else{
-                   // Open bus
+                else {
+                    // Open bus
                     messenger.sendToController("remoteControl", {
                         command: "start",
                         class: "bus",
@@ -252,10 +263,11 @@ BusEnumeration.prototype.processInit2 = function (data) {
                 // Sensors on this bus inserted or already inserted
                 this.sensors[data.ID].inserted = true;
 
-                // Bus enum finished
+                // ALL Bus enum finished
                 if (this.checkInitFinished()) {
-                    logger.log('info', 'EMIT init_parking_finished', emitObj);
-                    this.emit('init_parking_finished', emitObj);
+                    logger.log('info', 'EMIT init_parking_finished', this.emitDelta);
+                    this.emit('init_parking_finished', this.emitDelta);
+                    this.emitDelta = [];
                 }
 
             }.bind(this), function ko(err) {

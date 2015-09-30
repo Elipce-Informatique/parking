@@ -209,19 +209,31 @@ var FormParking = React.createClass({
     onInitParkingFinished: function (message) {
         if (message.messageType == 'init_parking_finished') {
 
-            console.log('Callback finished');
+            console.log('Callback init_parking_finished %o', message);
             // Fin chargement
             $.unblockUI();
+            // Parking non init encore
             if (!this.parkInitialized) {
 
                 // TODO process data DELTA
-                if(message.data.delta !== undefined){
-                    // SWAL
+                if (message.data !== undefined) {
+                    console.log('DELTA %o', message.data);
+                    // Sensors not in supervision and on physical network
+                    var txt = _.map(message.data, function (obj) {
+                        var busId = obj.bus;
+                        // Parse all delta sensors on this bus
+                        var temp = _.map(obj.delta, function (sensor) {
+                            return busId + '.' + sensor.leg + '.' + sensor.index;
+                        });
+                        return temp.join("\n");
+                    });
+                    // SWAL // TODO swal avec petit texte + scroll
+                    swal(Lang.get('administration_parking.parking.delta') + "\n" + txt);
                 }
                 else {
-                    // Action enregistrement parking init
-                    Actions.parking.parking_initialized(this.props.detailParking.id);
-                    this.parkInitialized = true;
+                    // Action enregistrement parking init // TODO remettrtre
+                    //Actions.parking.parking_initialized(this.props.detailParking.id);
+                    //this.parkInitialized = true;
                 }
             }
         }
