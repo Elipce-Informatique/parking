@@ -470,14 +470,12 @@ var store = Reflux.createStore({
         });
     },
     onFeature_allee_add: function (e) {
-        console.log('feature allee add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
             contextmenuItems: alleeHelper.administrationContextMenu(e, this)
         });
     },
     onFeature_zone_add: function (e) {
-        console.log('feature zone add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
             contextmenuItems: [{
@@ -490,7 +488,6 @@ var store = Reflux.createStore({
                 text: Lang.get('global.modifier'),
                 index: 2,
                 callback: function (evt) {
-                    console.log('callback place : %o', this);
                     // LANCEMENT DU MODAL DE MODIF DE ZONES
                     var data = {
                         layer: this.layer
@@ -521,7 +518,6 @@ var store = Reflux.createStore({
                 text: Lang.get('global.modifier'),
                 index: 2,
                 callback: function (evt) {
-                    console.log('callback place : %o', this);
                     // LANCEMENT DU MODAL DE MODIF DE AFFICHEURS
                     var data = {
                         layer: this.layer
@@ -752,7 +748,6 @@ var store = Reflux.createStore({
      */
     onStart_synchro: function () {
         if (window.clientWs != null) {
-            console.log('Lance la synchro');
             window.clientWs.send(JSON.stringify(comHelper.messages.startSynchroDisplays()));
         }
     },
@@ -911,7 +906,6 @@ var store = Reflux.createStore({
      * @param formDom : dom du form
      */
     handleCapteurAfficheur: function (formId, formDom) {
-        console.log('PASS liste capteurs : %o', this._inst.placesToAssociateToAfficheur);
         // EXTRACTION DE L'ID DE L'AFFICHEUR SÉLECTIONNÉ
         var affId = $(formDom).find('[name=afficheur_id]').val();
 
@@ -924,12 +918,10 @@ var store = Reflux.createStore({
                 return result;
             }
         }, {}, this);
-        console.log('Afficheur trouvé : %o', afficheur);
 
         // GÉNÉRATION DES DONNÉE DE RETOUR
         var dataCounters = afficheurHelper.prepareCountersData(this._inst.placesToAssociateToAfficheur, afficheur);
 
-        console.log('Data généré pour insertion compteurs : %o', dataCounters);
 
         var fData = formDataHelper('', 'POST');
         fData.append('data', JSON.stringify(dataCounters));
@@ -944,10 +936,8 @@ var store = Reflux.createStore({
             data: fData
         })
             .done(function (data) {
-                console.log('TEMP RETOUR AJAX : %o', data);
                 // On success use return data here
                 if (data != false) {
-                    console.log('AJAX compteurs OK, data : %o', data);
                     Actions.notif.success();
                 } else {
                     console.error('AJAX compteurs KO');
@@ -968,7 +958,6 @@ var store = Reflux.createStore({
     },
 
     handleUpdatePlace: function (formId, formDom) {
-        console.log('PASS update place avbec data suivantes: %o', this._inst.contextMenuTarget);
         var idPlace = this._inst.contextMenuTarget.options.data.id;
 
         var fData = formDataHelper(formId, 'PATCH');
@@ -981,11 +970,9 @@ var store = Reflux.createStore({
             data: fData,
             context: this,
             success: function (data) {
-                console.log('Data retour ajax : %o', data);
                 if (!data.errorBdd) {
                     // 1 - TRANSFORMATION DES DATA DE LA BDD EN PLACES
                     var placesCreated = this.createPlacesMapFromPlacesBDD([data.model]);
-                    console.log('Places créée : %o', placesCreated);
                     this._inst.mapInst.placesGroup.removeLayer(this._inst.contextMenuTarget);
                     this._inst.mapInst.placesGroup.addLayer(placesCreated[0].polygon);
 
@@ -1129,7 +1116,6 @@ var store = Reflux.createStore({
      * @param data : array les données formes à remettre sur la carte
      */
     cancelDeleteZones: function (data) {
-        console.log('cancelDeleteZones avec : %o', data);
         var zonesMap = _.map(data, function (z) {
             return {
                 data: z.options.data,
@@ -1166,7 +1152,6 @@ var store = Reflux.createStore({
      * @param data : array les données formes à remettre sur la carte
      */
     cancelDeleteAllees: function (data) {
-        console.log('cancelDeleteAllees avec : %o', data);
         var alleesMap = _.map(data, function (a) {
             return {
                 data: a.options.data,
@@ -1203,7 +1188,6 @@ var store = Reflux.createStore({
      * @param data : array les données formes à remettre sur la carte
      */
     cancelDeletePlaces: function (data) {
-        console.log('cancelDeletePlaces avec : %o', data);
         var placesMap = _.map(data, function (p) {
             return {
                 data: p.options.data,
@@ -1245,7 +1229,6 @@ var store = Reflux.createStore({
      * @param data : array les données formes à remettre sur la carte
      */
     cancelDeleteAfficheurs: function (data) {
-        console.log('cancelDeleteAfficheur avec : %o', data);
         var afficheursMap = _.map(data, function (a) {
             return {
                 data: a.options.data,
@@ -1612,7 +1595,6 @@ var store = Reflux.createStore({
      * - Vide les données du store en rapport avec l'affectation
      */
     onStop_affectation_capteurs_virtuels: function () {
-        console.log('PASS stop affectation capteurs virtuels');
         // DÉTACHEMENT DES ÉVÈNEMENTS SUR LES PLACES
         this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurVirtuelClick, this);
 
@@ -1630,7 +1612,6 @@ var store = Reflux.createStore({
             data: fData
         })
             .done(function (data) {
-                console.log('Retour insertion capteurs : %o', data);
                 if (data) {
                     this._inst.capteur_place_virtuel.capteurs_a_envoyer = [];
                     Actions.notif.success();

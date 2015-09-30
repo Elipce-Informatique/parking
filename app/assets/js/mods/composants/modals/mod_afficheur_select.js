@@ -49,7 +49,6 @@ var ModalAfficheur = React.createClass({
     componentWillMount: function () {
         this.listenTo(store, this.updateData);
         initModale(this.props.parkingId, this.props.planId);
-        console.log('Plan WILLMOUNT Id : %o', this.props.planId);
     },
 
     componentDidMount: function () {
@@ -162,7 +161,6 @@ var store = Reflux.createStore({
             context: this
         })
             .done(function (data) {
-                console.log('Data init chargées : %o', data);
                 this._inst.afficheurs = data;
                 this._inst.comboAfficheurs = this.getComboAfficheurs(data);
                 this.trigger({combo: this._inst.comboAfficheurs});
@@ -185,7 +183,6 @@ var store = Reflux.createStore({
             };
         });
 
-        console.log('combo : %o', combo);
 
         return combo
     }

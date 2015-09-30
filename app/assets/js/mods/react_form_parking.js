@@ -183,7 +183,6 @@ var FormParking = React.createClass({
         client.initWebSocket(this.props.detailParking.id, function (clientWs) {
             // Envoie initialisazion
             clientWs.send(JSON.stringify(messagesHelper.initParking(this.props.detailParking.init_mode)));
-            console.log('Lancer procédure init parking ' + this.props.detailParking.init_mode);
             // Chargement
             $.blockUI({
                 message: '<div class="alert alert-warning" role="alert" style="margin:0"><h1 style="margin:0"><div id="facebookG"><div id="blockG_1" class="facebook_blockG"></div><div id="blockG_2" class="facebook_blockG"></div><div id="blockG_3" class="facebook_blockG"></div></div>' + Lang.get('global.block_ui') + '</h1></div>',
@@ -197,7 +196,6 @@ var FormParking = React.createClass({
             });
         }.bind(this), function () {
             // Impossible de se connecter au server
-            console.log('callback err connexion');
             swal(Lang.get('global.com.errConnServer'));
         });
     },
@@ -209,7 +207,6 @@ var FormParking = React.createClass({
     onInitParkingFinished: function (message) {
         if (message.messageType == 'init_parking_finished') {
 
-            console.log('Callback init_parking_finished %o', message);
             // Fin chargement
             $.unblockUI();
             // Parking non init encore
@@ -217,7 +214,6 @@ var FormParking = React.createClass({
 
                 // TODO process data DELTA
                 if (message.data !== undefined) {
-                    console.log('DELTA %o', message.data);
                     // Sensors not in supervision and on physical network
                     var txt = _.map(message.data, function (obj) {
                         var busId = obj.bus;

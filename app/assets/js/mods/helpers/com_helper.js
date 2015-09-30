@@ -41,7 +41,6 @@ module.exports.client = {
 
                     // CONNECTION OPEN
                     window.clientWs.onopen = function () {
-                        console.log('WebSocket Client Connected %o', window.clientWs);
 
                         if (window.clientWs.readyState === window.clientWs.OPEN) {
                             Actions.com.orange();
@@ -98,7 +97,6 @@ module.exports.client = {
                     }.bind(this);
                 }.bind(this));
         } else {
-            console.log('On a deja un websocket !!');
         }
     }
 
