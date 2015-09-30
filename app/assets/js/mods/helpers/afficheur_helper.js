@@ -153,7 +153,6 @@ function prepareCountersData(places, afficheur) {
         groupedByTypePlace[p.type_place_id].push(p.capteur);
     }, this);
 
-    console.log('Groupé par type : %o', groupedByTypePlace);
     // CRÉATION DES COUNTERS (type_place, libelle afficheur, capteurs)
     var counters = _.map(groupedByTypePlace, function (capteurGroup, type_place) {
 

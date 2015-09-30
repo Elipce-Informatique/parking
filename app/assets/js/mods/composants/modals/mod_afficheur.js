@@ -314,7 +314,6 @@ var store = Reflux.createStore({
      * @param parkId : id du parking
      */
     loadInitData: function (parkId) {
-        console.log('PASS load init');
         this.initLocalState();
 
         $.ajax({

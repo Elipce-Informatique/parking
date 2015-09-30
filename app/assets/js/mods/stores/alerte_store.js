@@ -237,7 +237,6 @@ var store = Reflux.createStore({
                     if (isConfirm) {
                         context.deleteZones(deletedEntities)
                     } else {
-                        console.log('PASS CANCEL');
                         context.cancelDeleteZones(deletedEntities);
                     }
 

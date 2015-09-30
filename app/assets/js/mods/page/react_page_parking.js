@@ -482,7 +482,6 @@ var storeParking = Reflux.createStore({
                 // Erreur SQL
                 else {
                     Actions.notif.error(Lang.get('global.notif_erreur'));
-                    console.log('errorBDD %o',tab);
                 }
             },
 

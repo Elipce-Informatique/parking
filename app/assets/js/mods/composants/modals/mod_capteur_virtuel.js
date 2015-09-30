@@ -203,7 +203,6 @@ var store = Reflux.createStore({
      * @param formId : id du formulaire
      */
     onSubmit_form: function (formDom, formId) {
-        console.log('PASS SUBMIT FORM form id : ' + formId);
         // OBLIGÉ DE TRAITER ÇA ICI PLUTOT QUE DANS LE STORE DE LA MAP
         // POUR AVOIR ACCÈS AUX DONNÉES DES CAPTEURS.
         // LA SUITE SE PASSE DANS LE STORE MAP UNE FOIS QUE LES DONNÉES ONT ÉTÉ RÉCUPÉRÉES.
@@ -228,7 +227,6 @@ var store = Reflux.createStore({
         busId = $dom.find('[name=bus_id]').val();
         legNum = $dom.find('[name=leg_num]').val();
         configs_ids = $dom.find('[name=configs_ids]').val().split('[-]');
-        console.log('Config ids : %o', configs_ids);
 
         var concentrateur = this.getConcentrateurFromId(concentrateurId);
         var bus = this.getBusFromId(busId);
@@ -352,8 +350,6 @@ var store = Reflux.createStore({
                     if (legNum == 2) {
                         maxAdr = maxAdr + config.legLength[1];
                     }
-                    console.log('Data max adresse : %o', maxAdr);
-                    console.log('Data max noeud : %o', maxNoeud);
                     Actions.map.start_affectation_capteurs_virtuels(concentrateur, bus, legNum, maxAdr, maxNoeud, configs_ids);
                 } else {
                     // TODO : traiter l'erreur ?

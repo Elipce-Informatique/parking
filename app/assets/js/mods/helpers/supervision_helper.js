@@ -79,7 +79,6 @@ module.exports = {
     _listenEquipmentEvents: function(){
 
         if (this._unsubscribe != null && typeof this._unsubscribe === "function") {
-            console.log('Unsubscribe le ws');
             this._unsubscribe();
         }
         this._unsubscribe = Actions.com.message_controller.listen(this._onWSMessage.bind(this));
@@ -91,7 +90,6 @@ module.exports = {
      */
     _onWSMessage: function (message) {
 
-        console.log('ON RECOIT UN EVENT DU CONTROLLER, GO UPDATE LA SUPERVIION  !!!!! %o', message);
         switch (message.messageType) {
             case "sensor_event":
                 // UPDATE TOUT LE BAZAR
@@ -113,11 +111,9 @@ module.exports = {
 
         if (this._sensorDFU) {
             this._sensorDFU = false;
-            console.log('PASS sensor updates');
             this._handleAjax();
         }
         if (this._displayDFU) {
-            console.log('PASS display updates');
             this._displayDFU = false;
             this._handleViewAJAX();
         }
@@ -134,7 +130,6 @@ module.exports = {
         if(window.clientWs !== null){
             // Listen parking events
             this._listenParkingState();
-            console.log('Listen parking state');
         }
         else {
             // CONNEXION AU WEBSOCKET ET ÉCOUTE DES MESSAGES QUI NOUS INTÉRESSENT
@@ -142,7 +137,6 @@ module.exports = {
 
                 // Listen parking events
                 this._listenParkingState();
-                console.log('Listen parking state');
 
                 // Give the client in a callback
                 if (onConnexion !== undefined) {
