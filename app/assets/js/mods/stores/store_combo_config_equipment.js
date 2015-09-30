@@ -11,13 +11,10 @@
  */
 module.exports = Reflux.createStore({
 
-    localState: {
-        listConfigs: [],
-        configs_ids: [],
-        combo_config_name: 'configs_ids'
-    },
+    localState: {},
 
     getInitialState: function () {
+        this.initLocalState();
         this.fetchData();
         return this.localState;
     },
@@ -26,6 +23,15 @@ module.exports = Reflux.createStore({
     init: function () {
         // Register statusUpdate action
         this.listenTo(Actions.validation.form_field_changed, this.updateForm);
+        this.initLocalState();
+    },
+
+    initLocalState: function () {
+        this.localState = {
+            listConfigs: [],
+            configs_ids: [],
+            combo_config_name: 'configs_ids'
+        }
     },
 
     updateForm: function (data) {
