@@ -218,6 +218,12 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::get('journal_alerte/last/{planId}', 'JournalAlerteController@last');
     Route::get('journal_alerte/{parkingId}/{planId}', 'JournalAlerteController@showFromVersion');
 
+
+    // CONFIGURATION ÉQUIPMENT
+    Route::get('config_equipement/all', 'ConfigEquipementController@all');
+    Route::get('config_equipement/combo_all', 'ConfigEquipementController@comboAll');
+    Route::resource('config_equipement', 'ConfigEquipementController');
+
     // SIMULATEUR
     Route::get('simulator/capteurs', 'SimulatorController@capteurs');
     Route::get('simulator/foire/{planId}', 'SimulatorController@foire');

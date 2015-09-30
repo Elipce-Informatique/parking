@@ -44,16 +44,29 @@ class AfficheursController extends \BaseController
             'ligne',
             'lat',
             'lng');
-        Log::debug('Données de l\'afficheur à insérer : ' . print_r($input, true));
-        $afficheur = Afficheur::create($input);
-        $afficheur->v4_id = $afficheur->id;
+        $configs = explode('[-]', Input::get('configs_ids'));
 
-        $adresse = DB::table('afficheur')->where('bus_id', '=', $input['bus_id'])->max('adresse');
-        $adresse = $adresse != null ? $adresse + 1 : 1;
-        $afficheur->adresse = $adresse;
+        DB::beginTransaction();
+        try {
 
-        $afficheur->save();
-        return $afficheur;
+            Log::debug('Confifgs de l\'afficheur à insérer : ' . print_r($configs, true));
+            $afficheur = Afficheur::create($input);
+            $afficheur->v4_id = $afficheur->id;
+            $afficheur->configs()->attach($configs);
+
+            $adresse = DB::table('afficheur')->where('bus_id', '=', $input['bus_id'])->max('adresse');
+            $adresse = $adresse != null ? $adresse + 1 : 1;
+            $afficheur->adresse = $adresse;
+
+            $afficheur->save();
+            DB::commit();
+            return $afficheur;
+        } catch (Exception $e) {
+            Log::error('ERREUR INSERTION AFFICHEUR :');
+            Log::error($e);
+            DB::rollBack();
+            return json_encode(false);
+        }
     }
 
 

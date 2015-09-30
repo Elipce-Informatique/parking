@@ -3,6 +3,7 @@ var React = require('react/addons');
 var ComponentAccessMixins = require('../../mixins/component_access');
 /* Pour le listenTo */
 var MixinGestMod = require('../../mixins/gestion_modif');
+var storeComboConfig = require('../../stores/store_combo_config_equipment');
 
 // Actions Reflux locale à cette modale
 var initModale = Reflux.createAction();
@@ -46,6 +47,7 @@ var ModalAfficheur = React.createClass({
         return {
             listConcentrateurs: [],
             listBuses: [],
+            listConfigs: [],
             concentrateur_id: '',
             bus_id: '',
             reference: '',
@@ -53,11 +55,15 @@ var ModalAfficheur = React.createClass({
             model_name: '',
             serial_number: '',
             software_version: '',
-            hardware_version: ''
+            hardware_version: '',
+            configs_ids: [],
+            combo_config_name: ''
         };
     },
     componentWillMount: function () {
         this.listenTo(store, this.updateData);
+        this.listenTo(storeComboConfig, this.updateData, this.updateData);
+
         initModale(this.props.parkingId, this.props.planId, this.props.drawData);
     },
 
@@ -128,6 +134,23 @@ var ModalAfficheur = React.createClass({
                             attributes={{
                                 name: 'bus_id',
                                 label: Lang.get('global.bus'),
+                                labelCol: 4,
+                                selectCol: 6,
+                                htmlFor: 'form_mod_capteur',
+                                required: true
+                            }}
+                            labelClass='text-right'
+                        />
+
+                        <InputSelectEditable
+                            editable={true}
+                            data={this.state.listConfigs}
+                            selectedValue={this.state.configs_ids}
+                            placeholder={Lang.get('global.config')}
+                            multi={true}
+                            attributes={{
+                                name: this.state.combo_config_name,
+                                label: Lang.get('global.config'),
                                 labelCol: 4,
                                 selectCol: 6,
                                 htmlFor: 'form_mod_capteur',

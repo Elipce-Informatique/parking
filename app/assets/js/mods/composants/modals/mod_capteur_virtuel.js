@@ -4,6 +4,7 @@ var ComponentAccessMixins = require('../../mixins/component_access');
 /* Pour le listenTo */
 var MixinGestMod = require('../../mixins/gestion_modif');
 var config = require('../../../config/config.js');
+var storeComboConfig = require('../../stores/store_combo_config_equipment');
 
 var initModale = Reflux.createAction();
 
@@ -42,13 +43,18 @@ var ModalCapteurVirtuel = React.createClass({
             listConcentrateurs: [],
             listBuses: [],
             listLegs: [],
+            listConfigs: [],
             concentrateur_id: '',
             bus_id: '',
-            leg_num: ''
+            leg_num: '',
+            configs_ids: [],
+            combo_config_name: ''
         };
     },
     componentWillMount: function () {
         this.listenTo(store, this.updateData);
+        this.listenTo(storeComboConfig, this.updateData, this.updateData);
+
         initModale(this.props.parkingId);
 
     },
@@ -130,6 +136,24 @@ var ModalCapteurVirtuel = React.createClass({
                             labelClass='text-right'
                         />
 
+                        <InputSelectEditable
+                            editable={true}
+                            data={this.state.listConfigs}
+                            selectedValue={this.state.configs_ids}
+                            placeholder={Lang.get('global.config')}
+                            multi={true}
+                            attributes={{
+                                name: this.state.combo_config_name,
+                                label: Lang.get('global.config'),
+                                labelCol: 4,
+                                selectCol: 6,
+                                htmlFor: 'form_mod_capteur_virtuel',
+                                required: true
+                            }}
+                            labelClass='text-right'
+                        />
+
+
                     </Form>
                 </div>
 
@@ -198,17 +222,19 @@ var store = Reflux.createStore({
      * @param formDom : le DOM du formulaire
      */
     handleCapteur: function (formDom) {
-        // TODO adapter ça aux legs etc...
-        var concentrateurId, busId, legNum, $dom = $(formDom);
+
+        var concentrateurId, busId, legNum, configs_ids, $dom = $(formDom);
         concentrateurId = $dom.find('[name=concentrateur_id]').val();
         busId = $dom.find('[name=bus_id]').val();
         legNum = $dom.find('[name=leg_num]').val();
+        configs_ids = $dom.find('[name=configs_ids]').val().split('[-]');
+        console.log('Config ids : %o', configs_ids);
 
         var concentrateur = this.getConcentrateurFromId(concentrateurId);
         var bus = this.getBusFromId(busId);
 
         // LANCEMENT DE LA PROCÉDURE D'AFFECTATION DANS LE STORE PARKING MAP
-        this.getMaxAdressOnLeg(concentrateur, bus, legNum);
+        this.getMaxAdressOnLeg(concentrateur, bus, legNum, configs_ids);
     },
 
     /**
@@ -309,7 +335,7 @@ var store = Reflux.createStore({
      * @param busId
      * @param legNum
      */
-    getMaxAdressOnLeg: function (concentrateur, bus, legNum) {
+    getMaxAdressOnLeg: function (concentrateur, bus, legNum, configs_ids) {
         $.ajax({
             type: 'GET',
             url: BASE_URI + 'parking/bus/' + bus.id + '/' + legNum + '/max_noeud',
@@ -328,7 +354,7 @@ var store = Reflux.createStore({
                     }
                     console.log('Data max adresse : %o', maxAdr);
                     console.log('Data max noeud : %o', maxNoeud);
-                    Actions.map.start_affectation_capteurs_virtuels(concentrateur, bus, legNum, maxAdr, maxNoeud);
+                    Actions.map.start_affectation_capteurs_virtuels(concentrateur, bus, legNum, maxAdr, maxNoeud, configs_ids);
                 } else {
                     // TODO : traiter l'erreur ?
                 }
