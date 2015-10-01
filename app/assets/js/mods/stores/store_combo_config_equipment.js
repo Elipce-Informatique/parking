@@ -38,7 +38,7 @@ module.exports = Reflux.createStore({
         switch (data.name) {
             // Concentrateur selected
             case 'configs_ids':
-                this.localState.configs_ids = data.value.split('[-]');
+                this.localState.configs_ids = data.value;
                 this.trigger(this.localState);
                 break;
         }

@@ -4,6 +4,7 @@ class ConfigEquipement extends \Eloquent
 {
     protected $table = 'config_equipement';
     protected $fillable = ['libelle', 'json', 'v4_id'];
+    public $timestamps = false;
 
     /*****************************************************************************
      * RELATIONS DU MODELE *******************************************************
