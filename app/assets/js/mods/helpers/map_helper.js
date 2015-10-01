@@ -596,6 +596,12 @@ function generateInfosCapteurPlaceVirtuel(concentrateurV4Id, busNum, adressCapte
         'class="btn btn-success" ' +
         'onclick="Actions.map.stop_affectation_capteurs_virtuels()">' +
         Lang.get('administration_parking.carte.infos_capteur_bouton') +
+        '</button> ' +
+        '<button ' +
+        'type="button" ' +
+        'class="btn btn-default" ' +
+        'onclick="Actions.map.cancel_affectation_capteurs_virtuels()">' +
+        Lang.get('global.annuler') +
         '</button>';
 
     return titre + adresse + restant + bouton;

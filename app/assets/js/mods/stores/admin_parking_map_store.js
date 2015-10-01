@@ -469,6 +469,12 @@ var store = Reflux.createStore({
             contextmenuItems: placeHelper.administrationContextMenu(e, this)
         });
     },
+    onMarker_place_add: function (e) {
+        e.layer.bindContextMenu({
+            contextmenu: true,
+            contextmenuItems: placeHelper.administrationCapteurContextMenu(e, this)
+        });
+    },
     onFeature_allee_add: function (e) {
         e.layer.bindContextMenu({
             contextmenu: true,
@@ -1613,15 +1619,79 @@ var store = Reflux.createStore({
         })
             .done(function (data) {
                 if (data) {
-                    this._inst.capteur_place_virtuel.capteurs_a_envoyer = [];
+                    this.resetLocalState();
                     Actions.notif.success();
                     var retourTrigger = {
                         type: mapOptions.type_messages.hide_infos,
                         data: ''
                     };
                     this.trigger(retourTrigger);
+
+                    retourTrigger = {
+                        type: mapOptions.type_messages.set_id_capteur_virtuel,
+                        data: ''
+                    };
+                    this.trigger(retourTrigger);
                 } else {
                     Actions.notif.error();
+                }
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
+    },
+
+    cancel_affectation_capteurs_virtuels: function () {
+
+        // SUPPRESSION DES CAPTEURS VIRTUELS PAS ENCORE EN BDD
+        var retourTrigger = {
+            type: mapOptions.type_messages.annuler_capteur_virtuel,
+            data: ''
+        };
+        this.trigger(retourTrigger);
+
+        // MASQUAGE DES INFOS EN BAS DE PAGE
+        retourTrigger = {
+            type: mapOptions.type_messages.hide_infos,
+            data: ''
+        };
+        this.trigger(retourTrigger);
+        this.resetLocalState();
+    },
+
+    /**
+     * Lance la suppression des capteurs à partir de celui apssé en paramètre
+     */
+    onDelete_capteur_virtuel_bdd: function (capteur) {
+
+        var fData = new formDataHelper('', 'DELETE');
+        $.ajax({
+            type: 'POST',
+            url: BASE_URI + 'parking/capteur/delete/' + capteur.bus_id + '/' + capteur.leg + '/' + capteur.num_noeud,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            context: this,
+            data: fData
+        })
+            .done(function (data) {
+                console.log('Data suppression : %o', data);
+                // Suppression carte si OK
+                if (data) {
+                    Actions.notif.success();
+
+                    // SUPPRESSION DES CAPTEURS VIRTUELS PAS ENCORE EN BDD
+                    var retourTrigger = {
+                        type: mapOptions.type_messages.delete_capteur_from_num,
+                        data: {
+                            bus_id: capteur.bus_id,
+                            leg: capteur.leg,
+                            num_noeud: capteur.num_noeud
+                        }
+                    };
+                    this.trigger(retourTrigger);
                 }
             })
             .fail(function (xhr, type, exception) {
@@ -1953,4 +2023,4 @@ var store = Reflux.createStore({
     }
 });
 
-module.exports = store
+module.exports = store;
