@@ -10,32 +10,48 @@ var StoreNotif = Reflux.createStore({
         this.listenTo(Actions.notif.warning, this.notifWarning);
         this.listenTo(Actions.notif.error, this.notifError);
         this.listenTo(Actions.notif.default, this.notifDefault);
+        this.listenTo(Actions.notif.custom, this.notifCustom);
     },
     notifSuccess: function (message) {
         var data = {
             message: (typeof(message) == 'string') ? message : Lang.get('global.notif_success'),
-            style: 'success'
+            options: {
+                className: 'success'
+            }
         };
         this.trigger(data);
     },
     notifWarning: function (message) {
         var data = {
             message: (typeof(message) == 'string') ? message : Lang.get('global.notif_warning'),
-            style: 'warn'
+            options: {
+                stclassNameyle: 'warn'
+            }
         };
         this.trigger(data);
     },
     notifError: function (message) {
         var data = {
             message: (typeof(message) == 'string') ? message : Lang.get('global.notif_erreur'),
-            style: 'error'
+            options: {
+                className: 'error'
+            }
         };
         this.trigger(data);
     },
     notifDefault: function (message) {
         var data = {
             message: (typeof(message) == 'string') ? message : Lang.get('global.notif_default'),
-            style: 'info'
+            options: {
+                className: 'info'
+            }
+        };
+        this.trigger(data);
+    },
+    notifCustom: function(message, options){
+        var data = {
+            message: (typeof(message) == 'string') ? message : Lang.get('global.notif_default'),
+            options: options
         };
         this.trigger(data);
     }
@@ -97,7 +113,7 @@ var Notify = React.createClass({
         return <span key="uniquespankey"></span>;
     },
     displayNotif: function (data) {
-        $.notify(data.message, data.style);
+        $.notify(data.message, data.options);
     }
 });
 

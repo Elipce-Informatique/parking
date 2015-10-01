@@ -383,7 +383,6 @@ var parkingMap = React.createClass({
      * Déclenché par la mise à jour des données du store
      */
     onStoreTrigger: function (data) {
-        console.log('store trigger '+data.type);
         switch (data.type) {
             // Génériques
             case mapOptions.type_messages.mode_change:
@@ -458,7 +457,6 @@ var parkingMap = React.createClass({
                 selectButton(mapOptions.icon.reservation);
                 break;
             default:
-                console.log('defeult');
                 this.changeDrawToolbar(mapOptions.dessin.alerte_full);
                 // PAR DÉFAUT, ON SÉLECTIONNE LE MODE PLACE AU CAS OÙ
                 selectButton(mapOptions.icon.alerte_full);

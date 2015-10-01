@@ -49,7 +49,6 @@ var ModalAfficheur = React.createClass({
     componentWillMount: function () {
         this.listenTo(store, this.updateData);
         initModale(this.props.parkingId, this.props.planId);
-        console.log('Plan WILLMOUNT Id : %o', this.props.planId);
     },
 
     componentDidMount: function () {
@@ -106,7 +105,7 @@ var ModalAfficheur = React.createClass({
                     </Button>
                     <BtnSave
                         form_id="form_mod_select_afficheur"
-                        libelle={Lang.get('global.create')} />
+                        libelle={Lang.get('global.associer')} />
                 </div>
             </Modal>
         );
@@ -155,14 +154,13 @@ var store = Reflux.createStore({
 
         $.ajax({
             type: 'GET',
-            url: BASE_URI + 'parking/' + parkId + '/afficheurs',
+            url: BASE_URI + 'parking/' + parkId + '/afficheurs_libres',
             processData: false,
             contentType: false,
             data: {},
             context: this
         })
             .done(function (data) {
-                console.log('Data init chargées : %o', data);
                 this._inst.afficheurs = data;
                 this._inst.comboAfficheurs = this.getComboAfficheurs(data);
                 this.trigger({combo: this._inst.comboAfficheurs});
@@ -185,7 +183,6 @@ var store = Reflux.createStore({
             };
         });
 
-        console.log('combo : %o', combo);
 
         return combo
     }

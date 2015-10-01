@@ -114,7 +114,6 @@ var store = Reflux.createStore({
             menuEvent: 'click',
             fetchElementData: function (afficheur) {
                 var data = $(afficheur[0]).find('span').data('afficheur');
-                console.log('Data Afficheur cliqué: %o', data);
                 return data;
             },
             actions: afficheurHelper.supervisionContextMenu()

@@ -578,6 +578,30 @@ function generateInfosCapteurPlace(concentrateurV4Id, busNum, adressCapteur, nbR
 }
 
 /**
+ * Génère le message HTML à placer dans le cadre d'information
+ * de la carte pour le cycle de vie d'association capteur-place virtuel
+ * @param concentrateurV4Id : id du concentrateur sur la base Olav
+ * @param busNum : Nulméro du bus
+ * @param adressCapteur : id du capteur
+ * @param nbRestant : Capteurs restant sur le bus
+ *
+ */
+function generateInfosCapteurPlaceVirtuel(concentrateurV4Id, busNum, adressCapteur, nbRestant) {
+    var titre = '<h4>' + Lang.get('administration_parking.carte.infos_capteur_virtuel_titre') + '</h4>';
+    var adresse = '<p>' + Lang.get('administration_parking.carte.infos_capteur_num') + '<strong>' + concentrateurV4Id + '.' + busNum + '.' + adressCapteur + '</strong>';
+    var restant = '<br />' + Lang.get('administration_parking.carte.infos_capteur_restant') + '<strong>' + nbRestant + '</strong>';
+    var bouton = '</p><br />' +
+        '<button ' +
+        'type="button" ' +
+        'class="btn btn-success" ' +
+        'onclick="Actions.map.stop_affectation_capteurs_virtuels()">' +
+        Lang.get('administration_parking.carte.infos_capteur_bouton') +
+        '</button>';
+
+    return titre + adresse + restant + bouton;
+}
+
+/**
  * Génère les données du treeview à gauche de la map
  *
  * @param onSuccess -> Callback de succès
@@ -694,6 +718,7 @@ module.exports = {
     getDefaultAlleeIdInZoneFromPoint: getDefaultAlleeIdInZoneFromPoint,
     customZoomCRS: customZoomCRS,
     generateInfosCapteurPlace: generateInfosCapteurPlace,
+    generateInfosCapteurPlaceVirtuel: generateInfosCapteurPlaceVirtuel,
     initTreeviewParkingAjax: initTreeviewParkingAjax,
     recursiveTreeViewParking: recursiveTreeViewParking,
     getAlleeIdFromCoords: getAlleeIdFromCoords,

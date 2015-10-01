@@ -7,6 +7,10 @@ var alleeHelper = require('../helpers/allee_helper');
 var placeHelper = require('../helpers/place_helper');
 var afficheurHelper = require('../helpers/afficheur_helper');
 var formDataHelper = require('../helpers/form_data_helper');
+var comHelper = require('../helpers/com_helper');
+var moment = require('moment');
+var config = require('../../config/config.js');
+
 /**
  * Created by yann on 27/01/2015.
  *
@@ -42,7 +46,9 @@ var store = Reflux.createStore({
             id: 0,
             libelle: '',
             description: '',
-            init: 0
+            init: 0,
+            last_aff_update: '',
+            last_synchro_ok: ''
         },
         planInfos: {
             id: 0,
@@ -54,10 +60,22 @@ var store = Reflux.createStore({
         },
         capteur_place: { // Dernier capteur placé
             concentrateur: {},  // Concentrateur concerné
+            configs_ids: [],
             bus: {},            // Bus concerné
             capteurInit: {},    // Capteur initial pour l'affectation
             capteursTotaux: [], // Liste des capteurs totaux à affecter
             capteursRestant: [] // Liste des capteurs restant à affecter sur le bus
+        },
+        capteur_place_virtuel: {
+            concentrateur: {},
+            configs_ids: [],
+            bus: {},
+            bus_id: 0,
+            leg_num: 0,
+            last_noeud: 0,
+            last_adresse: 0,
+            nb_restant: 0,
+            capteurs_a_envoyer: []
         },
         types_places: [], // Types de places de la BDD
         currentMode: mapOptions.dessin.place,
@@ -76,13 +94,35 @@ var store = Reflux.createStore({
     /**
      * GROUPES D'ACTIONS À ÉCOUTER
      */
-    listenables: [Actions.map, Actions.validation],
+    listenables: [Actions.map, Actions.validation, Actions.com],
 
     getInitialState: function () {
         return {};
     },
 
     init: function () {
+    },
+
+    resetLocalState: function () {
+        this._inst.capteur_place_virtuel = {
+            concentrateur: {},
+            configs_ids: [],
+            bus: {},
+            bus_id: 0,
+            leg_num: 0,
+            last_noeud: 0,
+            last_adresse: 0,
+            nb_restant: 0,
+            capteurs_a_envoyer: []
+        };
+        this._inst.capteur_place = { // Dernier capteur placé
+            concentrateur: {},       // Concentrateur concerné
+            configs_ids: [],
+            bus: {},                 // Bus concerné
+            capteurInit: {},         // Capteur initial pour l'affectation
+            capteursTotaux: [],      // Liste des capteurs totaux à affecter
+            capteursRestant: []      // Liste des capteurs restant à affecter sur le bus
+        };
     },
 
 
@@ -95,6 +135,8 @@ var store = Reflux.createStore({
      * @param parkingInfos : object avec deux clés parkingId et planId
      */
     onMap_initialized: function (map, calibre, parkingInfos, mapInst) {
+
+        this.resetLocalState();
 
         // Récupération de l'instance de la map
         this._inst.mapInst = mapInst;
@@ -111,6 +153,7 @@ var store = Reflux.createStore({
         $.when(p1, p2, p3).done(function () {
             // Affichage des places du niveau
             this.affichageDataInitial();
+            this.connectWs(this._inst.parkingInfos.id);
         }.bind(this));
     }
     ,
@@ -196,7 +239,7 @@ var store = Reflux.createStore({
             // -------------------------------------------------------------
             // PROCÉDURE DE CRÉATION D'AFFICHEUR
             case mapOptions.dessin.afficheur:
-                console.log('PASS ADD AFFICHEUR : %o', data);
+                //console.log('PASS ADD AFFICHEUR : %o', data);
                 var dessin = data.e.layer;
 
                 // INIT DES VARIABLES NÉCESSAIRES À LA CRÉATION
@@ -294,102 +337,105 @@ var store = Reflux.createStore({
     onDraw_deleted: function (data) {
         console.log('Pass onDraw_deleted %o', data);
         var deletedEntities = _.values(data.e.layers._layers);
-        switch (this._inst.currentMode) {
-            // -------------------------------------------------------------
-            // SUPPRESSION D'UNE OU PLUSIEURS PLACES
-            case mapOptions.dessin.place:
-            case mapOptions.dessin.place_auto:
-                var context = this;
-                swal({
-                    title: Lang.get('administration_parking.carte.swal_titre_confirm'),
-                    text: Lang.get('administration_parking.carte.swal_msg_confirm_place'),
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: Lang.get('global.del'),
-                    cancelButtonText: Lang.get('global.annuler'),
-                    closeOnConfirm: true,
-                    closeOnCancel: true
-                }, function (isConfirm) {
-                    if (isConfirm) {
-                        context.deletePlaces(deletedEntities)
-                    } else {
-                        context.cancelDeletePlaces(deletedEntities);
-                    }
-                });
-                break;
-            // -------------------------------------------------------------
-            // SUPPRESSION D'UNE OU PLUSIEURS ZONES
-            case mapOptions.dessin.zone:
-                var context = this;
-                swal({
-                    title: Lang.get('administration_parking.carte.swal_titre_confirm'),
-                    text: Lang.get('administration_parking.carte.swal_msg_confirm_zone'),
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: Lang.get('global.del'),
-                    cancelButtonText: Lang.get('global.annuler'),
-                    closeOnConfirm: true,
-                    closeOnCancel: true
-                }, function (isConfirm) {
-                    if (isConfirm) {
-                        context.deleteZones(deletedEntities)
-                    } else {
-                        context.cancelDeleteZones(deletedEntities);
-                    }
-
-                });
-                break;
-            // -------------------------------------------------------------
-            // SUPPRESSION D'UNE OU PLUSIEURS ALLÉES
-            case mapOptions.dessin.allee:
-                var context = this;
-                swal({
-                    title: Lang.get('administration_parking.carte.swal_titre_confirm'),
-                    text: Lang.get('administration_parking.carte.swal_msg_confirm_allee'),
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: Lang.get('global.del'),
-                    cancelButtonText: Lang.get('global.annuler'),
-                    closeOnConfirm: true,
-                    closeOnCancel: true
-                }, function (isConfirm) {
-                    if (isConfirm) {
-                        context.deleteAllees(deletedEntities)
-                    } else {
-                        context.cancelDeleteAllees(deletedEntities);
-                    }
-                });
-                break;
-            // -------------------------------------------------------------
-            // SUPPRESSION D'UN OU PLISIEURS AFFICHEURS
-            case mapOptions.dessin.afficheur:
-                var context = this;
-                swal({
-                    title: Lang.get('administration_parking.carte.swal_titre_confirm'),
-                    text: Lang.get('administration_parking.carte.swal_msg_confirm_afficheur'),
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: Lang.get('global.del'),
-                    cancelButtonText: Lang.get('global.annuler'),
-                    closeOnConfirm: true,
-                    closeOnCancel: true
-                }, function (isConfirm) {
-                    if (isConfirm) {
-                        context.deleteAfficheurs(deletedEntities)
-                    } else {
-                        context.cancelDeleteAfficheurs(deletedEntities);
-                    }
-                });
-                break;
-            // -------------------------------------------------------------
-            // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
-            default:
-                //
-                break;
+        if (deletedEntities.length > 0) {
+            switch (this._inst.currentMode) {
+                // -------------------------------------------------------------
+                // SUPPRESSION D'UNE OU PLUSIEURS PLACES
+                case mapOptions.dessin.place:
+                case mapOptions.dessin.place_auto:
+                    var context = this;
+                    swal({
+                        title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                        text: Lang.get('administration_parking.carte.swal_msg_confirm_place'),
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: Lang.get('global.del'),
+                        cancelButtonText: Lang.get('global.annuler'),
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            context.deletePlaces(deletedEntities)
+                        } else {
+                            context.cancelDeletePlaces(deletedEntities);
+                        }
+                    });
+                    break;
+                // -------------------------------------------------------------
+                // SUPPRESSION D'UNE OU PLUSIEURS ZONES
+                case mapOptions.dessin.zone:
+                    var context = this;
+                    swal({
+                        title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                        text: Lang.get('administration_parking.carte.swal_msg_confirm_zone'),
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: Lang.get('global.del'),
+                        cancelButtonText: Lang.get('global.annuler'),
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            context.deleteZones(deletedEntities)
+                        } else {
+                            context.cancelDeleteZones(deletedEntities);
+                        }
+                    });
+                    break;
+                // -------------------------------------------------------------
+                // SUPPRESSION D'UNE OU PLUSIEURS ALLÉES
+                case mapOptions.dessin.allee:
+                    var context = this;
+                    swal({
+                        title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                        text: Lang.get('administration_parking.carte.swal_msg_confirm_allee'),
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: Lang.get('global.del'),
+                        cancelButtonText: Lang.get('global.annuler'),
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            context.deleteAllees(deletedEntities)
+                        } else {
+                            context.cancelDeleteAllees(deletedEntities);
+                        }
+                    });
+                    break;
+                // -------------------------------------------------------------
+                // SUPPRESSION D'UN OU PLISIEURS AFFICHEURS
+                case mapOptions.dessin.afficheur:
+                    var context = this;
+                    swal({
+                        title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                        text: Lang.get('administration_parking.carte.swal_msg_confirm_afficheur'),
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: Lang.get('global.del'),
+                        cancelButtonText: Lang.get('global.annuler'),
+                        closeOnConfirm: true,
+                        closeOnCancel: true
+                    }, function (isConfirm) {
+                        if (isConfirm) {
+                            context.deleteAfficheurs(deletedEntities)
+                        } else {
+                            context.cancelDeleteAfficheurs(deletedEntities);
+                        }
+                    });
+                    break;
+                // -------------------------------------------------------------
+                // SINON, ON AJOUTE SIMPLEMENT LA FORME À LA MAP
+                default:
+                    //
+                    break;
+            }
+        } else {
+            swal(Lang.get('administration_parking.carte.err_aucun_forme_select'));
         }
     },
     onDraw_drawstart: function (data) {
@@ -424,14 +470,12 @@ var store = Reflux.createStore({
         });
     },
     onFeature_allee_add: function (e) {
-        console.log('feature allee add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
             contextmenuItems: alleeHelper.administrationContextMenu(e, this)
         });
     },
     onFeature_zone_add: function (e) {
-        console.log('feature zone add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
             contextmenuItems: [{
@@ -444,7 +488,6 @@ var store = Reflux.createStore({
                 text: Lang.get('global.modifier'),
                 index: 2,
                 callback: function (evt) {
-                    console.log('callback place : %o', this);
                     // LANCEMENT DU MODAL DE MODIF DE ZONES
                     var data = {
                         layer: this.layer
@@ -462,7 +505,7 @@ var store = Reflux.createStore({
         });
     },
     onFeature_afficheur_add: function (e) {
-        console.log('feature afficheur add : %o', e);
+        //console.log('feature afficheur add : %o', e);
         e.layer.bindContextMenu({
             contextmenu: true,
             contextmenuItems: [{
@@ -475,7 +518,6 @@ var store = Reflux.createStore({
                 text: Lang.get('global.modifier'),
                 index: 2,
                 callback: function (evt) {
-                    console.log('callback place : %o', this);
                     // LANCEMENT DU MODAL DE MODIF DE AFFICHEURS
                     var data = {
                         layer: this.layer
@@ -489,7 +531,34 @@ var store = Reflux.createStore({
                         e: e,
                         storeContext: this
                     })
-            }]
+            },
+                {
+                    text: Lang.get('global.reset'),
+                    index: 2,
+                    callback: function (evt) {
+                        var context = this;
+                        // LANCEMENT SWAL CONFIRMATION RESET AFFICHEUR
+                        swal({
+                            title: Lang.get('administration_parking.carte.swal_titre_confirm'),
+                            text: Lang.get('administration_parking.carte.swal_msg_confirm_reset_afficheur'),
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#DD6B55",
+                            confirmButtonText: Lang.get('global.reset'),
+                            cancelButtonText: Lang.get('global.annuler'),
+                            closeOnConfirm: true,
+                            closeOnCancel: true
+                        }, function (isConfirm) {
+                            if (isConfirm) {
+                                context.storeContext.resetAfficheur(context.e);
+                            }
+                        });
+
+                    }.bind({
+                            e: e,
+                            storeContext: this
+                        })
+                }]
         });
     },
 
@@ -567,24 +636,55 @@ var store = Reflux.createStore({
     },
 
     onMode_capteur: function (data) {
-        if (this._inst.parkingInfos.init != 0) {
-            this._inst.currentMode = mapOptions.dessin.capteur;
+        switch (this._inst.parkingInfos.init_mode) {
+            // MODE REEL
+            case '0':
+            case '1':
+            {
+                if (this._inst.parkingInfos.init != 0) {
+                    this._inst.currentMode = mapOptions.dessin.capteur;
 
-            var retour = {
-                type: mapOptions.type_messages.mode_change,
-                data: {
-                    mode: mapOptions.dessin.capteur
+                    var retour = {
+                        type: mapOptions.type_messages.mode_change,
+                        data: {
+                            mode: mapOptions.dessin.capteur
+                        }
+                    };
+                    this.trigger(retour);
+
+                    // Pour éviter d'éventuels glitch du à une utilisation bizarre
+                    this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
+                } else {
+                    swal(Lang.get('administration_parking.carte.err_parking_non_init'));
                 }
-            };
+                break;
+            }
+            // MODE VIRTUEL
+            case '2':
+            {
+                if (this._inst.capteur_place_virtuel.capteurs_a_envoyer.length == 0) {
+                    this._inst.currentMode = mapOptions.dessin.capteur;
 
-            this.trigger(retour);
+                    var retour = {
+                        type: mapOptions.type_messages.mode_change,
+                        data: {
+                            mode: mapOptions.dessin.capteur_virtuel
+                        }
+                    };
+                    this.trigger(retour);
 
-            // Pour éviter d'éventuels glitch du à une utilisation bizarre
-            this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
-        } else {
-            swal(Lang.get('administration_parking.carte.err_parking_non_init'));
-
+                    // Pour éviter d'éventuels glitch du à une utilisation bizarre
+                    this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
+                }
+                else {
+                    swal(Lang.get('administration_parking.carte.err_affectation_non_finie'));
+                }
+                break;
+            }
+            default:
         }
+
+
     },
 
     onMode_capteur_afficheur: function (data) {
@@ -633,9 +733,22 @@ var store = Reflux.createStore({
             case "form_mod_afficheur":
                 this.handleAfficheur(formId, formDom);
                 break;
+            case 'form_mod_select_afficheur':
+                this.handleCapteurAfficheur(formId, formDom);
+                break;
 
             default:
                 break;
+        }
+    },
+
+
+    /**
+     * Lance le message de synchro
+     */
+    onStart_synchro: function () {
+        if (window.clientWs != null) {
+            window.clientWs.send(JSON.stringify(comHelper.messages.startSynchroDisplays()));
         }
     },
 
@@ -765,9 +878,10 @@ var store = Reflux.createStore({
             data: fData
         })
             .done(function (data) {
-                console.log('Ajax afficheur DONE : %o', data);
                 if (typeof data == 'object') {
                     Actions.notif.success();
+                    this._inst.afficheurs.push(data);
+                    this.trigger_notif_synchro();
                     var afficheursMap = afficheurHelper.createAfficheursMapFromAfficheursBDD([data]);
 
                     var message = {
@@ -786,8 +900,64 @@ var store = Reflux.createStore({
             });
     },
 
+    /**
+     *
+     * @param formId : Id du form
+     * @param formDom : dom du form
+     */
+    handleCapteurAfficheur: function (formId, formDom) {
+        // EXTRACTION DE L'ID DE L'AFFICHEUR SÉLECTIONNÉ
+        var affId = $(formDom).find('[name=afficheur_id]').val();
+
+        // RECHERCHE DE L'AFFICHEUR SÉLECTIONNÉ
+        var afficheur = _.reduce(this._inst.afficheurs, function (result, a) {
+            if (a.id == affId) {
+                return a;
+            }
+            else {
+                return result;
+            }
+        }, {}, this);
+
+        // GÉNÉRATION DES DONNÉE DE RETOUR
+        var dataCounters = afficheurHelper.prepareCountersData(this._inst.placesToAssociateToAfficheur, afficheur);
+
+
+        var fData = formDataHelper('', 'POST');
+        fData.append('data', JSON.stringify(dataCounters));
+
+        $.ajax({
+            type: 'POST',
+            url: BASE_URI + 'parking/afficheur/' + affId + '/set_counters_views ',
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            context: this,
+            data: fData
+        })
+            .done(function (data) {
+                // On success use return data here
+                if (data != false) {
+                    Actions.notif.success();
+                } else {
+                    console.error('AJAX compteurs KO');
+                    Actions.notif.error();
+                }
+                var retour = {
+                    type: mapOptions.type_messages.hide_modal,
+                    data: {}
+                };
+                this.trigger(retour);
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
+
+    },
+
     handleUpdatePlace: function (formId, formDom) {
-        console.log('PASS update place avbec data suivantes: %o', this._inst.contextMenuTarget);
         var idPlace = this._inst.contextMenuTarget.options.data.id;
 
         var fData = formDataHelper(formId, 'PATCH');
@@ -800,11 +970,9 @@ var store = Reflux.createStore({
             data: fData,
             context: this,
             success: function (data) {
-                console.log('Data retour ajax : %o', data);
                 if (!data.errorBdd) {
                     // 1 - TRANSFORMATION DES DATA DE LA BDD EN PLACES
                     var placesCreated = this.createPlacesMapFromPlacesBDD([data.model]);
-                    console.log('Places créée : %o', placesCreated);
                     this._inst.mapInst.placesGroup.removeLayer(this._inst.contextMenuTarget);
                     this._inst.mapInst.placesGroup.addLayer(placesCreated[0].polygon);
 
@@ -948,7 +1116,6 @@ var store = Reflux.createStore({
      * @param data : array les données formes à remettre sur la carte
      */
     cancelDeleteZones: function (data) {
-        console.log('cancelDeleteZones avec : %o', data);
         var zonesMap = _.map(data, function (z) {
             return {
                 data: z.options.data,
@@ -985,7 +1152,6 @@ var store = Reflux.createStore({
      * @param data : array les données formes à remettre sur la carte
      */
     cancelDeleteAllees: function (data) {
-        console.log('cancelDeleteAllees avec : %o', data);
         var alleesMap = _.map(data, function (a) {
             return {
                 data: a.options.data,
@@ -1022,7 +1188,6 @@ var store = Reflux.createStore({
      * @param data : array les données formes à remettre sur la carte
      */
     cancelDeletePlaces: function (data) {
-        console.log('cancelDeletePlaces avec : %o', data);
         var placesMap = _.map(data, function (p) {
             return {
                 data: p.options.data,
@@ -1044,26 +1209,26 @@ var store = Reflux.createStore({
      */
     deleteAfficheurs: function (data) {
 
-        /**/
         // INIT des données de retour
         var fData = formDataHelper('', 'DELETE');
         var ids = _.map(data, function (d) {
+            Actions.map.delete_afficheur_line(d.options.data.id);
             return d.options.data.id;
         });
-        console.log('Ids à délocaliser : %o', ids);
+
+
+        // SI ON A DES AFFICHEURS À VIRER...
         fData.append('ids', ids);
-
         var url = BASE_URI + 'parking/afficheur/delocate_many';
-
-        this.deleteFromIds(url, fData);
-        /**/
+        this.deleteFromIds(url, fData, function () {
+            this.trigger_notif_synchro();
+        }.bind(this));
     },
     /**
      * Annule la suppression visuelle des allées
      * @param data : array les données formes à remettre sur la carte
      */
     cancelDeleteAfficheurs: function (data) {
-        console.log('cancelDeleteAfficheur avec : %o', data);
         var afficheursMap = _.map(data, function (a) {
             return {
                 data: a.options.data,
@@ -1079,12 +1244,41 @@ var store = Reflux.createStore({
     },
 
     /**
+     * Lance le reset de l'afficheur passé en paramètre
+     * @param e : l'objet leaflet de l'afficheur
+     */
+    resetAfficheur: function (e) {
+        var aff = e.layer.options.data;
+        var fdata = formDataHelper('', 'PATCH');
+        $.ajax({
+            type: 'POST',
+            url: BASE_URI + 'parking/afficheur/' + aff.id + '/reset',
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            context: this,
+            data: fdata
+        })
+            .done(function (data) {
+                // on success use return data here
+                if (data == "OK") {
+                    this.trigger_notif_synchro();
+                }
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
+    },
+
+    /**
      * Lance une requête AJAX sur l'url et les data passées en params
      * puis notifie l'utilisateur selon le retour
      * @param url => url à appeller
      * @param fData => données à passer dans la requête
      */
-    deleteFromIds: function (url, fData) {
+    deleteFromIds: function (url, fData, onSuccess) {
         $.ajax({
             type: 'POST',
             url: url,
@@ -1095,6 +1289,7 @@ var store = Reflux.createStore({
             .done(function (result) {
                 if (result.save) {
                     Actions.notif.success();
+                    onSuccess = !undefined ? onSuccess() : null;
                 } else {
                     Actions.notif.error();
                 }
@@ -1145,7 +1340,52 @@ var store = Reflux.createStore({
         this.trigger(retour);
 
         // ATTACHEMENT DES ÉVÈNEMENTS SUR LES PLACES
+        this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
         this._inst.mapInst.placesGroup.on('click', this.onPlaceCapteurClick, this);
+    },
+
+    /**
+     * Commence la procédure de création de capteurs
+     * @param concentrateurId
+     * @param busId
+     * @param legNum
+     * @param maxAdresse
+     * @param configs_ids
+     */
+    onStart_affectation_capteurs_virtuels: function (concentrateur, bus, legNum, maxAdresse, maxNumNoeud, configs_ids) {
+        this._inst.capteur_place_virtuel.concentrateur = concentrateur;
+        this._inst.capteur_place_virtuel.configs_ids = configs_ids;
+        this._inst.capteur_place_virtuel.bus = bus;
+        this._inst.capteur_place_virtuel.bus_id = bus.id;
+        this._inst.capteur_place_virtuel.leg_num = parseInt(legNum);
+        this._inst.capteur_place_virtuel.last_noeud = parseInt(maxNumNoeud);
+        this._inst.capteur_place_virtuel.last_adresse = parseInt(maxAdresse);
+        this._inst.capteur_place_virtuel.nb_restant = config.legLength[legNum] - maxNumNoeud;
+
+        var infos = mapHelper.generateInfosCapteurPlaceVirtuel(
+            concentrateur.v4_id,
+            bus.num,
+            maxAdresse,
+            this._inst.capteur_place_virtuel.nb_restant
+        );
+
+        // Cachage de la modale
+        var retour = {
+            type: mapOptions.type_messages.hide_modal,
+            data: {}
+        };
+        this.trigger(retour);
+
+        // INIT MESSAGE D'INFO
+        retour = {
+            type: mapOptions.type_messages.show_infos,
+            data: infos
+        };
+        this.trigger(retour);
+
+        // ATTACHEMENT DES ÉVÈNEMENTS SUR LES PLACES
+        this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurVirtuelClick, this);
+        this._inst.mapInst.placesGroup.on('click', this.onPlaceCapteurVirtuelClick, this);
     },
 
     /**
@@ -1262,6 +1502,77 @@ var store = Reflux.createStore({
     },
 
     /**
+     * Event listener sur click d'une place quand on est en mode capteur virtuel.
+     * #- Récupère la place cliquée
+     * #- Test si place libre en JS
+     * #- Crée le capteur à insérer
+     * #- Met le capteur à insérer dans la liste
+     *
+     * @param evt : evt click sur place leaflet
+     */
+    onPlaceCapteurVirtuelClick: function (evt) {
+        // RÉCUPÉRATION PLACE CLIQUÉE
+        var place = _.cloneDeep(evt.layer.options.data);
+
+        // PLACE NON AFFECTÉE
+        if (place.capteur_id == null && this._inst.capteur_place_virtuel.nb_restant > 0) {
+            // CRÉATION DU CAPTEUR
+            var capteur = {
+                bus: this._inst.capteur_place_virtuel.bus,
+                place_id: place.id,
+                bus_id: this._inst.capteur_place_virtuel.bus_id,
+                num_noeud: this._inst.capteur_place_virtuel.last_noeud + 1,
+                adresse: this._inst.capteur_place_virtuel.last_adresse + 1,
+                leg: this._inst.capteur_place_virtuel.leg_num,
+                software_version: '',
+                v4_id: 0
+            };
+
+            this._inst.capteur_place_virtuel.capteurs_a_envoyer.push(capteur);
+
+            // INCRÉMENT DU LAST NOEUD
+            this._inst.capteur_place_virtuel.last_noeud++;
+            this._inst.capteur_place_virtuel.last_adresse++;
+            this._inst.capteur_place_virtuel.nb_restant--;
+
+            // MODIFICATION MESSAGE INFOS
+            var infos = mapHelper.generateInfosCapteurPlaceVirtuel(
+                this._inst.capteur_place_virtuel.concentrateur.v4_id,
+                this._inst.capteur_place_virtuel.bus.num,
+                this._inst.capteur_place_virtuel.last_adresse,
+                this._inst.capteur_place_virtuel.nb_restant
+            );
+
+            var retourTrigger = {
+                type: mapOptions.type_messages.update_infos,
+                data: infos
+            };
+            this.trigger(retourTrigger);
+
+            // SUPPRESSION PLACE MAP
+            var retourTrigger = {
+                type: mapOptions.type_messages.delete_place,
+                data: {
+                    place_id: place.id
+                }
+            };
+            this.trigger(retourTrigger);
+
+            // REMETTRE LA PLACE AVEC UN CAPTEUR ID POUR ÉVITER DE RÉASSOCIER
+            var newPlace = place;
+            newPlace.capteur_id = 0;
+            newPlace.capteur = capteur;
+            retourTrigger = {
+                type: mapOptions.type_messages.add_places,
+                data: this.createPlacesMapFromPlacesBDD([newPlace])
+            };
+            this.trigger(retourTrigger);
+        } else {
+
+        }
+    },
+
+    /**
      * Arrête l'affectation:
      * - Supprime les events listeners sur les places
      * - Vide les données du store en rapport avec l'affectation
@@ -1277,6 +1588,47 @@ var store = Reflux.createStore({
 
         // DÉTACHEMENT DES ÉVÈNEMENTS SUR LES PLACES
         this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
+    },
+    /**
+     * Arrête l'affectation:
+     * - Supprime les events listeners sur les places
+     * - Vide les données du store en rapport avec l'affectation
+     */
+    onStop_affectation_capteurs_virtuels: function () {
+        // DÉTACHEMENT DES ÉVÈNEMENTS SUR LES PLACES
+        this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurVirtuelClick, this);
+
+        var fData = formDataHelper('', 'POST');
+        fData.append('capteurs', JSON.stringify(this._inst.capteur_place_virtuel.capteurs_a_envoyer));
+        fData.append('configs_ids', JSON.stringify(this._inst.capteur_place_virtuel.configs_ids));
+
+        $.ajax({
+            type: 'POST',
+            url: BASE_URI + 'parking/capteur/create_virtuels',
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            context: this,
+            data: fData
+        })
+            .done(function (data) {
+                if (data) {
+                    this._inst.capteur_place_virtuel.capteurs_a_envoyer = [];
+                    Actions.notif.success();
+                    var retourTrigger = {
+                        type: mapOptions.type_messages.hide_infos,
+                        data: ''
+                    };
+                    this.trigger(retourTrigger);
+                } else {
+                    Actions.notif.error();
+                }
+            })
+            .fail(function (xhr, type, exception) {
+                // if ajax fails display error alert
+                console.error("ajax error response error " + type);
+                console.error("ajax error response body " + xhr.responseText);
+            });
     },
 
     /**
@@ -1334,6 +1686,13 @@ var store = Reflux.createStore({
                 this._inst.parkingInfos.libelle = data.libelle;
                 this._inst.parkingInfos.description = data.description;
                 this._inst.parkingInfos.init = data.init;
+                this._inst.parkingInfos.init_mode = data.init_mode;
+                this._inst.parkingInfos.last_aff_update = moment(data.last_aff_update).utc();
+                this._inst.parkingInfos.last_synchro_ok = moment(data.last_synchro_ok).utc();
+                this._inst.parkingInfos.up_to_date = this._inst.parkingInfos.last_synchro_ok.isAfter(this._inst.parkingInfos.last_aff_update);
+
+                // DÉCLENCHEMENT DE LA NOTIF SI BESOIN
+                this._inst.parkingInfos.up_to_date ? null : this.trigger_notif_synchro();
             },
             error: function (xhr, status, err) {
                 console.error(status, err);
@@ -1507,6 +1866,14 @@ var store = Reflux.createStore({
     },
 
     /**
+     * Lance la connexion au WS avec l'id du parking
+     * @param parkingId
+     */
+    connectWs: function (parkingId) {
+        comHelper.client.initWebSocket(parkingId);
+    },
+
+    /**
      * Crée les places à afficher sur la map en fonction d'un tableau de places venant directement de la BDD
      *
      * @param placesBDD : objet de type place sorti d'Eloquent.
@@ -1572,7 +1939,18 @@ var store = Reflux.createStore({
             data: {}
         };
         this.trigger(retour);
+    },
+    /**
+     * Lance l'affichage de la notification pour commencer la synchro
+     */
+    trigger_notif_synchro: function () {
+        // startSynchroDisplay
+        var retour = {
+            type: mapOptions.type_messages.synchro_notif,
+            data: {}
+        };
+        this.trigger(retour);
     }
 });
 
-module.exports = store;
+module.exports = store

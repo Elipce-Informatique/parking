@@ -3,6 +3,7 @@ var React = require('react/addons');
 var ComponentAccessMixins = require('../../mixins/component_access');
 /* Pour le listenTo */
 var MixinGestMod = require('../../mixins/gestion_modif');
+var storeComboConfig = require('../../stores/store_combo_config_equipment');
 
 // Actions Reflux locale à cette modale
 var initModale = Reflux.createAction();
@@ -46,6 +47,7 @@ var ModalAfficheur = React.createClass({
         return {
             listConcentrateurs: [],
             listBuses: [],
+            listConfigs: [],
             concentrateur_id: '',
             bus_id: '',
             reference: '',
@@ -53,17 +55,15 @@ var ModalAfficheur = React.createClass({
             model_name: '',
             serial_number: '',
             software_version: '',
-            hardware_version: ''
-            //reference: 'test',
-            //manufacturer: 'tesst',
-            //model_name: 'tessst',
-            //serial_number: 'tet',
-            //software_version: 'tesssst',
-            //hardware_version: 'tessssst'
+            hardware_version: '',
+            configs_ids: [],
+            combo_config_name: ''
         };
     },
     componentWillMount: function () {
         this.listenTo(store, this.updateData);
+        this.listenTo(storeComboConfig, this.updateData, this.updateData);
+
         initModale(this.props.parkingId, this.props.planId, this.props.drawData);
     },
 
@@ -142,6 +142,23 @@ var ModalAfficheur = React.createClass({
                             labelClass='text-right'
                         />
 
+                        <InputSelectEditable
+                            editable={true}
+                            data={this.state.listConfigs}
+                            selectedValue={this.state.configs_ids}
+                            placeholder={Lang.get('global.config')}
+                            multi={true}
+                            attributes={{
+                                name: this.state.combo_config_name,
+                                label: Lang.get('global.config'),
+                                labelCol: 4,
+                                selectCol: 6,
+                                htmlFor: 'form_mod_capteur',
+                                required: true
+                            }}
+                            labelClass='text-right'
+                        />
+
                         <InputTextEditable
                             editable={true}
                             attributes={{
@@ -152,7 +169,7 @@ var ModalAfficheur = React.createClass({
                                 wrapperClassName: 'col-md-6',
                                 labelClassName: 'col-md-4 text-right',
                                 groupClassName: 'row',
-                                required: true
+                                required: false
                             }}
                         />
 
@@ -166,7 +183,7 @@ var ModalAfficheur = React.createClass({
                                 wrapperClassName: 'col-md-6',
                                 labelClassName: 'col-md-4 text-right',
                                 groupClassName: 'row',
-                                required: true
+                                required: false
                             }}
                         />
 
@@ -180,7 +197,7 @@ var ModalAfficheur = React.createClass({
                                 wrapperClassName: 'col-md-6',
                                 labelClassName: 'col-md-4 text-right',
                                 groupClassName: 'row',
-                                required: true
+                                required: false
                             }}
                         />
 
@@ -194,7 +211,7 @@ var ModalAfficheur = React.createClass({
                                 wrapperClassName: 'col-md-6',
                                 labelClassName: 'col-md-4 text-right',
                                 groupClassName: 'row',
-                                required: true
+                                required: false
                             }}
                         />
 
@@ -208,7 +225,7 @@ var ModalAfficheur = React.createClass({
                                 wrapperClassName: 'col-md-6',
                                 labelClassName: 'col-md-4 text-right',
                                 groupClassName: 'row',
-                                required: true
+                                required: false
                             }}
                         />
 
@@ -277,11 +294,27 @@ var store = Reflux.createStore({
                 break;
         }
     },
+
+    initLocalState: function () {
+        this.localState = {
+            listConcentrateurs: [],
+            listBuses: [],
+            concentrateur_id: '',
+            bus_id: '',
+            reference: '',
+            manufacturer: '',
+            model_name: '',
+            serial_number: '',
+            software_version: '',
+            hardware_version: ''
+        };
+    },
     /**
      * Charge les données du réseau du parking en fonction de l'ID du parking
      * @param parkId : id du parking
      */
     loadInitData: function (parkId) {
+        this.initLocalState();
 
         $.ajax({
             type: 'GET',
@@ -358,7 +391,7 @@ var store = Reflux.createStore({
         });
         return _.map(buses, function (b) {
             return {
-                label: b.num.toString(),
+                label: b.name.toString(),
                 value: b.id.toString()
             }
         });

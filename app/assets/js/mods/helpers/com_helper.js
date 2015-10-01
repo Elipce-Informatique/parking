@@ -34,15 +34,16 @@ module.exports.client = {
                     window.clientWs.onerror = function (err) {
                         console.warn('Connection Error');
                         window.clientWs = null;
+                        Actions.com.red();
                         // Callback connexion error
                         onError(err);
                     }.bind(this);
 
                     // CONNECTION OPEN
                     window.clientWs.onopen = function () {
-                        console.log('WebSocket Client Connected %o', window.clientWs);
 
                         if (window.clientWs.readyState === window.clientWs.OPEN) {
+                            Actions.com.orange();
                             // We say the server we are a webbrowser
                             //console.log('SUPERVISION CONNECTION');
                             window.clientWs.send(JSON.stringify(messages.supervisionConnection()));
@@ -54,6 +55,7 @@ module.exports.client = {
                     // CONNECTION CLOSE
                     window.clientWs.onclose = function () {
                         window.clientWs = null;
+                        Actions.com.red();
                     }.bind(this);
 
                     // MESSAGE REÇU
@@ -78,6 +80,12 @@ module.exports.client = {
 
                             // 2 - Message has a messageType key
                             if (message.messageType) {
+                                if (message.messageType == "controllerStatus" && message.data.controller == true) {
+                                    Actions.com.green();
+                                }
+                                else if (message.messageType == "controllerStatus" && message.data.controller == false) {
+                                    Actions.com.orange();
+                                }
                                 Actions.com.message_controller(message);
                             }
                             // 2 BIS - Message doesn't have a messageType key
@@ -89,7 +97,6 @@ module.exports.client = {
                     }.bind(this);
                 }.bind(this));
         } else {
-            console.log('On a deja un websocket !!');
         }
     }
 
@@ -110,11 +117,23 @@ var messages = ({
     },
     /**
      * Client send hello
-     * @returns {{messageType: string, data: {toto: string}}}
+     * @returns {{messageType: string, data: {}}}
      */
     supervisionConnection: function () {
         var retour = {
             messageType: 'supervisionConnection',
+            data: {}
+        };
+        return retour;
+    },
+
+    /**
+     * Client send hello
+     * @returns {{messageType: string, data: {}}}
+     */
+    startSynchroDisplays: function () {
+        var retour = {
+            messageType: 'startSynchroDisplays',
             data: {}
         };
         return retour;
@@ -150,7 +169,7 @@ var messages = ({
     remoteControl: function (command) {
         return {
             messageType: "remoteControl",
-            "data": {
+            data: {
                 command: command
             }
         }
@@ -174,14 +193,12 @@ var messages = ({
         }
     },
 
-    remoteControl: function(command) {
+    startSynchroDisplays: function () {
         return {
-            messageType: "remoteControl",
-            data:{
-                command:command
-            }
+            messageType: "startSynchroDisplays"
         }
     }
+
 
 });
 module.exports.messages = messages;

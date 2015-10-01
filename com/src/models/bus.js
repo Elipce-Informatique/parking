@@ -10,15 +10,21 @@ var mysql = require('mysql');
 var queues = require('mysql-queues');
 var _ = require('lodash');
 var Q = require('q');
+var _ = require('lodash');
 
 module.exports = {
     /**
      * Insert the buses provided by the controller
      * @param data : list of all controllers with a bus property featuring an array of buses.
+     * @param onBusInserted : callback function
      */
-    insertBuses: function (data) {
+    insertBuses: function (data, onBusInserted) {
+        logger.log('info', 'START INSERT BUSSES', data);
+        //Query structure insert controller
+        var insertController = "INSERT IGNORE INTO concentrateur(parking_id, v4_id) " +
+            "VALUES (?, ?)";
 
-        //Query structure
+        //Query structure insert bus
         var sql = "INSERT IGNORE INTO bus(concentrateur_id, `type`, num, protocole, parameter, name, v4_id)" +
             "VALUES (?,?,?,?,?,?,?)";
 
@@ -28,62 +34,124 @@ module.exports = {
 
         // TRANSACTION
         var trans = connection.startTransaction();
+        // Controllers inserted
+        var controllersInserted = [];
+
         // Parse controllers
         data.forEach(function (controller) {
-            // Parking and controller infos from port and controller ID
-            var sqlController = "" +
-                "SELECT c.id " +
-                "FROM server_com s " +
-                "JOIN parking p ON p.id=s.parking_id " +
-                "JOIN concentrateur c ON c.parking_id=p.id " +
-                "WHERE s.protocol_port = ? " +
-                "AND c.v4_id = ? ";
-
-            trans.query(sqlController, [global.port, controller.controllerID], function (err, rows) {
+            // INSERT controller
+            var inst = mysql.format(insertController, [global.parkingId, controller.controllerID]);
+            trans.query(inst, function (err, result) {
                 if (err && trans.rollback) {
-                    trans.rollback();
+                    logger.log('error', 'ERROR CONTROLLER INSERTED ', err);
                     throw err;
                 }
+                // Insert controller OK
                 else {
-                    // At least 1 bus
-                    if (controller.bus.length > 0) {
-                        var concentrateurId = rows[0]['id'];
-                        // Parse buses
-                        controller.bus.forEach(function (bus) {
-
-                            // Prepare sql
-                            var inst = mysql.format(sql, [
-                                concentrateurId,
-                                bus.busType,
-                                bus.busNumber,
-                                bus.protocol,
-                                bus.parameter,
-                                bus.name,
-                                bus.ID]);
-
-                            // Insert bus
-                            trans.query(inst, function (err, result) {
-                                if (err && trans.rollback) {
-                                    trans.rollback();
-                                    logger.log('error', 'TRANSACTION ROLLBACK');
-                                    throw err;
-                                }
-                            });
-                        }, this);
-                    }
+                    //logger.log('info', 'CTRL INSERTED ', result);
+                    controllersInserted.push({
+                        id: result.insertId,
+                        busses: _.cloneDeep(controller.bus)
+                    });
                 }
             });
-        }, this);
-        trans.commit(function (err, info) {
-            if (err) {
-                logger.log('error', 'TRANSACTION COMMIT ERROR');
-            } else {
-                logger.log('info', 'TRANSACTION COMMIT OK');
-            }
-            // Ending mysql connection once all queries have been executed
-            connection.end(errorHandler.onMysqlEnd);
+        }, this);// Fin foreach
+
+
+        // TRANSACTION COMMIT IF NO ROLLBACK OCCURED
+        var promise = Q.Promise(function (resolve, reject) {
+            trans.commit(function (err, info) {
+                if (err && trans.rollback()) {
+                    logger.log('error', 'TRANSACTION COMMIT CONTROLLERS REJECT');
+                    reject(err, trans);
+                } else {
+                    logger.log('info', 'CONTROLLERS INSERTED OK');
+                    resolve(controllersInserted);
+                }
+            });
         });
 
+        // Transaction execution
+        trans.execute();
+
+        // Controllers inserted, then
+        promise.then(function controllersOk(controllers) {
+
+            //logger.log('info', 'PASSE PROMISE BUSSES', controllers);
+            trans = connection.startTransaction();
+            // Parse controllers
+            controllers.forEach(function (controller, indexCtrl) {
+
+                //logger.log('info', 'ID CTRL ' + controller.id + ' length: ' + controller.busses.length);
+                // New controller inserted AND At least 1 bus
+                if (controller.id > 0 && controller.busses.length > 0) {
+                    var concentrateurId = controller.id;
+                    // Parse buses
+                    controller.busses.forEach(function (bus, indexBus) {
+
+                        // Prepare sql
+                        var inst = mysql.format(sql, [
+                            concentrateurId,
+                            bus.busType,
+                            bus.busNumber,
+                            bus.protocol,
+                            bus.parameter,
+                            bus.name,
+                            bus.ID]);
+
+                        // Insert bus
+                        trans.query(inst, function (err, result) {
+                            if (err && trans.rollback) {
+                                logger.log('error', 'ERROR BUS INSERTED ', err);
+                                trans.rollback();
+                                throw err;
+                            }
+                            else {
+                                //logger.log('info', 'BUS INSERTED ' + bus.ID, result);
+                            }
+                        });
+                    }, this);
+                }
+            })// fin foreach controllers
+
+            // TRANSACTION COMMIT IF NO ROLLBACK OCCURED
+            var promiseBusses = Q.Promise(function (resolve, reject) {
+                trans.commit(function (err, info) {
+                    if (err && trans.rollback()) {
+                        logger.log('error', 'TRANSACTION COMMIT CONTROLLERS REJECT');
+                        reject(err, trans);
+                    } else {
+                        resolve(controllersInserted);
+                    }
+                });
+            });
+
+            trans.execute();
+
+            promiseBusses.then(function promiseBussesOk() {
+
+                logger.log('info', 'TRANSACTION COMMIT BUSSES OK');
+                // Ending mysql connection once all queries have been executed
+                connection.end(errorHandler.onMysqlEnd);
+                onBusInserted(true);
+
+            }, function promisesBussesKo() {
+
+                // Rollback => ending conexion
+                trans.rollback();
+                connection.end(errorHandler.onMysqlEnd);
+                logger.log('error', 'ERROR INSERT BUSSES', err);
+                onBusInserted(false);
+            });
+
+
+        }, function promisesCtrlKo(err) {
+            logger.log('error', 'ERROR INSERT CONTROLLERS', err);
+            // Rollback => ending conexion
+            trans.rollback();
+            connection.end(errorHandler.onMysqlEnd);
+            onBusInserted(false);
+        });
     },
 
     /**
@@ -162,14 +230,16 @@ module.exports = {
 
         });// fin _.each
 
-    },
+    }
+
+    ,
 
     /**
      * Get all parking buses
      * @param port: listening parking port
      * @param callback: callback function with result parameter
      */
-    getBuses: function(port, callback){
+    getBuses: function (port, callback) {
         var connexion = require('../utils/mysql_helper.js').standardConnexion();
 
         var sql = "" +
@@ -179,9 +249,9 @@ module.exports = {
             "JOIN concentrateur c ON c.id=b.concentrateur_id " +
             "JOIN parking p ON p.id=c.parking_id " +
             "JOIN server_com s ON s.parking_id=p.id " +
-            "WHERE s.protocol_port = ? " ;
+            "WHERE s.protocol_port = ? ";
 
-        connexion.query(sql, [global.port], function(err, result){
+        connexion.query(sql, [global.port], function (err, result) {
 
             callback(err, result);
             // End the connection once the callback is done

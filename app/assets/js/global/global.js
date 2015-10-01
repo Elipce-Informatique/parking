@@ -66,7 +66,8 @@ require('sweetalert');
         "success",
         "warning",
         "error",
-        "default"
+        "default",
+        "custom"
     ]);
 
     /*
@@ -130,7 +131,10 @@ require('sweetalert');
         "liste_buses",
         "liste_capteurs",
         "start_affectation_capteurs",
-        "stop_affectation_capteurs"
+        "stop_affectation_capteurs",
+        "start_affectation_capteurs_virtuels",
+        "stop_affectation_capteurs_virtuels",
+        "delete_afficheur_line"
     ]);
 
     /*
@@ -248,7 +252,11 @@ require('sweetalert');
      |--------------------------------------------------------------------------
      */
     global.Actions.com = Reflux.createActions([
-        "message_controller"
+        "message_controller",
+        "start_synchro",
+        "green",
+        "orange",
+        "red"
     ]);
 
 })(window);
@@ -267,7 +275,7 @@ $(function () {
     $(document).bind('keydown', function (e) {
         if (e.ctrlKey && (e.which == 83)) {
             e.preventDefault();
-            swal('Raté ! Si tu veux vraiment sauvegarder la page, utilise le menu de ton navigateur.');
+            swal('Raté ! Si vous voulez vraiment sauvegarder la page, utilisez le menu du navigateur.');
         }
     });
 

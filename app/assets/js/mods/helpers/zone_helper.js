@@ -250,7 +250,6 @@ function administrationContextMenu(e, context) {
         text: Lang.get('global.modifier'),
         index: 2,
         callback: function (evt) {
-            console.log('callback place : %o', this);
             // LANCEMENT DU MODAL DE MODIF DE ALLEES
             var data = {
                 layer: this.e.layer

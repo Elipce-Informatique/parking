@@ -94,6 +94,8 @@ Voulez-vous vraiment quitter cette page ?',
     'description' => 'Description',
     'defaut' => 'Défaut',
     'message' => "Message",
+    'reset' => 'Reset',
+    'etat_reseau' => "Communication",
 
     // FORMULAIRE
     'select' => 'Sélection...',
@@ -101,6 +103,7 @@ Voulez-vous vraiment quitter cette page ?',
     'saisieNumberBis' => ' entre %1 et %2',
     'inputTelError' => 'Numéro incorrect',
     'erreurFileInput' => "Seules les extensions suivantes sont prises en compte :\n [extensions]",
+    'associer' => 'Associer',
 
     // PARKING
     'occupee' => 'Occupée',
@@ -120,6 +123,9 @@ Voulez-vous vraiment quitter cette page ?',
     'type_place' => 'Type de place',
     'empty' => 'Libre',
     'full' => 'Complet',
+    'leg' => 'Leg',
+    'virtuel' => 'Virtuel',
+    'config' => 'Configuration',
 
     // ALERTES
     'alerte_full' => "",

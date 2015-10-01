@@ -311,7 +311,6 @@ var parkingMap = React.createClass({
                     this._inst.afficheursGroup.addLayer(afficheur.polyline);
                 }
                 else {
-                    console.log('AFFICHEUR.polyline VIDE');
                 }
 
             }
@@ -340,14 +339,12 @@ var parkingMap = React.createClass({
 
         // Parcours les afficheurs impactés et les chercher dans les markers
         _.each(afficheurs, function (affModif) {
-            console.log('affModif : %o', affModif);
             var idModif = affModif.data.id;
             var aff = {};
             _.each(this._inst.afficheursGroup._layers, function (affMap) {
 
                 // CE N'EST PAS UN POLYLINE, ON EST SUR UN MARKER
                 if (typeof affMap._path === 'undefined' && affMap.options.data.id == idModif) {
-                    console.log('Unbinding label ... %o', affMap);
                     affMap.unbindLabel();
                     aff = affMap;
                 }

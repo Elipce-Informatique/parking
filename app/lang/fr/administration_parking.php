@@ -35,6 +35,7 @@ return array(
         'titre_afficheur' => 'Création d\'un afficheur',
         'titre_calibre' => 'Configuration du calibre',
         'titre_capteur' => 'Capteurs de place',
+        'titre_capteur_virtuel' => 'Capteurs de place virtuel',
         'titre_zone' => 'Création d\'une zone',
         'titre_allee' => 'Création d\'une allée',
         'titre_edit_place' => "Édition d'une place",
@@ -75,7 +76,9 @@ return array(
         'err_zone_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une allée.',
         'err_allee_contenue_allee' => 'Erreur : La zone dessinée ne doit pas être contenue dans une autre allée.',
         'err_parking_non_init' => 'Erreur : Le parking n\'a pas encore été initialisé.',
-        'err_places_sans_capteur' => 'Erreur: aucune des places sélectionnées n\'est attachée à un capteur.' ,
+        'err_affectation_non_finie' => 'Merci de terminer l\'affectation en cours.',
+        'err_places_sans_capteur' => 'Erreur: aucune des places sélectionnées n\'est attachée à un capteur.',
+        'err_aucun_forme_select' => 'Erreur: aucun entité n\'a été sélectionné pour être supprimé.',
         // MODALE AFFICHEURS
         'reference' => 'Nom',
         'type_afficheur' => 'Type d\'afficheur',
@@ -87,7 +90,9 @@ return array(
         'hardware_version' => 'Hardware version',
         // MESSAGE D'INFOS CAPTEUR (Cadre bas droite map)
         'infos_capteur_titre' => 'Capteur de place',
+        'infos_capteur_virtuel_titre' => 'Capteur de place virtuel',
         'infos_capteur_adresse' => 'Adresse : ',
+        'infos_capteur_num' => 'Numéro physique du capteur : ',
         'infos_capteur_restant' => 'Capteurs restant sur le bus : ',
         'infos_capteur_bouton' => 'Terminer l\'affectation',
         'swal_titre_confirm' => "Êtes-vous sûr ?",
@@ -95,7 +100,9 @@ return array(
         'swal_msg_confirm_allee' => "ATTENTION supprimer une allée est une action irréversible.",
         'swal_msg_confirm_place' => "ATTENTION supprimer une place est une action irréversible.",
         'swal_msg_confirm_afficheur' => "ATTENTION supprimer un afficheur est une action irréversible.",
-
+        'swal_msg_confirm_reset_afficheur' => "ATTENTION remettre un afficheur à zéro est une action irréversible. Cela va supprimer les vues et les compteurs associés à ce dernier. Cela peut impacter d'autres afficheurs si ils se basent sur ce dernier pour leurs compteurs.",
+        'notif_synchro' => 'Le parking n\'est pas synchronisé avec le controller.',
+        'notif_synchro_btn' => 'Synchroniser',
     ],
 
     // MODULE TEMPS REEL
@@ -122,10 +129,12 @@ return array(
         'libelleExists' => "Le nom du parking existe déjà",
         'users' => "Utilisateurs associés au parking",
         'init' => "Initialisation",
+        'synchro' => "Synchronisation",
         'btn' => "Lancer",
         'txt' => "Parking déjà initialisé",
         "protocol_version" => "Version du protocole",
-        "port" => "Port"
+        "port" => "Port",
+        "delta" => "Les capteurs suivants existent sur le réseau terrain mais pas dans la supervision. Veuillez les ajouter et recommencer l'initialisation SVP."
     ]
 );
 

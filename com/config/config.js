@@ -26,5 +26,6 @@ module.exports = {
             password: 'p023',
             database: 'p023'
         }
-    }
+    },
+    legLength: 62
 };

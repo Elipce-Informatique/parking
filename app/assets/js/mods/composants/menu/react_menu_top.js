@@ -206,7 +206,11 @@ var UserInfos = React.createClass({
 
         return (
             <ul className="nav navbar-nav navbar-right">
+                <li className="li-network-indicator">
+                    <IndicateurReseau />
+                </li>
                 <li className="li-logo-navbar">
+
                     <LogoEntreprise url={BASE_URI + "public/images/logo_navbar.jpg"} />
                 </li>
                 <li className="dropdown">
@@ -299,6 +303,80 @@ var LogoEntreprise = React.createClass({
     render: function () {
         return (
             <img src={this.props.url} className="img-logo-navbar" />
+        );
+    }
+});
+
+var IndicateurReseau = React.createClass({
+    mixins: [Reflux.ListenerMixin],
+    /**
+     * Vérification éventuelle des types des propriétés
+     */
+    propTypes: {},
+    /**
+     * Méthode appellée à la création du composant,
+     * initialise les propriétés non définies lors de l'appel avec les valeurs retournées
+     * @returns object
+     */
+    getDefaultProps: function () {
+        return {dropdown: []};
+    },
+    /**
+     * État initial des données du composant
+     * @returns les données de l'état initial
+     */
+    getInitialState: function () {
+        return {
+            color: 'red'
+        };
+    },
+    /**
+     * Callback appelé lorsque le composant est affiché.
+     * C'est par exemple ici qu'on peut faire un appel ajax pour
+     * charger ses données dynamiquement !
+     */
+    componentDidMount: function () {
+        this.listenTo(Actions.com.green, this.onGreen);
+        this.listenTo(Actions.com.orange, this.onOrange);
+        this.listenTo(Actions.com.red, this.onRed);
+
+    },
+    onGreen: function () {
+        this.setState({
+            color: 'green'
+        })
+    },
+    onOrange: function () {
+        this.setState({
+            color: 'orange'
+        })
+    },
+    onRed: function () {
+        this.setState({
+            color: 'red'
+        })
+    },
+    /**
+     * Test si le composant doit être réaffiché avec les nouvelles données
+     * @param nextProps : Nouvelles propriétés
+     * @param nextState : Nouvel état
+     * @returns {boolean} : true ou false selon si le composant doit être mis à jour
+     */
+    shouldComponentUpdate: function (nextProps, nextState) {
+        return true;
+    },
+    /**
+     * Méthode appellée pour construire le composant.
+     * A chaque fois que son contenu est mis à jour.
+     * @returns {XML}
+     */
+    render: function () {
+        var classe = 'cercle cercle-' + this.state.color;
+        return (
+            <a className="network-indicator">
+                <Glyphicon glyph="flash"/>{Lang.get('global.etat_reseau')}
+                <span className={classe}></span>
+            </a>
         );
     }
 });

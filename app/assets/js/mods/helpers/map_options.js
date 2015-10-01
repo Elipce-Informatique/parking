@@ -13,7 +13,8 @@ module.exports.dessin = {
     alerte_full: 8,
     alerte_change: 9,
     reservation: 10,
-    capteur_afficheur: 11
+    capteur_afficheur: 11,
+    capteur_virtuel: 12 // Pas vraiment un mode de dessin, c'est pour savoir qu'on est en mode capteur_virtuel
 };
 
 /**
@@ -102,7 +103,8 @@ module.exports.type_messages = {
     edit_zone: 25,
     edit_afficheur: 26,
     update_afficheurs: 27,
-    capteur_afficheur: 28
+    capteur_afficheur: 28,
+    synchro_notif: 29
 };
 
 /**
@@ -149,6 +151,18 @@ module.exports.pastilleCapteur = L.Icon.extend({
         iconAnchor: new L.Point(7, 7),
         iconSize: new L.Point(14, 14),
         iconUrl: BASE_URI + 'public/images/pastille.png'
+    }
+});
+
+/**
+ * Marker de place tut tut la voiture
+ * @type {void|*}
+ */
+module.exports.pastilleCapteurVirtuel = L.Icon.extend({
+    options: {
+        iconAnchor: new L.Point(7, 7),
+        iconSize: new L.Point(14, 14),
+        iconUrl: BASE_URI + 'public/images/pastille_jaune.png'
     }
 });
 
@@ -240,5 +254,6 @@ module.exports.modal_type = {
     edit_allee: 10,
     edit_zone: 11,
     edit_afficheur: 12,
-    capteur_afficheur: 13
+    capteur_afficheur: 13,
+    capteur_virtuel: 14
 };

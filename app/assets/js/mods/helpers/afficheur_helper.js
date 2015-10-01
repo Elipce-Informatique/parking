@@ -140,6 +140,37 @@ function generateAfficheurLabel(afficheur) {
     return htmlAfficheur;
 }
 
+/**
+ * Prépare les données à envoyer au serveur
+ * @param places : object - Les places au format comme renvoyées par la fonction getPlacesInAfficheur.
+ */
+function prepareCountersData(places, afficheur) {
+    var placesWithCapteur = places.capteurPlaces;
+    var groupedByTypePlace = {};
+
+    _.each(placesWithCapteur, function (p) {
+        typeof groupedByTypePlace[p.type_place_id] === 'undefined' ? groupedByTypePlace[p.type_place_id] = [] : null;
+        groupedByTypePlace[p.type_place_id].push(p.capteur);
+    }, this);
+
+    // CRÉATION DES COUNTERS (type_place, libelle afficheur, capteurs)
+    var counters = _.map(groupedByTypePlace, function (capteurGroup, type_place) {
+
+        // Séparation des ids
+        var capteurs_ids = _.map(capteurGroup, function (capteur) {
+            // Parcourt des places pour retourner les id
+            return capteur.id;
+        }, this);
+
+        return {
+            aff_libelle: afficheur.reference,
+            type_place: type_place,
+            capteurs_ids: capteurs_ids
+        };
+    }, this);
+    return counters;
+}
+
 
 /**
  * Retourne les options de contextMenu pour les afficheurs en mode supervision
@@ -181,6 +212,7 @@ module.exports = {
     getPlacesInAfficheur: getPlacesInAfficheur,
     generateAfficheurLabel: generateAfficheurLabel,
     supervisionContextMenu: supervisionContextMenu,
+    prepareCountersData: prepareCountersData,
     style: {
         color: '#000000',
         weight: 1,
