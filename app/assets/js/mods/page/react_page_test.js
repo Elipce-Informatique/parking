@@ -33,6 +33,7 @@ var InputDateEditable = Field.InputDateEditable;
 var InputTime = Field.InputTime;
 var InputTimeEditable = Field.InputTimeEditable;
 var Form = Field.Form;
+var BtnSave = Field.BtnSave;
 
 var ModalUn = require('../composants/modals/test_modal_1');
 var Modal2 = require('../composants/modals/test_modal_2');
@@ -360,12 +361,17 @@ var ReactPageTest = React.createClass({
             /* Paramètres Select */
 
 
-            function selectChange(value, aData) {
+            var selectChange= function(value, aData) {
 
                 _.each(aData, function (val, key) {
                     indice++;
                 });
-            }
+                console.log(value);
+                console.log(aData);
+                this.setState({
+                    comboFruit: value
+                });
+            }.bind(this);
 
             function clickImage(evt) {
                 var copie = _.clone(evt);
@@ -444,10 +450,12 @@ var ReactPageTest = React.createClass({
                             {
                                 label: 'InputTextEditable',
                                 name: "InputTextEditable",
-                                value: 'Vivian',
+                                value: 'tttt',
                                 wrapperClassName: 'col-md-4',
                                 labelClassName: 'col-md-2',
-                                groupClassName: 'row'
+                                groupClassName: 'row',
+                                required: true
+
                             }}
                             editable={editable} />
 
@@ -459,7 +467,8 @@ var ReactPageTest = React.createClass({
                                 value: 'InputTextEditableArea',
                                 wrapperClassName: 'col-md-4',
                                 labelClassName: 'col-md-2',
-                                groupClassName: 'row'
+                                groupClassName: 'row',
+                                required: false
                             }}
                             editable={editable} />
 
@@ -513,7 +522,7 @@ var ReactPageTest = React.createClass({
                             editable={editable} />
 
                         <InputSelectEditable
-                            multi={false}
+                            multi={true}
                             evts={{onChange: selectChange}}
                             attributes={{
                                 label: 'Mes fruits',
@@ -526,7 +535,7 @@ var ReactPageTest = React.createClass({
                             editable={editable}
                             placeholder={'PlaceHolder...'}
                             labelClass='text-right'
-                            selectedValue={["5fraise", "3pomme"]}
+                            selectedValue={this.state.comboFruit}
                         />
                         <ColorPicker
                             color="FF2800"
@@ -538,8 +547,7 @@ var ReactPageTest = React.createClass({
                             labelClass="text-right"
                         />
 
-            {{
-                /*
+                    {{/*
                  <InputSelectEditable
                  multi={true}
                  evts={{onChange: selectChange}}
@@ -560,7 +568,7 @@ var ReactPageTest = React.createClass({
 
                         <InputSelectEditable
                             multi={false}
-                            attributes={{name: "SelectSansLabel", selectCol: 4, required: true}}
+                            attributes={{name: "SelectSansLabel", selectCol: 4, required: false}}
                             data={this.state.options}
                             editable={editable}
                             placeholder={'PlaceHolder...'}
@@ -573,17 +581,11 @@ var ReactPageTest = React.createClass({
                             options={this.state.options}
                         />
 
-                        <Button
-                            bsStyle="success"
-                            onClick={function () {
-                                var fData = form_data_helper('form_test', 'POST');
-                                //console.log('DATA: %o',fData);
-                                var f = $('#form_test').serializeArray();
-                                //console.log('DATA %o',f);
-                                // Vérif champ erronés
-                                Actions.validation.verify_form_save();
-                            }}
-                        >Valider</Button>
+                        <BtnSave
+                            form_id="form_test"
+                            libelle="Save form test"
+                        />
+
 
                         <InputNumberEditable
                             min={-10}
@@ -653,7 +655,8 @@ var ReactPageTest = React.createClass({
                                 </RadioGroup>
                             </Col>
                         </Row>
-            {/* EXemple de radio inline*/}
+            {// EXemple de radio inline
+            }
                         <RadioGroup
                             attributes={{
                                 name: "radio"
@@ -691,7 +694,8 @@ var ReactPageTest = React.createClass({
                                 key = "pitchoune"/>
                         </RadioGroup>
 
-                 {/* EXemple de radio les uns sous les autres*/}
+                 {// EXemple de radio les uns sous les autres
+                 }
                         <RadioGroup
                             editable={editable}
                             attributes={{
@@ -773,6 +777,7 @@ var ReactPageTest = React.createClass({
                         <Button bsStyle="primary" onClick={this.toggleModal1}>Modal 1</Button>
 
                         <Button bsStyle="success" onClick={this.toggleModal2}>Modal 2</Button>
+
                     </Form>
                 </div>
             )
