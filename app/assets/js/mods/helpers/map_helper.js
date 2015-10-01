@@ -588,7 +588,7 @@ function generateInfosCapteurPlace(concentrateurV4Id, busNum, adressCapteur, nbR
  */
 function generateInfosCapteurPlaceVirtuel(concentrateurV4Id, busNum, adressCapteur, nbRestant) {
     var titre = '<h4>' + Lang.get('administration_parking.carte.infos_capteur_virtuel_titre') + '</h4>';
-    var adresse = '<p>' + Lang.get('administration_parking.carte.infos_capteur_num') + '<strong>' + concentrateurV4Id + '.' + busNum + '.' + adressCapteur + '</strong>';
+    var adresse = '<p>' + Lang.get('administration_parking.carte.infos_capteur_num') + '<strong>' + concentrateurV4Id + '.' + busNum + '.' + (parseInt(adressCapteur) + 1) + '</strong>';
     var restant = '<br />' + Lang.get('administration_parking.carte.infos_capteur_restant') + '<strong>' + nbRestant + '</strong>';
     var bouton = '</p><br />' +
         '<button ' +
