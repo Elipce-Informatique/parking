@@ -32,9 +32,9 @@ module.exports = {
             database: 'p023'
         },
         certificates:{
-            ca: "./auth/ca.crt",
-            cert: "./auth/server.crt",
-            key: "./auth/server.key"
+            ca: "./auth/p023/ca.crt",
+            cert: "./auth/p023/server.crt",
+            key: "./auth/p023/server.key"
         }
     },
     legLength: 62
