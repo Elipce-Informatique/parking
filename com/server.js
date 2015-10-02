@@ -1,9 +1,9 @@
 // CONFIG
 var conf = require('./config/config.js');
 // Variables
-global.modeDev = process.env.PRODUCTION && process.env.PRODUCTION != 'false';
-global.port = getPort(global.modeDev ? conf.prod.port : conf.dev.port);
-global.host = global.modeDev ? conf.prod.host : conf.dev.host;
+global.modeProd = process.env.PRODUCTION && process.env.PRODUCTION != 'false';
+global.port = getPort(global.modeProd ? conf.prod.port : conf.dev.port);
+global.host = global.modeProd ? conf.prod.host : conf.dev.host;
 global.ssl = true;
 global.controllerClient = null;
 global.supervisionClients = [];
@@ -35,9 +35,9 @@ var cfg = {
     ssl: global.ssl,
     port: global.port,
     host: global.host,
-    ssl_key: './auth/server.key',
-    ssl_cert: './auth/server.crt',
-    ca: './auth/ca.crt'
+    ssl_key: global.modeProd ? conf.prod.certificates.key : conf.dev.certificates.key,
+    ssl_cert: global.modeProd ? conf.prod.certificates.cert: conf.dev.certificates.cert,
+    ca: global.modeProd ? conf.prod.certificates.ca : conf.dev.certificates.ca
 };
 
 var httpServ = ( cfg.ssl ) ? require('https') : require('http');

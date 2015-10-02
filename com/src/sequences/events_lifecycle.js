@@ -67,7 +67,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         this.ackID = data.ackID;
     }
     else {
-        logger.log('info', '############ ackID IS NOT A NUMBER ' + data.ackID);
+        //logger.log('info', '############ ackID IS NOT A NUMBER ' + data.ackID);
 
     }
 

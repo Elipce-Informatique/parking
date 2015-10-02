@@ -11,8 +11,8 @@ var WebSocket = require('ws');
 var helperClient = require('./src/utils/test_helper.js');
 
 // Mode dev
-var modeDev = process.env.PRODUCTION && process.env.PRODUCTION != 'false';
-var host = modeDev ? '127.0.0.1' : '85.14.137.12';
+var modeProd = process.env.PRODUCTION && process.env.PRODUCTION != 'false';
+var host = !modeProd ? '127.0.0.1' : '85.14.137.12';
 
 var port = 26000;
 
