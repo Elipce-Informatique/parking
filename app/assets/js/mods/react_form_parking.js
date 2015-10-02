@@ -13,6 +13,10 @@ var Select = Field.InputSelectEditable;
 var com = require('./helpers/com_helper');
 var client = com.client;
 var messagesHelper = com.messages;
+var Upload = Field.InputFile;
+var Photo = require('./composants/react_photo').PhotoEditable;
+var RadioGroup = Field.RadioGroup;
+var InputRadio = Field.InputRadioBootstrapEditable;
 
 /**
  * Formulaire de jours prédéfinis
@@ -50,18 +54,13 @@ var FormParking = React.createClass({
         },
 
         render: function () {
-            //console.log'render form detail: %o',this.props.detailParking);
-
-
+            //console.log'render form detail: %o',this.props.detailParking)
             var ligneInit = '';
+            var logo = ''
+            // Mode edition
             if (this.props.mode == 'edition') {
+                // Ligne synchronisation qui était auparavant une init à faire une seule fois
                 var blocInit = "";
-                //// Parking déjà init
-                //if (this.props.detailParking.init == '1') {
-                //    blocInit = Lang.get('administration_parking.parking.txt')
-                //}
-                //// Parking non init
-                //else {
                 var attr = {disabled: true};
                 // Mode edition
                 if (this.props.editable) {
@@ -77,24 +76,64 @@ var FormParking = React.createClass({
                         {Lang.get("administration_parking.parking.btn")}
                     </Button>
                 );
-            }
-            ligneInit = (
-                <Row>
+                // Logo
+                var src = src = this.props.detailParking.logo == '' ? {} : {
+                    src: DOC_URI + 'logo_parking/' + this.props.detailParking.logo
+                };
+                logo = (
+
                     <Col
                         md={2}
-                        className="text-right">
-                        <label>
+                        className = "text-center">
+                        <Photo
+                            editable={this.props.editable}
+                            {...src}
+                            name={"logo"}
+                            typeOfFile="img"
+                            alertOn={true}
+                            libelle={Lang.get('global.logo')}
+                            attributes={{
+                                required: false
+                            }}/>
+                    </Col>
+                );
+                // Row synchronisation (anciennement init)
+                ligneInit = (
+                    <Row>
+                        <Col
+                            md={2}
+                            className="text-right">
+                            <label>
                     {Lang.get('administration_parking.parking.synchro')}
-                        </label>
-                    </Col>
-                    <Col
-                        md={4}
-                        className="text-left">
+                            </label>
+                        </Col>
+                        <Col
+                            md={4}
+                            className="text-left">
                     {blocInit}
+                        </Col>
+                    </Row>
+                );
+            }
+            // Mode création
+            else {
+
+                // Logo
+                logo = (
+                    <Col
+                        md={2}>
+                        <Upload
+                            name={"logo"}
+                            typeOfFile="img"
+                            alertOn={true}
+                            libelle={Lang.get('global.telecharger')}
+                            attributes={{
+                                required: false
+                            }}
+                        />
                     </Col>
-                </Row>
-            );
-            //}
+                );
+            }
 
             return (
                 <Form attributes={{id: "form_parking"}}>
@@ -153,6 +192,62 @@ var FormParking = React.createClass({
                         editable={this.props.editable}
                         min={0}/>
 
+                    <Row>
+                        <Col md={2}>
+                            <label
+                                className="text-right">
+                                {Lang.get('administration_parking.parking.init_mode')}
+                            </label>
+                        </Col>
+                        <Col md={4}>
+                            <RadioGroup
+                                attributes={{
+                                    name: "init_mode"
+                                }}
+                                bootstrap={true}>
+                                <InputRadio
+                                    key={'bt1'}
+                                    editable={this.props.editable}
+                                    attributes={{
+                                        checked: parseInt(this.props.detailParking.init_mode) === 0,
+                                        value: '0'
+                                    }}
+                                >
+                    {Lang.get('administration_parking.parking.get')}
+                                </ InputRadio>
+                                <InputRadio
+                                    key={'bt2'}
+                                    editable={this.props.editable}
+                                    attributes={{
+                                        checked: parseInt(this.props.detailParking.init_mode) === 1,
+                                        value: '1'
+                                    }}
+                                >
+                    {Lang.get('administration_parking.parking.set')}
+                                </ InputRadio>
+                                <InputRadio
+                                    key={'bt3'}
+                                    editable={this.props.editable}
+                                    attributes={{
+                                        checked: parseInt(this.props.detailParking.init_mode) === 2,
+                                        value: '2'
+                                    }}
+                                >
+                    {Lang.get('administration_parking.parking.set_virtuel')}
+                                </ InputRadio>
+                            </RadioGroup>
+                        </Col>
+                    </Row>
+
+                    <Row>
+                        <Col
+                            md={2}
+                            className="text-right">
+                            <label>{Lang.get('global.logo')}</label>
+                        </Col>
+                        {logo}
+                    </Row>
+
                     <Select
                         attributes={{
                             label: Lang.get('administration_parking.parking.users'),
@@ -183,7 +278,7 @@ var FormParking = React.createClass({
             /**
              * Local function used to start Init if WS already connected or in connexion
              */
-             var startInitProcess = function(clientWs) {
+            var startInitProcess = function (clientWs) {
                 // Envoie initialisazion
                 clientWs.send(JSON.stringify(messagesHelper.initParking(this.props.detailParking.init_mode)));
                 console.log('Lancer procédure init parking ' + this.props.detailParking.init_mode);

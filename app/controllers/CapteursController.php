@@ -84,6 +84,25 @@ class CapteursController extends \BaseController
     }
 
     /**
+     * @param $busId
+     * @param $leg
+     * @param $num
+     */
+    public function deleteFromNum($busId, $leg, $num)
+    {
+        try {
+            Capteur::where('bus_id', '=', $busId)
+                ->where('leg', '=', $leg)
+                ->where('num_noeud', '>=', $num)->delete();
+            return json_encode(true);
+        } catch (Exception $e) {
+            Log::error('ERREUR D INSERTION CAPTEUR VIRTUEL :');
+            Log::error($e);
+            return json_encode(false);
+        }
+    }
+
+    /**
      * Crée plusieurs capteurs virtuels
      */
     public function create_virtuels()

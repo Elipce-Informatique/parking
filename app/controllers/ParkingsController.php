@@ -88,7 +88,12 @@ class ParkingsController extends \BaseController
             ServerCom::where('parking_id', '=', $id)
                 ->first()
                 ->delete();
-            Parking::find($id)->delete();
+            $model = Parking::find($id);
+            //  Delete file on the server
+            File::delete(storage_path() . '/documents/logo_parking/' . $model->logo);
+            // Delete parking in DB
+            $model->delete();
+
             $retour = true;
         } catch (Exception $e) {
             Log::error("Erreur suppression parking $id " . $e->getMessage());

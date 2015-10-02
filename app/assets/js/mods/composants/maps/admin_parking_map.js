@@ -145,7 +145,7 @@ var parkingMap = React.createClass({
             planId: this.props.planId
         };
         // INIT des layers
-        this._inst.placesMarkersGroup = new L.LayerGroup();
+        this._inst.placesMarkersGroup = new L.FeatureGroup();
         this._inst.map.addLayer(this._inst.placesMarkersGroup);
         this._inst.placesGroup = new L.FeatureGroup();
         this._inst.map.addLayer(this._inst.placesGroup);
@@ -162,6 +162,7 @@ var parkingMap = React.createClass({
 
         // INIT EVENTS LAERS POUR EVENTUELLEMENT CONTEXT MENU
         this._inst.placesGroup.on('layeradd', Actions.map.feature_place_add);
+        this._inst.placesMarkersGroup.on('layeradd', Actions.map.marker_place_add);
         this._inst.alleesGroup.on('layeradd', Actions.map.feature_allee_add);
         this._inst.zonesGroup.on('layeradd', Actions.map.feature_zone_add);
         this._inst.afficheursGroup.on('layeradd', Actions.map.feature_afficheur_add);
@@ -607,6 +608,16 @@ var parkingMap = React.createClass({
             case mapOptions.type_messages.synchro_notif:
                 this._onNotifSynchro();
                 break;
+            case mapOptions.type_messages.annuler_capteur_virtuel:
+                this._onAnnulerCapteur();
+                break;
+            case mapOptions.type_messages.set_id_capteur_virtuel:
+                this._onSetIdCapteurVirtuelBDD();
+                break;
+            case mapOptions.type_messages.delete_capteur_from_num:
+                this._onSupprimerCapteur(data.data.bus_id, data.data.leg, data.data.num_noeud);
+                break;
+
             default:
                 break;
         }
@@ -718,8 +729,11 @@ var parkingMap = React.createClass({
     onPlacesAdded: function (formes) {
         var liste_data = formes.data;
         _.each(liste_data, function (place) {
+
+            // RECALCUL DU NUMÉRO MAX DE PLACE SUR LA CARTE ACTUELLE
             this._inst.lastNum = Math.max(this._inst.lastNum, place.data.num);
             this._inst.placesGroup.addLayer(place.polygon);
+
             // MARKER SI CAPTEUR REEL
             if (place.data.capteur_id != null && place.data.capteur.v4_id != null && place.data.capteur.v4_id != 0) {
                 var marker = L.marker([place.data.lat, place.data.lng], {
@@ -1006,6 +1020,63 @@ var parkingMap = React.createClass({
             clickToHide: false,
             position: 'bottom-left'
         });
+    },
+
+    /**
+     * Supprime visuellement tous les capteurs virtuels qui ne sont pas en BDD (id capteur à 0)
+     * @private
+     */
+    _onSetIdCapteurVirtuelBDD: function () {
+        _.map(this._inst.placesMarkersGroup._layers, function (place) {
+
+            // ON EST SUR UN CAPTEUR VIRTUEL QUI N'EST PAS ENCORE EN BDD
+            if (place.options.data.capteur_id == 0) {
+
+                // ON LE DÉCLARE COMME EN BDD :
+                place.options.data.capteur_id = -1;
+            }
+        });
+    },
+
+    /**
+     * Supprime visuellement tous les capteurs virtuels qui ne sont pas en BDD
+     * @private
+     */
+    _onAnnulerCapteur: function () {
+        _.map(this._inst.placesMarkersGroup._layers, function (place) {
+            // ON EST SUR UN CAPTEUR VIRTUEL QUI N'EST PAS ENCORE EN BDD
+            if (place.options.data.capteur_id == 0) {
+                this._resetCapteurPlaceVisuel(place);
+            }
+        }, this);
+    },
+
+    _onSupprimerCapteur: function (busId, leg, num) {
+        _.map(this._inst.placesMarkersGroup._layers, function (place) {
+            // ON EST SUR UN CAPTEUR VIRTUEL QUI N'EST PAS ENCORE EN BDD
+            if (place.options.data.capteur_id != null) {
+                if (place.options.data.capteur != null) {
+                    if (place.options.data.capteur.bus_id == busId) {
+                        if (place.options.data.capteur.leg == leg) {
+                            if (place.options.data.capteur.num_noeud >= num) {
+                                this._resetCapteurPlaceVisuel(place);
+                            }
+                        }
+                    }
+                }
+            }
+        }, this);
+    },
+
+    /**
+     * Supprime le cercle présent sur une place et remet l'icone invisible à la place
+     * @param marker
+     * @private
+     */
+    _resetCapteurPlaceVisuel: function (marker) {
+        marker.options.data.capteur_id = null;
+        marker.options.data.capteur = null;
+        marker.setIcon(new mapOptions.iconInvisible());
     },
 
     /**

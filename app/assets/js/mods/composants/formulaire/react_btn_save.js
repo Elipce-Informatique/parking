@@ -37,7 +37,7 @@ var ButtonSave = React.createClass({
             <Button
             {...this.props.attrs}
             {...this.props.evts}
-                onClick={this.onClick.bind(this)}
+                onClick={this.onClick}
                 bsStyle="success"
                 form={this.props.form_id} >
                 <Glyphicon glyph="floppy-disk"/>{this.props.libelle}

@@ -14,7 +14,8 @@ class BusUnicity extends Migration {
 	{
 
         Schema::table('bus', function ($t) {
-            $t->dropUnique('bus_v4_id_unique');
+            $t->dropUnique('v4_id');
+//            $t->dropUnique('bus_v4_id_unique');
             $t->unique(['concentrateur_id','v4_id']);
         });
 	}
