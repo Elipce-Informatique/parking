@@ -15,6 +15,11 @@ module.exports = {
             user: 'root',
             password: 'elipce',
             database: 'parking'
+        },
+        certificates:{
+            ca: "./auth/ca.crt",
+            cert: "./auth/server.crt",
+            key: "./auth/server.key"
         }
     },
     prod: {
@@ -25,6 +30,11 @@ module.exports = {
             user: 'p023',
             password: 'p023',
             database: 'p023'
+        },
+        certificates:{
+            ca: "./auth/ca.crt",
+            cert: "./auth/server.crt",
+            key: "./auth/server.key"
         }
     },
     legLength: 62

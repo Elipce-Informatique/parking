@@ -412,6 +412,7 @@ class Parking extends BaseModel
             'save' => true,
             'errorBdd' => false,
             'model' => null,
+            'upload' => true
         ];
 
         // Début transaction
@@ -424,6 +425,29 @@ class Parking extends BaseModel
             try {
                 // Création du parking
                 $model = Parking::create($fields);
+
+                // Uploaded file logo
+                if (Input::hasFile('logo')) {
+                    // logo
+                    $fileCourant = Input::file('logo');
+                    // Extension
+                    $extFile = $fileCourant->getClientOriginalExtension();
+                    //  Nom du fichier (ID + extension)
+                    $fileName = $model->id . '.' . $extFile;
+                    // Sauvegarde dans "documents/logo_parking"
+                    $fileCourant->move(storage_path() . '/documents/logo_parking', $fileName);
+                    // Mise à jour du champ en base de donnée
+                    $model->logo = $fileName;
+                    $model->save();
+
+                } // Le fichier n'existe pas
+                else {
+                    if($fields['logo'] != '') {
+                        Log::error('Erreur enregistrement logo parking. ');
+                        $retour['save'] = false;
+                        $retour['upload'] = false;
+                    }
+                }
 
                 // Association des users
                 if (isset($fields['utilisateurs']) && $fields['utilisateurs'] !== '') {
@@ -487,12 +511,13 @@ class Parking extends BaseModel
         $retour = [
             'save' => true,
             'errorBdd' => false,
-            'model' => null
+            'model' => null,
+            'upload' => true
         ];
 
         // Les données passées en PUT
         $fields = Input::all();
-        Log::debug("UPDATE FIELDS " . print_r($fields, true));
+//        Log::debug("UPDATE FIELDS " . print_r($fields, true));
 
         // Début transaction
         DB::beginTransaction();
@@ -515,6 +540,31 @@ class Parking extends BaseModel
 
                 // Update parking
                 $model->update($filteredFields);
+
+                // Modification de logo
+                if ($fields['logo'] != '') {
+                    // Upload
+                    if (Input::file('logo')->isValid()) {
+                        // Logo
+                        $fileCourant = Input::file('logo');
+                        // Extension
+                        $extFile = $fileCourant->getClientOriginalExtension();
+                        //  Nom du fichier (ID + extension)
+                        $fileName = $model->id . '.' . $extFile;
+                        // Sauvegarde dans "documents/logo_parking"
+                        $fileCourant->move(storage_path() . '/documents/logo_parking', $fileName);
+                        // Mise à jour du champ en base de donnée
+                        $model->logo = $fileName;
+                        $model->save();
+
+                    } // Le fichier n'a pas été POST
+                    else {
+                        Log::error('Erreur enregistrement logo parking. ');
+                        $retour['save'] = false;
+                        $retour['upload'] = false;
+                    }
+                }
+                // else mode edition sans modification de fichier
 
                 // Les users avant insertion
                 $usersBefore = $model->utilisateurs()->get();

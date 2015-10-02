@@ -134,7 +134,11 @@ return array(
         'txt' => "Parking déjà initialisé",
         "protocol_version" => "Version du protocole",
         "port" => "Port",
-        "delta" => "Les capteurs suivants existent sur le réseau terrain mais pas dans la supervision. Veuillez les ajouter et recommencer l'initialisation SVP."
+        "delta" => "Les capteurs suivants existent sur le réseau terrain mais pas dans la supervision. Veuillez les ajouter et recommencer l'initialisation SVP.",
+        "init_mode" => "Mode d'initialisation",
+        "get" => "GET",
+        'set' => "SET",
+        'set_virtuel' => "SET virtuel"
     ]
 );
 

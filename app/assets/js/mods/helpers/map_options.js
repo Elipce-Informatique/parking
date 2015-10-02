@@ -104,7 +104,10 @@ module.exports.type_messages = {
     edit_afficheur: 26,
     update_afficheurs: 27,
     capteur_afficheur: 28,
-    synchro_notif: 29
+    synchro_notif: 29,
+    annuler_capteur_virtuel: 30,
+    set_id_capteur_virtuel: 31,
+    delete_capteur_from_num: 32
 };
 
 /**

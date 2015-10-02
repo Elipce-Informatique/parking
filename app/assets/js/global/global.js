@@ -93,6 +93,7 @@ require('sweetalert');
         "feature_allee_add",
         "feature_zone_add",
         "feature_afficheur_add",
+        "marker_place_add",
         "label_afficheurs_add",
         // ACTIONS DE DESSIN
         "draw_created",
@@ -134,7 +135,9 @@ require('sweetalert');
         "stop_affectation_capteurs",
         "start_affectation_capteurs_virtuels",
         "stop_affectation_capteurs_virtuels",
-        "delete_afficheur_line"
+        "cancel_affectation_capteurs_virtuels",
+        "delete_afficheur_line",
+        "delete_capteur_virtuel_bdd"
     ]);
 
     /*
