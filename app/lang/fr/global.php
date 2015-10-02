@@ -23,6 +23,7 @@ return array(
     // BOITES DE DIALOGUES
     'suppression_titre' => 'Êtes-vous sur?',
     'suppression_corps' => 'La suppression est une action irréversible.',
+    'suppression_capteur_corps' => 'La suppression d\'un capteur virtuel entrainera la suppression de tous les capteurs ayant un numéro physique supérieur.',
 
     // CHARGEMENT
     'block_ui' => 'Chargement....',
