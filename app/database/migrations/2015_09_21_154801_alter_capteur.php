@@ -14,6 +14,7 @@ class AlterCapteur extends Migration {
 	{
         Schema::table('capteur', function ($t) {
 
+            $t->char('sn',100)->after('adresse');
             $t->integer('leg')->after('sn');
             $t->char('software_version',20)->after('leg');
         });
@@ -27,7 +28,7 @@ class AlterCapteur extends Migration {
 	public function down()
 	{
         Schema::table('capteur', function ($t) {
-
+            $t->dropColumn('sn');
             $t->dropColumn('leg');
             $t->dropColumn('software_version');
         });

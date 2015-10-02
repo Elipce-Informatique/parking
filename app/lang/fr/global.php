@@ -126,6 +126,8 @@ Voulez-vous vraiment quitter cette page ?',
     'leg' => 'Leg',
     'virtuel' => 'Virtuel',
     'config' => 'Configuration',
+    'logo' => "Logo",
+    'telecharger' => "Télécharger",
 
     // ALERTES
     'alerte_full' => "",
