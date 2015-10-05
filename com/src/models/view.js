@@ -57,8 +57,17 @@ module.exports = {
                             reject(err);
                         }
                         else {
-                            //logger.log('info', 'P1 result', result);
-                            resolve(result[0]['id']);
+                            // Display found
+                            if(result.length > 0) {
+                                //logger.log('info', 'P1 result', result);
+                                resolve(result[0]['id']);
+                            }
+                            // Display not found
+                            else{
+                                reject({
+                                    erreur_bdd : '[-]init[-] DISPLAY DOESNT EXIST '+view.displayID
+                                })
+                            }
                         }
                     });
                 });

@@ -14,7 +14,7 @@ var _ = require('lodash');
 
 module.exports = {
     /**
-     * Insert the buses provided by the controller
+     * Insert controllers and busses provided by the controller
      * @param data : list of all controllers with a bus property featuring an array of buses.
      * @param onBusInserted : callback function
      */
