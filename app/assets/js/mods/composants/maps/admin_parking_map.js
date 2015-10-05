@@ -1225,14 +1225,9 @@ var parkingMap = React.createClass({
             return <span/>;
         } else {
             return (
-                <Modal bsStyle="primary" title="Modal heading" onHide={this.handleToggle}>
-                    <div className="modal-body">
-                        This modal is controlled by our custom trigger component.
-                    </div>
-                    <div className="modal-footer">
-                        <Button onClick={this.handleToggle}>Close</Button>
-                    </div>
-                </Modal>
+                <ModalCalibre
+                    onToggle={this.handleToggle}
+                />
             );
         }
     },
