@@ -694,6 +694,11 @@ var parkingMap = React.createClass({
                 });
                 break;
 
+            case mapOptions.dessin.afficheur_get:
+                this.changeDrawToolbar(data.data.mode);
+                selectButton(mapOptions.icon.afficheur);
+                break;
+
             default:
                 this.changeDrawToolbar(mapOptions.dessin.place);
                 // PAR DÉFAUT, ON SÉLECTIONNE LE MODE PLACE AU CAS OÙ
@@ -1220,14 +1225,9 @@ var parkingMap = React.createClass({
             return <span/>;
         } else {
             return (
-                <Modal bsStyle="primary" title="Modal heading" onHide={this.handleToggle}>
-                    <div className="modal-body">
-                        This modal is controlled by our custom trigger component.
-                    </div>
-                    <div className="modal-footer">
-                        <Button onClick={this.handleToggle}>Close</Button>
-                    </div>
-                </Modal>
+                <ModalCalibre
+                    onToggle={this.handleToggle}
+                />
             );
         }
     },
