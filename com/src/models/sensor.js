@@ -156,7 +156,7 @@ module.exports = {
                                 transAssoc.query(inst, function (err, result) {
                                     if (err) {
                                         //transAssoc.rollback();
-                                        logger.log('error', 'ERREUR SQL INSERT capteur_compteur', [sensorId, counterId]);
+                                        logger.log('error', '[-]init[-] ERREUR SQL INSERT capteur_compteur', [assoc.sensorId, counterId]);
                                     }
                                 });
                             }, this);
@@ -173,7 +173,7 @@ module.exports = {
                                 transAssoc.query(inst, function (err, result) {
                                     if (err) {
                                         //transAssoc.rollback();
-                                        logger.log('error', 'ERREUR SQL INSERT capteur_config', [sensorId, settingId]);
+                                        logger.log('error', '[-]init[-] ERREUR SQL INSERT capteur_config', [assoc.sensorId, settingId]);
                                     }
                                 });
                             }, this);
@@ -185,7 +185,7 @@ module.exports = {
                     transAssoc.commit(function (err, info) {
                         //logger.log('error', 'COMMITTTTTTTTTTTTTT');
                         if (err) {
-                            logger.log('error', 'TRANSACTION ASSOC COMMIT ERROR');
+                            logger.log('error', '[-]init[-] TRANSACTION ASSOC COMMIT ERROR');
                         }
                         else {
                             logger.log('info', 'TRANSACTION COMMIT ASSOCS OK');
