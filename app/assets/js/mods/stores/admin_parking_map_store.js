@@ -271,6 +271,35 @@ var store = Reflux.createStore({
                 };
                 this.trigger(retour);
                 break;
+            // -------------------------------------------------------------
+            // PROCÉDURE DE CRÉATION D'AFFICHEUR
+            case mapOptions.dessin.afficheur_get:
+                //console.log('PASS ADD AFFICHEUR : %o', data);
+                var dessin = data.e.layer;
+
+                // INIT DES VARIABLES NÉCESSAIRES À LA CRÉATION
+                var poly = null;
+                var marker = {};
+                var markerCoords = {};
+
+                // GÉNÉRATION DES INFOS SELON LE MODE DE DESSON CHOISI
+                if (data.e.layerType === "polyline") {
+                    poly = dessin;
+                    markerCoords = afficheurHelper.getCoordAfficheurFromPolyline(dessin);
+                    var geojson = poly.toGeoJSON();
+                    geojson = JSON.stringify(geojson.geometry.coordinates);
+                    console.log('Afficheur coords : %o', markerCoords);
+                    console.log('Afficheur Geojson : %o', geojson);
+
+                    swal('Geojson : >>>' + geojson + '<<< Lat : ' + markerCoords.lat + ' Lng : ' + markerCoords.lng);
+                } else {
+                    marker = dessin;
+                    markerCoords = dessin._latlng;
+                    // Mode marker, on laisse le polyline à null
+                    console.log('Afficheur coords : %o', markerCoords);
+                    swal('Lat : ' + dessin._latlng.lat + ' Lng : ' + dessin._latlng.lng);
+                }
+                break;
             case mapOptions.dessin.capteur_afficheur:
                 console.log('PASS FORME CAPTEUR_AFFICHEUR DESSINEE : %o', data);
                 var places = afficheurHelper.getPlacesInAfficheur(data, this._inst);
@@ -299,7 +328,7 @@ var store = Reflux.createStore({
         }
     },
     onDraw_edited: function (data) {
-        console.log('Pass onDraw_edited %o', data);
+        //console.log('Pass onDraw_edited %o', data);
         var editedEntities = _.values(data.e.layers._layers);
         switch (this._inst.currentMode) {
             // -------------------------------------------------------------
@@ -335,7 +364,7 @@ var store = Reflux.createStore({
     },
     // SUPPRESSION D'UN DESSIN
     onDraw_deleted: function (data) {
-        console.log('Pass onDraw_deleted %o', data);
+        //console.log('Pass onDraw_deleted %o', data);
         var deletedEntities = _.values(data.e.layers._layers);
         if (deletedEntities.length > 0) {
             switch (this._inst.currentMode) {
@@ -439,23 +468,23 @@ var store = Reflux.createStore({
         }
     },
     onDraw_drawstart: function (data) {
-        console.log('Pass onDraw_drawstart %o', data);
+        //console.log('Pass onDraw_drawstart %o', data);
     },
     onDraw_drawstop: function (data) {
-        console.log('Pass onDraw_drawstop %o', data);
+        //console.log('Pass onDraw_drawstop %o', data);
     },
     // A VOIR COMMENT RECUP LES DESSINS
     onDraw_editstart: function (data) {
-        console.log('Pass onDraw_editstart %o', data);
+        //console.log('Pass onDraw_editstart %o', data);
     },
     onDraw_editstop: function (data) {
-        console.log('Pass onDraw_editstop %o', data);
+        //console.log('Pass onDraw_editstop %o', data);
     },
     onDraw_deletestart: function (data) {
-        console.log('Pass onDraw_deletestart %o', data);
+        //console.log('Pass onDraw_deletestart %o', data);
     },
     onDraw_deletestop: function (data) {
-        console.log('Pass onDraw_deletestop %o', data);
+        //console.log('Pass onDraw_deletestop %o', data);
     },
 
     /**
@@ -618,15 +647,41 @@ var store = Reflux.createStore({
         this.trigger(retour);
     },
     onMode_afficheur: function (data) {
-        this._inst.currentMode = mapOptions.dessin.afficheur;
+        console.log('Mode d\'init : ' + this._inst.parkingInfos.init_mode);
+        switch (this._inst.parkingInfos.init_mode) {
+            // MODE REEL
+            case '0':
+            case '1':
+            {
+                this._inst.currentMode = mapOptions.dessin.afficheur_get;
 
-        var retour = {
-            type: mapOptions.type_messages.mode_change,
-            data: {
-                mode: mapOptions.dessin.afficheur
+                var retour = {
+                    type: mapOptions.type_messages.mode_change,
+                    data: {
+                        mode: mapOptions.dessin.afficheur
+                    }
+                };
+                this.trigger(retour);
+                break;
+                break;
             }
-        };
-        this.trigger(retour);
+            // MODE VIRTUEL
+            case '2':
+            {
+                this._inst.currentMode = mapOptions.dessin.afficheur;
+
+                var retour = {
+                    type: mapOptions.type_messages.mode_change,
+                    data: {
+                        mode: mapOptions.dessin.afficheur
+                    }
+                };
+                this.trigger(retour);
+                break;
+            }
+            default:
+        }
+
     },
     onMode_calibre: function (data) {
         this._inst.currentMode = mapOptions.dessin.calibre;

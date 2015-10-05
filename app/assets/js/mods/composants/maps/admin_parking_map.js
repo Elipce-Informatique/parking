@@ -694,6 +694,11 @@ var parkingMap = React.createClass({
                 });
                 break;
 
+            case mapOptions.dessin.afficheur_get:
+                this.changeDrawToolbar(data.data.mode);
+                selectButton(mapOptions.icon.afficheur);
+                break;
+
             default:
                 this.changeDrawToolbar(mapOptions.dessin.place);
                 // PAR DÉFAUT, ON SÉLECTIONNE LE MODE PLACE AU CAS OÙ
