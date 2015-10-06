@@ -171,9 +171,10 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         if (aViewEvt.length > 0) {
             // INSERT THE VIEW EVENTS GATHERED
             viewModel.insertViewEvents(this.pool, aViewEvt, function (viewsId) {
-                // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
-                messenger.supervisionBroadcast("view_event", viewsId);
-
+                if(viewsId.length > 0) {
+                    // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
+                    messenger.supervisionBroadcast("view_event", viewsId);
+                }
             });
         }
 
