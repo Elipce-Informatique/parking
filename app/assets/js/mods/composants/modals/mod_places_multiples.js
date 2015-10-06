@@ -22,6 +22,16 @@ var Button = ReactB.Button;
 var ModalPlaces = React.createClass({
 
     mixins: [Reflux.ListenerMixin, ComponentAccessMixins, MixinGestMod],
+    _inst: {
+        module_url: 'configuration_parking',
+        nbPlaces: '',
+        espacePoteaux: '3',
+        taillePoteau: '45',
+        prefix: '',
+        numPlace: '0',
+        suffixe: '',
+        increment: '1'
+    },
 
     propTypes: {
         onToggle: React.PropTypes.func.isRequired,
@@ -40,7 +50,7 @@ var ModalPlaces = React.createClass({
             nbPlaces: '',
             espacePoteaux: '3',
             taillePoteau: '45',
-            prefix: 'P',
+            prefix: '',
             numPlace: '0',
             suffixe: '',
             increment: '1'
@@ -48,10 +58,11 @@ var ModalPlaces = React.createClass({
     },
 
     getInitialState: function () {
-        return {};
+        return this.props;
     },
 
     componentDidMount: function () {
+
     },
 
     shouldComponentUpdate: function (nextProps, nextState) {
@@ -210,6 +221,20 @@ var ModalPlaces = React.createClass({
                 </div>
             </Modal>
         );
+    }
+});
+
+// TODO : passer toutes les valeurs en store
+var store = Reflux.createStore({
+    getInitialState: function() {
+        return {};
+    },
+    // Initial setup
+    init: function () {
+        // Register statusUpdate action
+    },
+    fetchData: function () {
+
     }
 });
 
