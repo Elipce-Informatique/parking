@@ -13,7 +13,7 @@ var _ = require('lodash');
 
 module.exports = {
     /**
-     * Insert the counters provided by the controller
+     * Insert the views provided by the controller
      * @param data : list of all counters
      */
     insertViews: function (data) {
