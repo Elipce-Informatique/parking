@@ -288,16 +288,19 @@ var store = Reflux.createStore({
                     markerCoords = afficheurHelper.getCoordAfficheurFromPolyline(dessin);
                     var geojson = poly.toGeoJSON();
                     geojson = JSON.stringify(geojson.geometry.coordinates);
-                    console.log('Afficheur coords : %o', markerCoords);
+                    console.log('Afficheur coords : %o Plan id : %o', markerCoords, this._inst.planInfos.id);
                     console.log('Afficheur Geojson : %o', geojson);
 
-                    swal('Geojson : >>>' + geojson + '<<< Lat : ' + markerCoords.lat + ' Lng : ' + markerCoords.lng);
+                    swal('Geojson : >>>' + geojson + '<<< Lat : ' +
+                    markerCoords.lat + ' Lng : ' + markerCoords.lng +
+                    ' Plan id : ' + this._inst.planInfos.id);
                 } else {
                     marker = dessin;
                     markerCoords = dessin._latlng;
                     // Mode marker, on laisse le polyline à null
-                    console.log('Afficheur coords : %o', markerCoords);
-                    swal('Lat : ' + dessin._latlng.lat + ' Lng : ' + dessin._latlng.lng);
+                    console.log('Afficheur coords : %o plan id : %o', markerCoords, this._inst.planInfos.id);
+                    swal('Lat : ' + dessin._latlng.lat + ' Lng : ' + dessin._latlng.lng +
+                    ' Plan id : ' + this._inst.planInfos.id);
                 }
                 break;
             case mapOptions.dessin.capteur_afficheur:
