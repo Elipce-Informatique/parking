@@ -72,7 +72,7 @@ var parkingMap = React.createClass({
 
     getDefaultProps: function () {
         return {
-            defaultDrawMode: mapOptions.dessin.place,
+            defaultDrawMode: mapOptions.dessin.place_auto,
             mapHeight: 300,
             calibre: 0,
             module_url: 'parking'
@@ -324,7 +324,7 @@ var parkingMap = React.createClass({
 
         // ---------------------------------------------------------
         // LANCEMENT DE L'ACTION POUR SÉLECTIONNER LE BOUTON "PLACE":
-        Actions.map.mode_place();
+        Actions.map.mode_place_auto();
 
     },
     initNotifSynchro: function () {
@@ -968,6 +968,7 @@ var parkingMap = React.createClass({
      * @private
      */
     _onEditPlace: function (data) {
+        console.log('PassThrough');
         this.setState({
             modalType: mapOptions.modal_type.edit_place,
             isModalOpen: true,
@@ -1137,7 +1138,7 @@ var parkingMap = React.createClass({
         if (!this.state.isModalOpen) {
             return <span/>;
         } else {
-            return (<ModalEditPlace
+            return (<ModalAllee
                 onToggle={this.handleToggle}
             />);
         }

@@ -103,6 +103,7 @@ return array(
         'swal_msg_confirm_reset_afficheur' => "ATTENTION remettre un afficheur à zéro est une action irréversible. Cela va supprimer les vues et les compteurs associés à ce dernier. Cela peut impacter d'autres afficheurs si ils se basent sur ce dernier pour leurs compteurs.",
         'notif_synchro' => 'Le parking n\'est pas synchronisé avec le controller.',
         'notif_synchro_btn' => 'Synchroniser',
+        'confirm_edit_stop' => "La modification ou la suppression en cours sera annulée si vous continuez. Êtes vous sur de vouloir continuer ?"
     ],
 
     // MODULE TEMPS REEL
