@@ -1082,11 +1082,24 @@ var store = Reflux.createStore({
                 // TEST ÉTAT INSERTION
                 if (data.retour) {
                     Actions.notif.success();
+
+                    // MASQUAGE MODAL
                     var retour = {
                         type: mapOptions.type_messages.hide_modal,
                         data: {}
                     };
                     this.trigger(retour);
+
+                    // MAJ CALIBRE STORE
+                    this._inst.calibre = calibre;
+
+                    // ACTIVATION CALIBRE SUR MAP
+                    var retour = {
+                        type: mapOptions.type_messages.set_calibre,
+                        data: calibre
+                    };
+                    this.trigger(retour);
+
                 } else {
                     Actions.notif.error(Lang.get('administration_parking.carte.calibre_update_fail'));
                 }
