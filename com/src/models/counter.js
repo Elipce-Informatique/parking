@@ -43,7 +43,7 @@ module.exports = {
                     counter.ID
                 ]);
 
-                // Insert bus
+                // Insert counter
                 trans.query(inst, function (err, result) {
                     if (err && trans.rollback) {
                         trans.rollback();
@@ -96,8 +96,17 @@ module.exports = {
                                 reject(err);
                             }
                             else {
-                                //logger.log('info', 'ASSOC with [id, V4]', assoc);
-                                resolve([assoc[0], result[0]['id']]);
+                                // Counter found
+                                if (result.length > 0) {
+                                    //logger.log('info', 'ASSOC with [id, V4]', assoc);
+                                    resolve([assoc[0], result[0]['id']]);
+                                }
+                                // Display not found
+                                else {
+                                    reject({
+                                        erreur_bdd: '[-]init[-] COUNTER DOESNT EXIST ' + assoc[1]
+                                    })
+                                }
                             }
                         });
 
@@ -115,7 +124,7 @@ module.exports = {
                         });
                     }, function reject(err) {
                         trans.rollback();
-                        logger.log('error', 'SELECT id FROM v4_id KO');
+                        logger.log('error', 'SELECT id FROM v4_id KO', err);
                     });
 
                 });
