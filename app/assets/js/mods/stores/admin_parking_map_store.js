@@ -1975,6 +1975,13 @@ var store = Reflux.createStore({
         };
         this.trigger(message);
 
+        // SETUP INIT_MODE -----------------------------------------------------------------------
+        message = {
+            type: mapOptions.type_messages.set_init_mode,
+            data: this._inst.parkingInfos.init_mode
+        };
+        this.trigger(message);
+
         // LES PLACES À AFFICHER SUR LA MAP ----------------------------------------------------
         var placesMap = this.createPlacesMapFromPlacesBDD(this._inst.places);
 

@@ -65,8 +65,8 @@ var parkingMap = React.createClass({
             calibreGroup: {},                     // Juste pour l'init du calibre
             drawControl: {},                      // Barre d'outils de dessin active sur la carte
             infosControl: undefined,              // Cadre d'informations en bas à droite de la carte
-            calibre: 0
-
+            calibre: 0,
+            init_mode: -1
         };
     },
 
@@ -94,7 +94,7 @@ var parkingMap = React.createClass({
         this.initInst();
         this.initMap();
         this.initDrawPlugin();
-        this.initCustomButtons();
+        //this.initCustomButtons();
         this.initNotifSynchro();
 
         this.listenTo(mapStore, this.onStoreTrigger);
@@ -309,15 +309,17 @@ var parkingMap = React.createClass({
             this._inst.map
         );
 
-        // CAPTEUR - AFFICHEUR
-        L.easyButton(
-            mapOptions.icon.capteur_afficheur,
-            function () {
-                Actions.map.mode_capteur_afficheur();
-            },
-            Lang.get('administration_parking.carte.lier_capteur_afficheur'),
-            this._inst.map
-        );
+        if (this._inst.init_mode != '0') {
+            // CAPTEUR - AFFICHEUR
+            L.easyButton(
+                mapOptions.icon.capteur_afficheur,
+                function () {
+                    Actions.map.mode_capteur_afficheur();
+                },
+                Lang.get('administration_parking.carte.lier_capteur_afficheur'),
+                this._inst.map
+            );
+        }
 
 
         // ---------------------------------------------------------
@@ -586,6 +588,9 @@ var parkingMap = React.createClass({
             case mapOptions.type_messages.set_calibre:
                 this.onSetCalibre(data);
                 break;
+            case mapOptions.type_messages.set_init_mode:
+                this.onSetInitMode(data);
+                break;
             case mapOptions.type_messages.new_afficheur:
                 this._onNewAfficheur(data);
                 break;
@@ -715,6 +720,16 @@ var parkingMap = React.createClass({
     onSetCalibre: function (data) {
         this._inst.calibre = data.data;
         this.changeDrawToolbar(this._inst.currentMode);
+    },
+
+    /**
+     * Met à jour le calibre sur la map
+     * Permet d'activer ou désactiver le dessin si calibre = 0
+     * @param data
+     */
+    onSetInitMode: function (data) {
+        this._inst.init_mode = data.data;
+        this.initCustomButtons();
     },
 
     /**
