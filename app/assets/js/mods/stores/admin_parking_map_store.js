@@ -1350,7 +1350,7 @@ var store = Reflux.createStore({
             .done(function (result) {
                 if (result.save) {
                     Actions.notif.success();
-                    onSuccess = !undefined ? onSuccess() : null;
+                    onSuccess != undefined ? onSuccess() : null;
                 } else {
                     Actions.notif.error();
                 }
