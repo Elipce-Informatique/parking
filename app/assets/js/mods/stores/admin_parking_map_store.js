@@ -288,16 +288,19 @@ var store = Reflux.createStore({
                     markerCoords = afficheurHelper.getCoordAfficheurFromPolyline(dessin);
                     var geojson = poly.toGeoJSON();
                     geojson = JSON.stringify(geojson.geometry.coordinates);
-                    console.log('Afficheur coords : %o', markerCoords);
+                    console.log('Afficheur coords : %o Plan id : %o', markerCoords, this._inst.planInfos.id);
                     console.log('Afficheur Geojson : %o', geojson);
 
-                    swal('Geojson : >>>' + geojson + '<<< Lat : ' + markerCoords.lat + ' Lng : ' + markerCoords.lng);
+                    swal('Geojson : >>>' + geojson + '<<< Lat : ' +
+                    markerCoords.lat + ' Lng : ' + markerCoords.lng +
+                    ' Plan id : ' + this._inst.planInfos.id);
                 } else {
                     marker = dessin;
                     markerCoords = dessin._latlng;
                     // Mode marker, on laisse le polyline à null
-                    console.log('Afficheur coords : %o', markerCoords);
-                    swal('Lat : ' + dessin._latlng.lat + ' Lng : ' + dessin._latlng.lng);
+                    console.log('Afficheur coords : %o plan id : %o', markerCoords, this._inst.planInfos.id);
+                    swal('Lat : ' + dessin._latlng.lat + ' Lng : ' + dessin._latlng.lng +
+                    ' Plan id : ' + this._inst.planInfos.id);
                 }
                 break;
             case mapOptions.dessin.capteur_afficheur:
@@ -493,21 +496,24 @@ var store = Reflux.createStore({
      * ---------------------------------------------------------------------------
      */
     onFeature_place_add: function (e) {
+        var store = this;
         e.layer.bindContextMenu({
             contextmenu: true,
-            contextmenuItems: placeHelper.administrationContextMenu(e, this)
+            contextmenuItems: placeHelper.administrationContextMenu(e, store)
         });
     },
     onMarker_place_add: function (e) {
+        var store = this;
         e.layer.bindContextMenu({
             contextmenu: true,
-            contextmenuItems: placeHelper.administrationCapteurContextMenu(e, this)
+            contextmenuItems: placeHelper.administrationCapteurContextMenu(e, store)
         });
     },
     onFeature_allee_add: function (e) {
+        var store = this;
         e.layer.bindContextMenu({
             contextmenu: true,
-            contextmenuItems: alleeHelper.administrationContextMenu(e, this)
+            contextmenuItems: alleeHelper.administrationContextMenu(e, store)
         });
     },
     onFeature_zone_add: function (e) {
@@ -1018,7 +1024,14 @@ var store = Reflux.createStore({
 
     },
 
+    /**
+     * Récupère la place sur laquelle le click droit à été fait
+     * Met à jour les infos en fonction de la saisie
+     * @param formId
+     * @param formDom
+     */
     handleUpdatePlace: function (formId, formDom) {
+        console.log('Target menu : %o', this._inst.contextMenuTarget);
         var idPlace = this._inst.contextMenuTarget.options.data.id;
 
         var fData = formDataHelper(formId, 'PATCH');
@@ -1082,11 +1095,24 @@ var store = Reflux.createStore({
                 // TEST ÉTAT INSERTION
                 if (data.retour) {
                     Actions.notif.success();
+
+                    // MASQUAGE MODAL
                     var retour = {
                         type: mapOptions.type_messages.hide_modal,
                         data: {}
                     };
                     this.trigger(retour);
+
+                    // MAJ CALIBRE STORE
+                    this._inst.calibre = calibre;
+
+                    // ACTIVATION CALIBRE SUR MAP
+                    var retour = {
+                        type: mapOptions.type_messages.set_calibre,
+                        data: calibre
+                    };
+                    this.trigger(retour);
+
                 } else {
                     Actions.notif.error(Lang.get('administration_parking.carte.calibre_update_fail'));
                 }
@@ -1350,7 +1376,7 @@ var store = Reflux.createStore({
             .done(function (result) {
                 if (result.save) {
                     Actions.notif.success();
-                    onSuccess = !undefined ? onSuccess() : null;
+                    onSuccess != undefined ? onSuccess() : null;
                 } else {
                     Actions.notif.error();
                 }
@@ -1952,6 +1978,13 @@ var store = Reflux.createStore({
         };
         this.trigger(message);
 
+        // SETUP INIT_MODE -----------------------------------------------------------------------
+        message = {
+            type: mapOptions.type_messages.set_init_mode,
+            data: this._inst.parkingInfos.init_mode
+        };
+        this.trigger(message);
+
         // LES PLACES À AFFICHER SUR LA MAP ----------------------------------------------------
         var placesMap = this.createPlacesMapFromPlacesBDD(this._inst.places);
 
@@ -2070,11 +2103,13 @@ var store = Reflux.createStore({
      */
     trigger_notif_synchro: function () {
         // startSynchroDisplay
-        var retour = {
-            type: mapOptions.type_messages.synchro_notif,
-            data: {}
-        };
-        this.trigger(retour);
+        if (this._inst.parkingInfos.init_mode != '0') {
+            var retour = {
+                type: mapOptions.type_messages.synchro_notif,
+                data: {}
+            };
+            this.trigger(retour);
+        }
     }
 });
 

@@ -108,7 +108,8 @@ module.exports.type_messages = {
     synchro_notif: 29,
     annuler_capteur_virtuel: 30,
     set_id_capteur_virtuel: 31,
-    delete_capteur_from_num: 32
+    delete_capteur_from_num: 32,
+    set_init_mode: 33
 };
 
 /**
