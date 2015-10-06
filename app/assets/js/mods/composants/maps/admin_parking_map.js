@@ -968,6 +968,7 @@ var parkingMap = React.createClass({
      * @private
      */
     _onEditPlace: function (data) {
+        console.log('PassThrough');
         this.setState({
             modalType: mapOptions.modal_type.edit_place,
             isModalOpen: true,
@@ -1137,7 +1138,7 @@ var parkingMap = React.createClass({
         if (!this.state.isModalOpen) {
             return <span/>;
         } else {
-            return (<ModalEditPlace
+            return (<ModalAllee
                 onToggle={this.handleToggle}
             />);
         }
