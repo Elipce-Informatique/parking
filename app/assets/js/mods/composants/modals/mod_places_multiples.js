@@ -14,6 +14,8 @@ var Row = ReactB.Row;
 var Col = ReactB.Col;
 var Button = ReactB.Button;
 
+var modalInit = Reflux.createAction();
+
 /**
  * Created by yann on 12/03/2015.
  *
@@ -25,37 +27,34 @@ var ModalPlaces = React.createClass({
 
     propTypes: {
         onToggle: React.PropTypes.func.isRequired,
-        nbPlaces: React.PropTypes.string,
-        espacePoteaux: React.PropTypes.string,
-        taillePoteau: React.PropTypes.string,
-        prefix: React.PropTypes.string,
-        numPlace: React.PropTypes.string,
-        suffixe: React.PropTypes.string,
-        increment: React.PropTypes.string
-    },
-
-    getDefaultProps: function () {
-        return {
-            module_url: 'configuration_parking',
-            nbPlaces: '',
-            espacePoteaux: '3',
-            taillePoteau: '45',
-            prefix: 'P',
-            numPlace: '0',
-            suffixe: '',
-            increment: '1'
-        };
+        numPlace: React.PropTypes.string.isRequired
     },
 
     getInitialState: function () {
-        return {};
+        return {
+            module_url: 'configuration_parking',
+            nb_place: '',
+            nb_poteaux: '',
+            taille_poteaux: '',
+            prefixe: '',
+            num_initial: '',
+            suffixe: '',
+            increment: ''
+        };
     },
 
-    componentDidMount: function () {
+    componentWillMount: function () {
+        console.log('Pass listenTo');
+        this.listenTo(store, this.updateState);
+        modalInit(this.props.numPlace);
     },
 
     shouldComponentUpdate: function (nextProps, nextState) {
         return true;
+    },
+
+    updateState: function (state) {
+        this.setState(state);
     },
 
     // Rien à faire dans la popup à priori
@@ -80,7 +79,7 @@ var ModalPlaces = React.createClass({
                                 label: Lang.get('administration_parking.carte.nb_places'),
                                 min: '0',
                                 name: "nb_place",
-                                value: this.props.nbPlaces,
+                                value: this.state.nb_place,
                                 required: true,
                                 groupClassName: 'row',
                                 wrapperClassName: 'col-md-4',
@@ -96,7 +95,7 @@ var ModalPlaces = React.createClass({
                                 label: Lang.get('administration_parking.carte.intervalle_poteaux'),
                                 min: '0',
                                 name: "nb_poteaux",
-                                value: this.props.espacePoteaux,
+                                value: this.state.nb_poteaux,
                                 required: true,
                                 groupClassName: 'row',
                                 wrapperClassName: 'col-md-4',
@@ -112,7 +111,7 @@ var ModalPlaces = React.createClass({
                                 label: Lang.get('administration_parking.carte.largeur_poteaux'),
                                 min: '0',
                                 name: "taille_poteaux",
-                                value: this.props.taillePoteau,
+                                value: this.state.taille_poteaux,
                                 required: true,
                                 groupClassName: 'row',
                                 wrapperClassName: 'col-md-4',
@@ -130,7 +129,7 @@ var ModalPlaces = React.createClass({
                                     {
                                         label: Lang.get('administration_parking.carte.pref'),
                                         name: "prefixe",
-                                        value: this.props.prefix,
+                                        value: this.state.prefixe,
                                         required: false,
                                         groupClassName: 'row',
                                         wrapperClassName: 'col-md-9',
@@ -148,7 +147,7 @@ var ModalPlaces = React.createClass({
                                         label: Lang.get('administration_parking.carte.num_initial'),
                                         min: '0',
                                         name: "num_initial",
-                                        value: this.props.numPlace,
+                                        value: this.state.num_initial,
                                         required: true,
                                         groupClassName: 'row',
                                         wrapperClassName: 'col-md-9',
@@ -165,7 +164,7 @@ var ModalPlaces = React.createClass({
                                     {
                                         label: Lang.get('administration_parking.carte.suff'),
                                         name: "suffixe",
-                                        value: this.props.suffixe,
+                                        value: this.state.suffixe,
                                         required: false,
                                         groupClassName: 'row',
                                         wrapperClassName: 'col-md-9',
@@ -185,7 +184,7 @@ var ModalPlaces = React.createClass({
                                         label: Lang.get('administration_parking.carte.incr'),
                                         min: '1',
                                         name: "increment",
-                                        value: this.props.increment,
+                                        value: this.state.increment,
                                         required: true,
                                         groupClassName: 'row',
                                         wrapperClassName: 'col-md-9',
@@ -210,6 +209,39 @@ var ModalPlaces = React.createClass({
                 </div>
             </Modal>
         );
+    }
+});
+
+var store = Reflux.createStore({
+    localState: {
+        nb_place: '',
+        nb_poteaux: '',
+        taille_poteaux: '',
+        prefixe: '',
+        num_initial: '',
+        suffixe: '',
+        increment: '1'
+    },
+    getInitialState: function () {
+        return {};
+    },
+    // Initial setup
+    init: function () {
+        // Register statusUpdate action
+        this.listenTo(modalInit, this.initState);
+        this.listenTo(Actions.validation.form_field_changed, this.onForm_field_changed);
+    },
+    initState: function (numPlace) {
+        this.localState.num_initial = numPlace;
+        this.trigger(this.localState);
+    },
+
+    onForm_field_changed: function (data) {
+        var dat = {};
+        // MAJ du state STORE
+        dat[data.name] = data.value;
+        this.localState = _.extend(this.localState, dat);
+        this.trigger(this.localState);
     }
 });
 

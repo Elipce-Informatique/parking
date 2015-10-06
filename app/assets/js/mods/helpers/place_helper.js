@@ -466,7 +466,8 @@ function administrationContextMenu(e, context) {
         text: Lang.get('global.modifier'),
         index: 2,
         callback: function (evt) {
-            this.storeContext._inst.thisMenuTarget = this.e.layer;
+            this.storeContext._inst.contextMenuTarget = this.e.layer;
+            console.log('Target helper : %o', this.storeContext._inst.contextMenuTarget);
             // LANCEMENT DU MODAL DE MODIF DE PLACES
             var data = {
                 layer: this.e.layer,
