@@ -77,6 +77,7 @@ var store = Reflux.createStore({
             nb_restant: 0,
             capteurs_a_envoyer: []
         },
+        is_editing: false,
         types_places: [], // Types de places de la BDD
         currentMode: mapOptions.dessin.place,
         places: [], // Places avec data base de données
@@ -471,23 +472,25 @@ var store = Reflux.createStore({
         }
     },
     onDraw_drawstart: function (data) {
+        this._inst.is_editing = true;
         //console.log('Pass onDraw_drawstart %o', data);
     },
     onDraw_drawstop: function (data) {
+        this._inst.is_editing = false;
         //console.log('Pass onDraw_drawstop %o', data);
     },
     // A VOIR COMMENT RECUP LES DESSINS
     onDraw_editstart: function (data) {
-        //console.log('Pass onDraw_editstart %o', data);
+        this._inst.is_editing = true;
     },
     onDraw_editstop: function (data) {
-        //console.log('Pass onDraw_editstop %o', data);
+        this._inst.is_editing = false;
     },
     onDraw_deletestart: function (data) {
-        //console.log('Pass onDraw_deletestart %o', data);
+        this._inst.is_editing = true;
     },
     onDraw_deletestop: function (data) {
-        //console.log('Pass onDraw_deletestop %o', data);
+        this._inst.is_editing = false;
     },
 
     /**
@@ -609,162 +612,178 @@ var store = Reflux.createStore({
      * ---------------------------------------------------------------------------
      */
     onMode_place: function (data) {
-        this._inst.currentMode = mapOptions.dessin.place;
+        if (this.canSwitchMode()) {
+            this._inst.currentMode = mapOptions.dessin.place;
 
-        var retour = {
-            type: mapOptions.type_messages.mode_change,
-            data: {
-                mode: mapOptions.dessin.place
-            }
-        };
-        this.trigger(retour);
+            var retour = {
+                type: mapOptions.type_messages.mode_change,
+                data: {
+                    mode: mapOptions.dessin.place
+                }
+            };
+            this.trigger(retour);
+        }
     },
     onMode_place_auto: function (data) {
-        this._inst.currentMode = mapOptions.dessin.place_auto;
+        if (this.canSwitchMode()) {
+            this._inst.currentMode = mapOptions.dessin.place_auto;
 
-        var retour = {
-            type: mapOptions.type_messages.mode_change,
-            data: {
-                mode: mapOptions.dessin.place_auto
-            }
-        };
-        this.trigger(retour);
+            var retour = {
+                type: mapOptions.type_messages.mode_change,
+                data: {
+                    mode: mapOptions.dessin.place_auto
+                }
+            };
+            this.trigger(retour);
+        }
     },
     onMode_allee: function (data) {
-        this._inst.currentMode = mapOptions.dessin.allee;
+        if (this.canSwitchMode()) {
+            this._inst.currentMode = mapOptions.dessin.allee;
 
-        var retour = {
-            type: mapOptions.type_messages.mode_change,
-            data: {
-                mode: mapOptions.dessin.allee
-            }
-        };
-        this.trigger(retour);
+            var retour = {
+                type: mapOptions.type_messages.mode_change,
+                data: {
+                    mode: mapOptions.dessin.allee
+                }
+            };
+            this.trigger(retour);
+        }
     },
     onMode_zone: function (data) {
-        this._inst.currentMode = mapOptions.dessin.zone;
+        if (this.canSwitchMode()) {
+            this._inst.currentMode = mapOptions.dessin.zone;
 
-        var retour = {
-            type: mapOptions.type_messages.mode_change,
-            data: {
-                mode: mapOptions.dessin.zone
-            }
-        };
-        this.trigger(retour);
+            var retour = {
+                type: mapOptions.type_messages.mode_change,
+                data: {
+                    mode: mapOptions.dessin.zone
+                }
+            };
+            this.trigger(retour);
+        }
     },
     onMode_afficheur: function (data) {
-        console.log('Mode d\'init : ' + this._inst.parkingInfos.init_mode);
-        switch (this._inst.parkingInfos.init_mode) {
-            // MODE REEL
-            case '0':
-            case '1':
-            {
-                this._inst.currentMode = mapOptions.dessin.afficheur_get;
 
-                var retour = {
-                    type: mapOptions.type_messages.mode_change,
-                    data: {
-                        mode: mapOptions.dessin.afficheur
-                    }
-                };
-                this.trigger(retour);
-                break;
-                break;
-            }
-            // MODE VIRTUEL
-            case '2':
-            {
-                this._inst.currentMode = mapOptions.dessin.afficheur;
+        if (this.canSwitchMode()) {
+            switch (this._inst.parkingInfos.init_mode) {
+                // MODE REEL
+                case '0':
+                case '1':
+                {
+                    this._inst.currentMode = mapOptions.dessin.afficheur_get;
 
-                var retour = {
-                    type: mapOptions.type_messages.mode_change,
-                    data: {
-                        mode: mapOptions.dessin.afficheur
-                    }
-                };
-                this.trigger(retour);
-                break;
+                    var retour = {
+                        type: mapOptions.type_messages.mode_change,
+                        data: {
+                            mode: mapOptions.dessin.afficheur
+                        }
+                    };
+                    this.trigger(retour);
+                    break;
+                    break;
+                }
+                // MODE VIRTUEL
+                case '2':
+                {
+                    this._inst.currentMode = mapOptions.dessin.afficheur;
+
+                    var retour = {
+                        type: mapOptions.type_messages.mode_change,
+                        data: {
+                            mode: mapOptions.dessin.afficheur
+                        }
+                    };
+                    this.trigger(retour);
+                    break;
+                }
+                default:
             }
-            default:
         }
 
     },
     onMode_calibre: function (data) {
-        this._inst.currentMode = mapOptions.dessin.calibre;
+        if (this.canSwitchMode()) {
+            this._inst.currentMode = mapOptions.dessin.calibre;
 
-        var retour = {
-            type: mapOptions.type_messages.mode_change,
-            data: {
-                mode: mapOptions.dessin.calibre
-            }
-        };
+            var retour = {
+                type: mapOptions.type_messages.mode_change,
+                data: {
+                    mode: mapOptions.dessin.calibre
+                }
+            };
 
-        this.trigger(retour);
+            this.trigger(retour);
+        }
     },
 
     onMode_capteur: function (data) {
-        switch (this._inst.parkingInfos.init_mode) {
-            // MODE REEL
-            case '0':
-            case '1':
-            {
-                if (this._inst.parkingInfos.init != 0) {
-                    this._inst.currentMode = mapOptions.dessin.capteur;
+        if (this.canSwitchMode()) {
+            switch (this._inst.parkingInfos.init_mode) {
+                // MODE REEL
+                case '0':
+                case '1':
+                {
+                    if (this._inst.parkingInfos.init != 0) {
+                        this._inst.currentMode = mapOptions.dessin.capteur;
 
-                    var retour = {
-                        type: mapOptions.type_messages.mode_change,
-                        data: {
-                            mode: mapOptions.dessin.capteur
-                        }
-                    };
-                    this.trigger(retour);
+                        var retour = {
+                            type: mapOptions.type_messages.mode_change,
+                            data: {
+                                mode: mapOptions.dessin.capteur
+                            }
+                        };
+                        this.trigger(retour);
 
-                    // Pour éviter d'éventuels glitch du à une utilisation bizarre
-                    this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
-                } else {
-                    swal(Lang.get('administration_parking.carte.err_parking_non_init'));
+                        // Pour éviter d'éventuels glitch du à une utilisation bizarre
+                        this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
+                    } else {
+                        swal(Lang.get('administration_parking.carte.err_parking_non_init'));
+                    }
+                    break;
                 }
-                break;
+                // MODE VIRTUEL
+                case '2':
+                {
+                    if (this._inst.capteur_place_virtuel.capteurs_a_envoyer.length == 0) {
+                        this._inst.currentMode = mapOptions.dessin.capteur;
+
+                        var retour = {
+                            type: mapOptions.type_messages.mode_change,
+                            data: {
+                                mode: mapOptions.dessin.capteur_virtuel
+                            }
+                        };
+                        this.trigger(retour);
+
+                        // Pour éviter d'éventuels glitch du à une utilisation bizarre
+                        this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
+                    }
+                    else {
+                        swal(Lang.get('administration_parking.carte.err_affectation_non_finie'));
+                    }
+                    break;
+                }
+                default:
             }
-            // MODE VIRTUEL
-            case '2':
-            {
-                if (this._inst.capteur_place_virtuel.capteurs_a_envoyer.length == 0) {
-                    this._inst.currentMode = mapOptions.dessin.capteur;
-
-                    var retour = {
-                        type: mapOptions.type_messages.mode_change,
-                        data: {
-                            mode: mapOptions.dessin.capteur_virtuel
-                        }
-                    };
-                    this.trigger(retour);
-
-                    // Pour éviter d'éventuels glitch du à une utilisation bizarre
-                    this._inst.mapInst.placesGroup.off('click', this.onPlaceCapteurClick, this);
-                }
-                else {
-                    swal(Lang.get('administration_parking.carte.err_affectation_non_finie'));
-                }
-                break;
-            }
-            default:
         }
 
 
     },
 
     onMode_capteur_afficheur: function (data) {
-        this._inst.currentMode = mapOptions.dessin.capteur_afficheur;
+        if (this.canSwitchMode()) {
+            this._inst.currentMode = mapOptions.dessin.capteur_afficheur;
 
-        var retour = {
-            type: mapOptions.type_messages.mode_change,
-            data: {
-                mode: mapOptions.dessin.capteur_afficheur
-            }
-        };
+            var retour = {
+                type: mapOptions.type_messages.mode_change,
+                data: {
+                    mode: mapOptions.dessin.capteur_afficheur
+                }
+            };
 
-        this.trigger(retour);
+            this.trigger(retour);
+        }
     },
 
     /**
@@ -2109,6 +2128,19 @@ var store = Reflux.createStore({
                 data: {}
             };
             this.trigger(retour);
+        }
+    },
+
+    /**
+     * Affiche la boite de confirmation pour changer de mode alors qu'une édition est en cours.
+     * @return {*}
+     */
+    canSwitchMode: function () {
+        if (this._inst.is_editing) {
+            return confirm(Lang.get('administration_parking.carte.confirm_edit_stop'));
+        }
+        else {
+            return true;
         }
     }
 });
