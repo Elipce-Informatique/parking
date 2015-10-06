@@ -493,21 +493,24 @@ var store = Reflux.createStore({
      * ---------------------------------------------------------------------------
      */
     onFeature_place_add: function (e) {
+        var store = this;
         e.layer.bindContextMenu({
             contextmenu: true,
-            contextmenuItems: placeHelper.administrationContextMenu(e, this)
+            contextmenuItems: placeHelper.administrationContextMenu(e, store)
         });
     },
     onMarker_place_add: function (e) {
+        var store = this;
         e.layer.bindContextMenu({
             contextmenu: true,
-            contextmenuItems: placeHelper.administrationCapteurContextMenu(e, this)
+            contextmenuItems: placeHelper.administrationCapteurContextMenu(e, store)
         });
     },
     onFeature_allee_add: function (e) {
+        var store = this;
         e.layer.bindContextMenu({
             contextmenu: true,
-            contextmenuItems: alleeHelper.administrationContextMenu(e, this)
+            contextmenuItems: alleeHelper.administrationContextMenu(e, store)
         });
     },
     onFeature_zone_add: function (e) {
@@ -1018,7 +1021,14 @@ var store = Reflux.createStore({
 
     },
 
+    /**
+     * Récupère la place sur laquelle le click droit à été fait
+     * Met à jour les infos en fonction de la saisie
+     * @param formId
+     * @param formDom
+     */
     handleUpdatePlace: function (formId, formDom) {
+        console.log('Target menu : %o', this._inst.contextMenuTarget);
         var idPlace = this._inst.contextMenuTarget.options.data.id;
 
         var fData = formDataHelper(formId, 'PATCH');
