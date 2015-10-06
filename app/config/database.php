@@ -54,10 +54,10 @@ return array(
 
         'mysql' => array(
             'driver'    => 'mysql',
-            'host'      => '185.24.155.69',//'85.14.137.12',
-            'database'  => 'p023',//'parking',
-            'username'  => 'p023-distant',//'parking_distant',
-            'password'  => 'p023',//'bruno2015',
+            'host'      => '85.14.137.12',
+            'database'  => 'parking',
+            'username'  => 'parking_distant',
+            'password'  => 'bruno2015',
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
