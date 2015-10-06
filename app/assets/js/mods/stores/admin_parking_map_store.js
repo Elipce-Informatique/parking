@@ -2083,11 +2083,13 @@ var store = Reflux.createStore({
      */
     trigger_notif_synchro: function () {
         // startSynchroDisplay
-        var retour = {
-            type: mapOptions.type_messages.synchro_notif,
-            data: {}
-        };
-        this.trigger(retour);
+        if (this._inst.parkingInfos.init_mode != '0') {
+            var retour = {
+                type: mapOptions.type_messages.synchro_notif,
+                data: {}
+            };
+            this.trigger(retour);
+        }
     }
 });
 
