@@ -249,15 +249,15 @@ var parkingMap = React.createClass({
             this._inst.map
         );
 
-        // PLACE DE PARKING
-        L.easyButton(
-            mapOptions.icon.place,
-            function () {
-                Actions.map.mode_place();
-            },
-            Lang.get('administration_parking.carte.ajouter_place'),
-            this._inst.map
-        );
+        //// PLACE DE PARKING
+        //L.easyButton(
+        //    mapOptions.icon.place,
+        //    function () {
+        //        Actions.map.mode_place();
+        //    },
+        //    Lang.get('administration_parking.carte.ajouter_place'),
+        //    this._inst.map
+        //);
 
         // PLACE DE PARKING MODE AUTOMATIQUE
         L.easyButton(
