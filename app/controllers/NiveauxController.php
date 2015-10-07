@@ -65,14 +65,14 @@ class NiveauxController extends \BaseController
 
                 // Save zone defaut
                 $modelZone = Zone::create([
-                    'libelle' => Lang::get('global.defaut'),
+                    'libelle' => Lang::get('global.defaut').' '.$plan,
                     'defaut' => '1',
                     'plan_id' => $newPlan->id
                 ]);
 
                 // Save allée defaut
                 $modelAllee = Allee::create([
-                    'libelle' => Lang::get('global.defaut'),
+                    'libelle' => Lang::get('global.defaut').' '.$plan,
                     'defaut' => '1',
                     'zone_id' => $modelZone->id
                 ]);
