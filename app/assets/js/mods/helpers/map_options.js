@@ -243,7 +243,7 @@ module.exports.DataMarker = L.Marker.extend({
     data: {}
 });
 /**
- *
+ * Différents types de modales à afficher dans la carte
  * @type {{}}
  */
 module.exports.modal_type = {
