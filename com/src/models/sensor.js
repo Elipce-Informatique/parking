@@ -309,9 +309,16 @@ module.exports = {
                     if (evt.sense === undefined) {
                         // Last sense of the sensor
                         mysqlHelper.execute(pool, selectLastSense, [sensorId], function (err, rows) {
-                            if (err || rows.length === 0) {
+                            if (err ) {
                                 logger.log('error', 'ERREUR SQL GET LAST SENSE ', err);
                                 reject(err);
+                            }
+                            else if(rows.length === 0){
+
+                                resolve({
+                                    sense: 'free',
+                                    sensorId: sensorId
+                                });
                             }
                             else {
 
@@ -337,9 +344,15 @@ module.exports = {
                     if (evt.state === undefined) {
                         // Last state of the sensor
                         mysqlHelper.execute(pool, selectLastState, [sensorId], function (err, rows) {
-                            if (err || rows.length === 0) {
+                            if (err ) {
                                 logger.log('error', 'ERREUR SQL GET LAST STATE ', err);
                                 reject(err);
+                            }
+                            else if (rows.length === 0){
+                                resolve({
+                                    state: 'online',
+                                    sensorId: sensorId
+                                });
                             }
                             else {
 
