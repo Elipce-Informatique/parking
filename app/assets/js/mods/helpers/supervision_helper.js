@@ -97,7 +97,7 @@ module.exports = {
                 break;
             case "view_event":
                 // UPDATE DISPLAYS in the data
-                console.log('MESSAGE %o', message);
+                //console.log('MESSAGE %o', message);
                 this._handleViewEvent(message.data);
                 break;
             default:
@@ -262,7 +262,7 @@ module.exports = {
      * @private
      */
     _handleViewEvent: function (idViews) {
-        console.log('ID views %o', idViews);
+        //console.log('ID views %o', idViews);
         // Merge array views to update
         this._viewsIdToUpdate = this._viewsIdToUpdate.concat(idViews);
         this._displayDFU = true;
