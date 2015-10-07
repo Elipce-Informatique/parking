@@ -529,7 +529,9 @@ var store = Reflux.createStore({
                     console.error('ERREUR WS : %o', err);
                 }.bind(this)
             );
-        }.bind(this));
+        }.bind(this)).fail(function( jqXHR, textStatus ) {
+            console.error('GET LAST JOURNAL EQUIPEMENT OU ALERTE KO? PAS DE CONNEXION WS '+ textStatus);
+        });;
     },
 
     /**
