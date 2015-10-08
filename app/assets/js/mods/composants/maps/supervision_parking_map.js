@@ -351,17 +351,15 @@ var parkingMap = React.createClass({
             }, this);
 
             //console.log('"###### %o', affModif.data.vues_bis);
-            if (affModif.data.vues_bis.length > 0) {
 
-                // ATTACHEMENT DU NOUVEAU LABEL
-                aff.bindLabel(afficheurHelper.generateAfficheurLabel(affModif), {
-                    noHide: true,
-                    className: 'afficheur_label',
-                    clickable: true
-                });
-                // AFFICHAGE DU NOUVEAU LABEL
-                aff.showLabel();
-            }
+            // ATTACHEMENT DU NOUVEAU LABEL
+            aff.bindLabel(afficheurHelper.generateAfficheurLabel(affModif), {
+                noHide: true,
+                className: 'afficheur_label',
+                clickable: true
+            });
+            // AFFICHAGE DU NOUVEAU LABEL
+            aff.showLabel();
 
         }, this);
 

@@ -275,6 +275,12 @@ var moduleStore = Reflux.createStore({
                 });
             }
         }
+    },
+    onVerify_form_save: function(){
+
+    },
+    onSubmit_form: function(){
+
     }
 });
 module.exports.Store = moduleStore;

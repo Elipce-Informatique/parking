@@ -12,6 +12,7 @@ var ModalAllee = require('../modals/mod_allee');
 var ModalCapteur = require('../modals/mod_capteur');
 var ModalCapteurVirtuel = require('../modals/mod_capteur_virtuel');
 var ModalAfficheur = require('../modals/mod_afficheur');
+var ModalAfficheurGet = require('../modals/mod_afficheur_get');
 var ModalEditPlace = require('../modals/mod_edit_place');
 var ModalCapteurAfficheur = require('../modals/mod_afficheur_select');
 var Field = require('../formulaire/react_form_fields');
@@ -364,7 +365,7 @@ var parkingMap = React.createClass({
      */
     changeDrawToolbar: function (mode_dessin) {
         // 1 : SUPPRIMER L'ANCIENNE TOOLBAR :
-        jQuery.isEmptyObject(this._inst.drawControl) ? '' : this._inst.map.removeControl(this._inst.drawControl);
+        jQuery.isEmptyObject(this._inst.drawControl) ? null : this._inst.map.removeControl(this._inst.drawControl);
 
         // AUCUN DESSIN NÉCESSAIRE
         if (mode_dessin == null) {
@@ -379,7 +380,8 @@ var parkingMap = React.createClass({
             // ------- LES POLYLINES ----------
             var polyline = (
             this._inst.currentMode == mapOptions.dessin.calibre ||
-            this._inst.currentMode == mapOptions.dessin.afficheur
+            this._inst.currentMode == mapOptions.dessin.afficheur ||
+            this._inst.currentMode == mapOptions.dessin.afficheur_get
             ) ? {
                 shapeOptions: {
                     color: mapOptions.control.draw.colors[this._inst.currentMode]
@@ -418,7 +420,8 @@ var parkingMap = React.createClass({
                 repeatMode: true
             } : false;
             // ------- LES MARKERS ----------
-            var marker = (this._inst.currentMode == mapOptions.dessin.afficheur) ? {
+            var marker = (this._inst.currentMode == mapOptions.dessin.afficheur ||
+            this._inst.currentMode == mapOptions.dessin.afficheur_get) ? {
                 icon: new mapOptions.afficheurMarker(),
                 repeatMode: true
             } : false;
@@ -579,7 +582,6 @@ var parkingMap = React.createClass({
             case mapOptions.type_messages.hide_infos:
                 this.hideInfos();
                 break;
-
             case mapOptions.type_messages.hide_modal:
                 this.setState({
                     isModalOpen: false
@@ -594,7 +596,9 @@ var parkingMap = React.createClass({
             case mapOptions.type_messages.new_afficheur:
                 this._onNewAfficheur(data);
                 break;
-
+            case mapOptions.type_messages.new_afficheur_get:
+                this._onNewAfficheurGet(data);
+                break;
             case mapOptions.type_messages.edit_place:
                 this._onEditPlace(data.data);
                 break;
@@ -950,7 +954,7 @@ var parkingMap = React.createClass({
     },
 
     /**
-     * Affiche la modale de création d'allée
+     * Affiche la modale de création d'un afficheur
      * @param data
      * @private
      */
@@ -958,6 +962,20 @@ var parkingMap = React.createClass({
         //console.log('_onNewAfficheur : %o', data);
         this.setState({
             modalType: mapOptions.modal_type.afficheur,
+            isModalOpen: true,
+            afficheurData: data.data
+        });
+    },
+
+    /**
+     * Affiche la modale de localisation d'un afficheur
+     * @param data
+     * @private
+     */
+    _onNewAfficheurGet: function (data) {
+        //console.log('_onNewAfficheur : %o', data);
+        this.setState({
+            modalType: mapOptions.modal_type.afficheur_get,
             isModalOpen: true,
             afficheurData: data.data
         });
@@ -1154,6 +1172,23 @@ var parkingMap = React.createClass({
             return <span/>;
         } else {
             return (<ModalAfficheur
+                onToggle={this.handleToggle}
+                parkingId={this.props.parkingId}
+                planId={this.props.planId}
+                drawData={this.state.afficheurData}
+            />);
+        }
+    },
+    /**
+     * Modal de saisie des informations pour placer un afficheur
+     * @returns {XML}
+     * @private
+     */
+    _modalAfficheurGet: function () {
+        if (!this.state.isModalOpen) {
+            return <span/>;
+        } else {
+            return (<ModalAfficheurGet
                 onToggle={this.handleToggle}
                 parkingId={this.props.parkingId}
                 planId={this.props.planId}
@@ -1379,6 +1414,9 @@ var parkingMap = React.createClass({
                 break;
             case mapOptions.modal_type.afficheur:
                 retour = this._modalAfficheur();
+                break;
+            case mapOptions.modal_type.afficheur_get:
+                retour = this._modalAfficheurGet();
                 break;
             case mapOptions.modal_type.place_multiple:
                 retour = this._modalPlaceMultiple();

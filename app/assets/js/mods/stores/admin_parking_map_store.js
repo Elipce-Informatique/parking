@@ -275,7 +275,7 @@ var store = Reflux.createStore({
             // -------------------------------------------------------------
             // PROCÉDURE DE CRÉATION D'AFFICHEUR
             case mapOptions.dessin.afficheur_get:
-                //console.log('PASS ADD AFFICHEUR : %o', data);
+                console.log('PASS ADD AFFICHEUR : %o', data);
                 var dessin = data.e.layer;
 
                 // INIT DES VARIABLES NÉCESSAIRES À LA CRÉATION
@@ -287,22 +287,25 @@ var store = Reflux.createStore({
                 if (data.e.layerType === "polyline") {
                     poly = dessin;
                     markerCoords = afficheurHelper.getCoordAfficheurFromPolyline(dessin);
-                    var geojson = poly.toGeoJSON();
-                    geojson = JSON.stringify(geojson.geometry.coordinates);
-                    console.log('Afficheur coords : %o Plan id : %o', markerCoords, this._inst.planInfos.id);
-                    console.log('Afficheur Geojson : %o', geojson);
 
-                    swal('Geojson : >>>' + geojson + '<<< Lat : ' +
-                    markerCoords.lat + ' Lng : ' + markerCoords.lng +
-                    ' Plan id : ' + this._inst.planInfos.id);
+                    // Mode polyline, on crée un marker au bout
+                    marker = new L.marker(markerCoords);
                 } else {
                     marker = dessin;
                     markerCoords = dessin._latlng;
                     // Mode marker, on laisse le polyline à null
-                    console.log('Afficheur coords : %o plan id : %o', markerCoords, this._inst.planInfos.id);
-                    swal('Lat : ' + dessin._latlng.lat + ' Lng : ' + dessin._latlng.lng +
-                    ' Plan id : ' + this._inst.planInfos.id);
                 }
+
+                // PRÉPARATION DU RETOUR
+                var retour = {
+                    type: mapOptions.type_messages.new_afficheur_get,
+                    data: {
+                        coords: markerCoords,
+                        polyline: poly,
+                        marker: marker
+                    }
+                };
+                this.trigger(retour);
                 break;
             case mapOptions.dessin.capteur_afficheur:
                 console.log('PASS FORME CAPTEUR_AFFICHEUR DESSINEE : %o', data);
@@ -548,6 +551,10 @@ var store = Reflux.createStore({
             }]
         });
     },
+    /**
+     * Affecte le contextMenu sur les afficheurs ajoutés à la map
+     * @param e
+     */
     onFeature_afficheur_add: function (e) {
         //console.log('feature afficheur add : %o', e);
         e.layer.bindContextMenu({
@@ -663,6 +670,11 @@ var store = Reflux.createStore({
             this.trigger(retour);
         }
     },
+    /**
+     * Passe en mode afficheurs, attention le fonctionnel
+     * derrière dépend du switch sur le mode d'init du parking
+     * @param data
+     */
     onMode_afficheur: function (data) {
 
         if (this.canSwitchMode()) {
@@ -676,7 +688,7 @@ var store = Reflux.createStore({
                     var retour = {
                         type: mapOptions.type_messages.mode_change,
                         data: {
-                            mode: mapOptions.dessin.afficheur
+                            mode: mapOptions.dessin.afficheur_get
                         }
                     };
                     this.trigger(retour);
@@ -798,7 +810,6 @@ var store = Reflux.createStore({
      * @param formId : id du formulaire
      */
     onSubmit_form: function (formDom, formId) {
-
         // SÉLECTION DU FORMULAIRE POUR TRAITER L'ACTION
         switch (formId) {
             case "form_mod_places_multiples":

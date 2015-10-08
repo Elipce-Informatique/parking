@@ -193,9 +193,10 @@ var FormParking = React.createClass({
                         min={0}/>
 
                     <Row>
-                        <Col md={2}>
-                            <label
-                                className="text-right">
+                        <Col
+                            md={2}
+                            className="text-right">
+                            <label>
                                 {Lang.get('administration_parking.parking.init_mode')}
                             </label>
                         </Col>
