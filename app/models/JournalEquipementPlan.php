@@ -57,7 +57,10 @@ class JournalEquipementPlan extends BaseModel
      */
     public static function getJournalPlan($planId)
     {
-        return JournalEquipementPlan::where('plan_id', '=', $planId)->get();
+//        return JournalEquipementPlan::where('plan_id', '=', $planId)->get();
+        return DB::table('journal_equipement_plan')
+            ->where('plan_id', '=', $planId)
+            ->get();
     }
 
     /**
@@ -68,7 +71,11 @@ class JournalEquipementPlan extends BaseModel
      */
     public static function getJournalPlanFromVersion($planId, $journalId)
     {
-        return JournalEquipementPlan::wherePlanId($planId)->where('id', '>', $journalId)->get();
+//        return JournalEquipementPlan::wherePlanId($planId)->where('id', '>', $journalId)->get();
+        return DB::table('journal_equipement_plan')
+            ->where('plan_id', '=', $planId)
+            ->where('id', '>', $journalId)
+            ->get();
     }
 
     /**
@@ -79,6 +86,9 @@ class JournalEquipementPlan extends BaseModel
      */
     public static function getJournalPlacesFromVersion($planId, $journalId)
     {
+        // ARTHUNG
+        DB::connection()->disableQueryLog();
+
         $placeIds = DB::table('journal_equipement_plan')->where('plan_id', '=', $planId)
             ->where('id', '>', $journalId)
             ->groupBy('place_id')
