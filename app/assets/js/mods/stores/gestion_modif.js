@@ -11,7 +11,7 @@ var store = Reflux.createStore({
         // Change formulaire
         this.listenTo(Actions.global.gestion_modif_change, $.proxy(this.modifFlag, this));
         this.listenTo(Actions.global.gestion_modif_reset, $.proxy(this.resetFlag, this));
-        this.listenTo(Actions.validation.submit_form, $.proxy(this.resetFlag, this));
+        this.listenTo(Actions.validation.submit_form, this.resetFlag.bind(this));
         this.listenTo(Actions.bandeau.retour, $.proxy(this.triggerBack, this));
         this.listenTo(Actions.bandeau.boutons_perso, $.proxy(this.triggerBoutonsPerso, this));
         $(window).on('beforeunload', $.proxy(this.beforeUnLoad, this));
