@@ -79,7 +79,7 @@ class JournalEquipementPlan extends BaseModel
      */
     public static function getJournalPlacesFromVersion($planId, $journalId)
     {
-        $placeIds = JournalEquipementPlan::wherePlanId($planId)
+        $placeIds = DB::table('journal_equipement_plan')->where('plan_id', '=', $planId)
             ->where('id', '>', $journalId)
             ->groupBy('place_id')
             ->lists('place_id');
