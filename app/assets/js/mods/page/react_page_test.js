@@ -875,5 +875,9 @@ var storeTest = Reflux.createStore({
     onForm_field_verif: function (obj) {
         console.log('VERIF ' + obj.name + ': ' + obj.value);
 
+    },
+
+    onVerify_form_save: function(){
+
     }
 });

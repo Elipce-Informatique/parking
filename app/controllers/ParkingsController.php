@@ -139,6 +139,26 @@ class ParkingsController extends \BaseController
     }
 
     /**
+     * Récupère la liste des afficheurs du parking.
+     * @param $parkingId : id du parking
+     * @return reponse
+     */
+    public function getAfficheursGet($parkingId)
+    {
+        $afficheurs = DB::table('parking')
+            ->join('concentrateur', 'parking.id', '=', 'concentrateur.parking_id')
+            ->join('bus', 'concentrateur.id', '=', 'bus.concentrateur_id')
+            ->join('afficheur', 'bus.id', '=', 'afficheur.bus_id')
+            ->where('parking.id', '=', $parkingId)
+            ->where('afficheur.a_supprimer', '=', '0')
+            ->whereNull('afficheur.lat', '=', '0')
+            ->select('afficheur.*')
+            ->get();
+        return $afficheurs;
+
+    }
+
+    /**
      * Récupère TOUTES les données du tableau de bord du parking:
      *
      * - Global parking

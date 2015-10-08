@@ -263,7 +263,6 @@ var store = Reflux.createStore({
     init: function () {
         // REGISTER STATUSUPDATE ACTION
         this.listenTo(Actions.validation.form_field_changed, this.updateForm);
-        this.listenTo(Actions.validation.submit_form, this.onSubmit_form);
         this.listenTo(initModale, this.loadInitData); // Appellé à l'affichage de la modale
 
         this.listenTo(Actions.map.liste_concentrateurs, this.getConcentrateurCombo);
