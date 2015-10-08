@@ -54,7 +54,7 @@ class JournalEquipementPlanController extends \BaseController
     public function last($planId)
     {
         // ATTENTION/ ARTHUNG/ les select sur une grosse quantité de données doivent être faits en queryBuilder et SURTOUT PAS en eloquent.
-        $retour = DB::table('journal_equipement_plan')->where('plan_id','=','9')->max('id');
+        $retour = DB::table('journal_equipement_plan')->where('plan_id','=',$planId)->max('id');
 
         return $retour ? $retour : 0;
 
