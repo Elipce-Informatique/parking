@@ -107,7 +107,6 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     /*
      * Configuration d'un parking
      */
-    Route::get('configuration_parking/treeview_carte', 'ConfigurationParkingController@menuTreeView');
     Route::resource('configuration_parking', 'ConfigurationParkingController');
 
 
@@ -157,6 +156,9 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
 |
 */
 Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parking'], function () {
+
+    // TREEVIEWS
+    Route::get('treeview_carte', 'ConfigurationParkingController@menuTreeView');
 
     // GESTION PLANS ET NIVEAUX
     Route::get('plan/{id}/places', 'PlansController@showWithPlaces');
