@@ -435,7 +435,9 @@ class Utilisateur extends Eloquent implements UserInterface, RemindableInterface
 
                 // Création et envoie du mail
                 $titre = Lang::get('mail.creation_utilisateur_titre');
-                $texte = str_replace('[-pwd-]', $pwd, Lang::get('mail.creation_utilisateur_text'));
+                $texte = Config::get('app.url');
+//                $environment->
+                $texte .= "\n".str_replace('[-pwd-]', $pwd, Lang::get('mail.creation_utilisateur_text'));
                 $infos = array(
                     'nom' => $fieldUser['nom'],
                     'prenom' => $fieldUser['prenom'],
