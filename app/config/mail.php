@@ -54,7 +54,7 @@ return array(
     |
     */
 
-    'from' => array('address' => 'elipce.informatique@gmail.com', 'name' => 'Elipce'),
+    'from' => array('address' => 'noreply@leaderpark.info', 'name' => 'noreply@leaderpark.info'),
 
     /*
     |--------------------------------------------------------------------------
