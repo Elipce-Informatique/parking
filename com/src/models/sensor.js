@@ -387,12 +387,12 @@ module.exports = {
                     var state = objState.state;
 
                     var inst = mysql.format(eventSql,[sensorId, evt.date, state, sense, evt.supply, evt.dfu]);
-                    logger.log('info', '##### EVENT_CAPTEUR: '+ inst);
+                    //logger.log('info', '##### EVENT_CAPTEUR: '+ inst);
                     // INSERT IN THE EVENT TABLE
-                    mysqlHelper.execute(pool, eventSql, inst,
+                    mysqlHelper.execute(pool, inst,
                         function (err, result) {
                             if (err) {
-                                logger.log('error', 'ERREUR SQL INSERT event_sensor ', err);
+                                logger.log('error', 'ERREUR SQL INSERT event_sensor '+inst, err);
                             }
                             else {
                                 //logger.log('info', 'INSERTED event_sensor OK');
@@ -490,7 +490,7 @@ module.exports = {
                     sense,
                     evt.date
                 ]);
-                logger.log('info', '##### JOURNAL_EQUIPEMENT_PLAN: '+ inst);
+                //logger.log('info', '##### JOURNAL_EQUIPEMENT_PLAN: '+ inst);
 
                 var p1 = Q.promise(function (resolve, reject) {
                     mysqlHelper.execute(pool, inst,
