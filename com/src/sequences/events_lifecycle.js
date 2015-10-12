@@ -172,7 +172,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
             else{
                 resolve();
             }
-        });
+        }.bind(this));
 
         // VIEW
         var pViews = Q.promise(function (resolve, reject) {
@@ -189,7 +189,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
             else{
                 resolve();
             }
-        });
+        }.bind(this));
 
         // COUNTER
         var pCounters = Q.promise(function (resolve, reject) {
@@ -198,7 +198,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
                 counterModel.insertCounterEvents(this.pool, aCounterEvt);
             }
             resolve();
-        });
+        }.bind(this));
 
         // DISPLAY
         var pDisplays = Q.promise(function (resolve, reject) {
@@ -207,7 +207,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
                 displayModel.insertDisplayEvents(this.pool, aDisplayEvt);
             }
             resolve();
-        });
+        }.bind(this));
 
         // BUS
         var pBusses = Q.promise(function (resolve, reject) {
@@ -216,7 +216,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
                 busModel.insertBusEvents(this.pool, aBusEvt);
             }
             resolve();
-        });
+        }.bind(this));
 
 
         // Send next event query when all inserted
@@ -224,7 +224,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
 
             // Send the next EventQuery
             this.events_controller.sendEventQuery(data.ackID);
-        });
+        }.bind(this));
     }
 }
 
