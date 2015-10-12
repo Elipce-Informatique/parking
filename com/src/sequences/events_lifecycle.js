@@ -158,6 +158,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
             }
         }, this);
 
+        // TODO tracer pourquoi on a pas onFinished sur les VUES
 
         // SENSOR
         var pSensors = Q.promise(function (resolve, reject) {
@@ -223,8 +224,11 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         Q.all([pSensors, pViews, pCounters, pDisplays, pBusses]).then(function(){
             //logger.log('info', "##### CHUNK FINISHED, NEXT"+data.ackID);
             // Send the next EventQuery
-            this.events_controller.sendEventQuery(data.ackID);
+            //this.events_controller.sendEventQuery(data.ackID);
         }.bind(this));
+
+        // Send the next EventQuery
+        this.events_controller.sendEventQuery(data.ackID);
     }
 }
 
