@@ -221,7 +221,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
 
         // Send next event query when all inserted
         Q.all([pSensors, pViews, pCounters, pDisplays, pBusses]).then(function(){
-            logger.log('info', "##### CHUNK FINISHED, NEXT"+data.ackID);
+            //logger.log('info', "##### CHUNK FINISHED, NEXT"+data.ackID);
             // Send the next EventQuery
             this.events_controller.sendEventQuery(data.ackID);
         }.bind(this));

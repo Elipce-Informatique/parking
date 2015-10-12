@@ -235,6 +235,12 @@ module.exports = {
 
             }, function reject1(err) {
                 logger.log('error', 'REJECT promise 1', err);
+                // FINAL VIEW EVENT
+                if (index == (events.length - 1)) {
+                    //logger.log('info', 'NOTIFICATION VIEW EVENTS OK ');
+                    // NOTIFY CALLER THAT WE'RE DONE
+                    onFinished(viewsId);
+                }
             }).then(function resolveAll() {
 
                 // FINAL VIEW EVENT
