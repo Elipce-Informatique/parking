@@ -376,6 +376,8 @@ module.exports = {
 
             }, function reject1(err) {
                 logger.log('error', 'REJECT promise 1', err);
+                // Call onFinished function idf we are on last event
+                sendFinished(index,(events.length - 1), onFinished);
             }).then(function resolve2(obj) {
                 //logger.log('info', "++++++++++++++ OBJET Q.ALL", obj);
                 // Promise 3
@@ -476,6 +478,8 @@ module.exports = {
                 });
             }, function reject2(err) {
                 logger.log('error', 'REJECT promise 2', err);
+                // Call onFinished function idf we are on last event
+                sendFinished(index,(events.length - 1), onFinished);
             }).then(function resolve3(oData) {
                 //logger.log('info', 'promise 3 OK ');
                 // oData = car space free / occupied + infos
@@ -526,17 +530,29 @@ module.exports = {
                 if (err != 'NO ONLINE') {
                     logger.log('error', 'REJECT promise 3');
                 }
-            }).then(function resolveAll() {
+                // Call onFinished function idf we are on last event
+                sendFinished(index,(events.length - 1), onFinished);
 
-                // FINAL SENSOR EVENT
-                if (index == (events.length - 1)) {
-                    //logger.log('info', 'NOTIFICATION SENSOR EVENTS OK ');
-                    // NOTIFY CALLER THAT WE'RE DONE
-                    onFinished();
-                }
+            }).then(function resolveAll() {
+                // Call onFinished function idf we are on last event
+                sendFinished(index,(events.length - 1), onFinished);
             });
 
         });// fin _.each
+
+        /**
+         * Send a notification when events are finished
+         * @param index: current index
+         * @param total: last index
+         * @param callback
+         */
+        function sendFinished(index, total, callback){
+            // FINAL SENSOR EVENT
+            if (index == total) {
+                // NOTIFY CALLER THAT WE'RE DONE
+                callback();
+            }
+        }
     },
 
     /**
