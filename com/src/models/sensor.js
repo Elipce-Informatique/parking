@@ -550,7 +550,7 @@ module.exports = {
             logger.log('info','ackID: '+ ackID+' info', 'index:'+index+' total:'+total);
             // FINAL SENSOR EVENT
             if (index == total) {
-                logger.log('info', 'NOTIFICATION SENSOR EVENTS FINISHED');
+                logger.log('info', 'NOTIFICATION SENSOR EVENTS FINISHED '+ackID);
                 // NOTIFY CALLER THAT WE'RE DONE
                 callback();
             }
