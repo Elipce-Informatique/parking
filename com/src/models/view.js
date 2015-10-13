@@ -236,8 +236,9 @@ module.exports = {
             }, function reject1(err) {
                 logger.log('error', 'REJECT promise 1', err);
                 // FINAL VIEW EVENT
+                logger.log('info', 'index:'+index+' total:'+(events.length - 1));
                 if (index == (events.length - 1)) {
-                    //logger.log('info', 'NOTIFICATION VIEW EVENTS OK ');
+                    logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED rejected');
                     // NOTIFY CALLER THAT WE'RE DONE
                     onFinished(viewsId);
                 }
@@ -245,7 +246,7 @@ module.exports = {
 
                 // FINAL VIEW EVENT
                 if (index == (events.length - 1)) {
-                    //logger.log('info', 'NOTIFICATION VIEW EVENTS OK ');
+                    logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED resolved ');
                     // NOTIFY CALLER THAT WE'RE DONE
                     onFinished(viewsId);
                 }
