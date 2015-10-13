@@ -59,7 +59,7 @@ EventsLifeCycle.prototype.startEventLoop = function () {
  * @param client
  */
 EventsLifeCycle.prototype.onEventData = function (data) {
-    logger.log('info', '#2 onEventData ' + data.ackID, data);
+    logger.log('info', '#2 onEventData, next ackID: ' + data.ackID, data);
 
     // Update ackID to the new value
     //this.ackID = _.isNumber(data.ackID) ? data.ackID : this.ackID;
@@ -158,8 +158,6 @@ EventsLifeCycle.prototype.onEventData = function (data) {
             }
         }, this);
 
-        // TODO tracer pourquoi on a pas onFinished sur les VUES
-
         // SENSOR
         var pSensors = Q.promise(function (resolve, reject) {
             if (aSensorEvt.length > 0) {
@@ -180,9 +178,13 @@ EventsLifeCycle.prototype.onEventData = function (data) {
             if (aViewEvt.length > 0) {
                 // INSERT THE VIEW EVENTS GATHERED
                 viewModel.insertViewEvents(this.pool, aViewEvt, function (viewsId) {
+                    // Views to update on supervision
                     if (viewsId.length > 0) {
                         // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
                         messenger.supervisionBroadcast("view_event", viewsId);
+                        resolve();
+                    }
+                    else{
                         resolve();
                     }
                 }, data.ackID);
@@ -226,9 +228,6 @@ EventsLifeCycle.prototype.onEventData = function (data) {
             // Send the next EventQuery
             this.events_controller.sendEventQuery(data.ackID);
         }.bind(this));
-
-        // Send the next EventQuery
-        //this.events_controller.sendEventQuery(data.ackID);
     }
 }
 
