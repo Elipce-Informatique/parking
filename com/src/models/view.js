@@ -238,7 +238,7 @@ module.exports = {
                 // FINAL VIEW EVENT
                 logger.log('info','ackID: '+ackID+' info', 'index:'+index+' total:'+(events.length - 1));
                 if (index == (events.length - 1)) {
-                    logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED rejected');
+                    logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED rejected '+ackID);
                     // NOTIFY CALLER THAT WE'RE DONE
                     onFinished(viewsId);
                 }
@@ -246,7 +246,7 @@ module.exports = {
 
                 // FINAL VIEW EVENT
                 if (index == (events.length - 1)) {
-                    logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED resolved ');
+                    logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED resolved '+ackID);
                     // NOTIFY CALLER THAT WE'RE DONE
                     onFinished(viewsId);
                 }
