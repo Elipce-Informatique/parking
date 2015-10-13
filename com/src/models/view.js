@@ -236,7 +236,7 @@ module.exports = {
             }, function reject1(err) {
                 logger.log('error', 'REJECT VIEW promise', err);
                 // FINAL VIEW EVENT
-                logger.log('ackID: '+ackID+' info', 'index:'+index+' total:'+(events.length - 1));
+                logger.log('info','ackID: '+ackID+' info', 'index:'+index+' total:'+(events.length - 1));
                 if (index == (events.length - 1)) {
                     logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED rejected');
                     // NOTIFY CALLER THAT WE'RE DONE

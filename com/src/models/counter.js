@@ -221,12 +221,16 @@ module.exports = {
 
 
             }, function reject1(err) {
-                logger.log('error', 'REJECT promise 1', err);
+                logger.log('error', 'REJECT COUNTER promise', err);
+                // FINAL COUNTER EVENT
+                if (index == (events.length - 1)) {
+                    // NOTIFY CALLER THAT WE'RE DONE
+                    onFinished(countersId);
+                }
             }).then(function resolveEventCompteur() {
 
                 // FINAL COUNTER EVENT
                 if (index == (events.length - 1)) {
-                    //logger.log('info', 'NOTIFICATION COUNTER EVENTS OK ');
                     // NOTIFY CALLER THAT WE'RE DONE
                     onFinished(countersId);
                 }

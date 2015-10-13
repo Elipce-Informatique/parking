@@ -547,7 +547,7 @@ module.exports = {
          * @param callback
          */
         function sendFinished(index, total, callback, ackID){
-            logger.log('ackID: '+ ackID+' info', 'index:'+index+' total:'+total);
+            logger.log('info','ackID: '+ ackID+' info', 'index:'+index+' total:'+total);
             // FINAL SENSOR EVENT
             if (index == total) {
                 logger.log('info', 'NOTIFICATION SENSOR EVENTS FINISHED');
