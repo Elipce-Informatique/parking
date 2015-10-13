@@ -168,7 +168,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
                     // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
                     messenger.supervisionBroadcast("sensor_event");
                     resolve();
-                });
+                }, data.ackID);
             }
             else{
                 resolve();
@@ -185,7 +185,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
                         messenger.supervisionBroadcast("view_event", viewsId);
                         resolve();
                     }
-                });
+                }, data.ackID);
             }
             else{
                 resolve();

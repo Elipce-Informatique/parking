@@ -216,7 +216,7 @@ module.exports = {
      * @param events : array of events to insert
      * @param onFinished : function called when event insertion is done
      */
-    insertSensorEvents: function (pool, events, onFinished) {
+    insertSensorEvents: function (pool, events, onFinished, ackID) {
         logger.log('info', 'SENSOR EVENTS to store ', events);
 
         var mysqlHelper = require('../utils/mysql_helper.js');
@@ -375,9 +375,9 @@ module.exports = {
                 return Q.all([p1, p2]);
 
             }, function reject1(err) {
-                logger.log('error', 'REJECT promise 1', err);
+                logger.log('error', 'REJECT SENSOR promise 1', err);
                 // Call onFinished function idf we are on last event
-                sendFinished(index,(events.length - 1), onFinished);
+                sendFinished(index,(events.length - 1), onFinished, ackID);
             }).then(function resolve2(obj) {
                 //logger.log('info', "++++++++++++++ OBJET Q.ALL", obj);
                 // Promise 3
@@ -477,9 +477,9 @@ module.exports = {
                     }
                 });
             }, function reject2(err) {
-                logger.log('error', 'REJECT promise 2', err);
+                logger.log('error', 'REJECT SENSOR promise 2', err);
                 // Call onFinished function idf we are on last event
-                sendFinished(index,(events.length - 1), onFinished);
+                sendFinished(index,(events.length - 1), onFinished, ackID);
             }).then(function resolve3(oData) {
                 //logger.log('info', 'promise 3 OK ');
                 // oData = car space free / occupied + infos
@@ -528,14 +528,14 @@ module.exports = {
 
             }, function reject3(err) {
                 if (err != 'NO ONLINE') {
-                    logger.log('error', 'REJECT promise 3');
+                    logger.log('error', 'REJECT SENSOR promise 3',err);
                 }
                 // Call onFinished function idf we are on last event
-                sendFinished(index,(events.length - 1), onFinished);
+                sendFinished(index,(events.length - 1), onFinished, ackID);
 
             }).then(function resolveAll() {
                 // Call onFinished function idf we are on last event
-                sendFinished(index,(events.length - 1), onFinished);
+                sendFinished(index,(events.length - 1), onFinished, ackID);
             });
 
         });// fin _.each
@@ -546,8 +546,8 @@ module.exports = {
          * @param total: last index
          * @param callback
          */
-        function sendFinished(index, total, callback){
-            logger.log('info', 'index:'+index+' total:'+total);
+        function sendFinished(index, total, callback, ackID){
+            logger.log('ackID: '+ ackID+' info', 'index:'+index+' total:'+total);
             // FINAL SENSOR EVENT
             if (index == total) {
                 logger.log('info', 'NOTIFICATION SENSOR EVENTS FINISHED');
