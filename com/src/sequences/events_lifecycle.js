@@ -157,7 +157,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
                 default:
             }
         }, this);
-
+// TODO enlever les log index dans view, sensor et ici
         // SENSOR
         var pSensors = Q.promise(function (resolve, reject) {
             if (aSensorEvt.length > 0) {
