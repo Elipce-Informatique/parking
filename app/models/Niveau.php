@@ -3,7 +3,11 @@
 class Niveau extends BaseModel
 {
     protected $table = 'niveau';
-    protected $fillable = ['libelle','description','parking_id'];
+    protected $fillable = [
+        'libelle',
+        'description',
+        'parking_id'
+    ];
 
     /*****************************************************************************
      * RELATIONS DU MODELE *******************************************************
