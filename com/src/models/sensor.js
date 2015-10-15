@@ -281,7 +281,7 @@ module.exports = {
                     //logger.log('info', 'QUERY SENSOR ID', result);
                     // ROLLBACK THE TRANSACTION
                     if (err) {
-                        logger.log('error', 'ERREUR SQL : ' + inst);
+                        logger.log('error', 'ERREUR SQL GET SENSOR ID, v4_id: ' + evt.ID);
                         reject(err);
                     }
                     else if (result.length == 0) {
