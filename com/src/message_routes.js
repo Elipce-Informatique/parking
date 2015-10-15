@@ -161,6 +161,7 @@ module.exports.route = function (message, client) {
 
     }
     // Trace
+    var now = new Date();
     logger.log('info', 'INCOMING QUERY at '+now.toISOString()+': messageType: ' + message.messageType + ' - Client type: ' + (client.isController != undefined ? (client.isController ? 'Controller' : 'Supervision') : 'unknown'));
 
 };
