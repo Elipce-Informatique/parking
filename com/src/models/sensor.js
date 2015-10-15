@@ -216,7 +216,7 @@ module.exports = {
      * @param events : array of events to insert
      * @param onFinished : function called when event insertion is done
      */
-    insertSensorEvents: function (pool, events, onFinished) {
+    insertSensorEvents: function (pool, events, onFinished, ackID) {
         logger.log('info', 'SENSOR EVENTS to store ', events);
 
         var mysqlHelper = require('../utils/mysql_helper.js');
@@ -375,7 +375,9 @@ module.exports = {
                 return Q.all([p1, p2]);
 
             }, function reject1(err) {
-                logger.log('error', 'REJECT promise 1', err);
+                logger.log('error', 'REJECT SENSOR promise 1', err);
+                // Call onFinished function idf we are on last event
+                sendFinished(index,(events.length - 1), onFinished, ackID);
             }).then(function resolve2(obj) {
                 //logger.log('info', "++++++++++++++ OBJET Q.ALL", obj);
                 // Promise 3
@@ -386,11 +388,13 @@ module.exports = {
                     var sense = objSense.sense;
                     var state = objState.state;
 
+                    var inst = mysql.format(eventSql,[sensorId, evt.date, state, sense, evt.supply, evt.dfu]);
+                    //logger.log('info', '##### EVENT_CAPTEUR: '+ inst);
                     // INSERT IN THE EVENT TABLE
-                    mysqlHelper.execute(pool, eventSql, [sensorId, evt.date, state, sense, evt.supply, evt.dfu],
+                    mysqlHelper.execute(pool, inst,
                         function (err, result) {
                             if (err) {
-                                logger.log('error', 'ERREUR SQL INSERT event_sensor ', err);
+                                logger.log('error', 'ERREUR SQL INSERT event_sensor '+inst, err);
                             }
                             else {
                                 //logger.log('info', 'INSERTED event_sensor OK');
@@ -473,7 +477,9 @@ module.exports = {
                     }
                 });
             }, function reject2(err) {
-                logger.log('error', 'REJECT promise 2', err);
+                logger.log('error', 'REJECT SENSOR promise 2', err);
+                // Call onFinished function idf we are on last event
+                sendFinished(index,(events.length - 1), onFinished, ackID);
             }).then(function resolve3(oData) {
                 //logger.log('info', 'promise 3 OK ');
                 // oData = car space free / occupied + infos
@@ -488,15 +494,10 @@ module.exports = {
                     sense,
                     evt.date
                 ]);
+                //logger.log('info', '##### JOURNAL_EQUIPEMENT_PLAN: '+ inst);
 
                 var p1 = Q.promise(function (resolve, reject) {
-                    mysqlHelper.execute(pool, journalSql, [
-                            evtData.plan_id,
-                            evtData.place_id,
-                            evtData.etat_occupation_id,
-                            sense,
-                            evt.date
-                        ],
+                    mysqlHelper.execute(pool, inst,
                         function (err, result) {
                             if (err) {
                                 logger.log('error', 'ERREUR INSERT journal_equipement_plan SQL : ' + inst, err);
@@ -527,19 +528,33 @@ module.exports = {
 
             }, function reject3(err) {
                 if (err != 'NO ONLINE') {
-                    logger.log('error', 'REJECT promise 3');
+                    logger.log('error', 'REJECT SENSOR promise 3',err);
                 }
-            }).then(function resolveAll() {
+                // Call onFinished function idf we are on last event
+                sendFinished(index,(events.length - 1), onFinished, ackID);
 
-                // FINAL SENSOR EVENT
-                if (index == (events.length - 1)) {
-                    //logger.log('info', 'NOTIFICATION SENSOR EVENTS OK ');
-                    // NOTIFY CALLER THAT WE'RE DONE
-                    onFinished();
-                }
+            }).then(function resolveAll() {
+                // Call onFinished function idf we are on last event
+                sendFinished(index,(events.length - 1), onFinished, ackID);
             });
 
         });// fin _.each
+
+        /**
+         * Send a notification when events are finished
+         * @param index: current index
+         * @param total: last index
+         * @param callback
+         */
+        function sendFinished(index, total, callback, ackID){
+            logger.log('info','ackID: '+ ackID+' info', 'index:'+index+' total:'+total);
+            // FINAL SENSOR EVENT
+            if (index == total) {
+                logger.log('info', 'NOTIFICATION SENSOR EVENTS FINISHED '+ackID);
+                // NOTIFY CALLER THAT WE'RE DONE
+                callback();
+            }
+        }
     },
 
     /**

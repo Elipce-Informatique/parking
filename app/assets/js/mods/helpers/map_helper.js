@@ -616,7 +616,7 @@ function generateInfosCapteurPlaceVirtuel(concentrateurV4Id, busNum, adressCapte
 function initTreeviewParkingAjax(onSuccess, context) {
     $.ajax({
         type: 'GET',
-        url: BASE_URI + 'configuration_parking/treeview_carte',
+        url: BASE_URI + 'parking/treeview_carte',
         context: context
     })
         .done(onSuccess)

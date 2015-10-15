@@ -138,7 +138,7 @@ module.exports = {
      * @param events : array of events to insert
      * @param onFinished : function called when event insertion is done
      */
-    insertViewEvents: function (pool, events, onFinished) {
+    insertViewEvents: function (pool, events, onFinished, ackID) {
         logger.log('info', 'VIEWS EVENTS to store ', events);
 
         var mysqlHelper = require('../utils/mysql_helper.js');
@@ -234,12 +234,19 @@ module.exports = {
                 return Q.all([p1, p2]);
 
             }, function reject1(err) {
-                logger.log('error', 'REJECT promise 1', err);
+                logger.log('error', 'REJECT VIEW promise', err);
+                // FINAL VIEW EVENT
+                logger.log('info','ackID: '+ackID+' info', 'index:'+index+' total:'+(events.length - 1));
+                if (index == (events.length - 1)) {
+                    logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED rejected '+ackID);
+                    // NOTIFY CALLER THAT WE'RE DONE
+                    onFinished(viewsId);
+                }
             }).then(function resolveAll() {
 
                 // FINAL VIEW EVENT
                 if (index == (events.length - 1)) {
-                    //logger.log('info', 'NOTIFICATION VIEW EVENTS OK ');
+                    logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED resolved '+ackID);
                     // NOTIFY CALLER THAT WE'RE DONE
                     onFinished(viewsId);
                 }
