@@ -122,7 +122,7 @@ function getPlacesInAfficheur(zone, _inst) {
  */
 function generateAfficheurLabel(afficheur) {
     var htmlTooltip = '';
-    if (afficheur.data.vues_bis.length > 0) {
+    if (_.keys(afficheur.data.vues_bis).length > 0) {
         // GÉNÉRATION DU TOOLTIP
         htmlTooltip = '<table>' + _.reduce(afficheur.data.vues_bis, function (str, vue) {
             return str + '<tr>' +
@@ -133,14 +133,15 @@ function generateAfficheurLabel(afficheur) {
                 '</td>' +
                 '</tr>';
         }, "", this) + '</table>';
+        htmlTooltip = _.escape(htmlTooltip);
     }
-
 
     // GÉNÉRATION DU CONTENU DU LABEL
     var htmlAfficheur = '<span class="html-afficheur" data-afficheur-wrapper data-afficheur="' + _.escape(JSON.stringify(afficheur.data)) +
         '" data-toggle="tooltip" data-html="true" title="' +
-        _.escape(htmlTooltip) +
+        htmlTooltip +
         '">' + afficheur.data.defaut + '</span>';
+    console.log('HTML afficheur : %o', htmlAfficheur);
     return htmlAfficheur;
 }
 

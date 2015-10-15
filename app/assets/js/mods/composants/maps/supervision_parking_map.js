@@ -337,29 +337,28 @@ var parkingMap = React.createClass({
         //console.log('AFFICHEURS MAP %o', this._inst.afficheursGroup);
         var afficheurs = afficheurHelper.createAfficheursMapFromAfficheursBDD(data.data);
 
-        // Parcours les afficheurs impactés et les chercher dans les markers
+        // PARCOURS LES AFFICHEURS IMPACTÉS ET LES CHERCHER DANS LES MARKERS
         _.each(afficheurs, function (affModif) {
             var idModif = affModif.data.id;
             var aff = {};
+
+            // RECHERCHE DES AFFICHEURS IMPACTÉS DANS LE LAYER GROUP
             _.each(this._inst.afficheursGroup._layers, function (affMap) {
 
                 // CE N'EST PAS UN POLYLINE, ON EST SUR UN MARKER
                 if (typeof affMap._path === 'undefined' && affMap.options.data.id == idModif) {
                     affMap.unbindLabel();
                     aff = affMap;
+                    // ATTACHEMENT DU NOUVEAU LABEL
+                    aff.bindLabel(afficheurHelper.generateAfficheurLabel(affModif), {
+                        noHide: true,
+                        className: 'afficheur_label',
+                        clickable: true
+                    });
+                    // AFFICHAGE DU NOUVEAU LABEL
+                    aff.showLabel();
                 }
             }, this);
-
-            //console.log('"###### %o', affModif.data.vues_bis);
-
-            // ATTACHEMENT DU NOUVEAU LABEL
-            aff.bindLabel(afficheurHelper.generateAfficheurLabel(affModif), {
-                noHide: true,
-                className: 'afficheur_label',
-                clickable: true
-            });
-            // AFFICHAGE DU NOUVEAU LABEL
-            aff.showLabel();
 
         }, this);
 
