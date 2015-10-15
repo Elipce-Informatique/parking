@@ -106,6 +106,7 @@ var store = Reflux.createStore({
      */
     onLabel_afficheurs_add: function () {
         // AJOUT TOOLTIP UNE FOIS LA BOUCLE PASSEE
+        console.log('Affichage tooltips');
         $("[data-afficheur-wrapper]").tooltip({html: true});
 
         // ATTACHE LE MENU AU LABEL
