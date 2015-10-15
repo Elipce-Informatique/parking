@@ -157,7 +157,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
                 default:
             }
         }, this);
-// TODO enlever les log index dans view, sensor et ici
+
         // SENSOR
         var pSensors = Q.promise(function (resolve, reject) {
             if (aSensorEvt.length > 0) {
@@ -224,7 +224,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
 
         // Send next event query when all inserted
         Q.all([pSensors, pViews, pCounters, pDisplays, pBusses]).then(function(){
-            logger.log('info', "##### CHUNK FINISHED, NEXT"+data.ackID);
+            //logger.log('info', "##### CHUNK FINISHED, NEXT"+data.ackID);
             // Send the next EventQuery
             this.events_controller.sendEventQuery(data.ackID);
         }.bind(this));

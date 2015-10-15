@@ -161,7 +161,7 @@ module.exports.route = function (message, client) {
 
     }
     // Trace
-    logger.log('info', 'INCOMING QUERY: messageType: ' + message.messageType + ' - Client type: ' + (client.isController != undefined ? (client.isController ? 'Controller' : 'Supervision') : 'unknown'));
+    logger.log('info', 'INCOMING QUERY at '+now.toISOString()+': messageType: ' + message.messageType + ' - Client type: ' + (client.isController != undefined ? (client.isController ? 'Controller' : 'Supervision') : 'unknown'));
 
 };
 /**

@@ -74,6 +74,8 @@ module.exports = {
         if (global.controllerClient !== null) {
             // Error message to the original client
             this.send(global.controllerClient, messageType, data, error, errorSocket);
+            var now = new Date();
+            logger.log('info', 'OUTGOING QUERY TO CONTROLLER at '+now.toISOString()+': messageType: ' + messageType );
         } else {
             // No controller connected yet
             this.send(errorSocket, messageType, {}, {

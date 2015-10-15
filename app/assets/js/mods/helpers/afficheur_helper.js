@@ -121,8 +121,10 @@ function getPlacesInAfficheur(zone, _inst) {
  * @returns {string} : le html à mettre dans le label du marker
  */
 function generateAfficheurLabel(afficheur) {
-    // GÉNÉRATION DU TOOLTIP
-    var htmlTooltip = '<table>' + _.reduce(afficheur.data.vues_bis, function (str, vue) {
+    var htmlTooltip = '';
+    if (_.keys(afficheur.data.vues_bis).length > 0) {
+        // GÉNÉRATION DU TOOLTIP
+        htmlTooltip = '<table>' + _.reduce(afficheur.data.vues_bis, function (str, vue) {
             return str + '<tr>' +
                 '<td class="afficheur-libelle" style="color:#' + vue.couleur + ';text-align:left;margin-right:3px;">' +
                 vue.libelle +
@@ -131,12 +133,15 @@ function generateAfficheurLabel(afficheur) {
                 '</td>' +
                 '</tr>';
         }, "", this) + '</table>';
+        htmlTooltip = _.escape(htmlTooltip);
+    }
 
     // GÉNÉRATION DU CONTENU DU LABEL
     var htmlAfficheur = '<span class="html-afficheur" data-afficheur-wrapper data-afficheur="' + _.escape(JSON.stringify(afficheur.data)) +
         '" data-toggle="tooltip" data-html="true" title="' +
-        _.escape(htmlTooltip) +
+        htmlTooltip +
         '">' + afficheur.data.defaut + '</span>';
+    console.log('HTML afficheur : %o', htmlAfficheur);
     return htmlAfficheur;
 }
 
