@@ -217,7 +217,7 @@ module.exports = {
      * @param onFinished : function called when event insertion is done
      */
     insertSensorEvents: function (pool, events, onFinished, ackID) {
-        logger.log('info', 'SENSOR EVENTS to store ', events);
+        logger.log('info', 'SENSOR EVENTS to store '+ackID, events);
 
         var mysqlHelper = require('../utils/mysql_helper.js');
 
@@ -465,7 +465,6 @@ module.exports = {
                                 // We do not change the journal in database
                                 break;
                             default:
-
                                 logger.log('error', "default event.sense " + sense + ". Last sense is getting from BDD in precedent promise, so we don't have to pas here");
                                 reject();
                                 break;
@@ -547,10 +546,10 @@ module.exports = {
          * @param callback
          */
         function sendFinished(index, total, callback, ackID){
-            logger.log('info','ackID: '+ ackID+' info', 'index:'+index+' total:'+total);
+            //logger.log('info','ackID: '+ ackID+' info', 'index:'+index+' total:'+total);
             // FINAL SENSOR EVENT
             if (index == total) {
-                logger.log('info', 'NOTIFICATION SENSOR EVENTS FINISHED '+ackID);
+                //logger.log('info', 'NOTIFICATION SENSOR EVENTS FINISHED '+ackID);
                 // NOTIFY CALLER THAT WE'RE DONE
                 callback();
             }

@@ -139,7 +139,7 @@ module.exports = {
      * @param onFinished : function called when event insertion is done
      */
     insertViewEvents: function (pool, events, onFinished, ackID) {
-        logger.log('info', 'VIEWS EVENTS to store ', events);
+        logger.log('info', 'VIEWS EVENTS to store '+ackID, events);
 
         var mysqlHelper = require('../utils/mysql_helper.js');
         var viewsId = [];
@@ -236,9 +236,9 @@ module.exports = {
             }, function reject1(err) {
                 logger.log('error', 'REJECT VIEW promise', err);
                 // FINAL VIEW EVENT
-                logger.log('info','ackID: '+ackID+' info', 'index:'+index+' total:'+(events.length - 1));
+                //logger.log('info','ackID: '+ackID+' info', 'index:'+index+' total:'+(events.length - 1));
                 if (index == (events.length - 1)) {
-                    logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED rejected '+ackID);
+                    //logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED rejected '+ackID);
                     // NOTIFY CALLER THAT WE'RE DONE
                     onFinished(viewsId);
                 }
@@ -246,7 +246,7 @@ module.exports = {
 
                 // FINAL VIEW EVENT
                 if (index == (events.length - 1)) {
-                    logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED resolved '+ackID);
+                    //logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED resolved '+ackID);
                     // NOTIFY CALLER THAT WE'RE DONE
                     onFinished(viewsId);
                 }
