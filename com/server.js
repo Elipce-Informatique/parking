@@ -10,6 +10,7 @@ global.supervisionClients = [];
 global.parkingId = null;
 global.legLength = conf.legLength;
 global.initMode = 2;
+global.poolNumber = getPoolNumber(10);
 
 
 // Local modules
@@ -202,3 +203,23 @@ function getPort(defaultPort) {
     }
     return defaultPort;
 }
+
+
+/**
+ * Get the port for the server through the comand line argument.
+ * if no mort provided, default port is returned.
+ *
+ * @param args : Command line arguments parsed by minimist.
+ * @param defaultPort
+ * @returns {*}
+ */
+function getPoolNumber(defaultPool) {
+    var _ = require('lodash');
+    var argv = require('minimist')(process.argv.slice(2));
+    if (typeof(argv['pool']) != 'undefined' && !_.isNaN(parseInt(argv['pool']))) {
+        return argv['pool'];
+    }
+    return defaultPool;
+}
+
+
