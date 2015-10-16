@@ -29,7 +29,7 @@ var mysqlClass = {
      * @returns {Function}
      */
     pool: function () {
-        var infos = _.extend(this.connexionInfos, {connectionLimit: 10});
+        var infos = _.extend(this.connexionInfos, {connectionLimit: 5});
         return mysql.createPool(infos);
     },
 
@@ -52,6 +52,7 @@ var mysqlClass = {
             query.on('error', function (err) {
                 logger.log('error','Mysql query error: ' + err);
                 callback(err, true);
+                connection.release();
             });
             query.on('result', function (rows) {
                 callback(false, rows);
