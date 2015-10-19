@@ -15,7 +15,7 @@ return array(
     |
     */
 
-    'driver' => 'log',
+    'driver' => 'smtp',
 
     /*
     |--------------------------------------------------------------------------
@@ -28,7 +28,7 @@ return array(
     |
     */
 
-    'host' => 'smtp.orange.fr',
+    'host' => '127.0.0.1',
 
     /*
     |--------------------------------------------------------------------------
@@ -54,7 +54,7 @@ return array(
     |
     */
 
-    'from' => array('address' => 'elipce.informatique@gmail.com', 'name' => 'Elipce'),
+    'from' => array('address' => 'noreply@leaderpark.info', 'name' => 'noreply@leaderpark.info'),
 
     /*
     |--------------------------------------------------------------------------

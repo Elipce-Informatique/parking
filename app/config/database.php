@@ -55,23 +55,13 @@ return array(
         'mysql' => array(
             'driver'    => 'mysql',
             'host'      => '185.24.155.69',
-            'database'  => 'p023',
-            'username'  => 'p023-distant',
-            'password'  => 'p023',
+            'database'  => 'p022',
+            'username'  => 'p022',
+            'password'  => 'p022',
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
         ),
-//        'mysql' => array(
-//            'driver'    => 'mysql',
-//            'host'      => '192.168.1.220',
-//            'database'  => 'parking',
-//            'username'  => 'root',
-//            'password'  => 'elipce',
-//            'charset'   => 'utf8',
-//            'collation' => 'utf8_unicode_ci',
-//            'prefix'    => '',
-//        ),
 
 		'pgsql' => array(
 			'driver'   => 'pgsql',

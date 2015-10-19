@@ -23,13 +23,13 @@ module.exports = {
         }
     },
     prod: {
-        host: '85.14.137.12',
-        port: 26000,
+        host: '185.24.155.69',
+        port: 26022,
         database: {
             host: 'localhost',
-            user: 'parking',
-            password: 'bruno2015',
-            database: 'parking'
+            user: 'p022',
+            password: 'p022',
+            database: 'p022'
         },
         certificates:{
             ca: "./auth/ca.crt",
