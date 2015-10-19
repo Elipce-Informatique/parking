@@ -194,14 +194,14 @@ EventsLifeCycle.prototype.onEventData = function (data) {
             }
         }.bind(this));
 
-        //// COUNTER
-        //var pCounters = Q.promise(function (resolve, reject) {
-        //    if (aCounterEvt.length > 0) {
-        //        // INSERT THE COUNTER EVENTS GATHERED
-        //        counterModel.insertCounterEvents(this.pool, aCounterEvt);
-        //    }
-        //    resolve();
-        //}.bind(this));
+        // COUNTER
+        var pCounters = Q.promise(function (resolve, reject) {
+            //if (aCounterEvt.length > 0) {
+            //    // INSERT THE COUNTER EVENTS GATHERED
+            //    counterModel.insertCounterEvents(this.pool, aCounterEvt);
+            //}
+            resolve();
+        }.bind(this));
 
         // DISPLAY
         var pDisplays = Q.promise(function (resolve, reject) {
