@@ -8,6 +8,7 @@ composer.phar
 composer.lock
 .env.*.php
 .env.php
+deploy.sh
 
 # Numerous always-ignore extensions
 *.diff
