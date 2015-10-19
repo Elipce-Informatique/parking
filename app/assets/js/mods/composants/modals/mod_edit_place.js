@@ -65,7 +65,6 @@ var ModalEditPlace = React.createClass({
         });
     },
     componentDidMount: function () {
-        console.log('Props de la modale : %o', this.props);
 
     },
 
@@ -79,7 +78,6 @@ var ModalEditPlace = React.createClass({
     },
 
     onStoreTrigger: function (data) {
-        console.log('Data trigger = %o', data);
         this.setState(data);
     },
 
@@ -240,7 +238,6 @@ var store = Reflux.createStore({
             _.each(c.buses, function (b) {
                 _.each(b.capteurs, function (ca) {
                     if (ca.place == null || ca.place.id == this._inst.place_id) {
-                        console.log('PASS clear capteur %o', ca);
                         // Capteur à ajouter
                         clearCapteurs.push({
                             label: c.v4_id.toString() + '.' + b.num.toString() + '.' + ca.adresse.toString(),

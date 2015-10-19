@@ -46,13 +46,18 @@ class JournalEquipementPlanController extends \BaseController
     }
 
     /**
+     * Last journal_equipement_plan pour la plan passé en param
      * @param $planId
      * @return mixed
      */
+
     public function last($planId)
     {
-        $retour = JournalEquipementPlan::wherePlanId($planId)->get()->max('id');
+        // ATTENTION/ ARTHUNG/ les select sur une grosse quantité de données doivent être faits en queryBuilder et SURTOUT PAS en eloquent.
+        $retour = DB::table('journal_equipement_plan')->where('plan_id','=',$planId)->max('id');
+
         return $retour ? $retour : 0;
+
     }
 
 

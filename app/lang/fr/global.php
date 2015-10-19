@@ -23,6 +23,7 @@ return array(
     // BOITES DE DIALOGUES
     'suppression_titre' => 'Êtes-vous sur?',
     'suppression_corps' => 'La suppression est une action irréversible.',
+    'suppression_capteur_corps' => 'La suppression d\'un capteur virtuel entrainera la suppression de tous les capteurs ayant un numéro physique supérieur.',
 
     // CHARGEMENT
     'block_ui' => 'Chargement....',
@@ -94,6 +95,8 @@ Voulez-vous vraiment quitter cette page ?',
     'description' => 'Description',
     'defaut' => 'Défaut',
     'message' => "Message",
+    'reset' => 'Reset',
+    'etat_reseau' => "Communication",
 
     // FORMULAIRE
     'select' => 'Sélection...',
@@ -101,6 +104,7 @@ Voulez-vous vraiment quitter cette page ?',
     'saisieNumberBis' => ' entre %1 et %2',
     'inputTelError' => 'Numéro incorrect',
     'erreurFileInput' => "Seules les extensions suivantes sont prises en compte :\n [extensions]",
+    'associer' => 'Associer',
 
     // PARKING
     'occupee' => 'Occupée',
@@ -120,6 +124,11 @@ Voulez-vous vraiment quitter cette page ?',
     'type_place' => 'Type de place',
     'empty' => 'Libre',
     'full' => 'Complet',
+    'leg' => 'Leg',
+    'virtuel' => 'Virtuel',
+    'config' => 'Configuration',
+    'logo' => "Logo",
+    'telecharger' => "Télécharger",
 
     // ALERTES
     'alerte_full' => "",

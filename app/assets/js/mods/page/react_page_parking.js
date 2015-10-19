@@ -332,6 +332,7 @@ var storeParking = Reflux.createStore({
                 libelle: '',
                 description: '',
                 ip: '',
+                init_mode: '2',
                 server_com: {
                     protocol_version: '1',
                     protocol_port: '',
@@ -474,15 +475,22 @@ var storeParking = Reflux.createStore({
                     // Maj state
                     this.trigger(this.stateLocal);
                 }
-                // Libellé existant
-                else if (tab.save == false && tab.errorBdd == false) {
-                    // Notification
-                    Actions.notif.error(Lang.get('administration_parking.parking.libelleExists'));
-                }
                 // Erreur SQL
                 else {
-                    Actions.notif.error(Lang.get('global.notif_erreur'));
-                    console.log('errorBDD %o',tab);
+
+                    // Upload KO
+                    if (!tab.upload) {
+                        Actions.notif.error(Lang.get('global.notif_erreur_upload'));
+                    }
+                    // Le parking existe déjà
+                    else if (!tab.errorBdd) {
+                        // Notification
+                        Actions.notif.error(Lang.get('administration_parking.parking.libelleExists'));
+                    }
+                    // Erreur SQL
+                    else {
+                        Actions.notif.error(Lang.get('global.notif_erreur'));
+                    }
                 }
             },
 

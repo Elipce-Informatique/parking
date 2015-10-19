@@ -5,7 +5,7 @@
 // Dependencies
 var mysql = require('mysql');
 var _ = require('lodash');
-
+var Q = require('q')
 
 // Local modules
 var logger = require('../utils/logger.js');
@@ -59,7 +59,7 @@ EventsLifeCycle.prototype.startEventLoop = function () {
  * @param client
  */
 EventsLifeCycle.prototype.onEventData = function (data) {
-    logger.log('info', '#2 onEventData ' + data.ackID, data);
+    logger.log('info', '#2 onEventData, next ackID: ' + data.ackID, data);
 
     // Update ackID to the new value
     //this.ackID = _.isNumber(data.ackID) ? data.ackID : this.ackID;
@@ -67,7 +67,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         this.ackID = data.ackID;
     }
     else {
-        logger.log('info', '############ ackID IS NOT A NUMBER ' + data.ackID);
+        //logger.log('info', '############ ackID IS NOT A NUMBER ' + data.ackID);
 
     }
 
@@ -159,44 +159,75 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         }, this);
 
         // SENSOR
-        if (aSensorEvt.length > 0) {
-            // INSERT THE SENSOR EVENTS GATHERED
-            sensorModel.insertSensorEvents(this.pool, aSensorEvt, function () {
-                // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
-                messenger.supervisionBroadcast("sensor_event");
-            });
-        }
+        var pSensors = Q.promise(function (resolve, reject) {
+            if (aSensorEvt.length > 0) {
+                // INSERT THE SENSOR EVENTS GATHERED
+                sensorModel.insertSensorEvents(this.pool, aSensorEvt, function () {
+                    // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
+                    messenger.supervisionBroadcast("sensor_event");
+                    resolve();
+                }, data.ackID);
+            }
+            else{
+                resolve();
+            }
+        }.bind(this));
 
         // VIEW
-        if (aViewEvt.length > 0) {
-            // INSERT THE VIEW EVENTS GATHERED
-            viewModel.insertViewEvents(this.pool, aViewEvt, function (viewsId) {
-                // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
-                messenger.supervisionBroadcast("view_event", viewsId);
-
-            });
-        }
+        var pViews = Q.promise(function (resolve, reject) {
+            if (aViewEvt.length > 0) {
+                // INSERT THE VIEW EVENTS GATHERED
+                viewModel.insertViewEvents(this.pool, aViewEvt, function (viewsId) {
+                    // Views to update on supervision
+                    if (viewsId.length > 0) {
+                        // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
+                        messenger.supervisionBroadcast("view_event", viewsId);
+                        resolve();
+                    }
+                    else{
+                        resolve();
+                    }
+                }, data.ackID);
+            }
+            else{
+                resolve();
+            }
+        }.bind(this));
 
         // COUNTER
-        if (aCounterEvt.length > 0) {
-            // INSERT THE COUNTER EVENTS GATHERED
-            counterModel.insertCounterEvents(this.pool, aCounterEvt);
-        }
+        var pCounters = Q.promise(function (resolve, reject) {
+            if (aCounterEvt.length > 0) {
+                // INSERT THE COUNTER EVENTS GATHERED
+                counterModel.insertCounterEvents(this.pool, aCounterEvt);
+            }
+            resolve();
+        }.bind(this));
 
         // DISPLAY
-        if (aDisplayEvt.length > 0) {
-            // INSERT THE DISPLAY EVENTS GATHERED
-            displayModel.insertDisplayEvents(this.pool, aDisplayEvt);
-        }
+        var pDisplays = Q.promise(function (resolve, reject) {
+            if (aDisplayEvt.length > 0) {
+                // INSERT THE DISPLAY EVENTS GATHERED
+                displayModel.insertDisplayEvents(this.pool, aDisplayEvt);
+            }
+            resolve();
+        }.bind(this));
 
         // BUS
-        if (aBusEvt.length > 0) {
-            // INSERT THE BUS EVENTS GATHERED
-            busModel.insertBusEvents(this.pool, aBusEvt);
-        }
+        var pBusses = Q.promise(function (resolve, reject) {
+            if (aBusEvt.length > 0) {
+                // INSERT THE BUS EVENTS GATHERED
+                busModel.insertBusEvents(this.pool, aBusEvt);
+            }
+            resolve();
+        }.bind(this));
 
-        // Send the next EventQuery
-        this.events_controller.sendEventQuery(data.ackID);
+
+        // Send next event query when all inserted
+        Q.all([pSensors, pViews, pCounters, pDisplays, pBusses]).then(function(){
+            //logger.log('info', "##### CHUNK FINISHED, NEXT"+data.ackID);
+            // Send the next EventQuery
+            this.events_controller.sendEventQuery(data.ackID);
+        }.bind(this));
     }
 }
 

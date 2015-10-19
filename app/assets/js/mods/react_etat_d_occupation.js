@@ -354,5 +354,8 @@ var reactEtatDoccupationStore = Reflux.createStore({
                 Actions.notif.error('AJAX : ' + Lang.get('global.notif_erreur'));
             }
         });
+    },
+    onVerify_form_save: function(){
+
     }
 });

@@ -4,7 +4,6 @@ var logger = require('./logger.js');
 var _ = require('lodash');
 var conf = require('../../config/config.js');
 
-// TODO get all that config from elsewhere ?
 var mysqlClass = {
 
     connexionInfos: (process.env.PRODUCTION && process.env.PRODUCTION == 'true') ? conf.prod.database :
@@ -30,7 +29,8 @@ var mysqlClass = {
      * @returns {Function}
      */
     pool: function () {
-        var infos = _.extend(this.connexionInfos, {connectionLimit: 10});
+        var infos = _.extend(this.connexionInfos, {connectionLimit: global.poolNumber});
+        //logger.log('info', '+++++++++++++++ POOL: '+global.poolNumber);
         return mysql.createPool(infos);
     },
 
@@ -44,14 +44,16 @@ var mysqlClass = {
     execute: function (pool, sql, params, callback) {
         pool.getConnection(function (err, connection) {
             if (err) {
-                logger.error('Mysql connection error: ' + err);
+                logger.log('error','Mysql connection error: ' + err);
                 callback(err, true);
                 return;
             }
+
             var query = connection.query(sql, params, callback);
             query.on('error', function (err) {
-                logger.error('Mysql query error: ' + err);
+                logger.log('error','Mysql query error: ' + err);
                 callback(err, true);
+                connection.release();
             });
             query.on('result', function (rows) {
                 callback(false, rows);

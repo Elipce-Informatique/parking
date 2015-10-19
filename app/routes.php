@@ -107,7 +107,6 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
     /*
      * Configuration d'un parking
      */
-    Route::get('configuration_parking/treeview_carte', 'ConfigurationParkingController@menuTreeView');
     Route::resource('configuration_parking', 'ConfigurationParkingController');
 
 
@@ -158,26 +157,34 @@ Route::group(['before' => 'auth|auth.canaccess'], function () {
 */
 Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parking'], function () {
 
+    // TREEVIEWS
+    Route::get('treeview_carte', 'ConfigurationParkingController@menuTreeView');
+
     // GESTION PLANS ET NIVEAUX
     Route::get('plan/{id}/places', 'PlansController@showWithPlaces');
     Route::post('plan/{id}/calibre', 'PlansController@updateCalibre');
     Route::get('niveau/{id}/places', 'NiveauxController@showWithPlaces');
     Route::get('niveau/{id}/afficheurs', 'NiveauxController@getAfficheurs');
+    Route::get('bus/{busId}/{legNum}/max_noeud', 'BusController@maxNoeudOnLeg');
 
     // SEULEMENT DES DATA, jamais du HTML (créer d'autres routes pour les pages d'adiministration des niveaux, zones, allées)
     Route::get('niveau/all', 'NiveauxController@all');
     Route::get('niveau/libelle/{libelle}/{id?}', 'NiveauxController@verifLibelle');
 
     // GESTION ZONES ALLEES PLACES, AFFICHEURS
-    Route::delete('zone/delete_many', 'ZonesController@destroyMany');
+    Route::delete('afficheur/delocate_many', 'AfficheursController@delocateMany');
+    Route::post('afficheur/{id}/setGeometry', 'AfficheursController@setGeometry');
+    Route::post('afficheur/{id}/set_counters_views', 'AfficheursController@setCountersViews');
+    Route::patch('afficheur/{id}/reset', 'AfficheursController@reset');
+    Route::get('afficheur/updateAfficheurs', 'AfficheursController@updateAfficheurs');
     Route::delete('allee/delete_many', 'AlleesController@destroyMany');
     Route::delete('place/delete_many', 'PlacesController@destroyMany');
-    Route::delete('afficheur/delocate_many', 'AfficheursController@delocateMany');
     Route::post('place/{id}/setCapteur', 'PlacesController@setCapteur');
+    Route::post('capteur/create_virtuels', 'CapteursController@create_virtuels');
+    Route::delete('capteur/delete/{busId}/{leg}/{num}', 'CapteursController@deleteFromNum');
     Route::patch('place/update_places_geo', 'PlacesController@updatePlacesGeo');
     Route::patch('place/{id}', 'PlacesController@updatePlace');
-    Route::post('afficheur/{id}/setGeometry', 'AfficheursController@setGeometry');
-    Route::get('afficheur/updateAfficheurs', 'AfficheursController@updateAfficheurs');
+    Route::delete('zone/delete_many', 'ZonesController@destroyMany');
 
     // GESTION PARKING
     Route::get('gestion_parking/all', 'ParkingsController@all');
@@ -199,7 +206,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::resource('capteur', 'CapteursController');
     Route::resource('gestion_parking', 'ParkingsController');
 
-    // Type place
+    // TYPE PLACE
     Route::get('type_place/all', 'TypesPlacesController@showAll');
     Route::resource('type_place', 'TypesPlacesController');
 
@@ -214,6 +221,12 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::get('journal_alerte/last/{planId}', 'JournalAlerteController@last');
     Route::get('journal_alerte/{parkingId}/{planId}', 'JournalAlerteController@showFromVersion');
 
+
+    // CONFIGURATION ÉQUIPMENT
+    Route::get('config_equipement/all', 'ConfigEquipementController@all');
+    Route::get('config_equipement/combo_all', 'ConfigEquipementController@comboAll');
+    Route::resource('config_equipement', 'ConfigEquipementController');
+
     // SIMULATEUR
     Route::get('simulator/capteurs', 'SimulatorController@capteurs');
     Route::get('simulator/foire/{planId}', 'SimulatorController@foire');
@@ -224,7 +237,8 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
 // RESSOURCE PARKING SÉPARÉE DU GROUPE AVEC PRÉFIXE PARKING POUR DES RAISONS LOGIQUES
 Route::group(['before' => 'auth|auth.canaccess|auth.parking'], function () {
     Route::get('parking/{id}/concentrateurs', 'ParkingsController@getConcentrateurs');
-    Route::get('parking/{id}/afficheurs', 'ParkingsController@getAfficheurs');
+    Route::get('parking/{id}/afficheurs_libres', 'ParkingsController@getAfficheursLibre');
+    Route::get('parking/{id}/afficheurs_get', 'ParkingsController@getAfficheursGet');
     Route::get('parking/{id}/tableau_bord', 'ParkingsController@getTableauBordData');
     Route::resource('parking', 'ParkingsController');
 });

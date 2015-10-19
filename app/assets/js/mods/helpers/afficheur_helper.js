@@ -121,8 +121,10 @@ function getPlacesInAfficheur(zone, _inst) {
  * @returns {string} : le html à mettre dans le label du marker
  */
 function generateAfficheurLabel(afficheur) {
-    // GÉNÉRATION DU TOOLTIP
-    var htmlTooltip = '<table>' + _.reduce(afficheur.data.vues_bis, function (str, vue) {
+    var htmlTooltip = '';
+    if (_.keys(afficheur.data.vues_bis).length > 0) {
+        // GÉNÉRATION DU TOOLTIP
+        htmlTooltip = '<table>' + _.reduce(afficheur.data.vues_bis, function (str, vue) {
             return str + '<tr>' +
                 '<td class="afficheur-libelle" style="color:#' + vue.couleur + ';text-align:left;margin-right:3px;">' +
                 vue.libelle +
@@ -131,13 +133,47 @@ function generateAfficheurLabel(afficheur) {
                 '</td>' +
                 '</tr>';
         }, "", this) + '</table>';
+        htmlTooltip = _.escape(htmlTooltip);
+    }
 
     // GÉNÉRATION DU CONTENU DU LABEL
     var htmlAfficheur = '<span class="html-afficheur" data-afficheur-wrapper data-afficheur="' + _.escape(JSON.stringify(afficheur.data)) +
         '" data-toggle="tooltip" data-html="true" title="' +
-        _.escape(htmlTooltip) +
+        htmlTooltip +
         '">' + afficheur.data.defaut + '</span>';
+    console.log('HTML afficheur : %o', htmlAfficheur);
     return htmlAfficheur;
+}
+
+/**
+ * Prépare les données à envoyer au serveur
+ * @param places : object - Les places au format comme renvoyées par la fonction getPlacesInAfficheur.
+ */
+function prepareCountersData(places, afficheur) {
+    var placesWithCapteur = places.capteurPlaces;
+    var groupedByTypePlace = {};
+
+    _.each(placesWithCapteur, function (p) {
+        typeof groupedByTypePlace[p.type_place_id] === 'undefined' ? groupedByTypePlace[p.type_place_id] = [] : null;
+        groupedByTypePlace[p.type_place_id].push(p.capteur);
+    }, this);
+
+    // CRÉATION DES COUNTERS (type_place, libelle afficheur, capteurs)
+    var counters = _.map(groupedByTypePlace, function (capteurGroup, type_place) {
+
+        // Séparation des ids
+        var capteurs_ids = _.map(capteurGroup, function (capteur) {
+            // Parcourt des places pour retourner les id
+            return capteur.id;
+        }, this);
+
+        return {
+            aff_libelle: afficheur.reference,
+            type_place: type_place,
+            capteurs_ids: capteurs_ids
+        };
+    }, this);
+    return counters;
 }
 
 
@@ -181,6 +217,7 @@ module.exports = {
     getPlacesInAfficheur: getPlacesInAfficheur,
     generateAfficheurLabel: generateAfficheurLabel,
     supervisionContextMenu: supervisionContextMenu,
+    prepareCountersData: prepareCountersData,
     style: {
         color: '#000000',
         weight: 1,

@@ -58,5 +58,26 @@ module.exports = {
                 }
             });
         }
+    },
+
+    /**
+     * Get all settings
+     * @param onGetSettings: callback function
+     */
+    getSettings: function(onGetSettings){
+        var connexion = require('../utils/mysql_helper.js').standardConnexion();
+
+        var sql = "" +
+            "SELECT v4_id AS ID, json, libelle AS name " +
+            "FROM config_equipement " +
+            "ORDER BY v4_id ";
+
+        connexion.query(sql, function (err, result) {
+
+            onGetSettings(err, result);
+            // End the connection once the callback is done
+            // to avoid the fatal error due to the server timeout
+            connexion.end();
+        });
     }
 };

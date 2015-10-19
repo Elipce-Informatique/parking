@@ -79,7 +79,6 @@ module.exports = {
     _listenEquipmentEvents: function(){
 
         if (this._unsubscribe != null && typeof this._unsubscribe === "function") {
-            console.log('Unsubscribe le ws');
             this._unsubscribe();
         }
         this._unsubscribe = Actions.com.message_controller.listen(this._onWSMessage.bind(this));
@@ -91,7 +90,6 @@ module.exports = {
      */
     _onWSMessage: function (message) {
 
-        console.log('ON RECOIT UN EVENT DU CONTROLLER, GO UPDATE LA SUPERVIION  !!!!! %o', message);
         switch (message.messageType) {
             case "sensor_event":
                 // UPDATE TOUT LE BAZAR
@@ -99,6 +97,7 @@ module.exports = {
                 break;
             case "view_event":
                 // UPDATE DISPLAYS in the data
+                //console.log('MESSAGE %o', message);
                 this._handleViewEvent(message.data);
                 break;
             default:
@@ -106,6 +105,10 @@ module.exports = {
         }
     },
 
+    /**
+     * Toutes les 3 sec on regarde si on a une mise à jour sensor ou display à faire
+     * IMPORTANT car lorsqu'on dépile les evts du controller, tout est abort car tout arrive en masse.
+     */
     timerUpdate: function () {
         // Abord AJAX si on doit en relancer
         this._displayDFU ? this._abortViewAjax() : null;
@@ -113,11 +116,9 @@ module.exports = {
 
         if (this._sensorDFU) {
             this._sensorDFU = false;
-            console.log('PASS sensor updates');
             this._handleAjax();
         }
         if (this._displayDFU) {
-            console.log('PASS display updates');
             this._displayDFU = false;
             this._handleViewAJAX();
         }
@@ -134,7 +135,6 @@ module.exports = {
         if(window.clientWs !== null){
             // Listen parking events
             this._listenParkingState();
-            console.log('Listen parking state');
         }
         else {
             // CONNEXION AU WEBSOCKET ET ÉCOUTE DES MESSAGES QUI NOUS INTÉRESSENT
@@ -142,7 +142,6 @@ module.exports = {
 
                 // Listen parking events
                 this._listenParkingState();
-                console.log('Listen parking state');
 
                 // Give the client in a callback
                 if (onConnexion !== undefined) {
@@ -267,42 +266,49 @@ module.exports = {
      * @private
      */
     _handleViewEvent: function (idViews) {
-        // console.log('ID views %o', idViews);
+        //console.log('ID views %o', idViews);
         // Merge array views to update
         this._viewsIdToUpdate = this._viewsIdToUpdate.concat(idViews);
         this._displayDFU = true;
     },
 
     _handleViewAJAX: function () {
+        //console.log('AJAX update %o',this._viewsIdToUpdate);
         // Data ajax
         var dataAjax = {
             ids: this._viewsIdToUpdate
         };
 
-        // Get displays infos
-        this._ajaxViewInstances['0'] = $.ajax({
-            method: 'GET',
-            url: BASE_URI + 'parking/afficheur/updateAfficheurs',
-            dataType: 'json',
-            context: this,
-            data: dataAjax,
-            global: false
-        })
-            .done(function (data) {
-                //console.log('ANSWER DISPLAYS  %o', data);
-                // Refresh afficheurs on the map
-                Actions.map.refresh_afficheurs(data);
-                // Views to update processed
-                this._viewsIdToUpdate = _.difference(this._viewsIdToUpdate, dataAjax.ids);
+        // At least 1 display to update
+        if(dataAjax.ids.length > 0) {
+            // Get displays infos
+            this._ajaxViewInstances['0'] = $.ajax({
+                method: 'GET',
+                url: BASE_URI + 'parking/afficheur/updateAfficheurs',
+                dataType: 'json',
+                context: this,
+                data: dataAjax,
+                global: false
             })
-            .fail(function (xhr, type, exception) {
-                // Abort effectué par nos soins pour ne pas rafraichir tant que la précédent refresh n'est pas fini.
-                if (type !== 'abort') {
-                    // if ajax fails display error alert
-                    console.error("ajax error response error " + type);
-                    console.error("ajax error response body " + xhr.responsetext);
-                }
-            });
+                .done(function (data) {
+                    //console.log('ANSWER DISPLAYS  %o', data);
+                    // Refresh afficheurs on the map
+                    Actions.map.refresh_afficheurs(data);
+                    // Views to update processed
+                    this._viewsIdToUpdate = _.difference(this._viewsIdToUpdate, dataAjax.ids);
+                })
+                .fail(function (xhr, type, exception) {
+                    // Abort effectué par nos soins pour ne pas rafraichir tant que la précédent refresh n'est pas fini.
+                    if (type !== 'abort') {
+                        // if ajax fails display error alert
+                        console.error("ajax error response error " + type);
+                        console.error("ajax error response body " + xhr.responsetext);
+                    }
+                    else {
+                        this._viewsIdToUpdate = [];
+                    }
+                });
+        }
     },
 
     /**

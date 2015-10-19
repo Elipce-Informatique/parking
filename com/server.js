@@ -1,13 +1,16 @@
 // CONFIG
 var conf = require('./config/config.js');
 // Variables
-global.modeDev = process.env.PRODUCTION && process.env.PRODUCTION != 'false';
-global.port = getPort(global.modeDev ? conf.prod.port : conf.dev.port);
-global.host = global.modeDev ? conf.prod.host : conf.dev.host;
+global.modeProd = process.env.PRODUCTION && process.env.PRODUCTION != 'false';
+global.port = getPort(global.modeProd ? conf.prod.port : conf.dev.port);
+global.host = global.modeProd ? conf.prod.host : conf.dev.host;
 global.ssl = true;
 global.controllerClient = null;
 global.supervisionClients = [];
 global.parkingId = null;
+global.legLength = conf.legLength;
+global.initMode = 2;
+global.poolNumber = getPoolNumber(10);
 
 
 // Local modules
@@ -33,9 +36,9 @@ var cfg = {
     ssl: global.ssl,
     port: global.port,
     host: global.host,
-    ssl_key: './auth/server.key',
-    ssl_cert: './auth/server.crt',
-    ca: './auth/ca.crt'
+    ssl_key: global.modeProd ? conf.prod.certificates.key : conf.dev.certificates.key,
+    ssl_cert: global.modeProd ? conf.prod.certificates.cert: conf.dev.certificates.cert,
+    ca: global.modeProd ? conf.prod.certificates.ca : conf.dev.certificates.ca
 };
 
 var httpServ = ( cfg.ssl ) ? require('https') : require('http');
@@ -150,6 +153,11 @@ wss.on('connection', function connection(client) {
         if (_.isEqual(client, controllerClient)) {
             logger.log('info', 'Client disconnected -> it was a controller');
             global.controllerClient = null;
+            client.send(JSON.stringify( {
+                messageType: 'controllerStatus',
+                data: {
+                    controller: false
+                }}), errorHandler.onSendError);
         }
         // At least 1 webclient
         else if (supervisionClients.length > 0) {
@@ -195,3 +203,23 @@ function getPort(defaultPort) {
     }
     return defaultPort;
 }
+
+
+/**
+ * Get the port for the server through the comand line argument.
+ * if no mort provided, default port is returned.
+ *
+ * @param args : Command line arguments parsed by minimist.
+ * @param defaultPort
+ * @returns {*}
+ */
+function getPoolNumber(defaultPool) {
+    var _ = require('lodash');
+    var argv = require('minimist')(process.argv.slice(2));
+    if (typeof(argv['pool']) != 'undefined' && !_.isNaN(parseInt(argv['pool']))) {
+        return argv['pool'];
+    }
+    return defaultPool;
+}
+
+
