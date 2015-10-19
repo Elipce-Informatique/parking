@@ -30,7 +30,7 @@ var mysqlClass = {
      */
     pool: function () {
         var infos = _.extend(this.connexionInfos, {connectionLimit: global.poolNumber});
-        logger.log('info', '+++++++++++++++ POOL: '+global.poolNumber);
+        //logger.log('info', '+++++++++++++++ POOL: '+global.poolNumber);
         return mysql.createPool(infos);
     },
 

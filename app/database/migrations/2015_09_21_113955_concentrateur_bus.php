@@ -14,7 +14,7 @@ class ConcentrateurBus extends Migration {
 	{
         Schema::table('bus', function ($t) {
 
-            $t->dropForeign('bus_ibfk_1');
+            $t->dropForeign('bus_ibfk_2');
             $t->foreign('concentrateur_id')
                 ->references('id')
                 ->on('concentrateur')
@@ -31,7 +31,7 @@ class ConcentrateurBus extends Migration {
 	public function down()
 	{
         Schema::table('bus', function ($t) {
-            $t->dropForeign('bus_ibfk_1');
+            $t->dropForeign('bus_ibfk_2');
         });
 	}
 
