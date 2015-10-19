@@ -44,9 +44,29 @@ class AfficheursController extends \BaseController
             'ligne',
             'lat',
             'lng');
-        Log::debug('Données de l\'afficheur à insérer : ' . print_r($input, true));
-        $afficheur = Afficheur::create($input);
-        return $afficheur;
+        $configs = explode('[-]', Input::get('configs_ids'));
+
+        DB::beginTransaction();
+        try {
+
+            Log::debug('Confifgs de l\'afficheur à insérer : ' . print_r($configs, true));
+            $afficheur = Afficheur::create($input);
+            $afficheur->v4_id = $afficheur->id;
+            $afficheur->configs()->attach($configs);
+
+            $adresse = DB::table('afficheur')->where('bus_id', '=', $input['bus_id'])->max('adresse');
+            $adresse = $adresse != null ? $adresse + 1 : 1;
+            $afficheur->adresse = $adresse;
+
+            $afficheur->save();
+            DB::commit();
+            return $afficheur;
+        } catch (Exception $e) {
+            Log::error('ERREUR INSERTION AFFICHEUR :');
+            Log::error($e);
+            DB::rollBack();
+            return json_encode(false);
+        }
     }
 
 
@@ -131,18 +151,27 @@ class AfficheursController extends \BaseController
      */
     public function delocateMany()
     {
-        Log::debug('locateMany, avec ces données : ' . print_r(Input::all(), true));
         $ids = explode(',', Input::get('ids'));
-        $action = Afficheur::whereIn('id', $ids)
-            ->delete();
-
+        try {
+            // Ce code permet la suppression réelle de l'afficheur et de ses vues
+//        foreach ($ids as $id) {
+//            $this->reset($id);
+//        }
 //        $action = Afficheur::whereIn('id', $ids)
-//            ->update([
-//                'plan_id' => null,
-//                'ligne' => null,
-//                'lat' => null,
-//                'lng' => null
-//            ]);
+//            ->delete();
+            foreach ($ids as $id) {
+                $aff = Afficheur::find($id);
+                $aff->a_supprimer = '1';
+                $aff->save();
+            }
+            $action = true;
+        } catch (Exception $e) {
+            Log::error('Erreur SQL : ');
+            Log::error($e);
+            $action = false;
+        }
+
+
         $retour = [
             'save' => $action,
             'errorBdd' => !$action,
@@ -163,6 +192,92 @@ class AfficheursController extends \BaseController
         $ids = Input::get('ids');
 //        Log::debug("IDS ".print_r($ids, true));
         return json_encode(Afficheur::getInfosFromViewId($ids));
+    }
+
+    /**
+     * Crée les compteurs et les vues pour cet afficheur.
+     *
+     * @param $id : id de l'afficheur à initialiser
+     */
+    public function setCountersViews($id)
+    {
+        $data = json_decode(Input::get('data'), true);
+
+//        Log::debug('Voici les données de l\'afficheur : ' . print_r($data, true));
+        DB::beginTransaction();
+
+        try {
+            $afficheur = Afficheur::find($id);
+            // Parcours des compteurs à afficher
+            foreach ($data AS $counter) {
+                $typePlace = TypePlace::find($counter['type_place']);
+
+                // 1 - CRÉATION DES COMPTEURS
+                $compteur = Compteur::create([
+                    'libelle' => $counter['aff_libelle'] . '_compteur_' . $typePlace->libelle
+                ]);
+
+                // 2 - ASSOCIATION COMPTEURS - CAPTEURS
+                $compteur->capteurs()->attach($counter['capteurs_ids']);
+
+                // 3 - AJOUT DU v4_id DU COMPTEUR
+                $compteur->v4_id = $compteur->id;
+                $compteur->save();
+
+                // 4 - CRÉATION VUE ATTACHÉE AUX COMPTEURS
+                $vue = Vue::create([
+                    'libelle' => $counter['aff_libelle'] . '_vue_' . $typePlace->libelle,
+                    'compteur_id' => $compteur->id,
+                    'afficheur_id' => $afficheur->id,
+                    'cellNr' => $typePlace->cell_nb,
+                    'total' => count($counter['capteurs_ids']),
+                    'occupees' => 0,
+                    'libres' => count($counter['capteurs_ids']),
+                    'offset' => 0,
+                    'emptyLow' => 0,
+                    'emptyHigh' => 0,
+                    'fullLow' => 0,
+                    'fullHigh' => 0,
+                    'type_place_id' => $counter['type_place']
+                ]);
+
+                // 5 - AJOUT DU v4_id DE LA VUE
+                $vue->v4_id = $vue->id;
+                $vue->save();
+            }
+            DB::commit();
+            return json_encode("OK");
+
+        } catch (Exception $e) {
+            Log::error('ERREUR D INSERTION COMPTEURS VUES :');
+            Log::error($e);
+            DB::rollBack();
+            return json_encode(false);
+        }
+    }
+
+    /**
+     * Reset l'afficheur désigné par l'id passé en params
+     * @param $id : id de l'afficheur à reset
+     */
+    public function reset($id)
+    {
+        DB::beginTransaction();
+        try {
+            Vue::where('afficheur_id', '=', $id)->get()->each(function ($vue) {
+                $vue->delete();
+            });
+
+            DB::commit();
+            return json_encode("OK");
+
+        } catch (Exception $e) {
+
+            Log::error('ERREUR DE SUPPRESSION COMPTEURS VUES :');
+            Log::error($e);
+            DB::rollBack();
+            return json_encode(false);
+        }
     }
 
 }

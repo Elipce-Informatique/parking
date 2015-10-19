@@ -156,7 +156,7 @@ module.exports = {
                                 transAssoc.query(inst, function (err, result) {
                                     if (err) {
                                         //transAssoc.rollback();
-                                        logger.log('error', 'ERREUR SQL INSERT capteur_compteur', [sensorId, counterId]);
+                                        logger.log('error', '[-]init[-] ERREUR SQL INSERT capteur_compteur', [assoc.sensorId, counterId]);
                                     }
                                 });
                             }, this);
@@ -173,7 +173,7 @@ module.exports = {
                                 transAssoc.query(inst, function (err, result) {
                                     if (err) {
                                         //transAssoc.rollback();
-                                        logger.log('error', 'ERREUR SQL INSERT capteur_config', [sensorId, settingId]);
+                                        logger.log('error', '[-]init[-] ERREUR SQL INSERT capteur_config', [assoc.sensorId, settingId]);
                                     }
                                 });
                             }, this);
@@ -185,7 +185,7 @@ module.exports = {
                     transAssoc.commit(function (err, info) {
                         //logger.log('error', 'COMMITTTTTTTTTTTTTT');
                         if (err) {
-                            logger.log('error', 'TRANSACTION ASSOC COMMIT ERROR');
+                            logger.log('error', '[-]init[-] TRANSACTION ASSOC COMMIT ERROR');
                         }
                         else {
                             logger.log('info', 'TRANSACTION COMMIT ASSOCS OK');
@@ -216,8 +216,8 @@ module.exports = {
      * @param events : array of events to insert
      * @param onFinished : function called when event insertion is done
      */
-    insertSensorEvents: function (pool, events, onFinished) {
-        logger.log('info', 'SENSOR EVENTS to store ', events);
+    insertSensorEvents: function (pool, events, onFinished, ackID) {
+        logger.log('info', 'SENSOR EVENTS to store '+ackID, events);
 
         var mysqlHelper = require('../utils/mysql_helper.js');
 
@@ -281,7 +281,7 @@ module.exports = {
                     //logger.log('info', 'QUERY SENSOR ID', result);
                     // ROLLBACK THE TRANSACTION
                     if (err) {
-                        logger.log('error', 'ERREUR SQL : ' + inst);
+                        logger.log('error', 'ERREUR SQL GET SENSOR ID, v4_id: ' + evt.ID);
                         reject(err);
                     }
                     else if (result.length == 0) {
@@ -309,9 +309,16 @@ module.exports = {
                     if (evt.sense === undefined) {
                         // Last sense of the sensor
                         mysqlHelper.execute(pool, selectLastSense, [sensorId], function (err, rows) {
-                            if (err || rows.length === 0) {
+                            if (err ) {
                                 logger.log('error', 'ERREUR SQL GET LAST SENSE ', err);
                                 reject(err);
+                            }
+                            else if(rows.length === 0){
+
+                                resolve({
+                                    sense: 'free',
+                                    sensorId: sensorId
+                                });
                             }
                             else {
 
@@ -337,9 +344,15 @@ module.exports = {
                     if (evt.state === undefined) {
                         // Last state of the sensor
                         mysqlHelper.execute(pool, selectLastState, [sensorId], function (err, rows) {
-                            if (err || rows.length === 0) {
+                            if (err ) {
                                 logger.log('error', 'ERREUR SQL GET LAST STATE ', err);
                                 reject(err);
+                            }
+                            else if (rows.length === 0){
+                                resolve({
+                                    state: 'online',
+                                    sensorId: sensorId
+                                });
                             }
                             else {
 
@@ -362,7 +375,9 @@ module.exports = {
                 return Q.all([p1, p2]);
 
             }, function reject1(err) {
-                logger.log('error', 'REJECT promise 1', err);
+                logger.log('error', 'REJECT SENSOR promise 1', err);
+                // Call onFinished function idf we are on last event
+                sendFinished(index,(events.length - 1), onFinished, ackID);
             }).then(function resolve2(obj) {
                 //logger.log('info', "++++++++++++++ OBJET Q.ALL", obj);
                 // Promise 3
@@ -373,11 +388,13 @@ module.exports = {
                     var sense = objSense.sense;
                     var state = objState.state;
 
+                    var inst = mysql.format(eventSql,[sensorId, evt.date, state, sense, evt.supply, evt.dfu]);
+                    //logger.log('info', '##### EVENT_CAPTEUR: '+ inst);
                     // INSERT IN THE EVENT TABLE
-                    mysqlHelper.execute(pool, eventSql, [sensorId, evt.date, state, sense, evt.supply, evt.dfu],
+                    mysqlHelper.execute(pool, inst,
                         function (err, result) {
                             if (err) {
-                                logger.log('error', 'ERREUR SQL INSERT event_sensor ', err);
+                                logger.log('error', 'ERREUR SQL INSERT event_sensor '+inst, err);
                             }
                             else {
                                 //logger.log('info', 'INSERTED event_sensor OK');
@@ -448,7 +465,6 @@ module.exports = {
                                 // We do not change the journal in database
                                 break;
                             default:
-
                                 logger.log('error', "default event.sense " + sense + ". Last sense is getting from BDD in precedent promise, so we don't have to pas here");
                                 reject();
                                 break;
@@ -460,7 +476,9 @@ module.exports = {
                     }
                 });
             }, function reject2(err) {
-                logger.log('error', 'REJECT promise 2', err);
+                logger.log('error', 'REJECT SENSOR promise 2', err);
+                // Call onFinished function idf we are on last event
+                sendFinished(index,(events.length - 1), onFinished, ackID);
             }).then(function resolve3(oData) {
                 //logger.log('info', 'promise 3 OK ');
                 // oData = car space free / occupied + infos
@@ -475,15 +493,10 @@ module.exports = {
                     sense,
                     evt.date
                 ]);
+                //logger.log('info', '##### JOURNAL_EQUIPEMENT_PLAN: '+ inst);
 
                 var p1 = Q.promise(function (resolve, reject) {
-                    mysqlHelper.execute(pool, journalSql, [
-                            evtData.plan_id,
-                            evtData.place_id,
-                            evtData.etat_occupation_id,
-                            sense,
-                            evt.date
-                        ],
+                    mysqlHelper.execute(pool, inst,
                         function (err, result) {
                             if (err) {
                                 logger.log('error', 'ERREUR INSERT journal_equipement_plan SQL : ' + inst, err);
@@ -514,33 +527,51 @@ module.exports = {
 
             }, function reject3(err) {
                 if (err != 'NO ONLINE') {
-                    logger.log('error', 'REJECT promise 3');
+                    logger.log('error', 'REJECT SENSOR promise 3',err);
                 }
-            }).then(function resolveAll() {
+                // Call onFinished function idf we are on last event
+                sendFinished(index,(events.length - 1), onFinished, ackID);
 
-                // FINAL SENSOR EVENT
-                if (index == (events.length - 1)) {
-                    //logger.log('info', 'NOTIFICATION SENSOR EVENTS OK ');
-                    // NOTIFY CALLER THAT WE'RE DONE
-                    onFinished();
-                }
+            }).then(function resolveAll() {
+                // Call onFinished function idf we are on last event
+                sendFinished(index,(events.length - 1), onFinished, ackID);
             });
 
         });// fin _.each
+
+        /**
+         * Send a notification when events are finished
+         * @param index: current index
+         * @param total: last index
+         * @param callback
+         */
+        function sendFinished(index, total, callback, ackID){
+            //logger.log('info','ackID: '+ ackID+' info', 'index:'+index+' total:'+total);
+            // FINAL SENSOR EVENT
+            if (index == total) {
+                //logger.log('info', 'NOTIFICATION SENSOR EVENTS FINISHED '+ackID);
+                // NOTIFY CALLER THAT WE'RE DONE
+                callback();
+            }
+        }
     },
 
     /**
      * Insert sensors in supervision DB
-     * @param pool: mysql connexion
      * @param busId: bus.id
      * @param sensors: sensors array
      */
-    insertSensorsFromBusEnum: function (pool, busId, sensors) {
-        logger.log('info', 'SENSORS FROM BUS ENUM TO INSERT ', sensors);
+    insertSensorsFromBusEnum: function (busId, sensors) {
+        logger.log('info', 'SENSORS FROM BUS ENUM TO INSERT ' + busId, sensors);
 
+        // MYSQL CONNECTOR AND QUEUES
+        var connection = require('../utils/mysql_helper.js').standardConnexion();
+        queues(connection);
+        var trans = connection.startTransaction();
+
+        // Variables
         var params = [];
-        var adresse = 1;
-        var mysqlHelper = require('../utils/mysql_helper.js');
+        var instSql = '';
         var sensorsInserted = [];
         var libelle = '';
 
@@ -552,26 +583,31 @@ module.exports = {
             "WHERE s.protocol_port =" + global.port + " " +
             "AND b.v4_id = ? ";
 
-        var sqlSensor = "INSERT IGNORE INTO capteur (bus_id, adresse, libelle, sn) " +
-            "VALUES ((" + sqlBus + "), ?, ?, ?)";
+        var sqlSensor = "INSERT IGNORE INTO capteur (bus_id, adresse, libelle, sn, num_noeud, leg, software_version) " +
+            "VALUES ((" + sqlBus + "), ?, ?, ?, ?, ?, ?)";
 
-        // TRANSACTION
-        var trans = pool.startTransaction();
+        var updateV4 = "UPDATE capteur SET v4_id=? WHERE id=?";
+
         // Parse sensors
         sensors.forEach(function (sensor) {
             // Address
-            adresse = parseInt(sensor.param.leg) == 2 ? parseInt(sensor.param.index) + 127: parseInt(sensor.param.index);
-            libelle = 'Sensor #' + busId + '#' + adresse;
+            var adresse = parseInt(sensor.leg) == 2 ? (parseInt(sensor.index) + global.legLength) : parseInt(sensor.index);// "var" important pour le passage de adresse dans la callback qui suit
+            //logger.log('info', '+++++++ adresse ', parseInt(sensor.leg), parseInt(sensor.index), adresse);
+            libelle = sensor.modelName + ' #' + busId + '#' + adresse;
             // Prepare sql
             params = [
                 busId,
                 adresse,
                 libelle,
-                sensor.ssn
+                sensor.ssn,
+                parseInt(sensor.index),
+                parseInt(sensor.leg),
+                sensor.softwareVersion
             ];
-
+            instSql = mysql.format(sqlSensor, params);
+            //logger.log('info', '###### SQL', instSql);
             // Insert bus
-            mysqlHelper.execute(pool, sqlSensor, params, function (err, result) {
+            trans.query(instSql, function (err, result) {
                 // INSERT KO
                 if (err && trans.rollback) {
                     trans.rollback();
@@ -580,32 +616,218 @@ module.exports = {
                 }
                 // INSERT OK
                 else {
-                    sensorsInserted.push({
-                        ID: result.insertId,
-                        busId: busId,
-                        address: adresse,
-                        spaceType: "generic",
-                        serialNumber: sensor.ssn
-                    })
+                    var sensorId = result.insertId;
+                    instSql = mysql.format(updateV4, [sensorId, sensorId]);
+                    //logger.log('info', '###### ', instSql);
+                    // UPDATE v4_id
+                    trans.query(instSql);
+
+                    // ELSE -> Sensor already exists
+                    if (sensorId > 0) {
+                        // Strore sensor
+                        sensorsInserted.push({
+                            ID: sensorId,
+                            address: adresse,
+                            spaceType: "generic",
+                            deviceInfo: {
+                                serialNumber: sensor.ssn,
+                                modelName: sensor.modelName,
+                                softwareVersion: sensor.softwareVersion
+                            } // Si suppression de deviceInfo alors aller modifier general_helper.dbSensorsToBusEnum
+                        })
+                    }
                 }
             });
         }, this);
-        // Commit INSERT counters
+        // Commit INSERT sensors
         var promise = Q.Promise(function (resolve, reject) {
             trans.commit(function (err, info) {
                 if (err) {
                     reject(err);
-                    logger.log('error', 'TRANSACTION COMMIT ERROR');
+                    logger.log('error', 'TRANSACTION COMMIT SENSORS ERROR');
                 } else {
                     resolve(sensorsInserted);
-                    logger.log('info', 'TRANSACTION COMMIT COUNTERS OK');
+                    logger.log('info', 'TRANSACTION COMMIT SENSORS OK');
                 }
+                // END MySQL connexion
+                connection.end(errorHandler.onMysqlEnd);
             });
         })
 
         // Execute the queue INSERT counters
         trans.execute();
 
-       return promise;
+        return promise;
+    },
+
+    /**
+     * Synchro sensors betwwen supervision DB and busEnum result
+     * @param pool: MySQL connexion
+     * @param busId: bus.id
+     * @param sensors: sensors array
+     */
+    synchroSensors: function (pool, busId, sensors, onSynchroFinished, onError) {
+        logger.log('info', 'SENSORS FROM BUS ENUM TO SYNCHRO ' + busId, sensors);
+
+        // MYSQL CONNECTOR AND QUEUES
+        var mysqlHelper = require('../utils/mysql_helper.js');
+        var connection = mysqlHelper.standardConnexion();
+        queues(connection);
+        var trans = connection.startTransaction();
+
+        // Variables;
+        var sensorsDelta = [];
+        var sensorsInserted = [];
+
+        var sqlSensor = "" +
+            "SELECT c.*, tp.v4_type_place, GROUP_CONCAT(ce.v4_id SEPARATOR ',')AS settings " +
+            "FROM parking p " +
+            "JOIN concentrateur con ON con.parking_id=p.id " +
+            "JOIN bus b ON b.concentrateur_id=con.id " +
+            "JOIN capteur c ON c.bus_id=b.id " +
+            "LEFT JOIN place pl ON pl.capteur_id=c.id " +
+            "LEFT JOIN type_place tp ON tp.id=pl.type_place_id " +
+            "LEFT JOIN capteur_config cc ON cc.capteur_id=c.id " +
+            "LEFT JOIN config_equipement ce ON ce.id=cc.config_equipement_id " +
+            "WHERE p.id =" + global.parkingId + " " +
+            "AND b.v4_id = ? " +
+            "AND c.leg = ? " +
+            "AND c.num_noeud = ? " +
+            "GROUP BY c.id ";
+
+        var updateCapteur = "" +
+            "UPDATE capteur SET libelle=?, sn=?, software_version=?, v4_id=? " +
+            "WHERE id=? ";
+
+        Q.promise(function (resolve, reject) {
+            // Parse sensors
+            sensors.forEach(function (sensor, index) {
+
+                Q.promise(function (resolve, reject) {
+                    // Get virtual sensor
+                    mysqlHelper.execute(pool, sqlSensor, [busId, sensor.leg, sensor.index], function (err, result) {
+                        //logger.log('info', 'EXEC');
+                        if (err) {
+                            logger.log('error', 'ERROR GET VIRTUAL SENSOR', err);
+                            reject(sensor);
+                        }
+                        else {
+                            // No virtual sensor for the unicity bus-leg-index
+                            if (result.length === 0) {
+                                logger.log('error', 'NO VIRTUAL SENSOR IN SUPERVISION DB', sensor);
+                                reject(sensor);
+
+                            }
+                            else {
+                                resolve({
+                                    busEnum: sensor,
+                                    db: result[0]
+                                })
+                            }
+                        }
+
+                    });
+                }).then(function onVirtualSensorExists(obj) {
+                    //logger.log('info', 'YOUHOU');
+                    // Variables
+                    var sensor = obj.busEnum;// Sensor from busEnum
+                    var dbSensor = obj.db; // Sensor from supervision DB
+
+                    // Sensor unique name
+                    var libelle = sensor.modelName + ' #' + busId + '#' + dbSensor['adresse'];
+
+                    return Q.promise(function (resolve, reject) {
+
+                        // Update sensor
+                        trans.query(updateCapteur, [
+                            libelle,
+                            sensor.ssn,
+                            sensor.softwareVersion,
+                            dbSensor.id,
+                            dbSensor.id
+                        ], function (err, result) {
+                            // INSERT KO
+                            if (err && trans.rollback) {
+                                reject(err)
+                                throw err;
+                            }
+                            else {
+                                // New sensor => match now
+                                if (dbSensor.v4_id === null) {
+                                    // New controller DB sensor
+                                    var temp = {
+                                        ID: dbSensor.id,
+                                        address: dbSensor.adresse,
+                                        spaceType: dbSensor.v4_type_place == null ? "generic" : dbSensor.v4_type_place,
+                                        deviceInfo: {
+                                            serialNumber: sensor.ssn,
+                                            modelName: sensor.modelName,
+                                            softwareVersion: sensor.softwareVersion
+                                        } // Si suppression de deviceInfo alors aller modifier general_helper.dbSensorsToBusEnum
+                                    }
+                                    // Setting key
+                                    var settings = dbSensor.settings == null ? {} : {
+                                        settings: dbSensor.settings.split(',')
+                                    };
+                                    // Add settings key
+                                    temp = _.extend(temp, settings);
+                                    // Store sensor
+                                    resolve(temp);
+                                }
+                                else {
+                                    resolve();
+                                }
+                            }
+
+                        });
+                    });
+                }, function onVirtualSensorKo(sensor) {
+                    // Sensor in busEnum and not in virtuals
+                    sensorsDelta.push(sensor);
+
+                }).then(function onUpdateSensorOk(newSensor) {
+
+                    //logger.log('info', 'NEW SENSOR', newSensor);
+                    if (newSensor !== undefined) {
+                        sensorsInserted.push(newSensor);
+                    }
+
+                    // Last sensor in the foreach => COMMIT
+                    if (index == (sensors.length - 1)) {
+                        resolve(sensorsInserted);
+                    }
+                }, function onUpdateSensorKo(err){
+
+                    trans.rollback();
+                    logger.log('error', 'TRANSACTION UPDATE VIRTUAL SENSOR ROLLBACK', err);
+                    // Callback synchro finished KO
+                    onError(err);
+
+                    // END MySQL connexion
+                    connection.end(errorHandler.onMysqlEnd);
+                });
+
+
+            }, this);
+        }).then(function ok(si) {
+
+            trans.commit(function (err, info) {
+                if (err) {
+                    logger.log('error', 'TRANSACTION COMMIT VIRTUAL SENSORS ERROR');
+                    // Callback synchro finished KO
+                    onError(err);
+                } else {
+                    // Callback synchro finished ok
+                    onSynchroFinished({
+                        delta: sensorsDelta,
+                        sensors: si
+                    });
+                    logger.log('info', 'TRANSACTION COMMIT SENSORS OK');
+                }
+                // END MySQL connexion
+                connection.end(errorHandler.onMysqlEnd);
+            });
+        });
     }
+
 };

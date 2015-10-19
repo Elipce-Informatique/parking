@@ -466,7 +466,8 @@ function administrationContextMenu(e, context) {
         text: Lang.get('global.modifier'),
         index: 2,
         callback: function (evt) {
-            this.storeContext._inst.thisMenuTarget = this.e.layer;
+            this.storeContext._inst.contextMenuTarget = this.e.layer;
+            console.log('Target helper : %o', this.storeContext._inst.contextMenuTarget);
             // LANCEMENT DU MODAL DE MODIF DE PLACES
             var data = {
                 layer: this.e.layer,
@@ -487,6 +488,48 @@ function administrationContextMenu(e, context) {
     }];
 }
 
+/**
+ * Retourne les options de contextMenu pour les places en mode administration
+ * @returns {*[]}
+ */
+function administrationCapteurContextMenu(e, context) {
+    if (e.layer.options.data.capteur != null && (e.layer.options.data.capteur.v4_id == null || e.layer.options.data.capteur.v4_id == 0)) {
+        return [{
+            text: '<b>' + Lang.get('global.virtuel') + ' ' +
+            e.layer.options.data.capteur.bus.name + '.' +
+            e.layer.options.data.capteur.adresse + '</b>',
+            index: 0
+        }, {
+            separator: true,
+            index: 1
+        }, {
+            text: Lang.get('global.del'),
+            index: 2,
+            callback: function (evt) {
+                swal({
+                    title: Lang.get('global.suppression_titre'),
+                    text: Lang.get('global.suppression_capteur_corps'),
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: Lang.get('global.ok'),
+                    cancelButtonText: Lang.get('global.annuler'),
+                    closeOnConfirm: true
+                }, function (isConfirm) {
+                    console.log('Suppreessiioonn !!! %o', this.e);
+                    Actions.map.delete_capteur_virtuel_bdd(this.e.layer.options.data.capteur);
+                }.bind(this));
+
+            }.bind({
+                    e: e,
+                    storeContext: context
+                })
+        }];
+    } else {
+        return [];
+    }
+}
+
 module.exports = {
     createPlacesFromParallelogramme: createPlacesFromParallelogramme,
     createPlaceMarker: createPlaceMarker,
@@ -495,5 +538,6 @@ module.exports = {
     createPlaceFromData: createPlaceFromData,
     editPlacesGeometry: editPlacesGeometry,
     supervisionContextMenu: supervisionContextMenu,
-    administrationContextMenu: administrationContextMenu
+    administrationContextMenu: administrationContextMenu,
+    administrationCapteurContextMenu: administrationCapteurContextMenu
 };

@@ -3,7 +3,7 @@
 class TypePlace extends BaseModel
 {
     protected $table = 'type_place';
-    protected $fillable = [];
+    protected $guarded = ['id'];
 
     /*
     |--------------------------------------------------------------------------

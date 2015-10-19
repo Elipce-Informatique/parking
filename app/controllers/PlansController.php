@@ -55,11 +55,12 @@ class PlansController extends \BaseController
      */
     public function showWithPlaces($id)
     {
-        return Plan::with([
-            'afficheurs.vues.type_place',
-            'zones.allees.places.etat_occupation',
-            'zones.allees.places.capteur.bus.concentrateur'
-        ])->find($id);
+        return Plan::with(['afficheurs' => function ($q) {
+            $q->where('afficheur.a_supprimer', '=', '0')->with('vues.type_place');
+        }])
+            ->with('zones.allees.places.etat_occupation')
+            ->with('zones.allees.places.capteur.bus.concentrateur')
+            ->find($id);
     }
 
     /**
@@ -72,7 +73,6 @@ class PlansController extends \BaseController
         $plan->calibre = Input::get('calibre');
         $retour = $plan->save();
         return ['retour' => $retour];
-
     }
 
 

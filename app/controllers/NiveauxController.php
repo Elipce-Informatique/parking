@@ -65,46 +65,49 @@ class NiveauxController extends \BaseController
 
                 // Save zone defaut
                 $modelZone = Zone::create([
-                    'libelle' => Lang::get('global.defaut'),
+                    'libelle' => Lang::get('global.defaut').' '.$plan,
                     'defaut' => '1',
                     'plan_id' => $newPlan->id
                 ]);
 
                 // Save allée defaut
                 $modelAllee = Allee::create([
-                    'libelle' => Lang::get('global.defaut'),
+                    'libelle' => Lang::get('global.defaut').' '.$plan,
                     'defaut' => '1',
                     'zone_id' => $modelZone->id
                 ]);
 
                 // Save file
                 $filePostName = 'url' . explode('plan', $key)[1];
-                if (Input::hasFile($filePostName)) {
-                    // Fichier plan
-                    $fileCourant = Input::file($filePostName);
+                if ($fields[$filePostName] != '') {
+                    if (Input::hasFile($filePostName)) {
+                        // Fichier plan
+                        $fileCourant = Input::file($filePostName);
 
-                    // Extension
-                    $extFile = $fileCourant->getClientOriginalExtension();
+                        // Extension
+                        $extFile = $fileCourant->getClientOriginalExtension();
 
-                    //  Nom du fichier (ID + extension)
-                    $fileName = $newPlan->id . '.' . $extFile;
+                        //  Nom du fichier (ID + extension)
+                        $fileName = $newPlan->id . '.' . $extFile;
 
-                    // Sauvegarde dans "documents/plans"
-                    $fileCourant->move(storage_path() . '/documents/plans', $fileName);
+                        // Sauvegarde dans "documents/plans"
+                        $fileCourant->move(storage_path() . '/documents/plans', $fileName);
 
-                    // Mise à jour du champ en base de donnée
-                    $newPlan->url = $fileName;
-                    $newPlan->save();
-                    // Ajout du plan à insérer dans le niveau
-                    $modelsPlan[] = $newPlan;
+                        // Mise à jour du champ en base de donnée
+                        $newPlan->url = $fileName;
+                        $newPlan->save();
+                        // Ajout du plan à insérer dans le niveau
+                        $modelsPlan[] = $newPlan;
 
-                } // Le fichier n'existe pas
-                else {
-                    Log::error('Erreur enregistrement fichier plan. ' . $filePostName);
-                    $retour['save'] = false;
-                    $retour['upload'] = false;
-                    break;
+                    } // Le fichier n'existe pas
+                    else {
+                        Log::error('Erreur enregistrement fichier plan. ' . $filePostName);
+                        $retour['save'] = false;
+                        $retour['upload'] = false;
+                        break;
+                    }
                 }
+                // else mode edition sans modification de fichier
             }
 
             // Plans OK (enregsitrement + upload)
@@ -274,39 +277,42 @@ class NiveauxController extends \BaseController
                 }
 
                 // Upload
-                if (Input::file($filePostName)->isValid()) {
-                    // Fichier plan
-                    $fileCourant = Input::file($filePostName);
+                if ($fields[$filePostName] != '') {
+                    if (Input::file($filePostName)->isValid()) {
+                        // Fichier plan
+                        $fileCourant = Input::file($filePostName);
 
-                    // Extension
-                    $extFile = $fileCourant->getClientOriginalExtension();
+                        // Extension
+                        $extFile = $fileCourant->getClientOriginalExtension();
 
-                    //  Nom du fichier Plan (ID + extension)
-                    $fileName = $modelPlan->id . '.' . $extFile;
+                        //  Nom du fichier Plan (ID + extension)
+                        $fileName = $modelPlan->id . '.' . $extFile;
 
-                    // Sauvegarde dans "documents/plans"
-                    $fileCourant->move($destFolder, $fileName);
+                        // Sauvegarde dans "documents/plans"
+                        $fileCourant->move($destFolder, $fileName);
 
-                    // Mise à jour du champ en base de donnée
-                    $modelPlan->url = $fileName;
-                    $modelPlan->save();
+                        // Mise à jour du champ en base de donnée
+                        $modelPlan->url = $fileName;
+                        $modelPlan->save();
 
-                    // Ajout du plan à insérer dans le niveau
-                    $modelsPlan[] = $modelPlan;
+                        // Ajout du plan à insérer dans le niveau
+                        $modelsPlan[] = $modelPlan;
 
-                } // Le fichier n'a pas été POST
-                else {
-                    // Mode création ou mode edition avec modification de fichier
-                    if (count($temp) > 1 || (count($temp) === 1 && $fields[$filePostName] != '')) {
+                    } // Le fichier n'a pas été POST
+                    else {
+                        // Mode création ou mode edition avec modification de fichier
+                        if (count($temp) > 1 || (count($temp) === 1 && $fields[$filePostName] != '')) {
 
-                        Log::error('Erreur enregistrement fichier plan. ' . $filePostName);
-                        $retour['save'] = false;
-                        $retour['upload'] = false;
-                        break;
+                            Log::error('Erreur enregistrement fichier plan. ' . $filePostName);
+                            $retour['save'] = false;
+                            $retour['upload'] = false;
+                            break;
+                        }
+                        // else mode edition sans modification de fichier
+
                     }
-                    // else mode edition sans modification de fichier
-
                 }
+                // else mode edition sans modification de fichier
             }
 
             // Plans OK (enregsitrement + upload)

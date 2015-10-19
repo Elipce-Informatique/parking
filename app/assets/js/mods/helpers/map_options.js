@@ -13,7 +13,9 @@ module.exports.dessin = {
     alerte_full: 8,
     alerte_change: 9,
     reservation: 10,
-    capteur_afficheur: 11
+    capteur_afficheur: 11,
+    capteur_virtuel: 12, // Pas vraiment un mode de dessin, c'est pour savoir qu'on est en mode capteur_virtuel
+    afficheur_get: 13
 };
 
 /**
@@ -42,6 +44,7 @@ colors[module.exports.dessin.allee] = '#5478da';
 colors[module.exports.dessin.zone] = '#da5454';
 colors[module.exports.dessin.calibre] = '#2C75FF';
 colors[module.exports.dessin.afficheur] = '#000000';
+colors[module.exports.dessin.afficheur_get] = '#000000';
 colors[module.exports.dessin.capteur_afficheur] = '#000000';
 
 // PRÉPARATION DE L'OBJET GROUPS:
@@ -51,6 +54,7 @@ groups[module.exports.dessin.place_auto] = 'placesGroup';
 groups[module.exports.dessin.allee] = 'alleesGroup';
 groups[module.exports.dessin.zone] = 'zonesGroup';
 groups[module.exports.dessin.afficheur] = 'afficheursGroup';
+groups[module.exports.dessin.afficheur_get] = 'afficheursGroup';
 groups[module.exports.dessin.capteur_afficheur] = 'capteurAfficheursGroup';
 groups[module.exports.dessin.calibre] = 'calibreGroup';
 groups[module.exports.dessin.alerte_full] = 'alerteFullGroup';
@@ -102,7 +106,13 @@ module.exports.type_messages = {
     edit_zone: 25,
     edit_afficheur: 26,
     update_afficheurs: 27,
-    capteur_afficheur: 28
+    capteur_afficheur: 28,
+    synchro_notif: 29,
+    annuler_capteur_virtuel: 30,
+    set_id_capteur_virtuel: 31,
+    delete_capteur_from_num: 32,
+    set_init_mode: 33,
+    new_afficheur_get: 34
 };
 
 /**
@@ -149,6 +159,18 @@ module.exports.pastilleCapteur = L.Icon.extend({
         iconAnchor: new L.Point(7, 7),
         iconSize: new L.Point(14, 14),
         iconUrl: BASE_URI + 'public/images/pastille.png'
+    }
+});
+
+/**
+ * Marker de place tut tut la voiture
+ * @type {void|*}
+ */
+module.exports.pastilleCapteurVirtuel = L.Icon.extend({
+    options: {
+        iconAnchor: new L.Point(7, 7),
+        iconSize: new L.Point(14, 14),
+        iconUrl: BASE_URI + 'public/images/pastille_jaune.png'
     }
 });
 
@@ -224,7 +246,7 @@ module.exports.DataMarker = L.Marker.extend({
     data: {}
 });
 /**
- *
+ * Différents types de modales à afficher dans la carte
  * @type {{}}
  */
 module.exports.modal_type = {
@@ -240,5 +262,7 @@ module.exports.modal_type = {
     edit_allee: 10,
     edit_zone: 11,
     edit_afficheur: 12,
-    capteur_afficheur: 13
+    capteur_afficheur: 13,
+    capteur_virtuel: 14,
+    afficheur_get: 15
 };

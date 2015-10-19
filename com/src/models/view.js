@@ -13,7 +13,7 @@ var _ = require('lodash');
 
 module.exports = {
     /**
-     * Insert the counters provided by the controller
+     * Insert the views provided by the controller
      * @param data : list of all counters
      */
     insertViews: function (data) {
@@ -57,8 +57,17 @@ module.exports = {
                             reject(err);
                         }
                         else {
-                            //logger.log('info', 'P1 result', result);
-                            resolve(result[0]['id']);
+                            // Display found
+                            if(result.length > 0) {
+                                //logger.log('info', 'P1 result', result);
+                                resolve(result[0]['id']);
+                            }
+                            // Display not found
+                            else{
+                                reject({
+                                    erreur_bdd : '[-]init[-] DISPLAY DOESNT EXIST '+view.displayID
+                                })
+                            }
                         }
                     });
                 });
@@ -129,8 +138,8 @@ module.exports = {
      * @param events : array of events to insert
      * @param onFinished : function called when event insertion is done
      */
-    insertViewEvents: function (pool, events, onFinished) {
-        logger.log('info', 'VIEWS EVENTS to store ', events);
+    insertViewEvents: function (pool, events, onFinished, ackID) {
+        logger.log('info', 'VIEWS EVENTS to store '+ackID, events);
 
         var mysqlHelper = require('../utils/mysql_helper.js');
         var viewsId = [];
@@ -225,18 +234,67 @@ module.exports = {
                 return Q.all([p1, p2]);
 
             }, function reject1(err) {
-                logger.log('error', 'REJECT promise 1', err);
+                logger.log('error', 'REJECT VIEW promise', err);
+                // FINAL VIEW EVENT
+                //logger.log('info','ackID: '+ackID+' info', 'index:'+index+' total:'+(events.length - 1));
+                if (index == (events.length - 1)) {
+                    //logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED rejected '+ackID);
+                    // NOTIFY CALLER THAT WE'RE DONE
+                    onFinished(viewsId);
+                }
             }).then(function resolveAll() {
 
                 // FINAL VIEW EVENT
                 if (index == (events.length - 1)) {
-                    //logger.log('info', 'NOTIFICATION VIEW EVENTS OK ');
+                    //logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED resolved '+ackID);
                     // NOTIFY CALLER THAT WE'RE DONE
                     onFinished(viewsId);
                 }
             });
 
         });// fin _.each
+
+    },
+
+    /**
+     * Delete all views in the array
+     * @param viewsId: views ID array
+     */
+    deleteViews: function (viewsId) {
+
+        // MYSQL CONNECTOR AND QUEUES
+        var connection = require('../utils/mysql_helper.js').standardConnexion();
+        queues(connection);
+        var trans = connection.startTransaction();
+
+        var sqlDelete = "" +
+            "DELETE FROM vue " +
+            "WHERE id=? ";
+
+        // Parse views id
+        viewsId.forEach(function (viewId) {
+            trans.query(sqlDelete, [viewId], function (err, result) {
+                // DELETE KO
+                if (err && trans.rollback) {
+                    trans.rollback();
+                    logger.log('error', 'TRANSACTION ROLLBACK DELETE VIEW', err);
+                    throw err;
+                }
+            });
+        }, this);
+
+        // Commit DELETE views
+        trans.commit(function (err, info) {
+            if (err) {
+                logger.log('error', 'TRANSACTION COMMIT VIEWS ERROR', err);
+            }
+            // END MySQL connexion
+            connection.end(errorHandler.onMysqlEnd);
+        });
+
+
+        // Execute the queue DELETE views
+        trans.execute();
 
     }
 }

@@ -88,7 +88,12 @@ class ParkingsController extends \BaseController
             ServerCom::where('parking_id', '=', $id)
                 ->first()
                 ->delete();
-            Parking::find($id)->delete();
+            $model = Parking::find($id);
+            //  Delete file on the server
+            File::delete(storage_path() . '/documents/logo_parking/' . $model->logo);
+            // Delete parking in DB
+            $model->delete();
+
             $retour = true;
         } catch (Exception $e) {
             Log::error("Erreur suppression parking $id " . $e->getMessage());
@@ -117,13 +122,36 @@ class ParkingsController extends \BaseController
      * @param $parkingId : id du parking
      * @return reponse
      */
-    public function getAfficheurs($parkingId)
+    public function getAfficheursLibre($parkingId)
+    {
+        $afficheurs = DB::table('parking')
+            ->join('concentrateur', 'parking.id', '=', 'concentrateur.parking_id')
+            ->join('bus', 'concentrateur.id', '=', 'bus.concentrateur_id')
+            ->join('afficheur', 'bus.id', '=', 'afficheur.bus_id')
+            ->leftJoin('vue', 'afficheur.id', '=', 'vue.afficheur_id')
+            ->where('parking.id', '=', $parkingId)
+            ->where('afficheur.a_supprimer', '=', '0')
+            ->whereNull('vue.id')
+            ->select('afficheur.*')
+            ->get();
+        return $afficheurs;
+
+    }
+
+    /**
+     * Récupère la liste des afficheurs du parking.
+     * @param $parkingId : id du parking
+     * @return reponse
+     */
+    public function getAfficheursGet($parkingId)
     {
         $afficheurs = DB::table('parking')
             ->join('concentrateur', 'parking.id', '=', 'concentrateur.parking_id')
             ->join('bus', 'concentrateur.id', '=', 'bus.concentrateur_id')
             ->join('afficheur', 'bus.id', '=', 'afficheur.bus_id')
             ->where('parking.id', '=', $parkingId)
+            ->where('afficheur.a_supprimer', '=', '0')
+            ->whereNull('afficheur.lat', '=', '0')
             ->select('afficheur.*')
             ->get();
         return $afficheurs;
@@ -489,6 +517,11 @@ class ParkingsController extends \BaseController
         return json_encode(Parking::isLibelleExists($libelle, $id));
     }
 
+    /**
+     * Parking initialized from controller
+     * @param $id : ID parking
+     * @return string
+     */
     public function initialized($id)
     {
         // Variable de retour
@@ -502,7 +535,9 @@ class ParkingsController extends \BaseController
             $model = Parking::find($id);
             $model->init = '1';
             $model->save();
-            $retour['model'] = $model;
+            $retour['model'] = Parking::with('server_com')
+                ->where('parking.id', '=', $id)
+                ->first();
         } catch (Exception $e) {
             Log::error('Error set parking.init = 1');
             $retour['errorBdd'] = true;

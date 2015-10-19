@@ -83,5 +83,58 @@ class CapteursController extends \BaseController
         //
     }
 
+    /**
+     * @param $busId
+     * @param $leg
+     * @param $num
+     */
+    public function deleteFromNum($busId, $leg, $num)
+    {
+        try {
+            Capteur::where('bus_id', '=', $busId)
+                ->where('leg', '=', $leg)
+                ->where('num_noeud', '>=', $num)->delete();
+            return json_encode(true);
+        } catch (Exception $e) {
+            Log::error('ERREUR D INSERTION CAPTEUR VIRTUEL :');
+            Log::error($e);
+            return json_encode(false);
+        }
+    }
 
+    /**
+     * Crée plusieurs capteurs virtuels
+     */
+    public function create_virtuels()
+    {
+        $capteurs = json_decode(Input::get('capteurs'));
+        $configs_ids = json_decode(Input::get('configs_ids'));
+
+        // INSERTION DES CAPTEURS EN BDD
+        DB::beginTransaction();
+        try {
+            foreach ($capteurs AS $capteur) {
+                $capteurBDD = Capteur::create([
+                    'bus_id' => $capteur->bus_id,
+                    'num_noeud' => $capteur->num_noeud,
+                    'adresse' => $capteur->adresse,
+                    'leg' => $capteur->leg,
+                    'software_version' => $capteur->software_version
+                ]);
+
+                $capteurBDD->configs()->attach($configs_ids);
+
+                $place = Place::find($capteur->place_id);
+                $place->capteur()->associate($capteurBDD);
+                $place->save();
+            }
+            DB::commit();
+            return json_encode(true);
+        } catch (Exception $e) {
+            Log::error('ERREUR D INSERTION CAPTEUR VIRTUEL :');
+            Log::error($e);
+            DB::rollBack();
+            return json_encode(false);
+        }
+    }
 }

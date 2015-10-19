@@ -97,7 +97,6 @@ var Page = React.createClass({
                 actions: [{
                     name: libs.item1,
                     onClick: function (data) {
-                        console.log('click item 1 ', data);
                         // Connexion websocket + ecoute parking state controller
                         supervision_helper.initParkingState(data.id);
 
@@ -142,14 +141,12 @@ var Page = React.createClass({
                                 }
                                 break;
                             default:
-                                console.log('etat default ' + data.etat);
                                 break;
                         }
                     }.bind(this)
                 }, {
                     name: libs.item2,
                     onClick: function (data) {
-                        console.log('click item 2 ', data);
                         // Connexion websocket + ecoute parking state controller
                         supervision_helper.initParkingState(data.id);
 
@@ -527,13 +524,14 @@ var store = Reflux.createStore({
                 this._inst.parkingId,
                 this._inst.temps_reel.last_alerte_id,
                 function OK(clientWs) {
-                    console.log('Connecté');
                 }.bind(this),
                 function KO(err) {
                     console.error('ERREUR WS : %o', err);
                 }.bind(this)
             );
-        }.bind(this));
+        }.bind(this)).fail(function( jqXHR, textStatus ) {
+            console.error('GET LAST JOURNAL EQUIPEMENT OU ALERTE KO? PAS DE CONNEXION WS '+ textStatus);
+        });;
     },
 
     /**

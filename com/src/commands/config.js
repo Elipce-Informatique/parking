@@ -139,6 +139,7 @@ Config.prototype.getSupervisionBuses = function (client) {
         }
         // Get busses OK
         else {
+            logger.log('info', 'getSupervisionBuses', result);
             this.emit('onGetSupervisionBuses', result, client);
         }
     }.bind(this))
@@ -158,13 +159,21 @@ Config.prototype.sendBusConfigQuery = function (client) {
  * @param data: data key from the response
  */
 Config.prototype.onBusConfigData = function (data) {
-    this.emit('busConfigData', data);
-
     // At least 1 controller
     if (_.isArray(data) && data.length > 0) {
-        busModel.insertBuses(data);
+        // Insert buses and controllers
+        busModel.insertBuses(data, function (bool) {
+            // Busses inserted OK
+            if (bool) {
+                logger.log('info', 'BUSSES inserted EMIT busConfigData');
+                this.emit('busConfigData', data);
+            }
+            // Busses NOT inserted
+            else {
+                logger.log('error', 'BUSSES NOT INSERTED, BUS ENUM NOT LAUNCHED')
+            }
+        }.bind(this));
     }
-
 };
 
 /**
@@ -173,7 +182,7 @@ Config.prototype.onBusConfigData = function (data) {
  * @param client: WS client which send busConfigUpdate
  */
 Config.prototype.sendBusConfigUpdate = function (dataUpdate, client) {
-    messenger.sendToController("busConfigUpdate" ,{ 'bus' : dataUpdate}, {}, client );
+    messenger.sendToController("busConfigUpdate", {'bus': dataUpdate}, {}, client);
 };
 
 /**
@@ -195,7 +204,7 @@ Config.prototype.sendSensorConfigQuery = function (busId, client) {
     }, {}, client);
 };
 
-/** TODO
+/**
  * insert the configuration of all the sensors for one bus in DB
  * @param data: data key from the response
  */
@@ -221,13 +230,13 @@ Config.prototype.sendSensorConfigUpdate = function (dataUpdate) {
 
 };
 
-/** TODO
+/**
  * The last sensorConfigUpdate has been completed
  */
-Config.prototype.onSensorConfigUpdateDone = function (data) {
-    this.emit('sensorConfigUpdateDone', data);
+Config.prototype.onSensorConfigUpdateDone = function () {
+    this.emit('sensorConfigUpdateDone');
 
-    logger.log('info', 'onBusConfigUpdateDone received: %o', data);
+    logger.log('info', 'onBusConfigUpdateDone');
 };
 
 // --------------------------------------------------------------------------------------------
@@ -241,7 +250,7 @@ Config.prototype.sendDisplayConfigQuery = function (busId, client) {
     }, {}, client);
 };
 
-/** TODO
+/**
  * insert the configuration of all the displays for one bus in DB
  * @param data: data key from the response
  */
@@ -262,13 +271,13 @@ Config.prototype.sendDisplayConfigUpdate = function (dataUpdate) {
 
 };
 
-/** TODO
+/**
  * The last displayConfigUpdate has been completed
  */
-Config.prototype.onDisplayConfigUpdateDone = function (data) {
-    this.emit('displayConfigUpdateDone', data);
+Config.prototype.onDisplayConfigUpdateDone = function () {
+    this.emit('displayConfigUpdateDone');
 
-    logger.log('info', 'onDisplayConfigUpdateDone received: %o', data);
+    logger.log('info', 'onDisplayConfigUpdateDone');
 };
 
 // --------------------------------------------------------------------------------------------
@@ -279,7 +288,7 @@ Config.prototype.sendCounterConfigQuery = function (client) {
     messenger.sendToController("counterConfigQuery", {}, {}, client);
 };
 
-/** TODO
+/**
  * insert the configuration of all the counters in DB
  * @param data: data key from the response
  */
@@ -303,13 +312,13 @@ Config.prototype.sendCounterConfigUpdate = function (dataUpdate) {
 
 };
 
-/** TODO
+/**
  * The last counterConfigUpdate has been completed
  */
-Config.prototype.onCounterConfigUpdateDone = function (data) {
-    this.emit('counterConfigUpdateDone', data);
+Config.prototype.onCounterConfigUpdateDone = function () {
+    this.emit('counterConfigUpdateDone');
 
-    logger.log('info', 'onCounterConfigUpdateDone received: %o', data);
+    logger.log('info', 'onCounterConfigUpdateDone');
 };
 
 // --------------------------------------------------------------------------------------------
@@ -342,11 +351,11 @@ Config.prototype.sendViewConfigUpdate = function (dataUpdate) {
 
 };
 
-/** TODO
+/**
  * The last viewConfigUpdate has been completed
  */
 Config.prototype.onViewConfigUpdateDone = function () {
-    logger.log('info', 'onViewConfigUpdateDone received: ', data);
+    logger.log('info', 'onViewConfigUpdateDone');
 };
 
 // --------------------------------------------------------------------------------------------
@@ -371,31 +380,75 @@ Config.prototype.onSettingsData = function (data) {
     }
 };
 
-/** TODO
- * Send a counterConfigUpdate to the controller
- * @param dataUpdate: data to send to the controller for the update
+/**
+ * Update settings in controller DB
+ * @param settings: array of settings objects
+ * @param client: WS client
  */
-Config.prototype.sendCounterConfigUpdate = function (dataUpdate) {
+Config.prototype.sendSettingsUpdate = function (settings, client) {
+    this.emit('settingsUpdate');
+    try {
+        logger.log('info', 'sendSettingsUpdate', settings);
+        // Parse settings
+        var _settings = _.map(settings, function(setting){
+            // Decode settings json
+            setting.json = JSON.parse(setting.json );
+            return setting;
+        });
 
+        logger.log('info', 'sendSettingsUpdate JSON PARSE', _settings);
+        // Send to controller
+        messenger.sendToController("settingsUpdate", _settings, {}, client);
+    }
+    catch (e)
+    {
+        logger.log('error', 'JSON PARSE SETTINGS KO',e);
+    }
 };
 
-/** TODO
- * The last counterConfigUpdate has been completed
+/**
+ * The last sensorConfigUpdate has been completed
  */
-Config.prototype.onCounterConfigUpdateDone = function (data) {
-    this.emit('counterConfigUpdateDone', data);
+Config.prototype.onSettingsUpdateDone = function () {
+    this.emit('settingsUpdateDone');
 
-    logger.log('info', 'onCounterConfigUpdateDone received: %o', data);
+    logger.log('info', 'onSettingsUpdateDone');
+};
+
+/**
+ * Get all settings
+ */
+Config.prototype.getSupervisionSettings = function (client) {
+    // Get settings
+    settingModel.getSettings(function (err, result) {
+        if (err) {
+            logger.log('error', 'Model setting, function getSettings callback error', err);
+        }
+        // Get settings OK
+        else {
+            //logger.log('info', 'getSupervisionSettings', result);
+            this.emit('onGetSupervisionSettings', result, client);
+        }
+    }.bind(this))
 };
 
 // --------------------------------------------------------------------------------------------
 /**
  * Send a notification to the client when parking initialization finished
  * @param client
+ * @param busID: bus ID
+ * @param data: {
+ *      bus: valeur
+ *      delta: [
+ *         { sensor1 (data from busEnum.param)},
+ *         ...
+ *      ]
+ * }
  */
-Config.prototype.sendNotificationInitFinished = function (client, busId) {
-    logger.log('info', '************** NOTIFICATION CLIENT init_parking_finished ON BUS ', busId);
-    messenger.send(client, 'init_parking_finished', {});
+Config.prototype.sendNotificationInitFinished = function (client, busId, data) {
+
+    logger.log('info', '************** NOTIFICATION CLIENT init_parking_finished ON BUS ', busId, data);
+    messenger.send(client, 'init_parking_finished', data);
 
 };
 
