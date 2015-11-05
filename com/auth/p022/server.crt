@@ -1,0 +1,58 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 10 (0xa)
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN=K0
+        Validity
+            Not Before: Oct  2 14:03:54 2015 GMT
+            Not After : Oct  3 14:03:54 2115 GMT
+        Subject: C=FR, ST=France, O=Elipce, OU=Elipce Informatique, CN=185.24.155.69
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (1024 bit)
+                Modulus:
+                    00:d6:1d:1f:31:4d:a0:46:9e:89:cc:e0:66:e3:80:
+                    2b:34:81:d9:8b:ff:45:9f:aa:a0:48:76:36:1c:d3:
+                    37:55:b6:fa:2d:06:c4:10:42:a0:6b:07:ee:6a:5e:
+                    e3:e1:62:c7:16:ec:0e:6b:61:c2:73:cc:a1:c2:34:
+                    25:22:d4:e9:58:4e:cc:c0:43:4f:08:ff:73:34:a8:
+                    c9:ea:de:d7:5c:54:cc:4e:be:23:9d:a9:37:1b:be:
+                    73:e5:84:aa:98:5b:5b:ad:0a:0d:f3:1c:c9:85:6e:
+                    28:21:73:d8:a9:5a:fa:75:4a:55:bc:5b:e8:77:93:
+                    c0:20:30:cc:d0:72:70:8b:29
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Comment: 
+                OpenSSL Generated Certificate
+            X509v3 Subject Key Identifier: 
+                65:C0:B9:60:EF:B4:36:F3:3F:F5:2B:9B:08:1F:AA:F9:B1:9F:53:90
+            X509v3 Authority Key Identifier: 
+                keyid:5A:B4:BA:A9:4F:B6:AE:C4:75:9C:06:C2:84:7D:71:B1:20:87:9E:27
+
+    Signature Algorithm: sha256WithRSAEncryption
+         52:43:a1:3e:23:18:8a:d3:4d:d1:e3:d4:3d:33:f8:41:cf:0d:
+         36:c0:0c:d5:ca:15:4b:bb:21:bd:43:3f:5d:6b:a6:72:55:ee:
+         7e:62:42:96:bd:8e:0e:c8:e9:97:f4:d0:cb:d1:7e:9e:f5:9f:
+         9e:6a:6c:21:e3:4f:d4:90:f6:f9:f0:16:7a:78:fa:d4:04:0c:
+         7e:e5:42:4a:da:7a:d3:87:21:a7:84:ba:82:be:2d:0e:32:0c:
+         8c:7e:7d:2d:75:8a:1b:87:ea:1a:a1:fb:26:51:49:a3:4f:5b:
+         41:d7:14:95:74:71:30:ec:9c:94:1b:e3:52:d4:7d:96:49:10:
+         19:87
+-----BEGIN CERTIFICATE-----
+MIICZTCCAc6gAwIBAgIBCjANBgkqhkiG9w0BAQsFADANMQswCQYDVQQDDAJLMDAg
+Fw0xNTEwMDIxNDAzNTRaGA8yMTE1MTAwMzE0MDM1NFowZTELMAkGA1UEBhMCRlIx
+DzANBgNVBAgMBkZyYW5jZTEPMA0GA1UECgwGRWxpcGNlMRwwGgYDVQQLDBNFbGlw
+Y2UgSW5mb3JtYXRpcXVlMRYwFAYDVQQDDA0xODUuMjQuMTU1LjY5MIGfMA0GCSqG
+SIb3DQEBAQUAA4GNADCBiQKBgQDWHR8xTaBGnonM4GbjgCs0gdmL/0WfqqBIdjYc
+0zdVtvotBsQQQqBrB+5qXuPhYscW7A5rYcJzzKHCNCUi1OlYTszAQ08I/3M0qMnq
+3tdcVMxOviOdqTcbvnPlhKqYW1utCg3zHMmFbighc9ipWvp1SlW8W+h3k8AgMMzQ
+cnCLKQIDAQABo3sweTAJBgNVHRMEAjAAMCwGCWCGSAGG+EIBDQQfFh1PcGVuU1NM
+IEdlbmVyYXRlZCBDZXJ0aWZpY2F0ZTAdBgNVHQ4EFgQUZcC5YO+0NvM/9SubCB+q
++bGfU5AwHwYDVR0jBBgwFoAUWrS6qU+2rsR1nAbChH1xsSCHnicwDQYJKoZIhvcN
+AQELBQADgYEAUkOhPiMYitNN0ePUPTP4Qc8NNsAM1coVS7shvUM/XWumclXufmJC
+lr2ODsjpl/TQy9F+nvWfnmpsIeNP1JD2+fAWenj61AQMfuVCStp604chp4S6gr4t
+DjIMjH59LXWKG4fqGqH7JlFJo09bQdcUlXRxMOyclBvjUtR9lkkQGYc=
+-----END CERTIFICATE-----
