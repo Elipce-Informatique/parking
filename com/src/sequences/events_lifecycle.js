@@ -196,10 +196,10 @@ EventsLifeCycle.prototype.onEventData = function (data) {
 
         // COUNTER
         var pCounters = Q.promise(function (resolve, reject) {
-            if (aCounterEvt.length > 0) {
-                // INSERT THE COUNTER EVENTS GATHERED
-                counterModel.insertCounterEvents(this.pool, aCounterEvt);
-            }
+            //if (aCounterEvt.length > 0) {
+            //    // INSERT THE COUNTER EVENTS GATHERED
+            //    counterModel.insertCounterEvents(this.pool, aCounterEvt);
+            //}
             resolve();
         }.bind(this));
 
@@ -228,6 +228,9 @@ EventsLifeCycle.prototype.onEventData = function (data) {
             // Send the next EventQuery
             this.events_controller.sendEventQuery(data.ackID);
         }.bind(this));
+
+        // Test send next event query directly // NOT A GOOD SOLUTION MYSQL SERVER BUSY
+        //this.events_controller.sendEventQuery(data.ackID);
     }
 }
 
