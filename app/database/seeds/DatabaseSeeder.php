@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder {
 		Eloquent::unguard();
 
 		$this->call('TypePlaceSeeder');
-        $this->call('SettingsSeeder');
+//        $this->call('SettingsSeeder');// Seulement si pas de settings dans la BDDD controller
 	}
 
 }

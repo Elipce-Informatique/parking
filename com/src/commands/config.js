@@ -86,7 +86,12 @@ Config.prototype.setParkingId = function () {
             logger.log('error', 'Model parking, function getInfos callback error');
         }
         else {
-            global.parkingId = result[0]['id'];
+            try {
+                global.parkingId = result[0]['id'];
+            } catch (e) {
+                logger.error('error', 'Aucun parking associé à un controlleur utilisant ce port. (Penser à créer un parking en BDD et à lui associer un port)');
+                throw e;
+            }
         }
     });
 
@@ -390,9 +395,9 @@ Config.prototype.sendSettingsUpdate = function (settings, client) {
     try {
         logger.log('info', 'sendSettingsUpdate', settings);
         // Parse settings
-        var _settings = _.map(settings, function(setting){
+        var _settings = _.map(settings, function (setting) {
             // Decode settings json
-            setting.json = JSON.parse(setting.json );
+            setting.json = JSON.parse(setting.json);
             return setting;
         });
 
@@ -400,9 +405,8 @@ Config.prototype.sendSettingsUpdate = function (settings, client) {
         // Send to controller
         messenger.sendToController("settingsUpdate", _settings, {}, client);
     }
-    catch (e)
-    {
-        logger.log('error', 'JSON PARSE SETTINGS KO',e);
+    catch (e) {
+        logger.log('error', 'JSON PARSE SETTINGS KO', e);
     }
 };
 
