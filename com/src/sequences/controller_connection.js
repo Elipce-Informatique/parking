@@ -27,7 +27,7 @@ module.exports = {
         if (global.activateEventLoop) {
             logger.log('info', 'Starting EVENT LOOP');
             // Launches the event lifecycle
-            //eventsHandler.startEventLoop();
+            eventsHandler.startEventLoop();
         }
     }
 };
