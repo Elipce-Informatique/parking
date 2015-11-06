@@ -24,8 +24,10 @@ module.exports = {
         // Get the parking identifier
         ConfigHandler.setParkingId();
 
-        logger.log('info', 'Starting EVENT LOOP');
-        // Launches the event lifecycle
-        eventsHandler.startEventLoop();
+        if (global.activateEventLoop) {
+            logger.log('info', 'Starting EVENT LOOP');
+            // Launches the event lifecycle
+            eventsHandler.startEventLoop();
+        }
     }
 };

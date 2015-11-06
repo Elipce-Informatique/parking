@@ -11,6 +11,7 @@ global.parkingId = null;
 global.legLength = conf.legLength;
 global.initMode = 2;
 global.poolNumber = getPoolNumber(10);
+global.activateEventLoop = getEventLoopActivation(true);
 
 
 // Local modules
@@ -37,7 +38,7 @@ var cfg = {
     port: global.port,
     host: global.host,
     ssl_key: global.modeProd ? conf.prod.certificates.key : conf.dev.certificates.key,
-    ssl_cert: global.modeProd ? conf.prod.certificates.cert: conf.dev.certificates.cert,
+    ssl_cert: global.modeProd ? conf.prod.certificates.cert : conf.dev.certificates.cert,
     ca: global.modeProd ? conf.prod.certificates.ca : conf.dev.certificates.ca
 };
 
@@ -153,11 +154,12 @@ wss.on('connection', function connection(client) {
         if (_.isEqual(client, controllerClient)) {
             logger.log('info', 'Client disconnected -> it was a controller');
             global.controllerClient = null;
-            client.send(JSON.stringify( {
+            client.send(JSON.stringify({
                 messageType: 'controllerStatus',
                 data: {
                     controller: false
-                }}), errorHandler.onSendError);
+                }
+            }), errorHandler.onSendError);
         }
         // At least 1 webclient
         else if (supervisionClients.length > 0) {
@@ -220,6 +222,23 @@ function getPoolNumber(defaultPool) {
         return argv['pool'];
     }
     return defaultPool;
+}
+
+/**
+ * Get the port for the server through the comand line argument.
+ * if no mort provided, default port is returned.
+ *
+ * @param args : Command line arguments parsed by minimist.
+ * @param defaultPort
+ * @returns {*}
+ */
+function getEventLoopActivation(defaultVal) {
+    var _ = require('lodash');
+    var argv = require('minimist')(process.argv.slice(2));
+    if (typeof(argv['evts']) != 'undefined' && !_.isNaN(parseInt(argv['evts']))) {
+        return argv['evts'] == 'false' ? false : (argv['evts'] == 'true' ? true : defaultVal);
+    }
+    return defaultVal;
 }
 
 
