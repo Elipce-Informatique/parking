@@ -56,7 +56,7 @@ var mysqlClass = {
                 logger.log('error', 'Mysql query error: ' + err);
                 logger.log('error', 'Mysql query error RANDOM: ' + rand);
                 callback(err, true);
-                //connection.release();
+                connection.release();
             });
             query.on('result', function (rows) {
                 callback(false, rows);
