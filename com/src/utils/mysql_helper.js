@@ -44,21 +44,25 @@ var mysqlClass = {
     execute: function (pool, sql, params, callback) {
         pool.getConnection(function (err, connection) {
             if (err) {
-                logger.log('error','Mysql connection error: ' + err);
+                logger.log('error', 'Mysql connection error: ' + err);
                 callback(err, true);
                 return;
             }
 
-            var query = connection.query(sql, params, callback);
+            var rand = Math.random();
+
+            var query = connection.query(sql, params/*, callback*/);
             query.on('error', function (err) {
-                logger.log('error','Mysql query error: ' + err);
+                logger.log('error', 'Mysql query error: ' + err);
+                logger.log('error', 'Mysql query error RANDOM: ' + rand);
                 callback(err, true);
-                connection.release();
+                //connection.release();
             });
             query.on('result', function (rows) {
                 callback(false, rows);
             });
             query.on('end', function () {
+                logger.log('error', 'Mysql query end RANDOM: ' + rand);
                 connection.release();
             });
         });
