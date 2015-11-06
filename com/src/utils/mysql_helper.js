@@ -49,21 +49,22 @@ var mysqlClass = {
                 return;
             }
 
-            var rand = Math.random();
+            // TEST
+            //var rand = Math.random();
 
             var query = connection.query(sql, params, callback);
             query.on('error', function (err) {
                 logger.log('error', 'Mysql query error: ' + err);
-                logger.log('error', 'Mysql query error RANDOM: ' + rand);
+                //logger.log('error', 'Mysql query error RANDOM: ' + rand);
                 callback(err, true);
-                //connection.release();
+                connection.release();
             });
             query.on('result', function (rows) {
                 callback(false, rows);
             });
             query.on('end', function () {
-                logger.log('info', 'Mysql query end RANDOM: ' + rand);
-                //connection.release();
+                //logger.log('info', 'Mysql query end RANDOM: ' + rand);
+                connection.release();
             });
         });
     }
