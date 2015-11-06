@@ -51,7 +51,7 @@ var mysqlClass = {
 
             var rand = Math.random();
 
-            var query = connection.query(sql, params/*, callback*/);
+            var query = connection.query(sql, params, callback);
             query.on('error', function (err) {
                 logger.log('error', 'Mysql query error: ' + err);
                 logger.log('error', 'Mysql query error RANDOM: ' + rand);
