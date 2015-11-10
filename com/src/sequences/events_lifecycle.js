@@ -162,6 +162,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         var pSensors = Q.promise(function (resolve, reject) {
             if (aSensorEvt.length > 0) {
                 // INSERT THE SENSOR EVENTS GATHERED
+                // WITH INDEXATION
                 sensorModel.insertSensorEvents(this.pool, aSensorEvt, function () {
                     // NOTIFY ALL THE SUPERVISIONS THAT SOMETHING HAVE CHANGED !
                     messenger.supervisionBroadcast("sensor_event");
@@ -177,6 +178,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         var pViews = Q.promise(function (resolve, reject) {
             if (aViewEvt.length > 0) {
                 // INSERT THE VIEW EVENTS GATHERED
+                // WITH INDEXATION
                 viewModel.insertViewEvents(this.pool, aViewEvt, function (viewsId) {
                     // Views to update on supervision
                     if (viewsId.length > 0) {
@@ -207,7 +209,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         var pDisplays = Q.promise(function (resolve, reject) {
             if (aDisplayEvt.length > 0) {
                 // INSERT THE DISPLAY EVENTS GATHERED
-                displayModel.insertDisplayEvents(this.pool, aDisplayEvt);
+                //displayModel.insertDisplayEvents(this.pool, aDisplayEvt);
             }
             resolve();
         }.bind(this));
@@ -216,7 +218,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         var pBusses = Q.promise(function (resolve, reject) {
             if (aBusEvt.length > 0) {
                 // INSERT THE BUS EVENTS GATHERED
-                busModel.insertBusEvents(this.pool, aBusEvt);
+                //busModel.insertBusEvents(this.pool, aBusEvt);
             }
             resolve();
         }.bind(this));
