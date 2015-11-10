@@ -10,7 +10,6 @@ var Collapse = require('../composants/react_collapse').Collapse;
 var CollapseBody = require('../composants/react_collapse').CollapseBody;
 var CollapseSidebar = require('../composants/react_collapse').CollapseSidebar;
 var ParkingMap = require('../composants/maps/supervision_parking_map');
-var TestD3 = require('../charts/test_d3');
 var ZoneTempsReel = require('../composants/react_supervision_temps_reel');
 var TableauBord = require('../composants/react_supervision_tableau_bord').tab_bord;
 var PanelLogos = require('../composants/react_supervision_tableau_bord').panel_logos;
