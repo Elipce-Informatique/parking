@@ -53,13 +53,23 @@ var mysqlClass = {
             query.on('error', function (err) {
                 logger.log('error','Mysql query error: ' + err);
                 callback(err, true);
-                connection.release();
+                // TODO pansement à corriger plus proprement
+                try {
+                    connection.release();
+                } catch (e) {
+                    logger.log('error', 'erreur connexion release', e);
+                }
             });
             query.on('result', function (rows) {
                 callback(false, rows);
             });
             query.on('end', function () {
-                connection.release();
+                // TODO pansement à corriger plus proprement
+                try {
+                    connection.release();
+                } catch (e) {
+                    logger.log('error', 'erreur connexion release', e);
+                }
             });
         });
     }
