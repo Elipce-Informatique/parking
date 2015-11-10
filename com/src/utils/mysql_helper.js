@@ -61,7 +61,7 @@ var mysqlClass = {
                 try {
                     connection.release();
                 } catch (e) {
-                    logger.log('eror', 'erreur connexion release', e);
+                    logger.log('error', 'erreur connexion release', e);
                 }
             });
             query.on('result', function (rows) {
@@ -72,7 +72,7 @@ var mysqlClass = {
                 try {
                     connection.release();
                 } catch (e) {
-                    logger.log('eror', 'erreur connexion release', e);
+                    logger.log('error', 'erreur connexion release', e);
                 }
             });
         });
