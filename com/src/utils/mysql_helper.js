@@ -57,23 +57,22 @@ var mysqlClass = {
                 logger.log('error', 'Mysql query error: ' + err);
                 //logger.log('error', 'Mysql query error RANDOM: ' + rand);
                 callback(err, true);
+                // TODO pansement à corriger plus proprement
                 try {
                     connection.release();
                 } catch (e) {
-                    logger.log('info', 'ERROR FATALE TRES TRES IMPORTANTE, ne pas négliger ce log. Le code mis en place ici n\'est qu\'un pansement tout moisi');
-                    logger.log('info', 'ERROR FATALE TRES TRES IMPORTANTE: ', e);
+                    logger.log('eror', 'erreur connexion release', e);
                 }
             });
             query.on('result', function (rows) {
                 callback(false, rows);
             });
             query.on('end', function () {
-                //logger.log('info', 'Mysql query end RANDOM: ' + rand);
+                // TODO pansement à corriger plus proprement
                 try {
                     connection.release();
                 } catch (e) {
-                    logger.log('info', 'ERROR FATALE TRES TRES IMPORTANTE, ne pas négliger ce log. Le code mis en place ici n\'est qu\'un pansement tout moisi');
-                    logger.log('info', 'ERROR FATALE TRES TRES IMPORTANTE: ', e);
+                    logger.log('eror', 'erreur connexion release', e);
                 }
             });
         });
