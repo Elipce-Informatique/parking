@@ -262,6 +262,13 @@ module.exports = {
             "           FROM event_capteur e2 " +
             "           WHERE e2.capteur_id=e.capteur_id) ";
 
+        var selectLastState = "SELECT e.state " +
+            "FROM event_capteur e " +
+            "WHERE capteur_id=? " +
+            "AND e.id=(SELECT MAX(e2.id) " +
+            "           FROM event_capteur e2 " +
+            "           WHERE e2.capteur_id=e.capteur_id) ";
+
         // UPDATE THE SPACE "ETAT D'OCCUPATION"
         var updatePlaceSql = "UPDATE place SET etat_occupation_id=? WHERE id=?";
 
