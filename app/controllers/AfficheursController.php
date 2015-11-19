@@ -280,4 +280,13 @@ class AfficheursController extends \BaseController
         }
     }
 
+    /**
+     * Retourne la liste des places de l'afficheur
+     */
+    public function getPlaces($id)
+    {
+        $aff = Afficheur::find($id);
+
+    }
+
 }

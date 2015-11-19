@@ -255,19 +255,28 @@ module.exports = {
         var journalSql = "INSERT INTO journal_equipement_plan (plan_id, place_id, etat_occupation_id, overstay, date_evt)" +
             "VALUES (?,?,?,?,?)";
 
-        var selectLastSense = "SELECT e.sense " +
+        var selectLastSense = "" +
+            "SELECT e.sense, e.state " +
             "FROM event_capteur e " +
             "WHERE capteur_id=? " +
             "AND e.id=(SELECT MAX(e2.id) " +
             "           FROM event_capteur e2 " +
             "           WHERE e2.capteur_id=e.capteur_id) ";
 
-        var selectLastState = "SELECT e.state " +
+        // Optimisation car la sous-requeete ci-dessus est indexée mais pas la requête principale
+        selectLastSense = "" +
+            "SELECT e.sense, e.state " +
             "FROM event_capteur e " +
             "WHERE capteur_id=? " +
-            "AND e.id=(SELECT MAX(e2.id) " +
-            "           FROM event_capteur e2 " +
-            "           WHERE e2.capteur_id=e.capteur_id) ";
+            "ORDER BY id DESC " +
+            "LIMIT 1 ";
+
+        //var selectLastState = "SELECT e.state " +
+        //    "FROM event_capteur e " +
+        //    "WHERE capteur_id=? " +
+        //    "AND e.id=(SELECT MAX(e2.id) " +
+        //    "           FROM event_capteur e2 " +
+        //    "           WHERE e2.capteur_id=e.capteur_id) ";
 
         // UPDATE THE SPACE "ETAT D'OCCUPATION"
         var updatePlaceSql = "UPDATE place SET etat_occupation_id=? WHERE id=?";
@@ -302,11 +311,11 @@ module.exports = {
                 // Promise 2 Composée de 2 promises
                 var p1 = Q.promise(function (resolve, reject) {
                     //logger.log('info', 'PASS promiose 2, sensor id: ' + sensorId);
-
-
                     var sense = evt.sense;
+                    var state = evt.state;
+
                     // No sense key
-                    if (evt.sense === undefined) {
+                    if (evt.sense === undefined || evt.state == undefined) {
                         // Last sense of the sensor
                         mysqlHelper.execute(pool, selectLastSense, [sensorId], function (err, rows) {
                             if (err ) {
@@ -316,14 +325,16 @@ module.exports = {
                             else if(rows.length === 0){
 
                                 resolve({
-                                    sense: 'free',
+                                    state: state===undefined ?'online':state,
+                                    sense: sense===undefined ?'free':sense,
                                     sensorId: sensorId
                                 });
                             }
                             else {
 
                                 resolve({
-                                    sense: rows[0]['sense'],
+                                    state: state===undefined ?rows[0]['state']:state,
+                                    sense: sense===undefined ?rows[0]['sense']:sense,
                                     sensorId: sensorId
                                 });
                             }
@@ -333,46 +344,48 @@ module.exports = {
                     else {
                         resolve({
                             sense: sense,
-                            sensorId: sensorId
-                        });
-                    }
-                });
-
-                var p2 = Q.promise(function (resolve, reject) {
-                    var state = evt.state;
-                    // No state key
-                    if (evt.state === undefined) {
-                        // Last state of the sensor
-                        mysqlHelper.execute(pool, selectLastState, [sensorId], function (err, rows) {
-                            if (err ) {
-                                logger.log('error', 'ERREUR SQL GET LAST STATE ', err);
-                                reject(err);
-                            }
-                            else if (rows.length === 0){
-                                resolve({
-                                    state: 'online',
-                                    sensorId: sensorId
-                                });
-                            }
-                            else {
-
-                                resolve({
-                                    state: rows[0]['state'],
-                                    sensorId: sensorId
-                                });
-                            }
-                        });
-                    }
-                    // Sense key OK in the message
-                    else {
-                        resolve({
                             state: state,
                             sensorId: sensorId
                         });
                     }
                 });
+                return p1;
 
-                return Q.all([p1, p2]);
+                //var p2 = Q.promise(function (resolve, reject) {
+                //    var state = evt.state;
+                //    // No state key
+                //    if (evt.state === undefined) {
+                //        // Last state of the sensor
+                //        mysqlHelper.execute(pool, selectLastState, [sensorId], function (err, rows) {
+                //            if (err ) {
+                //                logger.log('error', 'ERREUR SQL GET LAST STATE ', err);
+                //                reject(err);
+                //            }
+                //            else if (rows.length === 0){
+                //                resolve({
+                //                    state: 'online',
+                //                    sensorId: sensorId
+                //                });
+                //            }
+                //            else {
+                //
+                //                resolve({
+                //                    state: rows[0]['state'],
+                //                    sensorId: sensorId
+                //                });
+                //            }
+                //        });
+                //    }
+                //    // Sense key OK in the message
+                //    else {
+                //        resolve({
+                //            state: state,
+                //            sensorId: sensorId
+                //        });
+                //    }
+                //});
+                //
+                //return Q.all([p1, p2]);
 
             }, function reject1(err) {
                 logger.log('error', 'REJECT SENSOR promise 1', err);
@@ -382,12 +395,11 @@ module.exports = {
                 //logger.log('info', "++++++++++++++ OBJET Q.ALL", obj);
                 // Promise 3
                 return Q.promise(function (resolve, reject) {
-                    var objSense = obj[0];
-                    var objState = obj[1];
-                    var sensorId = objSense.sensorId;
-                    var sense = objSense.sense;
-                    var state = objState.state;
+                    var sensorId = obj.sensorId;
+                    var sense = obj.sense;
+                    var state = obj.state;
 
+                    // Insert into event_capteur
                     var inst = mysql.format(eventSql,[sensorId, evt.date, state, sense, evt.supply, evt.dfu]);
                     //logger.log('info', '##### EVENT_CAPTEUR: '+ inst);
                     // INSERT IN THE EVENT TABLE
