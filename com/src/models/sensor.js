@@ -226,7 +226,8 @@ module.exports = {
             "VALUES (?,?,?,?,?,?)";
 
         // FETCH SENSOR ID FROM SENSOR V4_ID. NEED TO GO THROUGH THE PARKING
-        var getSensorIdSql = "SELECT c.id FROM capteur c" +
+        var getSensorIdSql = "SELECT c.id " +
+            "   FROM capteur c" +
             "   JOIN place p ON p.capteur_id=c.id" +
             "   JOIN allee a ON a.id=p.allee_id" +
             "   JOIN zone z ON z.id=a.zone_id" +
@@ -247,7 +248,6 @@ module.exports = {
             " JOIN allee a ON a.id=p.allee_id" +
             " JOIN zone z ON z.id=a.zone_id" +
             " JOIN plan ON plan.id=z.plan_id" +
-
             " WHERE eo.is_occupe=? " +
             " AND c.id=?";
 

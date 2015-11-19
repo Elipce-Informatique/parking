@@ -22,8 +22,8 @@ module.exports = {
         //Query structure
         var insertView =
             "INSERT IGNORE INTO vue(libelle, compteur_id, afficheur_id, cellNr, total, " +
-            "offset, emptyLow, emptyHigh, fullLow, fullHigh, v4_id, type_place_id)" +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, (SELECT id FROM type_place WHERE cell_nb=?))";
+            "offset, emptyLow, emptyHigh, fullLow, fullHigh, v4_id, type_place_id, libres)" +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, (SELECT id FROM type_place WHERE cell_nb=?), ?)";
 
         var selectDisplay =
             "SELECT a.id " +
@@ -104,6 +104,7 @@ module.exports = {
                         view.fullHigh,
                         view.ID,
                         view.cellNr,
+                        view.total
                     ]);
                     //logger.log('info', 'Insert view', inst);
                     -
