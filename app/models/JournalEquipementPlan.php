@@ -73,8 +73,8 @@ class JournalEquipementPlan extends BaseModel
     {
 //        return JournalEquipementPlan::wherePlanId($planId)->where('id', '>', $journalId)->get();
         return DB::table('journal_equipement_plan')
-            ->where('plan_id', '=', $planId)
             ->where('id', '>', $journalId)
+            ->where('plan_id', '=', $planId)
             ->get();
     }
 
@@ -89,8 +89,9 @@ class JournalEquipementPlan extends BaseModel
         // ARTHUNG
         DB::connection()->disableQueryLog();
 
-        $placeIds = DB::table('journal_equipement_plan')->where('plan_id', '=', $planId)
+        $placeIds = DB::table('journal_equipement_plan')
             ->where('id', '>', $journalId)
+            ->where('plan_id', '=', $planId)
             ->groupBy('place_id')
             ->lists('place_id');
 

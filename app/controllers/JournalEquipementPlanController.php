@@ -22,6 +22,7 @@ class JournalEquipementPlanController extends \BaseController
      */
     public function show($planId)
     {
+        DB::connection()->disableQueryLog();
         return JournalEquipementPlan::getJournalPlan($planId);
     }
 
@@ -32,6 +33,7 @@ class JournalEquipementPlanController extends \BaseController
      */
     public function showFromVersion($planId, $journalId)
     {
+        DB::connection()->disableQueryLog();
         return JournalEquipementPlan::getJournalPlanFromVersion($planId, $journalId);
     }
 
@@ -42,6 +44,7 @@ class JournalEquipementPlanController extends \BaseController
      */
     public function showPlacesFromVersion($planId, $journalId)
     {
+        DB::connection()->disableQueryLog();
         return JournalEquipementPlan::getJournalPlacesFromVersion($planId, $journalId);
     }
 
@@ -53,6 +56,7 @@ class JournalEquipementPlanController extends \BaseController
 
     public function last($planId)
     {
+        DB::connection()->disableQueryLog();
         // ATTENTION/ ARTHUNG/ les select sur une grosse quantité de données doivent être faits en queryBuilder et SURTOUT PAS en eloquent.
         $retour = DB::table('journal_equipement_plan')->where('plan_id','=',$planId)->max('id');
 
