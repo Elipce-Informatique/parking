@@ -285,8 +285,52 @@ class AfficheursController extends \BaseController
      */
     public function getPlaces($id)
     {
-        $aff = Afficheur::find($id);
 
+        $places = [];
+        // COMPTEUR PAPA
+        $papasIds = DB::table('afficheur')
+            ->join('vue', 'vue.afficheur_id', '=', 'afficheur.id')
+            ->join('compteur', 'compteur.id', '=', 'vue.compteur_id')
+            ->where('afficheur.id', $id)
+            ->get(['compteur.id']);
+
+        // RÉCURSIVITÉ EN PARTANT DE CHAQUE PAPA
+        foreach ($papasIds as $compteur) {
+            $places = array_merge($places, $this->getPlacesRecursive($compteur->id));
+        }
+
+        return $places;
+    }
+
+    /**
+     * @param $papaId
+     */
+    private function getPlacesRecursive($papaId)
+    {
+        $places = [];
+
+        // PLACES DE CE PAPA
+        $papaPlaces = DB::table('compteur')
+            ->join('capteur_compteur', 'capteur_compteur.compteur_id', '=', 'compteur.id')
+            ->join('capteur', 'capteur.id', '=', 'capteur_compteur.capteur_id')
+            ->join('place', 'place.capteur_id', '=', 'capteur.id')
+            ->where('capteur_compteur.compteur_id', $papaId)
+            ->get(['place.*']);
+        $places = array_merge($places, $papaPlaces);
+
+        // COMPTEURS FILS DE CE PAPA
+        $filsIds = DB::table('compteur')
+            ->join('compteur_compteur', 'compteur_compteur.compteur_id', '=', 'compteur.id')
+            ->where('compteur_compteur.compteur_id', $papaId)
+            ->get(['compteur_compteur.compteur_fils_id']);
+
+        foreach ($filsIds as $filsIds) {
+            if ($filsIds->compteur_fils_id) {
+                $places = array_merge($places, $this->getPlacesRecursive($filsIds->compteur_fils_id));
+            }
+        }
+
+        return $places;
     }
 
 }
