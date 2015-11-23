@@ -106,7 +106,7 @@ EventsLifeCycle.prototype.onEventData = function (data) {
         _.each(evts, function (evt) {
 
             // On ne garde que les 3 clés "optimisés" par olav
-            cacheEvt = _.keep(cacheEvt, ['date', 'event', 'class']);
+            cacheEvt = _.pick(cacheEvt, ['date', 'event', 'class']);
 
             // Omit class key if the ID key is absent
             if (typeof evt.ID === "undefined") {
