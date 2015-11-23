@@ -177,6 +177,7 @@ Route::group(['before' => 'auth|auth.canaccess|auth.parking', 'prefix' => 'parki
     Route::post('afficheur/{id}/set_counters_views', 'AfficheursController@setCountersViews');
     Route::patch('afficheur/{id}/reset', 'AfficheursController@reset');
     Route::get('afficheur/updateAfficheurs', 'AfficheursController@updateAfficheurs');
+    Route::get('afficheur/{id}/places', 'AfficheursController@getPlaces');
     Route::delete('allee/delete_many', 'AlleesController@destroyMany');
     Route::delete('place/delete_many', 'PlacesController@destroyMany');
     Route::post('place/{id}/setCapteur', 'PlacesController@setCapteur');
