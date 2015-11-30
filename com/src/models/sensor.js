@@ -217,7 +217,7 @@ module.exports = {
      * @param onFinished : function called when event insertion is done
      */
     insertSensorEvents: function (pool, events, onFinished, ackID) {
-        logger.log('info', 'SENSOR EVENTS to store '+ackID, events);
+        logger.log('info', 'SENSOR EVENTS to store ' + ackID, events);
 
         var mysqlHelper = require('../utils/mysql_helper.js');
 
@@ -265,11 +265,11 @@ module.exports = {
 
         // Optimisation car la sous-requeete ci-dessus est indexée mais pas la requête principale
         selectLastSense = "" +
-            "SELECT e.sense, e.state " +
-            "FROM event_capteur e " +
-            "WHERE capteur_id=? " +
-            "ORDER BY id DESC " +
-            "LIMIT 1 ";
+        "SELECT e.sense, e.state " +
+        "FROM event_capteur e " +
+        "WHERE capteur_id=? " +
+        "ORDER BY id DESC " +
+        "LIMIT 1 ";
 
         //var selectLastState = "SELECT e.state " +
         //    "FROM event_capteur e " +
@@ -318,23 +318,23 @@ module.exports = {
                     if (evt.sense === undefined || evt.state == undefined) {
                         // Last sense of the sensor
                         mysqlHelper.execute(pool, selectLastSense, [sensorId], function (err, rows) {
-                            if (err ) {
+                            if (err) {
                                 logger.log('error', 'ERREUR SQL GET LAST SENSE ', err);
                                 reject(err);
                             }
-                            else if(rows.length === 0){
+                            else if (rows.length === 0) {
 
                                 resolve({
-                                    state: state===undefined ?'online':state,
-                                    sense: sense===undefined ?'free':sense,
+                                    state: state === undefined ? 'online' : state,
+                                    sense: sense === undefined ? 'free' : sense,
                                     sensorId: sensorId
                                 });
                             }
                             else {
 
                                 resolve({
-                                    state: state===undefined ?rows[0]['state']:state,
-                                    sense: sense===undefined ?rows[0]['sense']:sense,
+                                    state: state === undefined ? rows[0]['state'] : state,
+                                    sense: sense === undefined ? rows[0]['sense'] : sense,
                                     sensorId: sensorId
                                 });
                             }
@@ -390,7 +390,7 @@ module.exports = {
             }, function reject1(err) {
                 logger.log('error', 'REJECT SENSOR promise 1', err);
                 // Call onFinished function idf we are on last event
-                sendFinished(index,(events.length - 1), onFinished, ackID);
+                sendFinished(index, (events.length - 1), onFinished, ackID);
             }).then(function resolve2(obj) {
                 //logger.log('info', "++++++++++++++ OBJET Q.ALL", obj);
                 // Promise 3
@@ -400,13 +400,13 @@ module.exports = {
                     var state = obj.state;
 
                     // Insert into event_capteur
-                    var inst = mysql.format(eventSql,[sensorId, evt.date, state, sense, evt.supply, evt.dfu]);
+                    //var inst = mysql.format(eventSql,[sensorId, evt.date, state, sense, evt.supply, evt.dfu]);
                     //logger.log('info', '##### EVENT_CAPTEUR: '+ inst);
                     // INSERT IN THE EVENT TABLE
-                    mysqlHelper.execute(pool, inst,
+                    mysqlHelper.execute(pool, eventSql, [sensorId, evt.date, state, sense, evt.supply, evt.dfu],
                         function (err, result) {
                             if (err) {
-                                logger.log('error', 'ERREUR SQL INSERT event_sensor '+inst, err);
+                                logger.log('error', 'ERREUR SQL INSERT event_sensor ' + eventSql, err);
                             }
                             else {
                                 //logger.log('info', 'INSERTED event_sensor OK');
@@ -490,7 +490,7 @@ module.exports = {
             }, function reject2(err) {
                 logger.log('error', 'REJECT SENSOR promise 2', err);
                 // Call onFinished function idf we are on last event
-                sendFinished(index,(events.length - 1), onFinished, ackID);
+                sendFinished(index, (events.length - 1), onFinished, ackID);
             }).then(function resolve3(oData) {
                 //logger.log('info', 'promise 3 OK ');
                 // oData = car space free / occupied + infos
@@ -498,20 +498,26 @@ module.exports = {
                 var sense = oData.sense == 'overstay' ? 1 : 0;
                 var evtData = oData.data;
                 // UPDATE JOURNAL (plan_id, place_id, etat_occupation_id, overstay, date_evt)
-                var inst = mysql.format(journalSql, [
-                    evtData.plan_id,
-                    evtData.place_id,
-                    evtData.etat_occupation_id,
-                    sense,
-                    evt.date
-                ]);
+                //var inst = mysql.format(journalSql, [
+                //    evtData.plan_id,
+                //    evtData.place_id,
+                //    evtData.etat_occupation_id,
+                //    sense,
+                //    evt.date
+                //]);
                 //logger.log('info', '##### JOURNAL_EQUIPEMENT_PLAN: '+ inst);
 
                 var p1 = Q.promise(function (resolve, reject) {
-                    mysqlHelper.execute(pool, inst,
+                    mysqlHelper.execute(pool, journalSql, [
+                            evtData.plan_id,
+                            evtData.place_id,
+                            evtData.etat_occupation_id,
+                            sense,
+                            evt.date
+                        ],
                         function (err, result) {
                             if (err) {
-                                logger.log('error', 'ERREUR INSERT journal_equipement_plan SQL : ' + inst, err);
+                                logger.log('error', 'ERREUR INSERT journal_equipement_plan SQL : ' + journalSql, err);
                             }
                             resolve();
                         });
@@ -539,14 +545,14 @@ module.exports = {
 
             }, function reject3(err) {
                 if (err != 'NO ONLINE') {
-                    logger.log('error', 'REJECT SENSOR promise 3',err);
+                    logger.log('error', 'REJECT SENSOR promise 3', err);
                 }
                 // Call onFinished function idf we are on last event
-                sendFinished(index,(events.length - 1), onFinished, ackID);
+                sendFinished(index, (events.length - 1), onFinished, ackID);
 
             }).then(function resolveAll() {
                 // Call onFinished function idf we are on last event
-                sendFinished(index,(events.length - 1), onFinished, ackID);
+                sendFinished(index, (events.length - 1), onFinished, ackID);
             });
 
         });// fin _.each
@@ -557,7 +563,7 @@ module.exports = {
          * @param total: last index
          * @param callback
          */
-        function sendFinished(index, total, callback, ackID){
+        function sendFinished(index, total, callback, ackID) {
             //logger.log('info','ackID: '+ ackID+' info', 'index:'+index+' total:'+total);
             // FINAL SENSOR EVENT
             if (index == total) {
@@ -808,7 +814,7 @@ module.exports = {
                     if (index == (sensors.length - 1)) {
                         resolve(sensorsInserted);
                     }
-                }, function onUpdateSensorKo(err){
+                }, function onUpdateSensorKo(err) {
 
                     trans.rollback();
                     logger.log('error', 'TRANSACTION UPDATE VIRTUAL SENSOR ROLLBACK', err);
