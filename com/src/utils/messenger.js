@@ -21,17 +21,21 @@ module.exports = {
     send: function (socket, messageType, data, error, errorSocket, callback) {
         // The target socket is null
         if (socket == null || typeof socket === 'undefined') {
-            // Error message to the error client
-            this.send(errorSocket, messageType, {}, {
-                "text": "The client socket supplied for this message is null or undefined."
-            }, {}, callback);
+            if (errorSocket.readyState !== WebSocket.OPEN) {
+                // Error message to the error client
+                this.send(errorSocket, messageType, {}, {
+                    "text": "The client socket supplied for this message is null or undefined."
+                }, {}, callback);
+            }
             logger.log('error', "The client socket supplied for this message is null or undefined.");
         }
         // The socket is not open
         else if (socket.readyState !== WebSocket.OPEN) {
-            this.send(errorSocket, messageType, {}, {
-                "text": "The client socket supplied for this message is not opened."
-            }, {}, callback);
+            if (errorSocket.readyState !== WebSocket.OPEN) {
+                this.send(errorSocket, messageType, {}, {
+                    "text": "The client socket supplied for this message is not opened."
+                }, {}, callback);
+            }
             logger.log('error', "The client socket supplied for this message is not opened.");
         }
         // This is an error message
@@ -75,7 +79,7 @@ module.exports = {
             // Error message to the original client
             this.send(global.controllerClient, messageType, data, error, errorSocket);
             var now = new Date();
-            logger.log('info', 'OUTGOING QUERY TO CONTROLLER at '+now.toISOString()+': messageType: ' + messageType );
+            logger.log('info', 'OUTGOING QUERY TO CONTROLLER at ' + now.toISOString() + ': messageType: ' + messageType);
         } else {
             // No controller connected yet
             this.send(errorSocket, messageType, {}, {
