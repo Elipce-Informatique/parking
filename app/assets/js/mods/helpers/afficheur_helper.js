@@ -141,7 +141,7 @@ function generateAfficheurLabel(afficheur) {
         '" data-toggle="tooltip" data-html="true" title="' +
         htmlTooltip +
         '">' + afficheur.data.defaut + '</span>';
-    console.log('HTML afficheur : %o', htmlAfficheur);
+    //console.log('HTML afficheur : %o', htmlAfficheur);
     return htmlAfficheur;
 }
 
