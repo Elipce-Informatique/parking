@@ -21,7 +21,7 @@ module.exports = {
     send: function (socket, messageType, data, error, errorSocket, callback) {
         // The target socket is null
         if (socket == null || typeof socket === 'undefined') {
-            if (errorSocket.readyState !== WebSocket.OPEN) {
+            if (errorSocket != undefined && errorSocket.readyState !== WebSocket.OPEN) {
                 // Error message to the error client
                 this.send(errorSocket, messageType, {}, {
                     "text": "The client socket supplied for this message is null or undefined."
@@ -31,7 +31,7 @@ module.exports = {
         }
         // The socket is not open
         else if (socket.readyState !== WebSocket.OPEN) {
-            if (errorSocket.readyState !== WebSocket.OPEN) {
+            if (errorSocket != undefined && errorSocket.readyState !== WebSocket.OPEN) {
                 this.send(errorSocket, messageType, {}, {
                     "text": "The client socket supplied for this message is not opened."
                 }, {}, callback);
