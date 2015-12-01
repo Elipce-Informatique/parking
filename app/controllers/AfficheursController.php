@@ -299,6 +299,10 @@ class AfficheursController extends \BaseController
             $places = array_merge($places, $this->getPlacesRecursive($compteur->id));
         }
 
+        usort($places, function ($p1, $p2) {
+            return strcmp($p1->libelle, $p2->libelle);
+        });
+
         return $places;
     }
 
