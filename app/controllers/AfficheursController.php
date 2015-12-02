@@ -300,7 +300,9 @@ class AfficheursController extends \BaseController
         }
 
         usort($places, function ($p1, $p2) {
-            return strcmp($p1->libelle, $p2->libelle);
+            $l1 = str_replace(' ', '', $p1->libelle);
+            $l2 = str_replace(' ', '', $p2->libelle);
+            return $l1 < $l2 ? -1 : 1;
         });
 
         return $places;
