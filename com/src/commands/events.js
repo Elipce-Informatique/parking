@@ -24,7 +24,7 @@ util.inherits(Events, EventEmitter);
  * received with the previous event report.
  */
 Events.prototype.sendEventQuery = function (ackID) {
-    //logger.log('info', '****** EVENT QUERY '+ackID);
+    logger.log('info', '****** EVENT QUERY '+ackID);
     messenger.sendToController('eventQuery', {
         "ackID": ackID
     });
