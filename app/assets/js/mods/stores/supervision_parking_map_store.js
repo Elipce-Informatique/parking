@@ -106,19 +106,20 @@ var store = Reflux.createStore({
      */
     onLabel_afficheurs_add: function () {
         // AJOUT TOOLTIP UNE FOIS LA BOUCLE PASSEE
-        console.log('Affichage tooltips');
+        //console.log('Affichage tooltips');
         $("[data-afficheur-wrapper]").tooltip({html: true});
 
-        // ATTACHE LE MENU AU LABEL
-        var htmlClass = 'afficheur_label';
-        var menu = new BootstrapMenu('.' + htmlClass, {
-            menuEvent: 'click',
-            fetchElementData: function (afficheur) {
-                var data = $(afficheur[0]).find('span').data('afficheur');
-                return data;
-            },
-            actions: afficheurHelper.supervisionContextMenu()
-        });
+        // TODO: Corriger l'affectation multiple du bootstrap menu
+        //// ATTACHE LE MENU AU LABEL
+        //var htmlClass = 'afficheur_label';
+        //var menu = new BootstrapMenu('.' + htmlClass, {
+        //    menuEvent: 'click',
+        //    fetchElementData: function (afficheur) {
+        //        var data = $(afficheur[0]).find('span').data('afficheur');
+        //        return data;
+        //    },
+        //    actions: afficheurHelper.supervisionContextMenu()
+        //});
     },
 
     /**
