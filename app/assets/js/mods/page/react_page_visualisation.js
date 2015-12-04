@@ -75,7 +75,7 @@ var Page = React.createClass({
 
         //console.log('DidUpdate %o, %o', _.cloneDeep(ps.treeView), _.cloneDeep(this.state.treeView));
         // TreeView update
-        //if (!_.isEqual(ps.treeView, this.state.treeView)) { // ATTENTION ne fonctionne pas les state sont identiques, laissez commenté
+        ////if (!_.isEqual(ps.treeView, this.state.treeView)) { // ATTENTION ne fonctionne pas les state sont identiques, laissez commenté
         var libs = {};
         //console.log('treeview modifié');
         // Parcours 1er étage du treeview
@@ -83,119 +83,120 @@ var Page = React.createClass({
             // Libellé des items
             libs = this.getLibelleFromEtatParking(item.etat);
 
+            // TODO: Corriger l'affectation multiple du bootstrap menu
             // Menu click droit
-            new BootstrapMenu('[data-id=' + item.id + ']:not([data-parking-id])', {
-                fetchElementData: function ($rowElem) {
-                    //console.log('dans fetch : %o, %o',$('[data-id=' + item.id + ']:not([data-parking-id])').data('etat'), $rowElem.data('etat'));
-                    return {
-                        id: $rowElem.data('id'),
-                        //etat: $rowElem.data('etat') // Les modifications du DOM par le state sont BIEN pas prises en compte. Ce pendant la fonction .data() renvoie la 1ere valeur du DOM
-                        etat: parseInt($rowElem.attr('data-etat'))
-                    };
-                },
-                actions: [{
-                    name: libs.item1,
-                    onClick: function (data) {
-                        // Connexion websocket + ecoute parking state controller
-                        supervision_helper.initParkingState(data.id);
-
-                        // Envoi un message au controller en fonction de l'état actuel du parking
-                        switch (data.etat) {
-                            case 0: // Etat actuel ouvert
-                            case 2: // etat actuel: veille
-                                // TODO send message fermeture parking (ID parking= data.id)
-                                if (window.modeDev) {
-                                    // En attendant simulation d'une action, on attend que le listen soit fait
-                                    window.setTimeout(function () {
-                                        Actions.com.message_controller({
-                                            messageType: "parking_state",
-                                            data: {
-                                                id: data.id,
-                                                etat: '1'
-                                            }
-                                        });
-                                    }, 2000);
-                                }
-                                // Mode production
-                                else {
-                                    this.swalNoCom();
-                                }
-                                break;
-                            case 1: // etat actuel fermé
-                                // TODO send message ouverture parking (ID parking= data.id)
-                                if (window.modeDev) {
-                                    window.setTimeout(function () {
-                                        Actions.com.message_controller({
-                                            messageType: "parking_state",
-                                            data: {
-                                                id: data.id,
-                                                etat: '0'
-                                            }
-                                        });
-                                    }, 2000);
-                                }
-                                // Mode production
-                                else {
-                                    this.swalNoCom();
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                    }.bind(this)
-                }, {
-                    name: libs.item2,
-                    onClick: function (data) {
-                        // Connexion websocket + ecoute parking state controller
-                        supervision_helper.initParkingState(data.id);
-
-                        switch (data.etat) {
-                            case 0: // Etat actuel ouvert
-                            case 1: // etat actuel: fermé
-                                // TODO send message veille parking (ID parking= data.id)
-                                if (window.modeDev) {
-                                    window.setTimeout(function () {
-                                        // En attendant simulation d'une action
-                                        Actions.com.message_controller({
-                                            messageType: "parking_state",
-                                            data: {
-                                                id: data.id,
-                                                etat: '2'
-                                            }
-                                        });
-                                    }, 2000);
-                                }
-                                // Mode production
-                                else {
-                                    this.swalNoCom();
-                                }
-                                break;
-                            case 2: // etat actuel veille
-                                // TODO send message ouverture parking (ID parking= data.id)
-                                if (window.modeDev) {
-                                    window.setTimeout(function () {
-                                        Actions.com.message_controller({
-                                            messageType: "parking_state",
-                                            data: {
-                                                id: data.id,
-                                                etat: '0'
-                                            }
-                                        });
-                                    }, 2000);
-                                }
-                                // Mode production
-                                else {
-                                    this.swalNoCom();
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }]
-            });
+        //    new BootstrapMenu('[data-id=' + item.id + ']:not([data-parking-id])', {
+        //        fetchElementData: function ($rowElem) {
+        //            //console.log('dans fetch : %o, %o',$('[data-id=' + item.id + ']:not([data-parking-id])').data('etat'), $rowElem.data('etat'));
+        //            return {
+        //                id: $rowElem.data('id'),
+        //                //etat: $rowElem.data('etat') // Les modifications du DOM par le state sont BIEN pas prises en compte. Ce pendant la fonction .data() renvoie la 1ere valeur du DOM
+        //                etat: parseInt($rowElem.attr('data-etat'))
+        //            };
+        //        },
+        //        actions: [{
+        //            name: libs.item1,
+        //            onClick: function (data) {
+        //                // Connexion websocket + ecoute parking state controller
+        //                supervision_helper.initParkingState(data.id);
+        //
+        //                // Envoi un message au controller en fonction de l'état actuel du parking
+        //                switch (data.etat) {
+        //                    case 0: // Etat actuel ouvert
+        //                    case 2: // etat actuel: veille
+        //                        // TODO send message fermeture parking (ID parking= data.id)
+        //                        if (window.modeDev) {
+        //                            // En attendant simulation d'une action, on attend que le listen soit fait
+        //                            window.setTimeout(function () {
+        //                                Actions.com.message_controller({
+        //                                    messageType: "parking_state",
+        //                                    data: {
+        //                                        id: data.id,
+        //                                        etat: '1'
+        //                                    }
+        //                                });
+        //                            }, 2000);
+        //                        }
+        //                        // Mode production
+        //                        else {
+        //                            this.swalNoCom();
+        //                        }
+        //                        break;
+        //                    case 1: // etat actuel fermé
+        //                        // TODO send message ouverture parking (ID parking= data.id)
+        //                        if (window.modeDev) {
+        //                            window.setTimeout(function () {
+        //                                Actions.com.message_controller({
+        //                                    messageType: "parking_state",
+        //                                    data: {
+        //                                        id: data.id,
+        //                                        etat: '0'
+        //                                    }
+        //                                });
+        //                            }, 2000);
+        //                        }
+        //                        // Mode production
+        //                        else {
+        //                            this.swalNoCom();
+        //                        }
+        //                        break;
+        //                    default:
+        //                        break;
+        //                }
+        //            }.bind(this)
+        //        }, {
+        //            name: libs.item2,
+        //            onClick: function (data) {
+        //                // Connexion websocket + ecoute parking state controller
+        //                supervision_helper.initParkingState(data.id);
+        //
+        //                switch (data.etat) {
+        //                    case 0: // Etat actuel ouvert
+        //                    case 1: // etat actuel: fermé
+        //                        // TODO send message veille parking (ID parking= data.id)
+        //                        if (window.modeDev) {
+        //                            window.setTimeout(function () {
+        //                                // En attendant simulation d'une action
+        //                                Actions.com.message_controller({
+        //                                    messageType: "parking_state",
+        //                                    data: {
+        //                                        id: data.id,
+        //                                        etat: '2'
+        //                                    }
+        //                                });
+        //                            }, 2000);
+        //                        }
+        //                        // Mode production
+        //                        else {
+        //                            this.swalNoCom();
+        //                        }
+        //                        break;
+        //                    case 2: // etat actuel veille
+        //                        // TODO send message ouverture parking (ID parking= data.id)
+        //                        if (window.modeDev) {
+        //                            window.setTimeout(function () {
+        //                                Actions.com.message_controller({
+        //                                    messageType: "parking_state",
+        //                                    data: {
+        //                                        id: data.id,
+        //                                        etat: '0'
+        //                                    }
+        //                                });
+        //                            }, 2000);
+        //                        }
+        //                        // Mode production
+        //                        else {
+        //                            this.swalNoCom();
+        //                        }
+        //                        break;
+        //                    default:
+        //                        break;
+        //                }
+        //            }
+        //        }]
+        //    });
         }, this);
-        //}
+        ////}
     },
 
     swalNoCom: function () {
