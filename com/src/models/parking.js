@@ -51,7 +51,7 @@ module.exports = {
      * @param pool: MySQL connexion
      * @param onGetDisplays: callback function
      */
-    getAllDisplays: function(pool, onGetDisplays){
+    getAllDisplays: function (pool, onGetDisplays) {
 
         var mysqlHelper = require('../utils/mysql_helper.js');
 
@@ -79,7 +79,7 @@ module.exports = {
      * @param pool: MySQL connexion
      * @param onGetViews: callback function
      */
-    getAllViews: function(pool, onGetViews){
+    getAllViews: function (pool, onGetViews) {
 
         var mysqlHelper = require('../utils/mysql_helper.js');
 
@@ -94,9 +94,9 @@ module.exports = {
             "JOIN compteur co ON co.id=v.compteur_id " +
             "WHERE p.id = ? ";
 
-        var inst = mysql.format(sql, [global.parkingId]);
+        //var inst = mysql.format(sql, [global.parkingId]);
         //logger.log('info','getAllViews: '+inst);
-        mysqlHelper.execute(pool, inst, function (err, result) {
+        mysqlHelper.execute(pool, sql, [global.parkingId], function (err, result) {
             onGetViews(err, result);
         });
     },
@@ -106,7 +106,7 @@ module.exports = {
      * @param pool: MySQL connexion
      * @param onGetCounters: callback function
      */
-    getAllCounters: function(pool, onGetCounters){
+    getAllCounters: function (pool, onGetCounters) {
 
         var mysqlHelper = require('../utils/mysql_helper.js');
 
@@ -123,9 +123,9 @@ module.exports = {
             "WHERE p.id = ? " +
             "GROUP BY co.id";
 
-        var inst = mysql.format(sql, [global.parkingId]);
+        //var inst = mysql.format(sql, [global.parkingId]);
         //logger.log('info','getAllCounters: '+inst);
-        mysqlHelper.execute(pool, inst, function (err, result) {
+        mysqlHelper.execute(pool, sql, [global.parkingId], function (err, result) {
             onGetCounters(err, result);
         });
     },
@@ -135,7 +135,7 @@ module.exports = {
      * @param pool: MySQL connexion
      * @param onGetAssocCountersSensors: callback function
      */
-    getAllAssocCountersSensors: function(pool, onGetAssocCountersSensors){
+    getAllAssocCountersSensors: function (pool, onGetAssocCountersSensors) {
 
         var mysqlHelper = require('../utils/mysql_helper.js');
 
@@ -152,9 +152,9 @@ module.exports = {
             "WHERE p.id = ? " +
             "GROUP BY ca.id";
 
-        var inst = mysql.format(sql, [global.parkingId]);
+        //var inst = mysql.format(sql, [global.parkingId]);
         //logger.log('info','getAllAssocs: '+inst);
-        mysqlHelper.execute(pool, inst, function (err, result) {
+        mysqlHelper.execute(pool, sql, [global.parkingId], function (err, result) {
             onGetAssocCountersSensors(err, result);
         });
     }

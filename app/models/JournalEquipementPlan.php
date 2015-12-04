@@ -94,10 +94,38 @@ class JournalEquipementPlan extends BaseModel
             ->groupBy('place_id')
             ->lists('place_id');
 
-        return Place::whereIn('id', $placeIds)
-            ->with('etat_occupation')
-            ->with('latest_journal_equipement')
-            ->get();
+        // Récup des données etat_occupation
+        $etats_occup = DB::table('etat_occupation')->get();
+
+        // Intégration des données aux places !
+        $aPlace = DB::table('place')
+            ->whereIn('id', $placeIds)->get();
+
+        $retour = array_map(function ($place) use ($etats_occup) {
+
+            // Init place retour
+            $pRetour = $place;
+
+            // Integration états occupation
+            $etat_occup = array_reduce($etats_occup, function ($carry, $item) use ($place) {
+                return ($place->etat_occupation_id == $item->id) ? $item : $carry;
+            });
+            $pRetour->etat_occupation = $etat_occup;
+
+            // Intégration journal_équipement plan
+            $pRetour->latest_journal_equipement = DB::table('journal_equipement_plan')
+                ->where('place_id', $place->id)
+                ->orderBy('id', 'DESC')
+                ->limit('1')
+                ->get()[0];
+            return $pRetour;
+        }, $aPlace);
+
+        return $retour;
+//        return Place::whereIn('id', $placeIds)
+//            ->with('etat_occupation')
+//            ->with('latest_journal_equipement')
+//            ->get();
     }
 
     /**

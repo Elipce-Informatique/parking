@@ -237,9 +237,9 @@ module.exports = {
             "WHERE p.id = ? " +
             "AND a.v4_id=? ";
 
-        var inst = mysql.format(sql, [global.parkingId, displayId]);
+        //var inst = mysql.format(sql, [global.parkingId, displayId]);
         //logger.log('info','getAllViews: '+inst);
-        mysqlHelper.execute(pool, inst, function (err, result) {
+        mysqlHelper.execute(pool, sql, [global.parkingId, displayId], function (err, result) {
             onGetViews(err, result);
         });
     },
