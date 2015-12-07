@@ -41,7 +41,7 @@ module.exports = {
 
 
         // WS déjà connecté
-        if(window.clientWs !== null){
+        if (window.clientWs !== null) {
             // Listen equipment events
             this._listenEquipmentEvents();
         }
@@ -76,7 +76,7 @@ module.exports = {
      * Ecoute les évènements capteur et afficheur envoyés par le controller
      * @private
      */
-    _listenEquipmentEvents: function(){
+    _listenEquipmentEvents: function () {
 
         if (this._unsubscribe != null && typeof this._unsubscribe === "function") {
             this._unsubscribe();
@@ -132,7 +132,7 @@ module.exports = {
      */
     initParkingState: function (parkingId, onConnexion, onError) {
         // WS déjà connecté
-        if(window.clientWs !== null){
+        if (window.clientWs !== null) {
             // Listen parking events
             this._listenParkingState();
         }
@@ -268,19 +268,18 @@ module.exports = {
     _handleViewEvent: function (idViews) {
         //console.log('ID views %o', idViews);
         // Merge array views to update
-        this._viewsIdToUpdate = this._viewsIdToUpdate.concat(idViews);
+        this._viewsIdToUpdate = _.unique(this._viewsIdToUpdate.concat(idViews));
         this._displayDFU = true;
     },
 
     _handleViewAJAX: function () {
-        //console.log('AJAX update %o',this._viewsIdToUpdate);
         // Data ajax
         var dataAjax = {
-            ids: this._viewsIdToUpdate
+            ids: _.clone(this._viewsIdToUpdate)
         };
 
         // At least 1 display to update
-        if(dataAjax.ids.length > 0) {
+        if (dataAjax.ids.length > 0) {
             // Get displays infos
             this._ajaxViewInstances['0'] = $.ajax({
                 method: 'GET',
@@ -291,11 +290,11 @@ module.exports = {
                 global: false
             })
                 .done(function (data) {
-                    //console.log('ANSWER DISPLAYS  %o', data);
+                    // Nouveaux ids à rafraichir
+                    this._viewsIdToUpdate = _.unique(_.difference(this._viewsIdToUpdate, dataAjax.ids));
+                    // Views to update processed
                     // Refresh afficheurs on the map
                     Actions.map.refresh_afficheurs(data);
-                    // Views to update processed
-                    this._viewsIdToUpdate = _.difference(this._viewsIdToUpdate, dataAjax.ids);
                 })
                 .fail(function (xhr, type, exception) {
                     // Abort effectué par nos soins pour ne pas rafraichir tant que la précédent refresh n'est pas fini.
