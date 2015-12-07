@@ -249,7 +249,7 @@ module.exports = {
                 if (index == (events.length - 1)) {
                     //logger.log('info', 'NOTIFICATION VIEW EVENTS FINISHED resolved '+ackID);
                     // NOTIFY CALLER THAT WE'RE DONE
-                    onFinished(viewsId);
+                    onFinished(_.unique(viewsId));
                 }
             });
 
