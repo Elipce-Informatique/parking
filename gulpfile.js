@@ -82,7 +82,7 @@ gulp.task('deploy-task', ['css', 'js', 'images'], function () {
     });
 });
 
-gulp.task('apply-prod-environment', function() {
+gulp.task('apply-prod-environment', function () {
     process.stdout.write("Setting NODE_ENV to 'production'" + "\n");
     process.env.NODE_ENV = 'production';
     if (process.env.NODE_ENV != 'production') {
@@ -268,6 +268,12 @@ gulp.task('browserify', function (callback) {
         });
         bundler.transform({es6: true}, reactify);
 
+        if (!config.debug) {
+            bundler.transform({
+                global: true
+            }, 'uglifyify');
+        }
+
         // Optimisation des libs en external
         libs.forEach(function (lib) {
             bundler.external(lib);
@@ -285,10 +291,6 @@ gulp.task('browserify', function (callback) {
                 // stream gulp compatible. Specifiy the
                 // desired output filename here.
                 .pipe(source(bundleConfig.outputName));
-            if (!config.debug) {
-                // If this is a production build, minify it
-                //stream.pipe(uglify()); TODO : voir issues
-            }
             // Specify the output destination
             stream.pipe(gulp.dest(bundleConfig.dest))
                 .on('end', reportFinished);
