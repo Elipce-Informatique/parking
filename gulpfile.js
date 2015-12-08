@@ -72,7 +72,7 @@ gulp.task('build', ['watch', 'css', 'js', 'images']);
 
 
 // Déploiement en mode réel, tout sauf le watch
-gulp.task('deploy', ['clean'], function () {
+gulp.task('deploy', ['clean', 'apply-prod-environment'], function () {
     gulp.start('deploy-task');
 });
 gulp.task('deploy-task', ['css', 'js', 'images'], function () {
@@ -80,6 +80,16 @@ gulp.task('deploy-task', ['css', 'js', 'images'], function () {
     process.nextTick(function () {
         process.exit(0);
     });
+});
+
+gulp.task('apply-prod-environment', function () {
+    process.stdout.write("Setting NODE_ENV to 'production'" + "\n");
+    process.env.NODE_ENV = 'production';
+    if (process.env.NODE_ENV != 'production') {
+        throw new Error("Failed to set NODE_ENV to production!!!!");
+    } else {
+        process.stdout.write("Successfully set NODE_ENV to production" + "\n");
+    }
 });
 
 /*
@@ -258,6 +268,12 @@ gulp.task('browserify', function (callback) {
         });
         bundler.transform({es6: true}, reactify);
 
+        if (!config.debug) {
+            bundler.transform({
+                global: true
+            }, 'uglifyify');
+        }
+
         // Optimisation des libs en external
         libs.forEach(function (lib) {
             bundler.external(lib);
@@ -275,10 +291,6 @@ gulp.task('browserify', function (callback) {
                 // stream gulp compatible. Specifiy the
                 // desired output filename here.
                 .pipe(source(bundleConfig.outputName));
-            if (!config.debug) {
-                // If this is a production build, minify it
-                //stream.pipe(uglify()); TODO : voir issues
-            }
             // Specify the output destination
             stream.pipe(gulp.dest(bundleConfig.dest))
                 .on('end', reportFinished);
