@@ -6,7 +6,7 @@ var _ = require('lodash');
 module.exports = {
     browserify: {
         // Enable source maps
-        debug: true,
+        debug: false,
         // Additional file extentions to make optional
         extensions: ['.js'],
         // A separate bundle will be generated for each
