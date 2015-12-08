@@ -72,7 +72,7 @@ gulp.task('build', ['watch', 'css', 'js', 'images']);
 
 
 // Déploiement en mode réel, tout sauf le watch
-gulp.task('deploy', ['clean'], function () {
+gulp.task('deploy', ['clean', 'apply-prod-environment'], function () {
     gulp.start('deploy-task');
 });
 gulp.task('deploy-task', ['css', 'js', 'images'], function () {
@@ -80,6 +80,16 @@ gulp.task('deploy-task', ['css', 'js', 'images'], function () {
     process.nextTick(function () {
         process.exit(0);
     });
+});
+
+gulp.task('apply-prod-environment', function() {
+    process.stdout.write("Setting NODE_ENV to 'production'" + "\n");
+    process.env.NODE_ENV = 'production';
+    if (process.env.NODE_ENV != 'production') {
+        throw new Error("Failed to set NODE_ENV to production!!!!");
+    } else {
+        process.stdout.write("Successfully set NODE_ENV to production" + "\n");
+    }
 });
 
 /*
