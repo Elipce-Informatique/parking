@@ -9,7 +9,6 @@ class SessionsController extends \BaseController
      */
     public function create()
     {
-//        dd(intval(ini_get('smtp_port')));
         if (Auth::check()) {
             return Redirect::to('/accueil');
         }
@@ -25,6 +24,7 @@ class SessionsController extends \BaseController
     public function store()
     {
         if (Auth::attempt(Input::only('email', 'password'), Input::exists('remember-me'))) {
+            Log::info('Utilisateur connecté : ' . input::get('email'));
             return Redirect::to('/');
         }
         Flash::error(Lang::get('global.login_error'));
